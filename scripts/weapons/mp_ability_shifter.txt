@@ -149,9 +149,9 @@ WeaponData
 			"fire_duration"						"0.2"
 			"toss_time"							"0.4"
 			"toss_overhead_time"				"0.4"
-			"ammo_no_remove_from_clip"			"1"
-			"ammo_no_remove_from_stockpile"		"1"
-			"ammo_min_to_fire"					"0"
+			"ammo_min_to_fire"					"200"
+			"ammo_per_shot"						"200"
+			"regen_ammo_refill_rate"			"20"
 		}
 		pm1
 		{
@@ -160,9 +160,9 @@ WeaponData
 			"fire_duration"						"0.2"
 			"toss_time"							"0.4"
 			"toss_overhead_time"				"0.4"
-			"ammo_no_remove_from_clip"			"1"
-			"ammo_no_remove_from_stockpile"		"1"
-			"ammo_min_to_fire"					"0"
+			"ammo_min_to_fire"					"200"
+			"ammo_per_shot"						"200"
+			"regen_ammo_refill_rate"			"20"
 		}
 		pm2
 		{
@@ -171,9 +171,9 @@ WeaponData
 			"fire_duration"						"0.2"
 			"toss_time"							"0.4"
 			"toss_overhead_time"				"0.4"
-			"ammo_no_remove_from_clip"			"1"
-			"ammo_no_remove_from_stockpile"		"1"
-			"ammo_min_to_fire"					"0"
+			"ammo_min_to_fire"					"200"
+			"ammo_per_shot"						"200"
+			"regen_ammo_refill_rate"			"20"
 
 			//
 			"impulse_force"   								"50000"

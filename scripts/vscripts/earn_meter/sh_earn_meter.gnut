@@ -195,11 +195,10 @@ EarnObject function EarnObject_GetByRef( string ref )
 
 bool function EarnMeterMP_IsTitanEarnGametype()
 {
-
 	#if MP
-	if ( !GetTitanfallEnabled() )
- 		return false
- 	#endif
+		if ( Riff_TitanAvailability() == eTitanAvailability.Never )
+			return false
+	#endif
 
 	if ( GAMETYPE == PILOT_SKIRMISH )
 		return false
@@ -224,6 +223,11 @@ bool function EarnMeterMP_IsTitanEarnGametype()
 
 	if ( GAMETYPE == LTS_BOMB )
 		return false
+
+	#if DEVSCRIPTS
+	if ( GAMETYPE == PVE_SANDBOX )
+		return false
+	#endif
 
 	return true
 }

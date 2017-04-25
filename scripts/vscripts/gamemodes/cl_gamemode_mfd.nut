@@ -10,6 +10,8 @@ global function MarkedForDeathHudThink
 
 global function ServerCallback_MFD_StartNewMarkCountdown
 
+global function GetMarkedName
+
 struct
 {
 	var friendlyMarkRui
@@ -38,6 +40,8 @@ void function ClGamemodeMfd_Init()
 
 	AddCreateCallback( MARKER_ENT_CLASSNAME, OnMarkedCreated )
 	AddPermanentEventNotification( ePermanentEventNotifications.MFD_YouAreTheMark, "#MARKED_FOR_DEATH_YOU_ARE_MARKED_REMINDER" )
+
+	AddCallback_GameStateEnter( eGameState.Postmatch, DisplayPostMatchTop3 )
 }
 
 
@@ -91,12 +95,14 @@ function MFDChanged()
 		 	EmitSoundOnEntity( player, "UI_InGame_MarkedForDeath_PlayerMarked"  )
 		 	thread PlayMarkedForDeathMusic( player )
 		 	thread DelayPlayingUnmarkedEffect( player )
-
-		 	HideEventNotification()
+			HideEventNotification()
 			AnnouncementData announcement = Announcement_Create( "#MARKED_FOR_DEATH_YOU_ARE_MARKED_ANNOUNCEMENT" )
 			Announcement_SetSubText( announcement, "#MARKED_FOR_DEATH_STAY_ALIVE" )
+			Announcement_SetTitleColor( announcement, <1,0,0> )
 			Announcement_SetPurge( announcement, true )
-			Announcement_SetDuration( announcement, 4.5 )
+			Announcement_SetPriority( announcement, 200 ) //Be higher priority than Titanfall ready indicator etc
+			Announcement_SetSoundAlias( announcement, SFX_HUD_ANNOUNCE_QUICK )
+			Announcement_SetStyle( announcement, ANNOUNCEMENT_STYLE_QUICK )
 			AnnouncementFromClass( player, announcement )
 		}
 	}
@@ -110,9 +116,11 @@ function MFDChanged()
 				return
 
 			AnnouncementData announcement = Announcement_Create( "#MARKED_FOR_DEATH_YOU_ARE_THE_NEXT_TARGET" )
+			Announcement_SetTitleColor( announcement, <1,0,0> )
 			Announcement_SetPurge( announcement, true )
-			Announcement_SetDuration( announcement, 4.5 )
-			//Announcement_SetPriority( announcement, 200 ) //Be higher priority than Titanfall ready indicator etc
+			Announcement_SetPriority( announcement, 200 ) //Be higher priority than Titanfall ready indicator etc
+			Announcement_SetSoundAlias( announcement, SFX_HUD_ANNOUNCE_QUICK )
+			Announcement_SetStyle( announcement, ANNOUNCEMENT_STYLE_QUICK )
 			AnnouncementFromClass( player, announcement )
 		}
 	}
@@ -121,7 +129,10 @@ function MFDChanged()
 		if ( !IsWatchingReplay() )
 		{
 			if ( IsAlive( friendlyMarked ) && IsAlive( enemyMarked ) )
-				SetTimedEventNotification( 6.0, "#MARKED_FOR_DEATH_ARE_MARKED", GetMarkedName( friendlyMarked), GetMarkedName( enemyMarked ) )
+			{
+				string msg = GetMarkedName( friendlyMarked ) + " " + Localize( "#AND" ) + " " +  GetMarkedName( enemyMarked ) + " " + Localize( "#MARKED_FOR_DEATH_ARE_MARKED" )
+				AnnouncementMessageSweep( GetLocalClientPlayer(), "#MARKED_FOR_DEATH_TARGeTS_ARE_MARKED" , msg, TEAM_COLOR_FRIENDLY )
+			}
 		}
 	}
 
@@ -135,6 +146,7 @@ function MFDChanged()
 			RuiTrackInt( rui, "teamRelation", friendlyMarked, RUI_TRACK_TEAM_RELATION_VIEWPLAYER )
 			RuiSetBool( rui, "playerIsMarked", friendlyMarked.IsPlayer() && GetLocalViewPlayer() == friendlyMarked )
 			RuiSetBool( rui, "isMarked", friendlyMarked.IsPlayer() )
+			RuiSetImage( rui, "markedIcon", $"rui/hud/gametype_icons/mfd/mfd_friendly" )
 
 			rui = ClGameState_GetRui()
 			RuiSetString( rui, "friendlyMarkName", Localize( "#MARKED_FOR_DEATH_GUARD_PLAYER_HUD", GetMarkedName( friendlyMarked ) ) )
@@ -167,7 +179,7 @@ function MFDChanged()
 			*/
 		}
 	}
-	else if ( IsAlive( pendingFriendlyMarked ) )
+	else if ( IsValid( pendingFriendlyMarked ) )
 	{
 		if ( pendingFriendlyMarked != player )
 		{
@@ -177,6 +189,7 @@ function MFDChanged()
 			RuiTrackInt( rui, "teamRelation", pendingFriendlyMarked, RUI_TRACK_TEAM_RELATION_VIEWPLAYER )
 			RuiSetBool( rui, "playerIsMarked", pendingFriendlyMarked.IsPlayer() && GetLocalViewPlayer() == pendingFriendlyMarked )
 			RuiSetBool( rui, "isMarked", pendingFriendlyMarked.IsPlayer() )
+			RuiSetImage( rui, "markedIcon", $"rui/hud/gametype_icons/mfd/mfd_friendly" )
 
 			rui = ClGameState_GetRui()
 			RuiSetString( rui, "friendlyMarkName", Localize( "#MARKED_FOR_DEATH_GUARD_PLAYER_HUD", GetMarkedName( pendingFriendlyMarked ) ) )
@@ -236,6 +249,7 @@ function MFDChanged()
 		RuiTrackInt( rui, "teamRelation", enemyMarked, RUI_TRACK_TEAM_RELATION_VIEWPLAYER )
 		RuiSetBool( rui, "playerIsMarked", enemyMarked.IsPlayer() && GetLocalViewPlayer() == enemyMarked )
 		RuiSetBool( rui, "isMarked", enemyMarked.IsPlayer() )
+		RuiSetImage( rui, "markedIcon", $"rui/hud/gametype_icons/mfd/mfd_enemy" )
 
 		rui = ClGameState_GetRui()
 		RuiSetString( rui, "enemyMarkName", Localize( "#MARKED_FOR_DEATH_KILL_PLAYER_HUD", GetMarkedName( enemyMarked ) ) )
@@ -413,10 +427,20 @@ void function ServerCallback_MFD_StartNewMarkCountdown_Internal( float endTime )
 
 	int team = player.GetTeam()
 	entity pendingFriendlyMarked = GetPendingMarked( team )
+	entity pendingEnemyMarked = GetPendingMarked( GetOtherTeam( team ) )
+
+	if ( pendingFriendlyMarked == player )
+		thread EmitCountdownSound( endTime, "UI_InGame_MarkedForDeath_CountdownToYouAreMarked" )
+	else
+		thread EmitCountdownSound( endTime, "UI_InGame_MarkedForDeath_CountdownToMarked" )
 
 	while ( Time() <= endTime )
 	{
-		if ( pendingFriendlyMarked == player )
+		if ( !IsAlive( pendingFriendlyMarked ) || !IsAlive( pendingEnemyMarked ) )
+		{
+			ClGameState_SetInfoStatusText( Localize( "#MARKED_FOR_DEATH_WAITING_FOR_MARKED_TO_SPAWN" ) )
+		}
+		else if ( pendingFriendlyMarked == player )
 		{
 			ClGameState_SetInfoStatusText( Localize( "#MARKED_FOR_DEATH_YOU_WILL_BE_MARKED_NEXT", floor( endTime - Time() ) ) )
 		}

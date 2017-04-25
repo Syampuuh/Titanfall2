@@ -11,7 +11,7 @@
         navDown                ButtonPassive2
         navUp           	   ButtonPassive3
         navLeft           	   ButtonPrimeTitan
-        navRight           	   ButtonCamoSkin
+        navRight           	   ButtonTitanExecutions
     }
 	Passive1Type
 	{
@@ -184,20 +184,37 @@
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ButtonCamoSkin
+    ButtonTitanExecutions
     {
 		ControlName				RuiButton
-		InheritProperties		CosmeticButton
+		InheritProperties		LoadoutButtonSmall
+        classname				TitanLoadoutPanelButtonClass
         xpos					-400
+        scriptID				"titanExecution"
 
 		navLeft                 ButtonPassive1
-        navRight                ButtonNoseArt
+        navRight                ButtonCamoSkin
         navDown               	ButtonPassive4
         navUp               	ButtonPassive4
 
         pin_to_sibling			ButtonPassive1
         pin_corner_to_sibling	TOP_LEFT
         pin_to_sibling_corner	TOP_LEFT
+    }
+    ButtonCamoSkin
+    {
+		ControlName				RuiButton
+		InheritProperties		CosmeticButton
+        xpos					10
+
+		navLeft                 ButtonTitanExecutions
+        navRight                ButtonNoseArt
+        navDown               	ButtonPassive5
+        navUp               	ButtonPassive5
+
+        pin_to_sibling			ButtonTitanExecutions
+        pin_corner_to_sibling	TOP_LEFT
+        pin_to_sibling_corner	TOP_RIGHT
     }
     ButtonNoseArt
     {
@@ -207,8 +224,8 @@
 
         navRight                ButtonWeaponCamo
         navLeft                	ButtonCamoSkin
-        navDown               	ButtonPassive5
-        navUp               	ButtonPassive5
+        navDown               	ButtonPassive6
+        navUp               	ButtonPassive6
 
         pin_to_sibling			ButtonCamoSkin
         pin_corner_to_sibling	TOP_LEFT
@@ -239,8 +256,8 @@
 
         navLeft                 ButtonWeaponCamo
         navRight                ButtonPassive1
-        navDown               	ButtonPassive2
-        navUp               	ButtonPassive3
+        navDown               	ButtonPassive6
+        navUp               	ButtonPassive6
 
         pin_to_sibling			ButtonWeaponCamo
         pin_corner_to_sibling	TOP_LEFT

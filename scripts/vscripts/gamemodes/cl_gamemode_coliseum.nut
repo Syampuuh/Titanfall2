@@ -55,6 +55,7 @@ void function ClGamemodeColiseum_ColiseumIntro_Internal( int enemyWinStreak, int
 	RuiSetString( rui, "playerLevel0", PlayerXPDisplayGenAndLevel( player.GetGen(), player.GetLevel() ) )
 	RuiSetImage( rui, "cardImage0", CallingCard_GetImage( callingCard ) )
 	RuiSetInt( rui, "layoutType0", CallingCard_GetLayout( callingCard ) )
+	RuiSetImage( rui, "cardGenImage0", PlayerXPGetGenIcon( player ) )
 	RuiSetImage( rui, "iconImage0", CallsignIcon_GetImage( callsignIcon ) )
 
 	entity otherPlayer = GetOtherPlayer()
@@ -76,6 +77,7 @@ void function ClGamemodeColiseum_ColiseumIntro_Internal( int enemyWinStreak, int
 	RuiSetString( rui, "playerLevel1", PlayerXPDisplayGenAndLevel( player.GetGen(), player.GetLevel() ) )
 	RuiSetImage( rui, "cardImage1", CallingCard_GetImage( callingCard ) )
 	RuiSetInt( rui, "layoutType1", CallingCard_GetLayout( callingCard ) )
+	RuiSetImage( rui, "cardGenImage1", PlayerXPGetGenIcon( player ) )
 	RuiSetImage( rui, "iconImage1", CallsignIcon_GetImage( callsignIcon ) )
 }
 
@@ -164,6 +166,7 @@ void function Epilogue_OnEnter()
 	RuiSetImage( rui, "cardImage", CallingCard_GetImage( callingCard ) )
 	RuiSetInt( rui, "layoutType", CallingCard_GetLayout( callingCard ) )
 	RuiSetImage( rui, "iconImage", CallsignIcon_GetImage( callsignIcon ) )
+	RuiSetImage( rui, "cardGenImage", PlayerXPGetGenIcon( winningPlayer ) )
 	RuiSetBool( rui, "isFriendly", GetLocalViewPlayer() == winningPlayer )
 	RuiSetBool( rui, "showTeamGlow", true )
 

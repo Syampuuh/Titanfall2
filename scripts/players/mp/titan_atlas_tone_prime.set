@@ -1,0 +1,13 @@
+#base "titan_atlas_tracker.set"
+"titan_atlas_tone_prime"
+{
+
+	isPrime 			1
+
+	execution_anim		"titan_atlas_tone_prime"
+
+	aiSettingsFile			"npc_titan_auto_atlas_tone_prime" //mp_only
+	// sp_aiSettingsFile		"npc_titan_atlas_stickybomb" //sp only, not needed for prime titan
+	at_aiSettingsFile		"npc_titan_atlas_tone_prime_bounty" //at only
+}
+

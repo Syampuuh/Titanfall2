@@ -92,7 +92,7 @@ struct
 	string userInfoPanel_hardware = ""
 	string userInfoPanel_userId = "0"
 	var communityChatroomMode
-	bool currentUserIsStreaming
+	bool currentUserIsStreaming = false
 	array<ChatroomWidget> chatroomUIs
 	bool hasFocus
 } file
@@ -188,7 +188,7 @@ bool function FillInCommunityMembership( UserInfoPanel userInfoPanel, CommunityM
 
 void function FillInUserInfoPanel( UserInfoPanel userInfoPanel, CommunityUserInfo userInfo )
 {
-	file.currentUserIsStreaming = userInfo.isLivestreaming > 0
+	file.currentUserIsStreaming = userInfo.isLivestreaming
 
 	Hud_SetText( userInfoPanel.Name, userInfo.name )
 	string killsText = "" + userInfo.kills
@@ -211,7 +211,8 @@ void function FillInUserInfoPanel( UserInfoPanel userInfoPanel, CommunityUserInf
 	RuiSetImage( rui, "cardImage", callingCard.image )
 	RuiSetImage( rui, "iconImage", callsignIcon.image )
 	RuiSetInt( rui, "layoutType", callingCard.layoutType )
-	RuiSetString( rui, "playerLevel", "" )
+	RuiSetImage( rui, "cardGenImage", GetGenIcon( userInfo.gen, userInfo.lvl ) )
+	RuiSetString( rui, "playerLevel", PlayerXPDisplayGenAndLevel( userInfo.gen, userInfo.lvl ) )
 	RuiSetString( rui, "playerName", userInfo.name )
 
 	array<CommunityMembership> ownerCommunities
@@ -221,7 +222,6 @@ void function FillInUserInfoPanel( UserInfoPanel userInfoPanel, CommunityUserInf
 	for ( int i = 0; i < userInfo.numCommunities; i++ )
 	{
 		CommunityMembership ornull communityInfo = GetCommunityUserMembershipInfo( userInfo.hardware, userInfo.uid, i )
-		Assert( communityInfo, "got a null communityMembershipInfo struct from GetCommunityUserMembershipInfo when it shouldn't be null here" )
 		if ( !communityInfo )
 			continue;
 		expect CommunityMembership( communityInfo )

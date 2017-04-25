@@ -63,7 +63,7 @@
         powerregenrate		12.0
         dodgePowerDelay		0.2
 
-		healthPerSegment	1500
+		healthPerSegment	1800
 		health				9000 // not used by segmented health
 		healthShield		1000
 		healthDoomed		2500

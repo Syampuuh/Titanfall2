@@ -188,4 +188,14 @@ ImpactTable
 		"headshot_mechanical" "explo_plasmasmall_impact_3p_vs_1p"
 	}
 
+	Sound_victim_from_AI
+	{
+		"F" "Flesh.LSTAR.BulletImpact_3P_vs_1P"
+		"P" "Android.LSTAR.BulletImpact_3P_vs_1P"
+
+		// Victim headshot sounds taken care of in PlayVictimHeadshotConfirmation():
+		//"headshot_flesh" "Flesh.BulletImpact_3P_vs_1P"
+		//"headshot_mechanical" "Android.Light.BulletImpact_3P_vs_1P"
+	}
+
 }

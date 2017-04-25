@@ -93,6 +93,8 @@ void function ScoreboardFocus( entity player )
 	if ( !level.showingScoreboard )
 	{
 		#if DEVSCRIPTS
+		if ( BoostStoreEnabled() )
+			CycleInventory( player )
 		EnableDpadComms( player )
 		#endif
 		return
@@ -147,7 +149,7 @@ int function GetEnemyScoreboardTeam()
 int function GetScoreboardDisplaySlotCount()
 {
 	int rawValue = expect int( level.maxTeamSize )
-	if ( IsFFAGame() || GameRules_GetGameMode() == ATCOOP || GameRules_GetGameMode() == PVE_SANDBOX)
+	if ( UseSingleTeamScoreboard() )
 		rawValue = GetCurrentPlaylistVarInt( "max_players", 8 )
 
 	return minint( MAX_TEAM_SLOTS, rawValue )
@@ -184,7 +186,7 @@ function InitScoreboardMP()
 		score = HudElement( "ScoreboardEnemyTeamScore", scoreboard )
 	}
 
-	if ( !IsFFAGame() && GameRules_GetGameMode() != ATCOOP && GameRules_GetGameMode() != PVE_SANDBOX)
+	if ( !UseSingleTeamScoreboard() )
 	{
 		string myFaction = GetFactionChoice( localPlayer )
 		ItemDisplayData myDisplayData = GetItemDisplayData( myFaction )
@@ -233,7 +235,7 @@ function InitScoreboardMP()
 	file.header.gametypeAndMap.Show()
 	file.header.gametypeDesc.Show()
 
-	if ( IsFFAGame() || GameRules_GetGameMode() == ATCOOP || GameRules_GetGameMode() == PVE_SANDBOX)
+	if ( UseSingleTeamScoreboard() )
 	{
 		file.teamElems[myTeam].logo.Hide()
 		file.teamElems[myTeam].score.Hide()
@@ -332,7 +334,7 @@ function ShowScoreboardMP()
 	int teamHeight = SCOREBOARD_TEAM_LOGO_HEIGHT + SCOREBOARD_PLAYER_ROW_OFFSET + ( SCOREBOARD_PLAYER_ROW_HEIGHT + SCOREBOARD_PLAYER_ROW_SPACING ) * numTeamPlayersDisplayed - SCOREBOARD_PLAYER_ROW_SPACING
 	int scoreboardHeight
 
-	if ( !IsFFAGame() && GameRules_GetGameMode() != ATCOOP && GameRules_GetGameMode() != PVE_SANDBOX)
+	if ( !UseSingleTeamScoreboard() )
 	{
 		scoreboardHeight = SCOREBOARD_TITLE_HEIGHT + SCOREBOARD_SUBTITLE_HEIGHT + SCOREBOARD_TEAM_LOGO_OFFSET + teamHeight + SCOREBOARD_TEAM_LOGO_OFFSET + teamHeight + SCOREBOARD_FOOTER_HEIGHT
 	}
@@ -393,7 +395,7 @@ function ShowScoreboardMP()
 			}
 		}
 
-		if ( IsFFAGame() || GameRules_GetGameMode() == ATCOOP || GameRules_GetGameMode() == PVE_SANDBOX)
+		if ( UseSingleTeamScoreboard() )
 		{
 			teamPlayers[myTeam] = GetSortedPlayers( compareFunc, 0 )
 			teamPlayers[enemyTeam] = []
@@ -443,7 +445,7 @@ function ShowScoreboardMP()
 			}
 		}
 
-		if ( !IsFFAGame() && GameRules_GetGameMode() != ATCOOP && GameRules_GetGameMode() != PVE_SANDBOX)
+		if ( !UseSingleTeamScoreboard() )
 		{
 			RuiSetInt( Hud_GetRui( file.teamElems[winningTeam].score ), "score", teamScore[winningTeam] )
 			RuiSetInt( Hud_GetRui( file.teamElems[losingTeam].score ), "score", teamScore[losingTeam] )
@@ -476,7 +478,7 @@ function ShowScoreboardMP()
 
 				var rui = Hud_GetRui( elemTable.background )
 				bool playerIsAlive = IsAlive( player )
-				if ( IsFFAGame() || GameRules_GetGameMode() == ATCOOP || GameRules_GetGameMode() == PVE_SANDBOX)
+				if ( UseSingleTeamScoreboard() )
 				{
 					if ( !playerIsAlive )
 						RuiSetFloat3( rui, "bgColor", <0.5, 0.5, 0.5> )
@@ -634,7 +636,7 @@ function ShowScoreboardMP()
 			int reservedCount
 			int connectingCount
 			int loadingCount
-			if ( IsFFAGame() || GameRules_GetGameMode() == ATCOOP || GameRules_GetGameMode() == PVE_SANDBOX)
+			if ( UseSingleTeamScoreboard() )
 			{
 				reservedCount = GetTotalPendingPlayersReserved()
 				connectingCount = GetTotalPendingPlayersConnecting()
@@ -679,7 +681,7 @@ function ShowScoreboardMP()
 				RuiSetImage( rui, "playerStatus", $"" )
 				RuiSetFloat3( rui, "bgColor", SCOREBOARD_EMPTY_COLOR )
 				RuiSetFloat( rui, "bgAlpha", SCOREBOARD_EMPTY_BG_ALPHA )
-				if ( (IsFFAGame() || GameRules_GetGameMode() == ATCOOP || GameRules_GetGameMode() == PVE_SANDBOX) && team != myTeam )
+				if ( (UseSingleTeamScoreboard()) && team != myTeam )
 					RuiSetFloat( rui, "bgAlpha", 0.0 )
 				RuiSetImage( rui, "playerCard", $"" )
 				RuiSetInt( rui, "numScoreColumns", 0 )
@@ -877,7 +879,7 @@ asset function GetPlayerGenIcon( entity player )
 
 int function GetNumTeamPlayers()
 {
-	if ( IsFFAGame() || GameRules_GetGameMode() == ATCOOP || GameRules_GetGameMode() == PVE_SANDBOX)
+	if ( UseSingleTeamScoreboard() )
 		return GetCurrentPlaylistVarInt( "max_players", MAX_TEAM_SLOTS )
 	return GetCurrentPlaylistVarInt( "max_players", MAX_TEAM_SLOTS ) / 2
 }
@@ -915,4 +917,9 @@ function ScoreboardInputMP( key )
 var function ClScoreboardMp_GetGameTypeDescElem()
 {
 	return file.header.gametypeDesc
+}
+
+bool function UseSingleTeamScoreboard()
+{
+	return ( IsFFAGame() || IsSingleTeamMode() )
 }

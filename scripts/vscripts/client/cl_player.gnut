@@ -316,8 +316,7 @@ void function TitanReadyMessage( float delay = 0.0, bool isQuick = false )
 		return
 
 	if ( !IsTitanAvailable( player ) &&
-					(Riff_TitanAvailability() == eTitanAvailability.Custom
-					|| Riff_TitanAvailability() == eTitanAvailability.Escalation)
+					(Riff_TitanAvailability() == eTitanAvailability.Custom)
 			)
 		return
 
@@ -607,8 +606,6 @@ function ClientPlayerClassChanged( entity player, newClass )
 	player.classChanged = false
 
 	level.vduOpen = false // vdu goes away when class changes
-
-	level.meleeHintActive = false // Clear melee message
 
 	Assert( !IsServer() )
 	Assert( newClass, "No class " )
@@ -2068,105 +2065,6 @@ void function ShowDeathRecap( entity player )
 	wait( 1.0 )
 
 	CallsignEvent( eCallSignEvents.YOU, attacker, Localize( "#DEATH_SCREEN_KILLED_YOU" ) )
-
-	//var rui = RuiCreate( $"ui/calling_card_shoutout.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 0 )
-	//RuiSetResolution( rui, screenSize[0], screenSize[1] )
-	//RuiSetGameTime( rui, "startTime", Time() )
-	//RuiSetBool( rui, "playOutro", false )
-	//RuiSetString( rui, "playerName", attacker.GetPlayerName() )
-	//RuiSetImage( rui, "cardImage", CallingCard_GetImage( callingCard ) )
-	//RuiSetInt( rui, "layoutType", CallingCard_GetLayoutType( callingCard ) )
-	//RuiSetBool( rui, "isFriendly", GetLocalClientPlayer().GetTeam() == attacker.GetTeam() )
-	//RuiSetString( rui, "eventText", "#DEATH_SCREEN_KILLED_YOU" )
-	//RuiSetBool( rui, "showKillerInfo", true )
-	//RuiSetString( rui, "killerHealthRemaining", string( ceil( damageHistory.attackerHealthPercent ) ) )
-	//RuiSetString( rui, "killerWeaponName", GetObitFromDamageSourceID( damageHistory.damageSourceId ) )
-	//
-	//asset weaponIcon
-	//switch ( damageHistory.damageSourceId )
-	//{
-	//	case eDamageSourceId.mp_weapon_alternator_smg:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_alternator_smg"
-	//		break
-	//	case eDamageSourceId.mp_weapon_autopistol:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_autopistol"
-	//		break
-	//	case eDamageSourceId.mp_weapon_car:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_car"
-	//		break
-	//	case eDamageSourceId.mp_weapon_defender:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_defender"
-	//		break
-	//	case eDamageSourceId.mp_weapon_dmr:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_dmr"
-	//		break
-	//	case eDamageSourceId.mp_weapon_epg:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_epg"
-	//		break
-	//	case eDamageSourceId.mp_weapon_esaw:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_esaw"
-	//		break
-	//	case eDamageSourceId.mp_weapon_g2:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_g2"
-	//		break
-	//	case eDamageSourceId.mp_weapon_hemlok:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_hemlok"
-	//		break
-	//	case eDamageSourceId.mp_weapon_lmg:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_lmg"
-	//		break
-	//	case eDamageSourceId.mp_weapon_lstar:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_lstar"
-	//		break
-	//	case eDamageSourceId.mp_weapon_mastiff:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_mastiff"
-	//		break
-	//	case eDamageSourceId.mp_weapon_mgl:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_mgl"
-	//		break
-	//	case eDamageSourceId.mp_weapon_r97:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_r97"
-	//		break
-	//	case eDamageSourceId.mp_weapon_rocket_launcher:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_rocket_launcher"
-	//		break
-	//	case eDamageSourceId.mp_weapon_rspn101:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_rspn101"
-	//		break
-	//	case eDamageSourceId.mp_weapon_semipistol:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_semipistol"
-	//		break
-	//	case eDamageSourceId.mp_weapon_shotgun:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_shotgun"
-	//		break
-	//	case eDamageSourceId.mp_weapon_shotgun_doublebarrel:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_shotgun_doublebarrel"
-	//		break
-	//	case eDamageSourceId.mp_weapon_shotgun_pistol:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_shotgun_pistol"
-	//		break
-	//	case eDamageSourceId.mp_weapon_smart_pistol:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_smart_pistol"
-	//		break
-	//	case eDamageSourceId.mp_weapon_smr:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_smr"
-	//		break
-	//	case eDamageSourceId.mp_weapon_sniper:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_sniper"
-	//		break
-	//	case eDamageSourceId.mp_weapon_softball:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_softball"
-	//		break
-	//	case eDamageSourceId.mp_weapon_vinson:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_vinson"
-	//		break
-	//	default:
-	//		weaponIcon = $"rui/weapon_icons/mp_weapon_temp"
-	//}
-	//
-	//RuiSetImage( rui, "killerWeaponIcon", weaponIcon )
-	//
-	//thread HideDeathRecap( player, rui )
 }
 
 void function HideDeathRecap( entity player, var rui )
@@ -2318,9 +2216,6 @@ int function UpdateSubText2ForRiffs( AnnouncementData announcement )
 				break
 			case eTitanAvailability.Once:
 				riffTexts.append( "#GAMESTATE_ONE_TITAN" )
-				break
-			case eTitanAvailability.FirstOneFree:
-				riffTexts.append( "#GAMESTATE_FIRST_TITAN_FREE" )
 				break
 			case eTitanAvailability.Never:
 				riffTexts.append( "#GAMESTATE_NO_TITANS" )

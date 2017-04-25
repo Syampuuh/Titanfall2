@@ -242,7 +242,6 @@ bool function Riff_IsTitanAvailable( entity player )
 			return true
 
 		case eTitanAvailability.Custom:
-		case eTitanAvailability.Escalation:
 			return svGlobal.titanAvailabilityCheck( player )
 
 		case eTitanAvailability.Never:

@@ -1,0 +1,40 @@
+"UnlitTwoTexture"
+{
+	"$nocull" "1"
+	"$nodecal" "1"
+	$allowoverbright 1
+	"$vertcoloristint" "1"
+	"$surfaceprop" "asphalt"
+	
+
+	"$additive" "1"
+
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+	"$translucent" 1
+	"$color2" "[2 2 2]"
+	
+	"$basetexture" "effects\dev_scanline_grid"
+	"$Texture2" "effects\laserplane_atmosphere"
+
+	"Proxies"
+	{
+			"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" 1
+			"texturescrollangle" -70
+			"texturescale"	1.5
+		}
+				"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" .1
+			"texturescrollangle" -90
+			"texturescale"	1
+			
+
+
+		}
+	}
+}

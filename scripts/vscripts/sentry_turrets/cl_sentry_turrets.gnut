@@ -484,15 +484,15 @@ void function ClearDeferredTraces()
 	file.turretLineDeferredTrace = null
 }
 
-void function ServerCallback_TurretReport( float timeAlive, int scoreEarned, int killsEarned )
+void function ServerCallback_TurretReport( float timeAlive, int killsEarned, int scoreEarned )
 {
 	var rui = RuiCreate( $"ui/turret_report.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 500 )
 	RuiSetString( rui, "hintText", "Turret Report" )
 	RuiSetGameTime( rui, "startTime", Time() )
 	RuiSetFloat3( rui, "bgcolor", <0,0,0> )
 	RuiSetFloat( rui, "timeAlive", timeAlive )
-	RuiSetInt( rui, "scoreEarned", killsEarned )
-	RuiSetInt( rui, "killsEarned", scoreEarned )
+	RuiSetInt( rui, "scoreEarned", scoreEarned )
+	RuiSetInt( rui, "killsEarned", killsEarned )
 }
 
 void function ClSentryTurret_OnCreateCockpit( entity cockpit, entity player )

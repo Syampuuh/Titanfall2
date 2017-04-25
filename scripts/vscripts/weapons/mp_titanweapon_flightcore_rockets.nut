@@ -38,10 +38,10 @@ var function OnWeaponPrimaryAttack_titanweapon_flightcore_rockets( entity weapon
 
 	if ( missile )
 	{
-		TraceResults result = TraceLine( owner.EyePosition(), owner.EyePosition() + attackParams.dir*50000, [ owner ], TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
+		TraceResults result = TraceLine( owner.EyePosition(), owner.EyePosition() + attackParams.dir*50000, [ owner ], TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_BLOCK_WEAPONS )
 		missile.kv.lifetime = 10
 		missile.InitMissileForRandomDriftFromWeaponSettings( attackPos, attackDir )
-		thread DelayedTrackingStart( missile, result.endPos)
+		thread DelayedTrackingStart( missile, result.endPos )
 	#if SERVER
 		missile.SetOwner( owner )
 		EmitSoundAtPosition( owner.GetTeam(), result.endPos, "Weapon_FlightCore_Incoming_Projectile" )

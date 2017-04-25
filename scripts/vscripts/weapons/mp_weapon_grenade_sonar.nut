@@ -47,6 +47,9 @@ void function OnProjectileIgnite_weapon_grenade_sonar( entity projectile )
 	#if SERVER
 		thread SonarGrenadeThink( projectile )
 	#endif
+
+	SetObjectCanBeMeleed( projectile, true )
+
 	StartParticleEffectOnEntity( projectile, GetParticleSystemIndex( FLASHEFFECT ), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
 	projectile.SetDoesExplode( false )
 }

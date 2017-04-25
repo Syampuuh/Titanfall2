@@ -9,14 +9,15 @@ global function LaunchSPMissionSelect
 global function LaunchMP
 global function LaunchGame
 global function LaunchSPTrialMission
-
 global function GetUserSignInState
 
 struct
 {
 	var menu
+	var versionDisplay
 	var trialLabel
 } file
+
 
 void function InitMainMenu()
 {
@@ -28,6 +29,10 @@ void function InitMainMenu()
 	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnMainMenu_Open )
 	AddMenuEventHandler( menu, eUIEvent.MENU_NAVIGATE_BACK, OnMainMenu_NavigateBack )
 
+	var titleRui = Hud_GetRui( Hud_GetChild( file.menu, "TitleRui" ) )
+	RuiSetImage( titleRui, "basicImage", $"rui/menu/main_menu/title")
+
+	file.versionDisplay = Hud_GetChild( menu, "versionDisplay" )
 	file.trialLabel = Hud_GetChild( menu, "TrialLabel" )
 
 	#if CONSOLE_PROG
@@ -44,6 +49,11 @@ void function InitMainMenu()
 	#endif // PC_PROG
 
 	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_ACCEPT", "#INBOX_ACCEPT", OpenDataCenterDialog, IsDataCenterFooterValid, UpdateDataCenterFooter )
+
+#if DEV
+	if ( DevStartPoints() )
+		AddMenuFooterOption( menu, BUTTON_Y, "#Y_BUTTON_DEV_MENU", "#DEV_MENU", OpenSinglePlayerDevMenu )
+#endif // DEV
 }
 
 #if CONSOLE_PROG
@@ -58,8 +68,14 @@ void function OnMainMenu_Open()
 	Signal( uiGlobal.signalDummy, "EndOnMainMenu_Open" )
 	EndSignal( uiGlobal.signalDummy, "EndOnMainMenu_Open" )
 
+	UpdatePromoData() // On script restarts this gives us the last data until the new request is complete
+	RequestMainMenuPromos() // This will be ignored if there was a recent request. "infoblock_requestInterval"
+
 	TryUnlockCollectiblesAchievement()
 	TryUnlockCompletedGameAchievements()
+
+	Hud_SetText( file.versionDisplay, GetPublicGameVersion() )
+	Hud_Show( file.versionDisplay )
 
 	thread UpdateTrialLabel()
 
@@ -321,6 +337,7 @@ void function LaunchGame()
 		return
 	}
 
+	SetMenuWasMultiplayerPlayedLast( true )
 	if ( uiGlobal.launching == eLaunching.SINGLEPLAYER_NEW )
 		NewGameSelected()
 	else if ( uiGlobal.launching == eLaunching.SINGLEPLAYER_CONTINUE )
@@ -534,6 +551,7 @@ void function StartMatchmakingIntoEmptyServer( string playlist )
 #endif // PC_PROG
 
 	printt( "MatchmakingBegin" )
+	SetMenuWasMultiplayerPlayedLast( true )
 	MatchmakingBegin( playlist )
 
 	Hud_SetAutoText( uiGlobal.ConfirmMenuMessage, "", HATT_MATCHMAKING_EMPTY_SERVER_SEARCH_STATE, 0 )
@@ -594,4 +612,9 @@ void function UpdateTrialLabel()
 
 		WaitFrame()
 	}
+}
+
+void function OpenSinglePlayerDevMenu( var button )
+{
+	AdvanceMenu( GetMenu( "SinglePlayerDevMenu" ) )
 }

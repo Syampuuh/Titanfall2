@@ -23,6 +23,16 @@ resource/ui/menus/lobby.menu
             InheritProperties       MenuVignette
         }
 
+	    VideoFrame // Example only
+	    {
+		    ControlName		Label
+		    xpos			50
+		    ypos			80
+		    wide			640 //f0
+		    tall			360 //f0
+		    visible			0
+	    }
+
 		MenuTitle
 		{
 			ControlName				Label

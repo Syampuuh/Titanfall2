@@ -56,7 +56,7 @@
 		scriptID                "coreAbility"
         rui                     "ui/loadout_image_medium.rpak"
 
-        xpos					-143
+        xpos					-96
         ypos					-150
 
 		pin_to_sibling			TitanLoadoutBG
@@ -71,11 +71,11 @@
 		textAlignment				center
 		ypos					0
 		xpos					0
-		wide 					128
+		wide 					72
 		auto_wide_tocontents	0
 		auto_tall_tocontents 	1
 		visible                 1
-		font					Default_26
+		font					Default_23
 		labelText				""
         fgcolor_override        "255 255 255 255"
 
@@ -92,7 +92,7 @@
 		textAlignment				center
 		ypos					0
 		xpos					0
-		wide 					128
+		wide 					72
 		auto_wide_tocontents	0
 		auto_tall_tocontents 	1
 		visible                 1
@@ -114,10 +114,10 @@
 		auto_wide_tocontents	1
 		tall 					28
 		visible                 1
-		font					Default_26
+		font					Default_23
 		labelText				"#TITAN_CORE"
         fgcolor_override        "200 200 200 255"
-        allcaps					0
+        allcaps					1
 
 		pin_to_sibling			ImgTitanCoreIcon
 		pin_corner_to_sibling	BOTTOM_LEFT
@@ -132,8 +132,8 @@
 		auto_wide_tocontents	1
 		tall 					28
 		visible					1
-		font					Default_31
-		allcaps					1
+		font					Default_26
+		allcaps					0
 		labelText				""
 		fgcolor_override        "254 184 0 255"
 
@@ -162,7 +162,7 @@
 		textAlignment				center
 		ypos					0
 		xpos					0
-		wide 					128
+		wide 					72
 		auto_wide_tocontents	0
 		auto_tall_tocontents 	1
 		visible                 1
@@ -183,7 +183,7 @@
 		textAlignment				center
 		ypos					0
 		xpos					0
-		wide 					128
+		wide 					72
 		auto_wide_tocontents	0
 		auto_tall_tocontents 	1
 		visible                 1
@@ -205,10 +205,10 @@
 		auto_wide_tocontents	1
 		tall 					28
 		visible                 1
-		font					Default_26
+		font					Default_23
 		labelText				"#TITAN_ORDNANCE"
         fgcolor_override        "200 200 200 255"
-        allcaps					0
+        allcaps					1
 
 		pin_to_sibling			ImgTitanOrdnanceIcon
 		pin_corner_to_sibling	BOTTOM_LEFT
@@ -224,8 +224,8 @@
 		auto_wide_tocontents	1
 		tall 					28
 		visible                 1
-		font					Default_31
-		allcaps					1
+		font					Default_26
+		allcaps					0
 		labelText				""
         fgcolor_override        "255 255 255 255"
 
@@ -254,7 +254,7 @@
 		textAlignment				center
 		ypos					0
 		xpos					0
-		wide 					128
+		wide 					72
 		auto_wide_tocontents	0
 		auto_tall_tocontents 	1
 		visible                 1
@@ -275,7 +275,7 @@
 		textAlignment				center
 		ypos					0
 		xpos					0
-		wide 					128
+		wide 					72
 		auto_wide_tocontents	0
 		auto_tall_tocontents 	1
 		visible                 1
@@ -297,10 +297,10 @@
 		auto_wide_tocontents	1
 		tall 					28
 		visible                 1
-		font					Default_26
+		font					Default_23
 		labelText				"#TITAN_DEFENSE"
         fgcolor_override        "200 200 200 255"
-        allcaps					0
+        allcaps					1
 
 		pin_to_sibling			ImgTitanSpecialIcon
 		pin_corner_to_sibling	BOTTOM_LEFT
@@ -316,8 +316,8 @@
 		auto_wide_tocontents	1
 		tall 					28
 		visible                 1
-		font					Default_31
-		allcaps					1
+		font					Default_26
+		allcaps					0
 		labelText				""
         fgcolor_override        "255 255 255 255"
 
@@ -347,10 +347,10 @@
 		auto_wide_tocontents	1
 		tall 					28
 		visible                 1
-		font					Default_26
+		font					Default_23
 		labelText				"#TITAN_UTILITY"
         fgcolor_override        "200 200 200 255"
-        allcaps					0
+        allcaps					1
 
 		pin_to_sibling			ImgTitanAntirodeoIcon
 		pin_corner_to_sibling	BOTTOM_LEFT
@@ -364,7 +364,7 @@
 		textAlignment				center
 		ypos					0
 		xpos					0
-		wide 					128
+		wide 					72
 		auto_wide_tocontents	0
 		auto_tall_tocontents 	1
 		visible                 1
@@ -386,7 +386,7 @@
 		textAlignment				center
 		ypos					0
 		xpos					0
-		wide 					128
+		wide 					72
 		auto_wide_tocontents	0
 		auto_tall_tocontents 	1
 		visible                 1
@@ -408,8 +408,8 @@
 		auto_wide_tocontents	1
 		tall 					28
 		visible                 1
-		font					Default_31
-		allcaps					1
+		font					Default_26
+		allcaps					0
 		labelText				""
         fgcolor_override        "255 255 255 255"
 

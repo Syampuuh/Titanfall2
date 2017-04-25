@@ -15,9 +15,9 @@ npc_soldier_pve_specialist
 	Health							120
 	PainOnRepeatDamageThreshold		90
 
-	DefaultModelName				"models/humans/pilots/sp_light_ged_m.mdl"
-	DefaultModelName_IMC			"models/humans/pilots/sp_light_ged_m.mdl"
-	DefaultModelName_MIL			"models/humans/pilots/sp_light_ged_m.mdl"
+	DefaultModelName				"models/humans/grunts/imc_grunt_shield_captain.mdl"
+	DefaultModelName_IMC			"models/humans/grunts/imc_grunt_shield_captain.mdl"
+	DefaultModelName_MIL			"models/humans/grunts/imc_grunt_shield_captain.mdl"
 
 	GibModel0						"models/robots/spectre/spectre_assault_d_gib_leg_l.mdl"
 	GibModel1						"models/robots/spectre/spectre_assault_d_gib_leg_r.mdl"

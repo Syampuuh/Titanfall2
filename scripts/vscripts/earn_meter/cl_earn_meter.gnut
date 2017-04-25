@@ -324,8 +324,16 @@ void function EarnMeter_Update()
 			#endif
 
 			#if MP
-			RuiSetImage( file.earnMeterRui, "goalBuildingIcon", Dev_GetPlayerSettingAssetByKeyField_Global( settingsName, "core_building_icon" ) )
-			RuiSetImage( file.earnMeterRui, "goalReadyIcon", Dev_GetPlayerSettingAssetByKeyField_Global( settingsName, "core_ready_icon" ) )
+			if ( settingsName == "titan_atlas_vanguard" )
+			{
+				RuiSetImage( file.earnMeterRui, "goalBuildingIcon", GetVanguardCoreIcon( player, 1 ) )
+				RuiSetImage( file.earnMeterRui, "goalReadyIcon", GetVanguardCoreIcon( player, 1 ) )
+			}
+			else
+			{
+				RuiSetImage( file.earnMeterRui, "goalBuildingIcon", Dev_GetPlayerSettingAssetByKeyField_Global( settingsName, "core_building_icon" ) )
+				RuiSetImage( file.earnMeterRui, "goalReadyIcon", Dev_GetPlayerSettingAssetByKeyField_Global( settingsName, "core_ready_icon" ) )
+			}
 			#endif
 
 			RuiTrackFloat( file.earnMeterRui, "earnedFrac", soul, RUI_TRACK_SCRIPT_NETWORK_VAR, GetNetworkedVariableIndex( "coreExpireFrac" ) )
@@ -361,7 +369,7 @@ void function EarnMeter_Update()
 	Cl_EarnMeter_UpdateHint( player )
 }
 
-asset function GetVanguardCoreIcon( entity player )
+asset function GetVanguardCoreIcon( entity player, int countOffset = 0 )
 {
 	Assert( player.IsTitan() )
 
@@ -372,22 +380,22 @@ asset function GetVanguardCoreIcon( entity player )
 		return Dev_GetPlayerSettingAssetByKeyField_Global( "titan_atlas_vanguard", "core_building_icon" )
 
 	#if MP
-	int loadoutIndex = GetPersistentSpawnLoadoutIndex( player, "titan" )
-	TitanLoadoutDef loadout = GetTitanLoadoutFromPersistentData( player, loadoutIndex )
+	TitanLoadoutDef loadout = GetActiveTitanLoadout( player )
 
 	entity soul = player.GetTitanSoul()
 	if ( !IsValid( soul ) )
 		return $""
 
-	if ( soul.GetTitanSoulNetInt( "upgradeCount" ) == 0 && loadout.passive4 != "" )
+	int upgradeCount = soul.GetTitanSoulNetInt( "upgradeCount" ) - countOffset
+	if ( upgradeCount == 0 && loadout.passive4 != "" )
 	{
 		return GetItemImage( loadout.passive4 )
 	}
-	else if ( soul.GetTitanSoulNetInt( "upgradeCount" ) == 1 && loadout.passive5 != "" )
+	else if ( upgradeCount == 1 && loadout.passive5 != "" )
 	{
 		return GetItemImage( loadout.passive5 )
 	}
-	else if ( soul.GetTitanSoulNetInt( "upgradeCount" ) == 2 && loadout.passive6 != "" )
+	else if ( upgradeCount == 2 && loadout.passive6 != "" )
 	{
 		return GetItemImage( loadout.passive6 )
 	}

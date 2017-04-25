@@ -24,12 +24,16 @@ WeaponData
 		"melee_range"									"260"
 		"melee_sound_attack_1p"							"scorch_melee_1p"
 		"melee_sound_attack_3p"							"scorch_melee_3p"
+		"melee_lunge_target_angle"						"30"
+		"melee_angle"									"30"
 	}
 	MP_BASE
 	{
 		"melee_range"									"280"
 		"melee_sound_attack_1p"							"scorch_melee_1p"
 		"melee_sound_attack_3p"							"scorch_melee_3p"
+		"melee_lunge_target_angle"						"20"
+		"melee_angle"									"20"
 	}
 
 	// Melee

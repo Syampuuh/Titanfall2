@@ -757,8 +757,11 @@ global const COCKPIT_HEALTHBARS						= 1
 //--------------------------------------------------
 // 				TITAN HEALTH REGEN
 //--------------------------------------------------
-
-global const float CORE_BUILD_PERCENT_FROM_TITAN_DAMAGE_INFLICTED	= 0.0075	// converts damage -> core %
+#if SP
+global const CORE_BUILD_PERCENT_FROM_TITAN_DAMAGE_INFLICTED = 0.0100
+#else
+global const CORE_BUILD_PERCENT_FROM_TITAN_DAMAGE_INFLICTED = 0.0075
+#endif
 global const float CORE_BUILD_PERCENT_FROM_TITAN_DAMAGE_RECEIVED	= 0.002		// converts damage -> core %
 global const float CORE_BUILD_PERCENT_FROM_DOOM_INFLICTED			= 10.0		// core %
 global const float CORE_BUILD_PERCENT_FROM_DOOM_ENTERED				= 0.0		// core %

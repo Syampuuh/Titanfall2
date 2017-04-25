@@ -2521,6 +2521,11 @@ bool function IsTitanEliminationBased()
 	return ( Riff_EliminationMode() == eEliminationMode.Titans || Riff_EliminationMode() == eEliminationMode.PilotsTitans )
 }
 
+bool function IsSingleTeamMode()
+{
+	return ( 1 == GetCurrentPlaylistVarInt( "max_teams", 2 ) )
+}
+
 void function __WarpInEffectShared( vector origin, vector angles, string sfx, float preWaitOverride = -1.0 )
 {
 	float preWait = 2.0
@@ -3892,26 +3897,18 @@ bool function PlayerCanSee( entity player, entity ent, bool doTrace, float degre
 bool function PlayerCanSeePos( entity player, vector pos, bool doTrace, float degrees )
 {
 	float minDot = deg_cos( degrees )
-
-	// On screen?
 	float dot = DotProduct( Normalize( pos - player.EyePosition() ), player.GetViewVector() )
 	if ( dot < minDot )
 		return false
 
-	// Can trace to it?
 	if ( doTrace )
 	{
 		TraceResults trace = TraceLine( player.EyePosition(), pos, null, TRACE_MASK_BLOCKLOS, TRACE_COLLISION_GROUP_NONE )
-		if ( trace.fraction >= 0.99 )
-			return true
-		else
+		if ( trace.fraction < 0.99 )
 			return false
 	}
-	else
-		return true
 
-	Assert( 0, "shouldn't ever get here")
-	unreachable
+	return true
 }
 
 vector function GetRelativeDelta( vector origin, entity ref, string attachment = "" )
@@ -3956,6 +3953,7 @@ vector function GetRelativeDelta( vector origin, entity ref, string attachment =
 	return Vector( distx, disty, distz )
 }
 
+#if SERVER
 float function GetRoundTimeLimit_ForGameMode()
 {
 	#if DEV
@@ -3967,8 +3965,10 @@ float function GetRoundTimeLimit_ForGameMode()
 		}
 	#endif
 
-	if ( level.timeLimitTimeOverride > 0 )
-		return expect float( level.timeLimitTimeOverride )
+	#if MP
+	if ( GameState_GetTimeLimitOverride() >= 0 )
+		return GameState_GetTimeLimitOverride()
+	#endif
 
 	if ( !GameMode_IsDefined( GAMETYPE ) )
 		return GetCurrentPlaylistVarFloat( "roundtimelimit", 10 )
@@ -3976,6 +3976,13 @@ float function GetRoundTimeLimit_ForGameMode()
 		return GameMode_GetRoundTimeLimit( GAMETYPE )
 
 	unreachable
+}
+#endif
+
+bool function HasIronRules()
+{
+	bool result = (GetCurrentPlaylistVarInt( "iron_rules", 0 ) != 0)
+	return result
 }
 
 vector function GetWorldOriginFromRelativeDelta( vector delta, entity ref )

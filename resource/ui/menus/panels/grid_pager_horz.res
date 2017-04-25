@@ -47,7 +47,6 @@ Resource/UI/menus/panels/grid_pager_horz.res
         zpos					2
         wide					40
         tall					40
-        OverrideTallIfNotBitmap 0
         visible					0
         enabled					1
         style					GridButton
@@ -85,7 +84,6 @@ Resource/UI/menus/panels/grid_pager_horz.res
         zpos					2
         wide					40
         tall					40
-        OverrideTallIfNotBitmap 0
         visible					0
         enabled					1
         style					GridButton

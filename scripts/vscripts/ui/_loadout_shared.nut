@@ -271,6 +271,10 @@ void function SetupLoadoutItemButtons( array<var> buttons, array<ItemDisplayData
 		{
 			isLocked = false
 		}
+		else if ( GetItemRequiresPrime( item.ref ) == true && !HasPrimeToMatchExecutionType( player, item.itemType ) )
+		{
+			isLocked = true
+		}
 		else
 		{
 			if ( IsSubItemType( itemType ) )
@@ -537,8 +541,14 @@ void function OnAbilitySelectMenu_Open()
 	}
 	else
 	{
-		uiGlobal.editingItemType = GetItemTypeFromTitanLoadoutProperty( uiGlobal.editingLoadoutProperty )
+		TitanLoadoutDef loadout = GetCachedTitanLoadout( uiGlobal.editingLoadoutIndex )
+		string nonPrimeSetFile = GetSetFileForTitanClassAndPrimeStatus( loadout.titanClass, false )
+		uiGlobal.editingItemType = GetItemTypeFromTitanLoadoutProperty( uiGlobal.editingLoadoutProperty, nonPrimeSetFile )
 		uiGlobal.editingItemRef = GetTitanLoadoutValue( GetTitanEditLoadout(), uiGlobal.editingLoadoutProperty )
+
+		RunMenuClientFunction( "UpdateTitanModel", uiGlobal.editingLoadoutIndex )
+		UI_SetPresentationType( ePresentationType.TITAN )
+		RefreshCreditsAvailable()
 	}
 
 	var menu = GetMenu( "AbilitySelectMenu" )

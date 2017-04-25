@@ -6,6 +6,9 @@ global function OnWeaponTossReleaseAnimEvent_weapon_deployable_cover
 global function OnWeaponAttemptOffhandSwitch_weapon_deployable_cover
 global function OnWeaponTossPrep_weapon_deployable_cover
 
+#if SERVER
+global function DeployCover
+#endif
 
 const DEPLOYABLE_ONE_PER_PLAYER = false
 const DEPLOYABLE_SHIELD_DURATION = 15.0
@@ -92,6 +95,7 @@ void function OnWeaponTossPrep_weapon_deployable_cover( entity weapon, WeaponTos
 void function OnDeployableCoverPlanted( entity projectile )
 {
 	#if SERVER
+		Assert( IsValid( projectile ) )
 		vector origin = projectile.GetOrigin()
 
 		vector endOrigin = origin - Vector( 0.0, 0.0, 32.0 )
@@ -121,8 +125,12 @@ void function OnDeployableCoverPlanted( entity projectile )
 }
 
 #if SERVER
-function DeployCover( entity projectile, vector origin, vector angles )
+void function DeployCover( entity projectile, vector origin, vector angles, float duration = DEPLOYABLE_SHIELD_DURATION )
 {
+	Assert( IsValid( projectile ) )
+	if ( !IsValid( projectile ) )
+		return
+
 	EmitSoundOnEntity( projectile, "Hardcover_Shield_Start_3P" )
 
 	vector fwd = AnglesToForward( angles )
@@ -130,10 +138,16 @@ function DeployCover( entity projectile, vector origin, vector angles )
 	origin = origin - (fwd * (DEPLOYABLE_SHIELD_RADIUS - 1.0))
 	origin = origin - (up * 1.0)
 
-	entity vortexSphere = CreateShieldWithSettings( origin, angles, DEPLOYABLE_SHIELD_RADIUS, DEPLOYABLE_SHIELD_HEIGHT, DEPLOYABLE_SHIELD_FOV, DEPLOYABLE_SHIELD_DURATION, DEPLOYABLE_SHIELD_HEALTH, DEPLOYABLE_SHIELD_FX )
+	entity vortexSphere = CreateShieldWithSettings( origin, angles, DEPLOYABLE_SHIELD_RADIUS, DEPLOYABLE_SHIELD_HEIGHT, DEPLOYABLE_SHIELD_FOV, duration, DEPLOYABLE_SHIELD_HEALTH, DEPLOYABLE_SHIELD_FX )
+
+	Assert( vortexSphere )
+	if ( !vortexSphere )
+		return
+
 	vortexSphere.SetParent( projectile )
 	vortexSphere.EndSignal( "OnDestroy" )
 	vortexSphere.SetBlocksRadiusDamage( true )
+	vortexSphere.DisableVortexBlockLOS()
 
 	UpdateShieldWallColorForFrac( vortexSphere.e.shieldWallFX, GetHealthFrac( vortexSphere ) )
 
@@ -143,7 +157,7 @@ function DeployCover( entity projectile, vector origin, vector angles )
 			StopSoundOnEntity( projectile, "Hardcover_Shield_Start_3P" )
 			EmitSoundOnEntity( projectile, "Hardcover_Shield_End_3P" )
 
-			if ( IsValid( projectile ) )
+			if ( IsValid( projectile ) && projectile.IsProjectile() )
 				projectile.GrenadeExplode( Vector(0,0,0) )
 
 			if ( IsValid( vortexSphere ) )
@@ -151,11 +165,12 @@ function DeployCover( entity projectile, vector origin, vector angles )
 		}
 	)
 
-	wait DEPLOYABLE_SHIELD_DURATION
+	wait duration
 }
 
 function DeployAmpedWall( entity grenade, vector origin, vector angles )
 {
+	Assert( grenade )
 	EmitSoundOnEntity( grenade, "Hardcover_Shield_Start_3P" )
 	grenade.SetBlocksRadiusDamage( true )
 
@@ -174,9 +189,13 @@ function DeployAmpedWall( entity grenade, vector origin, vector angles )
 	ampedWall.SetBlocksRadiusDamage( true )
 	ampedWall.Hide()
 	ampedWall.SetTakeDamageType( DAMAGE_YES)
+	ampedWall.SetDamageNotifications( true )
 	ampedWall.SetMaxHealth( 1000 )
 	ampedWall.SetHealth( 1000 )
 	ampedWall.EndSignal( "OnDestroy" )
+	SetVisibleEntitiesInConeQueriableEnabled( ampedWall, true )
+
+	AddEntityCallback_OnDamaged( ampedWall, OnAmpedWallDamaged )
 
 	SetTeam( ampedWall, TEAM_BOTH )
 
@@ -220,4 +239,15 @@ function DeployAmpedWall( entity grenade, vector origin, vector angles )
 
 	wait DEPLOYABLE_SHIELD_DURATION
 }
+
+void function OnAmpedWallDamaged( entity ampedWall, var damageInfo )
+{
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	if ( !IsValid( attacker ) )
+		return
+
+	if ( attacker.IsPlayer() )
+		attacker.NotifyDidDamage( ampedWall, 0, DamageInfo_GetDamagePosition( damageInfo ), DamageInfo_GetCustomDamageType( damageInfo ), DamageInfo_GetDamage( damageInfo ), DamageInfo_GetDamageFlags( damageInfo ), DamageInfo_GetHitGroup( damageInfo ), DamageInfo_GetWeapon( damageInfo ), DamageInfo_GetDistFromAttackOrigin( damageInfo ) )
+}
+
 #endif

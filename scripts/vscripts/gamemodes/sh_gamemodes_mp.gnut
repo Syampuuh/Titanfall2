@@ -1,20 +1,9 @@
 
 global function GameModes_Init_SV_CL
-global function GetTitanfallEnabled
-
-#if SERVER
-	global function SetTitanfallEnabled
-	global function TitanfallEnabled_Init
-	global function SyncTitanfallEnabledClient
-#endif //SERVER
 
 void function GameModes_Init_SV_CL()
 {
 	string gameMode
-
-	#if SERVER
-		TitanfallEnabled_Init()
-	#endif
 
 	bool useSpawnZones = (GetCurrentPlaylistVarInt( "spawn_zone_enabled", 1 ) != 0 || GetBugReproNum() == 678 )
 
@@ -155,38 +144,21 @@ void function GameModes_Init_SV_CL()
 	GameMode_SetScoreCompareFunc( gameMode, CompareSpeedball )
 #endif
 
+	gameMode = MARKED_FOR_DEATH
+	#if SERVER
+		GameMode_AddServerInit( gameMode, GamemodeMfd_Init )
+		GameMode_SetPilotSpawnpointsRatingFunc( gameMode, RateSpawnpoints_Frontline )
+		GameMode_SetTitanSpawnpointsRatingFunc( gameMode, RateSpawnpoints_Frontline )
+	#elseif CLIENT
+		GameMode_AddClientInit( gameMode, ClGamemodeMfd_Init )
+	#endif
+	#if !UI
+		GameMode_SetScoreCompareFunc( gameMode, CompareMFD )
+		GameMode_AddSharedInit( gameMode, GamemodeMfdDialogue_Init )
+		GameMode_AddSharedInit( gameMode, GamemodeMfdShared_Init )
+	#endif
+
 	#if DEVSCRIPTS
 	Dev_GameModes_Init_SV_CL()
-	#endif
-}
-
-#if SERVER
-void function SetTitanfallEnabled( bool state )
-{
-	svGlobal.titanfallEnabled = state
-	if ( !Flag( "EntitiesDidLoad" ) )
-		return
-
-	SetGlobalNetBool( "titanfallEnabled", svGlobal.titanfallEnabled )
-}
-
-void function TitanfallEnabled_Init()
-{
-	AddCallback_EntitiesDidLoad( SyncTitanfallEnabledClient )
-}
-
-void function SyncTitanfallEnabledClient()
-{
-	SetTitanfallEnabled( GetTitanfallEnabled() )
-}
-#endif //SERVER
-
-
-bool function GetTitanfallEnabled()
-{
-	#if SERVER
-		return svGlobal.titanfallEnabled
-	#else
-		return GetGlobalNetBool( "titanfallEnabled" )
 	#endif
 }

@@ -78,9 +78,7 @@ void function InitInboxFrontMenu()
 void function OnOpenInboxFrontMenu()
 {
 	UpdateInboxFrontButtons()
-
 	thread UpdateInboxFrontThread()
-
 	UI_SetPresentationType( ePresentationType.NO_MODELS )
 }
 
@@ -243,7 +241,7 @@ void function OnMessagesButton_Activate( var button )
 		return
 
 	AdvanceMenu( GetMenu( "Inbox" ) )
-	Hud_SetFocused( file.inboxMessageText );
+	Hud_SetFocused( file.inboxMessageText )
 }
 
 
@@ -292,9 +290,11 @@ void function InitInboxMenu()
 	RuiSetImage( rui, "basicImage", $"rui/menu/common/inbox_icon_new" )
 
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
-	// AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_ACCEPT_ALL", "#INBOX_ACCEPT_ALL", AcceptAllMessage_OnClick, CanAcceptOrDeleteMessage )
-	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_DONE", "#INBOX_DONE", AcceptMessage_OnClick, CanAcceptMessage )
-	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_DONE", "#INBOX_DONE", DeleteMessage_OnClick, CanDeleteMessage )
+	// AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_ACCEPT_ALL", "#INBOX_ACCEPT_ALL", AcceptAllMessage_OnClick, CanOnlyAcceptOrOnlyDeleteMessage )
+	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_DONE", "#INBOX_DONE", AcceptMessage_OnClick, CanOnlyAcceptMessage )
+	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_DONE", "#INBOX_DONE", DeleteMessage_OnClick, CanOnlyDeleteMessage )
+	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_YES", "#YES", AcceptMessage_OnClick, CanAcceptAndDeleteMessage )
+	AddMenuFooterOption( menu, BUTTON_Y, "#Y_BUTTON_NO", "#NO", DeleteMessage_OnClick, CanAcceptAndDeleteMessage )
 	AddMenuFooterOption( menu, BUTTON_Y, "#COMMUNITY_REPORTMSGABUSE_YBUTTON", "#COMMUNITY_REPORTMSGABUSE", ReportMessageAbuse_OnClick, CanReportMessageAbuse )
 }
 
@@ -317,9 +317,24 @@ bool function CanAcceptMessage()
 	return res
 }
 
-bool function CanAcceptOrDeleteMessage()
+bool function CanOnlyAcceptMessage()
 {
-	return CanAcceptMessage() || CanDeleteMessage()
+	return CanAcceptMessage() && !CanDeleteMessage()
+}
+
+bool function CanOnlyDeleteMessage()
+{
+	return CanDeleteMessage() && !CanAcceptMessage()
+}
+
+bool function CanOnlyAcceptOrOnlyDeleteMessage()
+{
+	return CanOnlyAcceptMessage() || CanOnlyDeleteMessage()
+}
+
+bool function CanAcceptAndDeleteMessage()
+{
+	return CanAcceptMessage() && CanDeleteMessage()
 }
 
 bool function IsViewingMessages()
@@ -475,6 +490,9 @@ void function ReportMessageAbuse_OnClick( var button )
 
 bool function CanReportMessageAbuse()
 {
+	if ( CanAcceptAndDeleteMessage() )
+		return false;
+
 	InboxMessage msg = Inbox_GetMessage( file.inboxCurrentMessageId )
 	Assert( IsValid( msg ) )
 
@@ -582,6 +600,7 @@ bool function UpdateInboxMessageUI( InboxMessage msg )
 	//#endif
 
 	file.inboxCanAcceptMsg = msg.actionURL != ""
+
 	if ( file.inboxCanAcceptMsg )
 	{
 		//Hud_Show( file.inboxAcceptButton )

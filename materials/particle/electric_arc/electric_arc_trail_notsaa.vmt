@@ -1,0 +1,18 @@
+"SpriteCard"
+{
+	$basetexture "particle/electric_arc/electric_arc_ramp"
+
+	$RAMPTEXTURE "particle/ramps/elec_blue_ramp.vtf"
+
+	$texColorFromAlpha 1
+	$additive 1
+	$splinetype	1
+	$addself 2
+	$vertexFogAmount 1
+
+	$disableTSAA 0
+    $tsaaFullyResponsive 1
+    $tsaaMotionAlphaThreshold 0.01
+    $tsaaMotionAlphaRamp 10
+
+}

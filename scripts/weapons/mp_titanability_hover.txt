@@ -32,6 +32,8 @@ WeaponData
 	"sound_weapon_ready"							"HUD_TitanUtilityAbility_replenished_1P"
 	"projectile_adjust_to_gun_barrel"				"0"
 
+	"sound_dryfire"   								"titan_dryfire"
+
 	// Ammo
 	"cooldown_type"                                 "ammo_instant"
 	"ammo_clip_size"   								"200"

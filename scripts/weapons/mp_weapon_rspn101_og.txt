@@ -605,7 +605,7 @@ WeaponData
 	}
 
 	"ui1_enable"		"1"
-	"ui1_draw_cloaked"	"0"
+	"ui1_draw_cloaked"	"1"
 	UiData1
 	{
 		"ui"							"ui/aog_multi_reticles"
@@ -722,7 +722,7 @@ WeaponData
 			"base_spread"				"0.0"
 			Args
 			{
-				isFiring				weapon_is_firing
+				//isFiring				weapon_is_firing
 			}
 		}
 	}

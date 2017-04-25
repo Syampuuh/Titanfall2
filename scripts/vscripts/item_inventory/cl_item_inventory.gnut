@@ -1,5 +1,17 @@
 global function Cl_ItemInventory_Init
+global function ItemInventory_ShowCycleHint
+global function CycleInventory
 
 void function Cl_ItemInventory_Init()
 {
+}
+
+void function ItemInventory_ShowCycleHint( entity player )
+{
+	AddPlayerHint( 5.0, 0.5, $"", "#HINT_CYCLE_INVENTORY" )
+}
+
+void function CycleInventory( entity player )
+{
+	player.ClientCommand( "CycleInventory" )
 }

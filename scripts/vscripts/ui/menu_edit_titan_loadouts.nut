@@ -113,6 +113,10 @@ void function UpdateTitanLoadout( int loadoutIndex )
 
 	SetEditLoadout( "titan", loadoutIndex )
 	UpdateTitanLoadoutPanel( file.loadoutPanel, loadout )
+	array<var> loadoutPanelButtons = GetElementsByClassname( file.menu, "TitanLoadoutPanelButtonClass" )
+	foreach ( button in loadoutPanelButtons )
+		Hud_SetEnabled( button, false )
+
 	RunMenuClientFunction( "UpdateTitanModel", loadoutIndex )
 }
 

@@ -83,11 +83,11 @@ WeaponData
 		"ammo_stockpile_max"							"200"
 		"ammo_clip_size"   								"200"
 		"ammo_default_total"							"200"
-		"ammo_per_shot"									"100"
-		"ammo_min_to_fire"								"100"
+		"ammo_per_shot"									"200"
+		"ammo_min_to_fire"								"200"
 
 		// Regen Ammo
-		"regen_ammo_refill_rate"						"5.5"
+		"regen_ammo_refill_rate"						"16.0"
 		"regen_ammo_refill_start_delay"					"0.0"
 
 		"explosion_damage"								"40"

@@ -202,6 +202,7 @@ void function PopulateTitanLoadoutFromPersistentData( entity player, TitanLoadou
 	loadout.decalIndex			= GetValidatedPersistentLoadoutValueInt( player, "titan", loadoutIndex, "decalIndex" )
 	loadout.primaryCamoIndex	= GetValidatedPersistentLoadoutValueInt( player, "titan", loadoutIndex, "primaryCamoIndex" )
 	loadout.primarySkinIndex	= GetValidatedPersistentLoadoutValueInt( player, "titan", loadoutIndex, "primarySkinIndex" ) //Important: Skin index needs to be gotten after camoIndex for loadout validation purposes
+	loadout.titanExecution 		= GetValidatedPersistentLoadoutValue( player, "titan", loadoutIndex, "titanExecution" )
 
 	//Prime Titan related vars
 	loadout.isPrime			= GetValidatedPersistentLoadoutValue( player, "titan", loadoutIndex, "isPrime" )
@@ -257,7 +258,7 @@ string function GetPersistentLoadoutValue( entity player, string loadoutType, in
 	// printl( "script GetPlayerArray()[0].SetPersistentVar( \"" + loadoutType + "Loadouts[" + loadoutIndex + "]." + loadoutProperty + "\", \"" + value + "\" )" )
 	// printt( "=======================================================================================" )
 
-	string getString = loadoutType + "Loadouts[" + loadoutIndex + "]." + loadoutProperty
+	string getString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, loadoutProperty )
 	var value = player.GetPersistentVar( getString )
 
 	if ( value == null )
@@ -358,10 +359,13 @@ function SetPersistentLoadoutValue( entity player, string loadoutType, int loado
 		loadoutPropertyEnum = GetTitanLoadoutPropertyEnum( loadoutProperty )
 	}
 
-	int initializedVersion = player.GetPersistentVarAsInt( "initializedVersion" )
-	bool previouslyInitialized = initializedVersion >= PERSISTENCE_INIT_VERSION
+	if ( loadoutPropertyEnum != null && !PersistenceEnumValueIsValid( loadoutPropertyEnum, value ) )
+	{
+		CodeWarning( loadoutType + " " + loadoutProperty + " value: " + value + " not valid in persistent data!" )
+		return
+	}
 
-	if ( previouslyInitialized && LoadoutPropertyRequiresItemValidation( loadoutProperty ) && value != "" ) //Important to check for clientScriptInitialized so we can call properly SetPeristentData even on refs that are locked
+	if ( LoadoutPropertyRequiresItemValidation( loadoutProperty ) && value != "" )
 	{
 		if ( FailsLoadoutValidationCheck( player, loadoutType, loadoutIndex, loadoutProperty, value ) )
 		{
@@ -374,12 +378,6 @@ function SetPersistentLoadoutValue( entity player, string loadoutType, int loado
 		}
 	}
 
-	if ( loadoutPropertyEnum != null && value != "" && !PersistenceEnumValueIsValid( loadoutPropertyEnum, value ) )
-	{
-		CodeWarning( loadoutType + " " + loadoutProperty + " value: " + value + " not valid in persistent data!" )
-		return
-	}
-
 	// Only checks primary mods and attachments are valid in itemData and the parent isn't locked
 	if ( !IsLoadoutSubitemValid( player, loadoutType, loadoutIndex, loadoutProperty, value ) )
 	{
@@ -387,13 +385,7 @@ function SetPersistentLoadoutValue( entity player, string loadoutType, int loado
 		return
 	}
 
-	string persistentVarString = loadoutType + "Loadouts[" + loadoutIndex + "]." + loadoutProperty
-	//printt( "SetPersistentLoadoutValue, pass validation checks, setting persistentVarString: " + persistentVarString + " to value: " + value + ", for player: " + player )
-
-	if ( GetPersistentLoadoutPropertyType( loadoutProperty ) == "int" )
-		player.SetPersistentVar( persistentVarString, int( value ) )
-	else
-		player.SetPersistentVar( persistentVarString, value )
+	SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, loadoutProperty, value )
 
 	// Reset child properties when parent changes
 	ResolveInvalidLoadoutChildValues( player, loadoutType, loadoutIndex, loadoutProperty, value )
@@ -402,7 +394,7 @@ function SetPersistentLoadoutValue( entity player, string loadoutType, int loado
 	#if HAS_THREAT_SCOPE_SLOT_LOCK
 		if ( loadoutProperty.tolower() == "primaryattachment" && value == "threat_scope" )
 		{
-			player.SetPersistentVar( loadoutType + "Loadouts[" + loadoutIndex + "]." + "primaryMod2", "" )
+			SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, "primaryMod2", "" )
 		}
 	#endif
 
@@ -532,6 +524,13 @@ string function GetTitanRefFromPersistenceLoadoutIndexAndValueForIsPrime( int in
 
 bool function LoadoutPropertyRequiresItemValidation( string loadoutProperty )
 {
+	bool shouldSkipValidation = ( GetCurrentPlaylistVarInt( "skip_loadout_validation", 0 ) == 1 )
+	if ( shouldSkipValidation )
+	{
+		//printt( "skip_loadout_validation" )
+		return false
+	}
+
 	if ( loadoutProperty == "name" )
 		return false
 
@@ -555,7 +554,7 @@ bool function IsLoadoutSubitemValid( entity player, string loadoutType, int load
 			if ( loadoutType == "pilot" )
 			{
 				string parentProperty = GetParentLoadoutProperty( loadoutType, property )
-				string loadoutString = loadoutType + "Loadouts[" + loadoutIndex + "]." + parentProperty
+				string loadoutString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, parentProperty )
 				if ( ref != "" )
 					childRef = ref
 				ref = expect string( player.GetPersistentVar( loadoutString ) )
@@ -586,57 +585,21 @@ bool function IsLoadoutSubitemValid( entity player, string loadoutType, int load
 	return true
 }
 
-// TODO:
-string function GetLoadoutPropertyDefault( string loadoutType, int loadoutIndex, string propertyName ) //Bad things go wrong if you give the wrong default!
+void function SetPlayerPersistentVarWithoutValidation( entity player, string loadoutType, int loadoutIndex, string propertyName, string value )
 {
-	string resultString
-	switch ( propertyName )
-	{
-		case "skinIndex":
-		case "camoIndex":
-		case "decalIndex":
-		case "primarySkinIndex":
-		case "primaryCamoIndex":
-		case "secondarySkinIndex":
-		case "secondaryCamoIndex":
-		case "primeSkinIndex":
-		case "primeCamoIndex":
-		case "primeDecalIndex":
-			resultString = "0"
-			break
+	string persistentLoadoutString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, propertyName )
 
-		case "isPrime":
-			resultString = "titan_is_not_prime"
-			break
+	if ( GetPersistentLoadoutPropertyType( propertyName ) == "int" )
+		player.SetPersistentVar( persistentLoadoutString, int( value ) )
+	else
+		player.SetPersistentVar( persistentLoadoutString, value )
+}
 
-		case "execution":
-			resultString = "execution_neck_snap" //HACK, not sure where this is getting set otherwise.
-			break
-
-		default:
-		{
-			bool isTitanLoadout = (loadoutType == "titan")
-			bool isPilotLoadout = (loadoutType == "pilot")
-			if ( isPilotLoadout )
-			{
-				PilotLoadoutDef defaultPilotLoadout = GetDefaultPilotLoadout( loadoutIndex ) //HACK: note that this can give an invalid default for a child property, e.g. a sight that doesn't exist on this weapon. This is handled later in ResolveInvalidLoadoutChildValues
-				resultString = GetPilotLoadoutValue( defaultPilotLoadout, propertyName )
-			}
-			else if ( isTitanLoadout )
-			{
-				TitanLoadoutDef defaultPilotLoadout = GetDefaultTitanLoadout( loadoutIndex ) //HACK: note that this can give an invalid default for a child property, e.g. a sight that doesn't exist on this weapon. This is handled later in ResolveInvalidLoadoutChildValues
-				resultString = GetTitanLoadoutValue( defaultPilotLoadout, propertyName )
-			}
-			else
-			{
-				unreachable
-			}
-			break
-		}
-	}
-
-	//printt( "GetLoadoutPropertyDefault, loadoutType: " + loadoutType + ", loadoutIndex: " + loadoutIndex + ", propertyName: " + propertyName + ", resultString: " + resultString )
-	return resultString
+string function ResetLoadoutPropertyToDefault( entity player, string loadoutType, int loadoutIndex, string propertyName )
+{
+	string defaultValue = GetLoadoutPropertyDefault( loadoutType, loadoutIndex, propertyName )
+	SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, propertyName, defaultValue )
+	return defaultValue
 }
 
 bool function FailsLoadoutValidationCheck( entity player, string loadoutType, int loadoutIndex, string loadoutProperty, var value )
@@ -644,8 +607,8 @@ bool function FailsLoadoutValidationCheck( entity player, string loadoutType, in
 	//printt( "FailsLoadoutValidationCheck, player: " + player + ", loadoutType: " + loadoutType + ", loadoutIndex: " + loadoutIndex + ", loadoutProperty: " + loadoutProperty + ", value: " + value )
 
 	int initializedVersion = player.GetPersistentVarAsInt( "initializedVersion" )
-	bool previouslyInitialized = (initializedVersion > 0)
-	if ( !previouslyInitialized ) //Special case: if we're intializing from defaults don't try to reset to defaults
+	bool previouslyInitialized = ( initializedVersion >= PERSISTENCE_INIT_VERSION )
+	if ( !previouslyInitialized ) //Special case: if we're intializing from defaults/updating persistent data, don't try to reset to defaults
 	{
 		//printt( "!previouslyInitialized" )
 		return false
@@ -674,6 +637,37 @@ bool function FailsLoadoutValidationCheck( entity player, string loadoutType, in
 	{
 		//printt( "IsSettingPrimeTitanWithoutSetFile, player: " + player + ", ref: " + ref )
 		return true
+	}
+
+	if ( FailsItemLockedValidationCheck( player, loadoutType, loadoutIndex, loadoutProperty, ref ) )
+	{
+		//printt( "FailsItemLockedValidationCheck, player: " + player + ", ref: " + ref )
+		return true
+	}
+
+	if ( !ValueIsValidForLoadoutTypeIndexAndProperty( loadoutType, loadoutIndex, loadoutProperty, value, ref ) )
+	{
+		//printt( "!ValueIsValidForLoadoutTypeIndexAndProperty, loadoutType: " + loadoutType + ", loadoutIndex: " + loadoutIndex + ", loadoutProperty: " + loadoutProperty + ", value: " + value + " ref: " + ref )
+		return true
+	}
+
+	//printt( "End FailsLoadoutValidationCheck" )
+	return false
+}
+
+bool function FailsItemLockedValidationCheck( entity player, string loadoutType, int loadoutIndex, string loadoutProperty, string ref  )
+{
+	bool shouldSkipValidation = ( GetCurrentPlaylistVarInt( "skip_loadout_item_locked_validation", 0 ) == 1 )
+	if ( shouldSkipValidation )
+	{
+		//printt( "skip_loadout_item_locked_validation" )
+		return false
+	}
+
+	if ( LoadoutIsLocked( player, loadoutType, loadoutIndex ) )
+	{
+		//printt( "loadout of type " + loadoutType + " and index " + loadoutIndex + " is locked, skip checking if items under it are locked" )
+		return false
 	}
 
 	if ( IsSubItemType( GetItemType( ref ) ) )
@@ -706,13 +700,6 @@ bool function FailsLoadoutValidationCheck( entity player, string loadoutType, in
 		}
 	}
 
-	if ( !ValueIsValidForLoadoutTypeIndexAndProperty( loadoutType, loadoutIndex, loadoutProperty, value, ref ) )
-	{
-		//printt( "!ValueIsValidForLoadoutTypeIndexAndProperty, loadoutType: " + loadoutType + ", loadoutIndex: " + loadoutIndex + ", loadoutProperty: " + loadoutProperty + ", value: " + value + " ref: " + ref )
-		return true
-	}
-
-	//printt( "End FailsLoadoutValidationCheck" )
 	return false
 }
 
@@ -824,6 +811,9 @@ bool function ValueIsValidForLoadoutTypeIndexAndProperty( string loadoutType, in
 
 			return ((itemType == eItemTypes.PILOT_EXECUTION) && isPilotLoadout)
 
+		case "titanExecution":
+			return ( isTitanLoadout && IsValidTitanExecution( loadoutIndex, loadoutProperty, value, ref ) )
+
 		case "primary": //Only Pilots store their primary in persistence
 
 			return ((itemType == eItemTypes.PILOT_PRIMARY) && isPilotLoadout)
@@ -875,7 +865,7 @@ bool function ValueIsValidForLoadoutTypeIndexAndProperty( string loadoutType, in
 			return (isTitanLoadout && IsValidTitanPassive( loadoutIndex, loadoutProperty, value, ref ))
 
 		case "isPrime":
-			return (isTitanLoadout && PersistenceEnumValueIsValid( "titanIsPrimeTitan", value ))
+			return (isTitanLoadout && PersistenceEnumValueIsValid( "titanIsPrimeTitan", value )) //Technically will be covered by enumValue checks before LoadoutValidation checks, but included here for completeness
 
 		//TODO: Need to get ref for these correctly!
 		case "skinIndex":
@@ -999,15 +989,15 @@ bool function SetCamoIndexToValue( entity player, string loadoutType, int loadou
 
 	//printt( "SetCamoIndexToValue, player: " + player + " loadouType: " + loadoutType + ", loadoutIndex: " + loadoutIndex + ", camoProperty: " + camoProperty + ", setValue: "  + string( setValue ))
 
-	SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, camoProperty, string( setValue ) )
+	SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, camoProperty, string( setValue ) )
 
 	return true
 }
 
 void function ResetSkinAndCamoIndexesToZero( entity player, string loadoutType, int loadoutIndex, string skinProperty, string camoProperty )
 {
-	SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, camoProperty, "0" )
-	SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, skinProperty, "0" )
+	SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, camoProperty, "0"  )
+	SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, skinProperty, "0"  )
 }
 
 string function GetCorrectCamoProperty( string loadoutProperty ) //HACK HACK: should fix dependency between skin and camo index on UI side. Remove when done.
@@ -1096,6 +1086,51 @@ bool function IsValidTitanPassive( int loadoutIndex, string loadoutProperty, var
 	unreachable
 }
 
+bool function IsValidTitanExecution( int loadoutIndex, string loadoutProperty, var value, string ref ) //TODO: Not using all parameters in this function yet, might need them for full validation
+{
+	//Should have run IsRefValid(ref already, so fine to do GetItemType( ref ))
+	int itemType = GetItemType( ref )
+	//printt( "itemType: " + itemType )
+
+	switch ( loadoutProperty )
+	{
+		case "titanExecution":
+		{
+			switch( loadoutIndex ) //TODO: Hard coded, not great!
+			{
+				case 0:
+					return itemType == eItemTypes.TITAN_ION_EXECUTION
+
+				case 1:
+					return itemType == eItemTypes.TITAN_SCORCH_EXECUTION
+
+				case 2:
+					return itemType == eItemTypes.TITAN_NORTHSTAR_EXECUTION
+
+				case 3:
+					return itemType == eItemTypes.TITAN_RONIN_EXECUTION
+
+				case 4:
+					return itemType == eItemTypes.TITAN_TONE_EXECUTION
+
+				case 5:
+					return itemType == eItemTypes.TITAN_LEGION_EXECUTION
+
+				case 6:
+					return itemType == eItemTypes.TITAN_VANGUARD_EXECUTION
+
+				default:
+					return false
+			}
+		}
+
+		default:
+			unreachable
+	}
+
+	unreachable
+}
+
 string function GetParentRefFromLoadoutInfoAndRef( entity player, string loadoutType, int loadoutIndex, string property, string childRef  )
 {
 	bool isPilotLoadout = (loadoutType == "pilot")
@@ -1114,7 +1149,7 @@ string function GetParentRefFromLoadoutInfoAndRef( entity player, string loadout
 		case "secondaryMod3":
 		{
 			string parentProperty = GetParentLoadoutProperty( loadoutType, property )
-			string loadoutString = loadoutType + "Loadouts[" + loadoutIndex + "]." + parentProperty
+			string loadoutString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, parentProperty )
 			string resultString = string( player.GetPersistentVar( loadoutString ) ) //titanLoadouts[5].titanClass
 			if ( HasSubitem( resultString, childRef ) )
 				return resultString
@@ -1133,7 +1168,7 @@ string function GetParentRefFromLoadoutInfoAndRef( entity player, string loadout
 				return ""
 
 			string parentProperty = GetParentLoadoutProperty( loadoutType, property )
-			string loadoutString = loadoutType + "Loadouts[" + loadoutIndex + "]." + parentProperty
+			string loadoutString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, parentProperty )
 			string resultString = string( player.GetPersistentVar( loadoutString ) ) //titanLoadouts[5].titanClass
 			if ( HasSubitem( resultString, childRef ) )
 				return resultString
@@ -1157,7 +1192,7 @@ string function GetParentRefFromLoadoutInfoAndRef( entity player, string loadout
 		{
 			if ( isPilotLoadout )
 			{
-				string loadoutString = "pilotLoadouts[" + loadoutIndex + "].primary"
+				string loadoutString = BuildPersistentVarAccessorString( "pilot", loadoutIndex, "primary" )
 				return string( player.GetPersistentVar( loadoutString ) )
 			}
 			else
@@ -1171,7 +1206,7 @@ string function GetParentRefFromLoadoutInfoAndRef( entity player, string loadout
 			if ( !isPilotLoadout ) //Only Pilots have secondaries
 				return ""
 
-			string loadoutString = "pilotLoadouts[" + loadoutIndex + "].secondary"
+			string loadoutString = BuildPersistentVarAccessorString( "pilot", loadoutIndex, "secondary" )
 			return string( player.GetPersistentVar( loadoutString ) )
 		}
 
@@ -1196,6 +1231,85 @@ int function ForceCastVarToInt( var value ) //HACK: working around inability to 
 	return int( value )
 }
 #endif //Server only
+
+string function GetLoadoutPropertyDefault( string loadoutType, int loadoutIndex, string propertyName ) //Bad things go wrong if you give the wrong default!
+{
+	string resultString
+	switch ( propertyName )
+	{
+		case "skinIndex":
+		case "camoIndex":
+		case "decalIndex":
+		case "primarySkinIndex":
+		case "primaryCamoIndex":
+		case "secondarySkinIndex":
+		case "secondaryCamoIndex":
+		case "primeSkinIndex":
+		case "primeCamoIndex":
+		case "primeDecalIndex":
+			resultString = "0"
+			break
+
+		case "isPrime":
+			resultString = "titan_is_not_prime"
+			break
+
+		case "execution":
+			resultString = "execution_neck_snap" //HACK, not sure where this is getting set otherwise.
+			break
+
+		case "titanExecution":
+			resultString = "execution_random_" + loadoutIndex //Loadout Index for Titans is synced to a specific Titan.
+			break
+
+		default:
+		{
+			bool isTitanLoadout = (loadoutType == "titan")
+			bool isPilotLoadout = (loadoutType == "pilot")
+			if ( isPilotLoadout )
+			{
+				PilotLoadoutDef defaultPilotLoadout = GetDefaultPilotLoadout( loadoutIndex ) //HACK: note that this can give an invalid default for a child property, e.g. a sight that doesn't exist on this weapon. This is handled later in ResolveInvalidLoadoutChildValues
+				resultString = GetPilotLoadoutValue( defaultPilotLoadout, propertyName )
+			}
+			else if ( isTitanLoadout )
+			{
+				TitanLoadoutDef defaultPilotLoadout = GetDefaultTitanLoadout( loadoutIndex ) //HACK: note that this can give an invalid default for a child property, e.g. a sight that doesn't exist on this weapon. This is handled later in ResolveInvalidLoadoutChildValues
+				resultString = GetTitanLoadoutValue( defaultPilotLoadout, propertyName )
+			}
+			else
+			{
+				unreachable
+			}
+			break
+		}
+	}
+
+	//printt( "GetLoadoutPropertyDefault, loadoutType: " + loadoutType + ", loadoutIndex: " + loadoutIndex + ", propertyName: " + propertyName + ", resultString: " + resultString )
+	return resultString
+}
+
+string function BuildPersistentVarAccessorString( string loadoutType, int loadoutIndex, string propertyName )
+{
+	return loadoutType + "Loadouts[" + loadoutIndex + "]." + propertyName
+}
+
+bool function LoadoutIsLocked( entity player, string loadoutType, int loadoutIndex )
+{
+	if ( loadoutType == "titan" )
+	{
+		string titanClass = GetLoadoutPropertyDefault( "titan", loadoutIndex, "titanClass" )
+		return IsItemLocked( player, titanClass )
+
+	}
+	else if ( loadoutType == "pilot" )
+	{
+		string pilotLoadoutRef = "pilot_loadout_" + ( loadoutIndex + 1 )
+		return IsItemLocked( player, pilotLoadoutRef )
+	}
+
+	unreachable
+
+}
 
 string function GetValidatedPersistentLoadoutValue( entity player, string loadoutType, int loadoutIndex, string loadoutProperty )
 {
@@ -1228,24 +1342,30 @@ string function GetValidatedPersistentLoadoutValue( entity player, string loadou
 			loadoutPropertyEnum = GetTitanLoadoutPropertyEnum( loadoutProperty )
 		}
 
-		string getString = loadoutType + "Loadouts[" + loadoutIndex + "]." + loadoutProperty
+		string getString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, loadoutProperty )
 		var value = player.GetPersistentVar( getString )
 
-		if ( LoadoutPropertyRequiresItemValidation( loadoutProperty ) && value != null )
+		if ( value == null )
+			value = ""
+
+		if ( loadoutPropertyEnum != null )
+		{
+			if ( !PersistenceEnumValueIsValid( loadoutPropertyEnum, value ) )
+			{
+				value = ResetLoadoutPropertyToDefault( player, loadoutType, loadoutIndex, loadoutProperty ) //TODO: This will call player.SetPersistentVar() directly. Awkward to do this in a getter function
+				ClientCommand( player, "disconnect #RESETTING_LOADOUT", 0 ) //Kick player out with a "Resetting Invalid Loadout" message. Mainly necessary so UI/Client script don't crash out later with known, bad data from persistence
+			}
+		}
+		if ( LoadoutPropertyRequiresItemValidation( loadoutProperty ) && value != "" )
 		{
 			if ( FailsLoadoutValidationCheck( player, loadoutType, loadoutIndex, loadoutProperty, value ) )
 			{
-				value = GetLoadoutPropertyDefault( loadoutType, loadoutIndex, loadoutProperty )
+				value = ResetLoadoutPropertyToDefault( player, loadoutType, loadoutIndex, loadoutProperty ) //TODO: This will call player.SetPersistentVar() directly. Awkward to do this in a getter function
+				ClientCommand( player, "disconnect #RESETTING_LOADOUT", 0 ) //Kick player out with a "Resetting Invalid Loadout" message. Mainly necessary so UI/Client script don't crash out later with known, bad data from persistence
 			}
 
 			ValidateSkinAndCamoIndexesAsAPair( player, loadoutType, loadoutIndex, loadoutProperty, value ) //TODO: This is awkward, has the potential to call a SetPersistentLoadoutValue() if skinIndex and camoIndex are not correct as a pair
 		}
-
-		if ( loadoutPropertyEnum != null && value != null ) // TODO: This skips the assert for values that are null, which are sometimes valid.
-			Assert( PersistenceEnumValueIsValid( loadoutPropertyEnum, value ), "Invalid loadoutPropertyEnum: " + loadoutPropertyEnum + " or ref value: " + value )
-
-		if ( value == null )
-			value = ""
 
 		return string( value )
 	#else
@@ -1325,10 +1445,7 @@ void function ResolveInvalidLoadoutChildValues( entity player, string loadoutTyp
 			childValue = GetLoadoutChildPropertyDefault( loadoutType, childProperty, parentValue )
 
 			#if SERVER
-				if ( GetPersistentLoadoutPropertyType( childProperty ) == "int" )
-					player.SetPersistentVar( loadoutType + "Loadouts[" + loadoutIndex + "]." + childProperty, int( childValue ) )
-				else
-					player.SetPersistentVar( loadoutType + "Loadouts[" + loadoutIndex + "]." + childProperty, childValue )
+				SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, childProperty, childValue )
 			#else
 				if ( loadoutType == "pilot" )
 					SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], childProperty, childValue )
@@ -1914,6 +2031,10 @@ string function GetTitanLoadoutValue( TitanLoadoutDef loadout, string property )
 			value = string( loadout.primeDecalIndex )
 			break
 
+		case "titanExecution":
+			value = loadout.titanExecution
+			break
+
 		default:
 			printt( "Returning blank for property: " + property ) //TODO: This should probably just be an error, but some existing calls depend on blank string being returned
 			value = ""
@@ -2007,6 +2128,10 @@ void function SetTitanLoadoutValue( TitanLoadoutDef loadout, string property, st
 		case "primeDecalIndex":
 			loadout.primeDecalIndex = int( value )
 			break
+
+		case "titanExecution":
+			loadout.titanExecution = value
+			break
 	}
 }
 
@@ -2069,6 +2194,7 @@ bool function IsValidTitanLoadoutProperty( string propertyName )
 		case "primeSkinIndex":
 		case "primeCamoIndex":
 		case "primeDecalIndex":
+		case "titanExecution":
 			return true
 	}
 
@@ -2131,7 +2257,8 @@ var function GetTitanLoadoutPropertyEnum( string property )
 		case "passive5":
 		case "passive6":
 			return "titanPassive"
-
+		case "isPrime":
+			return "titanIsPrimeTitan"
 		case "name":
 		default:
 			return null
@@ -2244,6 +2371,11 @@ int function GetItemTypeFromTitanLoadoutProperty( string loadoutProperty, string
 		case "passive6":
 			Assert( setFile != "" )
 			itemType = GetTitanLoadoutPropertyPassiveType( setFile, loadoutProperty )
+			break
+
+		case "titanExecution":
+			Assert( setFile != "" )
+			itemType = GetTitanLoadoutPropertyExecutionType( setFile, loadoutProperty )
 			break
 
 		case "voice":
@@ -2423,7 +2555,13 @@ string function GetParentLoadoutProperty( string loadoutType, string propertyNam
 
 int function GetPersistentSpawnLoadoutIndex( entity player, string loadoutType )
 {
-	return player.GetPersistentVarAsInt( loadoutType + "SpawnLoadout.index" )
+	int loadoutIndex = player.GetPersistentVarAsInt( loadoutType + "SpawnLoadout.index" )
+	#if !DEVSCRIPTS
+		if ( loadoutType == "titan" && loadoutIndex >= NUM_PERSISTENT_TITAN_LOADOUTS )
+			loadoutIndex = 0
+	#endif
+
+	return loadoutIndex
 }
 
 void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType, int loadoutIndex )
@@ -2751,12 +2889,23 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		SetPersistentLoadoutValue( player, "titan", loadoutIndex, "passive6",			loadout.passive6 )
 	}
 
+	bool function PlayerIsInGracePeriod( entity player )
+	{
+		if ( player.s.inGracePeriod )
+			return true
+
+		if ( player.p.usingLoadoutCrate )
+			return true
+
+		return false
+	}
+
 	bool function Loadouts_CanGivePilotLoadout( entity player )
 	{
 		if ( !IsAlive( player ) )
 			return false
 
-		if ( !player.s.inGracePeriod )
+		if ( !PlayerIsInGracePeriod( player ) )
 			return false
 
 		// hack for bug 114632, 167264. Real fix would be to make dropship spawn script not end on anim reset from model change.
@@ -2789,7 +2938,7 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		if ( !IsAlive( player ) )
 			return false
 
-		if ( !player.s.inGracePeriod )
+		if ( !PlayerIsInGracePeriod( player ) )
 			return false
 
 		if ( player.isSpawningHotDroppingAsTitan )
@@ -2845,7 +2994,7 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 			OverrideBotPilotLoadout( loadout )
 
 		GivePilotLoadout( player, loadout )
-		SetActivePilotLoadout( player, loadout )
+		SetActivePilotLoadout( player )
 		SetActivePilotLoadoutIndex( player, loadoutIndex )
 
 		//PROTO_DisplayPilotLoadouts( player, loadout )
@@ -2894,6 +3043,7 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		player.SetPlayerSettingsFromDataTable( { playerSetFile = loadout.setFile, playerSetFileMods = loadout.setFileMods } )
 		GiveTitanLoadout( player, loadout )
 		SetActiveTitanLoadoutIndex( player, loadoutIndex )
+		SetActiveTitanLoadout( player )
 		//PROTO_DisplayTitanLoadouts( player, player, loadout )
 
 		string settings = GetSoulPlayerSettings( soul )
@@ -3010,8 +3160,10 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		GivePilotLoadout( player, loadout )
 	}
 
-	void function SetActivePilotLoadout( entity player, PilotLoadoutDef loadout )
+	void function SetActivePilotLoadout( entity player )
 	{
+		PilotLoadoutDef loadout = GetPilotLoadoutFromPersistentData( player, GetPersistentSpawnLoadoutIndex( player, "pilot" ) )
+
 		player.SetPersistentVar( "activePilotLoadout.name", 				loadout.name )
 		player.SetPersistentVar( "activePilotLoadout.suit", 				loadout.suit )
 		player.SetPersistentVar( "activePilotLoadout.race", 				loadout.race )
@@ -3042,23 +3194,33 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		player.SetPlayerNetInt( "activePilotLoadoutIndex", loadoutIndex )
 	}
 
-	// TODO: Too risky to switch script to use this now. When not risky, anywhere SetActiveTitanLoadoutIndex() passes a non-negative loadout is where this should be called.
-	//void function SetActiveTitanLoadout( entity player, TitanLoadoutDef loadout )
-	//{
-	//	player.SetPersistentVar( "activeTitanLoadout.name", 				loadout.name )
-	//	player.SetPersistentVar( "activeTitanLoadout.titanClass", 			loadout.titanClass )
-	//	player.SetPersistentVar( "activeTitanLoadout.primaryMod", 			loadout.primaryMod )
-	//	player.SetPersistentVar( "activeTitanLoadout.special", 				loadout.special )
-	//	player.SetPersistentVar( "activeTitanLoadout.antirodeo", 			loadout.antirodeo )
-	//	player.SetPersistentVar( "activeTitanLoadout.passive1", 			loadout.passive1 )
-	//	player.SetPersistentVar( "activeTitanLoadout.passive2", 			loadout.passive2 )
-	//	player.SetPersistentVar( "activeTitanLoadout.passive3", 			loadout.passive3 )
-	//	player.SetPersistentVar( "activeTitanLoadout.skinIndex", 			loadout.skinIndex )
-	//	player.SetPersistentVar( "activeTitanLoadout.camoIndex", 			loadout.camoIndex )
-	//	player.SetPersistentVar( "activeTitanLoadout.decalIndex", 			loadout.decalIndex )
-	//	player.SetPersistentVar( "activeTitanLoadout.primarySkinIndex", 	loadout.primarySkinIndex )
-	//	player.SetPersistentVar( "activeTitanLoadout.primaryCamoIndex", 	loadout.primaryCamoIndex )
-	//}
+	void function SetActiveTitanLoadout( entity player )
+	{
+		Assert( player.IsPlayer(), "Titan spawn loadout makes sense for players not NPCs")
+		TitanLoadoutDef loadout = GetTitanSpawnLoadout( player )
+
+		player.SetPersistentVar( "activeTitanLoadout.name", 				loadout.name )
+		player.SetPersistentVar( "activeTitanLoadout.titanClass", 			loadout.titanClass )
+		player.SetPersistentVar( "activeTitanLoadout.primaryMod", 			loadout.primaryMod )
+		player.SetPersistentVar( "activeTitanLoadout.special", 				loadout.special )
+		player.SetPersistentVar( "activeTitanLoadout.antirodeo", 			loadout.antirodeo )
+		player.SetPersistentVar( "activeTitanLoadout.passive1", 			loadout.passive1 )
+		player.SetPersistentVar( "activeTitanLoadout.passive2", 			loadout.passive2 )
+		player.SetPersistentVar( "activeTitanLoadout.passive3", 			loadout.passive3 )
+		player.SetPersistentVar( "activeTitanLoadout.passive4", 			loadout.passive4 )
+		player.SetPersistentVar( "activeTitanLoadout.passive5", 			loadout.passive5 )
+		player.SetPersistentVar( "activeTitanLoadout.passive6", 			loadout.passive6 )
+		player.SetPersistentVar( "activeTitanLoadout.skinIndex", 			loadout.skinIndex )
+		player.SetPersistentVar( "activeTitanLoadout.camoIndex", 			loadout.camoIndex )
+		player.SetPersistentVar( "activeTitanLoadout.decalIndex", 			loadout.decalIndex )
+		player.SetPersistentVar( "activeTitanLoadout.primarySkinIndex", 	loadout.primarySkinIndex )
+		player.SetPersistentVar( "activeTitanLoadout.primaryCamoIndex", 	loadout.primaryCamoIndex )
+		player.SetPersistentVar( "activeTitanLoadout.titanExecution", 		loadout.titanExecution )
+		player.SetPersistentVar( "activeTitanLoadout.isPrime", 				loadout.isPrime )
+		player.SetPersistentVar( "activeTitanLoadout.primeSkinIndex", 		loadout.primeSkinIndex )
+		player.SetPersistentVar( "activeTitanLoadout.primeCamoIndex", 		loadout.primeCamoIndex )
+		player.SetPersistentVar( "activeTitanLoadout.primeDecalIndex", 		loadout.primeDecalIndex )
+	}
 
 	void function SetActiveTitanLoadoutIndex( entity player, int loadoutIndex )
 	{
@@ -3144,30 +3306,36 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 
 	TitanLoadoutDef function GetActiveTitanLoadout( entity player )
 	{
-		// TODO: Too risky to switch script to use this now. When not risky, this should only be considered valid if SetActiveTitanLoadoutIndex() wouldn't return -1.
-		//TitanLoadoutDef loadout
-		//loadout.name 				= string( player.GetPersistentVar( "activeTitanLoadout.name" ) )
-		//loadout.titanClass 			= string( player.GetPersistentVar( "activeTitanLoadout.titanClass" ) )
-		//loadout.primaryMod 			= string( player.GetPersistentVar( "activeTitanLoadout.primaryMod" ) )
-		//loadout.special 			= string( player.GetPersistentVar( "activeTitanLoadout.special" ) )
-		//loadout.antirodeo 			= string( player.GetPersistentVar( "activeTitanLoadout.antirodeo" ) )
-		//loadout.passive1 			= string( player.GetPersistentVar( "activeTitanLoadout.passive1" ) )
-		//loadout.passive2 			= string( player.GetPersistentVar( "activeTitanLoadout.passive2" ) )
-		//loadout.passive3 			= string( player.GetPersistentVar( "activeTitanLoadout.passive3" ) )
-		//loadout.skinIndex			= player.GetPersistentVarAsInt( "activeTitanLoadout.skinIndex" )
-		//loadout.camoIndex			= player.GetPersistentVarAsInt( "activeTitanLoadout.camoIndex" )
-		//loadout.decalIndex			= player.GetPersistentVarAsInt( "activeTitanLoadout.decalIndex" )
-		//loadout.primarySkinIndex	= player.GetPersistentVarAsInt( "activeTitanLoadout.primarySkinIndex" )
-		//loadout.primaryCamoIndex	= player.GetPersistentVarAsInt( "activeTitanLoadout.primaryCamoIndex" )
-		//
-		//UpdateDerivedTitanLoadoutData( loadout )
-		//OverwriteLoadoutWithDefaultsForSetFile( loadout )
-		//OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( loadout )
+		TitanLoadoutDef loadout
+		loadout.name 				= string( player.GetPersistentVar( "activeTitanLoadout.name" ) )
+		loadout.titanClass 			= string( player.GetPersistentVar( "activeTitanLoadout.titanClass" ) )
+		loadout.primaryMod 			= string( player.GetPersistentVar( "activeTitanLoadout.primaryMod" ) )
+		loadout.special 			= string( player.GetPersistentVar( "activeTitanLoadout.special" ) )
+		loadout.antirodeo 			= string( player.GetPersistentVar( "activeTitanLoadout.antirodeo" ) )
+		loadout.passive1 			= string( player.GetPersistentVar( "activeTitanLoadout.passive1" ) )
+		loadout.passive2 			= string( player.GetPersistentVar( "activeTitanLoadout.passive2" ) )
+		loadout.passive3 			= string( player.GetPersistentVar( "activeTitanLoadout.passive3" ) )
+		loadout.passive4 			= string( player.GetPersistentVar( "activeTitanLoadout.passive4" ) )
+		loadout.passive5 			= string( player.GetPersistentVar( "activeTitanLoadout.passive5" ) )
+		loadout.passive6 			= string( player.GetPersistentVar( "activeTitanLoadout.passive6" ) )
+		loadout.titanExecution 		= string( player.GetPersistentVar( "activeTitanLoadout.titanExecution" ) )
+		loadout.skinIndex			= player.GetPersistentVarAsInt( "activeTitanLoadout.skinIndex" )
+		loadout.camoIndex			= player.GetPersistentVarAsInt( "activeTitanLoadout.camoIndex" )
+		loadout.decalIndex			= player.GetPersistentVarAsInt( "activeTitanLoadout.decalIndex" )
+		loadout.primarySkinIndex	= player.GetPersistentVarAsInt( "activeTitanLoadout.primarySkinIndex" )
+		loadout.primaryCamoIndex	= player.GetPersistentVarAsInt( "activeTitanLoadout.primaryCamoIndex" )
+		loadout.isPrime				= string( player.GetPersistentVar( "activeTitanLoadout.isPrime" ) )
+		loadout.primeSkinIndex		= player.GetPersistentVarAsInt( "activeTitanLoadout.primeSkinIndex" )
+		loadout.primeCamoIndex		= player.GetPersistentVarAsInt( "activeTitanLoadout.primeCamoIndex" )
+		loadout.primeDecalIndex		= player.GetPersistentVarAsInt( "activeTitanLoadout.primeDecalIndex" )
 
-		int loadoutIndex = GetActiveTitanLoadoutIndex( player )
-
-		TitanLoadoutDef loadout = GetTitanLoadoutFromPersistentData( player, loadoutIndex )
+		UpdateDerivedTitanLoadoutData( loadout )
 		OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( loadout )
+
+		//int loadoutIndex = GetActiveTitanLoadoutIndex( player )
+
+		//TitanLoadoutDef loadout = GetTitanLoadoutFromPersistentData( player, loadoutIndex )
+		//OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( loadout )
 
 		return loadout
 	}
@@ -3460,4 +3628,32 @@ bool function IsValidTitanLoadoutIndex( int loadoutIndex )
 		return false
 
 	return true
+}
+
+bool function HasPrimeToMatchExecutionType( entity player, int itemType )
+{
+	if ( DevEverythingUnlocked() )
+		return true
+
+	switch( itemType )
+	{
+		case eItemTypes.TITAN_RONIN_EXECUTION:
+			return !IsItemLocked( player, "ronin_prime" )
+		case eItemTypes.TITAN_NORTHSTAR_EXECUTION:
+			return !IsItemLocked( player, "northstar_prime" )
+		case eItemTypes.TITAN_ION_EXECUTION:
+			return !IsItemLocked( player, "ion_prime" )
+		case eItemTypes.TITAN_TONE_EXECUTION:
+			return !IsItemLocked( player, "tone_prime" )
+		case eItemTypes.TITAN_SCORCH_EXECUTION:
+			return !IsItemLocked( player, "scorch_prime" )
+		case eItemTypes.TITAN_LEGION_EXECUTION:
+			return !IsItemLocked( player, "legion_prime" )
+		case eItemTypes.TITAN_VANGUARD_EXECUTION:
+			return false
+
+		default:
+			unreachable
+	}
+	unreachable
 }

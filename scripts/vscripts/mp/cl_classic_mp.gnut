@@ -9,6 +9,8 @@ global function ClassicMP_Client_CallGameStateThinkFunc_PickLoadOut
 global function ClassicMP_Client_CallGameStateEnterFunc_PickLoadOut
 global function ClassicMP_Client_SetGameStateThinkFunc_PickLoadOut
 global function ClassicMP_Client_SetGameStateEnterFunc_PickLoadOut
+global function ClassicMP_Client_CallGameStateEnterFunc_WaitingForPlayers
+global function ClassicMP_Client_SetGameStateEnterFunc_WaitingForPlayers
 global function RefreshIntroLoadoutDisplay
 const DROPSHIP_HERO_MODEL = $"models/vehicle/goblin_dropship/goblin_dropship_hero.mdl"
 const CROW_HERO_MODEL = $"models/vehicle/crow_dropship/crow_dropship_hero.mdl"
@@ -27,6 +29,7 @@ function ClClassicMp_Init()
 	level.classicMP_doCustomIntro <- false
 	level.classicMP_Client_GameStateThinkFunc_PickLoadOut <- null
 	level.classicMP_Client_GameStateEnterFunc_PickLoadOut <- null
+	level.classicMP_Client_GameStateEnterFunc_WaitingForPlayers <- null
 
 	RegisterServerVarChangeCallback( "gameStartTime", StartPlayerCountdown )
 	RegisterSignal( "DropShipStream" )
@@ -84,14 +87,24 @@ void function DropShipStream()
 function ClassicMP_Client_DropshipIntroSetup()
 {
 	// check if both of these are null, if so, we should fall back to default
+	ClassicMP_Client_SetGameStateEnterFunc_WaitingForPlayers( ClassicMP_JumpingToLocation_GameStateEnterFunc_WaitingForPlayers )
 	ClassicMP_Client_SetGameStateEnterFunc_PickLoadOut( ClassicMP_Dropship_GameStateEnterFunc_PickLoadOut )
 }
 
 // gamestate ENTER
-function ClassicMP_Dropship_GameStateEnterFunc_PickLoadOut( player )
+function ClassicMP_JumpingToLocation_GameStateEnterFunc_WaitingForPlayers( players )
 {
 	file.introJumpingRUI = RuiCreate( $"ui/dropship_intro_jumping.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 1001 )
 	RuiSetResolutionToScreenSize( file.introJumpingRUI )
+}
+
+function ClassicMP_Dropship_GameStateEnterFunc_PickLoadOut( player )
+{
+	if ( file.introJumpingRUI == null )
+	{
+		file.introJumpingRUI = RuiCreate( $"ui/dropship_intro_jumping.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 1001 )
+		RuiSetResolutionToScreenSize( file.introJumpingRUI )
+	}
 	HidePermanentCockpitRui()
 
 	if ( GameRules_GetGameMode() != LAST_TITAN_STANDING ||
@@ -173,18 +186,25 @@ void function StartPlayerCountdown()
 
 	if ( file.introJumpingRUI != null )
 	{
-		//RuiSetImage( Hud_GetRui( file.teamElems[TEAM_IMC].logo ), "logo", $"rui/hud/scoreboard/logo_imc" )
-		//RuiSetImage( Hud_GetRui( file.teamElems[TEAM_MILITIA].logo ), "logo", $"rui/hud/scoreboard/logo_mcorp" )
+		if ( GetCurrentPlaylistVarInt( "gamemode_uses_custom_countdown", 0 ) > 0 )
+		{
+			RuiDestroyIfAlive( file.introJumpingRUI )
+		}
+		else
+		{
+			//RuiSetImage( Hud_GetRui( file.teamElems[TEAM_IMC].logo ), "logo", $"rui/hud/scoreboard/logo_imc" )
+			//RuiSetImage( Hud_GetRui( file.teamElems[TEAM_MILITIA].logo ), "logo", $"rui/hud/scoreboard/logo_mcorp" )
 
-		string factionChoice = GetFactionChoice( player )
-		ItemDisplayData displayData = GetItemDisplayData( factionChoice )
-		asset factionLogo = displayData.image
-		string factionTitle = displayData.name
+			string factionChoice = GetFactionChoice( player )
+			ItemDisplayData displayData = GetItemDisplayData( factionChoice )
+			asset factionLogo = displayData.image
+			string factionTitle = displayData.name
 
-		RuiSetGameTime( file.introJumpingRUI, "fadeStartTime", Time() )
-		RuiSetGameTime( file.introJumpingRUI, "gameStartTime", gameStartTime )
-		RuiSetString( file.introJumpingRUI, "factionTitle", Localize( factionTitle ) )
-		RuiSetImage( file.introJumpingRUI, "factionImage", factionLogo )
+			RuiSetGameTime( file.introJumpingRUI, "fadeStartTime", Time() )
+			RuiSetGameTime( file.introJumpingRUI, "gameStartTime", gameStartTime )
+			RuiSetString( file.introJumpingRUI, "factionTitle", Localize( factionTitle ) )
+			RuiSetImage( file.introJumpingRUI, "factionImage", factionLogo )
+		}
 	}
 
 	thread CreateCountdown( player, gameStartTime )
@@ -215,7 +235,7 @@ void function CreateCountdown( entity player, float gameStartTime )
 {
 	HidePermanentCockpitRui()
 
-	if ( IsPrivateMatch() && player.GetPersistentVarAsInt( "privateMatchState" ) == 1 )
+	if ( IsPrivateMatchSpectator( player ) )
 	{
 		int lastSecond = -1
 		while ( Time() < gameStartTime )
@@ -317,7 +337,7 @@ void function CreateCountdown( entity player, float gameStartTime )
 	EmitSoundOnEntity( GetLocalClientPlayer(), "HUD_match_start_timer_0_seconds_1P" )
 
 	if ( file.introJumpingRUI != null )
-		RuiDestroy( file.introJumpingRUI )
+		RuiDestroyIfAlive( file.introJumpingRUI )
 
 	RuiDestroy( file.countdownRUI )
 
@@ -363,6 +383,8 @@ void function RefreshIntroLoadoutDisplay( entity player, int pilotLoadoutIndex, 
 	RuiSetImage( file.loadoutsRUI, "cardImage", CallingCard_GetImage( PlayerCallingCard_GetActive( player ) ) )
 	RuiSetImage( file.loadoutsRUI, "iconImage", CallsignIcon_GetImage( PlayerCallsignIcon_GetActive( player ) ) )
 	RuiSetInt( file.loadoutsRUI, "layoutType", CallingCard_GetLayout( PlayerCallingCard_GetActive( player ) ) )
+	RuiSetImage( file.loadoutsRUI, "cardGenImage", PlayerXPGetGenIcon( player ) )
+	RuiSetString( file.loadoutsRUI, "playerLevel", PlayerXPDisplayGenAndLevel( player.GetGen(), player.GetLevel() ) )
 
 	PilotLoadoutDef pilotLoadout = GetPilotLoadoutFromPersistentData( player, pilotLoadoutIndex )
 	TitanLoadoutDef titanLoadout = GetTitanLoadoutFromPersistentData( player, titanLoadoutIndex )
@@ -445,4 +467,19 @@ function ClassicMP_ShouldDoDefaultIntro()
 
 	return true
 }
+
+function ClassicMP_Client_SetGameStateEnterFunc_WaitingForPlayers( func )
+{
+	Assert( IsMultiplayerPlaylist() )
+
+	level.classicMP_Client_GameStateEnterFunc_WaitingForPlayers = func
+}
+
+function ClassicMP_Client_CallGameStateEnterFunc_WaitingForPlayers( player )
+{
+	Assert( IsMultiplayerPlaylist() )
+
+	return level.classicMP_Client_GameStateEnterFunc_WaitingForPlayers( player  )
+}
+
 

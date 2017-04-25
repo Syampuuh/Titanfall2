@@ -327,10 +327,34 @@ function RemoteFunctions_Init()
 			RegisterNetworkedVariable( "returningFlag", SNDC_PLAYER_EXCLUSIVE, SNVT_BOOL, false )
 
 			Remote_RegisterFunction( "ServerCallback_CTF_PlayMatchNearEndMusic" )
+			Remote_RegisterFunction( "ServerCallback_CTF_StartReturnFlagProgressBar" )
+			Remote_RegisterFunction( "ServerCallback_CTF_StopReturnFlagProgressBar" )
 
 #if CLIENT
 			CLCaptureTheFlag_RegisterNetworkFunctions()
 #endif
+			break
+
+		case FORT_WAR:
+			{
+				Remote_RegisterFunction( "ServerCallback_FW_FriendlyBaseAttacked" )
+				Remote_RegisterFunction( "ServerCallback_FW_NotifyTitanRequired" )
+				Remote_RegisterFunction( "ServerCallback_FW_NotifyEnterFriendlyArea" )
+				Remote_RegisterFunction( "ServerCallback_FW_NotifyExitFriendlyArea" )
+				Remote_RegisterFunction( "ServerCallback_FW_NotifyEnterEnemyArea" )
+				Remote_RegisterFunction( "ServerCallback_FW_NotifyExitEnemyArea" )
+				Remote_RegisterFunction( "ServerCallback_FW_SetObjective" )
+			}
+			break
+
+		case MARKED_FOR_DEATH:
+			Remote_RegisterFunction( "ServerCallback_MFD_StartNewMarkCountdown" )
+		break
+
+		case LAST_TITAN_STANDING:
+			{
+				Remote_RegisterFunction( "ServerCallback_LTSThirtySecondWarning" )
+			}
 			break
 
 		case COLISEUM:
@@ -360,23 +384,10 @@ function RemoteFunctions_Init()
 
 	RegisterNetworkedVariable( "playerHardpointID", SNDC_PLAYER_EXCLUSIVE, SNVT_UNSIGNED_INT, 255 )
 
-	//FORT WAR
-	Remote_RegisterFunction( "ServerCallback_FW_FriendlyBaseAttacked" )
-	Remote_RegisterFunction( "ServerCallback_FW_NotifyTitanRequired" )
-	Remote_RegisterFunction( "ServerCallback_FW_NotifyEnterFriendlyArea" )
-	Remote_RegisterFunction( "ServerCallback_FW_NotifyExitFriendlyArea" )
-	Remote_RegisterFunction( "ServerCallback_FW_NotifyEnterEnemyArea" )
-	Remote_RegisterFunction( "ServerCallback_FW_NotifyExitEnemyArea" )
-	Remote_RegisterFunction( "ServerCallback_FW_SetObjective" )
-
 	//TDAY
 	RegisterNetworkedVariable( "tdayUseHardPoints", SNDC_GLOBAL, SNVT_BOOL, true )
 	RegisterNetworkedVariable( "currentTDayPhase", SNDC_GLOBAL, SNVT_INT, 0 )
 	Remote_RegisterFunction( "ServerCallback_TDay_RegisterPod" )
-
-	//CTF
-	Remote_RegisterFunction( "ServerCallback_CTF_StartReturnFlagProgressBar" )
-	Remote_RegisterFunction( "ServerCallback_CTF_StopReturnFlagProgressBar" )
 
 	// NEW INTRO SYSTEM ( _cl_spawnslot_system.nut )
 	Remote_RegisterFunction( "ServerCallback_ResetEntSkyScale" )
@@ -462,9 +473,6 @@ function RemoteFunctions_Init()
 
 	//Titan Selection Screen - Clients don't have access to other player's persistent vars.
 	Remote_RegisterFunction( "ServerCallback_UpdateTeamTitanSelection" )
-
-	//LTS
-	Remote_RegisterFunction( "ServerCallback_LTSThirtySecondWarning" )
 
 	//FFA
 	Remote_RegisterFunction( "ServerCallback_FFASuddenDeathAnnouncement" )
@@ -559,6 +567,7 @@ function RemoteFunctions_Init()
 	// POSSIBLY CAN STAY AS REMOTE FUNCTIONS
 	Remote_RegisterFunction( "ServerCallback_PlayTeamMusicEvent" )
 	Remote_RegisterFunction( "ServerCallback_PlayMusicToCompletion" )
+	Remote_RegisterFunction( "ServerCallback_PlayMusic" )
 	Remote_RegisterFunction( "ServerCallback_TitanCockpitEMP" )
 	Remote_RegisterFunction( "ServerCallback_PlayerEarnedBurnCard" )
 	Remote_RegisterFunction( "ServerCallback_PlayerStoppedBurnCard" )
@@ -596,6 +605,8 @@ function RemoteFunctions_Init()
 	Remote_RegisterFunction( "SCB_SetMeritCount" )
 	Remote_RegisterFunction( "SCB_SetWeaponMeritCount" )
 	Remote_RegisterFunction( "SCB_SetTitanMeritCount" )
+
+	Remote_RegisterFunction( "SCB_SetHighlightFlagDisableDeathFade" ) //Hack, just for PulseBladeExecution
 
 	if ( IsLobby() )
 	{
@@ -684,8 +695,8 @@ function RemoteFunctions_Init()
 
 	RegisterString( "#DEV_COMMAND_FORCED_WIN_ANNOUNCEMENT" )
 	RegisterString( "#DEV_COMMAND_FORCED_LOSS_ANNOUNCEMENT" )
-	RegisterString( "#GAMEMODE_COOP_WIN_ANNOUNCEMENT" )
-	RegisterString( "#GAMEMODE_COOP_LOSS_ANNOUNCEMENT" )
+	RegisterString( "#COOP_TOTAL_VICTORY_HINT" )
+	RegisterString( "#COOP_TOTAL_DEFEAT_HINT" )
 	RegisterString( "#GAMEMODE_SUR_WIN_ANNOUNCEMENT" )
 	RegisterString( "#GAMEMODE_SUR_LOSS_ANNOUNCEMENT" )
 	RegisterString( "#ENEMY_TEAM_DISCONNECTED_WIN_ANNOUNCEMENT" )
@@ -752,6 +763,10 @@ function RemoteFunctions_Init()
 	RegisterString( "#SPEEDBALL_OBJECTIVE_ENEMY_FLAG" )
 	RegisterString( "#SPEEDBALL_OBJECTIVE_FRIENDLY_FLAG" )
 	RegisterString( "#SPEEDBALL_OBJECTIVE_PLAYER_FLAG" )
+
+#if DEVSCRIPTS
+	Dev_RemoteStrings_Init()
+#endif // DEVSCRIPTS
 
 	//Note: The following are all test variables, feel free to comment them out as we hit the limit
 	//Begin test variables

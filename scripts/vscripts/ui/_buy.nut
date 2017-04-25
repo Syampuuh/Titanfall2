@@ -37,7 +37,22 @@ void function OpenBuyItemDialog( array<var> buttons, var button, string itemName
 	file.itemToBuy.availableCredits = GetAvailableCredits( GetUIPlayer() )
 
 	DialogData dialogData
-	if ( file.itemToBuy.cost <= 0 )
+	if ( GetItemRequiresPrime( file.itemToBuy.ref ) )
+	{
+		EmitUISound( "blackmarket_purchase_fail" )
+		DialogMessageRuiData ruiMessage
+		string unlockReqText = Localize( GetItemUnlockReqText( ref, parentRef ) )
+		ruiMessage.message = unlockReqText
+		dialogData.header = Localize( "#BUY_HEADER_REQUIRES_PRIME", Localize( itemName ), unlockReqText )
+//		dialogData.message = unlockReqText
+		dialogData.ruiMessage = ruiMessage
+		dialogData.noChoiceWithNavigateBack = true
+
+		AddDialogButton( dialogData, "#OK" )
+		if ( IsLobby() ) //Stop players from accessing store outside of lobby
+			AddDialogButton( dialogData, "#MENU_DIALOG_GO_TO_THE_STORE", AdvanceToPrimeStoreMenu )
+	}
+	else if ( file.itemToBuy.cost <= 0 )
 	{
 		EmitUISound( "blackmarket_purchase_fail" )
 		DialogMessageRuiData ruiMessage
@@ -83,6 +98,12 @@ void function OpenBuyItemDialog( array<var> buttons, var button, string itemName
 	}
 
 	OpenDialog( dialogData )
+}
+
+void function AdvanceToPrimeStoreMenu()
+{
+	Assert( IsLobby() )
+	OpenStoreMenu( "StoreMenu_PrimeTitans" )
 }
 
 void function BuyItem()

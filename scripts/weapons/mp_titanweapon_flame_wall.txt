@@ -21,6 +21,8 @@ WeaponData
 
 	"projectile_ignores_vortex"						"mirror"
 
+	"sound_dryfire"   								"titan_dryfire"
+
 	"OnProjectileCollision"							"OnProjectileCollision_FlameWall"
 
 	// Models

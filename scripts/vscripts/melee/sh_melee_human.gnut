@@ -465,11 +465,7 @@ bool function AttemptHumanMeleeExecution( entity player, entity syncedTarget, en
 	if ( !IsAlive( player ) )
 		return false
 
-	const float STUN_EFFECT_CUTOFF = 0.05
-	float movestunEffect = StatusEffect_Get( player, eStatusEffect.move_slow )
-	bool movestunBlocked = (movestunEffect > STUN_EFFECT_CUTOFF)
-
-	if ( player.IsPhaseShifted() || (player.IsHuman() && movestunBlocked) )
+	if ( player.IsPhaseShifted() )
 		return false
 
 	if ( !CodeCallback_IsValidMeleeExecutionTarget( player, syncedTarget ) )

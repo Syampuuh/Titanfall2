@@ -43,9 +43,9 @@ resource/ui/menus/playlist_mixtape.menu
 	{
 		ControlName				ImagePanel
 		InheritProperties		R2_ContentBackground
-		ypos					220
+		ypos					170
 		wide					%100
-		tall					532
+		tall					552
 		visible					1
 		drawColor				"0 0 0 100"
 	}
@@ -55,8 +55,8 @@ resource/ui/menus/playlist_mixtape.menu
 		ControlName			RuiButton
 		Classname			GridButtonClass
 		InheritProperties	Playlist_Button
-		xpos			400
-		ypos			247
+		xpos			150
+		ypos			197
 		wide			648
 		tall			324
 		visible			1
@@ -67,7 +67,6 @@ resource/ui/menus/playlist_mixtape.menu
 		//navDown				PickButton
 		navDown					BtnPlaylistIcon00
 		navRight				PromoButton00
-		navLeft					PromoButton06
 
 		rightClickEvents	1
 		zpos			1
@@ -85,7 +84,6 @@ resource/ui/menus/playlist_mixtape.menu
 		ypos					0
 		navUp					PlayButton
 		navRight				PromoButton00
-		navLeft					PromoButton06
 	}
 
 	PromoButton00
@@ -107,7 +105,7 @@ resource/ui/menus/playlist_mixtape.menu
 
 		navDown		PromoButton01
 		navLeft		PlayButton
-		navRight	PromoButton03
+		navRight	PromoButton02
 
 		scriptID		0
 		rightClickEvents	1
@@ -131,15 +129,69 @@ resource/ui/menus/playlist_mixtape.menu
 		drawColor		"255 255 255 255"
 
 		navUp		PromoButton00
-		navDown		PromoButton02
+		navDown		PromoButton04
 		navLeft		PlayButton
-		navRight	PromoButton04
+		navRight	PromoButton03
 
 		scriptID		1
 		rightClickEvents	1
 		zpos			1
 	}
+
 	PromoButton02
+	{
+		ControlName			RuiButton
+		Classname			GridButtonClass
+		InheritProperties	Playlist_Button
+		pin_to_sibling			PromoButton00
+		pin_corner_to_sibling	TOP_LEFT
+		pin_to_sibling_corner	TOP_RIGHT
+		xpos			20
+		ypos			0
+		wide			358
+		tall			153
+		visible			1
+		scaleImage		1
+		tabPosition		1
+		drawColor		"255 255 255 255"
+
+		navLeft		PromoButton00
+		navDown		PromoButton03
+		navRight    PromoButton06
+
+		scriptID		2
+		rightClickEvents	1
+		zpos			1
+	}
+
+	PromoButton03
+	{
+		ControlName			RuiButton
+		Classname			GridButtonClass
+		InheritProperties	Playlist_Button
+		pin_to_sibling			PromoButton02
+		pin_corner_to_sibling	TOP_LEFT
+		pin_to_sibling_corner	BOTTOM_LEFT
+		xpos			0
+		ypos			0
+		wide			358
+		tall			153
+		visible			1
+		scaleImage		1
+		tabPosition		1
+		drawColor		"255 255 255 255"
+
+		navUp		PromoButton02
+		navLeft		PromoButton01
+		navDown		PromoButton05
+		navRight    PromoButton07
+
+		scriptID		3
+		rightClickEvents	1
+		zpos			1
+	}
+
+	PromoButton04
 	{
 		ControlName			RuiButton
 		Classname			GridButtonClass
@@ -161,37 +213,12 @@ resource/ui/menus/playlist_mixtape.menu
 		navRight	PromoButton05
 		navDown		BtnPlaylistIcon00
 
-		scriptID		2
+		scriptID		4
 		rightClickEvents	1
 		zpos			1
 	}
 
-	PromoButton03
-	{
-		ControlName			RuiButton
-		Classname			GridButtonClass
-		InheritProperties	Playlist_Button
-		pin_to_sibling			PromoButton00
-		pin_corner_to_sibling	TOP_LEFT
-		pin_to_sibling_corner	TOP_RIGHT
-		xpos			20
-		ypos			0
-		wide			358
-		tall			153
-		visible			1
-		scaleImage		1
-		tabPosition		1
-		drawColor		"255 255 255 255"
-
-		navLeft		PromoButton00
-		navDown		PromoButton04
-
-		scriptID		3
-		rightClickEvents	1
-		zpos			1
-	}
-
-	PromoButton04
+	PromoButton05
 	{
 		ControlName			RuiButton
 		Classname			GridButtonClass
@@ -209,33 +236,9 @@ resource/ui/menus/playlist_mixtape.menu
 		drawColor		"255 255 255 255"
 
 		navUp		PromoButton03
-		navLeft		PromoButton01
-		navDown		PromoButton05
-
-		scriptID		4
-		rightClickEvents	1
-		zpos			1
-	}
-
-	PromoButton05
-	{
-		ControlName			RuiButton
-		Classname			GridButtonClass
-		InheritProperties	Playlist_Button
-		pin_to_sibling			PromoButton04
-		pin_corner_to_sibling	TOP_LEFT
-		pin_to_sibling_corner	BOTTOM_LEFT
-		xpos			0
-		ypos			0
-		wide			358
-		tall			153
-		visible			1
-		scaleImage		1
-		tabPosition		1
-		drawColor		"255 255 255 255"
-
-		navUp		PromoButton04
-		navLeft		PromoButton02
+		navLeft		PromoButton04
+	    navRight    PromoButton08
+		navDown		BtnPlaylistIcon00
 
 		scriptID		5
 		rightClickEvents	1
@@ -247,11 +250,11 @@ resource/ui/menus/playlist_mixtape.menu
 		ControlName			RuiButton
 		Classname			GridButtonClass
 		InheritProperties	Playlist_Button
-		pin_to_sibling			PlayButton
-		pin_corner_to_sibling	TOP_RIGHT
-		pin_to_sibling_corner	TOP_LEFT
+		pin_to_sibling			PromoButton02
+		pin_corner_to_sibling	TOP_LEFT
+		pin_to_sibling_corner	TOP_RIGHT
 		xpos			30
-		ypos			-10
+		ypos			0
 		wide			358
 		tall			153
 		visible			1
@@ -260,7 +263,7 @@ resource/ui/menus/playlist_mixtape.menu
 		drawColor		"255 255 255 255"
 
 		navDown		PromoButton07
-		navRight	PlayButton
+		navLeft     PromoButton02
 
 		scriptID		6
 		rightClickEvents	1
@@ -285,7 +288,7 @@ resource/ui/menus/playlist_mixtape.menu
 
 		navUp		PromoButton06
 		navDown		PromoButton08
-		navRight	PlayButton
+		navLeft     PromoButton03
 
 		scriptID		7
 		rightClickEvents	1
@@ -309,18 +312,38 @@ resource/ui/menus/playlist_mixtape.menu
 		drawColor		"255 255 255 255"
 
 		navUp		PromoButton07
-		navRight	PlayButton
+		navLeft     PromoButton05
 
 		scriptID		8
 		rightClickEvents	1
 		zpos			1
 	}
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    FocusDescription
+    {
+        ControlName				Label
+        wide					648
+        auto_tall_tocontents	1
+        visible					1
+        labelText				""
+        font					Default_28
+        textAlignment			north-west
+        wrap					1
+
+        pin_to_sibling			PlayButton
+        pin_corner_to_sibling	TOP_LEFT
+        pin_to_sibling_corner	BOTTOM_LEFT
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	DetailsBackground
 	{
 		ControlName				ImagePanel
 		InheritProperties		R2_ContentBackground
-		ypos					762
+		ypos					732
 		wide					%100
 		tall					220
 		visible					1
@@ -333,10 +356,11 @@ resource/ui/menus/playlist_mixtape.menu
 		InheritProperties		R2_ContentDescriptionTitle
 		font					DefaultBold_44
 		labelText				"<ContentDescriptionTitle>"
-		ypos					0
-		xpos                    -400
+		ypos					-14
+		xpos                    -300
 		fgcolor_override		"255 184 0 255"
 		allcaps					0
+		auto_wide_tocontents    1
 
 		pin_to_sibling			DetailsBackground
 		pin_corner_to_sibling	TOP_LEFT
@@ -363,7 +387,8 @@ resource/ui/menus/playlist_mixtape.menu
 		ControlName				Label
 		InheritProperties		R2_ContentDescription
 		labelText				"<ContentDescription>"
-		xpos					0
+		font					Default_38
+		xpos					16
 		ypos					0
 		zpos					3 // Needed or clicking on the background can hide this
 		wide					%50
@@ -372,14 +397,14 @@ resource/ui/menus/playlist_mixtape.menu
 		auto_tall_tocontents 	1
         textalign               north
 		textAlignment			north
-		fgcolor_override		"255 255 255 255"
+		fgcolor_override		"255 184 0 255"
 
         font		Default_27             [!$JAPANESE && !$TCHINESE]
         font		Default_31             [$JAPANESE || $TCHINESE]
 
 		pin_to_sibling			ContentDescriptionTitle
-		pin_corner_to_sibling	TOP_LEFT
-		pin_to_sibling_corner	BOTTOM_LEFT
+		pin_corner_to_sibling	LEFT
+		pin_to_sibling_corner	RIGHT
 	}
 
 	BtnPlaylistIcon00
@@ -614,7 +639,7 @@ resource/ui/menus/playlist_mixtape.menu
 		labelText				"<PlayerCountPlayerCount>"
 		auto_wide_tocontents    1
 		tall                    30
-		ypos					10
+		ypos					40
 		xpos					-540
 
 		font					Default_27

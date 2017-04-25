@@ -91,7 +91,7 @@ ObitEntityInfo function Obituary_GetEntityInfo( entity ent, bool victimIsOwnedTi
 	return info
 }
 
-function Obituary( entity attacker, string attackerClass, entity victim, int scriptDamageType, int damageSourceId, bool isHeadShot, bool victimIsOwnedTitan = false )
+function Obituary( entity attacker, string attackerClass, entity victim, int scriptDamageType, int damageSourceId, bool isHeadShot, bool victimIsOwnedTitan = false, bool forceDisplay = false )
 {
 	if ( IsSingleplayer() )
 		return
@@ -99,23 +99,26 @@ function Obituary( entity attacker, string attackerClass, entity victim, int scr
 	if ( GetConVarInt( "hud_setting_showObituary" ) == 0 )
 		return
 
-	if ( victim.IsPlayer() )
+	if ( !forceDisplay )
 	{
-		// Players
-		if ( !OBITUARY_ENABLED_PLAYERS )
-			return
-	}
-	else if ( victim.IsTitan() )
-	{
-		// NPC Titans
-		if ( !OBITUARY_ENABLED_NPC_TITANS )
-			return
-	}
-	else
-	{
-		// NPC
-		if ( !OBITUARY_ENABLED_NPC )
-			return
+		if ( victim.IsPlayer() )
+		{
+			// Players
+			if ( !OBITUARY_ENABLED_PLAYERS )
+				return
+		}
+		else if ( victim.IsTitan() )
+		{
+			// NPC Titans
+			if ( !OBITUARY_ENABLED_NPC_TITANS )
+				return
+		}
+		else
+		{
+			// NPC
+			if ( !OBITUARY_ENABLED_NPC )
+				return
+		}
 	}
 
 	if ( damageSourceId == eDamageSourceId.round_end )

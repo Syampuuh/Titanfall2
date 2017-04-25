@@ -1,8 +1,15 @@
 untyped
 
 global function MeleeSyncedHumanShared_Init
+
+#if SERVER
+global function AnimEvent_attach_knife
+global function AnimEvent_detach_knife
+#endif
+
 const SWORD_MODEL = $"models/weapons/bolo_sword/v_bolo_sword.mdl"
 global const KNIFE_MODEL = $"models/weapons/combat_knife/w_combat_knife.mdl"
+global const PULSE_BLADE_MODEL = $"models/weapons/kunai/w_kunai.mdl"
 
 const HUMAN_BLOOD_FX = $"impact_flesh"
 const MECHANICAL_BLOOD_FX = $"P_impact_metal_spectre"
@@ -88,25 +95,29 @@ function MeleeSyncedHumanShared_Init()
 
 	{
 		// Face Stab
-		AnimEventData giveKnifeEvent
-		giveKnifeEvent.eventName = "attach_knife"
-		giveKnifeEvent.callback = AnimEvent_attach_knife
+		#if SERVER
+			AnimEventData giveKnifeEvent
+			giveKnifeEvent.eventName = "attach_knife"
+			giveKnifeEvent.callback = AnimEvent_attach_knife
 
-		AnimEventData takeKnifeEvent
-		takeKnifeEvent.eventName = "detach_knife"
-		takeKnifeEvent.callback = AnimEvent_detach_knife
+			AnimEventData takeKnifeEvent
+			takeKnifeEvent.eventName = "detach_knife"
+			takeKnifeEvent.callback = AnimEvent_detach_knife
 
-		AnimEventData headstabEvent
-		headstabEvent.eventName = "headstab_death"
-		headstabEvent.callback = AnimEvent_headstab_death
+			AnimEventData headstabEvent
+			headstabEvent.eventName = "headstab_death"
+			headstabEvent.callback = AnimEvent_headstab_death
+		#endif
 
 		SyncedMelee syncedMelee
 		syncedMelee.ref = "execution_face_stab"
 		syncedMelee.direction = < -1, 0, 0 >
 		syncedMelee.distance = HUMAN_EXECUTION_RANGE
 		syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_stab"
-		syncedMelee.attacker3pAnimEvents = [giveKnifeEvent, takeKnifeEvent]
-		syncedMelee.target3pAnimEvents = [headstabEvent]
+		#if SERVER
+			syncedMelee.attacker3pAnimEvents = [giveKnifeEvent, takeKnifeEvent]
+			syncedMelee.target3pAnimEvents = [headstabEvent]
+		#endif
 		syncedMelee.targetAnimation3p = "pt_mp_execution_victim_stab"
 		syncedMelee.thirdPersonCameraAttachment = "VDU"
 		syncedMelee.minDot = 0.2
@@ -118,25 +129,27 @@ function MeleeSyncedHumanShared_Init()
 
 	{
 		// Grand theft semi-auto
-		AnimEventData givePistolEvent
-		givePistolEvent.eventName = "attach_knife"
-		givePistolEvent.callback = AnimEvent_attach_pistol
+		#if SERVER
+			AnimEventData givePistolEvent
+			givePistolEvent.eventName = "attach_knife"
+			givePistolEvent.callback = AnimEvent_attach_pistol
 
-		AnimEventData takePistolEvent
-		takePistolEvent.eventName = "detach_knife"
-		takePistolEvent.callback = AnimEvent_detach_pistol
+			AnimEventData takePistolEvent
+			takePistolEvent.eventName = "detach_knife"
+			takePistolEvent.callback = AnimEvent_detach_pistol
 
-		AnimEventData headshotEvent
-		headshotEvent.eventName = "headshot_death"
-		headshotEvent.callback = AnimEvent_headshot_death
+			AnimEventData headshotEvent
+			headshotEvent.eventName = "headshot_death"
+			headshotEvent.callback = AnimEvent_headshot_death
 
-		AnimEventData backShotHighEvent
-		backShotHighEvent.eventName = "back_shot_high"
-		backShotHighEvent.callback = AnimEvent_back_shot_high
+			AnimEventData backShotHighEvent
+			backShotHighEvent.eventName = "back_shot_high"
+			backShotHighEvent.callback = AnimEvent_back_shot_high
 
-		AnimEventData backShotLowEvent
-		backShotLowEvent.eventName = "back_shot_low"
-		backShotLowEvent.callback = AnimEvent_back_shot_low
+			AnimEventData backShotLowEvent
+			backShotLowEvent.eventName = "back_shot_low"
+			backShotLowEvent.callback = AnimEvent_back_shot_low
+		#endif
 
 
 		SyncedMelee syncedMelee
@@ -144,8 +157,10 @@ function MeleeSyncedHumanShared_Init()
 		syncedMelee.direction = < -1, 0, 0 >
 		syncedMelee.distance = HUMAN_EXECUTION_RANGE
 		syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_steal"
-		syncedMelee.attacker3pAnimEvents = [givePistolEvent, takePistolEvent]
-		syncedMelee.target3pAnimEvents = [headshotEvent, backShotHighEvent, backShotLowEvent]
+		#if SERVER
+			syncedMelee.attacker3pAnimEvents = [givePistolEvent, takePistolEvent]
+			syncedMelee.target3pAnimEvents = [headshotEvent, backShotHighEvent, backShotLowEvent]
+		#endif
 		syncedMelee.targetAnimation3p = "pt_mp_execution_victim_steal"
 		syncedMelee.thirdPersonCameraAttachment = "VDU"
 		syncedMelee.minDot = 0.2
@@ -157,17 +172,20 @@ function MeleeSyncedHumanShared_Init()
 
 	{
 		// Human Multi Punch Combo Execution
-
-		AnimEventData headshotEvent
-		headshotEvent.eventName = "headshot_death"
-		headshotEvent.callback = AnimEvent_headshot_death
+		#if SERVER
+			AnimEventData headshotEvent
+			headshotEvent.eventName = "headshot_death"
+			headshotEvent.callback = AnimEvent_headshot_death
+		#endif
 
 		SyncedMelee syncedMelee
 		syncedMelee.ref = "execution_combo"
 		syncedMelee.direction = < -1, 0, 0 >
 		syncedMelee.distance = HUMAN_EXECUTION_RANGE
 		syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_mh"
-		syncedMelee.target3pAnimEvents = [headshotEvent]
+		#if SERVER
+			syncedMelee.target3pAnimEvents = [headshotEvent]
+		#endif
 		syncedMelee.targetAnimation3p = "pt_mp_execution_victim_mh"
 		syncedMelee.thirdPersonCameraAttachment = "VDU"
 		syncedMelee.minDot = 0.2
@@ -200,17 +218,17 @@ function MeleeSyncedHumanShared_Init()
 		{
 		  // Phase Telefrag
 		  #if SERVER
-		  AnimEventData phase_shift_start
-		  phase_shift_start.eventName = "phase_shift_start"
-		  phase_shift_start.callback = PhaseEmbarkPhaseStart
+			  AnimEventData phase_shift_start
+			  phase_shift_start.eventName = "phase_shift_start"
+			  phase_shift_start.callback = PhaseEmbarkPhaseStart
 
-		  AnimEventData phase_shift_stop
-		  phase_shift_stop.eventName = "phase_shift_stop"
-		  phase_shift_stop.callback = PhaseEmbarkPhaseStop
+			  AnimEventData phase_shift_stop
+			  phase_shift_stop.eventName = "phase_shift_stop"
+			  phase_shift_stop.callback = PhaseEmbarkPhaseStop
 
-		  AnimEventData phase_shift_explode
-		  phase_shift_explode.eventName = "phase_shift_explode"
-		  phase_shift_explode.callback = PhaseShiftExplodeSound
+			  AnimEventData phase_shift_explode
+			  phase_shift_explode.eventName = "phase_shift_explode"
+			  phase_shift_explode.callback = PhaseShiftExplodeSound
 		  #endif
 
 		  SyncedMelee syncedMelee
@@ -219,10 +237,9 @@ function MeleeSyncedHumanShared_Init()
 		  syncedMelee.distance = HUMAN_EXECUTION_RANGE
 		  syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_phaseshift"
 		  syncedMelee.targetAnimation3p = "pt_mp_execution_victim_phaseshift"
-
 		  #if SERVER
-		  syncedMelee.attacker3pAnimEvents = [phase_shift_start,phase_shift_stop]
-		  syncedMelee.target3pAnimEvents = [phase_shift_explode]
+			  syncedMelee.attacker3pAnimEvents = [phase_shift_start,phase_shift_stop]
+			  syncedMelee.target3pAnimEvents = [phase_shift_explode]
 		  #endif
 		  syncedMelee.thirdPersonCameraAttachment = "VDU"
 		  syncedMelee.minDot = 0.2
@@ -252,18 +269,18 @@ function MeleeSyncedHumanShared_Init()
 
 	    {
 	    	//Grapple Execution
-			AnimEventData headstabEvent
-			headstabEvent.eventName = "headstab_death"
-			headstabEvent.callback = AnimEvent_headstab_death
+	    	#if SERVER
+				AnimEventData headstabEvent
+				headstabEvent.eventName = "headstab_death"
+				headstabEvent.callback = AnimEvent_headstab_death
 
-			#if SERVER
-			AnimEventData grapple_stab
-			grapple_stab.eventName = "grapple_stab"
-			grapple_stab.callback = GrappleStabSound
+				AnimEventData grapple_stab
+				grapple_stab.eventName = "grapple_stab"
+				grapple_stab.callback = GrappleStabSound
 
-			AnimEventData grapple_bodyfall
-			grapple_bodyfall.eventName = "grapple_bodyfall"
-			grapple_bodyfall.callback = GrappleBodyfallSound
+				AnimEventData grapple_bodyfall
+				grapple_bodyfall.eventName = "grapple_bodyfall"
+				grapple_bodyfall.callback = GrappleBodyfallSound
 			#endif
 
 			SyncedMelee syncedMelee
@@ -272,10 +289,8 @@ function MeleeSyncedHumanShared_Init()
 			syncedMelee.distance = HUMAN_EXECUTION_RANGE
 			syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_grapple"
 			syncedMelee.targetAnimation3p = "pt_mp_execution_victim_grapple"
-			syncedMelee.target3pAnimEvents = [headstabEvent]
 			#if SERVER
-			syncedMelee.target3pAnimEvents.append( grapple_stab )
-			syncedMelee.target3pAnimEvents.append( grapple_bodyfall )
+				syncedMelee.target3pAnimEvents = [ headstabEvent, grapple_stab, grapple_bodyfall ]
 			#endif
 			syncedMelee.thirdPersonCameraAttachment = "VDU"
 			syncedMelee.minDot = 0.2
@@ -285,6 +300,54 @@ function MeleeSyncedHumanShared_Init()
 				AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
 			#endif
 		}
+
+	    {
+		    // PulseBlade Execution
+
+		    #if SERVER
+			    AnimEventData givePulseBladeEvent
+	    		givePulseBladeEvent.eventName = "attach_pulseBlade"
+	    		givePulseBladeEvent.callback = AnimEvent_attach_pulseBlade
+
+	    		AnimEventData headstabEvent
+				headstabEvent.eventName = "headstab_death"
+				headstabEvent.callback = AnimEvent_headstab_death
+
+	    		AnimEventData takePulseBladeEvent
+	    		takePulseBladeEvent.eventName = "detach_pulseBlade"
+	    		takePulseBladeEvent.callback = AnimEvent_detach_pulseBlade
+
+	    		AnimEventData playSonarExecutionSounds
+	    		playSonarExecutionSounds.eventName = "play_sonar_execution_sounds"
+	    		playSonarExecutionSounds.callback = AnimEvent_play_sonar_execution_sounds
+
+	    		AnimEventData mriPulseEvent
+	    		mriPulseEvent.eventName = "mri_effect"
+	    		mriPulseEvent.callback = AnimEvent_mriPulseEvent
+
+
+		    #endif
+
+		    SyncedMelee syncedMelee
+		    syncedMelee.ref = "execution_pulseblade"
+		    syncedMelee.direction = < -1, 0, 0 >
+		    syncedMelee.distance = HUMAN_EXECUTION_RANGE
+		    syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_pulseblade"
+		    syncedMelee.targetAnimation3p = "pt_mp_execution_victim_pulseblade"
+		    syncedMelee.thirdPersonCameraAttachment = "VDU"
+
+		    #if SERVER
+		    	syncedMelee.attacker3pAnimEvents = [ givePulseBladeEvent, takePulseBladeEvent ]
+		    	syncedMelee.target3pAnimEvents = [ headstabEvent, mriPulseEvent, playSonarExecutionSounds ]
+		    #endif
+
+		    syncedMelee.minDot = 0.2
+		    syncedMelee.isAttackerRef = false
+		    AddSyncedMelee( meleeChooser, syncedMelee )
+		    #if SERVER
+			    AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+		    #endif
+	    }
 
 		{
 			// Placeholder for the Random Execution
@@ -306,6 +369,7 @@ function MeleeSyncedHumanShared_Init()
 
 }
 
+#if SERVER
 const string KNIFE_TARGETNAME = "AnimEvent_attach_knife"
 
 void function AnimEvent_attach_knife( entity ent )
@@ -313,12 +377,25 @@ void function AnimEvent_attach_knife( entity ent )
 	entity knife = CreatePropDynamic( DATA_KNIFE_MODEL )
 	knife.kv.targetname = KNIFE_TARGETNAME
 	knife.SetParent( ent, "KNIFE", false, 0.0 )
+
+	OnThreadEnd(
+	function() : ( knife )
+		{
+			if ( IsValid( knife ) )
+			{
+				knife.Destroy()
+			}
+
+		}
+	)
+
+	WaittillAnimDone( ent )
 }
 
 
 void function AnimEvent_detach_knife( entity ent )
 {
-	var childEnt = ent.FirstMoveChild()
+	var childEnt =  ent.FirstMoveChild()
 
 	while ( childEnt != null )
 	{
@@ -328,7 +405,7 @@ void function AnimEvent_detach_knife( entity ent )
 			return
 		}
 
-		childEnt = expect entity( childEnt.NextMovePeer() )
+		childEnt = expect entity ( childEnt.NextMovePeer() )
 	}
 }
 
@@ -384,7 +461,7 @@ void function StealP2011MuzzleFlash( entity pistol )
 
 void function AnimEvent_detach_pistol( entity ent )
 {
-	var childEnt = ent.FirstMoveChild()
+	entity childEnt = ent.FirstMoveChild()
 
 	while ( childEnt != null )
 	{
@@ -394,7 +471,7 @@ void function AnimEvent_detach_pistol( entity ent )
 			return
 		}
 
-		childEnt = expect entity( childEnt.NextMovePeer() )
+		childEnt = childEnt.NextMovePeer()
 	}
 }
 
@@ -473,3 +550,91 @@ void function GrappleBodyfallSound( entity ent )
 {
 	PlaySoundsForBodyType( ent, "Pilot_Mvmt_Execution_Grapple_Robot_Pt3_Throwdown", "Pilot_Mvmt_Execution_Grapple_Pt3_Throwdown" )
 }
+
+void function AnimEvent_attach_pulseBlade( entity ent ) //Copy of the function that attaches the data knife. Easier to do this than to pass in a model to load instead because of the animeevent limitation
+{
+	entity knife = CreatePropDynamic( PULSE_BLADE_MODEL )
+	knife.kv.targetname = KNIFE_TARGETNAME
+	knife.SetParent( ent, "KNIFE", false, 0.0 )
+
+	OnThreadEnd(
+	function() : ( knife )
+		{
+			if ( IsValid( knife ) )
+			{
+				knife.Destroy()
+			}
+
+		}
+	)
+
+	WaittillAnimDone( ent )
+}
+
+void function AnimEvent_detach_pulseBlade( entity ent ) //Literally a copy of the function that detaches the dataknife. Could just call the same function really, but I prefer having a pair of functions that are differently named for consistency
+{
+	var childEnt =  ent.FirstMoveChild()
+
+	while ( childEnt != null )
+	{
+		if ( childEnt.kv.targetname == KNIFE_TARGETNAME )
+		{
+			childEnt.Destroy()
+			return
+		}
+
+		childEnt = expect entity ( childEnt.NextMovePeer() )
+	}
+}
+
+void function AnimEvent_play_sonar_execution_sounds( entity ent )
+{
+	entity attacker = ent.e.syncedMeleeAttacker
+
+	if ( !IsValid( attacker ) )
+		return
+
+	if ( ent.IsMechanical() )
+	{
+		EmitSoundOnEntity( attacker, "Pilot_Mvmt_Execution_Pulse_Robopilot" )
+	}
+	else
+	{
+		EmitSoundOnEntity( attacker, "Pilot_Mvmt_Execution_Pulse_Pilot" )
+	}
+}
+
+void function AnimEvent_mriPulseEvent( entity ent )
+{
+	entity syncedMeleeAttacker = ent.e.syncedMeleeAttacker
+
+	Assert( IsValid( syncedMeleeAttacker ) )
+
+	int meleeAttackerTeam = syncedMeleeAttacker.GetTeam()
+
+	int headShotAttachmentIndex
+	float startTime = Time()
+
+	Highlight_ClearEnemyHighlight( ent )
+	headShotAttachmentIndex = ent.LookupAttachment( "HEADSHOT" )
+	//Highlight_SetEnemyHighlightWithParam1( ent, "enemy_sonar_execution", ent.GetAttachmentOrigin( headShotAttachmentIndex ) )
+	Highlight_SetEnemyHighlightWithParams( ent, "enemy_sonar_execution", <startTime, Time(), 0>, ent.GetAttachmentOrigin( headShotAttachmentIndex ) )
+
+	ent.EndSignal( "OnDestroy" )
+
+	float lifeTimeOfEffect = Time() + 2.0
+
+	while( Time() < lifeTimeOfEffect )
+	{
+		/*
+		2 things here:
+		1. keep setting origin to make the effect look like it's coming from where the head is, as opposed to where the head was, even during the falling down part of the animation
+		2. Set time as the parameter manually because it looks like i.time in the highlight is not the same as Time(). It's server tick rate so not as smooth though :/
+		*/
+
+		Highlight_SetSonarExecutionHighlightOrigin( ent, ent.GetAttachmentOrigin( headShotAttachmentIndex ), <startTime, Time(), Time() - startTime> )
+		WaitFrame()
+	}
+}
+
+#endif //if server. These are all anim event functions that should be run on the server anyway, no reason for them to be defined on the client.

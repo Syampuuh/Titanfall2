@@ -3,6 +3,9 @@ global function ShFactionDialogue_Init
 global function ShouldPlayFactionDialogue
 global function GetFactionChoice
 global function GetEnemyFaction
+global function FactionUsesWaveform
+global function ConversationEnabledForFaction
+global function GetFactionCharacterName
 #if SERVER
 global function AssignEnemyFaction
 #endif // SERVER
@@ -14,9 +17,21 @@ global struct FactionLeaderDataStruct
 	//Needed for making faction leader spawn in classic_mp dropship
 	asset modelName
 	array<string> dropshipAnimList
+	array<string> easterEggDropshipAnimList
 	asset propModelName
 	string propAttachment
+	bool useWaveforms
+	string characterName
 }
+
+struct {
+
+	table < string, table<string,bool> > factionDisabledLines
+
+} file
+
+global const asset FD_MODEL_DAVIS	= $"models/humans/pilots/sp_medium_stalker_m.mdl" //Copied from SP. Ideally should be made a global const, but not touching SP files unless absolutely needed
+global const asset FD_MODEL_DROZ 	= $"models/humans/pilots/sp_medium_reaper_m.mdl" //Copied from SP. Ideally should be made a global const, but not touching SP files unless absolutely needed
 
 global table<string, FactionLeaderDataStruct > factionLeaderData
 
@@ -24,11 +39,15 @@ void function ShFactionDialogue_Init()
 {
 	//Can't precache from reading the model from the datatable, hence hard coding it here.
 	PrecacheModel( $"models/Humans/heroes/imc_hero_blisk.mdl" )
-	PrecacheModel( $"models/Humans/heroes/mlt_hero_jill.mdl" )
+	PrecacheModel( $"models/humans/pilots/sp_medium_geist_f.mdl" ) //Gates SP model. Ideally this should be a global const but we don't want to patch SP files.
 	PrecacheModel( $"models/Humans/heroes/imc_hero_ash.mdl" )
 	PrecacheModel( $"models/Humans/heroes/mlt_hero_sarah.mdl" )
 	PrecacheModel( $"models/Humans/heroes/mlt_hero_barker.mdl" )
 	PrecacheModel( $"models/Humans/heroes/imc_hero_marder.mdl" )
+	PrecacheModel( $"models/Robots/marvin/marvin.mdl" )
+
+	PrecacheModel( FD_MODEL_DAVIS ) //Precaching in here instead of FD specific script since we don't do game mode specific precaching...
+	PrecacheModel( FD_MODEL_DROZ ) //Precaching in here instead of FD specific script since we don't do game mode specific precaching...
 
 	PrecacheModel( $"models/props/flask/prop_flask_animated.mdl" ) //Barker's prop
 
@@ -48,7 +67,11 @@ void function ShFactionDialogue_Init()
 			PrecacheModel( factionLeaderInfo.propModelName )
 		factionLeaderInfo.propAttachment = GetDataTableString( factionLeaderDataTable, i, GetDataTableColumnByName( factionLeaderDataTable, FACTION_LEADERS_PROP_ATTACHMENT_COLUMN_NAME ) )
 
+		factionLeaderInfo.characterName = GetDataTableString( factionLeaderDataTable, i, GetDataTableColumnByName( factionLeaderDataTable, FACTION_LEADERS_NAME_COLUMN_NAME ) )
+		factionLeaderInfo.useWaveforms= GetDataTableBool( factionLeaderDataTable, i, GetDataTableColumnByName( factionLeaderDataTable, FACTION_LEADERS_WAVEFORM_COLUMN_NAME ) )
+
 		factionLeaderData[ persistenceRef ] <- factionLeaderInfo
+		file.factionDisabledLines[ persistenceRef ] <- {}
 	}
 
 	var factionLeaderDropshipAnimsTable = GetDataTable( $"datatable/faction_leaders_dropship_anims.rpak" ) //Only lists the various dropship anims. Consider moving prop name/prop attachment etc to this table too. (Menu uses those props too, which is why we haven't moved it yet)
@@ -58,7 +81,12 @@ void function ShFactionDialogue_Init()
 		string persistenceRef = GetDataTableString( factionLeaderDropshipAnimsTable, i, GetDataTableColumnByName( factionLeaderDropshipAnimsTable, FACTION_LEADERS_PERSISTENCE_REF_COLUMN_NAME ) )
 		Assert( persistenceRef in  factionLeaderData )
 		string animName = GetDataTableString( factionLeaderDropshipAnimsTable, i, GetDataTableColumnByName( factionLeaderDropshipAnimsTable, FACTION_LEADERS_DROPSHIP_ANIM_NAME_COLUMN_NAME ) )
-		factionLeaderData[ persistenceRef ].dropshipAnimList.append( animName )
+		bool easterEgg = GetDataTableBool( factionLeaderDropshipAnimsTable, i, GetDataTableColumnByName( factionLeaderDropshipAnimsTable, FACTION_LEADERS_DROPSHIP_ANIM_EASTEREGG ) )
+
+		if ( !easterEgg )
+			factionLeaderData[ persistenceRef ].dropshipAnimList.append( animName )
+		else
+			factionLeaderData[ persistenceRef ].easterEggDropshipAnimList.append( animName )
 	}
 
 	if ( IsLobby() ) //Don't need to register conversations in lobby
@@ -74,12 +102,34 @@ void function ShFactionDialogue_Init()
 
 		Assert( !(conversationName in level.Conversations ), "Already tried to register conversation: " + conversationName )
 		RegisterConversation( conversationName, priority, debounce )
+
+		string waveforms = GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, FACTION_DIALOGUE_DISABLED_LIST_NAME ) )
+		array<string> factions = split( waveforms, " " )
+		foreach ( key,factionData in factionLeaderData )
+		{
+			file.factionDisabledLines[ key ][ conversationName ] <- factions.contains(key)
+		}
 	}
+}
+
+bool function ConversationEnabledForFaction( string faction, string conversation )
+{
+	return !file.factionDisabledLines[ faction ][ conversation ]
+}
+
+bool function FactionUsesWaveform( string faction )
+{
+	return factionLeaderData[ faction ].useWaveforms
 }
 
 string function GetFactionChoice( entity player )
 {
 	return expect string ( player.GetPersistentVar( "factionChoice" ) )
+}
+
+string function GetFactionCharacterName( string faction )
+{
+	return factionLeaderData[ faction ].characterName
 }
 
 string function GetEnemyFaction( entity player )

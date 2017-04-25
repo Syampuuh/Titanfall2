@@ -276,6 +276,23 @@ void function AnnouncementMessageSweep( entity player, string messageText, strin
 		thread AnnouncementMessage_Display( player, announcement )
 }
 
+void function AnnouncementMessagePVEObjective( entity player, string messageText, string subText = "", vector titleColor = <1, 1, 1>, asset icon = $"", string soundAlias = SFX_HUD_ANNOUNCE_QUICK )
+{
+	if ( player != GetLocalClientPlayer() )
+		return
+
+	AnnouncementData announcement = Announcement_Create( messageText )
+	bool displayNow = InitializeAnnouncement_ShouldDisplayNow( announcement, messageText, subText, titleColor )
+	announcement.announcementStyle = ANNOUNCEMENT_STYLE_SWEEP
+	announcement.icon = icon
+	announcement.soundAlias = SFX_HUD_ANNOUNCE_QUICK
+	announcement.duration = 4.0
+	announcement.soundAlias = soundAlias
+
+	if ( displayNow )
+		thread AnnouncementMessage_Display( player, announcement )
+}
+
 #if SP
 
 void function AnnouncementMessageCheckpoint( entity player )

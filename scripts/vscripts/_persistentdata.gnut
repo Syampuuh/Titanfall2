@@ -145,6 +145,26 @@ void function InitPersistentData( entity player )
 		}
 	}
 
+	#if DEVSCRIPTS
+	// PVE Economy:
+	{
+		const int PVE_ECON_VERSION = 1
+		const int PVE_ECON_STARTER_MONEY = 500
+
+		int version = player.GetPersistentVarAsInt( "pve.version" )
+		if ( version < PVE_ECON_VERSION )
+		{
+			player.SetPersistentVar( "pve.currency", PVE_ECON_STARTER_MONEY )
+			player.SetPersistentVar( "pve.currencyInLatestMatch", 0 )
+
+			for( int index = 0; index < ePVETactical._count; ++index )
+				player.SetPersistentVar( "pve.tacticalUnlocks[" + index + "]", 0 )
+
+			player.SetPersistentVar( "pve.version", PVE_ECON_VERSION )
+		}
+	}
+	#endif
+
 	// Handle updating NETWORTH_VAR ("netWorth") having a correct value based on previously used TEMP_NETWORTH_VAR ("activeBCID")
 	if ( player.GetPersistentVarAsInt( TEMP_NETWORTH_VAR ) > 0 )
 	{
@@ -171,7 +191,7 @@ void function InitPersistentData( entity player )
 	}
 
 	//Vanguard
-	if ( initializedVersion < 220 )
+	if ( initializedVersion < 223 )
 	{
 		InitDefaultLoadouts() //Repopulate Default loadouts before getting the value for default loadout
 		#if DEVSCRIPTS
@@ -184,7 +204,28 @@ void function InitPersistentData( entity player )
 		}
 		#endif
 	}
-	if ( initializedVersion < 221 )
+	if ( initializedVersion < 223 )
+	{
+		if ( GetPersistentSpawnLoadoutIndex( player, "titan" ) > (NUM_PERSISTENT_TITAN_LOADOUTS - 1) )
+			SetPersistentSpawnLoadoutIndex( player, "titan", 0 )
+	}
+	if ( initializedVersion < 224 )
+	{
+		for ( int i = 0; i < NUM_PERSISTENT_TITAN_LOADOUTS; i++ )
+		{
+			ResetLoadoutPropertyToDefault( player, "titan", i, "titanClass" ) //Removed null value from titanClasses enum, hence need to reset all existing persistent data that somehow was set to "" to the actual default value. Should be fine since this isn't a field that players can normally change
+		}
+	}
+
+	if ( initializedVersion < 225 )
+	{
+		for ( int i = 0; i < NUM_PERSISTENT_TITAN_LOADOUTS; i++ )
+		{
+			player.SetPersistentVar( "titanLoadouts[" + i + "].titanExecution", "execution_random_" + i )
+		}
+	}
+	//Dev only script error fix.
+	if ( initializedVersion < 226 )
 	{
 		if ( GetPersistentSpawnLoadoutIndex( player, "titan" ) > (NUM_PERSISTENT_TITAN_LOADOUTS - 1) )
 			SetPersistentSpawnLoadoutIndex( player, "titan", 0 )

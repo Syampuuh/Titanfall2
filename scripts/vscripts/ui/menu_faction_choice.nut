@@ -68,7 +68,7 @@ void function InitFactionChoiceMenu()
 		file.factions.append( faction )
 	}
 
-	file.gridData.rows = 6
+	file.gridData.rows = 7
 	file.gridData.columns = 1
 	file.gridData.numElements = file.numFactions
 	file.gridData.pageType = eGridPageType.VERTICAL
@@ -186,6 +186,19 @@ void function FactionButton_GetFocus( var button, int elemNum )
 	string description = faction.leaderDescription
 	string unlockReq = GetItemUnlockReqText( item.ref )
 	UpdateItemDetails( file.menu, name, description, unlockReq )
+	var rui = Hud_GetRui( Hud_GetChild( file.menu, "ItemDetails" ) )
+	if ( faction.persistenceRef == "faction_marvin" )
+	{
+		int startDays = 1101
+		int firstDay = 1490267018 // Mar 23
+		int secondsElapsed = Daily_GetCurrentTime() - firstDay
+		int daysSinceFirstDay = startDays + int( secondsElapsed / float( SECONDS_PER_DAY ) )
+		RuiSetString( rui, "descTextArg", string( daysSinceFirstDay ) )
+	}
+	else
+	{
+		RuiSetString( rui, "descTextArg", "" )
+	}
 
 	RunMenuClientFunction( "UpdateFactionModel", elemNum )
 

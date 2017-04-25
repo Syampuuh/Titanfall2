@@ -110,7 +110,6 @@ resource/ui/menus/controls.menu
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					SwchAutoSprint
 			navDown					BtnGamepadLayout
-			tabPosition				1
 			ConVar					"cl_hold_to_rodeo_enable"
 			list
 			{

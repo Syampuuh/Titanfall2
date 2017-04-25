@@ -8,6 +8,8 @@ global function PlayerGetMaxXPPerGen
 global function PlayerGetRawLevelForXP
 global function PlayerGetRawLevel
 global function GetRawLevelForLevelAndGen
+global function PlayerXPGetGenIcon
+global function GetGenIcon
 
 #if SERVER
 global function InitXP
@@ -169,6 +171,44 @@ bool function CanGenUp( entity player )
 
 	return GetLevelForXP( xp ) >= file.maxLevelPerGen
 }
+
+
+asset function GetGenIcon( int gen, int level = 0 )
+{
+	if ( gen >= 100 )
+		return $"rui/gencard_icons/regen/regen100"
+	else if ( gen >= 90 )
+		return $"rui/gencard_icons/regen/regen090"
+	else if ( gen >= 80 )
+		return $"rui/gencard_icons/regen/regen080"
+	else if ( gen >= 70 )
+		return $"rui/gencard_icons/regen/regen070"
+	else if ( gen >= 60 )
+		return $"rui/gencard_icons/regen/regen060"
+	else if ( gen >= 50 )
+		return $"rui/gencard_icons/regen/regen050"
+	else if ( gen >= 40 )
+		return $"rui/gencard_icons/regen/regen040"
+	else if ( gen >= 30 )
+		return $"rui/gencard_icons/regen/regen030"
+	else if ( gen >= 20 )
+		return $"rui/gencard_icons/regen/regen020"
+	else if ( gen >= 10 )
+		return $"rui/gencard_icons/regen/regen010"
+	else
+		return $""
+
+	unreachable
+}
+
+
+asset function PlayerXPGetGenIcon( entity player )
+{
+	int gen = player.GetGen()
+
+	return GetGenIcon( gen )
+}
+
 
 string function PlayerXPDisplayGenAndLevel( int gen, int level, bool isCompact = false )
 {

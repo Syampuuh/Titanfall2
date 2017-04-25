@@ -30,6 +30,10 @@ global function IsPlayerDisembarking
 	global function StartCockpitLightThink
 	global function CockpitLightStop
 	global function Embark_DelayedFadeOut
+	global function PlayerIsFarOffTheGround
+
+	global function SetSmallDisembarkFailSafeTeleportVector //TODO: Re-examine this for next game, probably should have different values for SP versus MP
+	global function SetLargeDisembarkFailSafeTeleportVector //TODO: Re-examine this for next game, probably should have different values for SP versus MP
 #endif
 
 #if DEV
@@ -49,6 +53,8 @@ struct
 {
 	asset cockpitLightFX = $"xo_cockpit_dlight"
 	bool embarkDebugPrint = false
+	vector smallDisembarkFailSafeTeleportVector = < 400, 400, 200 >
+	vector largeDisembarkFailSafeTeleportVector = < 600, 600, 600 >
 } file
 
 function TitanEmbark_Init()
@@ -1413,35 +1419,47 @@ void function PlayerDisembarksTitanWithSequenceFuncs( entity player, FirstPerson
 	DispatchSpawn( titan )
 	e.titan = titan
 
-	vector ornull clampedPos = NavMesh_ClampPointForAIWithExtents( titan.GetOrigin(), titan, < 400, 400, 200 > )
-	if ( clampedPos == null )
-		clampedPos = NavMesh_ClampPointForAIWithExtents( titan.GetOrigin(), titan, < 600, 600, 600 > )
-
-	if ( clampedPos != null )
+	if ( !PlayerIsFarOffTheGround( player, [ player,titan ] ) ) //PlayerIsFarOffTheGround() necessary now for R2 because we have Titans that can jump/geo where Titans can fall down from large heights. Without check, mid-air disembarking will cause player to be teleported to the ground
 	{
-		expect vector( clampedPos )
-		vector titanOrigin = titan.GetOrigin()
+		vector ornull clampedPos = NavMesh_ClampPointForAIWithExtents( titan.GetOrigin(), titan, file.smallDisembarkFailSafeTeleportVector )
+		if ( clampedPos == null )
+			clampedPos = NavMesh_ClampPointForAIWithExtents( titan.GetOrigin(), titan, file.largeDisembarkFailSafeTeleportVector )
 
-		array<entity> ignoreEnts = []
-		ignoreEnts.append( titan )
-
-		TraceResults result = TraceHull( titanOrigin, titanOrigin, titan.GetBoundingMins(), titan.GetBoundingMaxs(), ignoreEnts, TRACE_MASK_TITANSOLID, TRACE_COLLISION_GROUP_NONE )
-
-		// expensive checks to make sure titan doesn't teleport to navmesh on other side of wall usually in invalid places
-		if ( result.startSolid ||
-			 TraceLineSimple( titanOrigin + Vector( 0, 0, 128 ), clampedPos + Vector( 0, 0, 0 ), titan ) == 1.0 ||
-		     TraceLineSimple( titanOrigin + Vector( 0, 0, 200 ), clampedPos + Vector( 0, 0, 0 ), titan ) == 1.0 ||
-		     TraceLineSimple( titanOrigin + Vector( 0, 0, 200 ), clampedPos + Vector( 0, 0, 128 ), titan ) == 1.0 )
+		if ( clampedPos != null )
 		{
-			#if DEV
-				if ( file.embarkDebugPrint )
-				{
-					printt( "PlayerDisembarksTitanWithSequenceFuncs, player origin: " + player.GetOrigin()+ ", titan origin: " + titan.GetOrigin() + ", clampedPos: " + clampedPos )
-				}
-			#endif
-			titan.SetOrigin( clampedPos )
-			titan.ForceCheckGroundEntity()
+			expect vector( clampedPos )
+			vector titanOrigin = titan.GetOrigin()
+
+			array<entity> ignoreEnts = []
+			ignoreEnts.append( titan )
+
+			TraceResults result = TraceHull( titanOrigin, titanOrigin, titan.GetBoundingMins(), titan.GetBoundingMaxs(), ignoreEnts, TRACE_MASK_TITANSOLID, TRACE_COLLISION_GROUP_NONE )
+
+			// expensive checks to make sure titan doesn't teleport to navmesh on other side of wall usually in invalid places
+			if ( result.startSolid ||
+				 TraceLineSimple( titanOrigin + Vector( 0, 0, 128 ), clampedPos + Vector( 0, 0, 0 ), titan ) == 1.0 ||
+			     TraceLineSimple( titanOrigin + Vector( 0, 0, 200 ), clampedPos + Vector( 0, 0, 0 ), titan ) == 1.0 ||
+			     TraceLineSimple( titanOrigin + Vector( 0, 0, 200 ), clampedPos + Vector( 0, 0, 128 ), titan ) == 1.0 )
+			{
+				#if DEV
+					if ( file.embarkDebugPrint )
+					{
+						printt( "PlayerDisembarksTitanWithSequenceFuncs, player origin: " + player.GetOrigin()+ ", titan origin: " + titan.GetOrigin() + ", clampedPos: " + clampedPos )
+					}
+				#endif
+				titan.SetOrigin( clampedPos )
+				titan.ForceCheckGroundEntity()
+			}
 		}
+	}
+	else
+	{
+		#if DEV
+			if ( file.embarkDebugPrint )
+			{
+				printt( "PlayerIsFarOffGround() returned true, skip doing NavMesh_ClampPointForAIWithExtents checks" )
+			}
+		#endif
 	}
 
 	titan.s.disembarkingPlayer <- player
@@ -1513,6 +1531,27 @@ void function PlayerDisembarksTitanWithSequenceFuncs( entity player, FirstPerson
 	WaittillAnimDone( player )
 }
 
+bool function PlayerIsFarOffTheGround( entity player, array<entity> ignoreEnts )
+{
+	vector boundingMaxs = player.GetBoundingMaxs()
+	float halfHeight =  boundingMaxs.z / 2.0
+
+	vector startpos = player.GetOrigin()
+	vector endpos = startpos
+	endpos.z -= halfHeight
+
+	TraceResults result = TraceHull( startpos, endpos, player.GetBoundingMins(), player.GetBoundingMaxs(), ignoreEnts, TRACE_MASK_PLAYERSOLID, TRACE_COLLISION_GROUP_PLAYER )
+	//PrintTraceResults( result )
+
+	if ( result.startSolid )
+		return false
+
+	if ( result.allSolid )
+		return false
+
+	return ( result.fraction >= 1.0 )
+}
+
 FirstPersonSequenceStruct function GetDisembarkSequenceForPlayer( entity player, entity titan )
 {
 	string titanSubClass = GetSoulTitanSubClass( titan.GetTitanSoul() )
@@ -1576,7 +1615,7 @@ FirstPersonSequenceStruct function GetDisembarkSequenceForTitan( entity player, 
 	return titanSequence
 }
 
-function DelayedSafePlayerLocation( entity player, entity titan, vector startOrigin )
+function DelayedSafePlayerLocationForDisembark( entity player, entity titan )
 {
 	float currentTime = Time()
 	float allowedTime = player.p.isCustomDisembark ? 10.0 : 2.0
@@ -1604,7 +1643,9 @@ function DelayedSafePlayerLocation( entity player, entity titan, vector startOri
 
 	if ( IsValid( titan ) )
 	{
-		safeStartPoint = titan.GetOrigin()
+		vector titanBoundingMaxs = titan.GetBoundingMaxs()
+		float halfTitanHeight = titanBoundingMaxs.z * 0.5
+		safeStartPoint = titan.GetOrigin() + < 0, 0, halfTitanHeight > //Let the start point of PutEntityInSafeSpot be closer to where the player is when disebmarking instead of the ground origin
 	}
 	else
 	{
@@ -1614,7 +1655,7 @@ function DelayedSafePlayerLocation( entity player, entity titan, vector startOri
 
 	#if DEV
 		if ( file.embarkDebugPrint )
-			printt( "DelayedSafePlayerLocation, before PutEntityInSafeSpot: player origin: " + player.GetOrigin() + ", titan origin: " + titan.GetOrigin() + " safeStartPoint: " + safeStartPoint )
+			printt( "DelayedSafePlayerLocationForDisembark, before PutEntityInSafeSpot: player origin: " + player.GetOrigin() + ", titan origin: " + titan.GetOrigin() + " safeStartPoint: " + safeStartPoint )
 	#endif
 
 
@@ -1624,7 +1665,7 @@ function DelayedSafePlayerLocation( entity player, entity titan, vector startOri
 
 	#if DEV
 		if ( file.embarkDebugPrint )
-			printt( "DelayedSafePlayerLocation, after PutEntityInSafeSpot: player origin: " + player.GetOrigin() + ", titan origin: " + titan.GetOrigin() + " safeStartPoint: " + safeStartPoint )
+			printt( "DelayedSafePlayerLocationForDisembark, after PutEntityInSafeSpot: player origin: " + player.GetOrigin() + ", titan origin: " + titan.GetOrigin() + " safeStartPoint: " + safeStartPoint )
 	#endif
 
 }
@@ -1641,7 +1682,7 @@ function ClearParentBeforeIntersect( entity player, entity titan, anim, e )
 		function() : ( player, e )
 		{
 			if ( IsValid( player ) )
-				thread DelayedSafePlayerLocation( player, expect entity( e.titan ), expect vector( e.startOrigin ) )
+				thread DelayedSafePlayerLocationForDisembark( player, expect entity( e.titan ) )
 		}
 	)
 
@@ -2150,6 +2191,17 @@ void function PilotBecomesTitan_UpdateRodeoRiderHud( entity playerTitan, entity 
 	Remote_CallFunction_Replay( rodeoPilot, "ServerCallback_UpdateRodeoRiderHud" )
 
 }
+
+void function SetSmallDisembarkFailSafeTeleportVector( vector value ) //TODO: Re-examine this for next game, probably should have different values for SP versus MP
+{
+	file.smallDisembarkFailSafeTeleportVector = value
+}
+
+void function SetLargeDisembarkFailSafeTeleportVector( vector value ) //TODO: Re-examine this for next game, probably should have different values for SP versus MP
+{
+	file.largeDisembarkFailSafeTeleportVector = value
+}
+
 #endif // SERVER
 
 #if DEV

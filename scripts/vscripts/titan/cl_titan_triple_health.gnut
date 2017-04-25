@@ -124,7 +124,11 @@ void function HudHealthFeedback( entity cockpit, entity player )
 			{
 				if ( GetDoomedState( player ) )
 				{
-					TitanCockpit_PlayDialog( player, "halfDoomState" )
+					bool ejectIsDisabled = TitanEjectIsDisabled()
+					if ( ejectIsDisabled )
+						TitanCockpit_PlayDialog( player, "doomState" )
+					else
+						TitanCockpit_PlayDialog( player, "halfDoomState" )
 				}
 				else
 				{

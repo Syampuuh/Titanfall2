@@ -10,6 +10,8 @@ struct
 	var leftShoulder
 	var rightShoulder
 
+	ItemDisplayData& focusDisplayData
+
 	int itemsPerPage
 	array<ItemDisplayData> skinItemData
 	array<string> skinPageNames
@@ -32,6 +34,7 @@ void function InitCamoSelectMenu()
 	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnCamoSelectMenu_Open )
 	AddMenuEventHandler( menu, eUIEvent.MENU_CLOSE, OnCamoSelectMenu_Close )
 	AddMenuEventHandler( menu, eUIEvent.MENU_NAVIGATE_BACK, OnCamoSelectMenu_NavigateBack )
+	SetMenuThinkFunc( menu, CamoMenu_Think )
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
@@ -242,6 +245,11 @@ void function OnCamoSelectMenu_Open()
 	RefreshCreditsAvailable()
 }
 
+void function CamoMenu_Think()
+{
+	UpdateCamoUnlockDetailPanel()
+}
+
 void function OnCamoSelectMenu_Close()
 {
 	Grid_DeregisterPageNavInputs( file.menu )
@@ -405,6 +413,8 @@ void function CamoButton_GetFocus( var button, int elemNum )
 	string parentRef = displayData.parentRef
 	int itemType = displayData.itemType
 
+	file.focusDisplayData = displayData
+
 	printt( "camo: ", ref, parentRef )
 /*
 		if ( uiGlobal.editingLoadoutType == "titan" )
@@ -506,6 +516,23 @@ void function CamoButton_GetFocus( var button, int elemNum )
 			Assert( false )
 		}
 	}
+}
+
+
+void function UpdateCamoUnlockDetailPanel()
+{
+	entity player = GetUIPlayer()
+	if ( !player )
+		return
+
+	ItemDisplayData displayData = file.focusDisplayData
+
+	if ( displayData.ref == "" )
+		return
+
+	string ref = displayData.ref
+	string parentRef = displayData.parentRef
+
 	string unlockReq
 	string unlockProgressText
 	float unlockProgressFrac

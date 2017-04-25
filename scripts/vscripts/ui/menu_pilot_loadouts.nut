@@ -71,6 +71,15 @@ void function OnPilotLoadoutsMenu_Close()
 
 		ClearNewStatus( button, pilotLoadoutRef )
 	}
+
+	if ( GetActiveMenu() == file.menu )
+	{
+		if ( uiGlobal.menuStack[uiGlobal.menuStack.len() - 2] == null )
+		{
+			ClientCommand( "LoadoutMenuClosed" )
+			UI_SetPresentationType( ePresentationType.INACTIVE )
+		}
+	}
 }
 
 
@@ -130,9 +139,17 @@ void function OnLoadoutButton_Activate( var button )
 	ClientCommand( "RequestPilotLoadout " + loadoutIndex )
 
 	if ( IsLobby() )
+	{
 		CloseActiveMenu()
+	}
 	else
+	{
 		CloseAllInGameMenus()
+		if ( GetActiveMenu() == null )
+			UI_SetPresentationType( ePresentationType.INACTIVE )
+
+		ClientCommand( "LoadoutMenuClosed" )
+	}
 }
 
 

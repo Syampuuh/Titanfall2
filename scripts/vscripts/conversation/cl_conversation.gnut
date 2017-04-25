@@ -85,6 +85,9 @@ function ClDialogue_Init()
 
 	#if SP
 	var dataTable = GetDataTable( $"datatable/caller_ids.rpak" )
+	#elseif MP
+	var dataTable = GetDataTable( $"datatable/caller_ids_mp.rpak" )
+	#endif
 	int rows = GetDatatableRowCount( dataTable )
 	for ( int i = 0 ; i < rows ; i++ )
 	{
@@ -92,7 +95,6 @@ function ClDialogue_Init()
 		asset image = GetDataTableAsset( dataTable, i, GetDataTableColumnByName( dataTable, "image" ) )
 		file.callerIDs[ title ] <- image
 	}
-	#endif
 
 	file.callerIDs[ "default" ] <- $"rui/hud/caller_ids/caller_id_01"
 }
@@ -1539,6 +1541,7 @@ var function CreateWaveform( string title, int team, float duration, entity spea
 	RuiSetFloat( waveformRUI, "fadeOutDuration", WAVEFORM_FADE_DURATION )
 	RuiSetString( waveformRUI, "speakerName", title )
 	RuiSetBool( waveformRUI, "intercepting", radioIntercept )
+	RuiSetBool( waveformRUI, "isMP", IsMultiplayer() )
 	RuiSetResolutionToScreenSize( waveformRUI )
 
 	file.lastWaveformTalker	= title
@@ -1642,7 +1645,7 @@ void function PlayOneLinerConversationOnEntWithPriority_internal( string soundAl
 	WaitSignal( handle, "OnSoundFinished" )
 }
 
-void function PlayAnnouncerLineThroughDeathWithPriority( string conversationName, string soundAlias, int priority ) //Used primarily with Faction Leader announcements that might need to go through death, e.g. win announcement
+void function PlayAnnouncerLineThroughDeathWithPriority( string conversationName, string soundAlias, int priority, string waveformName = "" ) //Used primarily with Faction Leader announcements that might need to go through death, e.g. win announcement
 {
 	bool printDebug = GetDialogueDebugLevel() > 0
 	if ( printDebug )
@@ -1661,21 +1664,31 @@ void function PlayAnnouncerLineThroughDeathWithPriority( string conversationName
 
 	SetConversationLastPlayedTime( conversationName, Time() )
 
-	thread PlayAnnouncerLineThroughDeathWithPriority_internal( soundAlias, localClientPlayer, priority ) //Only thread this off once we've done the priority check since threading is expensive
+	thread PlayAnnouncerLineThroughDeathWithPriority_internal( soundAlias, localClientPlayer, priority, waveformName ) //Only thread this off once we've done the priority check since threading is expensive
 
 }
 
-void function PlayAnnouncerLineThroughDeathWithPriority_internal( string soundAlias, entity localClientPlayer, int priority )
+void function PlayAnnouncerLineThroughDeathWithPriority_internal( string soundAlias, entity localClientPlayer, int priority, string waveformName )
 {
 	clGlobal.levelEnt.EndSignal( "CancelConversation" )
 
+	var rui
+	if ( waveformName != "" )
+	{
+		rui = CreateWaveform( waveformName, TEAM_MILITIA, 10.0 )
+	}
+
 	OnThreadEnd(
-	function() : ( soundAlias, localClientPlayer )
+	function() : ( rui, soundAlias, localClientPlayer )
 		{
 			//printt( "OnThreadEnd of PlayAnnouncerLineThroughDeathWithPriority_internal, should try to end " + soundAlias + " onLocalClientPlayer: " + localClientPlayer )
 			level.CurrentPriority = 0
 			if( IsValid( localClientPlayer ) )
 				StopSoundOnEntity( localClientPlayer, soundAlias )
+			if( rui != null )
+			{
+				thread DestroyWaveform( rui )
+			}
 		}
 	)
 

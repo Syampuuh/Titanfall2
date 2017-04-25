@@ -575,6 +575,9 @@ function RodeoRideThink( entity cockpit, entity player )
 	player.EndSignal( "OnDestroy" )
 
 	var rui = CreateCockpitRui( $"ui/rodeo_display.rpak" )
+	#if MP
+	RuiSetBool( rui, "isUsingLargeMinimap", Minimap_IsUsingLargeMinimap() )
+	#endif
 	file.rodeoRUI = rui
 	RuiSetDrawGroup( rui, RUI_DRAW_NONE )
 
@@ -1684,11 +1687,6 @@ void function UpdateLastTitanStanding()
 		local resMultiplier = screenSize[1] / 1080.0
 		int width = 630
 		int height = 225
-
-		if ( GameRules_GetGameMode() == "cp" )
-			height = 173
-		else if ( GameRules_GetGameMode() == "ctf" )
-			height = 146
 
 		HudElement( "IngameTextChat" ).SetSize( width * resMultiplier, height * resMultiplier )
 	}

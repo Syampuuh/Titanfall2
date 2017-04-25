@@ -8,7 +8,17 @@ WeaponData
 
 	"melee_lunge_time"								"0.2"			////
 	"melee_lunge_target_range"						"200"			// Titan melee script doesn't lunge.
-	"melee_lunge_target_angle"						"45"			////
+
+	SP_BASE
+	{
+		"melee_angle"									"45"
+		"melee_lunge_target_angle"						"45"
+	}
+	MP_BASE
+	{
+		"melee_angle"									"20"
+		"melee_lunge_target_angle"						"20"
+	}
 
 	"pushback_scale"								"0.3"
 }

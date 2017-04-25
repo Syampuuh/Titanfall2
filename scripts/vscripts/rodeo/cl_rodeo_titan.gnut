@@ -43,6 +43,7 @@ void function ClRodeoTitan_Init()
 	RegisterSignal( "OfferRodeoBattery" )
 	RegisterSignal( "ShowFriendlyTitanWantsBattery" )
 	RegisterSignal( "HideStolenBatteryIcons" )
+	RegisterSignal( "ShowFriendlyPlayerHasBattery" )
 
 	RegisterSignal( "StartRodeoDrain" )
 
@@ -148,10 +149,10 @@ void function Rodeo_YouEmbarkedWithABattery( entity ent, var eventVal )
 	thread PlayBatteryScreenFXWithDelay( GetLocalClientPlayer() )
 }
 
-void function PlayBatteryScreenFX( entity player )
+void function PlayBatteryScreenFX( entity player, string healthRestoredSound = TITAN_PICKS_UP_BATTERY_HEALTH_RESTORED_SOUND )
 {
 	FlashCockpitHealthGreen()
-	EmitSoundOnEntity( player, TITAN_PICKS_UP_BATTERY_HEALTH_RESTORED_SOUND  )
+	EmitSoundOnEntity( player, healthRestoredSound  )
 	entity cockpit = player.GetCockpit()
 	if ( IsValid( cockpit ) )
 		StartParticleEffectOnEntity( cockpit, GetParticleSystemIndex( BATTERY_FX_SCREEN ), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
@@ -377,6 +378,8 @@ void function ShowFriendlyPlayerHasBattery( entity friendlyPlayer, entity batter
 
 	titanSoul.EndSignal( "OnDestroy" )
 	titanSoul.EndSignal( "OnTitanDeath" )
+	battery.Signal( "ShowFriendlyPlayerHasBattery" )
+	battery.EndSignal( "ShowFriendlyPlayerHasBattery" )
 
 	var rui =  CreateCockpitRui( $"ui/battery_overhead_indicator_hud.rpak" )
 

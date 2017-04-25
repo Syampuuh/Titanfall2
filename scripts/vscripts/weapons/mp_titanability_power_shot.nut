@@ -9,6 +9,7 @@ void function MpTitanAbilityPowerShot_Init()
 {
 	#if SERVER
 	AddDamageCallbackSourceID( eDamageSourceId.mp_titanweapon_predator_cannon, PowerShot_DamagedEntity )
+	RegisterSignal( "PowerShotCleanup" )
 	#endif
 }
 
@@ -41,6 +42,9 @@ var function OnWeaponPrimaryAttack_power_shot( entity weapon, WeaponPrimaryAttac
 		primaryWeapon.SetForcedADS()
 		weaponOwner.SetMeleeDisabled()
 		PlayerUsedOffhand( weaponOwner, weapon )
+		#if SERVER
+		thread MonitorEjectStatus( weaponOwner )
+		#endif
 	}
 
 	if ( primaryWeapon.HasMod( "LongRangeAmmo" ) )
@@ -60,6 +64,21 @@ var function OnWeaponPrimaryAttack_power_shot( entity weapon, WeaponPrimaryAttac
 	return weapon.GetAmmoPerShot()
 }
 
+#if SERVER
+void function MonitorEjectStatus( entity weaponOwner )
+{
+	weaponOwner.EndSignal( "PowerShotCleanup" )
+
+	weaponOwner.WaitSignal( "TitanEjectionStarted" )
+
+	if ( IsValid( weaponOwner ) )
+	{
+		weaponOwner.ClearMeleeDisabled()
+		weaponOwner.SetTitanDisembarkEnabled( true )
+	}
+}
+#endif
+
 void function PowerShotCleanup( entity owner, entity weapon, string modName, array<string> modsToAdd )
 {
 	if ( IsValid( owner ) && owner.IsPlayer() )
@@ -67,6 +86,7 @@ void function PowerShotCleanup( entity owner, entity weapon, string modName, arr
 		#if SERVER
 		owner.ClearMeleeDisabled()
 		owner.SetTitanDisembarkEnabled( true )
+		owner.Signal( "PowerShotCleanup")
 		#endif
 	}
 	if ( IsValid( weapon ) )

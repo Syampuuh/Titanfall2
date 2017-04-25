@@ -21,6 +21,7 @@ WeaponData
 		"proficiency_good_spreadscale"					"1.1"//4.0
 		"proficiency_very_good_spreadscale"   			"1.1"//3.0
 		"proficiency_perfect_spreadscale" 				"0.5"
+		"explosion_damage"								"0"
 	}
 
 	SP_BASE
@@ -44,6 +45,7 @@ WeaponData
 		"proficiency_good_spreadscale"					"4.0"
 		"proficiency_very_good_spreadscale"   			"3.0"
 		"proficiency_perfect_spreadscale" 				"0.5"
+		"explosion_damage"								"20"
 	}
 
 	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_weapon_yh803"
@@ -102,7 +104,6 @@ WeaponData
 	"damage_far_value"								"15"
 	"damage_near_value_titanarmor"					"2"
 	"damage_far_value_titanarmor" 					"2"
-	"explosion_damage"								"20"
 
 	"explosionradius" 								"0"
 	"impulse_force"   								"1000"

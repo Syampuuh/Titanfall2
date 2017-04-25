@@ -96,7 +96,6 @@ function MeleeShared_Init()
 {
 	FlagInit( "ForceSyncedMelee" )
 
-	level.meleeHintActive <- false
 	level.HUMAN_VS_TITAN_MELEE <- 1
 	level.titan_attack_anim_event_count <- 0
 	level.titan_attack_push_button_count <- 0
@@ -187,8 +186,6 @@ vector function GetEyeOrigin( entity ent )
 //Called after pressing the melee button to recheck for targets
 bool function CodeCallback_IsValidMeleeExecutionTarget( entity attacker, entity target )
 {
-	level.meleeHintActive = false
-
 	if ( attacker == target )
 		return false
 
@@ -310,10 +307,6 @@ bool function CodeCallback_IsValidMeleeExecutionTarget( entity attacker, entity 
 	if ( action == null )
 		return false
 
-	if ( !PlayerMelee_IsExecutionReachable( attacker, target, 0.65 ) )
-		return false
-
-	level.meleeHintActive = true
 	return true
 }
 
@@ -602,7 +595,7 @@ bool function DoSyncedMelee( entity player, entity target )
 
 #if SERVER
 	player.p.lastExecutionUsed = action.ref
-	
+
 	if ( actions in file.syncedMeleeServerCallbacks )
 		thread SyncedMeleeServerCallbacks( actions, action, player, target )
 	bool functionref( SyncedMelee action, entity player, entity target ) think = file.syncedMeleeServerThink[ actions ]
@@ -1149,10 +1142,16 @@ bool function SyncedMelee_IsAllowed( entity player )
 	return player.GetPlayerNetBool( "playerAllowedToSyncedMelee" )
 }
 
-bool function IsAttackerRef( SyncedMelee action, entity target )
+bool function IsAttackerRef( SyncedMelee ornull action, entity target )
 {
-	if ( action.isAttackerRef )
-		return true
+	if ( action != null )
+	{
+		expect SyncedMelee( action )
+		if ( action.isAttackerRef )
+		{
+			return true
+		}
+	}
 
 	if ( !target )
 		return true

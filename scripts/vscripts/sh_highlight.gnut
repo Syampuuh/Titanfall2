@@ -21,6 +21,8 @@ global function GetHighlightContextForEnt
 	global function Highlight_SetSonarHighlightOrigin
 	global function Highlight_HasSonarHighlight
 
+	global function Highlight_SetSonarExecutionHighlightOrigin
+
 	global function Highlight_ClearFriendlyHighlight
 	global function Highlight_ClearEnemyHighlight
 	global function Highlight_ClearOwnedHighlight
@@ -85,6 +87,8 @@ global const HIGHLIGHT_OUTLINE_BOSS_TITAN = 108 // outline_boss_titan
 global const HIGHLIGHT_OUTLINE_OBJECTIVE = 125 // outline_objective
 const HIGHLIGHT_OUTLINE_PROTO_ENEMY_PILOT = 107 // outline_proto_enemy_pilot
 const HIGHLIGHT_OUTLINE_DEFAULT_ENEMY_TITAN = 127 // outline_default_enemy_titan
+const HIGHLIGHT_FILL_SONAR_EXECUTION = 115
+const HIGHLIGHT_OUTLINE_SONAR_EXECUTION = 116
 
 const HIGHLIGHT_OUTLINE_VM_CUSTOM_COLOR = 114
 const HIGHLIGHT_FILL_VM_CUSTOM_COLOR = 114
@@ -114,6 +118,7 @@ enum eHighlightDrawFunc
 	SPOT
 	PICKUP
 	SONAR_DETECTED
+	ALWAYS_LONG_FADE
 
 	LAST_DRAW_FUNC
 }
@@ -310,6 +315,14 @@ function Highlight_Init()
 	//HighlightContext_SetDrawFunc( highlight, eHighlightDrawFunc.SONAR_DETECTED )
 	HighlightContext_SetDrawFunc( highlight, eHighlightDrawFunc.ALWAYS )
 	HighlightContext_SetADSFade( highlight, false )
+
+	highlight = RegisterHighlight( "enemy_sonar_execution" )
+	HighlightContext_SetOutline( highlight, HIGHLIGHT_OUTLINE_SONAR_EXECUTION )
+	HighlightContext_SetRadius( highlight, 5 )
+	HighlightContext_SetFill( highlight, HIGHLIGHT_FILL_SONAR_EXECUTION )
+	HighlightContext_SetDrawFunc( highlight, eHighlightDrawFunc.ALWAYS_LONG_FADE )
+	HighlightContext_SetADSFade( highlight, false )
+	HighlightContext_SetDisableDeathFade( highlight, true )
 
 	highlight = RegisterHighlight( "enemy_boss_bounty" )
 	HighlightContext_SetOutline( highlight, HIGHLIGHT_OUTLINE_SONAR )
@@ -566,6 +579,25 @@ void function UpdatePlayerHighlightsSettings( entity player )
 
 void function OnPlayerKilled( entity victim, entity attacker, var damageInfo )
 {
+	HighlightContext ornull highlight = Highlight_GetEnemyHighlight( victim )
+	if ( highlight == null )
+	{
+		Highlight_ClearEnemyHighlight( victim )
+		return
+	}
+
+	expect HighlightContext( highlight )
+
+	if( highlight.disableDeathFade )
+	{
+		thread ClearEnemyHighlightDelayed( victim )
+	}
+}
+
+void function ClearEnemyHighlightDelayed( entity victim )
+{
+	// TEMP
+	wait 1.0
 	Highlight_ClearEnemyHighlight( victim )
 }
 #endif
@@ -678,6 +710,11 @@ void function HighlightContext_SetADSFade( HighlightContext highlight, bool valu
 	highlight.adsFade = value
 }
 
+void function HighlightContext_SetDisableDeathFade( HighlightContext highlight, bool value )
+{
+	highlight.disableDeathFade = value
+}
+
 void function HighlightContext_SetAfterPostProcess( HighlightContext highlight, bool value )
 {
 	highlight.afterPostProcess = value
@@ -694,6 +731,7 @@ void function Highlight_SetEnemyHighlight( entity ent, string assetName )
 {
 	HighlightContext highlight = GetHighlight( assetName )
 	__SetEntityContextHighlight( ent, HIGHLIGHT_CONTEXT_ENEMY, highlight )
+	ent.e.enemyHighlight = assetName
 }
 
 void function Highlight_SetEnemyHighlightWithParam0( entity ent, string assetName, vector paramVec0 )
@@ -751,6 +789,12 @@ void function Highlight_SetSonarHighlightOrigin( entity ent, vector origin )
 	ent.Highlight_SetParam( HIGHLIGHT_CONTEXT_SONAR, 1, origin )
 }
 
+void function Highlight_SetSonarExecutionHighlightOrigin( entity ent, vector origin, vector times )
+{
+	ent.Highlight_SetParam( HIGHLIGHT_CONTEXT_ENEMY, 1, origin )
+	ent.Highlight_SetParam( HIGHLIGHT_CONTEXT_ENEMY, 0, times )
+}
+
 void function Highlight_SetDeathRecapHighlight( entity ent, string assetName )
 {
 	HighlightContext highlight = GetHighlight( assetName )
@@ -796,6 +840,14 @@ bool function Hightlight_HasEnemyHighlight( entity ent, string assetName )
 	HighlightContext highlight = GetHighlight( assetName )
 
 	return ( highlightId == highlight.highlightId )
+}
+
+HighlightContext ornull function Highlight_GetEnemyHighlight( entity ent )
+{
+	if ( ent.e.enemyHighlight == "" )
+		return null
+
+	return GetHighlight( ent.e.enemyHighlight )
 }
 
 void function __SetEntityContextHighlight( entity ent, int contextId, HighlightContext highlight )
@@ -932,6 +984,7 @@ void function ClHighlight_UpdateHighlightFlags( entity ent, int contextId )
 	ent.Highlight_SetFlag( HIGHLIGHT_FLAG_REQUIRE_TITAN, highlight.requiresClass == REQUIRES_TITAN )
 	ent.Highlight_SetFlag( HIGHLIGHT_FLAG_REQUIRE_LOCAL_PLAYER_IS_OWNER, highlight.requiresOwnedByLocalPlayer )
 	ent.Highlight_SetFlag( HIGHLIGHT_FLAG_REQUIRE_HIGH_MOVEMENT, highlight.requiresStationary )
+	ent.Highlight_SetFlag( HIGHLIGHT_FLAG_DISABLE_DEATH_FADE, highlight.disableDeathFade )
 
 	if ( contextId == HIGHLIGHT_CONTEXT_FRIENDLY )
 		ent.Highlight_SetFlag( HIGHLIGHT_FLAG_REQUIRE_SAME_TEAM, true )
@@ -1004,6 +1057,16 @@ void function ClHighlight_UpdateHighlightFlags( entity ent, int contextId )
 				ent.Highlight_SetLifeTime( SPOT_HIGHLIGHT_TIME - SPOT_HIGHLIGHT_FADE_OUT_TIME )
 			}
 			break
+
+		case eHighlightDrawFunc.ALWAYS_LONG_FADE:
+			{
+				ent.Highlight_SetVisibilityType( HIGHLIGHT_VIS_ALWAYS )
+				ent.Highlight_SetFadeInTime( 0.07 )
+				ent.Highlight_SetFadeOutTime( 0.5 )
+				ent.Highlight_SetLifeTime( 0.57 )
+			}
+			break
+
 		#if HAS_WEAPON_PICKUP_HIGHLIGHT
 		case eHighlightDrawFunc.PICKUP:
 			{

@@ -310,6 +310,9 @@ bool function ShouldShowWeakpoints( entity ent )
 		if ( soul.GetShieldHealth() )
 			return false
 
+		if ( soul.GetCritsPrevented() == true )
+			return false
+
 		if ( soul.GetInvalidHealthBarEnt() )
 			return false
 	}

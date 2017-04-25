@@ -210,7 +210,6 @@ struct
 function FlightpathShared_Init()
 {
 	FlagInit( "DisableDropships", IsSingleplayer() )
-	FlagInit( "DisableTitanfall" )
 	FlagInit( "DogFights" )
 	FlagInit( "FlyerPickupAnalysis" )
 	FlagInit( "StratonFullAttack" )

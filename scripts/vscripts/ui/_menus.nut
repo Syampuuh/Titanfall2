@@ -68,6 +68,7 @@ global function IsDialogOnlyActiveMenu
 global function SetNavUpDown
 global function IsTrialPeriodActive
 global function LaunchGamePurchaseOrDLCStore
+global function SetMenuThinkFunc
 
 global function PCBackButton_Activate
 
@@ -205,6 +206,7 @@ void function UICodeCallback_LevelLoadingFinished( bool error )
 	if ( !IsLobby() )
 	{
 		HudChat_ClearTextFromAllChatPanels()
+		ResetActiveChatroomLastModified()
 	}
 	else
 	{
@@ -903,7 +905,11 @@ void function InitMenus()
 	AddMenu( "LobbyMenu", $"resource/ui/menus/lobby.menu", InitLobbyMenu, "#LOBBY" )
 
 	#if DEVSCRIPTS
+	AddMenu( "FDMenu", $"resource/ui/menus/playlist_fd.menu", InitFDPlaylistMenu )
+	AddMenu( "FDHostMatchMenu", $"resource/ui/menus/fd_host_match.menu", InitFDHostMatchMenu )
+	AddMenu( "FDMapsMenu", $"resource/ui/menus/fd_map_select.menu", InitFDMapsMenu )
 	AddMenu( "PVELobbyMenu", $"resource/ui/menus/pvelobby.menu", InitPVELobbyMenu, "#PVELOBBY" )
+	AddMenu( "PVETacticalsMenu", $"resource/ui/menus/pve_tacticals.menu", InitPVETacticalsMenu )
 	#endif
 	AddMenu( "PlaylistMenu", $"resource/ui/menus/playlist.menu", InitPlaylistMenu )
 	AddMenu( "PlaylistMixtapeMenu", $"resource/ui/menus/playlist_mixtape.menu", InitPlaylistMixtapeMenu )
@@ -928,6 +934,7 @@ void function InitMenus()
 #if DEVSCRIPTS
 	AddMenu( "InviteFriendsToNetworkMenu", $"resource/ui/menus/invite_friends.menu", InitInviteFriendsToNetworkMenu )
 	//AddMenu( "InviteFriendsToPartyMenu", $"resource/ui/menus/invite_friends.menu", InitInviteFriendsToPartyMenu )
+	AddMenu( "PathChooserDialog", $"resource/ui/menus/dialog_pathchooser.menu", InitPathChooserDialog )
 #endif
 
 	AddMenu( "InGameMPMenu", $"resource/ui/menus/ingame_mp.menu", InitInGameMPMenu )
@@ -941,7 +948,6 @@ void function InitMenus()
 	AddMenu( "ReviewTermsDialog", $"resource/ui/menus/dialog_review_terms.menu", InitReviewTermsDialog )
 	AddMenu( "RegistrationDialog", $"resource/ui/menus/dialog_registration.menu", InitRegistrationDialog )
 	AddMenu( "AdvocateGiftDialog", $"resource/ui/menus/dialog_advocate_gift.menu", InitAdvocateGiftDialog )
-	AddMenu( "PathChooserDialog", $"resource/ui/menus/dialog_pathchooser.menu", InitPathChooserDialog )
 
 	AddMenu( "ControlsMenu", $"resource/ui/menus/controls.menu", InitControlsMenu, "#CONTROLS" )
 	AddMenu( "ControlsAdvancedLookMenu", $"resource/ui/menus/controls_advanced_look.menu", InitControlsAdvancedLookMenu, "#CONTROLS_ADVANCED_LOOK" )
@@ -979,6 +985,7 @@ void function InitMenus()
 #if DEVSCRIPTS
 	AddMenu( "EditDpadCommsMenu", $"resource/ui/menus/editdpadcomms.menu", InitEditDpadCommsMenu )
 	AddMenu( "DpadCommsSelectMenu", $"resource/ui/menus/selectdpadcomms.menu", InitSelectDpadCommsMenu )
+	AddMenu( "BoostStoreMenu", $"resource/ui/menus/booststore.menu", InitBoostStoreMenu )
 #endif
 
 	AddMenu( "PrivateLobbyMenu", $"resource/ui/menus/private_lobby.menu", InitPrivateMatchMenu, "#PRIVATE_MATCH" )
@@ -1158,7 +1165,9 @@ void function FocusDefault( var menu )
 			}
 		}
 	}
-	else if ( menu == GetMenu( "CategorySelectMenu" ) ||
+	else if (
+				menu == GetMenu( "MainMenu" ) ||
+				menu == GetMenu( "CategorySelectMenu" ) ||
 			  menu == GetMenu( "AbilitySelectMenu" ) ||
 			  menu == GetMenu( "PassiveSelectMenu" ) ||
 			  menu == GetMenu( "WeaponSelectMenu" ) ||
@@ -1191,6 +1200,12 @@ void function PanelFocusDefault( var panel )
 		Hud_SetFocused( uiGlobal.panelData[ panel ].defaultFocus )
 		//printt( "PanelFocusDefault if passed,", Hud_GetHudName( uiGlobal.panelData[ panel ].defaultFocus ), "focused" )
 	}
+}
+
+void function SetMenuThinkFunc( var menu, void functionref() func )
+{
+	Assert( uiGlobal.menuData[ menu ].thinkFunc == null )
+	uiGlobal.menuData[ menu ].thinkFunc = func
 }
 
 void function AddMenuEventHandler( var menu, int event, void functionref() func )
@@ -1500,6 +1515,7 @@ void function InitGlobalMenuVars()
 	thread UpdateIsFullyConnected()
 	thread UpdateAmIPartyLeader()
 	thread UpdateIsPrivateMatch()
+	thread UpdateActiveMenuThink()
 
 	#if CONSOLE_PROG
 		thread UpdateConsole_IsOnline()
@@ -1524,6 +1540,22 @@ void function UpdateFocus()
 	while ( true )
 	{
 		SetMenuVarVar( "focus", GetFocus() )
+		WaitFrame()
+	}
+}
+
+void function UpdateActiveMenuThink()
+{
+	while ( true )
+	{
+		var menu = GetActiveMenu()
+		if ( menu )
+		{
+			Assert( menu in uiGlobal.menuData )
+			if ( uiGlobal.menuData[ menu ].thinkFunc != null )
+				uiGlobal.menuData[ menu ].thinkFunc()
+		}
+
 		WaitFrame()
 	}
 }
@@ -1860,4 +1892,19 @@ void function LaunchGamePurchaseOrDLCStore()
 
 void function UICodeCallback_PartyUpdated()
 {
+	if ( AmIPartyLeader() )
+	{
+		string activeSearchingPlaylist = GetActiveSearchingPlaylist()
+		if ( activeSearchingPlaylist != "" && !CanPlaylistFitMyParty( activeSearchingPlaylist ) )
+		{
+			CancelMatchSearch()
+
+			DialogData dialogData
+			dialogData.header = "#MATCHMAKING_CANCELED"
+			dialogData.message = "#MATCHMAKING_CANCELED_REASON_PARTY_SIZE"
+			AddDialogButton( dialogData, "#OK" )
+
+			OpenDialog( dialogData )
+		}
+	}
 }

@@ -1,0 +1,17 @@
+#base "titan_stryder_leadwall.set"
+"titan_stryder_leadwall_arc"
+{
+	"global"
+	{
+        healthPerSegment 1500	[$sp]
+        health			7500	[$sp]
+        healthDoomed	4000	[$sp]
+
+        healthPerSegment 2500	[$mp]
+        health			2500	[$mp]
+        healthDoomed	2500	[$mp]
+
+        healthShield	2500	[$mp]
+        healthShield	2500	[$sp]
+	}
+}

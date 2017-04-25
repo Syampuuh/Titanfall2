@@ -174,14 +174,14 @@ WeaponData
 	"aimassist_disable_ads_humansonly"				"1"
 
 	// Spread
-	"spread_stand_hip"								"1.5"
-	"spread_stand_hip_run"							"1.5"
-	"spread_stand_ads"								"1.5"
-	"spread_stand_hip_sprint"                       "1.5"
-	"spread_crouch_hip"   							"1.5"
-	"spread_crouch_ads"   							"1.5"
-	"spread_air_hip"  								"1.5"
-	"spread_air_ads"  								"1.5"
+	"spread_stand_hip"								"1.0"
+	"spread_stand_hip_run"							"1.0"
+	"spread_stand_ads"								"1.0"
+	"spread_stand_hip_sprint"                       "1.0"
+	"spread_crouch_hip"   							"1.0"
+	"spread_crouch_ads"   							"1.0"
+	"spread_air_hip"  								"1.0"
+	"spread_air_ads"  								"1.0"
 
 	"ammo_suck_behavior"							"offhand_weapons"
 
@@ -359,7 +359,7 @@ WeaponData
 
 		Crosshair_1
 		{
-			"ui"						"ui/crosshair_circle2"
+			"ui"						"ui/crosshair_circle2_small"
 			"base_spread"				"0.0"
 			Args
 			{

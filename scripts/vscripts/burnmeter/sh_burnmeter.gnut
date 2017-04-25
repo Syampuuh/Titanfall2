@@ -14,6 +14,7 @@ global function OnWeaponAttemptOffhandSwitch_burncardweapon
 global function BurnMeterPlayer_CanUseReward
 global function BurnMeterPlayer_GetRewardOrGoal
 global function BurnReward_GetTopInventoryItemBurnCard
+global function OnWeaponPrimaryAttack_nuke_eject
 #endif
 
 global const BURN_METER_SMALL_POINT_VALUE = 1
@@ -53,6 +54,7 @@ global struct BurnStruct
 {
 	table< string, BurnReward > burnRewards
 	array< BurnReward > allCards //Kinda inefficient to store the same burn cards 3 times (once in burnRewards, once in foil/normal, once in allcards. Prefer speed over memory? )
+	array< BurnReward > allowedCards
 
 }
 
@@ -60,12 +62,20 @@ global BurnStruct burn
 
 global table< string, bool functionref( entity ) >  burnMeterCanUseFuncTable
 
+struct
+{
+
+	bool shouldCycleOnRelease = false
+
+} file
+
 void function ShBurnMeter_Init()
 {
 
 	#if SERVER || CLIENT
 		//burnMeterCanUseFuncTable[ "burnmeter_random_foil" ] <- BurnMeter_RandomFoilCanUse
 		burnMeterCanUseFuncTable[ "burnmeter_emergency_titan" ] <- BurnMeter_EmergencyTitanCanUse
+		burnMeterCanUseFuncTable[ "burnmeter_nuke_titan" ] <- BurnMeter_NukeTitanCanUse
 
 	#endif
 
@@ -89,19 +99,27 @@ void function ShBurnMeter_Init()
 		burnReward.activationText = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "activationText" ) )
 		burnReward.skinIndex = GetDataTableInt( dataTable, row, GetDataTableColumnByName( dataTable, "skinIndex" ) )
 
-		#if SERVER || CLIENT
+		if ( IsDisabledRef( burnReward.ref ) )
+			continue
+
+#if SERVER || CLIENT
 		if ( burnReward.weaponName != "" )
 			PrecacheWeapon( burnReward.weaponName )
 		#endif
 
 		burn.burnRewards[burnReward.ref] <- burnReward
 
+		bool selectable 		= GetDataTableBool( dataTable, row, GetDataTableColumnByName( dataTable, "selectable" ) )
 		burn.allCards.append( burnReward )
+		if ( selectable )
+			burn.allowedCards.append( burnReward )
 	}
 
 	#if CLIENT
 		//Registering here instead of in CreateWeaponData() in _items.nut to remove dependence on HUD script with items. If more weapons other than smart pistol run into this problem, just add a column in burn_meter_rewards to specify we need to do this. ( ticks are fine because they have a damagedef associated with them )
 		RegisterWeaponDamageSourceName( "mp_weapon_smart_pistol", expect string( GetWeaponInfoFileKeyField_GlobalNotNull( "mp_weapon_smart_pistol", "shortprintname" ) ) )
+
+		RegisterConCommandTriggeredCallback( "-offhand4", CycleOnRelease )
 	#endif
 }
 
@@ -134,9 +152,7 @@ int function GetBoostSkin( string ref )
 
 BurnReward function BurnReward_GetRandom()
 {
-	int randomIndex = RandomInt( burn.burnRewards.len() )
-
-	return burn.allCards[ randomIndex ]
+	return burn.allowedCards.getrandom()
 }
 
 string function GetSelectedBurnCardRef( entity player )
@@ -146,8 +162,7 @@ string function GetSelectedBurnCardRef( entity player )
 	string ref = burnCard.ref
 
 	#if SERVER || CLIENT
-	string gameMode = GameRules_GetGameMode()
-	if ( gameMode == PILOT_SKIRMISH || GameRules_GetGameMode() == SPEEDBALL )
+	if ( Riff_TitanAvailability() == eTitanAvailability.Never )
 	{
 		//JFS: Batteries and Titan turrets are useless in PvP, turn them into amped weapons instead. Not an elegant solution at all. Fix next game. (Make boosts editable mid-match? )
 		if ( ref == "burnmeter_emergency_battery" || ref == "burnmeter_at_turret_weapon"  )
@@ -190,6 +205,7 @@ bool function TryUsingBurnCardWeapon( entity weapon, entity ownerPlayer )
 bool function TryUsingBurnCardWeaponInCriticalSection( entity weapon, entity ownerPlayer )
 {
 	Assert( weapon.HasMod( "burn_card_weapon_mod" ) )
+
 	if ( !CanUseWeaponAsBurnCard( weapon, ownerPlayer ) )
 		return false
 
@@ -303,7 +319,7 @@ bool function IsBurnMeterRewardAvailableForGameState() //Based off IsReplacement
 		}
 
 		default:
-			Assert( false, "Unknown Game State!" )
+			Assert( false, "Unknown Game State: " + currentGameState )
 			return false
 	}
 
@@ -320,7 +336,22 @@ bool function OnWeaponAttemptOffhandSwitch_burncardweapon( entity weapon )
 		return false
 
 	if ( weapon.HasMod( "burn_card_weapon_mod" ) )
-		return BurnMeterPlayer_CanUseEquipped( ownerPlayer )
+	{
+		bool canUse = BurnMeterPlayer_CanUseEquipped( ownerPlayer )
+
+		#if CLIENT
+		if ( !canUse )
+		{
+			#if DEVSCRIPTS
+			// if ( BoostStoreEnabled() )
+				// ItemInventory_ShowCycleHint( ownerPlayer )
+			//file.shouldCycleOnRelease = true
+			#endif
+		}
+		#endif
+
+		return canUse
+	}
 	else
 		return true
 
@@ -339,12 +370,26 @@ bool function BurnMeterPlayer_CanUseSpecial( entity player, BurnReward burnRewar
 	return burnMeterCanUseFuncTable[ burnReward.ref ]( player )
 }
 
+bool function BurnMeter_NukeTitanCanUse( entity player )
+{
+	bool canUse = BurnMeter_EmergencyTitanCanUse( player )
+
+	if ( !canUse )
+	{
+		#if CLIENT
+		AddPlayerHint( 5.0, 0.5, $"", "#HINT_NUKE_TITAN_CANT_USE" )
+		#endif
+	}
+
+	return canUse
+}
+
 bool function BurnMeter_EmergencyTitanCanUse( entity player )
 {
-	#if SERVER
-		if ( IsAlive( player.GetPetTitan() ) )
-			return false
+	if ( IsAlive( player.GetPetTitan() ) )
+		return false
 
+	#if SERVER
 		if ( !IsReplacementTitanAvailableForGameState() )
 			return false
 
@@ -379,4 +424,28 @@ bool function BurnMeter_SummonReaperCanUse( entity player )
 	return true
 }
 
+var function OnWeaponPrimaryAttack_nuke_eject( entity weapon, WeaponPrimaryAttackParams attackParams )
+{
+	#if CLIENT
+		entity weaponOwner = weapon.GetWeaponOwner()
+		if ( weaponOwner.IsPlayer() && IsValid( weaponOwner.GetCockpit() ) )
+		{
+			weaponOwner.ClientCommand( "TitanEject " + 3 )
+			PlayerEjects( weaponOwner, weaponOwner.GetCockpit() ) //Note that this can be run multiple times in a frame, e.g. get damaged by 4 pellets of a shotgun that brings the Titan into a doomed state with auto eject. Not ideal
+		}
+	#endif
+	return 0
+}
+
+#endif
+
+#if CLIENT
+void function CycleOnRelease( entity player )
+{
+	if ( file.shouldCycleOnRelease )
+	{
+		CycleInventory( player )
+		file.shouldCycleOnRelease = false
+	}
+}
 #endif

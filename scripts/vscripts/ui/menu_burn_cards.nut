@@ -23,7 +23,7 @@ void function InitBurnCardMenu()
 
 	Hud_SetText( Hud_GetChild( menu, "MenuTitle" ), "#MENU_BURNCARD_MENU" )
 
-	file.numBurnCards = burn.allCards.len()
+	file.numBurnCards = GetVisibleItemsOfType( eItemTypes.BURN_METER_REWARD ).len()
 
 	file.gridData.rows = 6
 	file.gridData.columns = 2
@@ -141,6 +141,9 @@ void function OnOpenBurnCardMenu()
 		GridMenuInit( file.menu, file.gridData )
 		file.isGridInitialized = true
 	}
+
+	file.numBurnCards = GetVisibleItemsOfType( eItemTypes.BURN_METER_REWARD ).len()
+	file.gridData.numElements = file.numBurnCards
 
 	Grid_InitPage( file.menu, file.gridData )
 

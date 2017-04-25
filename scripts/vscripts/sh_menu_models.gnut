@@ -7,6 +7,8 @@
 #endif //client && MP
 
 #if CLIENT
+	const float CARD_TAG_SCALE = 0.0 // update to match same const in hud_defs.rui
+
 	const DEFAULT_FOV = 50.0
 	const DEFAULT_DOF_NEAR_START = 7.5
 	const DEFAULT_DOF_NEAR_END = 7.7
@@ -148,7 +150,8 @@
 	global function GetMenuPilotBody
 	global function GetCallsignTopo
 
-	global function GetFactionModel // TEMP
+	global function GetFactionModel
+	global function GetFactionModelSkin
 
 	global function UpdateMouseRotateDelta
 #endif // CLIENT && MP
@@ -527,10 +530,12 @@
 		file.titanAnims[ animType ][ "titan_stryder_leadwall" ]				<- "titan_light_menu_main_idle_01"
 		file.titanAnims[ animType ][ "titan_stryder_sniper" ]				<- "titan_light_menu_main_idle_01"
 		file.titanAnims[ animType ][ "titan_stryder_northstar_prime" ]		<- "titan_light_menu_main_idle_01"
+		file.titanAnims[ animType ][ "titan_stryder_ronin_prime" ]			<- "titan_light_menu_main_idle_01"
 		file.titanAnims[ animType ][ "titan_atlas_tracker" ]				<- "titan_medium_menu_main_idle_01_TONE"
-		file.titanAnims[ animType ][ "titan_atlas_vanguard" ]				<- "titan_medium_menu_main_idle_01_TONE"
+		file.titanAnims[ animType ][ "titan_atlas_vanguard" ]				<- "titan_medium_menu_main_idle_01_MONARCH"
 		file.titanAnims[ animType ][ "titan_atlas_stickybomb" ]				<- "titan_medium_menu_main_idle_01"
 		file.titanAnims[ animType ][ "titan_atlas_ion_prime" ]				<- "titan_medium_menu_main_idle_01"
+		file.titanAnims[ animType ][ "titan_atlas_tone_prime" ]				<- "titan_medium_menu_main_idle_01_TONE"
 		file.titanAnims[ animType ][ "titan_ogre_meteor" ]					<- "titan_heavy_menu_main_idle_01"
 		file.titanAnims[ animType ][ "titan_ogre_scorch_prime" ]			<- "titan_heavy_menu_main_idle_01"
 		file.titanAnims[ animType ][ "titan_ogre_minigun" ]					<- "titan_heavy_menu_main_idle_01_LEGION"
@@ -543,10 +548,12 @@
 		file.titanAnims[ animType ][ "titan_stryder_leadwall" ]				<- "titan_light_menu_loadout_idle"
 		file.titanAnims[ animType ][ "titan_stryder_sniper" ]				<- "titan_light_menu_loadout_idle_NSTAR"
 		file.titanAnims[ animType ][ "titan_stryder_northstar_prime" ]		<- "titan_light_menu_loadout_idle_NSTAR"
+		file.titanAnims[ animType ][ "titan_stryder_ronin_prime" ]			<- "titan_light_menu_loadout_idle"
 		file.titanAnims[ animType ][ "titan_atlas_tracker" ]				<- "titan_medium_menu_loadout_idle"
-		file.titanAnims[ animType ][ "titan_atlas_vanguard" ]				<- "titan_medium_menu_loadout_idle"
+		file.titanAnims[ animType ][ "titan_atlas_vanguard" ]				<- "titan_medium_menu_loadout_idle_MONARCH"
 		file.titanAnims[ animType ][ "titan_atlas_stickybomb" ]				<- "titan_medium_menu_loadout_idle_ION"
 		file.titanAnims[ animType ][ "titan_atlas_ion_prime" ]				<- "titan_medium_menu_loadout_idle_ION"
+		file.titanAnims[ animType ][ "titan_atlas_tone_prime" ]				<- "titan_medium_menu_loadout_idle"
 		file.titanAnims[ animType ][ "titan_ogre_meteor" ]					<- "titan_heavy_menu_loadout_idle_SCORCH"
 		file.titanAnims[ animType ][ "titan_ogre_scorch_prime" ]			<- "titan_heavy_menu_loadout_idle_SCORCH"
 		file.titanAnims[ animType ][ "titan_ogre_minigun" ]					<- "titan_heavy_menu_loadout_idle_LEGION"
@@ -559,10 +566,12 @@
 		file.titanAnims[ animType ][ "titan_stryder_leadwall" ]				<- "titan_light_menu_loadout_idle_edit_RONIN"
 		file.titanAnims[ animType ][ "titan_stryder_sniper" ]				<- "titan_light_menu_loadout_idle_edit_NSTAR"
 		file.titanAnims[ animType ][ "titan_stryder_northstar_prime" ]		<- "titan_light_menu_loadout_idle_edit_NSTAR"
+		file.titanAnims[ animType ][ "titan_stryder_ronin_prime" ]			<- "titan_light_menu_loadout_idle_edit_RONIN"
 		file.titanAnims[ animType ][ "titan_atlas_tracker" ]				<- "titan_medium_menu_loadout_idle_edit_TONE"
-		file.titanAnims[ animType ][ "titan_atlas_vanguard" ]				<- "titan_medium_menu_loadout_idle_edit_TONE"
+		file.titanAnims[ animType ][ "titan_atlas_vanguard" ]				<- "titan_medium_menu_loadout_idle_edit_MONARCH"
 		file.titanAnims[ animType ][ "titan_atlas_stickybomb" ]				<- "titan_medium_menu_loadout_idle_edit_ION"
 		file.titanAnims[ animType ][ "titan_atlas_ion_prime" ]				<- "titan_medium_menu_loadout_idle_edit_ION"
+		file.titanAnims[ animType ][ "titan_atlas_tone_prime" ]				<- "titan_medium_menu_loadout_idle_edit_TONE"
 		file.titanAnims[ animType ][ "titan_ogre_meteor" ]					<- "titan_heavy_menu_loadout_idle_edit_SCORCH"
 		file.titanAnims[ animType ][ "titan_ogre_scorch_prime" ]			<- "titan_heavy_menu_loadout_idle_edit_SCORCH"
 		file.titanAnims[ animType ][ "titan_ogre_minigun" ]					<- "titan_heavy_menu_loadout_idle_edit_LEGION"
@@ -575,10 +584,12 @@
 		file.titanAnims[ animType ][ "titan_stryder_leadwall" ]				<- "titan_light_menu_noseart_idle"
 		file.titanAnims[ animType ][ "titan_stryder_sniper" ]				<- "titan_light_menu_noseart_idle"
 		file.titanAnims[ animType ][ "titan_stryder_northstar_prime" ]		<- "titan_light_menu_noseart_idle"
+		file.titanAnims[ animType ][ "titan_stryder_ronin_prime" ]			<- "titan_light_menu_noseart_idle"
 		file.titanAnims[ animType ][ "titan_atlas_tracker" ]				<- "titan_medium_menu_noseart_idle_TONE"
-		file.titanAnims[ animType ][ "titan_atlas_vanguard" ]				<- "titan_medium_menu_noseart_idle_TONE"
+		file.titanAnims[ animType ][ "titan_atlas_vanguard" ]				<- "titan_medium_menu_noseart_idle_MONARCH"
 		file.titanAnims[ animType ][ "titan_atlas_stickybomb" ]				<- "titan_medium_menu_noseart_idle"
 		file.titanAnims[ animType ][ "titan_atlas_ion_prime" ]				<- "titan_medium_menu_noseart_idle"
+		file.titanAnims[ animType ][ "titan_atlas_tone_prime" ]				<- "titan_medium_menu_noseart_idle_TONE"
 		file.titanAnims[ animType ][ "titan_ogre_meteor" ]					<- "titan_heavy_menu_noseart_idle"
 		file.titanAnims[ animType ][ "titan_ogre_scorch_prime" ]			<- "titan_heavy_menu_noseart_idle"
 		file.titanAnims[ animType ][ "titan_ogre_minigun" ]					<- "titan_heavy_menu_noseart_idle_LEGION"
@@ -742,7 +753,7 @@
 	{
 		//var topo = CreateCallsignTopology( GetMenuPilotBody().GetOrigin() + <110, 32, 100>, < 0, 45, 6 >, 32 * 1.25, 17 * 1.25 )
 		//var topo = CreateCallsignTopology( GetMenuPilotBody().GetOrigin() + <98, 16, 92>, < 0, 45, 6 >, 32 * 1.15, 17 * 1.15 )
-		var topo = CreateCallsignTopology( < -32, 50, 70 >, <0, 165, 6>, 28, 15 )
+		var topo = CreateCallsignTopology( < -32, 50, 67 >, <0, 165, 6>, 28, 15 + (28 * CARD_TAG_SCALE) )
 		RuiTopology_SetParent( topo, mover, "ORIGIN" )
 		var rui = RuiCreate( $"ui/callsign_basic.rpak", topo, RUI_DRAW_WORLD, 0 )
 		file.menuCallsignRui = rui
@@ -811,6 +822,7 @@
 			RuiSetImage( file.menuCallsignRui, "iconImage", callsignIcon.image )
 			RuiSetString( file.menuCallsignRui, "playerLevel", PlayerXPDisplayGenAndLevel( player.GetGen(), player.GetLevel() ) )
 			RuiSetString( file.menuCallsignRui, "playerName", player.GetPlayerName() )
+			RuiSetImage( file.menuCallsignRui, "cardGenImage", PlayerXPGetGenIcon( player ) ) //Commented Out Temporarily to Fix Blocker Bug: 220132
 			RuiSetBool( file.menuCallsignRui, "isLobbyCard", true )
 
 			thread KeepCallsignUpToDate( player )
@@ -831,6 +843,7 @@
 				RuiSetString( file.menuCallsignRui, "playerLevel", PlayerXPDisplayGenAndLevel( player.GetGen(), player.GetLevel() ) )
 				RuiSetImage( file.menuCallsignRui, "cardImage", callingCard.image )
 				RuiSetImage( file.menuCallsignRui, "iconImage", callsignIcon.image )
+				RuiSetImage( file.menuCallsignRui, "cardGenImage", PlayerXPGetGenIcon( player ) )  //Commented Out Temporarily to Fix Blocker Bug: 220132
 				RuiSetInt( file.menuCallsignRui, "layoutType", callingCard.layoutType )
 				wait 0.5
 			}
@@ -885,6 +898,7 @@
 		int team = player.GetTeam()
 		string ref = GetFactionChoice( player )
 		asset bodyModel = GetFactionModel( ref )
+		int skin = GetFactionModelSkin( ref )
 
 		vector refOrigin = mover.GetOrigin()
 		vector refAngles = mover.GetAngles()
@@ -894,6 +908,7 @@
 		bodyEnt.SetAlive( true )
 		bodyEnt.SetVisibleForLocalPlayer( 0 )
 		bodyEnt.MakeSafeForUIScriptHack()
+		bodyEnt.SetSkin( skin )
 		SetTeam( bodyEnt, team )
 
 		file.menuFaction.body = bodyEnt
@@ -1394,6 +1409,7 @@
 		array<ItemDisplayData> items = GetVisibleItemsOfType( eItemTypes.FACTION )
 		string ref = items[ itemIndex ].ref
 		asset model = GetFactionModel( ref )
+		int skinIndex = GetFactionModelSkin( ref )
 		asset propModel = GetFactionPropModel( ref )
 		string idleAnim = GetFactionIdleAnim( ref )
 
@@ -1401,7 +1417,9 @@
 		//if ( file.menuFaction.body.GetModelName() != model || idleAnim != file.menuFaction.bodyAnim ) // Model has changed or anim has changed
 		//	playIdle = true
 
+		file.menuFaction.body.SetSkin( 0 )
 		file.menuFaction.body.SetModel( model )
+		file.menuFaction.body.SetSkin( skinIndex )
 
 		entity propEnt = CreateFactionPropModel( file.menuFaction.body, ref )
 		if ( IsValid( file.menuFaction.weapon ) )
@@ -1452,6 +1470,7 @@
 			CallingCard callsignCard = CallingCard_GetByIndex( itemIndex )
 			RuiSetImage( file.menuCallsignRui, "cardImage", callsignCard.image )
 			RuiSetInt( file.menuCallsignRui, "layoutType", callsignCard.layoutType )
+			RuiSetImage( file.menuCallsignRui, "cardGenImage", PlayerXPGetGenIcon( player ) )
 		#endif
 	}
 
@@ -1572,6 +1591,15 @@
 		asset model = GetDataTableAsset( dataTable, row, GetDataTableColumnByName( dataTable, "modelName" ) )
 
 		return model
+	}
+
+	int function GetFactionModelSkin( string ref )
+	{
+		var dataTable = GetDataTable( $"datatable/faction_leaders.rpak" )
+		int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "persistenceRef" ), ref )
+		int skin = GetDataTableInt( dataTable, row, GetDataTableColumnByName( dataTable, "skinIndex" ) )
+
+		return skin
 	}
 
 	string function GetFactionPropAttachment( string ref )
@@ -1800,6 +1828,8 @@
 	{
 		string sceneAnim = file.presentationData[ presentationType ].sceneAnim
 		clGlobal.menuSceneModel.Anim_PlayWithRefPoint( sceneAnim, file.sceneRef.GetOrigin(), file.sceneRef.GetAngles() + <0, -90, 0>, 0 )
+		if ( !interpolate )
+			clGlobal.menuSceneModel.Anim_SetStartTime( 1.0 )
 
 		if ( presentationType == ePresentationType.INACTIVE )
 		{

@@ -278,11 +278,16 @@ void function ShowRUIHUD( entity cockpit )
 	#endif
 
 #if SP
-	RuiSetBool( file.cockpitRui, "ejectIsAllowed", false )
+	bool ejectIsAllowed = false
+#else
+	bool ejectIsAllowed = !TitanEjectIsDisabled()
 #endif
+	RuiSetBool( file.cockpitRui, "ejectIsAllowed", ejectIsAllowed )
 
 	string playerSettings = GetLocalViewPlayer().GetPlayerSettings()
-	float health = GetPlayerSettingsFieldForClassName_Health( playerSettings )
+	float health = float( player.GetMaxHealth() ) //float( player.GetPlayerSettingsField( "health" ) )
+	if ( HasVanguardChassisUpgrade( player ) )
+		health += VANGUARD_CORE8_HEALTH_AMOUNT
 	float healthPerSegment = GetPlayerSettingsFieldForClassName_HealthPerSegment( playerSettings )
 	RuiSetInt( file.cockpitRui, "numHealthSegments", int( health / healthPerSegment ) )
 	RuiTrackFloat( file.cockpitRui, "cockpitColor", player, RUI_TRACK_STATUS_EFFECT_SEVERITY, eStatusEffect.cockpitColor )
@@ -317,8 +322,7 @@ string function GetVanguardCoreString( entity player, int index )
 	if ( player != GetLocalClientPlayer() )  //Client Persistence doesn't know about other players.
 		return ""
 
-	int loadoutIndex = GetPersistentSpawnLoadoutIndex( player, "titan" )
-	TitanLoadoutDef loadout = GetTitanLoadoutFromPersistentData( player, loadoutIndex )
+	TitanLoadoutDef loadout = GetActiveTitanLoadout( player )
 
 	entity soul = player.GetTitanSoul()
 	if ( !IsValid( soul ) )
@@ -836,13 +840,6 @@ void function PlayerPressed_Eject( entity player )
 	if ( player.p.ejectPressCount < 3 || cockpit.s.ejectStartTime )
 		return
 
-	if ( TitanEjectIsDisabled() )
-	{
-		EmitSoundOnEntity( player, "CoOp_SentryGun_DeploymentDeniedBeep" )
-		SetTimedEventNotification( 0.5, "#NOTIFY_EJECT_DISABLED" )
-		return
-	}
-
 	PlayerEjects( player, cockpit )
 }
 
@@ -1133,6 +1130,14 @@ void function PlayerPressed_EjectEnable( entity player )
 	if ( IsValid( player.GetParent() ) )
 		return
 
+	if ( TitanEjectIsDisabled() )
+	{
+		EmitSoundOnEntity( player, "CoOp_SentryGun_DeploymentDeniedBeep" )
+		SetTimedEventNotification( 1.5, "" )
+		SetTimedEventNotification( 1.5, "#NOTIFY_EJECT_DISABLED" )
+		return
+	}
+
 	if ( Riff_TitanExitEnabled() == eTitanExitEnabled.Never || 	Riff_TitanExitEnabled() == eTitanExitEnabled.DisembarkOnly )
 		return
 
@@ -1214,7 +1219,9 @@ void function TitanCockpitHealthChangedThink( cockpit, entity player )
 			RuiSetFloat( rui, "newHealthFrac", newHealthFrac )
 
 			string playerSettings = GetLocalViewPlayer().GetPlayerSettings()
-			float health = GetPlayerSettingsFieldForClassName_Health( playerSettings )
+			float health = float( player.GetMaxHealth() ) //float( player.GetPlayerSettingsField( "health" ) )
+	        if ( HasVanguardChassisUpgrade( player ) )
+		        health += VANGUARD_CORE8_HEALTH_AMOUNT
 			float healthPerSegment = GetPlayerSettingsFieldForClassName_HealthPerSegment( playerSettings )
 			RuiSetInt( rui, "numHealthSegments", int( health / healthPerSegment ) )
 		}
@@ -1427,6 +1434,20 @@ void function FlashCockpitHealthGreen()
 
 	RuiSetGameTime( file.cockpitRui, "startFlashGreenTime", Time() )
 }
+
+void function UpdateHealthSegmentCount()
+{
+	if ( file.cockpitRui == null )
+		return
+
+	entity player = GetLocalViewPlayer()
+	string playerSettings = player.GetPlayerSettings()
+	float health = float( player.GetMaxHealth() ) //float( player.GetPlayerSettingsField( "health" ) )
+	if ( HasVanguardChassisUpgrade( player ) )
+		health += VANGUARD_CORE8_HEALTH_AMOUNT
+	float healthPerSegment = GetPlayerSettingsFieldForClassName_HealthPerSegment( playerSettings )
+	RuiSetInt( file.cockpitRui, "numHealthSegments", int( health / healthPerSegment ) )
+}
 #if MP
 void function NetworkedVarChangedCallback_UpdateVanguardRUICoreStatus( entity soul, int oldValue, int newValue, bool actuallyChanged )
 {
@@ -1439,6 +1460,8 @@ void function NetworkedVarChangedCallback_UpdateVanguardRUICoreStatus( entity so
 	entity player = GetLocalViewPlayer()
 	if ( !IsValid( player ) || !player.IsTitan() )
 		return
+
+	UpdateHealthSegmentCount()
 
 	string titanName = GetTitanCharacterName( player )
 	if ( titanName == "vanguard" )

@@ -3,7 +3,6 @@ global function Search_UpdateNetworksMoreButton
 global function Search_UpdateInboxButtons
 global function IsWaitingBeforeMatchMaking
 global function LocalPlayerIsMixtapeSearching
-global function HandleMixtapeSearchCancel
 
 struct {
 	var chatroomMenu
@@ -48,8 +47,8 @@ void function InitSearchMenu()
 
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( menu, BUTTON_BACK, "#BACK_BUTTON_POSTGAME_REPORT", "#POSTGAME_REPORT", OpenPostGameMenu, IsPostGameMenuValid )
-	AddMenuFooterOption( menu, BUTTON_Y, "#Y_BUTTON_SKIP_WAIT_BEFORE_MATCHMAKING", "#SKIP_WAIT_BEFORE_MATCHMAKING", SkipMatchMakingWait, IsWaitingBeforeMatchMaking )
-	AddMenuFooterOption( menu, BUTTON_Y, "#Y_BUTTON_SKIP", "#SKIP", Mixtape_SearchSkip, Mixtape_ShouldShowSearchSkipPrompt )
+	AddMenuFooterOption( menu, MOUSE_MIDDLE, "", "#SKIP_WAIT_BEFORE_MATCHMAKING", SkipMatchMakingWait, IsWaitingBeforeMatchMaking )
+	AddMenuFooterOption( menu, BUTTON_Y, "", "", SkipMatchMakingWait, IsWaitingBeforeMatchMaking )
 	AddMenuFooterOption( menu, BUTTON_TRIGGER_RIGHT, "#R_TRIGGER_CHAT", "", null, IsVoiceChatPushToTalk )
 
 	InitChatroom( menu )
@@ -91,14 +90,6 @@ bool function LocalPlayerIsMixtapeSearching()
 		return false
 
 	return true
-}
-
-void function HandleMixtapeSearchCancel()
-{
-	if ( !LocalPlayerIsMixtapeSearching() )
-		return
-
-	ClientCommand( "MatchmakingAdvanceShuffleIndex" )
 }
 
 void function OnSearchMenu_Open()
@@ -158,8 +149,10 @@ void function OnSearchMenu_Open()
 		// "Store"
 		{
 			bool storeIsNew = DLCStoreShouldBeMarkedAsNew()
-			RuiSetBool( Hud_GetRui( file.storeHeader ), "isNew", storeIsNew )
+			var headerRui = Hud_GetRui( file.storeHeader )
+			RuiSetBool( headerRui, "isNew", storeIsNew )
 			ComboButton_SetNew( file.storeButton, storeIsNew )
+			RuiSetBool( headerRui, "isTitleTint", true )
 		}
 
 		// "Callsign"
@@ -185,10 +178,6 @@ void function OnSearchMenu_Open()
 
 void function OnSearchMenu_Close()
 {
-	var menu = GetMenu( "SearchMenu" )
-	var titleEl = Hud_GetChild( menu, "MenuTitle" )
-	Hud_SetText( titleEl, "" )
-
 	if ( GetUIPlayer() )
 		StopMatchmaking()
 }
@@ -339,7 +328,6 @@ void function SkipMatchMakingWait( var button )
 {
 	Signal( uiGlobal.signalDummy, "BypassWaitBeforeRestartingMatchmaking" )
 	UpdateFooterOptions()
-
 }
 
 bool function IsWaitingBeforeMatchMaking()

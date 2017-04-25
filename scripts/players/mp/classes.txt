@@ -41,27 +41,21 @@
 	// Titan
 	import	"titan_atlas.set"
 	import	"titan_atlas_stickybomb.set"
-	import	"titan_atlas_ion_prime.set"
 	import	"titan_atlas_tracker.set"
+	import	"titan_atlas_tracker_mortar.set"
 	import	"titan_atlas_vanguard.set"
+	import	"titan_atlas_ion_prime.set"
+	import	"titan_atlas_tone_prime.set"
 
 	import	"titan_buddy.set"
 	import	"titan_buddy_spare.set"
 	import	"titan_buddy_slow_walk.set"
 
-	import	"titan_heavy_deadbolt.set"
-	import	"titan_heavy_ogre.set"
-
-	import	"titan_light_locust.set"
-	import	"titan_light_raptor.set"
-
-	import	"titan_medium_ajax.set"
-	import	"titan_medium_wraith.set"
-
 	import	"titan_ogre.set"
 	import	"titan_ogre_berserker.set"
 	import	"titan_ogre_minigun.set"
 	import	"titan_ogre_meteor.set"
+	import	"titan_ogre_meteor_nuke.set"
 	import	"titan_ogre_scorch_prime.set"
 	import  "titan_ogre_legion_prime.set"
 
@@ -69,12 +63,10 @@
 	import	"titan_stryder_arc.set"
 	import	"titan_stryder_rocketeer.set"
 	import	"titan_stryder_leadwall.set"
+	import	"titan_stryder_leadwall_arc.set"
 	import	"titan_stryder_sniper.set"
 	import  "titan_stryder_northstar_prime.set"
-
-	// Titan Misc
-	import	"titan_ctt.set"
-	import	"titan_atlas_burncard.set"
+	import  "titan_stryder_ronin_prime.set"
 
 	// Special Cases
 	import	"spectator.set"

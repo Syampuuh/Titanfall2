@@ -9,11 +9,13 @@ global function ServerCallback_VanguardUpgradeMessage
 
 const LASER_CHAGE_FX_1P = $"P_handlaser_charge"
 const LASER_CHAGE_FX_3P = $"P_handlaser_charge"
+const FX_SHIELD_GAIN_SCREEN		= $"P_xo_shield_up"
 
 void function UpgradeCore_Init()
 {
 	RegisterSignal( "OnSustainedDischargeEnd" )
 
+	PrecacheParticleSystem( FX_SHIELD_GAIN_SCREEN )
 	PrecacheParticleSystem( LASER_CHAGE_FX_1P )
 	PrecacheParticleSystem( LASER_CHAGE_FX_3P )
 }
@@ -46,7 +48,10 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 				{
 					entity primaryWeapon = weapons[0]
 					if ( IsValid( primaryWeapon ) )
+					{
 						primaryWeapon.SetMods( [ "arc_rounds" ] )
+						primaryWeapon.SetWeaponPrimaryClipCount( primaryWeapon.GetWeaponPrimaryClipCount() + 10 )
+					}
 				}
 				if ( owner.IsPlayer() )
 				{
@@ -67,11 +72,11 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 					Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 2 )
 				}
 			}
-			else if ( SoulHasPassive( soul, ePassives.PAS_VANGUARD_CORE3 ) ) //Energy Field
+			else if ( SoulHasPassive( soul, ePassives.PAS_VANGUARD_CORE3 ) ) //Energy Transfer
 			{
 				entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_LEFT )
 				if ( IsValid( offhandWeapon ) )
-					offhandWeapon.SetMods( [ "energy_field" ] )
+					offhandWeapon.SetMods( [ "energy_transfer" ] )
 				if ( owner.IsPlayer() )
 				{
 					int conversationID = GetConversationIndex( "upgradeTo1" )
@@ -90,6 +95,17 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 					array<string> mods = offhandWeapon.GetMods()
 					mods.append( "rapid_rearm" )
 					offhandWeapon.SetMods( mods )
+				}
+				array<entity> weapons = GetPrimaryWeapons( owner )
+				if ( weapons.len() > 0 )
+				{
+					entity primaryWeapon = weapons[0]
+					if ( IsValid( primaryWeapon ) )
+					{
+						array<string> mods = primaryWeapon.GetMods()
+						mods.append( "rapid_reload" )
+						primaryWeapon.SetMods( mods )
+					}
 				}
 				if ( owner.IsPlayer() )
 				{
@@ -110,16 +126,16 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 					Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 5 )
 				}
 			}
-			else if ( SoulHasPassive( soul, ePassives.PAS_VANGUARD_CORE6 ) ) //Energy Transfer
+			else if ( SoulHasPassive( soul, ePassives.PAS_VANGUARD_CORE6 ) ) //Energy Field
 			{
 				entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_LEFT )
 				if ( IsValid( offhandWeapon ) )
 				{
 					array<string> mods = offhandWeapon.GetMods()
-					if ( mods.contains( "energy_field" ) )
+					if ( mods.contains( "energy_transfer" ) )
 						offhandWeapon.SetMods( [ "energy_field_energy_transfer" ] )
 					else
-						offhandWeapon.SetMods( [ "energy_transfer" ] )
+						offhandWeapon.SetMods( [ "energy_field" ] )
 				}
 				if ( owner.IsPlayer() )
 				{
@@ -135,34 +151,103 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 			{
 				if ( owner.IsPlayer() )
 				{
-					int conversationID = GetConversationIndex( "upgradeTo3" )
+					array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
+					int conversationID = GetConversationIndex( conversations.getrandom() )
 					Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
 					Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 7 )
 				}
+
+				entity ordnance = owner.GetOffhandWeapon( OFFHAND_RIGHT )
+				array<string> mods
+				if ( ordnance.HasMod( "missile_racks") )
+					mods = [ "upgradeCore_MissileRack_Vanguard" ]
+				else
+					mods = [ "upgradeCore_Vanguard" ]
+
+				float ammoFrac = float( ordnance.GetWeaponPrimaryClipCount() ) / float( ordnance.GetWeaponPrimaryClipCountMax() )
+				owner.TakeWeaponNow( ordnance.GetWeaponClassName() )
+				owner.GiveOffhandWeapon( "mp_titanweapon_shoulder_rockets", OFFHAND_RIGHT, mods )
+				ordnance = owner.GetOffhandWeapon( OFFHAND_RIGHT )
+				ordnance.SetWeaponChargeFractionForced( 1 - ammoFrac )
 			}
 			else if ( SoulHasPassive( soul, ePassives.PAS_VANGUARD_CORE8 ) ) //Superior Chassis
 			{
 				if ( owner.IsPlayer() )
 				{
-					int conversationID = GetConversationIndex( "upgradeTo3" )
+					array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
+					int conversationID = GetConversationIndex( conversations.getrandom() )
 					Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
 					Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 8 )
-				}
 
+					array<string> settingMods = owner.GetPlayerSettingsMods()
+					settingMods.append( "core_health_upgrade" )
+					owner.SetPlayerSettingsWithMods( owner.GetPlayerSettings(), settingMods )
+				}
+				else
+				{
+				  if ( !GetDoomedState( owner ) )
+				  {
+					  owner.SetMaxHealth( owner.GetMaxHealth() + VANGUARD_CORE8_HEALTH_AMOUNT )
+					  owner.SetHealth( owner.GetHealth() + VANGUARD_CORE8_HEALTH_AMOUNT )
+				  }
+				}
+				entity soul = owner.GetTitanSoul()
+				soul.SetPreventCrits( true )
 			}
 			else if ( SoulHasPassive( soul, ePassives.PAS_VANGUARD_CORE9 ) ) //XO-16 Battle Rifle
 			{
+				array<entity> weapons = GetPrimaryWeapons( owner )
+				if ( weapons.len() > 0 )
+				{
+					entity primaryWeapon = weapons[0]
+					if ( IsValid( primaryWeapon ) )
+					{
+						if ( primaryWeapon.HasMod( "arc_rounds" ) )
+						{
+							primaryWeapon.RemoveMod( "arc_rounds" )
+							array<string> mods = primaryWeapon.GetMods()
+							mods.append( "arc_rounds_with_battle_rifle" )
+							primaryWeapon.SetMods( mods )
+						}
+						else
+						{
+							array<string> mods = primaryWeapon.GetMods()
+							mods.append( "battle_rifle" )
+							mods.append( "battle_rifle_icon" )
+							primaryWeapon.SetMods( mods )
+						}
+					}
+				}
+
 				if ( owner.IsPlayer() )
 				{
-					int conversationID = GetConversationIndex( "upgradeTo3" )
+					array<string> conversations = [ "upgradeTo3", "upgradeToFin" ]
+					int conversationID = GetConversationIndex( conversations.getrandom() )
 					Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
 					Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 9 )
 				}
 			}
 		}
+		else
+		{
+			if ( owner.IsPlayer() )
+			{
+				int conversationID = GetConversationIndex( "upgradeShieldReplenish" )
+				Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
+			}
+		}
 		soul.SetTitanSoulNetInt( "upgradeCount", currentUpgradeCount + 1 )
 		int statesIndex = owner.FindBodyGroup( "states" )
 		owner.SetBodygroup( statesIndex, 1 )
+	#endif
+
+	#if CLIENT
+		if ( owner.IsPlayer() )
+		{
+			entity cockpit = owner.GetCockpit()
+			if ( IsValid( cockpit ) )
+				StartParticleEffectOnEntity( cockpit, GetParticleSystemIndex( FX_SHIELD_GAIN_SCREEN	), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
+		}
 	#endif
 	OnAbilityCharge_TitanCore( weapon )
 	OnAbilityStart_TitanCore( weapon )
@@ -180,9 +265,9 @@ void function UpgradeCoreThink( entity weapon, float coreDuration )
 	owner.EndSignal( "DisembarkingTitan" )
 	owner.EndSignal( "TitanEjectionStarted" )
 
-	EmitSoundOnEntityOnlyToPlayer( owner, owner, "Titan_Legion_Smart_Core_Activated_1P" )
-	EmitSoundOnEntityOnlyToPlayer( owner, owner, "Titan_Legion_Smart_Core_ActiveLoop_1P" )
-	EmitSoundOnEntityExceptToPlayer( owner, owner, "Titan_Legion_Smart_Core_Activated_3P" )
+	EmitSoundOnEntityOnlyToPlayer( owner, owner, "Titan_Monarch_Smart_Core_Activated_1P" )
+	EmitSoundOnEntityOnlyToPlayer( owner, owner, "Titan_Monarch_Smart_Core_ActiveLoop_1P" )
+	EmitSoundOnEntityExceptToPlayer( owner, owner, "Titan_Monarch_Smart_Core_Activated_3P" )
 	entity soul = owner.GetTitanSoul()
 	soul.SetShieldHealth( soul.GetShieldHealthMax() )
 
@@ -191,8 +276,8 @@ void function UpgradeCoreThink( entity weapon, float coreDuration )
 		{
 			if ( IsValid( owner ) )
 			{
-				StopSoundOnEntity( owner, "Titan_Legion_Smart_Core_ActiveLoop_1P" )
-				EmitSoundOnEntityOnlyToPlayer( owner, owner, "Titan_Legion_Smart_Core_Deactivated_1P" )
+				StopSoundOnEntity( owner, "Titan_Monarch_Smart_Core_ActiveLoop_1P" )
+				//EmitSoundOnEntityOnlyToPlayer( owner, owner, "Titan_Monarch_Smart_Core_Activated_1P" )
 			}
 
 			if ( IsValid( weapon ) )

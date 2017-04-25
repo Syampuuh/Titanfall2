@@ -507,6 +507,7 @@ void function Update2DCallsignElement( var element )
 	RuiSetImage( rui, "cardImage", callingCard.image )
 	RuiSetInt( rui, "layoutType", callingCard.layoutType )
 	RuiSetImage( rui, "iconImage", callsignIcon.image )
+	RuiSetImage( rui, "cardGenImage", PlayerXPGetGenIcon( player ) )
 	RuiSetString( rui, "playerLevel", PlayerXPDisplayGenAndLevel( GetGen(), GetLevel() ) )
 	RuiSetString( rui, "playerName", GetPlayerName() )
 }
@@ -545,6 +546,8 @@ void function Reset2DCallsignCardElement(  var element, entity player )
 
 	RuiSetImage( rui, "cardImage", callsignCard.image )
 	RuiSetInt( rui, "layoutType", callsignCard.layoutType )
+	RuiSetImage( rui, "cardGenImage", PlayerXPGetGenIcon( player ) )
+	RuiSetString( rui, "playerLevel", PlayerXPDisplayGenAndLevel( GetGen(), GetLevel() ) )
 }
 
 void function Update2DCallsignIconElement( var element, CallsignIcon callsignIcon )

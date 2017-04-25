@@ -572,8 +572,9 @@ WeaponData
 			//"bodygroup1_set"							"0"
 			//"bodygroup4_set"							"1"
 
-			"damage_near_value"   							"50"
+			"damage_near_value"   							"45"
 			"damage_far_value"								"40"
+			"damage_very_far_value"							"30"
 			"damage_near_value_titanarmor"					"180"
 			"damage_far_value_titanarmor" 					"160"
 

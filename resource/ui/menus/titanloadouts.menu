@@ -68,9 +68,9 @@ resource/ui/menus/titanloadouts.menu
 	    TitanLoadoutDisplay
 	    {
 		    ControlName				CNestedPanel
-		    xpos					256
+		    xpos					370
 		    ypos					170
-		    zpos					10
+		    zpos					1
 			wide					2048
 			tall					1080
 		    visible					1

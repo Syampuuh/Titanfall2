@@ -264,7 +264,7 @@ void function PlayerUpdateTeamTitanSelectionThink( entity player )
 		array<entity> team = GetPlayerArrayOfTeam( player.GetTeam() )
 		foreach( teamMember in team )
 		{
-			if ( IsPrivateMatch() && teamMember.GetPersistentVarAsInt( "privateMatchState" ) == 1 )
+			if ( IsPrivateMatchSpectator( player ) )
 				continue
 
 			TitanLoadoutDef loadout = GetTitanLoadoutForPlayer( teamMember )

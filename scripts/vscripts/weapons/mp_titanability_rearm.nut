@@ -20,6 +20,9 @@ var function OnWeaponPrimaryAttack_titanability_rearm( entity weapon, WeaponPrim
 	#if SERVER
 	if ( weaponOwner.IsPlayer() )//weapon.HasMod( "rapid_rearm" ) &&  )
 			weaponOwner.Server_SetDodgePower( 100.0 )
+
+	if ( ordnance.IsChargeWeapon() )
+		ordnance.SetWeaponChargeFractionForced( 0 )
 	#endif
 	weapon.SetWeaponPrimaryClipCount( 0 )//used to skip the fire animation
 	return 0
@@ -40,8 +43,15 @@ bool function OnWeaponAttemptOffhandSwitch_titanability_rearm( entity weapon )
 
 	entity ordnance = weaponOwner.GetOffhandWeapon( OFFHAND_RIGHT )
 	entity defensive = weaponOwner.GetOffhandWeapon( OFFHAND_LEFT )
+
 	if ( ordnance.GetWeaponPrimaryClipCount() == ordnance.GetWeaponPrimaryClipCountMax() && defensive.GetWeaponPrimaryClipCount() == defensive.GetWeaponPrimaryClipCountMax() )
 		allowSwitch = false
+
+	if ( ordnance.IsBurstFireInProgress() )
+		allowSwitch = false
+
+	if ( ordnance.IsChargeWeapon() && ordnance.GetWeaponChargeFraction() > 0.0 )
+		allowSwitch = true
 
 	//if ( weapon.HasMod( "rapid_rearm" ) )
 	//{
@@ -54,8 +64,12 @@ bool function OnWeaponAttemptOffhandSwitch_titanability_rearm( entity weapon )
 		// Play SFX and show some HUD feedback here...
 		#if CLIENT
 			AddPlayerHint( 1.0, 0.25, $"rui/titan_loadout/tactical/titan_tactical_rearm", "#WPN_TITANABILITY_REARM_ERROR_HINT" )
+			if ( weaponOwner == GetLocalViewPlayer() )
+				EmitSoundOnEntity( weapon, "titan_dryfire" )
 		#endif
 	}
 
 	return allowSwitch
 }
+
+//UPDATE TO RESTORE CHARGE FOR THE MTMS

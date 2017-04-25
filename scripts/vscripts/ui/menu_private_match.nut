@@ -10,9 +10,6 @@ global function PrivateMatchSwitchTeams
 
 //global function SCB_RefreshLobby
 
-global function GetPrivateMatchMapNameForEnum
-global function GetModeNameForEnum
-
 global function HandleLockedCustomMenuItem
 global function GetMapImageForMapName
 
@@ -124,6 +121,11 @@ const table<asset> mapImages =
 	mp_angel_city = $"loadscreens/mp_angle_city_r2_lobby",
 	mp_colony02 = $"loadscreens/mp_colony02_lobby",
 	mp_glitch = $"loadscreens/mp_glitch_lobby",
+	mp_lf_stacks = $"loadscreens/mp_stacks_lobby",
+	mp_lf_meadow = $"loadscreens/mp_meadow_lobby",
+	mp_lf_deck = $"loadscreens/mp_lf_deck_lobby",
+	mp_coliseum = $"loadscreens/mp_coliseum_lobby",
+	mp_coliseum_column = $"loadscreens/mp_coliseum_column_lobby",
 }
 
 void function MenuPrivateMatch_Init()
@@ -641,6 +643,10 @@ void function SetModeInfo( string modeName )
 		return
 	}
 
+	var nextModeIcon = Hud_GetChild( file.menu, "NextMapIcon" )
+	RuiSetImage( Hud_GetRui( nextModeIcon ), "basicImage", GetPlaylistThumbnailImage( modeName ) )
+	Hud_Show( nextModeIcon )
+
 	Hud_SetText( file.nextGameModeLabel, GAMETYPE_TEXT[modeName] )
 	Hud_Show( file.nextGameModeLabel )
 }
@@ -683,17 +689,6 @@ void function SetPlaylistDisplayedMapAndModeByIndex( string playlistName, int ma
 	SetDisplayedMapAndMode( mapName, modeName )
 }
 
-function GetPrivateMatchMapNameForEnum( enumVal )
-{
-	foreach ( name, id in getconsttable().ePrivateMatchMaps )
-	{
-		if ( id == enumVal )
-			return name
-	}
-
-	return null
-}
-
 function Privatematch_map_Changed()
 {
 	if ( !IsPrivateMatch() )
@@ -702,8 +697,8 @@ function Privatematch_map_Changed()
 		return
 	if ( !IsLobby() )
 		return
-
-	local mapName = GetPrivateMatchMapNameForEnum( level.ui.privatematch_map )
+	
+	local mapName = PrivateMatch_GetSelectedMap()
 	if ( !mapName )
 		mapName = ""
 	expect string( mapName )
@@ -711,16 +706,6 @@ function Privatematch_map_Changed()
 }
 
 
-function GetModeNameForEnum( enumVal )
-{
-	foreach ( name, id in getconsttable().ePrivateMatchModes )
-	{
-		if ( id == enumVal )
-			return name
-	}
-
-	return null
-}
 
 function Privatematch_mode_Changed()
 {
@@ -731,7 +716,7 @@ function Privatematch_mode_Changed()
 	if ( !IsLobby() )
 		return
 
-	local modeName = GetModeNameForEnum( level.ui.privatematch_mode )
+	local modeName = PrivateMatch_GetSelectedMode()
 	if ( !modeName )
 		modeName = ""
 	expect string( modeName )
@@ -1231,7 +1216,7 @@ void function OnCommunityButton_Activate( var button )
 
 void function OnStartMatchButton_Activate( var button )
 {
-	if ( AmIPartyLeader() )
+	if ( AmIPartyLeader() || GetPartySize() == 1 )
 		ClientCommand( "PrivateMatchLaunch" )
 }
 

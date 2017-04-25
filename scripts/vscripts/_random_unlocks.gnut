@@ -87,7 +87,7 @@ void function InitRandomUnlocks()
 			ref = ref.slice( periodPos + 1 )
 		}
 
-		if ( IsDisabledRef( ref ) || IsDisabledRef( parentRef ) )
+		if ( IsDisabledRef( ref ) || IsDisabledRef( parentRef ) || !ItemDefined( ref ) )
 			continue
 
 #if DEV
@@ -515,44 +515,31 @@ bool function PlayerRandomUnlock_GiveItemOfUnlockType( entity player, int unlock
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLSIGN_ICON ] )
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.PILOT_EXECUTION ] )
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.FEATURE ] )
-
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN ] )
 			break
 
 		case eUnlockType.FACTION_LEVEL:
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLING_CARD ] )
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.FEATURE ] )
-
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_PILOT ] )
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_TITAN ] )
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN ] )
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLSIGN_ICON ] )
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.PILOT_EXECUTION ] )
-
 			break
 
 		case eUnlockType.WEAPON_LEVEL:
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN ] )
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.FEATURE ] )
-
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_PILOT ] )
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_TITAN ] )
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLING_CARD ] )
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLSIGN_ICON ] )
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.PILOT_EXECUTION ] )
 			break
 
 		case eUnlockType.TITAN_LEVEL:
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_TITAN ] )
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN ] )
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.FEATURE ] )
-
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_PILOT ] )
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLING_CARD ] )
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLSIGN_ICON ] )
-			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.PILOT_EXECUTION ] )
 			break
 	}
+
+	fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_TITAN ] )
+	fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_PILOT ] )
+	fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN ] )
+	fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLING_CARD ] )
+	fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLSIGN_ICON ] )
+	fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.PILOT_EXECUTION ] )
 
 	if ( GetColiseumAwardCount( player ) > 0 )
 	{
@@ -656,6 +643,21 @@ bool function RandomUnlocksAreAllReplenishable( array<RandomUnlockItem> ruItems 
 	return true
 }
 
+bool function AreWeightsBalanced( array<RandomUnlockItem> validUnlocks )
+{
+	float replenishableWeight = 0
+	float otherWeight = 0
+	foreach ( RandomUnlockItem ruItem in validUnlocks )
+	{
+		if ( RandomUnlockIsReplenishable( ruItem ) )
+			replenishableWeight += ruItem.weight
+		else
+			otherWeight += ruItem.weight
+	}
+
+	return otherWeight >= replenishableWeight
+}
+
 RandomUnlockItem ornull function GetRandomUnlockItem( entity player, array<RandomUnlockItem> possibleUnlocks, array<RandomUnlockItem> fallbackUnlocks, string parentRef = "" )
 {
 	array<RandomUnlockItem> validUnlocks
@@ -679,10 +681,13 @@ RandomUnlockItem ornull function GetRandomUnlockItem( entity player, array<Rando
 
 	printt( "valid unlocks: ", validUnlocks.len() )
 
-	if ( validUnlocks.len() == 0 || RandomUnlocksAreAllReplenishable( validUnlocks ) )
+	if ( validUnlocks.len() == 0 || RandomUnlocksAreAllReplenishable( validUnlocks ) || !AreWeightsBalanced( validUnlocks ) )
 	{
-		foreach ( ruItem in fallbackUnlocks )
+		fallbackUnlocks.randomize()
+		for ( int index = 0; index < fallbackUnlocks.len(); index++ )
 		{
+			RandomUnlockItem ruItem = fallbackUnlocks[index]
+
 			if ( ruItem.parentRef == "" )
 			{
 				if ( IsItemLocked( player, ruItem.ref ) || RandomUnlockIsReplenishable( ruItem ) )
@@ -690,12 +695,18 @@ RandomUnlockItem ornull function GetRandomUnlockItem( entity player, array<Rando
 			}
 			else
 			{
+				string checkParentRef = parentRef
 				if ( ruItem.parentRef != parentRef )
-					continue
+					checkParentRef = ""
 
-				if ( !IsItemLocked( player, parentRef ) && IsSubItemLocked( player, ruItem.ref, ruItem.parentRef ) )
+				checkParentRef = ruItem.parentRef
+
+				if ( !IsItemLocked( player, checkParentRef ) && IsSubItemLocked( player, ruItem.ref, ruItem.parentRef ) )
 					validUnlocks.append( ruItem )
 			}
+
+			if ( AreWeightsBalanced( validUnlocks ) )
+				break
 		}
 
 		printt( "valid unlocks after fallback: ", validUnlocks.len() )

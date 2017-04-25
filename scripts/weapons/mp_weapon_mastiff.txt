@@ -204,7 +204,7 @@ WeaponData
 	//"bolt_hitsize"								"20"
 
 	"bolt_hitsize"									"0.5"
-	"bolt_hitsize_grow1_time"						"0.075"
+	"bolt_hitsize_grow1_time"						"0.025"
 	"bolt_hitsize_grow1_size"						"5.0"
 	"bolt_hitsize_grow2_time"						"0.18"
 	"bolt_hitsize_grow2_size"						"10.0"

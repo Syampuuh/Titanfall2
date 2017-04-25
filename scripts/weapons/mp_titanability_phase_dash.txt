@@ -22,6 +22,8 @@ WeaponData
 	"stat_accuracy"   								"50"
 	"stat_rof"										"40"
 
+	"sound_dryfire"   								"titan_dryfire"
+
 	// Effects
 	"impact_effect_table" 							"exp_rocket_dumbfire"
 	"projectile_trail_effect_0" 					"Rocket_Smoke_SMALL_Titan_2"

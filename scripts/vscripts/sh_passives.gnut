@@ -115,7 +115,6 @@ global enum ePassives
 	PAS_VANGUARD_SHIELD,
 	PAS_VANGUARD_REARM,
 	PAS_VANGUARD_DOOM,
-	PAS_VANGUARD_UPGRADE,
 	PAS_VANGUARD_CORE1,
 	PAS_VANGUARD_CORE2,
 	PAS_VANGUARD_CORE3,
@@ -218,7 +217,6 @@ global const _PassiveFromEnum = {
 	[ "pas_vanguard_shield" ]				= ePassives.PAS_VANGUARD_SHIELD,
 	[ "pas_vanguard_rearm" ]				= ePassives.PAS_VANGUARD_REARM,
 	[ "pas_vanguard_doom" ]					= ePassives.PAS_VANGUARD_DOOM,
-	[ "pas_vanguard_upgrade" ]				= ePassives.PAS_VANGUARD_UPGRADE,
 	[ "pas_vanguard_core1" ]				= ePassives.PAS_VANGUARD_CORE1,
 	[ "pas_vanguard_core2" ]				= ePassives.PAS_VANGUARD_CORE2,
 	[ "pas_vanguard_core3" ]				= ePassives.PAS_VANGUARD_CORE3,
@@ -298,7 +296,6 @@ function PassivesShared_Init()
 	level.titanPassives[ ePassives.PAS_VANGUARD_SHIELD ] <- true
 	level.titanPassives[ ePassives.PAS_VANGUARD_REARM ] <- true
 	level.titanPassives[ ePassives.PAS_VANGUARD_DOOM ] <- true
-	level.titanPassives[ ePassives.PAS_VANGUARD_UPGRADE ] <- true
 	level.titanPassives[ ePassives.PAS_VANGUARD_CORE1 ] <- true
 	level.titanPassives[ ePassives.PAS_VANGUARD_CORE2 ] <- true
 	level.titanPassives[ ePassives.PAS_VANGUARD_CORE3 ] <- true

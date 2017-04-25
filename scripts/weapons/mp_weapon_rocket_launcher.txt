@@ -21,6 +21,7 @@ WeaponData
 	"OnWeaponDeactivate"							"OnWeaponDeactivate_weapon_rocket_launcher"
 	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_weapon_rocket_launcher"
 	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_weapon_rocket_launcher"
+	"OnWeaponOwnerChanged"                          "OnWeaponOwnerChanged_weapon_rocket_launcher"
 
 	// Menu
 	"menu_category"                                 "at"
@@ -499,6 +500,19 @@ WeaponData
 
 			"smart_ammo_targeting_time_min"				"0.5"
 			"smart_ammo_targeting_time_max"				"0.9"
+		}
+		fd_mortar_mode
+		{
+			"spread_stand_hip"  							"0"
+        	"spread_stand_ads"   							"0"
+        	"damage_near_value"         					"*0.0"
+        	"damage_far_value"			            		"*0.0"
+            "damage_near_value_titanarmor"					"*0.15"
+            "damage_far_value_titanarmor" 					"*0.15"
+            "explosion_damage"								"*0.0"
+            "explosion_damage_heavy_armor"					"*0.15"
+            "explosion_inner_radius"  						"*0"
+            "explosionradius" 								"*0"
 		}
 	}
 	

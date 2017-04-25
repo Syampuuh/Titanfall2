@@ -29,7 +29,6 @@ resource/ui/menus/modselect.menu
 			drawColor				"0 0 0 0"
 			labelText 				""
 			rui                     "ui/basic_image.rpak"
-			OverrideTallIfNotBitmap 0
 		}
 
 		ButtonFrame

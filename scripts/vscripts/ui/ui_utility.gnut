@@ -544,3 +544,19 @@ void function PrintPartyData()
 		printt( member.name, "uid:", member.uid, "callsignIdx:", member.callsignIdx, "skillMu:", member.skillMu )
 	}
 }
+
+void function PlayVideoFullScreen( string video, bool showCaptions = false )
+{
+	PlayVideo( video, 0, 0, 0, 0, showCaptions )
+}
+
+void function PlayVideoUsingPanelRect( string video, var panel )
+{
+	int xPos = Hud_GetX( panel )
+	int yPos = Hud_GetY( panel )
+	int width = Hud_GetWidth( panel )
+	int height = Hud_GetHeight( panel )
+
+	PlayVideo( video, xPos, yPos, width, height, false )
+}
+

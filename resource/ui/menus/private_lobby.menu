@@ -112,14 +112,14 @@ resource/ui/menus/private_lobby.menu
 		NextMapImage
 		{
 			ControlName				RuiPanel
-			wide					540
-			tall					304
+			wide					512
+			tall					288
 			visible					0
 			scaleImage				1
 			image					""
 			zpos -1
 
-            ypos                    420
+            ypos                    440
 
             rui                     "ui/basic_menu_image.rpak"
 
@@ -163,6 +163,23 @@ resource/ui/menus/private_lobby.menu
 			allcaps					1
 			fgcolor_override		"255 255 255 255"
 		}
+
+        NextMapIcon
+        {
+            ControlName				RuiPanel
+            wide					72
+            tall					72
+            visible					0
+            scaleImage				1
+            image					""
+
+            rui                     "ui/basic_image_add.rpak"
+
+            pin_to_sibling			NextGameModeName
+            pin_corner_to_sibling	BOTTOM_LEFT
+            pin_to_sibling_corner	TOP_LEFT
+        }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

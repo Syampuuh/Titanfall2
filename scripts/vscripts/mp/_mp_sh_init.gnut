@@ -19,6 +19,8 @@ void function SPMP_Shared_Init()
 
 #if DEVSCRIPTS
 	ShDpadComms_Init()
+	PVETactical_SharedInit()
+	ShInitBoostStore()
 #endif
 }
 
@@ -252,6 +254,7 @@ void function Server_MP_Init()
 	Melee_Init()
 	Rodeo_Init()
 
+	CloakDrone_Init()
 	AiPersonalShield()
 	ATTurrets_Init()
 
@@ -274,7 +277,10 @@ void function Server_MP_Init()
 
 	PIN_Init()
 
-	AbilityChooser_Init()
+	#if DEVSCRIPTS
+		AbilityChooser_Init()
+		InitBatteryPort()
+	#endif
 
 	// NOTE this should run after level scripts get a chance to override default behavior
 	if ( IsMultiplayerPlaylist() )

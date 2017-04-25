@@ -512,6 +512,10 @@ void function OnEditTitanSlotButton_Activate( var button )
 			AdvanceMenu( GetMenu( "DecalSelectMenu" ) )
 			break
 
+		case "titanExecution":
+			AdvanceMenu( GetMenu( "AbilitySelectMenu" ) )
+			break
+
 		default:
 			break
 	}

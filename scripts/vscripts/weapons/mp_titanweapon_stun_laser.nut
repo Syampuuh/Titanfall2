@@ -9,9 +9,14 @@ global function OnWeaponNPCPrimaryAttack_titanweapon_stun_laser
 
 const FX_EMP_BODY_HUMAN			= $"P_emp_body_human"
 const FX_EMP_BODY_TITAN			= $"P_emp_body_titan"
+const FX_SHIELD_GAIN_SCREEN		= $"P_xo_shield_up"
+
 
 void function MpTitanWeaponStunLaser_Init()
 {
+
+	PrecacheParticleSystem( FX_SHIELD_GAIN_SCREEN )
+
 	#if SERVER
 		AddDamageCallbackSourceID( eDamageSourceId.mp_titanweapon_stun_laser, StunLaser_DamagedTarget )
 	#endif
@@ -71,13 +76,16 @@ void function StunLaser_DamagedTarget( entity target, var damageInfo )
 	{
 		DamageInfo_SetDamage( damageInfo, 0 )
 		entity attackerSoul = attacker.GetTitanSoul()
-		if ( target.IsTitan() && IsValid( attackerSoul ) && attackerSoul.soul.upgradeCount >= 2 && SoulHasPassive( attackerSoul, ePassives.PAS_VANGUARD_CORE6 ) )
+		if ( target.IsTitan() && IsValid( attackerSoul ) && attackerSoul.GetTitanSoulNetInt( "upgradeCount" ) >= 1 && SoulHasPassive( attackerSoul, ePassives.PAS_VANGUARD_CORE3 ) )
 		{
 			entity soul = target.GetTitanSoul()
 			if ( IsValid( soul ) )
-				soul.SetShieldHealth( soul.GetShieldHealth() + 750 )
+				soul.SetShieldHealth( min( soul.GetShieldHealth() + 750, soul.GetShieldHealthMax() ) )
+			if ( target.IsPlayer() )
+				MessageToPlayer( target, eEventNotifications.VANGUARD_ShieldGain, target )
+
 			if ( attacker.IsPlayer() )
-				MessageToPlayer( attacker, eEventNotifications.VANGUARD_ShieldGain, attacker )
+				EmitSoundOnEntityOnlyToPlayer( target, attacker, "EnergySyphon_ShieldGive" )
 		}
 	}
 	else
@@ -85,7 +93,7 @@ void function StunLaser_DamagedTarget( entity target, var damageInfo )
 		int shieldRestoreAmount = target.GetArmorType() == ARMOR_TYPE_HEAVY ? 750 : 250
 		entity soul = attacker.GetTitanSoul()
 		if ( IsValid( soul ) )
-			soul.SetShieldHealth( soul.GetShieldHealth() + shieldRestoreAmount )
+			soul.SetShieldHealth( min( soul.GetShieldHealth() + shieldRestoreAmount, soul.GetShieldHealthMax() ) )
 		if ( attacker.IsPlayer() )
 			MessageToPlayer( attacker, eEventNotifications.VANGUARD_ShieldGain, attacker )
 	}
@@ -97,6 +105,14 @@ void function StunLaser_DamagedTarget( entity target, var damageInfo )
 void function Vanguard_ShieldGain( entity attacker, var eventVal )
 {
 	if ( attacker.IsPlayer() )
-		PlayBatteryScreenFX( attacker )
+	{
+		//FlashCockpitHealthGreen()
+		EmitSoundOnEntity( attacker, "EnergySyphon_ShieldRecieved"  )
+		entity cockpit = attacker.GetCockpit()
+		if ( IsValid( cockpit ) )
+			StartParticleEffectOnEntity( cockpit, GetParticleSystemIndex( FX_SHIELD_GAIN_SCREEN	), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
+		Rumble_Play( "rumble_titan_battery_pickup", { position = attacker.GetOrigin() } )
+	}
+
 }
 #endif

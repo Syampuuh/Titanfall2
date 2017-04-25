@@ -64,7 +64,7 @@ void function OnPlayVideoMenu_Open()
 	if ( GetLanguage() != "english" && file.video != INTRO_VIDEO )
 		forceUseCaptioning = true
 
-	PlayVideo( file.video, forceUseCaptioning )
+	PlayVideoFullScreen( file.video, forceUseCaptioning )
 	EmitUISound( GetMilesAudioForVideo( file.video ) )
 	uiGlobal.playingVideo = true
 

@@ -20,7 +20,7 @@ WeaponData
 	"instant_swap_to"								"1"
 
 	//"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_burncardweapon"
-	//"OnWeaponAttemptOffhandSwitch"                  "OnWeaponAttemptOffhandSwitch_burncardweapon"
+	"OnWeaponAttemptOffhandSwitch"                  "OnWeaponAttemptOffhandSwitch_burncardweapon"
 	"OnWeaponPrimaryAttackAnimEvent"				"OnWeaponPrimaryAttackAnimEvent_burncardweapon"
 	"OnWeaponActivate"								"OnWeaponActivate_burncardweapon"
 	"OnWeaponDeactivate"							"OnWeaponDeactivate_burncardweapon"
@@ -175,6 +175,13 @@ WeaponData
 				"readymessage"              "#HUD_BURNMETER_READY_RADAR_JAMMER"
 				"readyhint"                 "#HUD_BURNMETER_READY_RADAR_JAMMER_HINT"
 			}
+
+			burnmeter_nuke_titan
+            {
+                "hud_icon"				    "rui/menu/boosts/boost_icon_nuke"
+                "readymessage"              "#HUD_BURNMETER_READY_NUKE_TITAN"
+                "readyhint"                 "#HUD_BURNMETER_READY_NUKE_TITAN_DESC"
+            }
 		}
 
 	RUI_CrosshairData

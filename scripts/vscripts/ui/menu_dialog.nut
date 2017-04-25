@@ -424,7 +424,9 @@ bool function ShouldUpdateMenuForDialogFooterVisibility( var menu )
 function ServerCallback_OpenPilotLoadoutMenu()
 {
 	if ( uiGlobal.activeMenu == null)
+	{
 		AdvanceMenu( GetMenu( "PilotLoadoutsMenu" ) )
+	}
 }
 
 function SCBUI_PlayerConnectedOrDisconnected( joinSound )
@@ -553,8 +555,6 @@ void function CancelRestartingMatchmaking()
 
 void function CancelSearch()
 {
-	HandleMixtapeSearchCancel()
-
 	CloseActiveMenu() // "SearchMenu"
 	CancelMatchmaking()
 }

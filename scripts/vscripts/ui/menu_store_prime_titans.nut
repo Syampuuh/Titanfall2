@@ -249,7 +249,7 @@ void function RefreshEntitlements()
 
 		if ( !button.s.hasEntitlement && hasEntitlement )
 		{
-			ClientCommand( "StoreSetNewItemStatus" + uiGlobal.entitlementId + " " + loadout.primeTitanRef )
+			ClientCommand( "StoreSetNewItemStatus " + entitlementIds[ 0 ] + " " + loadout.primeTitanRef )
 		}
 
 		button.s.entitlementId <- entitlementIds[ 0 ]

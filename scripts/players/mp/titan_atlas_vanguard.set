@@ -23,6 +23,9 @@
 	{
 		printname			"#NPC_TITAN_AUTO_ATLAS_VANGUARD"
 
+		bodymodel			"models/titans/medium/titan_medium_vanguard.mdl"
+		armsmodel			"models/weapons/arms/pov_titan_medium_vanguard.mdl"
+
 		dodge  1
 		dodgePowerDrain		100
 		powerregenrate 		16.66
@@ -41,6 +44,11 @@
 			pas_vanguard_shield
 			{
 
+			}
+
+			core_health_upgrade
+			{
+				health			15000	[$mp]
 			}
 		}
 	}

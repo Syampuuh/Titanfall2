@@ -167,12 +167,14 @@ global struct CommunityUserInfo
 	string kills
 	string deaths
 	string xp
+	int gen
+	int lvl
 	int wins
 	int losses
 	int ties
 	int callSignIdx
 	int callingCardIdx
-	int isLivestreaming
+	bool isLivestreaming
 
 	int numCommunities
 }
@@ -262,6 +264,29 @@ global struct InboxMessage
 	string messageText
 	string actionLabel
 	string actionURL
+}
+
+global struct MainMenuPromos
+{
+	int version,
+
+	int newInfo_ImageIndex,
+	string newInfo_Title1,
+	string newInfo_Title2,
+	string newInfo_Title3,
+
+	int largeButton_ImageIndex,
+	string largeButton_Title,
+	string largeButton_Url,
+	string largeButton_Text,
+
+	int smallButton1_ImageIndex,
+	string smallButton1_Title,
+	string smallButton1_Url,
+
+	int smallButton2_ImageIndex,
+	string smallButton2_Title,
+	string smallButton2_Url
 }
 
 global struct VortexBulletHit

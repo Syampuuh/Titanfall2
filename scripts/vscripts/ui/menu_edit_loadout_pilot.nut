@@ -463,6 +463,9 @@ void function OnRenameEditBox_LostFocus( var elem )
 		return
 
 	string oldName = GetPilotLoadoutName( GetCachedPilotLoadout( uiGlobal.editingLoadoutIndex ) )
+	if ( oldName == "" )
+		oldName = Localize( "#SETTING_SENSITIVITY_DEFAULT" )
+
 	string newName = GetPilotLoadoutRenameText()
 
 	// strip doesn't work on UTF-8 strings

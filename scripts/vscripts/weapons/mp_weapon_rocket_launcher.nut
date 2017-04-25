@@ -5,6 +5,7 @@ global function MpWeaponRocketLauncher_Init
 global function OnWeaponActivate_weapon_rocket_launcher
 global function OnWeaponDeactivate_weapon_rocket_launcher
 global function OnWeaponPrimaryAttack_weapon_rocket_launcher
+global function OnWeaponOwnerChanged_weapon_rocket_launcher
 
 #if SERVER
 global function OnWeaponNpcPrimaryAttack_weapon_rocket_launcher
@@ -84,13 +85,13 @@ void function OnWeaponActivate_weapon_rocket_launcher( entity weapon )
 		}
 		else
 		{
-			SmartAmmo_SetMissileSpeed( weapon, 1800 )
-			SmartAmmo_SetMissileHomingSpeed( weapon, 300 )
+			SmartAmmo_SetMissileSpeed( weapon, 1200 )
+			SmartAmmo_SetMissileHomingSpeed( weapon, 125 )
 
 			if ( weapon.HasMod( "burn_mod_rocket_launcher" ) )
-				SmartAmmo_SetMissileSpeedLimit( weapon, 1600 )
+				SmartAmmo_SetMissileSpeedLimit( weapon, 1300 )
 			else
-				SmartAmmo_SetMissileSpeedLimit( weapon, 2000 )
+				SmartAmmo_SetMissileSpeedLimit( weapon, 1400 )
 		}
 
 		SmartAmmo_SetMissileShouldDropKick( weapon, false )  // TODO set to true to see drop kick behavior issues
@@ -208,7 +209,13 @@ var function OnWeaponNpcPrimaryAttack_weapon_rocket_launcher( entity weapon, Wea
 	weapon.EmitWeaponNpcSound( LOUD_WEAPON_AI_SOUND_RADIUS_MP, 0.2 )
 	entity missile = weapon.FireWeaponMissile( attackParams.pos, attackParams.dir, 1800.0, damageTypes.projectileImpact, damageTypes.explosive, false, PROJECTILE_NOT_PREDICTED )
 	if ( missile )
+	{
 		missile.InitMissileForRandomDriftFromWeaponSettings( attackParams.pos, attackParams.dir )
+		if ( weapon.w.missileFiredCallback != null )
+		{
+			weapon.w.missileFiredCallback( missile, weapon.GetWeaponOwner() )
+		}
+	}
 }
 #endif // #if SERVER
 
@@ -294,3 +301,11 @@ function playerHasMissileInFlight( entity weaponOwner, entity missile )
 	WaitSignal( missile, "OnDestroy" )
 }
 #endif // SERVER
+
+
+void function OnWeaponOwnerChanged_weapon_rocket_launcher( entity weapon, WeaponOwnerChangedParams changeParams )
+{
+	#if SERVER
+		weapon.w.missileFiredCallback = null
+	#endif
+}

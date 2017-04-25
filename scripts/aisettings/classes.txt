@@ -43,6 +43,7 @@ classes
 	import npc_soldier_pve_specialist.txt
 	import npc_soldier_pve_eliteguard.txt
 	import npc_spectre.txt
+    import npc_spectre_mortar.txt
 	import npc_stalker.txt
 	import npc_stalker_crawling.txt
 	import npc_stalker_crawling_mossy.txt
@@ -56,7 +57,9 @@ classes
 	import npc_titan_arc.txt
 	import npc_titan_atlas.txt
 	import npc_titan_atlas_stickybomb.txt
+	import npc_titan_atlas_stickybomb_boss_fd.txt
 	import npc_titan_atlas_tracker.txt
+	import npc_titan_atlas_tracker_boss_fd.txt
 	import npc_titan_atlas_tracker_mortar.txt
 	import npc_titan_atlas_vanguard.txt
 	import npc_titan_auto.txt
@@ -65,6 +68,7 @@ classes
 	import npc_titan_auto_atlas_stickybomb.txt
 	import npc_titan_auto_atlas_ion_prime.txt
 	import npc_titan_auto_atlas_tracker.txt
+	import npc_titan_auto_atlas_tone_prime.txt
 	import npc_titan_auto_atlas_vanguard.txt
 	import npc_titan_auto_ogre.txt
 	import npc_titan_auto_ogre_fighter.txt
@@ -75,6 +79,7 @@ classes
 	import npc_titan_auto_stryder.txt
 	import npc_titan_auto_stryder_arc.txt
 	import npc_titan_auto_stryder_leadwall.txt
+	import npc_titan_auto_stryder_ronin_prime.txt
 	import npc_titan_auto_stryder_sniper.txt
 	import npc_titan_auto_stryder_northstar_prime.txt
 	import npc_titan_buddy.txt
@@ -87,7 +92,9 @@ classes
 	import npc_titan_ogre_fighter_berserker_core.txt
 	import npc_titan_ogre_meteor.txt
 	import npc_titan_ogre_meteor_nuke.txt
+	import npc_titan_ogre_meteor_boss_fd.txt
 	import npc_titan_ogre_minigun.txt
+	import npc_titan_ogre_minigun_boss_fd.txt
 	import npc_titan_proto_stasisgun.txt
 	import npc_titan_sarah.txt
 	import npc_titan_vanguard.txt
@@ -95,10 +102,13 @@ classes
 	import npc_titan_stryder.txt
 	import npc_titan_stryder_arc.txt
 	import npc_titan_stryder_leadwall.txt
+	import npc_titan_stryder_leadwall_boss_fd.txt
 	import npc_titan_stryder_leadwall_shift_core.txt
+	import npc_titan_stryder_leadwall_arc.txt
 	import npc_titan_stryder_rocketeer.txt
 	import npc_titan_stryder_rocketeer_dash_core.txt
 	import npc_titan_stryder_sniper.txt
+	import npc_titan_stryder_sniper_boss_fd.txt
 	import npc_turret_mega.txt
 	import npc_turret_mega_nowindup.txt
 	import npc_turret_mega_old.txt
@@ -111,6 +121,8 @@ classes
 	import npc_turret_sentry_plasma_skyway.txt
 	import npc_turret_sentry_burn_card_at.txt
 	import npc_turret_sentry_burn_card_ap.txt
+	import npc_turret_sentry_burn_card_at_fd.txt
+	import npc_turret_sentry_burn_card_ap_fd.txt
 	import npc_turret_sentry_tactical_ability.txt
 	import npc_turret_sentry_tday.txt
 	import npc_turret_sentry_windup.txt

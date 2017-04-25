@@ -52,8 +52,8 @@ global const PVE_SANDBOX = "pve_sandbox"
 
 global const VERBOSE_DAMAGE_PRINTOUTS = false
 
-global const SAVEGAME_VERSION = 10 // increment when saves need to be tossed
-global const PERSISTENCE_INIT_VERSION = 221
+global const SAVEGAME_VERSION = 11 // increment when saves need to be tossed
+global const PERSISTENCE_INIT_VERSION = 226
 
 global const TEMP_NETWORTH_VAR = "activeBCID"
 global const NETWORTH_VAR = "netWorth"
@@ -68,7 +68,7 @@ global const NON_RARES_PER_RARE = 12
 
 global const MAX_RANK = 24
 
-global const MAX_GEN = 10
+global const MAX_GEN = 100
 
 global const CPU_LEVEL_MINSPEC = 0
 global const CPU_LEVEL_DURANGO = 1
@@ -174,7 +174,7 @@ global struct TitanLoadoutDef
 	int 			primarySkinIndex
 	int 			primaryCamoIndex
 	int 			difficulty
-	string 			isPrime //Really should be bool, but it is a massive pain to restructure existing script to work with bool loadout value type.
+	string 			isPrime = "titan_is_not_prime" //Really should be bool, but it is a massive pain to restructure existing script to work with bool loadout value type.
 	int 			primeSkinIndex		//Prime Titans don't have the same warpaints/nose arts than non Prime Titans have, so we need to store them separately
 	int 			primeCamoIndex		//Prime Titans don't have the same warpaints/nose arts than non Prime Titans have, so we need to store them separately
 	int 			primeDecalIndex		//Prime Titans don't have the same warpaints/nose arts than non Prime Titans have, so we need to store them separately
@@ -197,6 +197,8 @@ global struct TitanLoadoutDef
 
 	array<string>	specialMods
 	array<string>	antirodeoMods
+
+	string 			titanExecution
 }
 
 //////////////////////////////////////////////////
@@ -402,7 +404,7 @@ global const MFD_COUNTDOWN_TIME = 5
 global const MFDP_COUNTDOWN_TIME = 3
 global const MFD_BETWEEN_MARKS_TIME = 7
 global const MFD_ESCORT_RADIUS = 700
-global const MFD_ROUNDS_SKIPPED_AFTER_BEING_MARKED = 2
+global const MFD_ROUNDS_SKIPPED_AFTER_BEING_MARKED = 3
 global const MFD_PRO_KILL_ANNOUNCEMENT_WAIT = 0.12
 
 
@@ -436,6 +438,10 @@ global const MGL_MAGNETIC_FORCE = 1600
 global const TT_MAGNETIC_FORCE = 1600.0
 
 global const PROX_MINE_MARKER_TIME = 3
+
+// Vanguard Shoulder Rockets
+global const float VANGUARD_SHOULDER_MISSILE_SPEED = 2200
+global const int VANGUARD_CORE8_HEALTH_AMOUNT = 5000
 
 //--------------------------------------------------
 // 				TURRETS
@@ -1130,6 +1136,13 @@ global enum eItemTypes
 	PRIME_TITAN_NOSE_ART, //Not needed anymore since Prime Titans now share nose arts, but since the comment above suggests not deleting entries we're keeping this in here
 	GAME_MODE,
 	COMMS_ICON,
+	TITAN_RONIN_EXECUTION,
+	TITAN_NORTHSTAR_EXECUTION,
+	TITAN_ION_EXECUTION,
+	TITAN_TONE_EXECUTION,
+	TITAN_SCORCH_EXECUTION,
+	TITAN_LEGION_EXECUTION,
+	TITAN_VANGUARD_EXECUTION,
 	COUNT
 }
 
@@ -1244,9 +1257,6 @@ global enum eTitanAvailability
 	Once,
 	Never,
 	Custom,
-	TitanRequested,
-	FirstOneFree,
-	Escalation,
 
 	LastTitanAvailability
 }
@@ -1284,7 +1294,8 @@ global enum eWaveSpawnType
 	DISABLED,				// not used
 	FIXED_INTERVAL,			// spawn every 30 seconds (depending on playlist var "wave_spawn_interval")
 	PLAYER_DEATH,			// spawn 30 seconds after the first player to die in a new wave. (per team)
-	MANUAL					// set the spawn time manually
+	MANUAL,					// set the spawn time manually
+	DROPSHIP
 }
 
 global enum ePilotGroundSpawnMethod
@@ -1431,8 +1442,15 @@ global enum eMaps
 	mp_complex3
 	mp_coliseum
 	mp_angel_city
+	mp_colony02
+	mp_glitch
+	mp_lf_stacks
+	mp_lf_meadow
+	mp_lf_deck
+	mp_coliseum
+	mp_coliseum_column
 }
-
+/*
 global enum ePrivateMatchMaps
 {
 	mp_forwardbase_kodai
@@ -1446,6 +1464,12 @@ global enum ePrivateMatchMaps
 	mp_complex3
 	mp_angel_city
 	mp_colony02
+	mp_glitch
+	mp_lf_stacks
+	mp_lf_meadow
+	mp_lf_deck
+	mp_coliseum
+	mp_coliseum_column
 }
 
 global enum ePrivateMatchModes
@@ -1457,8 +1481,10 @@ global enum ePrivateMatchModes
 	ctf
 	lts
 	ps
+	speedball
+	coliseum
 }
-
+*/
 global enum eEventNotifications
 {
 	Clear,
@@ -1552,7 +1578,13 @@ global enum eEventNotifications
 	BLEEDOUT_SelfHealPrompt,
 	BATT_HealthFull,
 	BATT_Full,
-	VANGUARD_ShieldGain
+	VANGUARD_ShieldGain,
+	FD_AnnounceWaveStart,
+	FD_AnnounceWaveEnd,
+	FD_WaveLost,
+	FD_WaveRestart,
+	FD_AmmoRefilled,
+	FD_NotifyWaveBonusIncoming
 }
 
 global enum ePermanentEventNotifications
@@ -1607,6 +1639,13 @@ global const COOP_MAX_ACTIVE_CLOAKED_DRONES			= 3
 global const COOP_SENTRY_TURRET_MAX_COUNT_PET		= 3	// don't try to set it to more then 3
 global const COOP_SENTRY_TURRET_MAX_COUNT_INV		= 3
 
+//COOP END OF GAME VALUES
+global const float FD_VICTORY_ANNOUNCEMENT_LENGTH				= 13.0
+global const float FD_DEFEAT_ANNOUNCEMENT_LENGTH				= 13.0
+global const float FD_EOG_TIME_BETWEEN_ANNOUNCEMENT_AND_STARS	= 8.0
+global const float FD_EOG_STAR_DISPLAY_TIME						= 5.0
+global const float FD_STAR_DISPLAY_INTERVAL						= 1.0
+
 global const GENERATOR_SHIELD_REGEN_DELAY			= 10.0
 global const GENERATOR_SHIELD_REGEN_TIME			= 10.0
 
@@ -1634,7 +1673,7 @@ global const MINIMAP_LOADOUT_CRATE_SCALE		= 0.075
 global const RADAR_JAM_TIME						= 10.0
 
 // Generator damage callback sometimes tweaks AI weapon damage numbers to be better for coop
-global const GENERATOR_DAMAGE_NUKE_CORE_MULTIPLIER		= 5.0
+global const GENERATOR_DAMAGE_NUKE_CORE_MULTIPLIER		= 0.25
 global const GENERATOR_DAMAGE_MORTAR_ROCKET_MULTIPLIER	= 0.8 // increased the value since we now only fire 7 missiles per mortar
 
 //titan tactical ability slots
@@ -2009,6 +2048,9 @@ global enum eMusicPieceID
 	PILOT_ACTION_HIGH_2,
 	GAMEMODE_1,
 	GAMEMODE_2,
+	PVE_OBJECTIVE_START,
+	PVE_OBJECTIVE_START_FINAL,
+	PVE_OBJECTIVE_COMPLETE,
 	COOP_OPENING,
 	COOP_GAMEWON,
 	COOP_GAMELOST,
@@ -2150,6 +2192,23 @@ global const PVE_SANDBOX_SCORE_BONUS_STOLEN		= 00
 global const PVE_SANDBOX_SCORE_PILOT_MIN		= 5 //The minimum amount of bonus money you get for a player pilot kill
 global const PVE_SANDBOX_SCORE_TITAN_MIN		= 25 //The minimum amount of bonus money you get for a player titan kill
 
+global const FD_SCORE_TITAN   				= 5
+global const FD_SCORE_SUPER_SPECTRE 		= 3
+global const FD_SCORE_MEGATURRET			= 0
+global const FD_SCORE_SENTRYTURRET			= 0
+global const FD_SCORE_PILOT   				= 0
+global const FD_SCORE_AIR_DRONE 			= 2
+global const FD_SCORE_PROWLER  				= 1
+global const FD_SCORE_GRUNT   				= 1
+global const FD_SCORE_SPECTRE 				= 1
+global const FD_SCORE_STALKER 				= 1
+global const FD_SCORE_MARVIN  				= 0
+global const FD_SCORE_ENEMIES  				= 0
+global const FD_SCORE_MVP	  				= 0
+global const FD_SCORE_TEAM_FINAL_WAVE		= 0
+global const FD_SCORE_TEAM_WAVE				= 0
+global const FD_SCORE_TEAM_FLAWLESS_WAVE	= 0
+
 global const ZIPLINE_IDLE_ANIM = "pt_zipline_slide_idle"
 
 global const DEFAULT_CONVERSATION_DEBOUNCE_TIME = 10.0
@@ -2199,6 +2258,7 @@ global struct HighlightContext
 	bool requiresWeakPointsVisible
 	bool requiresOwnedByLocalPlayer = false
 	bool requiresStationary = false
+	bool disableDeathFade = false
 
 	int drawFuncId = 0
 	void functionref( entity ) thinkFunction
@@ -2433,14 +2493,17 @@ global const string BATTLE_CHATTER_DEBOUNCE_COLUMN_NAME = "debounce"
 global const string FACTION_DIALOGUE_CONVERSATION_NAME_COLUMN_NAME = "conversationname"
 global const string FACTION_DIALOGUE_PRIORITY_COLUMN_NAME = "priority"
 global const string FACTION_DIALOGUE_DEBOUNCE_COLUMN_NAME = "debounce"
+global const string FACTION_DIALOGUE_DISABLED_LIST_NAME = "disabledForFaction"
 
 global const string FACTION_LEADERS_PERSISTENCE_REF_COLUMN_NAME = "persistenceRef"
 global const string FACTION_LEADERS_FACTION_DIALOGUE_PREFIX_COLUMN_NAME = "factionDialoguePrefix"
 global const string FACTION_LEADERS_IMAGE_COLUMN_NAME = "image"
 global const string FACTION_LEADERS_NAME_COLUMN_NAME = "name"
+global const string FACTION_LEADERS_WAVEFORM_COLUMN_NAME = "usesWaveform"
 global const string FACTION_LEADERS_DESCRIPTION_COLUMN_NAME = "description"
 global const string FACTION_LEADERS_MODEL_NAME_COLUMN_NAME = "modelName"
 global const string FACTION_LEADERS_DROPSHIP_ANIM_NAME_COLUMN_NAME = "dropshipAnimName"
+global const string FACTION_LEADERS_DROPSHIP_ANIM_EASTEREGG = "isEasterEgg"
 global const string FACTION_LEADERS_PROP_MODEL_NAME_COLUMN_NAME = "propModelName"
 global const string FACTION_LEADERS_PROP_ATTACHMENT_COLUMN_NAME = "propAttachment"
 
@@ -2762,5 +2825,6 @@ global struct DpadCommListItem
 	string displayString
 	string nextMenu
 	string phrase
+	asset icon
 }
 

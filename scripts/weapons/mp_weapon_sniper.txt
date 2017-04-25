@@ -545,6 +545,16 @@ WeaponData
 			"damage_near_value_titanarmor"					"580"
 			"damage_far_value_titanarmor" 					"580"
 		}
+        pve_elite
+        {
+            //"ammo_stockpile_max"				"90"
+            //"ammo_clip_size"   					"7"
+            //"ammo_default_total"				"90"
+            //"reload_time"						"0.1"
+            //"fire_rate"   						"0.1"
+            "npc_damage_near_value"   						"70"
+            "npc_damage_far_value"							"70"
+        }
 	}
 
 	"ui1_enable"		"1"

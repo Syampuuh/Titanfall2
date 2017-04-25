@@ -243,18 +243,10 @@ void function PostGame_AddTitan( string titanRef, PostGameLevelUpData levelUpDat
 	postGameUnlockData.totalSegments = levelUpData.segments
 	postGameUnlockData.startingSegments = levelUpData.startingSegments
 	postGameUnlockData.endingSegments = levelUpData.endingSegments
-	postGameUnlockData.unlockTriggers = []
+	postGameUnlockData.unlockTriggers.append( "#POSTGAME_XP_TRIGGER_TITAN" )
 	postGameUnlockData.rewardRefs = levelUpData.rewardRefs
 	postGameUnlockData.level = levelUpData.level
 	postGameUnlockData.gen = levelUpData.gen
-
-	for ( int index = levelUpData.startingSegments; index < levelUpData.endingSegments; index++ )
-	{
-		if ( RandomInt( 2 ) != 0 )
-			postGameUnlockData.unlockTriggers.append( "TITANFALL" )
-		else
-			postGameUnlockData.unlockTriggers.append( "CORE" )
-	}
 
 	file.postGameUnlocks.append( postGameUnlockData )
 }
@@ -279,7 +271,7 @@ void function PostGame_AddWeapon( string weaponRef, PostGameLevelUpData levelUpD
 	postGameUnlockData.totalSegments = levelUpData.segments
 	postGameUnlockData.startingSegments = levelUpData.startingSegments
 	postGameUnlockData.endingSegments = levelUpData.endingSegments
-	postGameUnlockData.unlockTriggers = []
+	postGameUnlockData.unlockTriggers.append( "#POSTGAME_XP_TRIGGER_WEAPON" )
 	postGameUnlockData.rewardRefs = levelUpData.rewardRefs
 	postGameUnlockData.level = levelUpData.level
 	postGameUnlockData.gen = levelUpData.gen
@@ -307,7 +299,7 @@ void function PostGame_AddFaction( string factionRef, PostGameLevelUpData levelU
 	postGameUnlockData.totalSegments = levelUpData.segments
 	postGameUnlockData.startingSegments = levelUpData.startingSegments
 	postGameUnlockData.endingSegments = levelUpData.endingSegments
-	postGameUnlockData.unlockTriggers = []
+	postGameUnlockData.unlockTriggers.append( "#POSTGAME_XP_TRIGGER_FACTION" )
 	postGameUnlockData.rewardRefs = levelUpData.rewardRefs
 	postGameUnlockData.level = levelUpData.level
 	postGameUnlockData.gen = levelUpData.gen
@@ -376,6 +368,7 @@ void function PostGame_DisplayScore( int unlockIndex, PostGameUnlockData postGam
 	RuiSetImage( unlockBlockRui, "unlockImage", $"" )
 	RuiSetString( unlockBlockRui, "unlockTitle", "" )
 	RuiSetString( unlockBlockRui, "unlockSideText", postGameUnlockData.sideText )
+	RuiSetString( unlockBlockRui, "unlockTriggers", postGameUnlockData.unlockTriggers[0] )
 
 	if ( !skipIntro )
 	{
@@ -398,7 +391,6 @@ void function PostGame_DisplayScore( int unlockIndex, PostGameUnlockData postGam
 	for ( int pipIndex = 0; pipIndex < segmentsToAward; pipIndex++ )
 	{
 		RuiSetInt( unlockBlockRui, "numPips", postGameUnlockData.startingSegments + (pipIndex + 1) )
-
 		SkippableWait( 0.4, "UI_PostGame_PointsPointIncrease" )
 	}
 
@@ -420,6 +412,7 @@ void function PostGame_DisplayTitan( int unlockIndex, PostGameUnlockData postGam
 	RuiSetImage( unlockBlockRui, "unlockImage", itemDisplayData.image )
 	RuiSetString( unlockBlockRui, "unlockSideText", postGameUnlockData.sideText )
 	RuiSetString( unlockBlockRui, "unlockTitle", itemDisplayData.name )
+	RuiSetString( unlockBlockRui, "unlockTriggers", postGameUnlockData.unlockTriggers[0] )
 
 	if ( !skipIntro )
 	{
@@ -442,7 +435,6 @@ void function PostGame_DisplayTitan( int unlockIndex, PostGameUnlockData postGam
 	for ( int pipIndex = 0; pipIndex < segmentsToAward; pipIndex++ )
 	{
 		RuiSetInt( unlockBlockRui, "numPips", postGameUnlockData.startingSegments + (pipIndex + 1) )
-		RuiSetString( unlockBlockRui, "unlockTriggers", Localize( "#POSTGAME_XP_TRIGGER_TITAN" ) )
 		RuiSetGameTime( unlockBlockRui, "triggerTime", Time() )
 
 		SkippableWait( 0.4, "UI_PostGame_TitanPointIncrease" )
@@ -473,7 +465,7 @@ void function PostGame_DisplayWeapon( int unlockIndex, PostGameUnlockData postGa
 	RuiSetImage( unlockBlockRui, "unlockImage", itemDisplayData.image )
 	RuiSetString( unlockBlockRui, "unlockTitle", itemDisplayData.name )
 	RuiSetString( unlockBlockRui, "unlockSideText", postGameUnlockData.sideText )
-	RuiSetString( unlockBlockRui, "unlockTriggers", Localize( "#POSTGAME_XP_TRIGGER_WEAPON" ) )
+	RuiSetString( unlockBlockRui, "unlockTriggers", postGameUnlockData.unlockTriggers[0] )
 
 	if ( !skipIntro )
 	{
@@ -498,7 +490,6 @@ void function PostGame_DisplayWeapon( int unlockIndex, PostGameUnlockData postGa
 	for ( int pipIndex = 0; pipIndex < segmentsToAward; pipIndex++ )
 	{
 		RuiSetInt( unlockBlockRui, "numPips", postGameUnlockData.startingSegments + (pipIndex + 1) )
-
 		SkippableWait( 0.1, "UI_PostGame_WeaponPointIncrease" )
 	}
 
@@ -527,7 +518,7 @@ void function PostGame_DisplayFaction( int unlockIndex, PostGameUnlockData postG
 	RuiSetImage( unlockBlockRui, "unlockImage", itemDisplayData.image )
 	RuiSetString( unlockBlockRui, "unlockSideText", postGameUnlockData.sideText )
 	RuiSetString( unlockBlockRui, "unlockTitle", itemDisplayData.name )
-	RuiSetString( unlockBlockRui, "unlockTriggers", Localize( "#POSTGAME_XP_TRIGGER_FACTION" ) )
+	RuiSetString( unlockBlockRui, "unlockTriggers", postGameUnlockData.unlockTriggers[0] )
 
 	if ( !skipIntro )
 	{
@@ -550,7 +541,6 @@ void function PostGame_DisplayFaction( int unlockIndex, PostGameUnlockData postG
 	for ( int pipIndex = 0; pipIndex < segmentsToAward; pipIndex++ )
 	{
 		RuiSetInt( unlockBlockRui, "numPips", postGameUnlockData.startingSegments + (pipIndex + 1) )
-
 		SkippableWait( 0.4, "UI_PostGame_FactionPointIncrease" )
 	}
 

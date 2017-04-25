@@ -39,6 +39,7 @@ global function GetImage
 global function GetAllWeaponsByType
 global function GetItemTypeName
 global function GetItemRefTypeName
+global function GetItemRequiresPrime
 
 global function IsItemInEntitlementUnlock
 global function GetEntitlementIds
@@ -172,6 +173,7 @@ global function GetSuitBasedTactical
 global function GetWeaponBasedDefaultMod
 
 global function GetTitanLoadoutPropertyPassiveType
+global function GetTitanLoadoutPropertyExecutionType
 global function GetPrimeTitanSetFileFromNonPrimeSetFile
 
 global function CheckEverythingUnlockedAchievement
@@ -292,6 +294,7 @@ global struct ItemDisplayData
 	int persistenceId
 
 	bool hidden
+	bool reqPrime
 
 	table< var, var > i
 }
@@ -325,6 +328,7 @@ global struct ItemData
 	int cost
 
 	bool hidden
+	bool reqPrime
 
 	string persistenceStruct
 	int persistenceId
@@ -668,6 +672,32 @@ void function InitItems()
 
 		CreatePassiveData( i, eItemTypes.PILOT_EXECUTION, hidden, ref, name, description, description, image, cost )
 	}
+	/////////////////////
+	//TITAN EXECUTION DATA
+	/////////////////////
+
+	dataTable = GetDataTable( $"datatable/titan_executions.rpak" )
+	numRows = GetDatatableRowCount( dataTable )
+	for ( int i = 0; i < numRows; i++ )
+	{
+		bool hidden			= GetDataTableBool( dataTable, i, GetDataTableColumnByName( dataTable, "hidden" ) )
+		if ( hidden == true )
+			continue
+
+		string ref			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "ref" ) )
+		int itemType		= eItemTypes[ GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "type" ) ) ]
+		string name			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "name" ) )
+		string description	= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "description" ) )
+		asset image			= GetDataTableAsset( dataTable, i, GetDataTableColumnByName( dataTable, "image" ) )
+		int cost			= GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "cost" ) )
+		bool reqPrime		= GetDataTableBool( dataTable, i, GetDataTableColumnByName( dataTable, "reqPrime" ) )
+
+		if ( IsDisabledRef( ref ) )
+			continue
+
+		CreateTitanExecutionData( i, itemType, hidden, ref, name, description, description, image, cost, reqPrime )
+	}
+	/////////////////////
 
 	dataTable = GetDataTable( $"datatable/features_mp.rpak" )
 	numRows = GetDatatableRowCount( dataTable )
@@ -1079,12 +1109,16 @@ void function InitItems()
 
 			int datatableIndex = row
 
+			if ( IsDisabledRef( iconRef ) )
+				continue
+
 			CreateGenericItem( datatableIndex, eItemTypes.CALLSIGN_ICON, iconRef, name, desc, longdesc, image, cost, isHidden )
 			GetItemData( iconRef ).imageAtlas = IMAGE_ATLAS_CALLINGCARD
 		}
 	}
 
 	#if DEVSCRIPTS
+	if ( EmotesEnabled() )
 	{
 		var dataTable = GetDataTable( $"datatable/dpad_comm_custom_phrases.rpak" )
 		for ( int row = 0; row < GetDatatableRowCount( dataTable ); row++ )
@@ -1116,7 +1150,8 @@ void function InitItems()
 		string weapon = GetDataTableString( dataTable, i, NON_LOADOUT_WEAPON_COLUMN )
 
 		#if SERVER || CLIENT
-			PrecacheWeapon( weapon )
+			if ( !IsDisabledRef( weapon ) )
+				PrecacheWeapon( weapon )
 		#endif
 		//CreateWeaponData( i, eItemTypes.NOT_LOADOUT, true, weapon, true )
 	}
@@ -1151,14 +1186,19 @@ void function InitItems()
 		int cost			= GetDataTableInt( dataTable, row, GetDataTableColumnByName( dataTable, "cost" ) )
 		asset image			= GetDataTableAsset( dataTable, row, GetDataTableColumnByName( dataTable, "image" ) )
 
+		if ( IsDisabledRef( itemRef ) )
+			continue
+
 		// Why does the server need this? Client script error happens otherwise.
 		#if SERVER || CLIENT
 			asset model		= GetDataTableAsset( dataTable, row, GetDataTableColumnByName( dataTable, "model" ) )
 			PrecacheModel( model )
 		#endif // SERVER || CLIENT
 
-		const bool IS_HIDDEN_ARG = false
-		CreateGenericItem( row, eItemTypes.BURN_METER_REWARD, itemRef, name, description, description, image, cost, IS_HIDDEN_ARG )
+		bool hidden 		= !GetDataTableBool( dataTable, row, GetDataTableColumnByName( dataTable, "selectable" ) )
+		CreateGenericItem( row, eItemTypes.BURN_METER_REWARD, itemRef, name, description, description, image, cost, hidden )
+		if ( hidden )
+			InitUnlock( itemRef, "", eUnlockType.PLAYER_LEVEL, 1 )
 	}
 
 	InitRandomUnlocks()
@@ -1219,6 +1259,9 @@ void function InitItems()
 
 			PrecacheWeapon( "mp_weapon_engineer_turret" )
 			PrecacheWeapon( "mp_weapon_engineer_combat_drone" )
+
+			// Nuke titan special core
+			PrecacheWeapon( "mp_titanability_nuke_eject" )
 		#endif
 
 		#if DEV && ( SERVER || CLIENT )
@@ -1298,7 +1341,8 @@ void function InitUnlocks()
 
 	dataTable = GetDataTable( $"datatable/unlocks_faction_level.rpak" )
 	numRows = GetDatatableRowCount( dataTable )
-	for ( int column = 1; column <= 6; column++ )
+	int NUM_FACTIONS = GetAllItemRefsOfType( eItemTypes.FACTION ).len()
+	for ( int column = 1; column <= NUM_FACTIONS; column++ )
 	{
 		string additionalRef = GetDataTableString( dataTable, 0, column )
 
@@ -1546,8 +1590,6 @@ void function InitUnlocks()
 	//////////////////////////
 	// Reserved for future use
 	//////////////////////////
-	InitUnlock( "callsign_33_col_gold", "", eUnlockType.PERSISTENT_ITEM, 0 )
-	InitUnlock( "callsign_38_col_gold", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_65_col_gold", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_14_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_14_col_fire", "", eUnlockType.PERSISTENT_ITEM, 0 )
@@ -1606,6 +1648,8 @@ void function InitUnlocks()
 	InitUnlock( "callsign_140_col_gold", "", eUnlockType.PERSISTENT_ITEM, 0 )
 
 //	InitUnlock( "callsign_14_col_gold", "", eUnlockType.PERSISTENT_ITEM, 0 )
+	InitUnlock( "callsign_38_col_gold", "", eUnlockType.PLAYER_LEVEL, 2500 )
+	InitUnlock( "callsign_33_col_gold", "", eUnlockType.PLAYER_LEVEL, 5000 )
 
 	InitUnlock( "gc_icon_deuce", "", eUnlockType.PERSISTENT_ITEM, 0 )
 
@@ -1705,6 +1749,7 @@ void function InitUnlocks()
 	InitUnlockForStatInt( "execution_telefrag", "", 50, "kills_stats", "pilotExecutePilot" )
 	InitUnlockForStatInt( "execution_stim", "", 10, "kills_stats", "pilotExecutePilotUsing_execution_telefrag" )
 	InitUnlockForStatInt( "execution_grapple", "", 75, "kills_stats", "pilotExecutePilot" )
+	InitUnlockForStatInt( "execution_pulseblade", "", 10, "weapon_kill_stats", "pilots" , "mp_weapon_grenade_sonar" )
 	InitUnlockForStatInt( "execution_random", "", 0, "kills_stats", "pilotExecutePilot" )
 
 	//Distance
@@ -3207,6 +3252,9 @@ void function InitUnlocks()
 				continue
 
 			if ( item.ref in file.entitlementUnlocks )
+				continue
+
+			if ( IsDisabledRef( item.ref  ) )
 				continue
 
 			if ( ( item.ref in file.unlocks ) || IsItemInRandomUnlocks( item.ref ) )
@@ -4905,11 +4953,25 @@ void function CreateTitanData( int dataTableIndex, string titanRef, int cost, as
 	item.i.passive4Type			<- GetTitanLoadoutPropertyPassiveType( setFile, "passive4" )
 	item.i.passive5Type			<- GetTitanLoadoutPropertyPassiveType( setFile, "passive5" )
 	item.i.passive6Type			<- GetTitanLoadoutPropertyPassiveType( setFile, "passive6" )
+	item.i.titanExecution 		<- GetTitanLoadoutPropertyExecutionType( setFile, "titanExecution" )
 
 	item.persistenceStruct		= "titanChassis[" + dataTableIndex + "]"
 	item.persistenceId          = dataTableIndex
 }
 
+void function CreateTitanExecutionData( int dataTableIndex, int itemType, bool hidden, string ref, string name, string desc, string longdesc, asset image, int cost = 0, bool reqPrime = false )
+{
+	ItemData item		= CreateBaseItemData( itemType, ref, hidden )
+	item.name			= name
+	item.longname		= name
+	item.desc			= desc
+	item.longdesc		= longdesc
+	item.image			= image
+	item.persistenceId	= dataTableIndex
+	item.cost			= cost
+	item.imageAtlas		= IMAGE_ATLAS_MENU
+	item.reqPrime		= reqPrime
+}
 
 void function CreatePassiveData( int dataTableIndex, int itemType, bool hidden, string ref, string name, string desc, string longdesc, asset image, int cost = 0 )
 {
@@ -5344,6 +5406,15 @@ bool function IsItemOwned( entity player, string ref )
 		case eItemTypes.PILOT_EXECUTION:
 			return IsPersistenceBitSet( player, "unlockedPilotExecutions", bitIndex )
 
+		case eItemTypes.TITAN_RONIN_EXECUTION:
+		case eItemTypes.TITAN_NORTHSTAR_EXECUTION:
+		case eItemTypes.TITAN_ION_EXECUTION:
+		case eItemTypes.TITAN_TONE_EXECUTION:
+		case eItemTypes.TITAN_SCORCH_EXECUTION:
+		case eItemTypes.TITAN_LEGION_EXECUTION:
+		case eItemTypes.TITAN_VANGUARD_EXECUTION:
+			return IsPersistenceBitSet( player, "unlockedTitanExecutions", bitIndex )
+
 		case eItemTypes.TITAN_PRIMARY:
 			return IsPersistenceBitSet( player, "unlockedTitanWeapons", bitIndex )
 
@@ -5673,6 +5744,16 @@ bool function IsItemNew( entity player, string ref, string parentRef = "" )
 				persistenceVar = "newPilotExecutions"
 				break
 
+			case eItemTypes.TITAN_ION_EXECUTION:
+			case eItemTypes.TITAN_TONE_EXECUTION:
+			case eItemTypes.TITAN_SCORCH_EXECUTION:
+			case eItemTypes.TITAN_LEGION_EXECUTION:
+			case eItemTypes.TITAN_RONIN_EXECUTION:
+			case eItemTypes.TITAN_NORTHSTAR_EXECUTION:
+			case eItemTypes.TITAN_VANGUARD_EXECUTION:
+				persistenceVar = "newTitanExecutions"
+				break
+
 			case eItemTypes.TITAN_SPECIAL:
 			case eItemTypes.TITAN_ORDNANCE:
 			case eItemTypes.TITAN_ANTIRODEO:
@@ -5828,6 +5909,7 @@ void function UpdateCachedNewItems()
 	UpdateCachedNewItemsArray( "newPrimeTitans" )
 	UpdateCachedNewItemsArray( "newPilotSuits" )
 	UpdateCachedNewItemsArray( "newPilotExecutions" )
+	UpdateCachedNewItemsArray( "newTitanExecutions" )
 	UpdateCachedNewItemsArray( "newFeatures" )
 	UpdateCachedNewItemsArray( "newBoosts" )
 	UpdateCachedNewItemsArray( "newFactions" )
@@ -5944,6 +6026,17 @@ void function ClearNewStatus( var button, string ref, string parentRef = "" )
 			case eItemTypes.PILOT_EXECUTION:
 				SetCachedPersistenceBitfield( "newPilotExecutions", bitIndex, 0 )
 				break
+
+			case eItemTypes.TITAN_RONIN_EXECUTION:
+			case eItemTypes.TITAN_NORTHSTAR_EXECUTION:
+			case eItemTypes.TITAN_ION_EXECUTION:
+			case eItemTypes.TITAN_TONE_EXECUTION:
+			case eItemTypes.TITAN_SCORCH_EXECUTION:
+			case eItemTypes.TITAN_LEGION_EXECUTION:
+			case eItemTypes.TITAN_VANGUARD_EXECUTION:
+				SetCachedPersistenceBitfield( "newTitanExecutions", bitIndex, 0 )
+				break
+
 
 			case eItemTypes.TITAN_SPECIAL:
 			case eItemTypes.TITAN_ORDNANCE:
@@ -6173,6 +6266,13 @@ bool function ButtonShouldShowNew( int itemType, string ref = "", string parentR
 		case eItemTypes.FACTION:
 		case eItemTypes.CALLING_CARD:
 		case eItemTypes.CALLSIGN_ICON:
+		case eItemTypes.TITAN_ION_EXECUTION:
+		case eItemTypes.TITAN_TONE_EXECUTION:
+		case eItemTypes.TITAN_SCORCH_EXECUTION:
+		case eItemTypes.TITAN_LEGION_EXECUTION:
+		case eItemTypes.TITAN_RONIN_EXECUTION:
+		case eItemTypes.TITAN_NORTHSTAR_EXECUTION:
+		case eItemTypes.TITAN_VANGUARD_EXECUTION:
 			if ( menu == "EditPilotLoadoutsMenu" || menu == "EditPilotLoadoutMenu" ||
 				 menu == "EditTitanLoadoutsMenu" || menu == "EditTitanLoadoutMenu" ||
 				 menu == "PilotLoadoutsMenu" || menu == "TitanLoadoutsMenu" ||
@@ -6504,6 +6604,16 @@ void function SetItemOwnedStatus( entity player, string ref, string parentRef, b
 				SetPersistenceBitfield( player, "unlockedPilotExecutions", bitIndex, unlockBitVal )
 				return
 
+			case eItemTypes.TITAN_RONIN_EXECUTION:
+			case eItemTypes.TITAN_NORTHSTAR_EXECUTION:
+			case eItemTypes.TITAN_ION_EXECUTION:
+			case eItemTypes.TITAN_TONE_EXECUTION:
+			case eItemTypes.TITAN_SCORCH_EXECUTION:
+			case eItemTypes.TITAN_LEGION_EXECUTION:
+			case eItemTypes.TITAN_VANGUARD_EXECUTION:
+				SetPersistenceBitfield( player, "unlockedTitanExecutions", bitIndex, unlockBitVal )
+				return
+
 			case eItemTypes.TITAN_SPECIAL:
 			case eItemTypes.TITAN_ORDNANCE:
 				SetPersistenceBitfield( player, "unlockedTitanOffhands", bitIndex, unlockBitVal )
@@ -6649,6 +6759,16 @@ void function SetItemNewStatus( entity player, string ref, string parentRef, boo
 
 			case eItemTypes.PILOT_EXECUTION:
 				SetPersistenceBitfield( player, "newPilotExecutions", bitIndex, newBitVal )
+				return
+
+			case eItemTypes.TITAN_RONIN_EXECUTION:
+			case eItemTypes.TITAN_NORTHSTAR_EXECUTION:
+			case eItemTypes.TITAN_ION_EXECUTION:
+			case eItemTypes.TITAN_TONE_EXECUTION:
+			case eItemTypes.TITAN_SCORCH_EXECUTION:
+			case eItemTypes.TITAN_LEGION_EXECUTION:
+			case eItemTypes.TITAN_VANGUARD_EXECUTION:
+				SetPersistenceBitfield( player, "newTitanExecutions", bitIndex, newBitVal )
 				return
 
 			case eItemTypes.TITAN_SPECIAL:
@@ -6811,6 +6931,16 @@ bool function ClientCommand_ClearNewStatus( entity player, array<string> args )
 
 			case eItemTypes.PILOT_EXECUTION:
 				SetPersistenceBitfield( player, "newPilotExecutions", bitIndex, 0 )
+				return true
+
+			case eItemTypes.TITAN_RONIN_EXECUTION:
+			case eItemTypes.TITAN_NORTHSTAR_EXECUTION:
+			case eItemTypes.TITAN_ION_EXECUTION:
+			case eItemTypes.TITAN_TONE_EXECUTION:
+			case eItemTypes.TITAN_SCORCH_EXECUTION:
+			case eItemTypes.TITAN_LEGION_EXECUTION:
+			case eItemTypes.TITAN_VANGUARD_EXECUTION:
+				SetPersistenceBitfield( player, "newTitanExecutions", bitIndex, 0 )
 				return true
 
 			case eItemTypes.TITAN_SPECIAL:
@@ -7199,8 +7329,16 @@ array<string> function GetUnlockItemsForPlayerLevel( int newLevel )
 	{
 		if ( ul.unlockType == eUnlockType.PLAYER_LEVEL )
 		{
-			if ( ul.unlockLevel == ((newLevel - 1) % GetMaxPlayerLevel() + 1) )
-				levelUnlockItems.append( ref )
+			if ( ItemLockedShouldUseRawLevel( ref ) )
+			{
+				if ( ul.unlockLevel == newLevel && !genUnlockItems.contains( ref ) )
+					levelUnlockItems.append( ref )
+			}
+			else
+			{
+				if ( ul.unlockLevel == ((newLevel - 1) % GetMaxPlayerLevel() + 1) )
+					levelUnlockItems.append( ref )
+			}
 		}
 	}
 
@@ -7418,13 +7556,20 @@ int function UnlockItemSort( string itemRefA, string itemRefB )
 	itemPriority[eItemTypes.PILOT_MELEE] <- priority++
 	itemPriority[eItemTypes.TITAN] <- priority++
 	itemPriority[eItemTypes.PILOT_EXECUTION] <- priority++
+	itemPriority[eItemTypes.TITAN_RONIN_EXECUTION] <- priority++
+	itemPriority[eItemTypes.TITAN_NORTHSTAR_EXECUTION] <- priority++
+	itemPriority[eItemTypes.TITAN_ION_EXECUTION] <- priority++
+	itemPriority[eItemTypes.TITAN_TONE_EXECUTION] <- priority++
+	itemPriority[eItemTypes.TITAN_SCORCH_EXECUTION] <- priority++
+	itemPriority[eItemTypes.TITAN_LEGION_EXECUTION] <- priority++
+	itemPriority[eItemTypes.TITAN_VANGUARD_EXECUTION] <- priority++
+	itemPriority[eItemTypes.FACTION] <- priority++
 	itemPriority[eItemTypes.CALLING_CARD] <- priority++
 	itemPriority[eItemTypes.CALLSIGN_ICON] <- priority++
 	itemPriority[eItemTypes.CAMO_SKIN] <- priority++
 	itemPriority[eItemTypes.CAMO_SKIN_PILOT] <- priority++
 	itemPriority[eItemTypes.CAMO_SKIN_TITAN] <- priority++
 	itemPriority[eItemTypes.TITAN_WARPAINT] <- priority++
-	itemPriority[eItemTypes.FACTION] <- priority++
 	itemPriority[eItemTypes.TITAN_GENERAL_PASSIVE] <- priority++
 	itemPriority[eItemTypes.TITAN_TITANFALL_PASSIVE] <- priority++
 	itemPriority[eItemTypes.TITAN_RONIN_PASSIVE] <- priority++
@@ -7817,6 +7962,16 @@ string function GetDisplayNameFromItemType( int itemType )
 			displayName = "#ITEM_TYPE_PILOT_EXECUTION"
 			break
 
+		case eItemTypes.TITAN_RONIN_EXECUTION:
+		case eItemTypes.TITAN_NORTHSTAR_EXECUTION:
+		case eItemTypes.TITAN_ION_EXECUTION:
+		case eItemTypes.TITAN_TONE_EXECUTION:
+		case eItemTypes.TITAN_SCORCH_EXECUTION:
+		case eItemTypes.TITAN_LEGION_EXECUTION:
+		case eItemTypes.TITAN_VANGUARD_EXECUTION:
+			displayName = "#ITEM_TYPE_TITAN_EXECUTION"
+			break
+
 		default:
 			Assert( false, "Invalid item itemType!" )
 	}
@@ -8061,6 +8216,16 @@ int function GetTitanLoadoutPropertyPassiveType( string setFile, string loadoutP
 {
 	Assert( loadoutProperty == "passive1" || loadoutProperty == "passive2" || loadoutProperty == "passive3" || loadoutProperty == "passive4" || loadoutProperty == "passive5" || loadoutProperty == "passive6")
 
+	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
+	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "setFile" ), setFile )
+	int column = GetDataTableColumnByName( dataTable, loadoutProperty )
+	int itemType = eItemTypes[ GetDataTableString( dataTable, row, column ) ]
+
+	return itemType
+}
+
+int function GetTitanLoadoutPropertyExecutionType( string setFile, string loadoutProperty )
+{
 	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
 	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "setFile" ), setFile )
 	int column = GetDataTableColumnByName( dataTable, loadoutProperty )
@@ -8476,6 +8641,18 @@ string function GetItemTypeName( int itemType, int parentItemType = -1 )
 
 		case eItemTypes.PILOT_EXECUTION:
 			return "#ITEM_TYPE_PILOT_EXECUTION"
+
+		case eItemTypes.TITAN_ION_EXECUTION:
+		case eItemTypes.TITAN_SCORCH_EXECUTION:
+		case eItemTypes.TITAN_RONIN_EXECUTION:
+		case eItemTypes.TITAN_LEGION_EXECUTION:
+		case eItemTypes.TITAN_VANGUARD_EXECUTION:
+		case eItemTypes.TITAN_TONE_EXECUTION:
+		case eItemTypes.TITAN_NORTHSTAR_EXECUTION:
+			if ( parentItemType != -1 )
+				return "#ITEM_TYPE_TITAN_SPECIFIC_EXECUTION"
+							else
+				return "#ITEM_TYPE_TITAN_EXECUTION"
 
 		case eItemTypes.PILOT_PASSIVE1:
 		case eItemTypes.PILOT_PASSIVE2:
@@ -9197,7 +9374,7 @@ string function GetSkinRefFromTitanClassAndPersistenceValue( string titanClass, 
 }
 #endif
 
-const array<string> disabledRefs = [ "vanguard", "mp_titanweapon_xo16_vanguard", "mp_titanability_rearm", "mp_titanweapon_stun_laser", "mp_titancore_upgrade" ]
+const array<string> disabledRefs = [ "vanguard", "mp_titanweapon_xo16_vanguard", "mp_titanability_rearm", "mp_titanweapon_stun_laser", "mp_titancore_upgrade", "execution_random_6", "gc_icon_monarch", "execution_vanguard", "mp_ability_pathchooser", "burnmeter_arc_trap", "mp_weapon_arc_trap" ]
 
 bool function IsDisabledRef( string ref )
 {
@@ -9249,3 +9426,9 @@ void function ValidateDataTableCRC( asset dataTableAsset, int numRows, int gener
 	}
 }
 #endif
+
+bool function GetItemRequiresPrime( string ref, string parentRef = "" )
+{
+	Assert( ref in file.itemData )
+	return file.itemData[ref].reqPrime
+}

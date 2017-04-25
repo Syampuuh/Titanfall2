@@ -30,12 +30,12 @@ WeaponData
 
 	"offhand_keep_primary_in_hand"					"1"
 
-	"projectile_drift_windiness"					"70"
-	"projectile_drift_intensity"					"10.96"
-	"projectile_straight_time_min"					"0"
-	"projectile_straight_time_max"					"0.1"
-	"projectile_straight_radius_min"				"5"
-	"projectile_straight_radius_max"				"10"
+	"projectile_drift_windiness"					"7"
+	"projectile_drift_intensity"					"0.96"
+	"projectile_straight_time_min"					"0.9"
+	"projectile_straight_time_max"					"1.2"
+	"projectile_straight_radius_min"				"0"
+	"projectile_straight_radius_max"				"1"
 
 	// Menu Stats
 	"stat_damage" 									"95"
@@ -70,15 +70,17 @@ WeaponData
     "cooldown_type"                                 "charged_shot"
 	MP_BASE
 	{
+		"fire_rate"   									"12"
+
 		// Damage - When Used by Players
 		"damage_near_distance"							"800"
 		"damage_far_distance" 							"1200"
 		"damage_near_value"   							"250"
 		"damage_far_value"								"250"
-		"damage_near_value_titanarmor"					"250"
-		"damage_far_value_titanarmor"					"250"
+		"damage_near_value_titanarmor"					"350"
+		"damage_far_value_titanarmor"					"350"
 		"explosion_damage"								"100"
-		"explosion_damage_heavy_armor"					"200"
+		"explosion_damage_heavy_armor"					"350"
 
 		"explosionradius" 								"120"
 
@@ -86,6 +88,8 @@ WeaponData
 	}
 	SP_BASE
 	{
+		"fire_rate"   									"30"
+
 		// Damage - When Used by Players
 		"damage_near_distance"							"800"
 		"damage_far_distance" 							"1200"
@@ -118,7 +122,6 @@ WeaponData
 	"ammo_no_remove_from_clip"						"1"
 
 	// Behavior
-	"fire_rate"   									"30"
 	"burst_fire_delay"								"0.7"
 	"zoom_time_in"									"0.1"
 	"zoom_time_out"   								"0.1"
@@ -311,6 +314,27 @@ WeaponData
 
 			"is_burn_mod"		"1"
 		}
+
+		upgradeCore_Vanguard
+		{
+			"smart_ammo_max_targeted_burst"					"6"
+			"smart_ammo_target_max_locks_heavy"				"6"
+			"smart_ammo_search_angle" 						"30"
+			"smart_ammo_unlock_debounce_time"				"0.2"
+			"projectile_trail_effect_0"						"Rocket_Smoke_SMALL_Titan_mod"
+			"hud_icon"										"rui/titan_loadout/passive/monarch_core_multi_target"
+			"smart_ammo_lock_type"							"large"
+		}
+
+		upgradeCore_MissileRack_Vanguard
+		{
+			"smart_ammo_search_angle" 						"30"
+			"smart_ammo_unlock_debounce_time"				"0.2"
+
+			"projectile_trail_effect_0"						"Rocket_Smoke_SMALL_Titan_mod"
+			"hud_icon"										"rui/titan_loadout/passive/monarch_core_multi_target"
+			"smart_ammo_lock_type"							"large"
+		}
 	}
 
 	RUI_CrosshairData
@@ -331,7 +355,7 @@ WeaponData
 		Crosshair_1
 		{
 			"ui"						"ui/crosshair_lstar"
-			"base_spread"				"10.0"
+			"base_spread"				"12.0"
 			Args
 			{
 				isFiring				weapon_is_firing

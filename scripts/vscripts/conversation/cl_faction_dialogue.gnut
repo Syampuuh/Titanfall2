@@ -4,23 +4,36 @@ global function GenerateFactionDialogueAlias
 global function PlayFactionDialogueOnLocalClientPlayer
 global function ServerCallback_SpawnFactionCommanderInDropship
 
+global function SetFactionDialoguePrefixOverride
+global function GetFactionDialoguePrefixOverride
+global function SetFactionLeaderDropshipIntroOverride
+global function GetFactionLeaderDropshipIntroOverride
+
 struct
 {
 	#if DEV
 		int factionLeaderAnimIndex = -1
+		bool forceEasterEgg = false
 	#endif
-	bool stuff
+	string factionDialoguePrefixOverride = ""
+	void functionref( int shipEHandle, float dropshipSpawnTime ) factionLeaderDropshipIntroOverride = null
 }
 file
 
 #if DEV
 	global function Dev_SetFactionLeaderAnimIndex
+	global function Dev_ForceEasterEgg
 #endif
 
 string function GenerateFactionDialogueAlias( entity player, string conversationSuffix  )
 {
-	string factionChoice = GetFactionChoice( player )
-	string factionPrefix = factionLeaderData[ factionChoice ].dialoguePrefix
+	string factionPrefix = GetFactionDialoguePrefixOverride() //Mainly for Frontier Defence, where it has its own announcer. Don't want to override GetFactionChoice() because that's used by FactionXP etc.
+	if ( factionPrefix == "" )
+	{
+		string factionChoice = GetFactionChoice( player )
+		factionPrefix = factionLeaderData[ factionChoice ].dialoguePrefix
+	}
+
 	string result = "diag_" + factionPrefix + "_" + conversationSuffix
 	return result
 
@@ -52,12 +65,20 @@ void function PlayFactionDialogueOnLocalClientPlayer( string conversationName )
 	if ( !ShouldPlayFactionDialogue( conversationName, listeningPlayer ) )
 		return
 
+	string faction = GetFactionChoice( listeningPlayer )
+	if ( !ConversationEnabledForFaction( faction, conversationName ) )
+		return
+
 	//Check for priority. TODO: Cancel existing conversations if needed
 	int priority = expect int(  GetConversationPriority( conversationName )  )
 	//Generate alias from playerEHandle and number of altAliases we have
 	string soundAlias = GenerateFactionDialogueAlias( listeningPlayer, conversationName  )
 
-	PlayAnnouncerLineThroughDeathWithPriority( conversationName, soundAlias, priority )
+	bool useWaveForm = FactionUsesWaveform( faction ) && !IsWatchingReplay() // no waveforms in kill replay, confusing
+	string waveformName = ""
+	if ( useWaveForm )
+		waveformName = GetFactionCharacterName( faction )
+	PlayAnnouncerLineThroughDeathWithPriority( conversationName, soundAlias, priority, waveformName )
 }
 
 void function ForcePlayFactionDialogueOnLocalClientPlayer( string conversationName )
@@ -69,28 +90,46 @@ void function ForcePlayFactionDialogueOnLocalClientPlayer( string conversationNa
 
 	entity listeningPlayer = GetLocalClientPlayer()
 
+	string faction = GetFactionChoice( listeningPlayer )
+	if ( !ConversationEnabledForFaction( faction, conversationName ) )
+		return
+
 	//Check for priority. TODO: Cancel existing conversations if needed
 	int priority = expect int(  GetConversationPriority( conversationName )  )
 	//Generate alias from playerEHandle and number of altAliases we have
 	string soundAlias = GenerateFactionDialogueAlias( listeningPlayer, conversationName  )
 
-	PlayAnnouncerLineThroughDeathWithPriority( conversationName, soundAlias, priority )
+	bool useWaveForm = FactionUsesWaveform( faction ) && !IsWatchingReplay() // no waveforms in kill replay, confusing
+	string waveformName = ""
+	if ( useWaveForm )
+		waveformName = GetFactionCharacterName( faction )
+	PlayAnnouncerLineThroughDeathWithPriority( conversationName, soundAlias, priority, waveformName )
 }
 
 void function ServerCallback_SpawnFactionCommanderInDropship( int shipEHandle, float dropshipSpawnTime ) //Awkward that it's here, could be in cl_classic_mp.nut but it uses data that is read in from sh_faction_dialogue.nut
 {
-	thread ServerCallback_SpawnFactionCommanderInDropship_threaded( shipEHandle, dropshipSpawnTime )
+	if ( GetFactionLeaderDropshipIntroOverride() == null )
+	{
+		thread ServerCallback_SpawnFactionCommanderInDropship_threaded( shipEHandle, dropshipSpawnTime )
+	}
+	else
+	{
+		thread GetFactionLeaderDropshipIntroOverride()( shipEHandle, dropshipSpawnTime )
+	}
+
 }
 
 void function ServerCallback_SpawnFactionCommanderInDropship_threaded( int shipEHandle, float dropshipSpawnTime ) //Awkward that it's here, could be in cl_classic_mp.nut but it uses data that is read in from sh_faction_dialogue.nut
 {
 	entity dropShip = GetEntityFromEncodedEHandle( shipEHandle )
 	entity localViewPlayer = GetLocalViewPlayer()
-	FactionLeaderDataStruct factionLeaderInfo = factionLeaderData[ GetFactionChoice( localViewPlayer ) ]
+	string faction = GetFactionChoice( localViewPlayer )
+	FactionLeaderDataStruct factionLeaderInfo = factionLeaderData[ faction ]
 
-	entity factionLeader = CreatePropDynamic( factionLeaderInfo.modelName )
+	entity factionLeader = CreatePropDynamic( GetFactionModel( faction ) )
 	factionLeader.SetParent( dropShip, "ORIGIN" )
 	factionLeader.MarkAsNonMovingAttachment()
+	factionLeader.SetSkin( GetFactionModelSkin( faction ) )
 
 	entity prop = null
 	if ( factionLeaderInfo.propModelName != $"" )
@@ -101,6 +140,14 @@ void function ServerCallback_SpawnFactionCommanderInDropship_threaded( int shipE
 	}
 
 	array<string> dropshipAnimList = factionLeaderInfo.dropshipAnimList
+	bool useEasterEgg = RandomFloat( 100 ) <= 1.0
+	#if DEV
+	useEasterEgg = useEasterEgg || file.forceEasterEgg
+	#endif
+	if ( factionLeaderInfo.easterEggDropshipAnimList.len() > 0 && useEasterEgg )
+	{
+		dropshipAnimList = factionLeaderInfo.easterEggDropshipAnimList
+	}
 	/*foreach( dropshipAnim in dropshipAnimList )
 	{
 		printt( "dropshipAnim: " + dropshipAnim )
@@ -131,6 +178,7 @@ void function ServerCallback_SpawnFactionCommanderInDropship_threaded( int shipE
 	#endif
 	//printt( "Picked anim: " + dropshipAnim )
 
+	AddAnimEvent( factionLeader, "set_skin_2", ModelSetSkin2 ) //Marvin specific
 	thread PlayAnim( factionLeader, dropshipAnim, dropShip, "ORIGIN" )
 	factionLeader.Anim_SetStartTime( dropshipSpawnTime )
 	factionLeader.LerpSkyScale( 0.9, 0.1 )
@@ -153,9 +201,40 @@ void function ServerCallback_SpawnFactionCommanderInDropship_threaded( int shipE
 	//printt( "animation name: " + factionLeaderInfo.dropshipAnimName + ", initialTime: " + initialTime + ", propAttachment: " + factionLeaderInfo.propAttachment )
 }
 
+void function ModelSetSkin2( entity model ) //Marvin specific
+{
+	model.SetSkin( 2 )
+}
+
+void function SetFactionDialoguePrefixOverride( string value )
+{
+	file.factionDialoguePrefixOverride = value
+}
+
+string function GetFactionDialoguePrefixOverride()
+{
+	return file.factionDialoguePrefixOverride
+}
+
+void function SetFactionLeaderDropshipIntroOverride( void functionref( int shipEHandle, float dropshipSpawnTime ) value )
+{
+	file.factionLeaderDropshipIntroOverride = value
+
+}
+
+void functionref( int shipEHandle, float dropshipSpawnTime ) function GetFactionLeaderDropshipIntroOverride()
+{
+	return file.factionLeaderDropshipIntroOverride
+}
+
 #if DEV
 void function Dev_SetFactionLeaderAnimIndex( int value )
 {
 	file.factionLeaderAnimIndex = value
+}
+
+void function Dev_ForceEasterEgg()
+{
+	file.forceEasterEgg = true
 }
 #endif

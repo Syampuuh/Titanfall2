@@ -23,6 +23,7 @@ WeaponData
 	"OnProjectileCollision"							"OnProjectileCollision_weapon_tether"
 	"OnWeaponAttemptOffhandSwitch"					"OnWeaponAttemptOffhandSwitch_titanweapon_arc_wave"
 	"sound_weapon_ready"							"HUD_TitanOffenseAbility_replenished_1P"
+	"sound_dryfire"   								"titan_dryfire"
 
 	"aimassist_disable_hipfire_humansonly"			"1"
 	"aimassist_disable_ads_humansonly"				"1"

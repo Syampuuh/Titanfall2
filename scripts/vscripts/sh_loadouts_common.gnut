@@ -129,18 +129,8 @@ void function OverwriteLoadoutWithDefaultsForSetFile( TitanLoadoutDef loadout )
 	OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( loadout )
 
 	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
-	string nonPrimeSetFile
-	#if SP //JFS SP NPC titans don't set loadout.titanClass
-		nonPrimeSetFile = loadout.setFile //SP NPC titans don't set loadout.titanClass
-	#else
-		string titanClass = loadout.titanClass
-		if ( titanClass == "" )
-			nonPrimeSetFile = loadout.setFile //JFS: Bounty Hunt/Dev AI command spawning also doesn't set loadout.titanClass
-		else
-			nonPrimeSetFile = GetSetFileForTitanClassAndPrimeStatus( loadout.titanClass, false )
-	#endif
-
-	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "setFile" ), nonPrimeSetFile )
+	string titanName = GetTitanClassFromSetFile( loadout.setFile )
+	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "titanRef" ), titanName )
 
 	loadout.special		= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "special" ) )
 	loadout.antirodeo	= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "antirodeo" ) )
@@ -163,18 +153,8 @@ void function OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( 
 	loadout.primaryMods	= [ loadout.primaryMod ]
 
 	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
-
-	string nonPrimeSetFile
-	#if SP //JFS
-		nonPrimeSetFile = loadout.setFile //SP NPC titans don't set loadout.titanClass
-	#else
-		string titanClass = loadout.titanClass
-		if ( titanClass == "" )
-			nonPrimeSetFile = loadout.setFile //JFS: Bounty Hunt/Dev AI command spawning also doesn't set loadout.titanClass
-		else
-			nonPrimeSetFile = GetSetFileForTitanClassAndPrimeStatus( loadout.titanClass, false )
-	#endif
-	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "setFile" ), nonPrimeSetFile )
+	string titanName = GetTitanClassFromSetFile( loadout.setFile )
+	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "titanRef" ), titanName )
 
 	loadout.primary		= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "primary" ) )
 	loadout.melee		= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "melee" ) )

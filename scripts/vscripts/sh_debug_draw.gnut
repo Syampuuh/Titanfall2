@@ -57,6 +57,13 @@ array<vector> function DebugDrawCircle( vector origin, vector angles, float radi
 	return pointsOnCircle
 }
 
+void function DebugDrawMark( vector origin, float radius, array<int> color, bool alwaysDraw, float drawTime )
+{
+	DebugDrawLine( (origin - <radius, 0, 0>), (origin + <radius, 0, 0>), color[0], color[1], color[2], alwaysDraw, drawTime )
+	DebugDrawLine( (origin - <0, radius, 0>), (origin + <0, radius, 0>), color[0], color[1], color[2], alwaysDraw, drawTime )
+	DebugDrawLine( (origin - <0, 0, radius>), (origin + <0, 0, radius>), color[0], color[1], color[2], alwaysDraw, drawTime )
+}
+
 void function DebugDrawSphere( vector origin, float radius, int r, int g, int b, bool throughGeo, float time, int segments = 16 )
 {
 	float degrees = 45.0

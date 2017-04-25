@@ -15,7 +15,7 @@
         ControlName				Label
         ypos					-41
         wide					1328
-        tall					288
+        tall					433
         labelText				""
         //bgcolor_override 		"210 170 0 255"
         //paintbackground 		1
@@ -147,16 +147,52 @@
     ServiceStatus
     {
         ControlName				RuiPanel
-        ypos					-11
+        xpos					-12
+        ypos					-38
         wide					744
-        tall					348
+        tall					100
         rui                     "ui/service_status.rpak"
+        visible					1
+
+        pin_to_sibling			PinFrame
+        pin_corner_to_sibling	BOTTOM_LEFT
+        pin_to_sibling_corner	BOTTOM_LEFT
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    WhatsNew
+    {
+        ControlName				RuiPanel
+        ypos					380
+        wide					740
+        tall					125
+        rui                     "ui/whats_new.rpak"
         visible					1
 
         pin_to_sibling			PinFrame
         pin_corner_to_sibling	TOP_RIGHT
         pin_to_sibling_corner	TOP_RIGHT
     }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    SpotlightPanel
+    {
+        ControlName				CNestedPanel
+        xpos					-540
+        ypos					-11
+        wide					1920
+        tall					1080
+        visible					0
+        controlSettingsFile		"resource/ui/menus/panels/spotlight.res"
+
+        pin_to_sibling			PinFrame
+        pin_corner_to_sibling	TOP_LEFT
+        pin_to_sibling_corner	TOP_RIGHT
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     InstallProgress
     {
@@ -175,24 +211,14 @@
     ActiveProfile
 	{
 		ControlName				RuiPanel
-        xpos                    308
-        ypos					860
+        xpos                    -13
 		wide                    600
 		tall					28
 		visible					0
 		rui                     "ui/mainmenu_active_profile.rpak"
-	}
 
-    VersionDisplay
-    {
-        ControlName				Label
-        xpos                    308
-        ypos					904
-        auto_wide_tocontents 	1
-        auto_tall_tocontents 	1
-        labelText				""
-        font					Default_21
-        visible					0
-        fgcolor_override 		"120 120 140 255"
-    }
+        pin_to_sibling			PinFrame
+        pin_corner_to_sibling	BOTTOM_LEFT
+        pin_to_sibling_corner	BOTTOM_LEFT
+	}
 }

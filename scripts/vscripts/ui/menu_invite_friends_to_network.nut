@@ -147,9 +147,10 @@ void function FriendButton_Activate( var button, int elemNum )
 	Friend friend = file.friendsData.friends[elemNum]
 	string name = friend.name
 	string id = friend.id
-	printt( "Friend Name:", name, "id:", id )
+	int communityId = GetCurrentCommunityId()
+	printt( "Friend Name:", name, "id:", id, "communityId:", communityId)
 
-	// TODO: Actually send invite
+	InviteUserToCommunity( id, communityId )
 }
 
 void function FriendButton_GetFocus( var button, int elemNum )

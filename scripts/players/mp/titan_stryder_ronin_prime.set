@@ -1,0 +1,11 @@
+#base "titan_stryder_leadwall.set"
+"titan_stryder_ronin_prime"
+{
+	isPrime				1
+
+	 execution_anim		"titan_stryder_ronin_prime"
+
+	 aiSettingsFile			"npc_titan_auto_stryder_ronin_prime" //mp only
+	 at_aiSettingsFile		"npc_titan_stryder_ronin_bounty" //at only
+
+}

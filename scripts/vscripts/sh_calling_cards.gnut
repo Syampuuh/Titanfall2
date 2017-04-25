@@ -189,7 +189,7 @@ CallingCard function CallingCard_GetByIndex( int index )
 {
 	// JFS: handle players with invalid indices
 	//Assert( index < CallingCards_GetCount() )
-	if ( index > file.callingCards.len() )
+	if ( index >= file.callingCards.len() )
 		return file.callingCards["callsign_16_col"]
 
 	return file.callingCards[file.callingCardRefs[index]]

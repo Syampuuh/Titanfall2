@@ -27,7 +27,7 @@ WeaponData
 	}
 
     "cooldown_type"                                 "shared_energy_drain"
-
+    "sound_dryfire"   								"titan_dryfire"
 	"npc_use_check_type"							"shared_energy"
 
 	"shared_energy_cost"							"0"

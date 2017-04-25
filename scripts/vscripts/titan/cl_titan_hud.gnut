@@ -417,7 +417,12 @@ function TitanCockpit_WarningAudio( entity cockpit, entity player )
 
 			if ( healthFrac <= 0.5 )
 			{
-				TitanCockpit_PlayDialog( player, "halfDoomState" )
+				bool ejectIsDisabled = TitanEjectIsDisabled()
+				if ( ejectIsDisabled )
+					TitanCockpit_PlayDialog( player, "doomState" )
+				else
+					TitanCockpit_PlayDialog( player, "halfDoomState" )
+
 				if ( PROTO_AlternateDoomedState() )
 					break // so it doesn't spam you
 			}

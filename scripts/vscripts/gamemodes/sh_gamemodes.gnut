@@ -141,6 +141,7 @@ const table<string, int> gameModesStringToIdMap = {
 	[ COLISEUM ]							= eGameModes.COLISEUM_ID,
 	[ AI_TDM ]								= eGameModes.AI_TDM_ID,
 	[ SPEEDBALL ]							= eGameModes.SPEEDBALL_ID,
+	[ MARKED_FOR_DEATH ]					= eGameModes.MARKED_FOR_DEATH_ID,
 }
 
 struct
@@ -329,6 +330,24 @@ void function GameModes_Init()
 	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_FLAGS_SECURED", PGS_ASSAULT_SCORE, 2 )
 	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_DEATHS", PGS_DEATHS, 2 )
 	GameMode_SetColor( gameMode, [225, 141, 8, 255] )
+
+	gameMode = MARKED_FOR_DEATH
+	GameMode_Create( gameMode )
+	GameMode_SetName( gameMode, "#PL_marked_for_death" )
+	#if FACTION_DIALOGUE_ENABLED
+		GameMode_SetGameModeAnnouncement( gameMode, "mfd_modeDesc" )
+	#else
+		GameMode_SetGameModeAnnouncement( gameMode, "GameModeAnnounce_MFD" )
+	#endif
+	GameMode_SetDesc( gameMode, "#PL_marked_for_death_hint" )
+	GameMode_SetIcon( gameMode, $"ui/menu/playlist/mfd" )
+	GameMode_SetDefaultScoreLimits( gameMode, 10, 0 )
+	GameMode_SetDefaultTimeLimits( gameMode, 10, 0.0 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_MFD_SCORE", PGS_ASSAULT_SCORE, 2 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_MFD_MARKS_OUTLASTED", PGS_DEFENSE_SCORE, 2 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_KILLS", PGS_KILLS, 2 )
+	GameMode_SetColor( gameMode, [127, 127, 127, 255] )
+
 
 	#if DEVSCRIPTS
 	DevGameModes_Init()

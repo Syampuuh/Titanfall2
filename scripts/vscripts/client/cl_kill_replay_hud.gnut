@@ -107,12 +107,12 @@ void function KillReplayHud_Activate()
 		CallingCard callingCard = PlayerCallingCard_GetActive( attacker )
 		CallsignIcon callsignIcon = PlayerCallsignIcon_GetActive( attacker )
 
-
 		RuiSetBool( file.killReplayOverlayRui, "showKillerInfo", true )
 
 		RuiSetImage( file.killReplayOverlayRui, "cardImage", CallingCard_GetImage( callingCard ) )
 		RuiSetImage( file.killReplayOverlayRui, "iconImage", CallsignIcon_GetImage( callsignIcon ) )
 		RuiSetInt( file.killReplayOverlayRui, "layoutType", CallingCard_GetLayout( callingCard ) )
+		RuiSetImage( file.killReplayOverlayRui, "cardGenImage", PlayerXPGetGenIcon( attacker ) )
 		RuiSetFloat( file.killReplayOverlayRui, "killerHealthFrac", nameOfLastKiller.healthFrac )
 		RuiSetString( file.killReplayOverlayRui, "killerLevel", PlayerXPDisplayGenAndLevel( attacker.GetGen(), attacker.GetLevel() ) )
 
@@ -204,6 +204,7 @@ void function RoundWinningKillReplayClientHud_Activate()
 	RuiSetImage( file.killReplayOverlayRui, "cardImage", CallingCard_GetImage( callingCard ) )
 	RuiSetImage( file.killReplayOverlayRui, "iconImage", CallsignIcon_GetImage( callsignIcon ) )
 	RuiSetInt( file.killReplayOverlayRui, "layoutType", CallingCard_GetLayout( callingCard ) )
+	RuiSetImage( file.killReplayOverlayRui, "cardGenImage", PlayerXPGetGenIcon( viewEntity ) )
 	//printt( "Health Frac: " + level.nv.roundWinningKillReplayEntHealthFrac )
 	RuiSetFloat( file.killReplayOverlayRui, "killerHealthFrac", expect float( level.nv.roundWinningKillReplayEntHealthFrac ) )
 	RuiSetString( file.killReplayOverlayRui, "killerLevel", PlayerXPDisplayGenAndLevel( viewEntity.GetGen(), viewEntity.GetLevel() ) )

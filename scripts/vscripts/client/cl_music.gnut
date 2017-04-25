@@ -26,6 +26,7 @@ global function GetGameStateMusicEnabled
 
 global function ServerCallback_PlayTeamMusicEvent
 global function ServerCallback_PlayMusicToCompletion
+global function ServerCallback_PlayMusic
 global function RegisterLevelMusicForTeam
 
 global function ServerCallback_ForcePlayMusic
@@ -134,6 +135,13 @@ function InitDefaultMusic()
 	level.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.GAMEMODE_1 ] <- "Music_MarkedForDeath_MCOR_YouAreMarked"
 	level.musicForTeam[ TEAM_IMC ][ eMusicPieceID.GAMEMODE_2 ] <- "Music_MarkedForDeath_IMC_YouAreMarked"
 	level.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.GAMEMODE_2 ] <- "Music_MarkedForDeath_MCOR_YouAreMarked"
+
+	level.musicForTeam[ TEAM_IMC ][ eMusicPieceID.PVE_OBJECTIVE_START ] <- "Music_MarkedForDeath_IMC_YouAreMarked"
+	level.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.PVE_OBJECTIVE_START ] <- "Music_MarkedForDeath_MCOR_YouAreMarked"
+	level.musicForTeam[ TEAM_IMC ][ eMusicPieceID.PVE_OBJECTIVE_START_FINAL ] <- "Music_MarkedForDeath_IMC_YouAreMarked"
+	level.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.PVE_OBJECTIVE_START_FINAL ] <- "Music_MarkedForDeath_MCOR_YouAreMarked"
+	level.musicForTeam[ TEAM_IMC ][ eMusicPieceID.PVE_OBJECTIVE_COMPLETE ] <- "Music_MarkedForDeath_IMC_YouAreMarked"
+	level.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.PVE_OBJECTIVE_COMPLETE ] <- "Music_MarkedForDeath_MCOR_YouAreMarked"
 
 	//Play a different music piece based on winning/losing final round as opposed to yet another round. No difference between IMC or Milita
 	level.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.ROUND_BASED_GAME_WON ]  <- "Music_AngelCity_MCOR_Win" //Music_SuddenDeath_GameWon and Music_SuddenDeath_GameLost have flags that duck out the rest of audio. This is a problem in LH where we evac after the last round. Re-examine when server has more control of music played.
@@ -360,6 +368,21 @@ function RegisterGameModeMusic()
 		{
 			RegisterLevelMusicForTeam( eMusicPieceID.GAMEMODE_1, "Music_MarkedForDeath_IMC_YouAreMarked", TEAM_IMC )
 			RegisterLevelMusicForTeam( eMusicPieceID.GAMEMODE_1, "Music_MarkedForDeath_MCOR_YouAreMarked", TEAM_MILITIA )
+
+			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_INTRO, "music_mp_mfd_intro_flyin", TEAM_IMC )
+			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_INTRO, "music_mp_mfd_intro_flyin", TEAM_MILITIA )
+
+			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_WIN, "music_mp_mfd_epilogue_win", TEAM_IMC )
+			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_WIN, "music_mp_mfd_epilogue_win", TEAM_MILITIA )
+
+			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_DRAW, "music_mp_mfd_epilogue_lose", TEAM_IMC )
+			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_DRAW, "music_mp_mfd_epilogue_lose", TEAM_MILITIA )
+
+			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_LOSS, "music_mp_mfd_epilogue_lose", TEAM_IMC )
+			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_LOSS, "music_mp_mfd_epilogue_lose", TEAM_MILITIA )
+
+			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_LAST_MINUTE, "music_mp_mfd_lastminute", TEAM_IMC )
+			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_LAST_MINUTE, "music_mp_mfd_lastminute", TEAM_MILITIA )
 			break
 		}
 
@@ -580,6 +603,15 @@ function RegisterGameModeMusic()
 			break
 		}
 
+		case PVE_SANDBOX:
+		{
+			RegisterLevelMusicForBothTeams( eMusicPieceID.LEVEL_INTRO,					"music_beacon_8a_jumpingsuccess" )
+			RegisterLevelMusicForBothTeams( eMusicPieceID.PVE_OBJECTIVE_START,			"music_mp_coliseum_intro" )
+			RegisterLevelMusicForBothTeams( eMusicPieceID.PVE_OBJECTIVE_START_FINAL,	"music_mp_coliseum_lastminute" )
+			RegisterLevelMusicForBothTeams( eMusicPieceID.PVE_OBJECTIVE_COMPLETE,		"music_mp_coliseum_round_win" )
+		}
+		break
+
 		case GAMEMODE_SP:
 		{
 			// TEMP tracks until Erik works on it
@@ -607,6 +639,11 @@ function RegisterGameModeMusic()
 function RegisterLevelMusicForTeam( musicPieceID, soundAlias, team )
 {
 	level.musicForTeam[ team ][ musicPieceID ] = soundAlias
+}
+function RegisterLevelMusicForBothTeams( musicPieceID, soundAlias )
+{
+	level.musicForTeam[ TEAM_IMC ][ musicPieceID ] = soundAlias
+	level.musicForTeam[ TEAM_MILITIA ][ musicPieceID ] = soundAlias
 }
 
 function IsForcedMusicOnly( player )
@@ -744,6 +781,12 @@ function ServerCallback_PlayTeamMusicEvent( musicPieceID, timeMusicStarted, shou
 void function ServerCallback_PlayMusicToCompletion( int musicPieceID )
 {
 	thread ForcePlayMusicToCompletion( musicPieceID, 0 )
+	return
+}
+
+void function ServerCallback_PlayMusic( int musicPieceID )
+{
+	PlayMusic( musicPieceID )
 	return
 }
 

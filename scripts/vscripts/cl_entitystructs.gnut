@@ -51,6 +51,8 @@ global struct ClientEntityStruct
 
 	array<DamageHistoryStruct> recentDamageHistory
 	string functionref( entity ent ) entTextOverrideCallback
+
+	string enemyHighlight = ""
 }
 
 

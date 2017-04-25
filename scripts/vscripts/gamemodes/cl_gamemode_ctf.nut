@@ -65,6 +65,9 @@ void function ClCaptureTheFlag_Init()
 	file.imcFlagRui = CreateCockpitRui( $"ui/ctf_flag_marker.rpak", 200 )
 	file.milFlagRui = CreateCockpitRui( $"ui/ctf_flag_marker.rpak", 200 )
 	AddCallback_GameStateEnter( eGameState.Postmatch, DisplayPostMatchTop3 )
+
+	ClGameState_RegisterGameStateAsset( $"ui/gamestate_info_ctf.rpak" )
+	SetGameModeScoreBarUpdateRules( GameModeScoreBarRules_CTF )
 }
 
 
@@ -144,6 +147,22 @@ void function CTF_FlagHomeEntChanged( entity player, entity oldHome, entity newH
 	RuiTrackInt( rui, "teamRelation", newHome, RUI_TRACK_TEAM_RELATION_VIEWPLAYER )
 	RuiTrackInt( rui, "flagStateFlags", null, RUI_TRACK_SCRIPT_NETWORK_VAR_GLOBAL_INT, GetNetworkedVariableIndex( flagStateVar ) )
 }
+
+
+void function GameModeScoreBarRules_CTF( var rui )
+{
+	if ( GetGameState() < eGameState.Prematch || GetGameState() > eGameState.Playing )
+	{
+		RuiSetString( rui, "roundText", "" )
+		return
+	}
+
+	if ( !HasSwitchedSides() )
+		RuiSetString( rui, "roundText", "#FIRST_HALF" )
+	else
+		RuiSetString( rui, "roundText", "#SECOND_HALF" )
+}
+
 
 void function CTF_AddPlayer( entity player )
 {

@@ -80,6 +80,7 @@ global struct MenuDef
 	void functionref() closeFunc
 	void functionref() showFunc // TODO: Needs hooking up
 	void functionref() hideFunc // TODO: Needs hooking up
+	void functionref() thinkFunc
 	void functionref() navBackFunc
 	void functionref() tabChangedFunc
 
@@ -262,6 +263,7 @@ void function UICodeCallback_UIInit()
 	XP_Init()
 	#if DEVSCRIPTS
 	ShDpadComms_Init()
+	PVETactical_SharedInit()
 	#endif
 
 	MenuLobby_Init()
@@ -284,6 +286,7 @@ void function UICodeCallback_UIInit()
 	RegisterSignal( "ActiveMenuChanged" )
 	RegisterSignal( "LevelFinishedLoading")
 	RegisterSignal( "OpenErrorDialog" )
+	RegisterSignal( "BoughtItem" )
 
 	thread UpdateClientMenuOpenState()
 

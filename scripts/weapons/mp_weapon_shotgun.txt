@@ -98,7 +98,7 @@ WeaponData
 		"damage_near_value_titanarmor"					"300"
 		"damage_far_value_titanarmor" 					"10"
 		"damage_rodeo" 									"550"
-		"damage_near_distance"							"200"
+		"damage_near_distance"							"100"
 		"damage_far_distance" 							"750"
 
 		"damage_headshot_scale"							"1.25"
@@ -116,16 +116,16 @@ WeaponData
 		"damage_heavyarmor_nontitan_scale"				"0.35"
 
 		// Spread
-		"spread_stand_hip"								"6"
-		"spread_stand_hip_run"							"6"
-		"spread_stand_hip_sprint"                       "6"
-		"spread_crouch_hip"   							"6"
-		"spread_air_hip"  								"6"
-		"spread_stand_ads"								"6"
-		"spread_crouch_ads"   							"6"
-		"spread_air_ads"  								"6"
-		"spread_wallrunning"  							"6"
-		"spread_wallhanging"  							"6"
+		"spread_stand_hip"								"8"
+		"spread_stand_hip_run"							"8"
+		"spread_stand_hip_sprint"                       "8"
+		"spread_crouch_hip"   							"8"
+		"spread_air_hip"  								"8"
+		"spread_stand_ads"								"8"
+		"spread_crouch_ads"   							"8"
+		"spread_air_ads"  								"8"
+		"spread_wallrunning"  							"8"
+		"spread_wallhanging"  							"8"
 	}
 
 	SP_BASE

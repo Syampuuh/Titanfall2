@@ -78,12 +78,15 @@ var function OnWeaponPrimaryAttack_shifter( entity weapon, WeaponPrimaryAttackPa
 
 			if ( pmLevel >= 0 )
 				StatusEffect_AddTimed( weaponOwner, eStatusEffect.move_slow, 0.75, 0.75, 0.75 )	// "stick" a bit on exit
+
+			return weapon.GetWeaponSettingInt( eWeaponVar.ammo_min_to_fire )
 		}
 		else
 		{
 			PhaseShift( weaponOwner, 0, 99999 );
 			if ( pmLevel >= 1 )
 				EndlessStimBegin( weaponOwner, PMMOD_ENDLESS_STRENGTH )
+			return 0
 		}
 	}
 	else

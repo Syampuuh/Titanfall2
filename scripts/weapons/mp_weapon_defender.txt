@@ -78,8 +78,8 @@ WeaponData
 		// Damage - When Used by Players
 		"damage_near_value"   							"300"
 		"damage_far_value"								"300"
-		"damage_near_value_titanarmor"					"825"
-		"damage_far_value_titanarmor" 					"525"
+		"damage_near_value_titanarmor"					"1025"
+		"damage_far_value_titanarmor" 					"725"
 		"damage_rodeo"									"2000"
 		"damage_near_distance"							"4800"
 		"damage_far_distance" 							"5300"
@@ -505,6 +505,11 @@ WeaponData
 			"reload_time_late1"					"*0.7"
 			"reloadempty_time"					"*0.7"
 			"reloadempty_time_late1"			"*0.7"
+		}
+		pveBase
+		{
+			"ammo_stockpile_max"				"8"
+			"ammo_default_total"				"8"
 		}
 	}
 

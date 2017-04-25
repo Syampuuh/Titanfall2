@@ -68,7 +68,6 @@ resource/ui/menus/store_customization.menu
 
 			wide				122
 			tall				71
-			OverrideTallIfNotBitmap 1
 			visible				1
 			scaleImage			1
 
@@ -89,7 +88,6 @@ resource/ui/menus/store_customization.menu
 
 			wide				122
 			tall				71
-			OverrideTallIfNotBitmap 1
 			visible				1
 			scaleImage			1
 
@@ -110,7 +108,6 @@ resource/ui/menus/store_customization.menu
 
 			wide				122
 			tall				71
-			OverrideTallIfNotBitmap 1
 			visible				1
 			scaleImage			1
 
@@ -131,7 +128,6 @@ resource/ui/menus/store_customization.menu
 
 			wide				122
 			tall				71
-			OverrideTallIfNotBitmap 1
 			visible				1
 			scaleImage			1
 
@@ -152,7 +148,6 @@ resource/ui/menus/store_customization.menu
 
 			wide				122
 			tall				71
-			OverrideTallIfNotBitmap 1
 			visible				1
 			scaleImage			1
 
@@ -173,7 +168,6 @@ resource/ui/menus/store_customization.menu
 
 			wide				122
 			tall				71
-			OverrideTallIfNotBitmap 1
 			visible				1
 			scaleImage			1
 
@@ -202,7 +196,6 @@ resource/ui/menus/store_customization.menu
             navRight			Titan0DLC3
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}
@@ -228,7 +221,6 @@ resource/ui/menus/store_customization.menu
             navRight			Titan1DLC3
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}
@@ -252,7 +244,6 @@ resource/ui/menus/store_customization.menu
             navRight			Titan2DLC3
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}
@@ -276,7 +267,6 @@ resource/ui/menus/store_customization.menu
             navRight			Titan3DLC3
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}
@@ -300,7 +290,6 @@ resource/ui/menus/store_customization.menu
             navRight			Titan4DLC3
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}
@@ -324,7 +313,6 @@ resource/ui/menus/store_customization.menu
             navRight			Titan5DLC3
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}
@@ -348,7 +336,6 @@ resource/ui/menus/store_customization.menu
             navLeft				Titan0DLC1
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}
@@ -371,7 +358,6 @@ resource/ui/menus/store_customization.menu
             navLeft				Titan1DLC1
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}
@@ -394,7 +380,6 @@ resource/ui/menus/store_customization.menu
             navLeft				Titan2DLC1
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}
@@ -417,7 +402,6 @@ resource/ui/menus/store_customization.menu
             navLeft				Titan3DLC1
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}
@@ -440,7 +424,6 @@ resource/ui/menus/store_customization.menu
             navLeft				Titan4DLC1
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}
@@ -463,7 +446,6 @@ resource/ui/menus/store_customization.menu
             navLeft				Titan5DLC1
 
 			rui					"ui/customization_pack_button.rpak"
-			OverrideTallIfNotBitmap 0
 
 			zpos				1
 		}

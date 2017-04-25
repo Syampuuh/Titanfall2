@@ -23,7 +23,6 @@ global function Lobby_UpdateInboxButtons
 
 global function UpdateNetworksMoreButton
 global function GetTimeToRestartMatchMaking
-global function UpdateTimeToRestartMatchmaking
 
 global function RefreshCreditsAvailable
 
@@ -35,9 +34,12 @@ global function DLCStoreShouldBeMarkedAsNew
 
 global function SetNextAutoMatchmakingPlaylist
 global function GetNextAutoMatchmakingPlaylist
-global function Mixtape_ShouldShowSearchSkipPrompt
 
 global function OnDpadCommsButton_Activate
+
+global function GetActiveSearchingPlaylist
+
+const string MATCHMAKING_AUDIO_CONNECTING = "menu_campaignsummary_titanunlocked"
 
 struct
 {
@@ -78,7 +80,6 @@ struct
 	var findGameButton
 	var inviteRoomButton
 	var inviteFriendsButton
-	var pveMenuButton
 
 	var networksMoreButton
 
@@ -118,8 +119,9 @@ struct
 
 	bool putPlayerInMatchmakingAfterDelay = false
 	float matchmakingStartTime = 0.0
+	int etaTime = 0
+	int etaMaxMinutes = 15
 	string lastMixtapeMatchmakingStatus
-	bool mixtapeSkipEnabled = true
 
 	ComboStruct &lobbyComboStruct
 } file
@@ -262,7 +264,6 @@ void function InitLobbyMenu()
 
 	RegisterUIVarChangeCallback( "badRepPresent", UpdateLobbyBadRepPresentMessage )
 
-	RegisterUIVarChangeCallback( "nextMapModeSet", NextMapModeSet_Changed )
 	RegisterUIVarChangeCallback( "gameStartTime", GameStartTime_Changed )
 
 	RegisterUIVarChangeCallback( "showGameSummary", ShowGameSummary_Changed )
@@ -326,16 +327,6 @@ void function InitLobbyMenu()
 	RegisterSignal( "LeaveParty" )
 }
 
-#if DEVSCRIPTS
-void function DoClick_OpenPVE( var button )
-{
-	if ( Hud_IsLocked( button ) )
-		return
-
-	OpenPVELobbyMenu()
-}
-#endif
-
 void function SetupComboButtonTest( var menu )
 {
 	ComboStruct comboStruct = ComboButtons_Create( menu )
@@ -353,11 +344,6 @@ void function SetupComboButtonTest( var menu )
 
 	file.inviteFriendsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_INVITE_FRIENDS" )
 	Hud_AddEventHandler( file.inviteFriendsButton, UIE_CLICK, InviteFriendsIfAllowed )
-
-	#if DEVSCRIPTS
-	file.pveMenuButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_BUTTON_OPEN_PVE" )
-	Hud_AddEventHandler( file.pveMenuButton, UIE_CLICK, DoClick_OpenPVE )
-	#endif
 
 	headerIndex++
 	buttonIndex = 0
@@ -614,14 +600,6 @@ void function OnLobbyMenu_Open()
 		UpdateCallsignElement( file.callsignCard )
 		RefreshCreditsAvailable()
 
-		#if DEVSCRIPTS
-		bool pveMenuEnabled = PVELobbyMenuIsEnabled()
-		if ( pveMenuEnabled )
-			Hud_Show( file.pveMenuButton )
-		else
-			Hud_Hide( file.pveMenuButton )
-		#endif
-
 		bool emotesAreEnabled = EmotesEnabled()
 		// "Customize"
 		{
@@ -749,9 +727,10 @@ void function PutPlayerInMatchmakingAfterDelay()
 		return
 	}
 
-	bool wasAPartyMemberThatIsNotLeader = AmIPartyMember()
-	waitthread WaitBeforeRestartingMatchmaking() //Still need to go into this function if isPartyMemberThatIsNotLeader to set up UI saying "Waiting on Party Leader"  correctly
-	if ( wasAPartyMemberThatIsNotLeader ) //Not actually party leader, so should never actually try to StartMatchmaking
+	// Start auto-matchmaking UI for leaders and members
+	waitthread WaitBeforeRestartingMatchmaking()
+	// Only the leader should proceed to start matchmaking
+	if ( AmIPartyMember() )
 		return
 
 	if ( !Console_HasPermissionToPlayMultiplayer() )
@@ -937,18 +916,21 @@ float function GetMixtapeWaitTimeForPlaylist( string playlistName )
 	return maxWaitTime
 }
 
-bool function Mixtape_ShouldShowSearchSkipPrompt()
+void function UpdateRestartMatchmakingStatus( float time ) 
 {
-	if ( !LocalPlayerIsMixtapeSearching() )
-		return false
-	if ( !MixtapeMatchmakingSkipButtonIsOn() )
-		return false
-	if ( file.lastMixtapeMatchmakingStatus != "#MATCHMAKING_QUEUED" )
-		return false
-	if ( !file.mixtapeSkipEnabled )
-		return false
-
-	return true
+	if ( AmIPartyMember() )
+	{
+		MatchmakingSetSearchText( "#MATCHMAKING_WAIT_ON_PARTY_LEADER_RESTARTING_MATCHMAKING" )
+	}
+	else
+	{
+		string statusText = "#MATCHMAKING_WAIT_BEFORE_RESTARTING_MATCHMAKING"
+		string matchmakeNowText = ""
+		if ( uiGlobal.activeMenu == GetMenu( "SearchMenu" ) )
+			matchmakeNowText = Localize( "#MATCHMAKING_WAIT_MATCHMAKE_NOW" )
+		MatchmakingSetSearchText( statusText, matchmakeNowText )
+		MatchmakingSetCountdownTimer( time, false )
+	}
 }
 
 void function UpdateMatchmakingStatus()
@@ -978,15 +960,16 @@ void function UpdateMatchmakingStatus()
 
 	string lastActiveSearchingPlaylist
 	file.matchmakingStartTime = 0.0
+	file.etaTime = 0
+	file.etaMaxMinutes = int( GetCurrentPlaylistVarOrUseValue( "etaMaxMinutes", file.etaMaxMinutes ) )
 	file.lastMixtapeMatchmakingStatus = ""
 
 	while ( true )
 	{
 		int lobbyType = GetLobbyTypeScript()
 		string matchmakingStatus = GetMyMatchmakingStatus()
-		int mmdf = GetMMDF()
+		bool isConnectingToMatch = matchmakingStatus == "#MATCHMAKING_MATCH_CONNECTING"
 
-		//
 		{
 			string activeSearchingPlaylist = GetActiveSearchingPlaylist()
 			if ( lastActiveSearchingPlaylist != activeSearchingPlaylist )
@@ -1003,46 +986,16 @@ void function UpdateMatchmakingStatus()
 				}
 			}
 
-			if ( LocalPlayerIsMixtapeSearching() )
+			if ( isConnectingToMatch && (matchmakingStatus != file.lastMixtapeMatchmakingStatus) )
 			{
-				if ( matchmakingStatus == "#MATCHMAKING_QUEUED" )
-				{
-					// Client auto-skip:
-					{
-						string playlistName = GetMyMatchmakingStatusParam( 1 )
-						float maxWaitTime = (playlistName.len() > 0) ? GetMixtapeWaitTimeForPlaylist( playlistName ) : 0.0
-						if ( maxWaitTime > 0.1)
-						{
-							float waitTime = CalcMatchmakingWaitTime()
-							if ( waitTime > maxWaitTime )
-							{
-								file.matchmakingStartTime = 0.0
-								LogMixtapeTimedOut( playlistName )
-								ClientCommand( "MatchmakingSkipToNext" )
-							}
-						}
-					}
-				}
+				EmitUISound( MATCHMAKING_AUDIO_CONNECTING )
 
-				// Telemetery on connect:
-				if ( (matchmakingStatus == "#MATCHMAKING_MATCH_CONNECTING") && (matchmakingStatus != file.lastMixtapeMatchmakingStatus) )
-				{
-					int mixtape_version = GetMixtapeMatchmakingVersion()
-
-					if ( IsMixtapeVersionNew() )
-						LogMixtapeHasNew( mixtape_version )
-
-					array<string> checkedOnPlaylists = GetMixtapeExternalCheckedOnPlaylists()
-					foreach( string thisPLName in checkedOnPlaylists)
-						LogMixtapeCheckOn( thisPLName, mixtape_version )
-				}
-
-				file.lastMixtapeMatchmakingStatus = matchmakingStatus
+				int mixtape_version = GetMixtapeMatchmakingVersion()
+				if ( IsMixtapeVersionNew() )
+					LogMixtapeHasNew( mixtape_version )
 			}
-			else
-			{
-				file.lastMixtapeMatchmakingStatus = ""
-			}
+
+			file.lastMixtapeMatchmakingStatus = matchmakingStatus
 		}
 
 		if ( level.ui.gameStartTime != null || lobbyType == eLobbyType.PRIVATE_MATCH )
@@ -1057,14 +1010,7 @@ void function UpdateMatchmakingStatus()
 		}
 		else if ( GetTimeToRestartMatchMaking() > 0  )
 		{
-			if ( AmIPartyMember() )
-				MatchmakingSetSearchText( "#MATCHMAKING_WAIT_ON_PARTY_LEADER_RESTARTING_MATCHMAKING" )
-			else
-				MatchmakingSetSearchText( "#MATCHMAKING_WAIT_BEFORE_RESTARTING_MATCHMAKING" )
-
-			var statusEl = Hud_GetChild( searchMenu, "MatchmakingStatusBig" )
-			RuiSetString( Hud_GetRui( statusEl ), "statusText", "" )
-			RuiSetInt( Hud_GetRui( statusEl ), "playlistCount", 0 )
+			UpdateRestartMatchmakingStatus( GetTimeToRestartMatchMaking() )
 		}
 		else if ( level.ui.gameStartTime == null )
 		{
@@ -1074,16 +1020,8 @@ void function UpdateMatchmakingStatus()
 
 			if ( !IsConnected() || !AreWeMatchmaking() )
 			{
-				ClearDisplayedMapAndMode()
-
 				if ( uiGlobal.activeMenu == searchMenu )
 					CloseActiveMenu()
-
-				if ( lobbyType == eLobbyType.MATCH )
-				{
-					//MatchmakingSetSearchText( "#MATCHMAKING_PLAYERS_CONNECTING" )
-					MatchmakingSetSearchText( "" )
-				}
 			}
 			else
 			{
@@ -1096,48 +1034,26 @@ void function UpdateMatchmakingStatus()
 				}
 
 				var statusEl = Hud_GetChild( searchMenu, "MatchmakingStatusBig" )
-				var titleEl = searchMenu.GetChild( "MenuTitle" )
-				string param1 = GetMyMatchmakingStatusParam( 1 )
-				string param2 = GetMyMatchmakingStatusParam( 2 )
-				string param3 = GetMyMatchmakingStatusParam( 3 )
-				string param4 = GetMyMatchmakingStatusParam( 4 )
-				string param5 = GetMyMatchmakingStatusParam( 5 )
-				string param6 = GetMyMatchmakingStatusParam( 6 )	// searching for mixtape playlists
 				if ( matchmakingStatus == "#MATCH_NOTHING" )
 				{
-					Hud_SetText( titleEl, "" )
 					Hud_Hide( statusEl )
 				}
 				else if ( MatchmakingStatusShouldShowAsActiveSearch( matchmakingStatus ) )
 				{
-					string playlistName = param1
-					Hud_SetText( titleEl, "#MATCHMAKING_PLAYLIST", GetPlaylistVarOrUseValue( playlistName, "name", "#UNKNOWN_PLAYLIST_NAME" ) )
+					string playlistName = GetMyMatchmakingStatusParam( 1 )
+					int etaSeconds = int( GetMyMatchmakingStatusParam( 2 ) )
+					int mapIdx = int( GetMyMatchmakingStatusParam( 3 ) )
+					int modeIdx = int( GetMyMatchmakingStatusParam( 4 ) )
+					string playlistList = GetMyMatchmakingStatusParam( 5 )
 
-					string dinf = "";
-					if ( mmdf )
 					{
-						float maxWaitTime = LocalPlayerIsMixtapeSearching() ? GetMixtapeWaitTimeForPlaylist( playlistName ) : 0.0
-						if ( maxWaitTime > 0.0 )
-							dinf = format( "`0 (%s, %0.0f/%0.0f)", lastActiveSearchingPlaylist, CalcMatchmakingWaitTime(), maxWaitTime )
-						else
-							dinf = format( "`0 (%s, %0.0f)", lastActiveSearchingPlaylist, CalcMatchmakingWaitTime() )
-					}
-
-					bool oldMixtapeSkipEnabled = file.mixtapeSkipEnabled
-
-					//param6 = "aitdm,at,cp,lts,ctf,ps,tdm,ffa,aitdm2"
-					//param6 = "lts,ffa"
-					if ( param6.len() > 0 )
-					{
-						file.mixtapeSkipEnabled = false
-
-						string statusText = Localize( "#MATCHMAKING_PLAYLIST", "" ) + dinf
+						string statusText = Localize( "#MATCHMAKING_PLAYLISTS" )
 						RuiSetString( Hud_GetRui( statusEl ), "statusText", statusText )
 						for ( int idx = 1; idx <= 5; ++idx )
 							RuiSetString( Hud_GetRui( statusEl ), ("bulletPointText" + idx), "" )
 
 						const int MAX_SHOWN_PLAYLISTS = 9
-						array<string> searchingPlaylists = split( param6, "," )
+						array< string > searchingPlaylists = split( playlistList, "," )
 						int searchingCount = minint( searchingPlaylists.len(), MAX_SHOWN_PLAYLISTS )
 						RuiSetInt( Hud_GetRui( statusEl ), "playlistCount", searchingCount )
 						for( int idx = 0; idx < searchingCount; ++idx )
@@ -1146,33 +1062,9 @@ void function UpdateMatchmakingStatus()
 							RuiSetImage( Hud_GetRui( statusEl ), format( "playlistIcon%d", idx ), playlistThumbnail )
 						}
 					}
-					else
-					{
-						file.mixtapeSkipEnabled = true
-
-						string statusText = Localize( "#MATCHMAKING_PLAYLIST", Localize( GetPlaylistVarOrUseValue( playlistName, "name", "#UNKNOWN_PLAYLIST_NAME" ) ) ) + dinf
-						RuiSetString( Hud_GetRui( statusEl ), "statusText", statusText )
-
-						bool mixtapeIsEnabled = MixtapeMatchmakingIsEnabled()
-						asset playlistThumbnail = mixtapeIsEnabled ? GetPlaylistThumbnailImage( playlistName ) : $""
-						RuiSetInt( Hud_GetRui( statusEl ), "playlistCount", 1 )
-						RuiSetImage( Hud_GetRui( statusEl ), "playlistIcon0", playlistThumbnail )
-
-						RuiSetString( Hud_GetRui( statusEl ), "bulletPointText1", Localize( GetPlaylistVarOrUseValue( playlistName, "gamemode_bullet_001", "" ) ) )
-						RuiSetString( Hud_GetRui( statusEl ), "bulletPointText2", Localize( GetPlaylistVarOrUseValue( playlistName, "gamemode_bullet_002", "" ) ) )
-						RuiSetString( Hud_GetRui( statusEl ), "bulletPointText3", Localize( GetPlaylistVarOrUseValue( playlistName, "gamemode_bullet_003", "" ) ) )
-						RuiSetString( Hud_GetRui( statusEl ), "bulletPointText4", Localize( GetPlaylistVarOrUseValue( playlistName, "gamemode_bullet_004", "" ) ) )
-						RuiSetString( Hud_GetRui( statusEl ), "bulletPointText5", Localize( GetPlaylistVarOrUseValue( playlistName, "gamemode_bullet_005", "" ) ) )
-					}
-
-					if ( oldMixtapeSkipEnabled != file.mixtapeSkipEnabled )
-						UpdateFooterOptions()
 
 					Hud_Show( statusEl )
 
-					string maxPlayers = ""
-					int mapIdx = int( param3 )
-					int modeIdx = int( param4 )
 					if ( mapIdx > -1 && modeIdx > -1 )
 					{
 						if ( file.preCacheInfo.playlistName != playlistName || file.preCacheInfo.mapIdx != mapIdx || file.preCacheInfo.modeIdx != modeIdx )
@@ -1180,91 +1072,53 @@ void function UpdateMatchmakingStatus()
 							file.preCacheInfo.playlistName = playlistName
 							file.preCacheInfo.mapIdx = mapIdx
 							file.preCacheInfo.modeIdx = modeIdx
-							// SetPlaylistDisplayedMapAndModeByIndex( playlistName, mapIdx, modeIdx )
 						}
-
-						maxPlayers = GetPlaylistGamemodeByIndexVar( playlistName, modeIdx, "max_players" )
 					}
 
-					if ( maxPlayers == "" )
+					string etaStr = ""
+					if ( !etaSeconds && !isConnectingToMatch )
 					{
-						matchmakingStatus = "#MATCHMAKING_QUEUE"
+						matchmakingStatus = "#MATCHMAKING_SEARCHING_FOR_MATCH"
 					}
 					else
 					{
-						param1 = param2
-						param2 = maxPlayers
-						param3 = GetPlaylistCountDescForRegion( playlistName )
-						if ( param3 == "" )
-							param3 = "0"
+						int now = int( Time() )
+						int etaTime = now + etaSeconds
+						if ( !file.etaTime || etaTime < file.etaTime )
+							file.etaTime = etaTime
+
+						int etaSeconds = file.etaTime - now
+						if ( etaSeconds <= 0 )
+							file.etaTime = etaTime
+
+						etaSeconds = file.etaTime - now
+						if ( etaSeconds <= 90 )
+						{
+							etaStr = Localize( "#MATCHMAKING_ETA_SECONDS", etaSeconds )
+						}
+						else
+						{
+							int etaMinutes = int( ceil( etaSeconds / 60.0 ) )
+							if ( etaMinutes < file.etaMaxMinutes )
+								etaStr = Localize( "#MATCHMAKING_ETA_MINUTES", etaMinutes )
+							else
+								etaStr = Localize( "#MATCHMAKING_ETA_UNKNOWN", etaMinutes )
+						}
 					}
+
+					MatchmakingSetSearchText( matchmakingStatus, etaStr )
 				}
 				else
 				{
-					Hud_SetText( titleEl, "#MATCHMAKING" )
-
 					Hud_Show( statusEl )
 					RuiSetString( Hud_GetRui( statusEl ), "statusText", "" )
 					RuiSetInt( Hud_GetRui( statusEl ), "playlistCount", 0 )
 				}
-
-				MatchmakingSetSearchText( matchmakingStatus, param1, param2, param3, param3 )
 			}
 		}
 
 		WaitFrameOrUntilLevelLoaded()
 	}
-}
-
-function NextMapModeSet_Changed()
-{
-	if ( IsPrivateMatch() )
-		return
-
-	if ( IsCoopMatch() )
-		return
-
-	if ( !level.ui.nextMapModeSet )
-	{
-		ClearDisplayedMapAndMode()
-		return
-	}
-
-	SetCurrentPlaylistDisplayedMapAndModeByIndex( expect int( level.ui.nextMapIdx ), expect int( level.ui.nextModeIdx ) )
-}
-
-void function SetMapInfo( string mapName )
-{
-}
-
-void function SetModeInfo( string modeName )
-{
-}
-
-void function ClearDisplayedMapAndMode()
-{
-}
-
-void function SetDisplayedMapAndMode( string mapName, string modeName )
-{
-}
-
-void function SetCurrentPlaylistDisplayedMapAndModeByIndex( int mapIdx, int modeIdx )
-{
-	string mapName = GetCurrentPlaylistGamemodeByIndexMapByIndex( modeIdx, mapIdx )
-	Assert( mapName.len() )
-	string modeName = GetCurrentPlaylistGamemodeByIndex( modeIdx )
-	Assert( modeName.len() )
-	SetDisplayedMapAndMode( mapName, modeName )
-}
-
-void function SetPlaylistDisplayedMapAndModeByIndex( string playlistName, int mapIdx, int modeIdx )
-{
-	string mapName = GetPlaylistGamemodeByIndexMapByIndex( playlistName, modeIdx, mapIdx )
-	Assert( mapName.len() )
-	string modeName = GetPlaylistGamemodeByIndex( playlistName, modeIdx )
-	Assert( modeName.len() )
-	SetDisplayedMapAndMode( mapName, modeName )
 }
 
 void function UpdateAnnouncementDialog()
@@ -1334,17 +1188,22 @@ bool function CurrentMenuIsPVEMenu()
 
 void function RefreshCreditsAvailable( int creditsOverride = -1 )
 {
+	entity player = GetUIPlayer()
+	if ( !IsValid( player ) )
+		return
+	if ( !IsPersistenceAvailable() )
+		return
+
 	int credits = creditsOverride >= 0 ? creditsOverride : GetAvailableCredits( GetLocalClientPlayer() )
-	bool isPVE = CurrentMenuIsPVEMenu()
-	int pveCredits = 0
 	string pveTitle = ""
+	int pveCredits = 0
+	bool isPVE = CurrentMenuIsPVEMenu()
+	#if DEVSCRIPTS
+	UpdatePVEPurchasePrediction( player )
+	pveCredits = GetPVECreditsForPlayer( player )
 	if ( isPVE )
-	{
-		entity player = GetUIPlayer()
-		if ( IsValid( player ) )
-			pveCredits = player.GetPersistentVarAsInt( "pve.currency" )
 		pveTitle = "#PVE_TITLEEXAMPLE"
-	}
+	#endif
 
 	foreach ( elem in file.creditsAvailableElems )
 	{
@@ -1369,6 +1228,13 @@ void function SetUIPlayerCreditsInfo( var infoElement, int credits, int xp, int 
 	{
 		RuiSetString( rui, "levelText", PlayerXPDisplayGenAndLevel( gen, level ) )
 		RuiSetString( rui, "nextLevelText", Localize( "#REGEN_AVAILABLE" ) )
+		RuiSetInt( rui, "numLevelPips", GetXPPipsForLevel( level - 1 ) )
+		RuiSetInt( rui, "filledLevelPips", GetXPPipsForLevel( level - 1 ) )
+	}
+	else if ( xp == GetMaxPlayerXP() && gen == MAX_GEN )
+	{
+		RuiSetString( rui, "levelText", PlayerXPDisplayGenAndLevel( gen, level ) )
+		RuiSetString( rui, "nextLevelText", Localize( "#MAX_GEN" ) )
 		RuiSetInt( rui, "numLevelPips", GetXPPipsForLevel( level - 1 ) )
 		RuiSetInt( rui, "filledLevelPips", GetXPPipsForLevel( level - 1 ) )
 	}
@@ -1534,9 +1400,6 @@ function UpdateLobbyType()
 				printt( "Lobby lobbyType changing from:", lastType, "to:", debugArray[lobbyType] )
 			else
 				printt( "Lobby lobbyType changing from:", debugArray[lastType], "to:", debugArray[lobbyType] )
-
-			if ( lobbyType != lastType )
-				ClearDisplayedMapAndMode()
 
 			UpdateLobbyTypeButtons( menu, lobbyType )
 
@@ -1740,16 +1603,7 @@ void function UpdateTimeToRestartMatchmaking( float time )//JFS: This uses UI ti
 
 	if ( time > 0  )
 	{
-		if ( AmIPartyMember() )
-		{
-			MatchmakingSetSearchText( "#MATCHMAKING_WAIT_ON_PARTY_LEADER_RESTARTING_MATCHMAKING" )
-		}
-		else
-		{
-			MatchmakingSetSearchText( "#MATCHMAKING_WAIT_BEFORE_RESTARTING_MATCHMAKING" )
-			MatchmakingSetCountdownTimer( time, false )
-		}
-
+		UpdateRestartMatchmakingStatus( time )
 		ShowMatchmakingStatusIcons()
 	}
 	else
@@ -1838,7 +1692,6 @@ void function OnLobbyLevelInit()
 	UpdateCallsignElement( file.callsignCard )
 	RefreshCreditsAvailable()
 }
-
 
 function UpdatePlayerInfo()
 {

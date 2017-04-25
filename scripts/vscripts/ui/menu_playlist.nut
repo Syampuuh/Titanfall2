@@ -75,9 +75,11 @@ asset function GetPlaylistImage( string playlistName )
 
 asset function GetPlaylistThumbnailImage( string playlistName )
 {
-	string imageName = GetPlaylistVarOrUseValue( playlistName, "image", "default" )
+	string imageName = GetPlaylistVarOrUseValue( playlistName, "image", playlistName )
 	var dataTable = GetDataTable( $"datatable/playlist_items.rpak" )
 	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "playlist" ), imageName )
+	if ( row == -1 )
+		row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "playlist" ), "default" )
 	asset levelImage = GetDataTableAsset( dataTable, row, GetDataTableColumnByName( dataTable, "thumbnail" ) )
 
 	return levelImage
@@ -173,7 +175,7 @@ bool function CanPlaylistFitMyParty( string playlistName )
 
 	if ( playlistName == "coliseum" )
 	{
-		if ( partySize == 2 && GetCurrentPlaylistVarInt( "enable_coliseum_updates", 0 ) == 1 )
+		if ( partySize == 2 && GetCurrentPlaylistVarInt( "enable_coliseum_party", 0 ) == 1 )
 			return true
 	}
 
@@ -309,6 +311,12 @@ bool function PlaylistButton_Click_Internal( var button, string playlistName, ar
 			ColiseumPlaylist_OfferToBuyTickets( refreshButtons, button )
 			return false
 		}
+	}
+
+	if ( playlistName == "fd" )
+	{
+		AdvanceMenu( GetMenu( "FDMenu" ) )
+		return false
 	}
 
 	CloseActiveMenu() // playlist selection menu

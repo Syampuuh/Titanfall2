@@ -20,7 +20,7 @@ FontFileTable
 	"arial unicode ms"			"vgui/fonts/arialuni.ttf"
 
 	"lucida console"			"fonts\\lucon.ttf"						[$PC]
-	"lucida console"			"resource/hack-regular.ttf"  			[$GAMECONSOLE]
+	"lucida console"			"resource/MetronicPro-Regular.vfont"	[$GAMECONSOLE]
 
 	"tahoma"					"fonts\\tahoma.ttf"						[$PC]
 	"tahoma"					"resource/MetronicPro-Regular.vfont"  	[$GAMECONSOLE]

@@ -399,6 +399,10 @@ particles_manifest
 	//R2 DLC
 	"file"		"particles/monarch_beam.pcf"
 	"file"		"particles/monarch_beam_impact.pcf"
+	"file"		"particles/impact_Fx_exp_monarch_beam.pcf"
+	"file"		"particles/player_screen_titan_shield.pcf"
+	"file"		"particles/marvin_fx.pcf"
+
 
 	//DEV FX
 	"file"		"particles/example_blendmodes.pcf"

@@ -56,8 +56,6 @@ WeaponData
 	"damage_far_value"								"35"
 	"damage_near_value_titanarmor"					"140"
 	"damage_far_value_titanarmor" 					"140"
-	"explosion_damage"								"0"
-	"explosion_damage_heavy_armor"					"0"
 
 	// Damage - When Used by NPCs
 	"explosion_inner_radius"  						"25"
@@ -85,6 +83,9 @@ WeaponData
 		"charge_end_forces_fire"  						"1"
 		"charge_remain_full_when_fired"					"1"
 
+		"explosion_damage"								"0"
+		"explosion_damage_heavy_armor"					"0"
+
 		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
 	}
 	SP_BASE
@@ -95,6 +96,9 @@ WeaponData
 		"charge_cooldown_delay"   						"1.0"
 		"charge_end_forces_fire"  						"1"
 		"charge_remain_full_when_fired"					"1"
+
+		"explosion_damage"								"300"
+		"explosion_damage_heavy_armor"					"300"
 
 		"enable_highlight_networking_on_creation"		"1"
 	}

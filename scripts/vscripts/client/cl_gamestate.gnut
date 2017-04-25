@@ -14,8 +14,10 @@ global function ShowRoundScoresInAnnouncement
 global function PlayRoundWonConversationWithAnnouncementDelay
 
 global function UpdatePilotTitanStatusDisplay
+global function UpdatePilotTitanStatusDisplayWithCount
 
 global function SetGameModeScoreBarUpdateRules
+global function SetGameModeScoreBarUpdateRulesWithFlags
 
 global function DisplayPostMatchTop3
 
@@ -24,11 +26,11 @@ global function GetGameStartTime
 global function ClGameState_RegisterGameStateAsset
 
 const int PTS_TYPE_NONE 			= 0
-const int PTS_TYPE_PILOT 			= 1
-const int PTS_TYPE_DEAD 			= 2
+const int PTS_TYPE_DEAD 			= 1
+const int PTS_TYPE_DEAD_PILOT_TITAN = 2
 const int PTS_TYPE_DEAD_READY 		= 3
-const int PTS_TYPE_READY 			= 4
-const int PTS_TYPE_DEAD_PILOT_TITAN = 5
+const int PTS_TYPE_PILOT 			= 4
+const int PTS_TYPE_READY 			= 5
 const int PTS_TYPE_PILOT_TITAN 		= 6
 const int PTS_TYPE_EVAC 			= 7
 const int PTS_TYPE_ION 				= 8
@@ -37,11 +39,19 @@ const int PTS_TYPE_RONIN 			= 10
 const int PTS_TYPE_TONE 			= 11
 const int PTS_TYPE_LEGION 			= 12
 const int PTS_TYPE_NORTHSTAR 		= 13
+const int PTS_TYPE_VANGUARD 		= 14
+const int PTS_TYPE_COUNT			= 15
 
 struct PilotTitanStatus
 {
 	int playerCount
 	int[8] slotTypes
+}
+
+global enum sbflag
+{
+	SKIP_STANDARD_UPDATE = (1<<0),
+	_count = 1
 }
 
 struct
@@ -51,6 +61,7 @@ struct
 	bool thirtySecondWarningDone = false
 
 	void functionref( var ) gameModeScoreBarUpdateRules
+	int gameModeScoreBarUpdateFlags = 0
 
 	table< int, PilotTitanStatus> pilotTitanStatus
 
@@ -79,9 +90,15 @@ void function GameModeScoreBarUpdateRules_Default( var rui )
 {
 }
 
-void function SetGameModeScoreBarUpdateRules( void functionref( var ) rules )
+void function SetGameModeScoreBarUpdateRulesWithFlags( void functionref( var ) rules, int sbflags )
 {
 	file.gameModeScoreBarUpdateRules = rules
+	file.gameModeScoreBarUpdateFlags = sbflags
+}
+
+void function SetGameModeScoreBarUpdateRules( void functionref( var ) rules )
+{
+	SetGameModeScoreBarUpdateRulesWithFlags( rules, 0 )
 }
 
 void function ClGameState_RegisterNetworkFunctions()
@@ -115,9 +132,6 @@ asset function GetGameStateAsset()
 {
 	if ( GAMETYPE == ATTRITION )
 		return $"ui/gamestate_info_at.rpak"
-
-	if ( GAMETYPE == CAPTURE_THE_FLAG )
-		return $"ui/gamestate_info_ctf.rpak"
 
 	if ( GAMETYPE == FREE_AGENCY )
 		return $"ui/gamestate_info_fra.rpak"
@@ -503,6 +517,9 @@ array<int> function GetPilotTitanStatusForTeam( int team )
 						case "northstar":
 							statusTypes[playerIndex] = PTS_TYPE_NORTHSTAR
 							break
+						case "vanguard":
+							statusTypes[playerIndex] = PTS_TYPE_VANGUARD
+							break
 					}
 				}
 			}
@@ -510,9 +527,22 @@ array<int> function GetPilotTitanStatusForTeam( int team )
 		else
  		{
 			if ( IsAlive( teamPlayer ) )
+			{
 				statusTypes[playerIndex] = IsTitanAvailable( teamPlayer ) ? PTS_TYPE_READY : PTS_TYPE_PILOT
+
+				if ( GetWaveSpawnType() == eWaveSpawnType.DROPSHIP && teamPlayer.GetParent() != null )
+				{
+					entity playerParent = teamPlayer.GetParent()
+					if ( playerParent.IsNPC() && IsDropship( playerParent ) )
+					{
+						statusTypes[playerIndex] = PTS_TYPE_EVAC
+					}
+				}
+			}
 			else
+			{
 				statusTypes[playerIndex] = IsTitanAvailable( teamPlayer ) ? PTS_TYPE_DEAD_READY : PTS_TYPE_DEAD
+			}
 		}
 
 		playerIndex++
@@ -535,28 +565,25 @@ int function PilotTitanStatusSort( int a, int b )
 }
 
 
-void function UpdatePilotTitanStatusDisplay( int team )
+void function UpdatePilotTitanStatusDisplayWithCount( int team, int friendlyCount, int enemyCount )
 {
-	var statusRui = ClGameState_GetRui()
-
 	if ( IsFFAGame() )
 		return
+	var statusRui = ClGameState_GetRui()
 
 	array<int> playerStatus = GetPilotTitanStatusForTeam( team )
-	Assert( playerStatus.len() == 8 )
-	for ( int index = 0; index < 8; index++ )
-	{
+	for ( int index = 0; index < friendlyCount; index++ )
 		RuiSetInt( statusRui, "friendlyPlayerStatusType" + (index + 1), playerStatus[index] )
-	}
 
 	array<int> enemyPlayerStatus = GetPilotTitanStatusForTeam( GetOtherTeam( team ) )
-	Assert( enemyPlayerStatus.len() == 8 )
-	for ( int index = 0; index < 8; index++ )
-	{
+	for ( int index = 0; index < enemyCount; index++ )
 		RuiSetInt( statusRui, "enemyPlayerStatusType" + (index + 1), enemyPlayerStatus[index] )
-	}
 }
 
+void function UpdatePilotTitanStatusDisplay( int team )
+{
+	UpdatePilotTitanStatusDisplayWithCount( team, 8, 8 )
+}
 
 void function ClGameStateThink_Postmatch( player )
 {
@@ -586,6 +613,8 @@ void function ClGameState_Changed()
 			break
 
 		case eGameState.WaitingForPlayers:
+			if ( IsMultiplayerPlaylist() && level.classicMP_Client_GameStateEnterFunc_WaitingForPlayers )
+				ClassicMP_Client_CallGameStateEnterFunc_WaitingForPlayers( player )
 			//player.cv.gamescomWaitTillReady.Hide()
 
 			//player.cv.waitingForPlayersDesc.SetText( "#HUD_WAITING_FOR_PLAYERS_BASIC" )
@@ -765,6 +794,7 @@ void function ServerCallback_AnnounceWinner( int teamIndex, int subStringIndex, 
 		//Announcement_SetTitleColor( outcomeAnnouncement, TEAM_COLOR_YOU )
 		Announcement_SetHideOnDeath( outcomeAnnouncement, false )
 		Announcement_SetDuration( outcomeAnnouncement, winnerDeterminedWait )
+		Announcement_SetPriority( outcomeAnnouncement, 500 )
 		Announcement_SetPurge( outcomeAnnouncement, true )
 		AnnouncementFromClass( player, outcomeAnnouncement )
 	}
@@ -781,6 +811,7 @@ void function ServerCallback_AnnounceWinner( int teamIndex, int subStringIndex, 
 			Announcement_SetTitleColor( outcomeAnnouncement, TEAM_COLOR_YOU )
 			Announcement_SetHideOnDeath( outcomeAnnouncement, false )
 			Announcement_SetDuration( outcomeAnnouncement, winnerDeterminedWait )
+			Announcement_SetPriority( outcomeAnnouncement, 500 )
 			Announcement_SetPurge( outcomeAnnouncement, true )
 			AnnouncementFromClass( player, outcomeAnnouncement )
 		}
@@ -796,6 +827,7 @@ void function ServerCallback_AnnounceWinner( int teamIndex, int subStringIndex, 
 		Announcement_SetTitleColor( outcomeAnnouncement, TEAM_COLOR_PARTY )
 		Announcement_SetHideOnDeath( outcomeAnnouncement, false )
 		Announcement_SetDuration( outcomeAnnouncement, winnerDeterminedWait )
+		Announcement_SetPriority( outcomeAnnouncement, 500 )
 		Announcement_SetPurge( outcomeAnnouncement, true )
 		AnnouncementFromClass( player, outcomeAnnouncement )
 	}
@@ -809,6 +841,7 @@ void function ServerCallback_AnnounceWinner( int teamIndex, int subStringIndex, 
 		Announcement_SetTitleColor( outcomeAnnouncement, TEAM_COLOR_ENEMY )
 		Announcement_SetHideOnDeath( outcomeAnnouncement, false )
 		Announcement_SetDuration( outcomeAnnouncement, winnerDeterminedWait )
+		Announcement_SetPriority( outcomeAnnouncement, 500 )
 		Announcement_SetPurge( outcomeAnnouncement, true )
 		AnnouncementFromClass( player, outcomeAnnouncement )
 	}
@@ -979,13 +1012,34 @@ void function UpdateScoreboardBadRepPresentMessage()
 		player.cv.scoreboardBadRepPresentMessage.Hide()
 }
 
+void function UpdateChatHudLocationForTop3()
+{
+	var hudElement = HudElement( "IngameTextChat" )
+	var height = hudElement.GetHeight()
+	var screenSize = Hud.GetScreenSize()
+	var position = hudElement.GetPos()
+	HudElement( "IngameTextChat" ).SetPos( position[0], -1 * ( screenSize[1] - ( height + screenSize[1] * 0.10 ) ) )
+}
+
 void function DisplayPostMatchTop3()
 {
 	array<entity> players = GetPlayerArray()
+
+	for ( int i = players.len() - 1; i >= 0; i-- )
+	{
+		if ( IsPrivateMatchSpectator( players[ i ] ) )
+			players.remove( i )
+	}
+
 	if ( players.len() >= 1 )
 	{
 		int localTeam = GetLocalClientPlayer().GetTeam()
+		#if PC_PROG
+		var rui = RuiCreate( $"ui/scoreboard_postmatch_top3_pc.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 1001 )
+		UpdateChatHudLocationForTop3()
+		#else
 		var rui = RuiCreate( $"ui/scoreboard_postmatch_top3.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 1001 )
+		#endif
 		string gamemode = GameRules_GetGameMode()
 		int functionref( entity, entity ) compareFunc = GameMode_GetScoreCompareFunc( gamemode )
 		if ( compareFunc == null )
@@ -1026,6 +1080,8 @@ void function DisplayPostMatchTop3()
 			RuiSetImage( rui, "cardImage" + i, CallingCard_GetImage( PlayerCallingCard_GetActive( players[i] ) ) )
 			RuiSetImage( rui, "iconImage" + i, CallsignIcon_GetImage( PlayerCallsignIcon_GetActive( players[i] ) ) )
 			RuiSetInt( rui, "layoutType" + i, CallingCard_GetLayout( PlayerCallingCard_GetActive( players[i] ) ) )
+			RuiSetImage( rui, "cardGenImage" + i, PlayerXPGetGenIcon( players[i] ) )
+			RuiSetString( rui, "playerLevel" + i, PlayerXPDisplayGenAndLevel( players[i].GetGen(), players[i].GetLevel() ) )
 			RuiSetBool( rui, "isFriendly" + i, localTeam == players[i].GetTeam() )
 		}
 	}

@@ -76,6 +76,9 @@ bool function FRAShouldSpawnPowerUp()
 
 bool function LTSShouldSpawnPowerUp()
 {
+	if ( HasIronRules() )
+		return false
+
 	return ( GAMETYPE == LAST_TITAN_STANDING || GAMETYPE == LTS_BOMB )
 }
 

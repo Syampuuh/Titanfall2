@@ -24,7 +24,7 @@ global const asset EARN_METER_DATATABLE = $"datatable/earn_meter_mp.rpak"
 global const bool ANTI_RODEO_MINIGAME_ENABLED = false
 global const bool HAS_RODEO_HOLD_OPTION = true
 
-global const bool HAS_WEAPON_PICKUP_HIGHLIGHT = false
+global const bool HAS_WEAPON_PICKUP_HIGHLIGHT = true
 global const bool HAS_AMMO_FULL_FLYOUT = false
 
 global const bool HAS_THREAT_SCOPE_SLOT_LOCK = true
@@ -92,20 +92,6 @@ global const asset SST_MODE_ICON = $"vgui/burncards/burncard_group_icon_titan"
 //------------------------------------------------------
 global const asset BOMB_MODEL = $"models/weapons/bullets/temp_triple_threat_projectile_large.mdl"
 
-//------------------------------------------------------
-// Fort War
-//------------------------------------------------------
-global const MODEL_FORT_WAR_TOWER 	= $"models/props/generator_coop/generator_coop_medium.mdl"
-global const MODEL_FORT_WAR_TOWER_RINGS = $"models/props/generator_coop/generator_coop_rings_medium_animated.mdl"
-global const MODEL_FORT_WAR_CAMP 	= $"models/props/generator_coop/generator_coop_small.mdl"
-global const MODEL_FORT_WAR_GENERATOR 	= $"models/communication/flag_base_red.mdl"
-global const MODEL_FORT_WAR_SONAR_SITE = $"models/Robots/mobile_hardpoint/mobile_hardpoint.mdl"
-global const MODEL_FORT_WAR_TITAN_BARRICADE = $"models/barriers/fort_war_tetrapod_barrier_01.mdl"
-global const MODEL_FORT_WAR_FOUNDATION_PLATE = $"models/industrial/grate_mod.mdl"
-global const MODEL_FORT_WAR_TURRET_TERRITORY = $"models/fort_war/fw_turret_territory_512.mdl"
-global const MODEL_FORT_WAR_TURRET_TERRITORY_ENEMY = $"models/fort_war/fw_turret_territory_enemy_512.mdl"
-global const MODEL_FORT_WAR_PORT = $"models/props/battery_port/battery_port_animated.mdl"
-
 // move these to auto precache
 global const TEAM_MIL_GRUNT_MODEL 			= $"models/humans/grunts/mlt_grunt_rifle.mdl"
 global const TEAM_MIL_GRUNT_MODEL_LMG		= $"models/humans/grunts/mlt_grunt_lmg.mdl"
@@ -114,30 +100,6 @@ global const TEAM_MIL_GRUNT_MODEL_ROCKET 	= $"models/humans/grunts/mlt_grunt_rif
 global const TEAM_MIL_GRUNT_MODEL_SHOTGUN 	= $"models/humans/grunts/mlt_grunt_shotgun.mdl"
 global const TEAM_MIL_GRUNT_MODEL_SMG		= $"models/humans/grunts/mlt_grunt_smg.mdl"
 
-//------------------------------------------------------
-// Hunted
-//------------------------------------------------------
-global const HUNTED_BLACKBOX_MODEL = $"models/titans/medium/titan_medium_battery_static.mdl"
-//Objective Models
-global const HUNTED_OBJECTIVE_DROPPOD = $"models/vehicle/escape_pod/escape_pod_nodoor_v2.mdl"
-global const HUNTED_OBJECTIVE_COMMS = $"models/props/global_access_panel_button/global_access_panel_button_console.mdl"
-global const HUNTED_OBJECTIVE_RESEARCH = $"models/robots/mobile_hardpoint_laptop/mobile_hardpoint_laptop.mdl"
-global const HUNTED_OBJECTIVE_CRASHLOG = $"models/props/global_access_panel_button/global_access_panel_button_console.mdl"
-global const HUNTED_OBJECTIVE_DATACORE = $"models/titans/medium/ajax_dead_03.mdl"
-global const HUNTED_OBJECTIVE_DROPSHIP = $"models/vehicles_r2/aircraft/goblin_destroyed/v_goblin_dropship_Destroyed.mdl"
-global const HUNTED_OBJECTIVE_SERVER = $"models/beacon/beacon_server_stand_01.mdl"
-global const HUNTED_OBJECTIVE_PILOT = $"models/Humans/pilots/IMC_pilot_dead_02.mdl"
-global const HUNTED_OBJECTIVE_GRUNT = $"models/Humans/grunts/MCOR_grunt_heavy_static_07.mdl"
-
-global const HUNTED_PROWLER = $"models/creatures/prowler/r2_prowler.mdl"
-global const asset HUNTED_IMC_SHIELD_CAPTAIN = $"models/humans/grunts/imc_grunt_shield_captain.mdl"
-
-//Weapon lockers
-global const HUNTED_WEAPON_LOCKER = $"models/containers/pelican_case_large_IMC.mdl"
-global const HUNTED_WEAPON_LOCKER_OPEN = $"models/containers/pelican_case_IMC_open.mdl"
-global const HUNTED_GRENADE_LOCKER = $"models/containers/pelican_case_large.mdl"
-global const HUNTED_GRENADE_LOCKER_OPEN = $"models/containers/pelican_case_large_open.mdl"
-
 //-------------------------------------------------------
 // Frontier Defense
 //-------------------------------------------------------
@@ -145,16 +107,6 @@ global const MODEL_IMC_SHIELD_CAPTAIN = $"models/humans/grunts/imc_grunt_shield_
 global const MODEL_FRONTIER_DEFENSE_TURRET_SITE	= $"models/props/turret_base/turret_base.mdl"
 global const MODEL_FRONTIER_DEFENSE_PORT = $"models/props/battery_port/battery_port_animated.mdl"
 global const MODEL_FRONTIER_DEFENSE_FOUNDATION_PLATE = $"models/industrial/grate_mod.mdl"
-
-//-------------------------------------------------------
-// Double or Nothing
-//-------------------------------------------------------
-global const DON_RESPAWN_PANEL = $"models/props/global_access_panel_button/global_access_panel_button_console.mdl"
-
-//------------------------------------------------------
-// Raid
-//------------------------------------------------------
-global const MODEL_RAID_BOMB_LOCATION = $"models/Robots/mobile_hardpoint/mobile_hardpoint.mdl"
 
 //------------------------------------------------------
 // AT COOP

@@ -57,12 +57,7 @@ void function InitModesMenu()
 
 void function OnOpenModesMenu()
 {
-	local modesArray = []
-	modesArray.resize( getconsttable().ePrivateMatchModes.len() )
-	foreach ( k, v in getconsttable().ePrivateMatchModes )
-	{
-		modesArray[v] = k
-	}
+	array<string> modesArray = GetPrivateMatchModes()
 
 	var menu = GetMenu( "ModesMenu" )
 	array<var> buttons = GetElementsByClassname( GetMenu( "ModesMenu" ), "ModeButton" )
@@ -72,8 +67,16 @@ void function OnOpenModesMenu()
 
 		if ( buttonID >= 0 && buttonID < modesArray.len() )
 		{
-			SetButtonRuiText( button, GetGameModeDisplayName( expect string( modesArray[buttonID] ) ) )
+			SetButtonRuiText( button, GetGameModeDisplayName( modesArray[buttonID] ) )
+
+			string mapName = PrivateMatch_GetSelectedMap()
+			bool mapSupportsMode = PrivateMatch_IsValidMapModeCombo( mapName, modesArray[buttonID] )
+
 			Hud_SetEnabled( button, true )
+			Hud_SetLocked( button, !mapSupportsMode )
+			if ( !mapSupportsMode )
+				SetButtonRuiText( button, Localize( "#PRIVATE_MATCH_UNAVAILABLE", Localize( GetGameModeDisplayName( modesArray[buttonID] ) ) ) )
+
 		}
 		else
 		{
@@ -88,49 +91,52 @@ void function OnOpenModesMenu()
 	}
 }
 
+//GetCurrentPlaylistVarInt( "max_players", 12 )
+
 void function ModeButton_GetFocus( var button )
 {
-	int mapID = int( Hud_GetScriptID( button ) )
+	int modeId = int( Hud_GetScriptID( button ) )
 
 	var menu = GetMenu( "ModesMenu" )
 	var nextModeImage = Hud_GetChild( menu, "NextModeImage" )
+	var nextModeIcon = Hud_GetChild( menu, "ModeIconImage" )
 	var nextModeName = Hud_GetChild( menu, "NextModeName" )
 	var nextModeDesc = Hud_GetChild( menu, "NextModeDesc" )
 
-	local modesArray = []
-	modesArray.resize( getconsttable().ePrivateMatchModes.len() )
-	foreach ( k, v in getconsttable().ePrivateMatchModes )
-	{
-		modesArray[v] = k
-	}
+	array<string> modesArray = GetPrivateMatchModes()
 
-	if ( mapID > modesArray.len() )
+	if ( modeId > modesArray.len() )
 		return
 
-	string modeName = expect string( modesArray[mapID] )
+	string modeName = modesArray[modeId]
 
 	asset playlistImage = GetPlaylistImage( modeName )
 	RuiSetImage( Hud_GetRui( nextModeImage ), "basicImage", playlistImage )
+	RuiSetImage( Hud_GetRui( nextModeIcon ), "basicImage", GetPlaylistThumbnailImage( modeName ) )
 	Hud_SetText( nextModeName, GetGameModeDisplayName( modeName ) )
-	Hud_SetText( nextModeDesc, GetGameModeDisplayDesc( modeName ) )
+
+	string mapName = PrivateMatch_GetSelectedMap()
+	bool mapSupportsMode = PrivateMatch_IsValidMapModeCombo( mapName, modeName )
+	if ( !mapSupportsMode )
+		Hud_SetText( nextModeDesc, Localize( "#PRIVATE_MATCH_MODE_NO_MAP_SUPPORT", Localize( GetGameModeDisplayName( modeName ) ), Localize( GetMapDisplayName( mapName ) ) ) )
+	else
+		Hud_SetText( nextModeDesc, GetGameModeDisplayDesc( modeName ) )
 }
 
 void function ModeButton_Click( var button )
 {
-	if ( !AmIPartyLeader() )
+	if ( !AmIPartyLeader() && GetPartySize() > 1 )
+		return
+
+	if ( Hud_IsLocked( button ) )
 		return
 
 	int mapID = int( Hud_GetScriptID( button ) )
 
 	var menu = GetMenu( "MapsMenu" )
 
-	local modesArray = []
-	modesArray.resize( getconsttable().ePrivateMatchModes.len() )
-	foreach ( k, v in getconsttable().ePrivateMatchModes )
-	{
-		modesArray[v] = k
-	}
-	local modeName = modesArray[mapID]
+	array<string> modesArray = GetPrivateMatchModes()
+	string modeName = modesArray[mapID]
 
 	// set it
 	ClientCommand( "PrivateMatchSetMode " + modeName )
@@ -214,7 +220,7 @@ void function OnOpenMatchSettingsMenu()
 {
 	var menu = GetMenu( "MatchSettingsMenu" )
 
-	string modeName = expect string( GetModeNameForEnum( level.ui.privatematch_mode ) )
+	string modeName = PrivateMatch_GetSelectedMode()
 	file.modeSettingsName = modeName
 
 	Hud_SetText( file.gameModeLabel, GAMETYPE_TEXT[ modeName ] )
@@ -379,7 +385,7 @@ function UpdateMatchSettingsSliderValues( menu )
 {
 	EndSignal( uiGlobal.signalDummy, "OnCloseMatchSettingsMenu" )
 
-	local modeName = GetModeNameForEnum( level.ui.privatematch_mode )
+	local modeName = PrivateMatch_GetSelectedMode()
 
 	while ( true )
 	{

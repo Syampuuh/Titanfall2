@@ -133,7 +133,7 @@ resource/ui/menus/panels/chatroom.res
 		talkingColor			"255 255 255 255"
 		awayColor				"140 140 140 255"
 		selectedFgColor			"0 0 0 255"
-   		friendColor             "0 255 0 255"
+   		friendColor             "55 189 205 255"
 		selectedBgColor			"255 255 255 128"
 		nameBgColor				"64 64 64 0"
 		adminColor				"87 219 151 128"

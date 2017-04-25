@@ -687,7 +687,7 @@ WeaponData
 			"base_spread"				"-2.0"
 			Args
 			{
-				isFiring				weapon_is_firing
+				//isFiring				weapon_is_firing
 			}
 		}
 	}

@@ -1,8 +1,10 @@
 untyped
 
 global function InitMainMenuPanel
+global function UpdatePromoData
 
 global function UICodeCallback_GetOnPartyServer
+global function UICodeCallback_MainMenuPromosUpdated
 
 struct
 {
@@ -15,8 +17,13 @@ struct
 	var buttonData
 	array<var> menuButtons
 	var activeProfile
-	var versionDisplay
 	var serviceStatus
+
+	MainMenuPromos& promoData
+	var whatsNew
+	var spotlightPanel
+	array<var> spotlightButtons
+
 	bool installing = false
 } file
 
@@ -35,9 +42,15 @@ void function InitMainMenuPanel()
 	file.menuButtons = GetElementsByClassname( file.menu, "MainMenuButtonClass" )
 	AddEventHandlerToButtonClass( file.menu, "MainMenuButtonClass", UIE_CLICK, MainMenuButton_Activate )
 
+	file.spotlightPanel = Hud_GetChild( file.panel, "SpotlightPanel" )
+	file.spotlightButtons = GetElementsByClassname( file.menu, "SpotlightButtonClass" )
+	foreach ( button in file.spotlightButtons )
+		button.s.url <- ""
+	AddEventHandlerToButtonClass( file.menu, "SpotlightButtonClass", UIE_CLICK, SpotlightButton_Activate )
+
 	file.activeProfile = Hud_GetChild( file.panel, "ActiveProfile" )
-	file.versionDisplay = Hud_GetChild( file.panel, "versionDisplay" )
 	file.serviceStatus = Hud_GetRui( Hud_GetChild( file.panel, "ServiceStatus" ) )
+	file.whatsNew = Hud_GetRui( Hud_GetChild( file.panel, "WhatsNew" ) )
 
 	ComboStruct comboStruct = ComboButtons_Create( file.panel )
 
@@ -79,11 +92,13 @@ void function InitMainMenuPanel()
 		Hud_AddEventHandler( videoButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "VideoMenu" ) ) )
 	#endif
 
+	var spotlightLargeButton = Hud_GetChild( file.spotlightPanel, "SpotlightLarge" )
+	spotlightLargeButton.SetNavLeft( file.spButtons[0] )
+
+	var spotlightSmall0Button = Hud_GetChild( file.spotlightPanel, "SpotlightSmall0" )
+	spotlightSmall0Button.SetNavLeft( file.spButtons[0] )
+
 	file.buttonData = []
-	if ( DevStartPoints() )
-	{
-		file.buttonData.append( { name = "Dev (Not for ship)", activateFunc = OnDevButton_Activate } )
-	}
 
 	#if PC_PROG
 		file.buttonData.append( { name = "#QUIT", activateFunc = OnQuitButton_Activate } )
@@ -93,11 +108,14 @@ void function InitMainMenuPanel()
 	{
 		comboStruct.navUpButton = file.menuButtons[ expect int( file.buttonData.len() ) - 1 ]
 		comboStruct.navDownButton = file.menuButtons[0]
+
+		foreach ( button in file.menuButtons )
+			button.SetNavRight( spotlightLargeButton )
 	}
 
-	ComboButtons_Finalize( comboStruct )
+	comboStruct.navRightButton = spotlightLargeButton
 
-	SetPanelDefaultFocus( file.panel, Hud_GetChild( file.panel, "ButtonRow0x0" ) )
+	ComboButtons_Finalize( comboStruct )
 
 	//AddPanelFooterOption( file.panel, BUTTON_A, "#A_BUTTON_SELECT" )
 	//AddPanelFooterOption( file.panel, BUTTON_B, "#B_BUTTON_CLOSE", "#CLOSE" )
@@ -144,29 +162,17 @@ void function OnShowMainMenuPanel()
 		Hud_Show( file.activeProfile )
 	#endif // DURANGO_PROG
 
-	Hud_SetText( file.versionDisplay, GetPublicGameVersion() )
-	Hud_Show( file.versionDisplay )
-
 	ExecCurrentGamepadButtonConfig()
 	ExecCurrentGamepadStickConfig()
 
-	//SetNextAutoMatchmakingPlaylist( "" )
 
+	string defaultButtonRowFocus = "ButtonRow0x0"
+	bool shouldFocusMultiplayer = GetMenuWasMultiplayerPlayedLast()
+	if ( shouldFocusMultiplayer )
+		defaultButtonRowFocus = "ButtonRow1x0"
+
+	SetPanelDefaultFocus( file.panel, Hud_GetChild( file.panel, defaultButtonRowFocus ) )
 	PanelFocusDefault( file.panel )
-	/*var focus = GetFocus()
-	bool validFocus = false
-
-	foreach ( button in file.menuButtons )
-	{
-		if ( button == focus && Hud_IsVisible( button ) )
-			validFocus = true
-	}
-
-	if ( !validFocus )
-	{
-		FocusDefault( file.menu )
-		focus = GetFocus()
-	}*/
 }
 
 void function EnableCheckPlus()
@@ -213,6 +219,9 @@ void function UpdatePlayButton( var button )
 
 	while ( GetTopNonDialogMenu() == file.menu )
 	{
+		bool isSpotlightReady = file.promoData.version != 0 ? true : false
+		Hud_SetVisible( file.spotlightPanel, isSpotlightReady )
+
 		if ( !Hud_IsFocused( button ) )
 		{
 			RuiSetBool( file.serviceStatus, "isVisible", false )
@@ -470,11 +479,6 @@ void function MainMenuButton_Activate( var button )
 		file.buttonData[buttonID].activateFunc.call( this )
 }
 
-function OnDevButton_Activate()
-{
-	AdvanceMenu( GetMenu( "SinglePlayerDevMenu" ) )
-}
-
 void function OnPlayMPButton_Activate( var button )
 {
 	if ( file.mpButtonActivateFunc == null )
@@ -690,3 +694,62 @@ bool function HasLatestPatch()
 	return true
 }
 #endif // PS4_PROG
+
+void function UpdatePromoData()
+{
+	file.promoData = GetMainMenuPromos()
+
+	UpdateWhatsNewData()
+	UpdateSpotlightData()
+}
+
+void function UICodeCallback_MainMenuPromosUpdated()
+{
+	printt( "MainMenuPromos updated" )
+
+	UpdatePromoData()
+}
+
+void function UpdateWhatsNewData()
+{
+	// file.promoData.newInfo_ImageIndex
+	//RuiSetString( file.whatsNew, "line1Text", "`2%$rui/menu/main_menu/whats_new_bulletpoint%`0 Updated Live Fire Maps!\n`2%$rui/menu/main_menu/whats_new_bulletpoint%`0 Prime Titans`0 in the Store\n`2%$rui/menu/main_menu/whats_new_bulletpoint% DOUBLE XP`0 weekend!" )//file.promoData.newInfo_Title1 )
+	RuiSetString( file.whatsNew, "line1Text", file.promoData.newInfo_Title1 )
+	RuiSetString( file.whatsNew, "line2Text", file.promoData.newInfo_Title2 )
+	RuiSetString( file.whatsNew, "line3Text", file.promoData.newInfo_Title3 )
+
+	bool isVisible = true
+	if ( file.promoData.newInfo_Title1 == "" && file.promoData.newInfo_Title2 == "" && file.promoData.newInfo_Title3 == "" )
+		isVisible = false
+
+	RuiSetBool( file.whatsNew, "isVisible", isVisible )
+}
+
+void function UpdateSpotlightData()
+{
+	SetSpotlightButtonData( file.spotlightButtons[0], file.promoData.largeButton_Url, file.promoData.largeButton_ImageIndex, file.promoData.largeButton_Title, file.promoData.largeButton_Text )
+	SetSpotlightButtonData( file.spotlightButtons[1], file.promoData.smallButton1_Url, file.promoData.smallButton1_ImageIndex, file.promoData.smallButton1_Title )
+	SetSpotlightButtonData( file.spotlightButtons[2], file.promoData.smallButton2_Url, file.promoData.smallButton2_ImageIndex, file.promoData.smallButton2_Title )
+}
+
+void function SetSpotlightButtonData( var button, string url, int imageIndex, string title, string details = "skip" )
+{
+	var rui = Hud_GetRui( button )
+
+	var dataTable = GetDataTable( $"datatable/spotlight_images.rpak" )
+	asset image = GetDataTableAsset( dataTable, imageIndex, GetDataTableColumnByName( dataTable, "image" ) )
+
+	RuiSetImage( rui, "buttonImage", image )
+	RuiSetString( rui, "titleText", title )
+
+	if ( details != "skip" )
+		RuiSetString( rui, "detailsText", details )
+
+	button.s.url = url
+}
+
+void function SpotlightButton_Activate( var button )
+{
+	if ( button.s.url != "" )
+		LaunchExternalWebBrowser( button.s.url )
+}

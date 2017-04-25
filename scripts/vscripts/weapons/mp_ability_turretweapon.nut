@@ -3,11 +3,19 @@ global function OnWeaponPrimaryAttack_turretweapon
 global function OnWeaponActivate_turretweapon
 global function OnWeaponDeactivate_turretweapon
 
+#if SERVER
+global function DeployableTurret_SetAISettingsForPlayer_AP
+global function DeployableTurret_SetAISettingsForPlayer_AT
+#endif
+
 const float DEPLOYABLE_TURRET_PLACEMENT_RANGE_MAX = 80
 const float DEPLOYABLE_TURRET_PLACEMENT_RANGE_MIN = 40
 const vector DEPLOYABLE_TURRET_MINS = < -30, -30, 0 >
 const vector DEPLOYABLE_TURRET_MAXS = < 30, 30, 60 >
 const vector DEPLOYABLE_TURRET_PLACEMENT_TRACE_OFFSET = < 0, 0, 128 >
+
+const string DEPLOYABLE_TURRET_DEFAULT_AISETTING_AP = "npc_turret_sentry_burn_card_ap"
+const string DEPLOYABLE_TURRET_DEFAULT_AISETTING_AT = "npc_turret_sentry_burn_card_at"
 
 struct TurretPoseData
 {
@@ -16,9 +24,16 @@ struct TurretPoseData
 	int[4] turretLegPoseIds
 }
 
+struct TurretAISettingsData
+{
+	string aiSettings_AP = DEPLOYABLE_TURRET_DEFAULT_AISETTING_AP
+	string aiSettings_AT = DEPLOYABLE_TURRET_DEFAULT_AISETTING_AT
+}
+
 struct
 {
 	table< asset, TurretPoseData > turretPoseData
+	table< entity, TurretAISettingsData > playerTurretAISettings
 } file
 
 void function DeployableTurrentWeapon_Init()
@@ -32,8 +47,18 @@ void function DeployableTurrentWeapon_Init()
 		StatusEffect_RegisterEnabledCallback( eStatusEffect.placing_at_turret, OnBeginPlacingTurret )
 		StatusEffect_RegisterDisabledCallback( eStatusEffect.placing_at_turret, OnEndPlacingTurret )
 	#endif
+
+	#if SERVER
+		AddCallback_OnClientConnected( DeployableTurret_ClientConnected )
+	#endif
 }
 
+
+void function DeployableTurret_ClientConnected( entity player )
+{
+	TurretAISettingsData playerTurretSettings
+	file.playerTurretAISettings[player] <- playerTurretSettings
+}
 
 void function InitTurretPoseDataForModel( asset modelName )
 {
@@ -116,11 +141,12 @@ var function OnWeaponPrimaryAttack_turretweapon( entity weapon, WeaponPrimaryAtt
 	entity ownerPlayer = weapon.GetWeaponOwner()
 	Assert( ownerPlayer.IsPlayer() )
 
+	// TODO: find a way to use DeployableTurret_GetAISettingsForPlayer_* .. can't do this now because the concept isn't networked
 	asset turretModel
 	if( weapon.HasMod( "burnmeter_at_turret_weapon" ) )
-		turretModel =  Dev_GetAISettingAssetByKeyField_Global( "npc_turret_sentry_burn_card_at", "DefaultModelName" )
+		turretModel =  Dev_GetAISettingAssetByKeyField_Global( DEPLOYABLE_TURRET_DEFAULT_AISETTING_AT, "DefaultModelName" )
 	else
-		turretModel =  Dev_GetAISettingAssetByKeyField_Global( "npc_turret_sentry_burn_card_ap", "DefaultModelName" )
+		turretModel =  Dev_GetAISettingAssetByKeyField_Global( DEPLOYABLE_TURRET_DEFAULT_AISETTING_AP, "DefaultModelName" )
 
 	if ( !(turretModel.tolower() in file.turretPoseData) )
 	{
@@ -176,9 +202,9 @@ entity function DeployTurret( entity player, vector origin, vector angles, entit
 	EmitSoundOnEntity( turret, "Boost_Card_SentryTurret_Deployed_3P" )
 
 	if( weapon.HasMod( "burnmeter_at_turret_weapon" ) )
-		SetSpawnOption_AISettings( turret, "npc_turret_sentry_burn_card_at" )
+		SetSpawnOption_AISettings( turret, DeployableTurret_GetAISettingsForPlayer_AT( player ) )
 	else if( weapon.HasMod( "burnmeter_ap_turret_weapon" ) )
-		SetSpawnOption_AISettings( turret, "npc_turret_sentry_burn_card_ap" )
+		SetSpawnOption_AISettings( turret, DeployableTurret_GetAISettingsForPlayer_AP( player ) )
 	else
 		SetSpawnOption_AISettings( turret, "npc_turret_sentry_plasma" )
 
@@ -186,6 +212,35 @@ entity function DeployTurret( entity player, vector origin, vector angles, entit
 
 	return turret
 }
+
+
+string function DeployableTurret_GetAISettingsForPlayer_AP( entity player )
+{
+	Assert( player in file.playerTurretAISettings )
+	return file.playerTurretAISettings[player].aiSettings_AP
+}
+
+
+void function DeployableTurret_SetAISettingsForPlayer_AP( entity player, string aiSettings )
+{
+	Assert( player in file.playerTurretAISettings )
+	file.playerTurretAISettings[player].aiSettings_AP = aiSettings
+}
+
+
+string function DeployableTurret_GetAISettingsForPlayer_AT( entity player )
+{
+	Assert( player in file.playerTurretAISettings )
+	return file.playerTurretAISettings[player].aiSettings_AT
+}
+
+
+void function DeployableTurret_SetAISettingsForPlayer_AT( entity player, string aiSettings )
+{
+	Assert( player in file.playerTurretAISettings )
+	file.playerTurretAISettings[player].aiSettings_AT = aiSettings
+}
+
 
 void function DestroyOnDeathDelayed( entity turret, float delay )
 {
@@ -197,6 +252,7 @@ void function DestroyOnDeathDelayed( entity turret, float delay )
 	// TODO: explosion or other FX
 	turret.Destroy()
 }
+
 
 void function KillTurretAfterDelay( entity turret )
 {
@@ -407,11 +463,12 @@ void function OnBeginPlacingTurret( entity player, int statusEffect, bool actual
 	if ( player != GetLocalViewPlayer() )
 		return
 
+	// TODO: find a way to use DeployableTurret_GetAISettingsForPlayer_* .. can't do this now because the concept isn't networked
 	asset turretModel
 	if ( statusEffect == eStatusEffect.placing_at_turret )
-		turretModel =  Dev_GetAISettingAssetByKeyField_Global( "npc_turret_sentry_burn_card_at", "DefaultModelName" )
+		turretModel =  Dev_GetAISettingAssetByKeyField_Global( DEPLOYABLE_TURRET_DEFAULT_AISETTING_AT, "DefaultModelName" )
 	else
-		turretModel =  Dev_GetAISettingAssetByKeyField_Global( "npc_turret_sentry_burn_card_ap", "DefaultModelName" )
+		turretModel =  Dev_GetAISettingAssetByKeyField_Global( DEPLOYABLE_TURRET_DEFAULT_AISETTING_AP, "DefaultModelName" )
 
 	if ( !(turretModel.tolower() in file.turretPoseData) )
 	{

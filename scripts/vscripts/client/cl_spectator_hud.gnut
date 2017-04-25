@@ -84,6 +84,7 @@ void function UpdateSpectatorHud( entity player, entity currentTarget )
 	RuiSetImage( rui, "cardImage", CallingCard_GetImage( callingCard ) )
 	RuiSetInt( rui, "layoutType", CallingCard_GetLayout( callingCard ) )
 	RuiSetImage( rui, "iconImage", CallsignIcon_GetImage( callsignIcon ) )
+	RuiSetImage( rui, "cardGenImage", PlayerXPGetGenIcon( currentTarget ) )
 	RuiSetBool( rui, "isFriendly", true )
 	RuiSetBool( rui, "showTeamGlow", true )
 

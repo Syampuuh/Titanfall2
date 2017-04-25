@@ -11,7 +11,7 @@ void function OnWeaponActivate_burncardweapon( entity weapon )
 		int skin = GetBurnCardWeaponSkin( weapon )
 		weapon.SetWeaponSkin( skin )
 		Assert( owner.IsPlayer() )
-		PlayerInventory_StartCriticalSection( owner )
+		PlayerInventory_StartCriticalSection( owner ) //TODO: Should check that we're not already in a critical section? But then you need to delay starting the critical section till after the current critical section is ended?
 	}
 	#endif
 }

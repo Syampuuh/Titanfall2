@@ -48,6 +48,8 @@ WeaponData
 	"sound_weapon_ready"							"HUD_TitanDefenseAbility_replenished_1P"
 	"projectile_adjust_to_gun_barrel"				"1"
 
+	"sound_dryfire"   								"titan_dryfire"
+
 	"explosionradius" 								"175"
 	"offhand_keep_primary_in_hand"					"1"
 

@@ -63,10 +63,14 @@ void function OnOpenMapsMenu()
 	 			if ( IsItemLocked( GetUIPlayer(), name ) && GetCurrentPlaylistVarInt( name + "_available" , 0 ) == 0 )
 	 			{
 	 				SetButtonRuiText( button, Localize( "#MAP_LOCKED", Localize( GetMapDisplayName( name ) ) ) )
-	 				Hud_SetEnabled( button, false )
 	 			}
 	 		}
 
+			bool mapSupportsMode = PrivateMatch_IsValidMapModeCombo( name, PrivateMatch_GetSelectedMode() )
+			Hud_SetLocked( button, !mapSupportsMode )
+
+			if ( !mapSupportsMode )
+				SetButtonRuiText( button, Localize( "#PRIVATE_MATCH_UNAVAILABLE", Localize( GetMapDisplayName( name ) ) ) )
 		}
 		else
 		{
@@ -108,7 +112,13 @@ void function MapButton_Focused( var button )
 	asset mapImage = GetMapImageForMapName( mapName )
 	RuiSetImage( Hud_GetRui( nextMapImage ), "basicImage", mapImage )
 	Hud_SetText( nextMapName, GetMapDisplayName( mapName ) )
-	Hud_SetText( nextMapDesc, GetMapDisplayDesc( mapName ) )
+
+	string modeName = PrivateMatch_GetSelectedMode()
+	bool mapSupportsMode = PrivateMatch_IsValidMapModeCombo( mapName, modeName )
+	if ( !mapSupportsMode )
+		Hud_SetText( nextMapDesc, Localize( "#PRIVATE_MATCH_MAP_NO_MODE_SUPPORT", Localize( GetMapDisplayName( mapName ) ), Localize( GetGameModeDisplayName( modeName ) ) ) )
+	else
+		Hud_SetText( nextMapDesc, GetMapDisplayDesc( mapName ) )
 
 	// Update window scrolling if we highlight a map not in view
 	int minScrollState = int( clamp( buttonID - (MAP_LIST_VISIBLE_ROWS - 1), 0, file.numMapButtonsOffScreen ) )
@@ -134,7 +144,7 @@ void function MapButton_Activate( var button )
 		return
 	}
 
-	if ( !AmIPartyLeader() )
+	if ( !AmIPartyLeader() && GetPartySize() > 1 )
 		return
 
 	array<string> mapsArray = GetPrivateMatchMaps()
@@ -147,16 +157,6 @@ void function MapButton_Activate( var button )
 	CloseActiveMenu()
 }
 
-array<string> function GetPrivateMatchMaps()
-{
-	array<string> mapsArray
-	mapsArray.resize( getconsttable().ePrivateMatchMaps.len() )
-
-	foreach ( k, v in getconsttable().ePrivateMatchMaps )
-		mapsArray[ expect int( v ) ] = expect string( k )
-
-	return mapsArray
-}
 
 void function OnMapListScrollUp_Activate( var button )
 {

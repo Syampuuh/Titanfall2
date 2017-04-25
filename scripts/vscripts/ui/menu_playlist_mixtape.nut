@@ -1,15 +1,12 @@
-untyped
-
 global function GetPlaylistMenuName
 global function InitPlaylistMixtapeMenu
 global function InitPlaylistMixtapeChecklistMenu
 global function MixtapeMatchmakingIsEnabled
-global function MixtapeMatchmakingSkipButtonIsOn
 global function GetChecklistPlaylistsArray
 global function GetMixtapeMatchmakingVersion
 global function IsMixtapeVersionNew
-global function GetMixtapeExternalCheckedOnPlaylists
 global function PrintPlaylistAvailability
+global function ConvertStringArrayToCSS
 
 //script_ui AdvanceMenu( GetMenu( "PlaylistMixtapeMenu" ) )
 
@@ -30,8 +27,10 @@ struct
 	bool isOnPlaylistCheckboxButton
 	bool isOnPromoButton
 	bool isOnPlayButton
+	bool isShowingPlayButtonDescription
 
 	string lastFocusedPlaylistDisplayName
+	string lastFocusedPlaylistNoteText
 
 	/////
 
@@ -40,6 +39,8 @@ struct
 	int checklistButtonsFirstVisibleIndex
 	array<string> activeChecksOnOpen
 
+	var focusDescription
+	int topBGHeight
 } file
 
 struct promoInfo
@@ -63,12 +64,6 @@ struct
 bool function MixtapeMatchmakingIsEnabled()
 {
 	bool result = (Code_GetCurrentPlaylistVarOrUseValue( "mixtape_matchmaking", "0" ) == "1")
-	return result
-}
-
-bool function MixtapeMatchmakingSkipButtonIsOn()
-{
-	bool result = (Code_GetCurrentPlaylistVarOrUseValue( "mixtape_skip_button", "0" ) == "1")
 	return result
 }
 
@@ -118,33 +113,6 @@ void function ParsePlaylistInfos()
 	}
 }
 
-array<string> function GetMixtapeExternalCheckedOnPlaylists()
-{
-	array<string> results
-
-	array<string> checkDisables = GetCheckDisablesFromConvar()
-	int plCount = GetPlaylistCount()
-	for ( int idx = 0; idx < plCount; ++idx )
-	{
-		string playlistName = string( GetPlaylistName( idx ) )
-
-		bool visible = GetPlaylistVarOrUseValue( playlistName, "visible", "0" ) == "1"
-		if ( !visible )
-			continue
-
-		int mixtapeSlot = int( GetPlaylistVarOrUseValue( playlistName, "mixtape_slot", "-1" ) )
-		if ( (mixtapeSlot < 0) && (mixtapeSlot >= CHECKLIST_SLOT_COUNT) )
-			continue
-
-		if ( checkDisables.contains( playlistName ) )
-			continue
-
-		results.append( playlistName )
-	}
-
-	return results
-}
-
 array<string> function GetChecklistPlaylistsArray()
 {
 	array<string> results
@@ -184,7 +152,6 @@ void function InitPlaylistMixtapeMenu()
 		file.promoButtons.append( button )
 
 		AddButtonEventHandler( button, UIE_CLICK, OnPromoButtonClick )
-		AddButtonEventHandler( button, UIE_CLICKRIGHT, OnPromoButtonClickRight )
 		AddButtonEventHandler( button, UIE_GET_FOCUS, OnPromoButtonFocus )
 		AddButtonEventHandler( button, UIE_LOSE_FOCUS, OnPromoButtonFocusLost )
 	}
@@ -195,7 +162,6 @@ void function InitPlaylistMixtapeMenu()
 		var button = Hud_GetChild( file.mixtapeMenu, buttonName )
 
 		AddButtonEventHandler( button, UIE_CLICK, OnChecklistIconButtonClick )
-		AddButtonEventHandler( button, UIE_CLICKRIGHT, OnChecklistIconButtonClickRight )
 		AddButtonEventHandler( button, UIE_GET_FOCUS, OnChecklistIconButtonFocus )
 		AddButtonEventHandler( button, UIE_LOSE_FOCUS, OnChecklistIconButtonFocusLost )
 		file.checklistIconButtons.append( button )
@@ -203,7 +169,6 @@ void function InitPlaylistMixtapeMenu()
 
 	file.playButton = Hud_GetChild( file.mixtapeMenu, "PlayButton" )
 	AddButtonEventHandler( file.playButton, UIE_CLICK, OnPlayButtonClick )
-	AddButtonEventHandler( file.playButton, UIE_CLICKRIGHT, OnPlayButtonClickRight )
 	AddButtonEventHandler( file.playButton, UIE_GET_FOCUS, OnPlayButtonFocus )
 	AddButtonEventHandler( file.playButton, UIE_LOSE_FOCUS, OnPlayButtonFocusLost )
 
@@ -213,9 +178,9 @@ void function InitPlaylistMixtapeMenu()
 
 	file.contentDescriptionTitle = Hud_GetChild( file.mixtapeMenu, "ContentDescriptionTitle" )
 	file.contentDescription = Hud_GetChild( file.mixtapeMenu, "ContentDescription" )
-	file.contentDescription.SetText( "" )
+	Hud_SetText( file.contentDescription, "" )
 	file.notifyNewTitle = Hud_GetChild( file.mixtapeMenu, "NotifyNewTitle" )
-	file.notifyNewTitle.SetText( "#NEW" )
+	Hud_SetText( file.notifyNewTitle, "#NEW" )
 	Hud_SetVisible( file.notifyNewTitle, false )
 
 	AddMenuEventHandler( file.mixtapeMenu, eUIEvent.MENU_OPEN, OnOpenPlaylistMixtapeMenu )
@@ -223,7 +188,10 @@ void function InitPlaylistMixtapeMenu()
 	//AddMenuFooterOption( file.mixtapeMenu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( file.mixtapeMenu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.mixtapeMenu, BUTTON_Y, "#Y_BUTTON_TOGGLE_ALL", "#TOGGLE_ALL", ToggleAllCheckboxButtons, null )
-	AddMenuFooterOption( file.mixtapeMenu, BUTTON_X, "#X_BUTTON_DETAILS", "#MOUSE2_DETAILS", null, IsOnADetailsButton )
+	//AddMenuFooterOption( file.mixtapeMenu, BUTTON_X, "#X_BUTTON_DETAILS", "#MOUSE2_DETAILS", null, IsOnADetailsButton )
+
+	file.focusDescription = Hud_GetChild( file.mixtapeMenu, "FocusDescription" )
+	file.topBGHeight = Hud_GetHeight( Hud_GetChild( file.mixtapeMenu, "BackgroundLeft" ) )
 }
 
 bool function IsOnADetailsButton()
@@ -314,17 +282,22 @@ void function RefreshDescriptionTitle( bool asEnabled )
 	if ( file.isOnPlaylistCheckboxButton && (file.lastFocusedPlaylistDisplayName.len() > 0) )
 	{
 		string titleText = Localize( file.lastFocusedPlaylistDisplayName )
-		file.contentDescriptionTitle.SetText( titleText )
+		Hud_SetText( file.contentDescriptionTitle, titleText )
+
+		string noteText = Localize( file.lastFocusedPlaylistNoteText )
+		Hud_SetText( file.contentDescription, noteText )
 
 		if ( asEnabled )
-			file.contentDescriptionTitle.SetColor( 255, 184, 0, 255 )
+			Hud_SetColor( file.contentDescriptionTitle, 255, 184, 0, 255 )
 		else
-			file.contentDescriptionTitle.SetColor( 128, 128, 128, 255 )
+			Hud_SetColor( file.contentDescriptionTitle, 128, 128, 128, 255 )
 	}
 	else
 	{
-		file.contentDescriptionTitle.SetText( "#MATCHMAKING_MIXTAPE_CHOOSE_INFO" )
-		file.contentDescriptionTitle.SetColor( 192, 192, 192, 192 )
+		Hud_SetText( file.contentDescriptionTitle, "#MATCHMAKING_MIXTAPE_CHOOSE_INFO" )
+		Hud_SetText( file.contentDescription, "" )
+
+		Hud_SetColor( file.contentDescriptionTitle, 192, 192, 192, 192 )
 	}
 }
 
@@ -332,6 +305,7 @@ void function SetDescriptionTitleForIconButton( int buttonID )
 {
 	string playlistName = pplInfo.checks[buttonID].playlistName
 	file.lastFocusedPlaylistDisplayName = GetPlaylistVarOrUseValue( playlistName, "name", "#UNKNOWN_PLAYLIST_NAME" )
+	file.lastFocusedPlaylistNoteText = GetPlaylistVarOrUseValue( playlistName, "promo_note", "" )
 
 	bool isChecked = pplInfo.checks[buttonID].isChecked
 	RefreshDescriptionTitle( isChecked )
@@ -346,7 +320,10 @@ void function OnChecklistIconButtonFocus( var button )
 	int buttonID = int( Hud_GetScriptID( button ) )
 	SetDescriptionTitleForIconButton( buttonID )
 
-	//
+	string descText = GetPlaylistDescription( pplInfo.checks[buttonID].playlistName )
+	Hud_SetText( file.focusDescription, descText )
+	file.isShowingPlayButtonDescription = false
+
 	//SetMixtapeVersionCurrent()
 }
 
@@ -354,6 +331,7 @@ void function OnChecklistIconButtonFocusLost( var button )
 {
 //	file.isOnPlaylistCheckboxButton = false
 	file.lastFocusedPlaylistDisplayName = ""
+	file.lastFocusedPlaylistNoteText = ""
 	RefreshDescriptionTitle( false )
 }
 
@@ -370,14 +348,6 @@ void function OnChecklistIconButtonClick( var button )
 	SetDescriptionTitleForIconButton( buttonID )
 
 	SetMixtapeVersionCurrent()
-}
-
-void function OnChecklistIconButtonClickRight( var button )
-{
-	int buttonID = int( Hud_GetScriptID( button ) )
-	string playlistName = pplInfo.checks[buttonID].playlistName
-	DoPlaylistInfoDialog( playlistName )
-	PlayRightClickSound()
 }
 
 bool function AreAnyPlaylistsCheckedOff()
@@ -425,8 +395,10 @@ void function ToggleAllCheckboxButtons( var button )
 		EmitUISound( "Menu_LoadOut_Weapon_Select" )
 	else
 		EmitUISound( "Menu_LoadOut_PilotCamo_Select" )
-}
 
+	if ( file.isShowingPlayButtonDescription )
+		Hud_SetText( file.focusDescription, GetPlayButtonDescription() )
+}
 
 void function SetChecklistIconButtonsVisible( bool setBool )
 {
@@ -473,6 +445,7 @@ void function UpdatePromoButtonsThread()
 
 void function SetupPromoButtons()
 {
+	int numPromoButtons = 0
 	int length = file.promoButtons.len()
 	for( int idx = 0; idx < length; ++idx )
 	{
@@ -487,13 +460,32 @@ void function SetupPromoButtons()
 		}
 
 		Hud_SetVisible( button, true )
+		numPromoButtons++
 
 		asset playlistImage = GetPlaylistImage( playlistName )
 		RuiSetImage( buttonRui, "itemImage", playlistImage )
 
 		string displayName = GetPlaylistVarOrUseValue( playlistName, "name", "#UNKNOWN_PLAYLIST_NAME" )
 		RuiSetString( buttonRui, "title", displayName )
+
+		string displayNote = GetPlaylistVarOrUseValue( playlistName, "promo_note", "" )
+		RuiSetString( buttonRui, "playlistNoteName", displayNote )
 	}
+
+	var topBG = Hud_GetChild( file.mixtapeMenu, "BackgroundLeft" )
+	var bottomBG = Hud_GetChild( file.mixtapeMenu, "DetailsBackground" )
+
+	//if ( numPromoButtons <= 4 )
+	//{
+	//	int diff = int( file.topBGHeight * 0.2 )
+	//	Hud_SetHeight( topBG, file.topBGHeight * 0.8 )
+	//	Hud_SetY( bottomBG, Hud_GetBaseY( bottomBG ) - diff )
+	//}
+	//else
+	//{
+		Hud_SetHeight( topBG, file.topBGHeight )
+		Hud_SetY( bottomBG, Hud_GetBaseY( bottomBG ) )
+	//}
 
 	thread UpdatePromoButtonsThread()
 }
@@ -572,7 +564,7 @@ void function OnOpenPlaylistMixtapeMenu()
 		if ( worldDesc == "" )
 			worldDesc = "37429"
 #endif // #if DEV
-		file.mixtapeMenu.GetChild( "PlayerCount" ).SetText( "#PLAYLIST_PLAYERCOUNT_MIXTAPE_SCREEN", regionDesc, worldDesc )
+		Hud_SetText( Hud_GetChild( file.mixtapeMenu, "PlayerCount" ), "#PLAYLIST_PLAYERCOUNT_MIXTAPE_SCREEN", regionDesc, worldDesc )
 	}
 
 	SetChecklistIconButtonsVisible( true )
@@ -678,7 +670,7 @@ void function DoPlayButtonWarningDialog( array<string> activePlaylists, bool and
 
 	DialogData dialogData
 	dialogData.header = "#MENU_HEADER_PLAY"
-	dialogData.message = messageTop + Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_BOTTOM", Localize( GetMenuHeader() ) )
+	dialogData.message = messageTop + Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_BOTTOM" )
 	dialogData.noChoiceWithNavigateBack = true
 
 	if ( andThenPlay )
@@ -701,19 +693,16 @@ void function PlayRightClickSound()
 	EmitUISound( "Menu.Accept" )
 }
 
-void function OnPromoButtonClickRight( var button )
-{
-	int buttonID = int( Hud_GetScriptID( button ) )
-	string playlistName = pplInfo.promo[buttonID].playlistName
-	DoPlaylistInfoDialog( playlistName )
-	PlayRightClickSound()
-}
-
 void function OnPromoButtonFocus( var button )
 {
 	file.isOnPlaylistCheckboxButton = false
 	file.isOnPromoButton = true
 	file.isOnPlayButton = false
+
+	int buttonID = int( Hud_GetScriptID( button ) )
+	string descText = GetPlaylistDescription( pplInfo.promo[buttonID].playlistName )
+	Hud_SetText( file.focusDescription, descText )
+	file.isShowingPlayButtonDescription = false
 }
 
 void function OnPromoButtonFocusLost( var button )
@@ -786,18 +775,14 @@ void function OnPlayButtonClick( var button )
 	DoPlayButtonAction_Internal( activePlaylists )
 }
 
-void function OnPlayButtonClickRight( var button )
-{
-	array<string> activePlaylists = GetActiveChecks()
-	DoPlayButtonWarningDialog( activePlaylists, false )
-	PlayRightClickSound()
-}
-
 void function OnPlayButtonFocus( var button )
 {
 	file.isOnPlaylistCheckboxButton = false
 	file.isOnPromoButton = false
 	file.isOnPlayButton = true
+
+	Hud_SetText( file.focusDescription, GetPlayButtonDescription() )
+	file.isShowingPlayButtonDescription = true
 }
 
 void function OnPlayButtonFocusLost( var button )
@@ -836,7 +821,6 @@ void function InitPlaylistMixtapeChecklistMenu()
 	}
 
 	AddMenuEventHandler( file.checklistMenu, eUIEvent.MENU_OPEN, OnOpenPlaylistMixtapeChecklistMenu )
-	AddMenuEventHandler( file.checklistMenu, eUIEvent.MENU_CLOSE, OnClosePlaylistMixtapeChecklistMenu )
 	AddMenuFooterOption( file.checklistMenu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( file.checklistMenu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 }
@@ -911,29 +895,6 @@ void function OnOpenPlaylistMixtapeChecklistMenu()
 
 	if ( file.checklistButtonsFirstVisibleIndex >= 0 )
 		thread DelayedSetFocusThread( file.checklistButtons[file.checklistButtonsFirstVisibleIndex] )
-}
-
-void function OnClosePlaylistMixtapeChecklistMenu()
-{
-	/*
-	{
-		array<string> checkedNames = GetActiveChecks()
-
-		foreach( string playlistName in checkedNames )
-		{
-			bool isNew = !(file.activeChecksOnOpen.contains( playlistName ))
-			if ( isNew )
-				LogMixtapeCheckOn( playlistName )
-		}
-
-		foreach( string playlistName in file.activeChecksOnOpen )
-		{
-			bool isOld = !(checkedNames.contains( playlistName ))
-			if ( isOld )
-				LogMixtapeCheckOff( playlistName )
-		}
-	}
-	*/
 }
 
 void function OnChecklistButtonFocus( var button )
@@ -1046,6 +1007,19 @@ string function ConvertStringArrayToCSS( array<string> strArray )
 	}
 
 	return result
+}
+
+string function GetPlayButtonDescription()
+{
+	string message = BuildPlayWarningMessageTop( GetActiveChecks() )
+	string descText = message + Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_BOTTOM" )
+
+	return descText
+}
+
+string function GetPlaylistDescription( string playlistName )
+{
+	return GetPlaylistVarOrUseValue( playlistName, "description", "#UNKNOWN_PLAYLIST_NAME" )
 }
 
 void function PrintPlaylistAvailability()

@@ -92,6 +92,8 @@ struct CallsignEventData
 	string playerText
 	string playerLevel
 
+	int playerGen
+
 	bool isFriendly
 	bool showTeamGlow
 	bool purge
@@ -270,6 +272,7 @@ void function CallsignEvent( int eventType, entity ownerPlayer, string eventText
 	callsignEventData.eventText = eventText
 	callsignEventData.playerText = ownerPlayer.GetPlayerName()
 	callsignEventData.playerLevel = PlayerXPDisplayGenAndLevel( ownerPlayer.GetGen(), ownerPlayer.GetLevel() )
+	callsignEventData.playerGen = ownerPlayer.GetGen()
 	callsignEventData.isFriendly = ownerPlayer.GetTeam() == GetLocalClientPlayer().GetTeam()
 	callsignEventData.showTeamGlow = false
 	callsignEventData.eventType = eventType
@@ -292,6 +295,7 @@ void function KilledByCallsignEvent( entity attacker )
 	callsignEventData.eventText = Localize( "#CALLSIGN_EVENT_KILLED_BY" )
 	callsignEventData.playerText = attacker.GetPlayerName()
 	callsignEventData.playerLevel = PlayerXPDisplayGenAndLevel( attacker.GetGen(), attacker.GetLevel() )
+	callsignEventData.playerGen = attacker.GetGen()
 	callsignEventData.isFriendly = false
 	callsignEventData.showTeamGlow = true
 	callsignEventData.defaultDuration = 3.5
@@ -346,6 +350,7 @@ void function CallsignEventQueueThink( int eventType )
 		RuiSetString( rui, "eventText", eventData.eventText )
 		RuiSetImage( rui, "cardImage", CallingCard_GetImage( eventData.callingCard ) )
 		RuiSetInt( rui, "layoutType", CallingCard_GetLayout( eventData.callingCard ) )
+		RuiSetImage( rui, "cardGenImage", GetGenIcon( eventData.playerGen ) )
 		RuiSetImage( rui, "iconImage", CallsignIcon_GetImage( eventData.callsignIcon ) )
 		RuiSetBool( rui, "isFriendly", eventData.isFriendly )
 		RuiSetBool( rui, "showTeamGlow", eventData.showTeamGlow )
@@ -382,6 +387,7 @@ void function CallsignEventStackThink( int eventType )
 		RuiSetString( rui, "eventText", eventData.eventText )
 		RuiSetImage( rui, "cardImage", CallingCard_GetImage( eventData.callingCard ) )
 		RuiSetInt( rui, "layoutType", CallingCard_GetLayout( eventData.callingCard ) )
+		RuiSetImage( rui, "cardGenImage", GetGenIcon( eventData.playerGen ) )
 		RuiSetImage( rui, "iconImage", CallsignIcon_GetImage( eventData.callsignIcon ) )
 		RuiSetBool( rui, "isFriendly", eventData.isFriendly )
 		RuiSetBool( rui, "showTeamGlow", eventData.showTeamGlow )

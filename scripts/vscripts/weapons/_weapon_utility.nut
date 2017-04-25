@@ -2966,6 +2966,10 @@ void function EMP_DamagedPlayerOrNPC( entity ent, var damageInfo )
 
 void function VanguardEnergySiphon_DamagedPlayerOrNPC( entity ent, var damageInfo )
 {
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	if ( IsValid( attacker ) && attacker.GetTeam() == ent.GetTeam() )
+		return
+
 	Elecriticy_DamagedPlayerOrNPC( ent, damageInfo, FX_VANGUARD_ENERGY_BODY_HUMAN, FX_VANGUARD_ENERGY_BODY_TITAN  )
 }
 

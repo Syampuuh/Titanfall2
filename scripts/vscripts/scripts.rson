@@ -38,7 +38,6 @@ Scripts:
 When: "(SERVER || CLIENT) && MP"
 Scripts:
 [
-	//gamemodes/sh_dev_gamemodes_mp.gnut // DEVSCRIPTS REMOVE
 	gamemodes/sh_gamemodes_mp.gnut
 ]
 
@@ -84,7 +83,6 @@ Scripts:
 	sh_calling_cards.gnut
 	_persistentdata.gnut
 	gamemodes/sh_gamemodes.gnut
-	//gamemodes/sh_dev_gamemodes.gnut // DEVSCRIPTS REMOVE
 	mp/sh_challenges_content.nut
 	sh_loadouts.nut
 	sh_mp_utility_all.gnut
@@ -176,7 +174,6 @@ Scripts:
 When: "(SERVER || CLIENT) && MP"
 Scripts:
 [
-    //_dev_remote_functions_mp.gnut // DEVSCRIPTS REMOVE
 	_remote_functions_mp.gnut
 ]
 
@@ -403,7 +400,6 @@ Scripts:
 
 	weapons/mp_ability_burncardweapon.nut
 	weapons/mp_ability_turretweapon.nut
-	weapons/mp_ability_pathchooser.nut
 
 	sh_ping.gnut
 
@@ -561,6 +557,8 @@ When: "SERVER && MP"
 Scripts:
 [
 	lobby/_lobby.gnut
+	lobby/_private_lobby.gnut
+	lobby/sh_lobby.gnut
 
 	_harvester.gnut
     sh_loadouts_mp.nut
@@ -576,10 +574,12 @@ Scripts:
 	ai/_ai_soldiers_mp.gnut
 
 	mp/_challenges.gnut
+	mp/_dropship_spawn_common.gnut
 	mp/_classic_mp.nut
 	mp/spawn.nut
 	mp/spawn_debug.gnut
 	mp/spawn_wave.gnut
+	mp/spawn_wave_dropship.gnut
 	mp/_score.nut
 	mp/_gamestate_mp.nut
 	mp/spawn_on_friendly.gnut
@@ -692,6 +692,7 @@ Scripts:
 	client/cl_titan_xp.gnut
 	client/cl_pilot_speedometer.gnut
 	lobby/cl_lobby.gnut
+	lobby/sh_lobby.gnut
 	mp/cl_challenges.gnut
 
 	conversation/cl_battle_chatter.gnut
@@ -844,7 +845,6 @@ Scripts:
 	ui/menu_test.nut
 	ui/menu_dialog.nut
 	ui/menu_eula_dialog.nut
-	ui/menu_pathchooser_dialog.nut
 	ui/menu_review_terms_dialog.nut
 	ui/menu_registration_dialog.nut
 	ui/menu_advocate_gift_dialog.nut
@@ -918,6 +918,7 @@ Scripts:
 	ui/menu_edit_titan_loadouts.nut
 	burnmeter/sh_burnmeter.gnut
 	sp/sh_sp_objective_strings.gnut
+	lobby/sh_lobby.gnut
 ]
 
 When: "UI && PC_PROG"
@@ -954,71 +955,4 @@ Scripts:
 ]
 */
 
-// DEVSCRIPTS CONTENT
-/*
-When: "(SERVER || CLIENT) && MP"
-Scripts:
-[
-	sh_matchcandy.gnut
 
-	gamemodes/sh_gamemode_atcoop.nut
-	gamemodes/sh_gamemode_raid.nut
-    gamemodes/sh_gamemode_fw.nut
-    gamemodes/sh_gamemode_hunted.nut
-    gamemodes/sh_gamemode_don.nut
-    gamemodes/sh_gamemode_fd.nut
-	gamemodes/sh_gamemode_pve_sandbox.nut
-	gamemodes/sh_gamemode_cq.nut
-
-	gamemodes/sh_gamemode_cq_dialogue.nut
-]
-
-
-When: "SERVER && MP"
-Scripts:
-[
-	_harvester_fw.nut
-
-	gamemodes/_gamemode_atcoop.nut
-	gamemodes/_gamemode_raid.nut
-	gamemodes/_gamemode_fw.nut
-	gamemodes/_gamemode_hunted.nut
-	gamemodes/_gamemode_don.nut
-    gamemodes/_gamemode_fd.nut
-	gamemodes/_gamemode_pve_sandbox.nut
-	gamemodes/_gamemode_cq.nut
-]
-
-When: "CLIENT && MP"
-Scripts:
-[
-    gamemodes/cl_gamemode_atcoop.nut
-	gamemodes/cl_gamemode_raid.nut
-	gamemodes/cl_gamemode_fw.nut
-	gamemodes/cl_gamemode_hunted.nut
-	gamemodes/cl_gamemode_don.nut
-	gamemodes/cl_gamemode_fd.nut
-	gamemodes/cl_gamemode_pve_sandbox.nut
-    gamemodes/cl_gamemode_cq.nut
-
-	conversation/cl_dpad_comms.gnut
-]
-
-When: "UI"
-Scripts:
-[
-	ui/menu_pvelobby.nut
-
-	ui/menu_edit_dpad_comms.nut
-	ui/menu_select_dpad_comms.nut
-]
-
-
-When: "MP || UI"
-Scripts:
-[
-	conversation/sh_dpad_comms.gnut
-]
-*/
-
-// END DEVSCRIPTS CONTENT

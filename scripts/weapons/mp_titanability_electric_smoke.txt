@@ -71,7 +71,7 @@ WeaponData
 	{
 		maelstrom
 		{
-			"hud_icon"										"rui/titan_loadout/passive/vanguard_core2"
+			"hud_icon"										"rui/titan_loadout/passive/monarch_core_maelstrom"
 		}
 	}
 }

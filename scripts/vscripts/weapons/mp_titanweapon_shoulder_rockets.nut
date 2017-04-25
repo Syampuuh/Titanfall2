@@ -11,9 +11,9 @@ global function OnWeaponNpcPrimaryAttack_titanweapon_shoulder_rockets
 //----------------------
 
 const SHOULDERROCKETS_NUM_ROCKETS_PER_SHOT 		= 1
-const SHOULDERROCKETS_MISSILE_SPEED 			= 1000
+const float SHOULDERROCKETS_MISSILE_SPEED 		= 1000.0
 const SHOULDERROCKETS_APPLY_RANDOM_SPREAD 		= true
-const SHOULDERROCKETS_LAUNCH_OUT_ANG 			= 15
+const SHOULDERROCKETS_LAUNCH_OUT_ANG 			= 10
 const SHOULDERROCKETS_LAUNCH_OUT_TIME 			= 0.2
 const SHOULDERROCKETS_LAUNCH_IN_LERP_TIME 		= 0.0
 const SHOULDERROCKETS_LAUNCH_IN_ANG 			= -10
@@ -52,8 +52,10 @@ void function Init_titanweapon_shoulder_rockets( entity weapon )
 {
 	if ( !weapon.w.initialized )
 	{
-		SmartAmmo_SetMissileSpeed( weapon, SHOULDERROCKETS_MISSILE_SPEED )
-		SmartAmmo_SetMissileHomingSpeed( weapon, 250 )
+		float missileSpeed = IsMultiplayer() ? VANGUARD_SHOULDER_MISSILE_SPEED : SHOULDERROCKETS_MISSILE_SPEED
+		SmartAmmo_SetMissileSpeed( weapon, missileSpeed )
+		float homingSpeed = IsMultiplayer() ? ( VANGUARD_SHOULDER_MISSILE_SPEED / SHOULDERROCKETS_MISSILE_SPEED * 250 ) : 250.0
+		SmartAmmo_SetMissileHomingSpeed( weapon, homingSpeed )
 		SmartAmmo_SetUnlockAfterBurst( weapon, true )
 		SmartAmmo_SetExpandContract( weapon, SHOULDERROCKETS_NUM_ROCKETS_PER_SHOT, SHOULDERROCKETS_APPLY_RANDOM_SPREAD, SHOULDERROCKETS_LAUNCH_OUT_ANG, SHOULDERROCKETS_LAUNCH_OUT_TIME, SHOULDERROCKETS_LAUNCH_IN_LERP_TIME, SHOULDERROCKETS_LAUNCH_IN_ANG, SHOULDERROCKETS_LAUNCH_IN_TIME, SHOULDERROCKETS_LAUNCH_STRAIGHT_LERP_TIME )
 		weapon.w.initialized = true
@@ -84,8 +86,18 @@ var function OnWeaponPrimaryAttack_titanweapon_shoulder_rockets( entity weapon, 
 
 	if ( smartAmmoFired == 0 )
 	{
-		weapon.SetWeaponBurstFireCount( 1 )
-		weapon.FireWeaponMissile( attackParams.pos, attackParams.dir, SHOULDERROCKETS_MISSILE_SPEED, damageTypes.projectileImpact, damageTypes.explosive, false, shouldPredict )
+		if ( IsMultiplayer() )
+		{
+			weapon.SetWeaponBurstFireCount( maxTargetedBurst - int( (weapon.GetWeaponChargeFraction() + shotFrac ) * maxTargetedBurst ) )
+			OnWeaponPrimaryAttack_titanweapon_salvo_rockets( weapon, attackParams )
+
+		}
+		else
+		{
+			entity missile = weapon.FireWeaponMissile( attackParams.pos, attackParams.dir, SHOULDERROCKETS_MISSILE_SPEED, damageTypes.projectileImpact, damageTypes.explosive, false, shouldPredict )
+			weapon.SetWeaponBurstFireCount( 1 )
+		}
+
 		weapon.SetWeaponChargeFractionForced( weapon.GetWeaponChargeFraction() + shotFrac )
 	}
 	else

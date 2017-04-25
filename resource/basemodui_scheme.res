@@ -304,6 +304,15 @@ Scheme
 		HybridButton.BorderColor 					"0 0 0 255"
 		HybridButton.BlotchColor 					"0 0 255 128"
 
+		RuiButton.Style                             0
+		RuiButton.CursorHeight		                0
+		RuiButton.TextColor                         Blank
+		RuiButton.LockedColor                       Blank
+		RuiButton.FocusColor                        Blank
+		RuiButton.SelectedColor                     Blank
+		RuiButton.DisabledColor                     Blank
+		RuiButton.FocusDisabledColor                Blank
+
 		// any primary menu (not the main menu)
 		DefaultButton.Style							0
 		DefaultButton.TextInsetX					79
@@ -338,60 +347,6 @@ Scheme
 		RuiSmallButton.DisabledColor				Blank
 		RuiSmallButton.FocusDisabledColor			Blank
 
-		RuiLargeButton.Style						0
-		RuiLargeButton.CursorHeight					68
-		RuiLargeButton.TextColor                    Blank
-		RuiLargeButton.LockedColor                  Blank
-		RuiLargeButton.FocusColor					Blank
-		RuiLargeButton.SelectedColor				Blank
-		RuiLargeButton.DisabledColor				Blank
-		RuiLargeButton.FocusDisabledColor			Blank
-
-		RuiMediumButton.Style						0
-		RuiMediumButton.CursorHeight				40
-		RuiMediumButton.TextColor                   Blank
-		RuiMediumButton.LockedColor                 Blank
-		RuiMediumButton.FocusColor					Blank
-		RuiMediumButton.SelectedColor				Blank
-		RuiMediumButton.DisabledColor				Blank
-		RuiMediumButton.FocusDisabledColor			Blank
-
-		RuiKNBSubjectButton.Style					0
-		RuiKNBSubjectButton.CursorHeight			48
-		RuiKNBSubjectButton.TextColor				Blank
-		RuiKNBSubjectButton.LockedColor				Blank
-		RuiKNBSubjectButton.FocusColor				Blank
-		RuiKNBSubjectButton.SelectedColor			Blank
-		RuiKNBSubjectButton.DisabledColor			Blank
-		RuiKNBSubjectButton.FocusDisabledColor		Blank
-
-		RuiMixtapeChecklistButton.Style					0
-		RuiMixtapeChecklistButton.CursorHeight			60
-		RuiMixtapeChecklistButton.TextColor				Blank
-		RuiMixtapeChecklistButton.LockedColor			Blank
-		RuiMixtapeChecklistButton.FocusColor			Blank
-		RuiMixtapeChecklistButton.SelectedColor			Blank
-		RuiMixtapeChecklistButton.DisabledColor			Blank
-		RuiMixtapeChecklistButton.FocusDisabledColor	Blank
-
-		RuiMixtapeChecklistIconButton.Style				0
-		RuiMixtapeChecklistIconButton.CursorHeight		120
-		RuiMixtapeChecklistIconButton.TextColor			Blank
-		RuiMixtapeChecklistIconButton.LockedColor		Blank
-		RuiMixtapeChecklistIconButton.FocusColor		Blank
-		RuiMixtapeChecklistIconButton.SelectedColor		Blank
-		RuiMixtapeChecklistIconButton.DisabledColor		Blank
-		RuiMixtapeChecklistIconButton.FocusDisabledColor	Blank
-
-		RuiGamepadBindButton.Style						0
-		RuiGamepadBindButton.CursorHeight				60
-		RuiGamepadBindButton.TextColor					Blank
-		RuiGamepadBindButton.LockedColor				Blank
-		RuiGamepadBindButton.FocusColor					Blank
-		RuiGamepadBindButton.SelectedColor				Blank
-		RuiGamepadBindButton.DisabledColor				Blank
-		RuiGamepadBindButton.FocusDisabledColor			Blank
-
 		RuiFooterButton.Style						0
 		RuiFooterButton.CursorHeight				36
 		RuiFooterButton.TextInsetX					12 // ?
@@ -402,42 +357,6 @@ Scheme
 		RuiFooterButton.SelectedColor				Blank
 		RuiFooterButton.DisabledColor				Blank
 		RuiFooterButton.FocusDisabledColor			Blank
-
-		RuiStartMatchButton.Style						0
-		RuiStartMatchButton.CursorHeight				56
-		RuiStartMatchButton.TextColor                   Blank
-		RuiStartMatchButton.LockedColor                 Blank
-		RuiStartMatchButton.FocusColor					Blank
-		RuiStartMatchButton.SelectedColor				Blank
-		RuiStartMatchButton.DisabledColor				Blank
-		RuiStartMatchButton.FocusDisabledColor			Blank
-
-		GenUpButton.Style						0
-		GenUpButton.CursorHeight				56
-		GenUpButton.TextColor                   Blank
-		GenUpButton.LockedColor                 Blank
-		GenUpButton.FocusColor					Blank
-		GenUpButton.SelectedColor				Blank
-		GenUpButton.DisabledColor				Blank
-		GenUpButton.FocusDisabledColor			Blank
-
-		RuiInboxButton.Style						0
-		RuiInboxButton.CursorHeight					68
-		RuiInboxButton.TextColor                    Blank
-		RuiInboxButton.LockedColor                  Blank
-		RuiInboxButton.FocusColor					Blank
-		RuiInboxButton.SelectedColor				Blank
-		RuiInboxButton.DisabledColor				Blank
-		RuiInboxButton.FocusDisabledColor			Blank
-
-		RuiCheckBox.Style						    0
-		RuiCheckBox.CursorHeight					40
-		RuiCheckBox.TextColor                       Blank
-		RuiCheckBox.LockedColor                     Blank
-		RuiCheckBox.FocusColor					    Blank
-		RuiCheckBox.SelectedColor				    Blank
-		RuiCheckBox.DisabledColor				    Blank
-		RuiCheckBox.FocusDisabledColor			    Blank
 
 		ComboButton.Style							0
 		ComboButton.CursorHeight					40
@@ -579,19 +498,10 @@ Scheme
 		CommunityItemLook.CursorHeight				27
 		CommunityItemLook.SelectedColor				"210 170 0 255"
 
-		DataCenterButton.Style 						0
-		DataCenterButton.TextInsetX					56
-		DataCenterButton.TextInsetY					7
-
 		MapButton.Style								0
 		MapButton.CursorHeight						89
 		MapButton.TextInsetX						79
 		MapButton.TextInsetY						7
-
-		TabButton.Style								0
-		TabButton.FocusColor						"232 232 232 255"
-		TabButton.SelectedColor						"232 232 232 255"
-		TabButton.CursorHeight						40
 
 		PCFooterButton.Style						0
 		PCFooterButton.CursorHeight					36
@@ -607,32 +517,8 @@ Scheme
 		TitanDecalButton.TextInsetX					79
 		TitanDecalButton.TextInsetY					7
 
-		Test1Button.Style 						    0
-		Test1Button.CursorHeight			    	96
-
 		Test2Button.Style 					    	0
 		Test2Button.CursorHeight			    	96
-
-		Test3Button.Style 					    	0
-		Test3Button.CursorHeight			    	45
-
-		LoadoutButtonLarge.Style 					0
-		LoadoutButtonLarge.CursorHeight			    112
-
-		LoadoutButtonMedium.Style 					0
-		LoadoutButtonMedium.CursorHeight			96
-
-		LoadoutButtonSmall.Style 					0
-		LoadoutButtonSmall.CursorHeight			    72
-
-		CosmeticButton.Style     					0
-		CosmeticButton.CursorHeight			        72
-
-		PostGameScoreboardRow.Style 		        0
-		PostGameScoreboardRow.CursorHeight	        35
-
-		PostGameProgressDisplay.Style 		        0
-		PostGameProgressDisplay.CursorHeight        260
 
 		CoopStoreButton.Style 						0
 		CoopStoreButton.CursorHeight				56
@@ -2531,20 +2417,6 @@ Scheme
 			childGroupNew			DefaultButtonNewGroup
 		}
 
-		DefaultMessageButton
-		{
-			wide					674
-			tall					45
-			zpos					3 // Needed or clicking on the background can hide this
-			visible					1
-			enabled					1
-			style					DefaultButton
-			childGroupNormal		DefaultButtonNormalGroup
-			childGroupFocused		DefaultButtonFocusGroup
-			childGroupDisabled		DefaultMessageButtonDisabledGroup
-			childGroupNew			DefaultButtonNewGroup
-		}
-
 		CompactButton
 		{
 			wide					674
@@ -2558,19 +2430,6 @@ Scheme
 			childGroupLocked		CompactButtonLockedGroup
 			childGroupNew			CompactButtonNewGroup
 			childGroupSelected		CompactButtonSelectedGroup
-		}
-
-		VerySmallButton
-		{
-			wide					540
-			style					SmallButton
-			tall					31
-			zpos					3 // Needed or clicking on the background can hide this
-			visible					1
-			enabled					1
-			childGroupNormal		VerySmallButtonNormalGroup
-			childGroupFocused		VerySmallButtonFocusGroup
-			childGroupSelected		VerySmallButtonSelectedGroup
 		}
 
 		SmallButton
@@ -2587,6 +2446,30 @@ Scheme
 			childGroupLocked        SmallButtonLockedGroup
 		}
 
+		SpotlightButtonLarge
+		{
+			wide					540
+			tall					254
+			zpos					3 // Needed or clicking on the background can hide this
+			visible					1
+			enabled					1
+            rui						"ui/spotlight_button_large.rpak"
+			labelText				""
+			style					RuiButton
+		}
+
+		SpotlightButtonSmall
+		{
+			wide					267
+			tall					124
+			zpos					3 // Needed or clicking on the background can hide this
+			visible					1
+			enabled					1
+            rui						"ui/spotlight_button_small.rpak"
+			labelText				""
+			style	                RuiButton
+		}
+
 		RuiSmallButton
 		{
 			wide					540
@@ -2599,18 +2482,6 @@ Scheme
 			style					SmallButton
 		}
 
-		RuiLargeButton
-		{
-			wide					540
-			tall					68
-			zpos					3 // Needed or clicking on the background can hide this
-			visible					1
-			enabled					1
-            rui						"ui/large_button.rpak"
-			labelText				""
-			style					RuiLargeButton
-		}
-
 		RuiInboxButton
 		{
 			wide					660
@@ -2620,19 +2491,7 @@ Scheme
 			enabled					1
             rui						"ui/menu_inbox_button.rpak"
 			labelText				""
-			style					RuiLargeButton
-		}
-
-		RuiMediumButton
-		{
-			wide					400
-			tall					40
-			zpos					3 // Needed or clicking on the background can hide this
-			visible					1
-			enabled					1
-            rui						"ui/medium_button.rpak"
-			labelText				""
-			style					RuiMediumButton
+			style					RuiButton
 		}
 
 		RuiKNBSubjectButton
@@ -2644,7 +2503,39 @@ Scheme
 			enabled					1
             rui						"ui/knb_subject_button.rpak"
 			labelText				""
-			style					RuiKNBSubjectButton
+			style					RuiButton
+		}
+
+		RuiTacticalMainButton
+		{
+			xpos					0
+			ypos					0
+			zpos					2
+			wide					300
+			tall					150
+			visible					1
+			enabled					1
+			style					TitanDecalButton
+			allcaps					0
+			textAlignment			left
+			labelText 				""
+            rui						"ui/pve_tacticals_main_button.rpak"
+		}
+
+		RuiTacticalSubButton
+		{
+			xpos					0
+			ypos					0
+			zpos					2
+			wide					150
+			tall					150
+			visible					1
+			enabled					1
+			style					TitanDecalButton
+			allcaps					0
+			textAlignment			left
+			labelText 				""
+            rui						"ui/pve_tacticals_sub_button.rpak"
 		}
 
 		RuiMixtapeChecklistButton
@@ -2656,7 +2547,7 @@ Scheme
 			enabled					1
             rui						"ui/mixtape_checklist_button.rpak"
 			labelText				""
-			style					RuiMixtapeChecklistButton
+			style					RuiButton
 		}
 
 		RuiMixtapeChecklistIconButton
@@ -2668,7 +2559,7 @@ Scheme
 			enabled					1
             rui						"ui/mixtape_checklist_small_button.rpak"
 			labelText				""
-			style					RuiMixtapeChecklistIconButton
+			style					RuiButton
 		}
 
 		RuiGamepadBindButton
@@ -2680,7 +2571,7 @@ Scheme
 			enabled					1
             rui						"ui/gamepad_bindlist_button.rpak"
 			labelText				""
-			style					RuiGamepadBindButton
+			style					RuiButton
 		}
 
 		RuiStartMatchButton
@@ -2692,7 +2583,7 @@ Scheme
 			enabled					1
             rui						"ui/start_match_button.rpak"
 			labelText				""
-			style					RuiStartMatchButton
+			style					RuiButton
 		}
 
 		GenUpButton
@@ -2704,20 +2595,19 @@ Scheme
 			enabled					1
             rui						"ui/genup_button.rpak"
 			labelText				""
-			style					GenUpButton
+			style					RuiButton
 		}
 
 		RuiStoreButtonFront
 		{
 			wide					720
 			tall					71
-			OverrideTallIfNotBitmap 0
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
             rui						"ui/store_button_front.rpak"
 			labelText				""
-			style					RuiSmallButton
+			style					RuiButton
             clip 					0
 		}
 
@@ -2725,13 +2615,12 @@ Scheme
 		{
 			wide					800
 			tall					71
-			OverrideTallIfNotBitmap 0
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
             rui						"ui/store_button_bundle.rpak"
 			labelText				""
-			style					RuiSmallButton
+			style					RuiButton
             clip 					0
 		}
 
@@ -2739,13 +2628,12 @@ Scheme
 		{
 			wide					560
 			tall					71
-			OverrideTallIfNotBitmap 0
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
             rui						"ui/store_button_prime.rpak"
 			labelText				""
-			style					RuiSmallButton
+			style					RuiButton
             clip 					0
 		}
 
@@ -2753,13 +2641,12 @@ Scheme
 		{
 			wide					320
 			tall					128
-			OverrideTallIfNotBitmap 0
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
             rui						"ui/store_buy_button.rpak"
 			labelText				""
-			style					RuiSmallButton
+			style					RuiButton
             clip 					0
 		}
 
@@ -2767,7 +2654,6 @@ Scheme
 		{
 			wide					288
 			tall					40
-			OverrideTallIfNotBitmap 0
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
@@ -2782,13 +2668,12 @@ Scheme
 		{
 			wide					224
 			tall					56
-			OverrideTallIfNotBitmap 0
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
             rui						"ui/loadout_selection_button.rpak"
 			labelText				""
-			style					RuiSmallButton
+			style					RuiButton
             clip 					0
 		}
 
@@ -2796,13 +2681,12 @@ Scheme
 		{
 			wide					300
 			tall					40
-			OverrideTallIfNotBitmap 0
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
             rui						"ui/friend_button.rpak"
 			labelText				""
-			style					RuiSmallButton
+			style					RuiButton
             clip 					0
 		}
 
@@ -2810,7 +2694,6 @@ Scheme
 		{
 			wide					288
 			tall					40
-			OverrideTallIfNotBitmap 0
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
@@ -2840,12 +2723,11 @@ Scheme
 		{
 			wide					40
 			tall					40
-			OverrideTallIfNotBitmap 0
 			visible					1
 			enabled					1
             rui						"ui/button_checkbox.rpak"
 			labelText				""
-			style					RuiCheckBox
+			style					RuiButton
 		}
 
 		RuiSkipLabel
@@ -2878,7 +2760,6 @@ Scheme
 			allCaps                 0
 			style					ComboButton
 			visible					0
-			OverrideTallIfNotBitmap 0
 			childGroupAlways        ComboButtonLargeAlways
 //			fgcolor_override        "255 255 0 64"
 //			bgcolor_override        "255 255 0 64"
@@ -2958,19 +2839,6 @@ Scheme
 			childGroupFocused		LargeButtonFocusGroup
 			childGroupLocked		LargeButtonLockedGroup
 			childGroupNew	        LargeButtonNewGroup
-		}
-
-		LargeMessageButton
-		{
-			wide					540
-			tall					56
-			zpos					3 // Needed or clicking on the background can hide this
-			visible					1
-			enabled					1
-			style					LargeButton
-			childGroupNormal		LargeButtonNormalGroup
-			childGroupFocused		LargeButtonFocusGroup
-			childGroupDisabled		LargeMessageButtonDisabledGroup
 		}
 
 		SubmenuButton
@@ -3099,19 +2967,6 @@ Scheme
 			labelText				"--"
 		}
 
-		DataCenterButton
-		{
-			wide					636
-			tall					45
-			zpos					3 // Needed or clicking on the background can hide this
-			visible					1
-			enabled					1
-			style					DataCenterButton
-			childGroupAlways		DataCenterButtonAlwaysGroup
-			childGroupFocused		DataCenterButtonFocusGroup
-			childGroupSelected		DataCenterButtonSelectedGroup
-		}
-
 		RankedPlayDetailsProperties
 		{
 			classname 				RankedPlayDetails
@@ -3187,7 +3042,7 @@ Scheme
 		LobbyFriendlyButton
 		{
 			wide					496
-			tall					45
+			tall					47
 			visible					1
 			enabled					1
 			style					LobbyPlayerButton
@@ -3216,7 +3071,7 @@ Scheme
 		LobbyEnemyButton
 		{
 			wide					496
-			tall					45
+			tall					47
 			visible					1
 			enabled					1
 			style					LobbyPlayerButton
@@ -3282,7 +3137,7 @@ Scheme
 			tall					40
 			visible					1
 			enabled					1
-			style					TabButton
+			style					RuiButton
             rui						"ui/tab_button.rpak"
 			labelText				""
 		}
@@ -3392,7 +3247,6 @@ Scheme
 			style					TitanDecalButton
 			allcaps					0
 			textAlignment			left
-			OverrideTallIfNotBitmap 0
             rui						"ui/mission_select_button.rpak"
 			labelText 				""
 		}
@@ -3409,7 +3263,6 @@ Scheme
 			style					TitanDecalButton
 			allcaps					0
 			textAlignment			left
-			OverrideTallIfNotBitmap 0
             rui						"ui/sp_difficulty_select.rpak"
 			labelText 				""
 		}
@@ -3444,7 +3297,6 @@ Scheme
 			allcaps					0
 			textAlignment			left
 			labelText 				""
-			OverrideTallIfNotBitmap 0
             rui						"ui/playlist_button.rpak"
 		}
 
@@ -3477,11 +3329,10 @@ Scheme
 			tall					64
 			visible					1
 			enabled					1
-			style					TitanDecalButton
+			style					RuiButton
 			allcaps					0
 			textAlignment			left
 			labelText 				""
-			OverrideTallIfNotBitmap 0
 			rui						"ui/burn_card_button.rpak"
 		}
 
@@ -3492,14 +3343,12 @@ Scheme
 			zpos					2
 			wide					64
 			tall					64
-			OverrideTallIfNotBitmap 0
 			visible					1
 			enabled					1
-			style					TitanDecalButton
+			style					RuiButton
 			allcaps					0
 			textAlignment			left
 			labelText 				""
-			OverrideTallIfNotBitmap 0
 			rui						"ui/camo_button.rpak"
 		}
 
@@ -3510,14 +3359,12 @@ Scheme
 			zpos					2
 			wide					32
 			tall					64
-			OverrideTallIfNotBitmap 0
 			visible					1
 			enabled					1
-			style					TitanDecalButton
+			style					RuiButton
 			allcaps					0
 			textAlignment			left
 			labelText 				""
-			OverrideTallIfNotBitmap 0
 			rui						"ui/callsign_icon_button.rpak"
 		}
 
@@ -3528,14 +3375,12 @@ Scheme
 			zpos					2
 			wide					32
 			tall					64
-			OverrideTallIfNotBitmap 0
 			visible					1
 			enabled					1
-			style					TitanDecalButton
+			style					RuiButton
 			allcaps					0
 			textAlignment			left
 			labelText 				""
-			OverrideTallIfNotBitmap 0
 			rui						"ui/callsign_icon_store.rpak"
 		}
 
@@ -3546,14 +3391,12 @@ Scheme
 			zpos					2
 			wide					64
 			tall					64
-			OverrideTallIfNotBitmap 0
 			visible					1
 			enabled					1
-			style					TitanDecalButton
+			style					RuiButton
 			allcaps					0
 			textAlignment			left
 			labelText 				""
-			OverrideTallIfNotBitmap 0
 			rui						"ui/callsign_card_button.rpak"
 		}
 
@@ -3566,11 +3409,10 @@ Scheme
 			tall					64
 			visible					1
 			enabled					1
-			style					TitanDecalButton
+			style					RuiButton
 			allcaps					0
 			textAlignment			left
 			labelText 				""
-			OverrideTallIfNotBitmap 0
 			rui						"ui/faction_button.rpak"
 		}
 
@@ -3599,7 +3441,6 @@ Scheme
 			zpos					2
 			wide					32
 			tall					128
-			OverrideTallIfNotBitmap 0
 			visible					1
 			enabled					1
 			style					GridButton
@@ -3616,7 +3457,6 @@ Scheme
 			zpos					2
 			wide					32
 			tall					128
-			OverrideTallIfNotBitmap 0
 			visible					1
 			enabled					1
 			style					GridButton
@@ -3633,7 +3473,6 @@ Scheme
 			zpos					2
 			wide					128
 			tall					32
-			OverrideTallIfNotBitmap 0
 			visible					1
 			enabled					1
 			style					GridButton
@@ -3650,7 +3489,6 @@ Scheme
 			zpos					2
 			wide					128
 			tall					32
-			OverrideTallIfNotBitmap 0
 			visible					1
 			enabled					1
 			style					GridButton
@@ -3724,7 +3562,7 @@ Scheme
 			tall					112
 			visible					1
 			enabled					1
-			style					LoadoutButtonLarge
+			style					RuiButton
             rui						"ui/loadout_button_large.rpak"
 			labelText 				""
 		}
@@ -3735,7 +3573,7 @@ Scheme
 			tall					96
 			visible					1
 			enabled					1
-			style					LoadoutButtonMedium
+			style					RuiButton
             rui						"ui/loadout_button_medium.rpak"
 			labelText 				""
 		}
@@ -3746,7 +3584,7 @@ Scheme
 			tall					72
 			visible					1
 			enabled					1
-			style					LoadoutButtonSmall
+			style					RuiButton
 			rui						"ui/loadout_button_small.rpak"
 			labelText 				""
 		}
@@ -3757,7 +3595,7 @@ Scheme
 			tall					72
 			visible					1
 			enabled					1
-			style					LoadoutButtonSmall
+			style					RuiButton
 			rui						"ui/loadout_button_small_no_background.rpak"
 			labelText 				""
 		}
@@ -3768,7 +3606,7 @@ Scheme
 			tall					112
 			visible					1
 			enabled					1
-			style					LoadoutButtonLarge
+			style					RuiButton
             rui						"ui/suit_button.rpak"
 			labelText 				""
 		}
@@ -3779,22 +3617,9 @@ Scheme
 			tall					72
 			visible					1
 			enabled					1
-			style					CosmeticButton
+			style					RuiButton
             rui						"ui/cosmetic_button.rpak"
 			labelText 				""
-		}
-
-		Test1Button
-		{
-			wide					192
-			tall					96
-			visible					1
-			enabled					0
-			style					Test1Button
-			labelText 				""
-			childGroupAlways		Test1ButtonAlwaysGroup
-			childGroupFocused		Test1ButtonFocusedGroup
-			childGroupNew			Test1ButtonNewGroup
 		}
 
 		Test2Button
@@ -3808,19 +3633,6 @@ Scheme
 			childGroupAlways		Test2ButtonAlwaysGroup
 			childGroupFocused		Test2ButtonFocusedGroup
 			childGroupNew			Test2ButtonNewGroup
-		}
-
-		Test3Button
-		{
-			wide					96
-			tall					45
-			visible					1
-			enabled					0
-			style					Test3Button
-			labelText 				""
-			childGroupAlways		Test3ButtonAlwaysGroup
-			childGroupFocused		Test3ButtonFocusedGroup
-			childGroupNew			Test3ButtonNewGroup
 		}
 
 		CoopStoreButton
@@ -4868,7 +4680,7 @@ Scheme
             tall				    35
             visible				    1
             enabled					1
-            style					PostGameScoreboardRow
+            style					RuiButton
             rui					    "ui/postgame_scoreboard_row.rpak"
             labelText 				""
         }
@@ -4880,7 +4692,7 @@ Scheme
             tall				    260
             visible				    1
             enabled					1
-            style					PostGameProgressDisplay
+			style					RuiButton
             rui					    "ui/postgame_progress_display.rpak"
             labelText 				""
         }
@@ -4892,7 +4704,7 @@ Scheme
             tall				    260
             visible				    1
             enabled					1
-            style					PostGameProgressDisplay
+			style					RuiButton
             rui					    "ui/postgame_progress_display.rpak"
             labelText 				""
         }
@@ -5301,22 +5113,6 @@ Scheme
 			}
 		}
 
-		DefaultMessageButtonDisabledGroup
-		{
-			ButtonMessage
-			{
-				ControlName				Label
-				xpos					124
-				ypos					45
-				wide					636
-				tall					45
-				font					Default_27_ShadowGlow
-				labelText 				""
-				fgcolor_override		"214 121 49 255"
-				visible					1
-			}
-		}
-
 		CompactButtonNormalGroup
 		{
 			FocusFade
@@ -5453,53 +5249,6 @@ Scheme
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		VerySmallButtonNormalGroup
-		{
-			FocusFade
-			{
-				ControlName				ImagePanel
-				xpos					0
-				ypos					0
-				wide					540
-				tall					30
-				visible					1
-				image					"ui/menu/common/menu_hover_left_default_anim_new"
-				scaleImage				1
-				drawColor				"255 255 255 0"
-			}
-		}
-		VerySmallButtonFocusGroup
-		{
-			Focus
-			{
-				ControlName				ImagePanel
-				xpos					0
-				ypos					0
-				wide					540
-				tall					30
-				visible					1
-				image					"ui/menu/common/menu_hover_left_default_new"
-				scaleImage				1
-			}
-		}
-		VerySmallButtonSelectedGroup
-		{
-			TestImage1
-			{
-				ControlName				ImagePanel
-				xpos					0
-				ypos					0
-				wide					540
-				tall					30
-				visible					1
-				image					"ui/menu/common/menu_hover_left_default_new"
-				scaleImage				1
-				drawColor				"255 255 255 40"
-			}
-		}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 		ChallengeCategoryButtonSelectedGroup
 		{
 			TrackedIcon
@@ -5587,21 +5336,6 @@ Scheme
 				visible					1
 				image					"ui/menu/common/newitemicon"
 				scaleImage				1
-			}
-		}
-		LargeMessageButtonDisabledGroup
-		{
-			ButtonMessage
-			{
-				ControlName				Label
-				xpos					124
-				ypos					45
-	    		wide					540
-    			tall					56
-				font					Default_27_ShadowGlow
-				labelText 				""
-				fgcolor_override		"214 121 49 255"
-				visible					1
 			}
 		}
 
@@ -6077,50 +5811,6 @@ Scheme
 				visible					1
 				image					"ui/menu/coop_eog_mission_summary/coop_eog_hover"
 				scaleImage				1
-			}
-		}
-
-		DataCenterButtonAlwaysGroup
-		{
-			Ping
-			{
-				ControlName				Label
-				xpos 					398
-				zpos					1
-				wide 					180
-				tall 					45
-				labelText 				"temp_ping"
-				font					Default_28
-				textAlignment			"east"
-			}
-		}
-		DataCenterButtonFocusGroup
-		{
-			Focus
-			{
-				ControlName				ImagePanel
-				xpos					0
-				ypos					0
-				wide					636
-				tall					45
-				visible					1
-				image					"ui/menu/common/menu_hover_left_default"
-				scaleImage				1
-			}
-		}
-		DataCenterButtonSelectedGroup
-		{
-			Selected
-			{
-				ControlName				ImagePanel
-				xpos					0
-				ypos					0
-				wide					636
-				tall					45
-				visible					1
-				image					"ui/menu/common/menu_hover_left_default"
-				scaleImage				1
-				drawColor				"255 255 255 40"
 			}
 		}
 
@@ -7014,59 +6704,6 @@ Scheme
 			}
 		}
 
-		Test1ButtonAlwaysGroup
-		{
-			Background
-			{
-				ControlName				ImagePanel
-				wide					192
-				tall					96
-				zpos					101
-				image 					"rui/menu/loadout_boxes/weapon_box_bg"
-				visible					1
-				scaleImage				1
-			}
-
-			Item
-			{
-				ControlName				ImagePanel
-				wide					192
-				tall					96
-				zpos					110
-				image 					"ui/test_button_item"
-				visible					1
-				scaleImage				1
-			}
-		}
-
-		Test1ButtonFocusedGroup
-		{
-			Focused
-			{
-				ControlName				ImagePanel
-				wide					192
-				tall					96
-				zpos					102
-				image 					"rui/menu/loadout_boxes/weapon_box_bg_inverse"
-				visible					1
-				scaleImage				1
-			}
-		}
-
-        Test1ButtonNewGroup
-        {
-			NewEffect
-			{
-				ControlName				ImagePanel
-				wide					192
-				tall					96
-				zpos					102
-				image 					"ui/test_button_new"
-				visible					1
-				scaleImage				1
-			}
-        }
-
 		Test2ButtonAlwaysGroup
 		{
 			Background
@@ -7113,59 +6750,6 @@ Scheme
 				ControlName				ImagePanel
 				wide					96
 				tall					96
-				zpos					102
-				image 					"ui/test_button_new"
-				visible					1
-				scaleImage				1
-			}
-        }
-
-		Test3ButtonAlwaysGroup
-		{
-			Background
-			{
-				ControlName				ImagePanel
-				wide					96
-				tall					45
-				zpos					101
-				image 					"rui/menu/loadout_boxes/attachment_box_bg"
-				visible					1
-				scaleImage				1
-			}
-
-			Item
-			{
-				ControlName				ImagePanel
-				wide					96
-				tall					45
-				zpos					110
-				image 					"ui/test_button_item"
-				visible					1
-				scaleImage				1
-			}
-		}
-
-		Test3ButtonFocusedGroup
-		{
-			Focused
-			{
-				ControlName				ImagePanel
-				wide					96
-				tall					45
-				zpos					102
-				image 					"rui/menu/loadout_boxes/attachment_box_bg_inverse"
-				visible					1
-				scaleImage				1
-			}
-		}
-
-        Test3ButtonNewGroup
-        {
-			NewEffect
-			{
-				ControlName				ImagePanel
-				wide					96
-				tall					45
 				zpos					102
 				image 					"ui/test_button_new"
 				visible					1

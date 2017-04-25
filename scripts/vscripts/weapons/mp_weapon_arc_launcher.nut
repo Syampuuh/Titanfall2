@@ -13,11 +13,14 @@ var function OnWeaponPrimaryAttack_weapon_arc_launcher( entity weapon, WeaponPri
 	}
 
 	#if SERVER
-		vector angles = VectorToAngles( weaponOwner.GetViewVector() )
-		vector up = AnglesToUp( angles )
+		if ( weaponOwner.IsPlayer() )
+		{
+			vector angles = VectorToAngles( weaponOwner.GetViewVector() )
+			vector up = AnglesToUp( angles )
 
-		if ( weaponOwner.GetTitanSoulBeingRodeoed() != null )
-			attackParams.pos = attackParams.pos + up * 20
+			if ( weaponOwner.GetTitanSoulBeingRodeoed() != null )
+				attackParams.pos = attackParams.pos + up * 20
+		}
 	#endif
 
 	bool shouldPredict = weapon.ShouldPredictProjectiles()

@@ -11,6 +11,7 @@ global function HideEventNotification
 global function AddEventNotificationCallback
 global function AddPermanentEventNotification
 global function RestorePermanentEventNotification
+global function EmitCountdownSound
 
 global function SetEventNotificationEndingOnSignals //Should go away once we make gamemodes/etc register their own EventNotifications as opposed to adding to EventNotification()
 
@@ -50,14 +51,16 @@ void function EventNotification( int eventID, entity ent, var eventVal )
 			break
 
 		case eEventNotifications.MarkedForDeathWaitingForMarkedToSpawn:
+			//Not used atm
 			SetEventNotification( "#MARKED_FOR_DEATH_WAITING_FOR_MARKED_TO_SPAWN" )
 			break
 
 		case eEventNotifications.MarkedForDeathMarkedDisconnected:
-			SetTimedEventNotification( 3.0, "#MARKED_FOR_DEATH_MARKED_DISCONNECTED" )
+			AnnouncementMessageSweep( GetLocalClientPlayer(), "#MARKED_FOR_DEATH_MARKED_DISCONNECTED", "#MARKED_FOR_DEATH_MARKED_DISCONNECTED_SUB", <1,0,0> )
 			break
 
 		case eEventNotifications.MarkedForDeathYouWillBeMarkedNext:
+			//Not used atm.
 			expect float( eventVal )
 			if ( eventVal - Time() > 2.0 )
 			{
@@ -71,6 +74,7 @@ void function EventNotification( int eventID, entity ent, var eventVal )
 			break
 
 		case eEventNotifications.MarkedForDeathCountdownToNextMarked:
+			//Not used atm.
 			expect float( eventVal )
 			if ( eventVal - Time() > 2.0 )
 			{
@@ -78,7 +82,7 @@ void function EventNotification( int eventID, entity ent, var eventVal )
 				thread EmitCountdownSound( eventVal, "UI_InGame_MarkedForDeath_CountdownToMarked" )
 			}
 			break
-
+#if MP
 		case eEventNotifications.MarkedForDeathKill:
 			if ( !ent )
 				return
@@ -90,43 +94,19 @@ void function EventNotification( int eventID, entity ent, var eventVal )
 				attacker = GetHeavyWeightEntityFromEncodedEHandle( eventVal )
 			}
 
-			local attackerName
-			if ( IsValid( attacker ) && attacker.IsPlayer() )
-				attackerName = attacker.GetPlayerName()
+			if ( !IsValid( attacker ) )
+				break
 
-			local timeToDisplay = 3.0
-			local msg
-			bool friendly = ent.GetTeam() == GetLocalClientPlayer().GetTeam()
-			if ( attackerName )
-			{
-				if ( friendly )
-					msg = "#GAMEMODE_MARKED_ENEMY_KILLED_MARKED"
-				else
-					msg = "#GAMEMODE_MARKED_FRIENDLY_KILLED_MARKED"
-				SetTimedEventNotification( timeToDisplay, msg, attackerName, ent.GetPlayerName(), EN_SHOW_OVER_SCREENFADE )
-			}
+			entity clientPlayer = GetLocalClientPlayer()
+			bool friendlyDeath = ent.GetTeam() == clientPlayer.GetTeam()
+			string msg = GetMarkedName( attacker ) + " " + Localize( "#DEATH_GENERIC_KILLED_LOWER_CASE" ) + " " +  GetMarkedName( ent )
+			if ( friendlyDeath )
+				AnnouncementMessageSweep( GetLocalClientPlayer(), "#MARKED_FOR_DEATH_MARK_ELIMINATED" , msg, TEAM_COLOR_ENEMY )
 			else
-			{
-				if ( friendly )
-					msg = "#GAMEMODE_MARKED_FRIENDLY_MARKED_DIED"
-				else
-					msg = "#GAMEMODE_MARKED_ENEMY_MARKED_DIED"
-				SetTimedEventNotification( timeToDisplay, msg, ent.GetPlayerName(), null, EN_SHOW_OVER_SCREENFADE )
-			}
+				AnnouncementMessageSweep( GetLocalClientPlayer(), "#MARKED_FOR_DEATH_MARK_ELIMINATED" , msg, TEAM_COLOR_FRIENDLY )
 
-			//	if ( !eventVal )
-			//		return
-
-			//	entity killer = GetEntityFromEncodedEHandle( eventVal )
-			//	if ( !IsValid( killer ) )
-			//		return
-
-			//	if ( ent == killer )
-			//		SetTimedEventNotification( 3.0, "#GAMEMODE_MARKED_FOR_DEATH_SUICIDE", ent.GetPlayerName() )
-			//	else
-			//		SetTimedEventNotification( 3.0, "#GAMEMODE_MARKED_FOR_DEATH_KILLED", killer.GetPlayerName(), ent.GetPlayerName() )
 			break
-
+#endif
 		case eEventNotifications.SST_ScoreChange:
 			if ( IsLocalViewPlayer( ent ) )
 			{
@@ -324,7 +304,7 @@ void function EventNotification( int eventID, entity ent, var eventVal )
 			Announcement_SetSubText( announcement, "#AT_SUPPLY_DROP_EXPIRED_HINT" )
 			Announcement_SetDuration( announcement, 4.0 )
 			Announcement_SetPurge( announcement, true )
-			Announcement_SetSoundAlias( announcement,  "UI_InGame_CoOp_TryAgain" )
+			Announcement_SetSoundAlias( announcement, "UI_InGame_CoOp_TryAgain" )
 			Announcement_SetPriority( announcement, 200 ) //Be higher priority than Titanfall ready indicator etc
 			AnnouncementFromClass( player, announcement )
 			break
@@ -506,11 +486,13 @@ function EmitCountdownSound( endCountdownTime, soundAlias = "UI_InGame_MarkedFor
 {
 	//player.EndSignal( "OnDestroy" ) //Don't end signal on destroy because if you are watching kill replay while counting down to marked, we don't want this thread to end
 
-	while( endCountdownTime - Time() > 0 )
+	var remainingTime = endCountdownTime - Time()
+	while( remainingTime > 0 )
 	{
 		entity player = GetLocalClientPlayer() //Keep getting handle to local player because we want to keep playing this sound throughout kill replay
 		EmitSoundOnEntity( player, soundAlias )
 		wait 1.0
+		remainingTime -= 1.0
 	}
 }
 

@@ -9,6 +9,9 @@ global function RegisterMinimapPackage
 
 global function Minimap_SetZoomScale
 global function Minimap_SetSizeScale
+global function Minimap_IsUsingLargeMinimap
+
+global function Minimap_Ping
 
 #if DEV
 global function DumpMinimapHandles
@@ -136,7 +139,14 @@ void function ClMinimap_Init()
 	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FW_BUILDSITE, $"ui/minimap_fw_build_site.rpak", MinimapPackage_FWBuildSite )
 	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FW_BUILDSITE_TURRET, $"ui/minimap_fw_build_site.rpak", MinimapPackage_FWBuildSite )
 	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FW_BUILDSITE_SHIELDED, $"ui/minimap_fw_build_site.rpak", MinimapPackage_FWBuildSite )
-	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FD_HARVESTER, $"ui/minimap_fw_camp.rpak", MinimapPackage_FDHarvester )
+	#if DEVSCRIPTS
+	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FD_HARVESTER, $"ui/minimap_obj_area.rpak", MinimapPackage_FDHarvester )
+	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FD_LOADOUT_CHEST, $"ui/minimap_obj_area.rpak", MinimapPackage_FDLoadoutChest )
+	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FD_BATTERY_EXCHANGE, $"ui/minimap_obj_area.rpak", MinimapPackage_FDBatteryExchange )
+	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.BOOST_STORE, $"ui/minimap_obj_area.rpak", MinimapPackage_BoostStore )
+	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FD_MORTAR_POSITION, $"ui/minimap_obj_area.rpak", MinimapPackage_MortarPosition )
+	#endif
+
 	//RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FW_CAMP_A, $"ui/minimap_fw_camp.rpak", MinimapPackage_FWCampA )
 	//RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FW_CAMP_B, $"ui/minimap_fw_camp.rpak", MinimapPackage_FWCampB )
 	//RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FW_CAMP_C, $"ui/minimap_fw_camp.rpak", MinimapPackage_FWCampC )
@@ -349,6 +359,29 @@ void function AddMinimapObject( entity ent ) //TODO: If we want radar jammer boo
 	}
 }
 
+void function Minimap_Ping( vector origin, float radius, float duration, vector color )
+{
+	entity viewPlayer = GetLocalViewPlayer()
+	int zOrder = viewPlayer.Minimap_GetZOrder()
+
+	var rui = CreateCockpitRui( $"ui/minimap_ping.rpak", MINIMAP_Z_BASE + zOrder )
+
+	RuiTrackFloat3( rui, "playerPos", viewPlayer, RUI_TRACK_ABSORIGIN_FOLLOW )
+	RuiTrackFloat3( rui, "playerAngles", viewPlayer, RUI_TRACK_EYEANGLES_FOLLOW )
+
+	RuiSetFloat3( rui, "objColor", color )
+	RuiSetFloat3( rui, "objectPos", origin )
+	RuiSetFloat3( rui, "objectAngles", <0,0,0> )
+
+	RuiSetFloat( rui, "objectRadius", radius / file.threatMaxDist )
+
+	RuiSetFloat( rui, "displayDist", file.threatMaxDist )
+	RuiSetFloat( rui, "minimapZoomScale", file.minimapZoomScale )
+	RuiSetFloat( rui, "minimapSizeScale", file.minimapSizeScale )
+
+	RuiSetGameTime( rui, "startTime", Time() )
+	RuiSetGameTime( rui, "endTime", Time() + duration )
+}
 
 var function Minimap_AddLayer( asset layerImage, bool isFriendly )
 {
@@ -577,10 +610,42 @@ void function MinimapPackage_HardpointC( entity ent, var rui )
 	RuiSetFloat( rui, "objectRadius", 0.001 )
 }
 
+#if DEVSCRIPTS
 void function MinimapPackage_FDHarvester( entity ent, var rui )
 {
-	RuiSetFloat( rui, "objectRadius", 0.001 )
+	RuiSetImage( rui, "centerImage", $"rui/hud/gametype_icons/fd/coop_harvester" )
+	RuiSetImage( rui, "clampedImage", $"rui/hud/gametype_icons/fd/coop_harvester" )
+	RuiSetFloat( rui, "objectRadius", 0.01 )
 }
+
+void function MinimapPackage_FDLoadoutChest( entity ent, var rui )
+{
+	RuiSetImage( rui, "centerImage", $"rui/hud/gametype_icons/fd/coop_ammo_locker_icon" )
+	RuiSetImage( rui, "clampedImage", $"rui/hud/gametype_icons/fd/coop_ammo_locker_icon" )
+	RuiSetFloat( rui, "objectRadius", 0.01 )
+}
+
+void function MinimapPackage_FDBatteryExchange( entity ent, var rui )
+{
+	RuiSetImage( rui, "centerImage", $"rui/hud/gametype_icons/bounty_hunt/bh_bank_icon" )
+	RuiSetImage( rui, "clampedImage", $"rui/hud/gametype_icons/bounty_hunt/bh_bank_icon" )
+	RuiSetFloat( rui, "objectRadius", 0.01 )
+}
+
+void function MinimapPackage_BoostStore( entity ent, var rui )
+{
+	RuiSetImage( rui, "centerImage", $"rui/hud/gametype_icons/bounty_hunt/bh_bonus_icon" )
+	RuiSetImage( rui, "clampedImage", $"rui/hud/gametype_icons/bounty_hunt/bh_bonus_icon" )
+	RuiSetFloat( rui, "objectRadius", 0.01 )
+}
+
+void function MinimapPackage_MortarPosition( entity ent, var rui )
+{
+	RuiSetImage( rui, "centerImage", $"rui/hud/gametype_icons/fd/mortar_titan_minimap_orange" )
+	RuiSetImage( rui, "clampedImage", $"rui/hud/gametype_icons/fd/mortar_titan_minimap_orange" )
+	RuiSetFloat( rui, "objectRadius", 0.01 )
+}
+#endif
 
 void function MinimapPackage_FWCampA( entity ent, var rui )
 {
@@ -737,7 +802,13 @@ void function Minimap_SetZoomScale( float scale )
 		RuiSetBool( file.minimap_wedges, "isVisible", file.minimapZoomScale == 1.0 )
 	}
 }
+
 void function Minimap_SetSizeScale( float scale )
 {
 	file.minimapSizeScale = scale
+}
+
+bool function Minimap_IsUsingLargeMinimap()
+{
+	return file.minimapSizeScale > 1.0
 }

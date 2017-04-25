@@ -4,6 +4,7 @@
     {
 		ControlName				Label
 		labelText				""
+		xpos                    0
     }
     ButtonPassive1
     {
@@ -16,11 +17,11 @@
         navLeft                 ButtonNoseArt
         navRight                ButtonPassive2
 
-        xpos 					50
+        xpos 					0
 
         pin_to_sibling			Anchor
         pin_corner_to_sibling	TOP_LEFT
-        pin_to_sibling_corner	TOP_RIGHT
+        pin_to_sibling_corner	TOP_LEFT
     }
 	Passive1Type
 	{

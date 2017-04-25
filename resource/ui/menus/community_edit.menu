@@ -69,7 +69,6 @@
             scaleImage              1
             zpos                    5
             labelText               ""
-			OverrideTallIfNotBitmap 0
             drawColor               "0 0 0 128"
     		rui                     "ui/basic_border_box.rpak"
         }

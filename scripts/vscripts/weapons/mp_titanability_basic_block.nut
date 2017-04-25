@@ -16,10 +16,11 @@ global function OnWeaponChargeBegin_ability_swordblock
 
 void function MpTitanAbilityBasicBlock_Init()
 {
-	#if SERVER
-		AddDamageCallback( "player", BasicBlock_OnDamage )
-		AddDamageCallback( "npc_titan", BasicBlock_OnDamage )
-	#endif
+#if SERVER
+	AddDamageFinalCallback( "player", BasicBlock_OnDamage )
+	AddDamageFinalCallback( "npc_titan", BasicBlock_OnDamage )
+#endif
+
 	PrecacheParticleSystem( $"P_impact_xo_sword" )
 }
 

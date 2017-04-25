@@ -109,7 +109,11 @@ function MissileThink( weapon, missile )
 
 bool function OnWeaponAttemptOffhandSwitch_titanweapon_tracker_rockets( entity weapon )
 {
-	var allTargets = weapon.SmartAmmo_GetTargets()
+	var allTargets = []
+	if ( weapon.SmartAmmo_IsEnabled() )
+	{
+		allTargets = weapon.SmartAmmo_GetTargets()
+	}
 
 	foreach ( target in allTargets )
 	{
@@ -151,7 +155,8 @@ void function DelayedDisableToneLockOnNotification(entity target, int statusID)
 	wait 1
 
 	#if SERVER
-		StatusEffect_Stop( target, statusID )
+		if( IsValid( target ))
+			StatusEffect_Stop( target, statusID )
 	#endif
 
 }
