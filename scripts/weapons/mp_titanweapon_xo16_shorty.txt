@@ -1,0 +1,12 @@
+#base "mp_titanweapon_xo16.txt"
+WeaponData
+{
+	"leveled_pickup"								"1"
+
+	"viewmodel"   									"models/weapons/titan_xo16_shorty/atpov_xo16shorty.mdl"
+	"playermodel" 									"models/weapons/titan_xo16_shorty/w_xo16shorty.mdl"
+
+	dof_zoom_focusArea_horizontal					0.04
+	dof_zoom_focusArea_top							0.04
+	dof_zoom_focusArea_bottom						-0.04
+}

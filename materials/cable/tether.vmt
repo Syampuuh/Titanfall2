@@ -1,0 +1,8 @@
+"SplineRope"
+{
+	"$basetexture" "cable\grapple_col"
+
+	"$selfillum" "1"
+	"$selfillummask" "cable\grapple_ilm"
+	"$selfillumtint" "[16.0 8.0 4.0]"
+}

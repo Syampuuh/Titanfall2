@@ -1,0 +1,64 @@
+#base "mp_titanweapon_vortex_shield.txt"
+WeaponData
+{
+	"longdesc"										"#WPN_TITAN_VORTEX_SHIELD_LONGDESC"
+
+	MP_BASE
+	{
+		// Charge settings
+		"charge_time"									"-1.0"
+		"charge_cooldown_time"							"0.0"
+		"charge_cooldown_delay"   						"0.0"
+		"charge_end_forces_fire"  						"1"
+		"charge_remain_full_when_fired"					"1"
+
+		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+	}
+	SP_BASE
+	{
+		// Charge settings
+		"charge_time"									"-1.0"
+		"charge_cooldown_time"							"0.0"
+		"charge_cooldown_delay"   						"0.0"
+		"charge_end_forces_fire"  						"1"
+		"charge_remain_full_when_fired"					"1"
+
+		"enable_highlight_networking_on_creation"		"1"
+	}
+
+    "cooldown_type"                                 "shared_energy_drain"
+
+	"npc_use_check_type"							"shared_energy"
+
+	"shared_energy_cost"							"0"
+	"shared_energy_charge_cost"						"2"
+
+	active_crosshair_count				"1"
+	rui_crosshair_index					"0"
+
+	RUI_CrosshairData
+	{
+		DefaultArgs
+		{
+			adjustedSpread				weapon_spread
+			adsFrac 					player_zoomFrac
+			isSprinting					player_is_sprinting
+			isReloading					weapon_is_reloading
+			teamColor					crosshair_team_color
+			isAmped						weapon_is_amped
+			crosshairMovementX          crosshair_movement_x
+			crosshairMovementY          crosshair_movement_y
+			chargeFrac                  shared_energy_frac
+		}
+
+		Crosshair_1
+		{
+			"ui"						"ui/crosshair_vortex"
+			"base_spread"				"3.0"
+			Args
+			{
+				isFiring				weapon_is_firing
+			}
+		}
+	}
+}

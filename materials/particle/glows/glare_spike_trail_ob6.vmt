@@ -1,0 +1,13 @@
+"SpriteCard"
+{
+	// Original shader: AddTexture
+	"$basetexture" "particle/glows/glare_spike"
+	$vertexcolor 1
+	$vertexalpha 1
+	$additive 1
+	$splinetype 2
+	
+	$overbrightfactor 6
+	
+	$vertexFogAmount 1
+}

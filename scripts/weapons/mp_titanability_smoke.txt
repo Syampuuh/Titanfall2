@@ -1,0 +1,187 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_TITAN_ELECTRIC_SMOKE"
+	"shortprintname"   								"#WPN_TITAN_ELECTRIC_SMOKE_SHORT"
+	"description" 									"#WPN_TITAN_ELECTRIC_SMOKE_DESC"
+	"longdesc"										"#WPN_TITAN_ELECTRIC_SMOKE_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/tactical/titan_tactical_electric_smoke_menu"
+	"hud_icon"										"rui/titan_loadout/tactical/titan_tactical_electric_smoke"
+
+	"weaponClass" 									"titan"
+	"weaponType"									"tactical"
+	"fire_mode"   									"offhand_instant"
+	"cooldown_type"									"ammo_instant"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titanability_smoke"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_titanability_smoke"
+
+	// Menu Stats
+	"stat_damage" 									"90"
+	"stat_range"  									"100"
+	"stat_accuracy"   								"50"
+	"stat_rof"										"40"
+
+	// Effects
+	"impact_effect_table" 							"exp_rocket_dumbfire"
+	"projectile_trail_effect_0" 					"Rocket_Smoke_SMALL_Titan_2"
+	"projectile_trail_attachment" 					"exhaust"
+	"vortex_absorb_effect"							"wpn_vortex_projectile_rocket_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_rocket"
+	"vortex_absorb_sound"							"Vortex_Shield_AbsorbRocket"
+	"vortex_absorb_sound_1p_vs_3p"					"Vortex_Shield_AbsorbRocket_1P_VS_3P"
+	"projectile_adjust_to_gun_barrel"				"0"
+
+	"damage_type" 									"burn"
+
+	"explosion_inner_radius"  						"50"
+	"explosionradius" 								"120"
+	"impulse_force"   								"1"
+
+	// Ammo
+	"ammo_display"									"bar"
+	"ammo_stockpile_max"							"100"
+	"ammo_clip_size"   								"100"
+	"ammo_default_total"							"100"
+	"ammo_per_shot"									"100"
+	"ammo_min_to_fire"								"100"
+
+	// Regen Ammo
+	"regen_ammo_refill_rate"						"5.0"
+	"regen_ammo_refill_start_delay"					"0.0"
+
+	MP_BASE
+	{
+		// Damage - When Used by Players
+		"damage_near_distance"							"800"
+		"damage_far_distance" 							"1200"
+		"damage_near_value"   							"900"
+		"damage_far_value"								"900"
+		"explosion_damage"								"100"
+		"explosion_damage_heavy_armor"					"250"
+	}
+
+	SP_BASE
+	{
+		// Damage - When Used by Players
+		"damage_near_distance"							"800"
+		"damage_far_distance" 							"1200"
+		"damage_near_value"   							"900"
+		"damage_far_value"								"900"
+		"explosion_damage"								"100"
+		"explosion_damage_heavy_armor"					"250"
+	}
+
+	// Behavior
+	"fire_rate"   									"1"
+	"zoom_time_in"									"0.01"
+	"zoom_time_out"   								"0.01"
+	"zoom_fov"										"50"
+	"reload_time" 									"0"
+	"holster_time"									"0.01"
+	"deploy_time" 									"0.01"
+	"lower_time"  									"0.01"
+	"raise_time"  									"0.01"
+	"vortex_refire_behavior"  						"rocket"
+	"allow_empty_fire"								"0"
+	"reload_enabled"  								"0"
+	"allow_empty_click"   							"1"
+	"empty_reload_only"   							"0"
+	"trigger_snipercam"   							"1"
+	"allow_headshots" 								"0"
+
+	// Spread
+	"spread_stand_hip"  								"0"
+	"spread_stand_ads"   							"0"
+
+	"ammo_suck_behavior"							"offhand_weapons"
+
+	// View Kick
+	"viewkick_spring" 								"pistol"
+
+	"viewkick_pitch_base" 							"-2.5"
+	"viewkick_pitch_random"   						"0.5"
+	"viewkick_pitch_softScale"						"0.5"
+	"viewkick_pitch_hardScale"						"0.5"
+
+	"viewkick_yaw_base"   							"0"
+	"viewkick_yaw_random" 							"0.5"
+	"viewkick_yaw_softScale"  						"1.5"
+	"viewkick_yaw_hardScale"  						"0.25"
+
+	"viewkick_roll_base"  							"0.0"
+	"viewkick_roll_randomMin" 						"0.6"
+	"viewkick_roll_randomMax" 						"0.8"
+	"viewkick_roll_softScale" 						"0.2"
+	"viewkick_roll_hardScale" 						"1.0"
+
+	"viewkick_hipfire_weaponFraction" 				"0.4"
+	"viewkick_hipfire_weaponFraction_vmScale" 		"0.5"
+	"viewkick_ads_weaponFraction" 					"0.0"
+	"viewkick_ads_weaponFraction_vmScale" 			"0.0"
+
+
+	// Rumble
+	"fire_rumble"									"rumble_titan_ordnanceeject"
+
+	// Sway
+
+	// NPC
+	"npc_min_range"   								"0"
+	"npc_max_range"   								"1500"
+	"npc_min_burst"   								"1"
+	"npc_max_burst"   								"1"
+
+	"npc_rest_time_between_bursts_min"				"8"
+	"npc_rest_time_between_bursts_max"				"14"
+
+	"npc_use_check_type"							"electric_smoke"
+
+	// WeaponED Unhandled Key/Values and custom script Key/Values
+	"sway_turn_angle_factor"  						".8"
+	"sway_turn_origin_factor" 						"0.2"
+	"sway_turn_angle_factor_zoomed"   				"1.5"
+	"sway_turn_origin_factor_zoomed"  				"0.2"
+	"sway_move_angle_factor"  						"-2"
+	"sway_move_origin_factor" 						"-.2"
+	"sway_move_angle_factor_zoomed"   				"0"
+	"sway_move_origin_factor_zoomed"  				"0.03"
+	"sway_gain"   									"15.0"
+
+	Mods
+	{
+		pas_defensive_core
+		{
+			"fire_rate"		"*1.25"
+		}
+
+		trigger_stickies
+		{
+
+		}
+
+		fast_warmup
+		{
+			"fire_rate"		"*1.5"
+		}
+
+		dev_mod_low_recharge
+		{
+			"fire_rate"		"*20"
+		}
+
+		burn_mod_titan_smoke
+		{
+			"fire_rate"   		"*1.25"
+
+			"is_burn_mod"		"1"
+		}
+
+		npc_normal_difficulty
+		{
+			"proficiency_poor_additional_rest"					"30"
+			"proficiency_average_additional_rest"				"30"
+		}
+	}
+}

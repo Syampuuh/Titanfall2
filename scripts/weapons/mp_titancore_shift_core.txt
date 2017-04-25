@@ -1,0 +1,65 @@
+WeaponData
+{
+	"printname"										"#WPN_TITAN_SWORD"
+	"shortprintname"								"#WPN_TITAN_SWORD"
+	"description"									"#WPN_TITAN_SWORD_DESC"
+	"longdesc"										"#WPN_TITAN_SWORD_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/core/titan_core_sword"
+	"hud_icon"										"rui/titan_loadout/core/titan_core_sword"
+
+	// General
+	"weaponClass" 									"titan"
+	"weaponType"									"titan_core"
+	"fire_mode"   									"offhand_instant"
+
+	"OnWeaponPrimaryAttack"							"OnAbilityStart_Shift_Core"
+	"OnWeaponChargeBegin"							"OnCoreCharge_Shift_Core"
+	"OnWeaponChargeEnd"								"OnCoreChargeEnd_Shift_Core"
+
+	"damage_type" 									"none"
+	"fire_rate"										"0.0"	// prevent triggering a fire animation event on client
+
+	// Ammo
+	"ammo_stockpile_max"							"200"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+
+	"damage_protection"								"0"
+
+	"play_offhand_charging_anim"  					"1"
+
+	MP_BASE
+	{
+		"core_duration"								"12.0" //Needs to match charge_cooldown_delay
+		"charge_cooldown_delay"   					"12.0"
+		"charge_cooldown_time"						"13.0"
+	}
+
+	SP_BASE
+	{
+		"core_duration"								"20.0" //Needs to match charge_cooldown_delay
+		"charge_cooldown_delay"   					"20.0"
+		"charge_cooldown_time"						"21.0"
+	}
+
+
+	// Behavior
+	"core_build_time"								"120"
+	"chargeup_time"									"0.75"	// also update ACT_MP_OFFHAND_CHARGING time in qc
+	"passive"										"PAS_SHIFT_CORE"
+
+	"readymessage"									"#HUD_CORE_ONLINE_STRYDER_SHIFT"
+	"readyhint"										"#HUD_CORE_ONLINE_STRYDER_SHIFT_HINT"
+
+	// Charge settings
+	"charge_time" 									"0.75" // chargeup time // also update update ACT_MP_OFFHAND_CHARGING time in qc
+	"charge_end_forces_fire"  						"1"
+	"charge_require_input"							"0"
+
+	"dialog_core_online"							"swordCoreOnline"
+	"dialog_core_activated"							"swordCoreActivated"
+
+	"npc_rest_time_between_bursts_min"				"20"
+	"npc_rest_time_between_bursts_max"				"20"
+}

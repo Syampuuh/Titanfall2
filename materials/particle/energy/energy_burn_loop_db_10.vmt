@@ -1,0 +1,14 @@
+"SpriteCard"
+{
+	$basetexture "particle\energy\energy_burn_loop"
+	$vertexcolor 1
+	$vertexalpha 1
+	//$overbrightfactor 3
+	$translucent 	1
+	$nocull	1
+	//$additive 1
+	$depthblend 1
+	$depthblendscale 10
+	$vertexFogAmount 1
+	//$alphaErosion 1
+}

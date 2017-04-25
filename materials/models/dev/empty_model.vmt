@@ -1,0 +1,9 @@
+"Basic"
+{
+	$surfaceprop "default"
+
+	$basetexture "effects\white"
+	alphatest 1
+	$alpha 0
+	
+}

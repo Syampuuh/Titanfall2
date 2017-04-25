@@ -1,0 +1,12 @@
+"spritecard"
+{
+	"$basetexture" "particle\glows\glow_pointlight"
+//	$translucent 1
+	$additive 1
+	$depthblend 0
+	
+	$overbrightfactor 15
+	
+	$vertexFogAmount 1
+
+}

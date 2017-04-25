@@ -1,0 +1,431 @@
+untyped
+
+global function MeleeTitanShared_Init
+global function TitanUnsyncedMelee
+global function TitanMeleeAttack
+
+const TITAN_PUNCH_KNOCKBACK_SCALE = 510.0
+const TITAN_SWORD_KNOCKBACK_SCALE_MP = 400.0
+const TITAN_SWORD_KNOCKBACK_SCALE_MP_SWORD_CORE = 100.0
+const TITAN_SWORD_KNOCKBACK_SCALE_SP = 300.0
+
+
+function MeleeTitanShared_Init()
+{
+}
+
+function TitanUnsyncedMelee( entity player )
+{
+	entity activeWeapon = player.GetActiveWeapon()
+	if ( !IsValid( activeWeapon ) )
+		return
+	entity meleeWeapon = player.GetMeleeWeapon()
+	if ( !IsValid( meleeWeapon ) )
+		return
+
+	local attackState = PLAYER_MELEE_STATE_TITAN_MELEE_JAB
+
+	player.PlayerMelee_StartAttack( attackState )
+
+#if SERVER
+	meleeWeapon.EmitWeaponNpcSound( 800, 0.2 )
+#endif // #if SERVER
+
+#if SERVER
+	if ( attackState == PLAYER_MELEE_STATE_TITAN_DASH_PUNCH )
+	{
+		thread MeleeJetFX( player )
+		player.s.startDashMeleeTime = Time()
+	}
+#endif
+
+	player.SetSelectedOffhandToMelee()
+
+#if SERVER
+	if ( PlayerHasPassive( player, ePassives.PAS_SHIFT_CORE ) )
+		Shift_Core_UseMeter( player )
+#endif
+}
+
+#if SERVER
+function MeleeJetFX( entity player )
+{
+	player.EndSignal( "OnDeath" )
+
+	array<entity> fx
+
+	OnThreadEnd(
+		function () : ( fx )
+		{
+			foreach ( effect in fx )
+			{
+				if ( !IsValid( effect ) )
+					continue
+
+				effect.ClearParent()
+				effect.Destroy()
+			}
+		}
+	)
+
+	fx.append( PlayFXOnEntity( $"xo_atlas_jet_large", player, "thrust" ) )
+	fx.append( PlayFXOnEntity( $"xo_atlas_jet_large", player, "vent_left" ) )
+	fx.append( PlayFXOnEntity( $"xo_atlas_jet_large", player, "vent_right" ) )
+
+	wait 1
+}
+#endif // SERVER
+
+void function TitanMeleeAttack( entity titan )
+{
+	if ( !IsValid( titan ) )
+		return
+	if ( titan.PlayerMelee_GetAttackHitEntity() )	// won't do any more melee hits if we hit something on a previous frame
+		return
+	if ( IsInExecutionMeleeState( titan ) )
+		return
+	if ( titan.IsPhaseShifted() )
+		return
+
+	Assert( titan.PlayerMelee_IsAttackActive() )
+	if ( !titan.PlayerMelee_IsAttackActive() ) //JFS, Defensive fix for 209347
+	    return
+
+	bool didHitATarget = false
+	bool didHitAnEnemyTitan = false
+
+	entity meleeWeapon = titan.GetMeleeWeapon()
+	vector traceStartPos = titan.EyePosition()
+
+	const int IMPACT_EFFECT_FLAGS = 0
+	array<VisibleEntityInCone> hitResults = PlayerMelee_FindVisibleEntitiesInCone( titan )
+	foreach( hit in hitResults )
+	{
+		entity targetEnt = hit.ent
+		if ( !CodeCallback_IsValidMeleeAttackTarget( titan, targetEnt ) )
+			continue
+
+		Assert( titan.PlayerMelee_IsAttackActive() )
+		if ( !titan.PlayerMelee_IsAttackActive() ) //JFS, Defensive fix for 209347
+		    return
+
+		vector damageOrigin = hit.visiblePosition
+
+		int surfaceProp = GetSurfacePropForEntity( targetEnt );
+		vector hitNormal = Normalize( traceStartPos - damageOrigin )
+		titan.DispatchImpactEffects( targetEnt, traceStartPos, damageOrigin, hitNormal, surfaceProp, 0, DMG_MELEE_ATTACK, meleeWeapon.GetImpactTableIndex(), titan, IMPACT_EFFECT_FLAGS )
+
+		if ( GetCurrentPlaylistVarInt( "vortex_blocks_melee", 0 ) == 1 )
+		{
+			VortexBulletHit ornull vortexHit = VortexBulletHitCheck( titan, traceStartPos, damageOrigin )
+			if ( vortexHit != null )
+			{
+#if SERVER
+				expect VortexBulletHit( vortexHit )
+				vector velocity = Normalize( traceStartPos - vortexHit.hitPos ) * 800.0
+				entity moveParent = titan.GetRootMoveParent()
+				if ( (moveParent == null) || (moveParent == titan) )
+					PushEntWithVelocity( titan, velocity )
+#endif // #if SERVER
+				continue
+			}
+		}
+
+		titan.PlayerMelee_SetAttackHitEntity( targetEnt )
+
+		if ( IsHumanSized( targetEnt ) )
+		{
+			TitanAttackHumanSized( titan, meleeWeapon, targetEnt, damageOrigin )
+		}
+		else if ( targetEnt.IsTitan() )
+		{
+			TitanAttackTitan( titan, meleeWeapon, targetEnt, damageOrigin )
+
+			bool meleeButtonHeldCheck
+			#if HOLD_BUTTON_FOR_TITAN_EXECUTION
+				meleeButtonHeldCheck = titan.IsInputCommandHeld( IN_MELEE )
+			#else
+				meleeButtonHeldCheck = true
+			#endif
+
+			if ( meleeButtonHeldCheck && CodeCallback_IsValidMeleeExecutionTarget( titan, targetEnt ) )
+			{
+				#if SERVER
+					AttemptScriptedExecution( titan, targetEnt )
+				#endif
+				return
+			}
+			didHitAnEnemyTitan = true
+		}
+		else if ( ShouldMeleeDamage( targetEnt ) ) // Catches cases for dropships, turrets, etc
+		{
+			TitanAttackDefault( titan, meleeWeapon, targetEnt, damageOrigin )
+		}
+#if SERVER
+		else if ( targetEnt.IsBreakableGlass() )
+		{
+			targetEnt.BreakSphere( hit.visiblePosition, 150 )
+		}
+#endif // #if SERVER
+
+		didHitATarget = true
+	}
+
+	bool didHitTheWorld = false
+	if ( !didHitATarget )
+	{
+		Assert( titan.PlayerMelee_IsAttackActive() )
+		if ( !titan.PlayerMelee_IsAttackActive() ) //JFS, Defensive fix for 209347
+		    return
+
+		vector traceDir = titan.GetViewVector()
+		float attackRange = meleeWeapon.GetMeleeAttackRange()
+		vector traceEnd = (traceStartPos + traceDir * attackRange)
+		TraceResults tr = TraceLine( traceStartPos, traceEnd, null, TRACE_MASK_SOLID_BRUSHONLY, TRACE_COLLISION_GROUP_DEBRIS )
+		if ( IsValid( tr.hitEnt ) )
+		{
+			if ( !tr.hitEnt.IsWorld() )
+			{
+				if ( CodeCallback_IsValidMeleeAttackTarget( titan, tr.hitEnt ) )
+					TitanAttackDefault( titan, meleeWeapon, tr.hitEnt, traceEnd )
+			}
+			titan.DispatchImpactEffects( tr.hitEnt, traceStartPos, tr.endPos, tr.surfaceNormal, tr.surfaceProp, tr.staticPropIndex, DMG_MELEE_ATTACK, meleeWeapon.GetImpactTableIndex(), titan, IMPACT_EFFECT_FLAGS )
+			titan.PlayerMelee_SetAttackHitEntity( tr.hitEnt )
+			didHitTheWorld = true
+		}
+	}
+
+	if ( didHitATarget || didHitTheWorld )
+	{
+		const float SCALE_WHEN_ENEMY_TITAN = 1.0
+		const float SCALE_WHEN_WORLD = 0.5
+		const float SCALE_WHEN_OTHER_TARGETS = 0.2
+
+		float severityScale = 0.0
+		if ( didHitAnEnemyTitan )
+			severityScale = SCALE_WHEN_ENEMY_TITAN
+		else if ( didHitTheWorld )
+			severityScale = SCALE_WHEN_WORLD
+		else if ( didHitATarget )
+			severityScale = SCALE_WHEN_OTHER_TARGETS
+
+		meleeWeapon.DoMeleeHitConfirmation( severityScale )
+	}
+}
+
+int function GetMeleeDamageSourceIDForWeapon( entity meleeWeapon )
+{
+	string weaponName = meleeWeapon.GetWeaponClassName()
+	int result = eDamageSourceId[weaponName]
+	return result
+}
+
+function TitanAttackHumanSized( entity titan, entity meleeWeapon, entity hitEnt, vector damageOrigin )
+{
+#if SERVER
+	local angles = titan.EyeAngles()
+
+	int damageFlags = meleeWeapon.GetWeaponDamageFlags()
+	if ( MeleeTargetCanBeGibbed( hitEnt ) )
+		damageFlags = (damageFlags | DF_GIB)
+
+	local pushBackVelocity = AnglesToForward( angles ) * 800
+	local directionVector = hitEnt.GetOrigin() - titan.GetOrigin()
+	if ( DotProduct( directionVector, pushBackVelocity ) < 0)
+		pushBackVelocity = pushBackVelocity * -1
+
+	if ( hitEnt.IsPlayer() )
+	{
+		//Strip away rodeo protection by melee
+		entity titanBeingRodeoed = GetTitanBeingRodeoed( hitEnt )
+		if ( IsValid( titanBeingRodeoed ) )
+			TakeAwayFriendlyRodeoPlayerProtection( titanBeingRodeoed )
+	}
+
+	if ( hitEnt.IsNPC() )
+	{
+		if ( !("silentDeath" in hitEnt.s ) ) //Stop grunts from screaming when gibbed due to titan melee attack
+			hitEnt.s.silentDeath <- true
+	}
+
+	int damageSource = GetMeleeDamageSourceIDForWeapon( meleeWeapon )
+	int damageAmount = meleeWeapon.GetDamageAmountForArmorType( hitEnt.GetArmorType() );
+	hitEnt.SetVelocity( hitEnt.GetVelocity() + pushBackVelocity )
+	hitEnt.TakeDamage( damageAmount, titan, titan, { scriptType = damageFlags, damageType = DMG_MELEE_ATTACK, damageSourceId = damageSource, origin = damageOrigin, force = pushBackVelocity } )
+#endif // #if SERVER
+}
+
+function TitanAttackTitan( entity titan, entity meleeWeapon, entity enemyTitan, vector damageOrigin )
+{
+#if SERVER
+	bool hasShiftCore = IsNinja( titan )
+
+	if ( IsTitanWithinBubbleShield( enemyTitan ) )
+		return
+
+	local hasDashPunch = (titan.PlayerMelee_GetState() == PLAYER_MELEE_STATE_TITAN_DASH_PUNCH)
+
+	// Shove target away:
+	{
+		string settingsFile
+		if ( enemyTitan.IsPlayer() )
+			settingsFile = enemyTitan.GetPlayerSettings()
+		else
+			settingsFile = GetNPCTitanSettingFile( enemyTitan )
+
+		float pushBackScale
+		string meleeWeaponClassName = meleeWeapon.GetWeaponClassName()
+		if ( meleeWeaponClassName == "melee_titan_sword" || meleeWeaponClassName == "melee_titan_sword_AOE" )
+		{
+			if ( IsSingleplayer() )
+			{
+				pushBackScale = TITAN_SWORD_KNOCKBACK_SCALE_SP
+			}
+			else
+			{
+				if ( meleeWeapon.HasMod( "super_charged" ) )
+					pushBackScale = TITAN_SWORD_KNOCKBACK_SCALE_MP_SWORD_CORE
+				else
+					pushBackScale = TITAN_SWORD_KNOCKBACK_SCALE_MP
+			}
+		}
+		else
+		{
+			pushBackScale = TITAN_PUNCH_KNOCKBACK_SCALE
+		}
+
+		vector angles = titan.EyeAngles()
+		vector pushBackVelocity = AnglesToForward( angles ) * pushBackScale
+
+		if ( hasDashPunch )
+			pushBackVelocity = pushBackVelocity * 1.25
+
+		local directionVector = enemyTitan.GetOrigin() - titan.GetOrigin()
+		if ( DotProduct( directionVector, pushBackVelocity ) < 0 )
+			pushBackVelocity = (pushBackVelocity * -1.0)
+
+		float weaponPushBackScale = meleeWeapon.GetWeaponInfoFileKeyField( "pushback_scale" ) == null ? 1.0 : expect float( meleeWeapon.GetWeaponInfoFileKeyField( "pushback_scale" ) )
+		pushBackVelocity *= weaponPushBackScale
+
+		//Push enemy back first before doing damage to get rid of some dependencies
+		vector targetVelocity
+		targetVelocity = enemyTitan.GetVelocity()
+		targetVelocity += pushBackVelocity
+
+		// Put a floor on the targetVelocity: has to be at least 0.85 of the pushback velocity to be able to push back players far enough
+		// so that their slow melee attack doesn't still connect after being hit by a fast melee.
+		float clampRatio = 0.85
+		if ( ShouldClampTargetVelocity( targetVelocity, pushBackVelocity, clampRatio ) )
+			targetVelocity = pushBackVelocity * clampRatio
+
+		targetVelocity += Vector(0,0,100 )
+		targetVelocity = ClampVerticalVelocity( targetVelocity, TITAN_MELEE_MAX_VERTICAL_PUSHBACK )
+
+		// enemyTitan.SetVelocity( targetVelocity )
+		PushEntWithVelocity( enemyTitan, targetVelocity )
+
+		vector backVel = -1*pushBackVelocity
+		backVel.z = 0
+
+		// titan.SetVelocity( backVel )
+
+		PushEntWithVelocity( titan, backVel )
+
+		if ( enemyTitan.IsPlayer() && enemyTitan.PlayerMelee_IsAttackActive() )
+		{
+			enemyTitan.PlayerMelee_EndAttack()
+		}
+	}
+
+	int damageAmount = meleeWeapon.GetDamageAmountForArmorType( enemyTitan.GetArmorType() );
+	local damageTable =
+	{
+		scriptType = meleeWeapon.GetWeaponDamageFlags()
+		forceKill = false
+		damageType = DMG_MELEE_ATTACK
+		damageSourceId = GetMeleeDamageSourceIDForWeapon( meleeWeapon )
+		origin = damageOrigin
+	}
+
+	// THIS IS STARTING TO GET UNWIELDY
+	if ( hasShiftCore )
+		damageTable.damageSourceId = eDamageSourceId.mp_titancore_shift_core
+
+	enemyTitan.TakeDamage( damageAmount, titan, titan, damageTable )
+#endif // #if SERVER
+}
+
+function TitanAttackDefault( entity titan, entity meleeWeapon, entity targetEnt, vector damageOrigin )
+{
+#if SERVER
+	int damageAmount = meleeWeapon.GetDamageAmountForArmorType( targetEnt.GetArmorType() );
+
+	if ( IsSingleplayer() )
+	{
+		if ( IsSuperSpectre( targetEnt ) )
+		{
+			damageAmount *= 2
+		}
+	}
+
+	local damageTable =
+	{
+		scriptType = meleeWeapon.GetWeaponDamageFlags()
+		forceKill = false
+		damageType = DMG_MELEE_ATTACK
+		damageSourceId = GetMeleeDamageSourceIDForWeapon( meleeWeapon )
+		origin = damageOrigin
+	}
+
+	targetEnt.TakeDamage( damageAmount, titan, titan, damageTable )
+#endif // #if SERVER
+}
+
+function MeleeTargetCanBeGibbed( ent )
+{
+	if ( ent.IsHuman() )
+		return true
+	if ( ent.GetClassName() == "npc_prowler" )
+		return true
+
+	return false
+}
+
+function ShouldMeleeDamage( ent )
+{
+	if ( ent.IsNPC() )
+		return true
+
+	if ( ObjectCanBeMeleed( expect entity( ent ) ) )
+		return true
+
+	return false
+}
+
+function AttemptScriptedExecution( entity player, entity target )
+{
+	Assert( IsServer() )
+	if ( !CodeCallback_IsValidMeleeExecutionTarget( player, target ) )
+		return
+
+	if ( target.IsTitan() )
+	{
+		if ( Time() == target.GetTitanSoul().doomedTime )
+		{
+			return
+		}
+	}
+
+	thread PlayerTriesSyncedMelee( player, target )
+}
+
+bool function IsNinja( entity titan )
+{
+	if ( !titan.IsPlayer() )
+		return false
+
+	if ( PlayerHasPassive( titan, ePassives.PAS_SHIFT_CORE ) )
+		return true
+
+	return false
+}

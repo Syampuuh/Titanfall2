@@ -1,0 +1,254 @@
+
+"pilot_base"
+{
+	raceOrSex					"race_human_male" //TODO: Get code work for this
+
+	"global"
+	{
+		///////////////////////////////////////////////////
+		// other pilot set files overwrite these defaults
+		///////////////////////////////////////////////////
+		bodymodel			"models/humans/pilots/pilot_medium_reaper_m.mdl"
+		armsmodel			"models/weapons/arms/pov_pilot_medium_reaper_m.mdl"
+		cockpitmodel		"models/weapons/arms/human_pov_cockpit.mdl"
+		///////////////////////////////////////////////////
+		//
+		///////////////////////////////////////////////////
+
+		ui_targetinfo				"ui/targetinfo_pilot"
+
+		weaponClass					"human"
+		automantle					1
+		healthpacks					1
+		jump						1
+		dodge						0
+		slide						1
+		fov							70
+		viewmodelfov				70
+		health						100
+		healthShield				200
+		mechanical					0
+		ArmorType					normal
+		leech_range					64
+		impactSpeed					380
+		pitchOffsetScale			9.2
+		doFaceAnim					true
+		aiEnemy_priority			10
+		footstepImpactTable			"pilot_foostep"
+		landingImpactTable			"pilot_landing"
+		slideEffectTable			"pilot_slide"
+		sound_slide_prefix			"pilotslide"
+		deathcamRotateSpeed			8
+		viewmodelDuckOffset			-0.75
+		viewPunchSpring				punch_pilot
+
+		headshotFX 					"P_headshot_pilot"
+
+		viewkickFallDistMin			10
+		viewkickFallDistMax			70
+		viewkickFallDistMaxScale	12
+
+		slidedecel					50
+		slidevelocitydecay			0.7
+
+		sprintViewOffset			-6.0
+		sprintStartDelay			0.2
+		sprintStartDuration			0.8
+		sprintStartFastDuration		0.2
+		sprintEndDuration			0.15
+		sprinttiltMaxRoll			2
+
+		passThroughThickness		32
+
+		context_action_can_melee	1
+		context_action_can_use		1
+
+		aimAngleBackwardEnd			-120
+		aimAngleForwardStart		-60
+		aimAngleForwardEnd			60
+		aimAngleBackwardStart		120
+
+		aimassist_adspull_centerAttachmentName		"CHESTFOCUS"
+		aimassist_adspull_centerRadius				11.0
+		aimassist_adspull_headshotAttachmentName	"HEADSHOT"
+		aimassist_adspull_headshotRadius			13.0
+
+		chasecamDistanceMax			75
+		chasecamMaxOrbitDepth		20
+		chasecamMaxPitchUp			-45
+		chasecamOffsetUp			0
+		chasecamOffsetRight			18
+		chasecamOffsetForward		0
+
+		melee_cone_trace_range		400
+		melee_cone_trace_angle		40
+
+		rumbleOnJump				"rumble_pilotOnJump"
+		rumbleOnDoubleJump			"rumble_pilotOnDoubleJump"
+		rumbleOnWallrunStart		"rumble_pilotOnWallrunStart"
+		rumbleOnWallrunTimeout		"rumble_pilotOnWallrunTimeout"
+		rumbleOnWallHangStart		"rumble_pilotOnWallHangStart"
+		rumbleOnLandingSoft			"rumble_pilotOnLandingSoft"
+		rumbleOnLandingHard			"rumble_pilotOnLandingHard"
+		rumbleOnSlideBegin			"rumble_pilotOnSlideBegin"
+		rumbleOnZiplineAttach		"rumble_pilotOnZiplineAttach"
+		rumbleOnZiplineDetach		"rumble_pilotOnZiplineDetach"
+
+		cockpitSwayTurnAngleFactor		-0.6
+		cockpitSwayTurnAngleRollFactor	0.2
+		cockpitSwayTurnOriginFactor		-0.15
+		cockpitSwayMoveAngleFactor		-0.4
+		cockpitSwayMoveAngleRollFactor	-0.2
+		cockpitSwayMoveOriginFactor		-0.15
+		cockpitSwayGain					1.0
+
+		grapple_detachLengthMin				33
+		grapple_detachLengthMax				50
+		grapple_detachAwaySpeed				500
+		grapple_gravityFracMin				0.25
+		grapple_gravityFracMax				0.7
+		grapple_detachVerticalBoost			200
+		grapple_detachVerticalMaxSpeed		200
+		grapple_detachSpeedLoss				300
+		grapple_detachSpeedLossMin			430
+		grapple_detachLowSpeedThreshold		250
+		grapple_detachLowSpeedTime			1.5
+		grapple_detachLowSpeedWallTime		1.2
+		grapple_detachLowSpeedGroundTime	0.7
+		grapple_impactVerticalBoost			300
+		grapple_impactVerticalMaxSpeed		300
+		grapple_power_regen_delay			3
+		grapple_power_regen_rate			3
+		grapple_airSpeedMax					420
+		grapple_airAccel					650
+
+		//deathcamDistanceMin 75
+		//deathcamMinHeight 5
+		//deathcamExtraHeight 10
+
+		deathcamDistanceMin			170
+		deathcamDistanceMax			250
+		deathcamDistanceGrowRate	70
+		deathcamExtraHeight			40
+		deathcamMinHeight			30
+		deathcamRotateSpeed			8
+
+		physicsIgnoreBelowMass	10
+		physicsSoftBelowMass	100
+		physicsPushMassLimit	5000
+		physicsPushSpeedLimit	50
+
+		//damageImpulseScaleZ		2.5
+		//damageImpulseSpeedZLimit		600
+		damageImpulseSpeedBoostLimit	1000
+
+		gibModel0						"models/gibs/human_gibs.mdl"
+
+		sound_superJump					"Player.SuperJump"
+		sound_superJumpFail				"Player.SuperJumpFail"
+		sound_dodge_1p					""
+		sound_dodge_3p					""
+		sound_dodgeFail					""
+		sound_groundImpact				"Pilot.GroundImpact"
+		sound_wallrunImpact				"wallrun_impact"
+		sound_wallrunSlip				""
+		sound_wallrunFall				""
+		sound_wallHangStart				"Default.WallCling_Attach"
+		sound_wallHangComplete			"Pilot_CrouchStand_1P"
+		sound_wallHangFall				"Default.WallCling_Detach"
+
+		sound_freefall_start_1p			"Jumpjet_Freefall_Start_1P"
+		sound_freefall_start_3p			"Jumpjet_Freefall_Start_3P"
+		sound_freefall_body_1p			"Jumpjet_Freefall_Body_1P"
+		sound_freefall_body_3p			"Jumpjet_Freefall_Body_3P"
+		sound_freefall_finish_1p		"Jumpjet_Freefall_End_1P"
+		sound_freefall_finish_3p		"Jumpjet_Freefall_End_3P"
+
+		sound_jumpjet_jump_start_1p		"Jumpjet_Jump_Start_1P"
+		sound_jumpjet_jump_start_3p		"Jumpjet_Jump_Start_3P"
+		sound_jumpjet_jump_body_1p		"Jumpjet_Jump_Body_1P"
+		sound_jumpjet_jump_body_3p		"Jumpjet_Jump_Body_3P"
+		sound_jumpjet_jump_finish_1p	"Jumpjet_Jump_End_1P"
+		sound_jumpjet_jump_finish_3p	"Jumpjet_Jump_End_3P"
+
+		sound_jumpjet_jet_start_1p		"Jumpjet_Jet_Start_1P"
+		sound_jumpjet_jet_start_3p		"Jumpjet_Jet_Start_3P"
+		sound_jumpjet_jet_body_1p		"Jumpjet_Jet_Body_1P"
+		sound_jumpjet_jet_body_3p		"Jumpjet_Jet_Body_3P"
+		sound_jumpjet_jet_finish_1p		"Jumpjet_Jet_End_1P"
+		sound_jumpjet_jet_finish_3p		"Jumpjet_Jet_End_3P"
+
+		sound_jumpjet_wallrun_start_1p	"Jumpjet_Wallrun_Start_1P"
+		sound_jumpjet_wallrun_start_3p	"Jumpjet_Wallrun_Start_3P"
+		sound_jumpjet_wallrun_body_1p	"Jumpjet_Wallrun_Body_1P"
+		sound_jumpjet_wallrun_body_3p	"Jumpjet_Wallrun_Body_3P"
+		sound_jumpjet_wallrun_finish_1p	"Jumpjet_Wallrun_End_1P"
+		sound_jumpjet_wallrun_finish_3p	"Jumpjet_Wallrun_End_3P"
+
+		sound_pain_layer1_loop 			"Pilot_Wounded_Loop_1P"
+		sound_pain_layer1_end  			"Pilot_WoundedLoop_End_1P"
+		sound_pain_layer2_start 		"Pilot_Critical_Breath_Start_1P"
+		sound_pain_layer2_loop 			"Pilot_Critical_Drone_Loop_1P"
+		sound_pain_layer3_loop			"Pilot_Critical_Breath_Loop_1P"
+		sound_pain_layer3_end 			"Pilot_Wounded_BreathLoop_End_1P"
+
+		wallrun_hangTimeLimit		4
+		wallrun_timeLimit			4.0
+
+		ClassMods
+		{
+			pas_stealth_movement
+			{
+			}
+
+			pas_wall_runner
+			{
+				wallrun_timeLimit		"2.5++"
+				wallrun_hangTimeLimit	"21++"
+			}
+
+			pas_pilot_hardcore_settings
+			{
+				health 50
+			}
+		}
+	}
+	"crouch"
+	{
+		footstepWalkSoundRadius	0
+		footstepRunSoundRadius	0
+		footstepMinSpeed		80
+		footstepInterval 		450
+
+		viewheight 				"0 0 38"
+		firstpersonproxyoffset 	"0 0 -38"
+		hull_min 				"-16 -16 0"
+		hull_max 				"16 16 47"
+	}
+
+	"dead"
+	{
+		viewheight 				"0 0 14"
+	}
+
+	"observe"
+	{
+		hull_min 				"-10 -10 -10"
+		hull_max 				"10 10 10"
+	}
+
+	"stand"
+	{
+		footstepWalkSoundRadius	100
+		footstepRunSoundRadius	300
+		footstepMinSpeed		30
+		footstepInterval		400
+		footstepIntervalSprint	275
+
+		viewheight 				"0 0 60"
+		firstpersonproxyoffset 	"0 0 -60"
+		hull_min 				"-16 -16 0"
+		hull_max 				"16 16 72"
+	}
+}
+

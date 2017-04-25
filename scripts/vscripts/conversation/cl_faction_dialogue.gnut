@@ -1,0 +1,161 @@
+global function ServerCallback_PlayFactionDialogue
+global function ServerCallback_ForcePlayFactionDialogue
+global function GenerateFactionDialogueAlias
+global function PlayFactionDialogueOnLocalClientPlayer
+global function ServerCallback_SpawnFactionCommanderInDropship
+
+struct
+{
+	#if DEV
+		int factionLeaderAnimIndex = -1
+	#endif
+	bool stuff
+}
+file
+
+#if DEV
+	global function Dev_SetFactionLeaderAnimIndex
+#endif
+
+string function GenerateFactionDialogueAlias( entity player, string conversationSuffix  )
+{
+	string factionChoice = GetFactionChoice( player )
+	string factionPrefix = factionLeaderData[ factionChoice ].dialoguePrefix
+	string result = "diag_" + factionPrefix + "_" + conversationSuffix
+	return result
+
+}
+
+void function ServerCallback_PlayFactionDialogue( int conversationIndex  )
+{
+	string conversationName = GetConversationName( conversationIndex )
+
+	PlayFactionDialogueOnLocalClientPlayer( conversationName )
+}
+
+void function ServerCallback_ForcePlayFactionDialogue( int conversationIndex  )
+{
+	string conversationName = GetConversationName( conversationIndex )
+
+	ForcePlayFactionDialogueOnLocalClientPlayer( conversationName )
+}
+
+void function PlayFactionDialogueOnLocalClientPlayer( string conversationName )
+{
+	bool printDebug = GetDialogueDebugLevel() > 0
+
+	if ( printDebug )
+		printt( "PlayFactionDialogueOnLocalClientPlayer: " + conversationName )
+
+	entity listeningPlayer = GetLocalClientPlayer()
+
+	if ( !ShouldPlayFactionDialogue( conversationName, listeningPlayer ) )
+		return
+
+	//Check for priority. TODO: Cancel existing conversations if needed
+	int priority = expect int(  GetConversationPriority( conversationName )  )
+	//Generate alias from playerEHandle and number of altAliases we have
+	string soundAlias = GenerateFactionDialogueAlias( listeningPlayer, conversationName  )
+
+	PlayAnnouncerLineThroughDeathWithPriority( conversationName, soundAlias, priority )
+}
+
+void function ForcePlayFactionDialogueOnLocalClientPlayer( string conversationName )
+{
+	bool printDebug = GetDialogueDebugLevel() > 0
+
+	if ( printDebug )
+		printt( "ForcePlayFactionDialogueOnLocalClientPlayer: " + conversationName )
+
+	entity listeningPlayer = GetLocalClientPlayer()
+
+	//Check for priority. TODO: Cancel existing conversations if needed
+	int priority = expect int(  GetConversationPriority( conversationName )  )
+	//Generate alias from playerEHandle and number of altAliases we have
+	string soundAlias = GenerateFactionDialogueAlias( listeningPlayer, conversationName  )
+
+	PlayAnnouncerLineThroughDeathWithPriority( conversationName, soundAlias, priority )
+}
+
+void function ServerCallback_SpawnFactionCommanderInDropship( int shipEHandle, float dropshipSpawnTime ) //Awkward that it's here, could be in cl_classic_mp.nut but it uses data that is read in from sh_faction_dialogue.nut
+{
+	thread ServerCallback_SpawnFactionCommanderInDropship_threaded( shipEHandle, dropshipSpawnTime )
+}
+
+void function ServerCallback_SpawnFactionCommanderInDropship_threaded( int shipEHandle, float dropshipSpawnTime ) //Awkward that it's here, could be in cl_classic_mp.nut but it uses data that is read in from sh_faction_dialogue.nut
+{
+	entity dropShip = GetEntityFromEncodedEHandle( shipEHandle )
+	entity localViewPlayer = GetLocalViewPlayer()
+	FactionLeaderDataStruct factionLeaderInfo = factionLeaderData[ GetFactionChoice( localViewPlayer ) ]
+
+	entity factionLeader = CreatePropDynamic( factionLeaderInfo.modelName )
+	factionLeader.SetParent( dropShip, "ORIGIN" )
+	factionLeader.MarkAsNonMovingAttachment()
+
+	entity prop = null
+	if ( factionLeaderInfo.propModelName != $"" )
+	{
+		prop = CreatePropDynamic( factionLeaderInfo.propModelName )
+		prop.MarkAsNonMovingAttachment()
+		prop.SetParent( factionLeader, factionLeaderInfo.propAttachment )
+	}
+
+	array<string> dropshipAnimList = factionLeaderInfo.dropshipAnimList
+	/*foreach( dropshipAnim in dropshipAnimList )
+	{
+		printt( "dropshipAnim: " + dropshipAnim )
+	}
+	*/
+
+	string dropshipAnim = dropshipAnimList.getrandom()
+	#if DEV
+		if ( file.factionLeaderAnimIndex > -1 )
+		{
+			int numberOfAnims = dropshipAnimList.len()
+			Assert( numberOfAnims > 0 )
+			if ( ( numberOfAnims - 1 ) >= file.factionLeaderAnimIndex )
+			{
+				dropshipAnim = dropshipAnimList[ file.factionLeaderAnimIndex ]
+				printt( "------------------" )
+				printt( "Selecting anim: " + dropshipAnim )
+				printt( "------------------" )
+			}
+			else
+			{
+				printt( "------------------" )
+				printt( "Tried to select anim number " + file.factionLeaderAnimIndex + " but only anims 0 - " + ( dropshipAnimList.len() - 1 ) + " available" )
+				printt( "------------------" )
+
+			}
+		}
+	#endif
+	//printt( "Picked anim: " + dropshipAnim )
+
+	thread PlayAnim( factionLeader, dropshipAnim, dropShip, "ORIGIN" )
+	factionLeader.Anim_SetStartTime( dropshipSpawnTime )
+	factionLeader.LerpSkyScale( 0.9, 0.1 )
+	SetTeam( factionLeader, localViewPlayer.GetTeam() )
+
+	dropShip.EndSignal( "OnDestroy" )
+
+	OnThreadEnd(
+	function() : ( factionLeader, prop )
+		{
+			if ( IsValid( factionLeader ) ) //Need to check for this because if you disconnect it will delete that prop, then call this OnThreadEnd
+				factionLeader.Destroy()
+
+			if ( IsValid( prop ) )
+				prop.Destroy()
+		}
+	)
+
+	WaitForever()
+	//printt( "animation name: " + factionLeaderInfo.dropshipAnimName + ", initialTime: " + initialTime + ", propAttachment: " + factionLeaderInfo.propAttachment )
+}
+
+#if DEV
+void function Dev_SetFactionLeaderAnimIndex( int value )
+{
+	file.factionLeaderAnimIndex = value
+}
+#endif

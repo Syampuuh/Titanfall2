@@ -1,0 +1,29 @@
+global function Sh_ItemInventory_Init
+global function PlayerInventory_ItemCount
+
+global enum eInventoryItemType
+{
+	burnmeter
+}
+
+global struct InventoryItem
+{
+	int itemType
+	string weaponRef
+	BurnReward &burnReward
+}
+
+void function Sh_ItemInventory_Init()
+{
+}
+
+int function PlayerInventory_ItemCount( entity player )
+{
+	#if SERVER
+		return SvPlayerInventory_ItemCount( player )
+	#else
+		return player.GetPlayerNetInt( "itemInventoryCount" )
+	#endif
+}
+
+

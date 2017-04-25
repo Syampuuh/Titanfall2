@@ -1,0 +1,39 @@
+"UnlitTwoTexture"
+{
+	"$surfaceprop"	"metal"
+
+	"$basetexture" "models\weapons\lstar\lstar_heat_charge_col"
+	"$texture2" "effects\laserplane_atmosphere"
+
+	$allowoverbright 1
+
+	$decal 1
+
+	"$translucent" 1
+
+	"$additive" 1
+
+	$layercolor1 "[2 1.38 1]"
+	$layeralpha1 "1"
+
+	$layercolor2 "[3 1 0.5]"
+	$layeralpha2 "1"
+
+	"Proxies"
+	{
+
+		"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" "-0.05"
+			"texturescrollangle" "180"
+			"texturescale"	.25
+		}
+
+		"LSTARHeatFraction"
+		{
+			"resultVar" "$alpha"
+		}
+	}
+
+}

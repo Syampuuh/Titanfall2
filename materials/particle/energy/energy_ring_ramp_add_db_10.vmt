@@ -1,0 +1,27 @@
+"SpriteCard"
+{
+
+	$basetexture "particle/energy/energy_ring_ramp"
+
+// RAMPTEXTURE and POWERFUNCTION are mutually exclusive:
+
+	$RAMPTEXTURE "particle/ramps/basic_white_ramp"
+
+//	$POWERFUNCTION "[0.8 2.5 5]"
+
+//	$texAlphafromColor 4
+
+	$texColorFromAlpha 1
+
+	$additive 1
+	$depthblend 1
+	$depthblendscale 10
+
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+
+	$addself 2
+
+	$vertexFogAmount 1
+}

@@ -1,0 +1,130 @@
+resource/ui/menus/camoselect.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			classname				MenuTitle
+			labelText               "CAMO"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+	    CreditsAvailable
+	    {
+	        ControlName             RuiPanel
+	        InheritProperties       CreditsAvailableProperties
+	    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		GridPanel
+		{
+			ControlName				CNestedPanel
+			xpos					96
+            ypos                    160
+            zpos                    16
+			wide					734
+			tall					732
+			visible					1
+			tabPosition				1
+			controlSettingsFile		"Resource/UI/menus/panels/camo_selection_grid.res"
+		}
+
+        UnlockDetailsAnchor
+        {
+            ControlName				Label
+
+	        xpos					%70
+	        ypos                    %40
+	        wide                    2
+	        tall                    2
+            visible 0
+        }
+
+        UnlockDetails
+        {
+            ControlName				RuiPanel
+            //InheritProperties		ItemDetails
+            wide                    640
+			tall					150
+            rui						"ui/unlock_details.rpak"
+
+            pin_to_sibling			UnlockDetailsAnchor
+            pin_corner_to_sibling	TOP
+            pin_to_sibling_corner	TOP
+
+        }
+
+        Name
+        {
+            ControlName				Label
+            InheritProperties       NameProperties
+
+            xpos					72
+            wide 					450
+
+            pin_to_sibling			GridPanel
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+            visible 0
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ModelRotateMouseCapture
+        {
+            ControlName				CMouseMovementCapturePanel
+            xpos                    730
+            zpos					12
+            wide                    1190
+            tall                    %100
+        }
+
+// FOOTER //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

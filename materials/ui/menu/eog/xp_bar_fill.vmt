@@ -1,0 +1,21 @@
+UnlitTwoTexture
+{
+	"$basetexture" 	"white"
+	"$texture2" 	"ui/menu/eog/xp_bar_fill"
+
+	$translucent 	1
+	$vertexalpha		1
+
+	$screenspacecoordssquare2 1
+
+	"Proxies"
+	{
+		TextureScroll
+		{
+			"textureScrollVar" "$texture2transform"
+			"textureScrollRate" 0.1
+			"textureScrollAngle" 135
+			"texturescale"	1.2
+		}
+	}
+}

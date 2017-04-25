@@ -1,0 +1,26 @@
+#base "titan_stryder.set"
+"titan_stryder_arc"
+{
+	aiSettingsFile 				"npc_titan_auto_stryder_arc" //mp only
+	sp_aiSettingsFile			"npc_titan_stryder_arc" //sp only
+
+	"global"
+	{
+		printname			"#NPC_TITAN_AUTO_STRYDER_ARC"
+
+		bodymodel			"models/titans/light/titan_light_locust.mdl"
+		armsmodel			"models/weapons/arms/pov_titan_light_locust.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_light_cockpit.mdl"
+
+		powerregenrate		6.25
+	    dodgePowerDrain		50
+		ClassMods
+		{
+			pas_mobility_dash_capacity
+			{
+				dodgePowerDrain		33
+				powerregenrate		4.25
+			}
+		}
+	}
+}

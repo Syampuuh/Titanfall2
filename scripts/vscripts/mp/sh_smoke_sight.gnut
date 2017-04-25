@@ -1,0 +1,73 @@
+untyped
+
+global function SmokeSight_Init
+
+#if SERVER
+	global function CreateSmokeSightTrigger
+#endif
+
+#if CLIENT
+	// TODO: Convert temp client silhouettes to MRI when MRI draws through smoke
+	global function ServerCallback_BeginSmokeSight
+	global function ServerCallback_EndSmokeSight
+#endif
+
+function SmokeSight_Init()
+{
+}
+
+#if SERVER
+	function CreateSmokeSightTrigger( vector pos, int ownerTeam, float lifetime )
+	{
+		entity trigger = CreateTriggerRadiusMultiple( pos, 480.0, [], TRIG_FLAG_PLAYERONLY | TRIG_FLAG_START_DISABLED )
+		trigger.s.ownerTeam <- ownerTeam
+
+		AddCallback_ScriptTriggerEnter( trigger, OnSmokeSightTriggerEnter )
+		AddCallback_ScriptTriggerLeave( trigger, OnSmokeSightTriggerLeave )
+		ScriptTriggerSetEnabled( trigger, true )
+
+		OnThreadEnd(
+			function () : ( trigger )
+			{
+				if ( IsValid( trigger ) )
+					trigger.Destroy()
+			}
+		)
+
+		wait lifetime
+	}
+
+	void function OnSmokeSightTriggerEnter( entity trigger, entity ent )
+	{
+		if ( !( "inSmokeTriggerCount" in ent.s ) )
+			ent.s.inSmokeTriggerCount <- 0
+
+		if ( IsEnemyTeam( expect int( trigger.s.ownerTeam ), ent.GetTeam() ) )
+		{
+			ent.s.inSmokeTriggerCount++
+			if ( ent.s.inSmokeTriggerCount == 1 )
+				ent.nv.inSmoke = true
+		}
+	}
+
+	void function OnSmokeSightTriggerLeave( entity trigger, entity ent )
+	{
+		if ( IsEnemyTeam( expect int( trigger.s.ownerTeam ), ent.GetTeam() ) )
+		{
+			ent.s.inSmokeTriggerCount--
+
+			if ( ent.s.inSmokeTriggerCount < 1 )
+				ent.nv.inSmoke = false
+		}
+	}
+#endif
+
+#if CLIENT
+	function ServerCallback_BeginSmokeSight()
+	{
+	}
+
+	function ServerCallback_EndSmokeSight()
+	{
+	}
+#endif

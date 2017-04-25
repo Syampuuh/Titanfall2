@@ -1,0 +1,475 @@
+untyped
+
+global function MeleeSyncedHumanShared_Init
+const SWORD_MODEL = $"models/weapons/bolo_sword/v_bolo_sword.mdl"
+global const KNIFE_MODEL = $"models/weapons/combat_knife/w_combat_knife.mdl"
+
+const HUMAN_BLOOD_FX = $"impact_flesh"
+const MECHANICAL_BLOOD_FX = $"P_impact_metal_spectre"
+const HUMAN_STAB_FX = $"P_stab_impact_flesh"
+const MECHANICAL_STAB_FX = $"P_stab_impact_robot"
+
+function MeleeSyncedHumanShared_Init()
+{
+#if SERVER
+	PrecacheModel( DATA_KNIFE_MODEL )
+	PrecacheModel( STEAL_PISTOL_MODEL )
+
+	PrecacheParticleSystem( HUMAN_BLOOD_FX )
+	PrecacheParticleSystem( MECHANICAL_BLOOD_FX )
+	PrecacheParticleSystem( HUMAN_STAB_FX )
+	PrecacheParticleSystem( MECHANICAL_STAB_FX )
+#endif
+/*
+#if SERVER
+	PrecacheModel( SWORD_MODEL )
+	PrecacheModel( KNIFE_MODEL )
+
+#endif
+	//---------------------------
+	// Pilot executes Prowler
+	//---------------------------
+	// Human vs. Prowler
+	SyncedMeleeChooser pilotProwlerSyncedMeleeManager = CreateSyncedMeleeChooser( "human", "prowler" )
+	SyncedMelee actionHumanVsProwler
+	actionHumanVsProwler.direction = Vector( -1, 0, 0 )
+	actionHumanVsProwler.distance = PROWLER_EXECUTION_RANGE
+	actionHumanVsProwler.attackerAnimation1p = "ptpov_prowler_synced_death_back"
+	actionHumanVsProwler.attackerAnimation3p = "pt_prowler_synced_death_back"
+	actionHumanVsProwler.targetAnimation1p = ""
+	actionHumanVsProwler.targetAnimation3p = "pr_synced_death_back"
+	actionHumanVsProwler.minDot = 0.2
+
+	AddSyncedMelee( pilotProwlerSyncedMeleeManager, actionHumanVsProwler )
+#if SERVER
+	AddSyncedMeleeServerThink( pilotProwlerSyncedMeleeManager, MeleeThread_PilotVsEnemy )
+#endif
+*/
+
+	//---------------------------
+	// Human executes Human with sword
+	//---------------------------
+	// Human Sword vs. Human
+	//SyncedMeleeChooser humanSwordSyncedMeleeManager = CreateSyncedMeleeChooser( "human", "human" )
+	//SyncedMelee humanSwordVsHuman
+	//humanSwordVsHuman.direction = Vector( -1, 0, 0 )
+	//humanSwordVsHuman.distance = HUMAN_EXECUTION_RANGE
+	//humanSwordVsHuman.attackerAnimation1p = "ptpov_assassin_melee_necksnap_rear"
+	//humanSwordVsHuman.attackerAnimation3p = "pt_assassin_melee_necksnap_rear"
+	//humanSwordVsHuman.targetAnimation1p = "ptpov_assassin_melee_necksnap_rear_attacked"
+	//humanSwordVsHuman.targetAnimation3p = "pt_assassin_melee_necksnap_rear_attacked"
+	//humanSwordVsHuman.attachModel1p = SWORD_MODEL
+	//humanSwordVsHuman.attachTag1p = "PROPGUN"
+	//humanSwordVsHuman.minDot = 0.2
+	//AddSyncedMelee( humanSwordSyncedMeleeManager, humanSwordVsHuman )
+	//#if SERVER
+	//PrecacheModel( SWORD_MODEL )
+	//AddSyncedMeleeServerThink( humanSwordSyncedMeleeManager, MeleeThread_PilotVsEnemy )
+	//#endif
+
+	SyncedMeleeChooser meleeChooser = CreateSyncedMeleeChooser( "human", "human" )
+
+	{
+		// Human Knee Kick w/ Neck Break
+		SyncedMelee syncedMelee
+		syncedMelee.ref = "execution_neck_snap"
+		syncedMelee.direction = < -1, 0, 0 >
+		syncedMelee.distance = HUMAN_EXECUTION_RANGE
+		syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_nb"
+		syncedMelee.targetAnimation3p = "pt_mp_execution_victim_nb"
+		syncedMelee.thirdPersonCameraAttachment = "VDU"
+		syncedMelee.minDot = 0.2
+		syncedMelee.isAttackerRef = false
+		AddSyncedMelee( meleeChooser, syncedMelee )
+		#if SERVER
+			AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+		#endif
+	}
+
+	{
+		// Face Stab
+		AnimEventData giveKnifeEvent
+		giveKnifeEvent.eventName = "attach_knife"
+		giveKnifeEvent.callback = AnimEvent_attach_knife
+
+		AnimEventData takeKnifeEvent
+		takeKnifeEvent.eventName = "detach_knife"
+		takeKnifeEvent.callback = AnimEvent_detach_knife
+
+		AnimEventData headstabEvent
+		headstabEvent.eventName = "headstab_death"
+		headstabEvent.callback = AnimEvent_headstab_death
+
+		SyncedMelee syncedMelee
+		syncedMelee.ref = "execution_face_stab"
+		syncedMelee.direction = < -1, 0, 0 >
+		syncedMelee.distance = HUMAN_EXECUTION_RANGE
+		syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_stab"
+		syncedMelee.attacker3pAnimEvents = [giveKnifeEvent, takeKnifeEvent]
+		syncedMelee.target3pAnimEvents = [headstabEvent]
+		syncedMelee.targetAnimation3p = "pt_mp_execution_victim_stab"
+		syncedMelee.thirdPersonCameraAttachment = "VDU"
+		syncedMelee.minDot = 0.2
+		AddSyncedMelee( meleeChooser, syncedMelee )
+		#if SERVER
+			AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+		#endif
+	}
+
+	{
+		// Grand theft semi-auto
+		AnimEventData givePistolEvent
+		givePistolEvent.eventName = "attach_knife"
+		givePistolEvent.callback = AnimEvent_attach_pistol
+
+		AnimEventData takePistolEvent
+		takePistolEvent.eventName = "detach_knife"
+		takePistolEvent.callback = AnimEvent_detach_pistol
+
+		AnimEventData headshotEvent
+		headshotEvent.eventName = "headshot_death"
+		headshotEvent.callback = AnimEvent_headshot_death
+
+		AnimEventData backShotHighEvent
+		backShotHighEvent.eventName = "back_shot_high"
+		backShotHighEvent.callback = AnimEvent_back_shot_high
+
+		AnimEventData backShotLowEvent
+		backShotLowEvent.eventName = "back_shot_low"
+		backShotLowEvent.callback = AnimEvent_back_shot_low
+
+
+		SyncedMelee syncedMelee
+		syncedMelee.ref = "execution_backshot"
+		syncedMelee.direction = < -1, 0, 0 >
+		syncedMelee.distance = HUMAN_EXECUTION_RANGE
+		syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_steal"
+		syncedMelee.attacker3pAnimEvents = [givePistolEvent, takePistolEvent]
+		syncedMelee.target3pAnimEvents = [headshotEvent, backShotHighEvent, backShotLowEvent]
+		syncedMelee.targetAnimation3p = "pt_mp_execution_victim_steal"
+		syncedMelee.thirdPersonCameraAttachment = "VDU"
+		syncedMelee.minDot = 0.2
+		AddSyncedMelee( meleeChooser, syncedMelee )
+		#if SERVER
+			AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+		#endif
+	}
+
+	{
+		// Human Multi Punch Combo Execution
+
+		AnimEventData headshotEvent
+		headshotEvent.eventName = "headshot_death"
+		headshotEvent.callback = AnimEvent_headshot_death
+
+		SyncedMelee syncedMelee
+		syncedMelee.ref = "execution_combo"
+		syncedMelee.direction = < -1, 0, 0 >
+		syncedMelee.distance = HUMAN_EXECUTION_RANGE
+		syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_mh"
+		syncedMelee.target3pAnimEvents = [headshotEvent]
+		syncedMelee.targetAnimation3p = "pt_mp_execution_victim_mh"
+		syncedMelee.thirdPersonCameraAttachment = "VDU"
+		syncedMelee.minDot = 0.2
+		syncedMelee.isAttackerRef = false
+		AddSyncedMelee( meleeChooser, syncedMelee )
+		#if SERVER
+			AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+		#endif
+	}
+
+	{
+		// Human Knockout
+		SyncedMelee syncedMelee
+		syncedMelee.ref = "execution_knockout"
+		syncedMelee.direction = < -1, 0, 0 >
+		syncedMelee.distance = HUMAN_EXECUTION_RANGE
+		syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_kick"
+		syncedMelee.targetAnimation3p = "pt_mp_execution_victim_kick"
+		syncedMelee.thirdPersonCameraAttachment = "VDU"
+		syncedMelee.minDot = 0.2
+		syncedMelee.isAttackerRef = false
+		AddSyncedMelee( meleeChooser, syncedMelee )
+		#if SERVER
+			AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+		#endif
+	}
+
+	if ( IsMultiplayer() )
+	{
+		{
+		  // Phase Telefrag
+		  #if SERVER
+		  AnimEventData phase_shift_start
+		  phase_shift_start.eventName = "phase_shift_start"
+		  phase_shift_start.callback = PhaseEmbarkPhaseStart
+
+		  AnimEventData phase_shift_stop
+		  phase_shift_stop.eventName = "phase_shift_stop"
+		  phase_shift_stop.callback = PhaseEmbarkPhaseStop
+
+		  AnimEventData phase_shift_explode
+		  phase_shift_explode.eventName = "phase_shift_explode"
+		  phase_shift_explode.callback = PhaseShiftExplodeSound
+		  #endif
+
+		  SyncedMelee syncedMelee
+		  syncedMelee.ref = "execution_telefrag"
+		  syncedMelee.direction = < -1, 0, 0 >
+		  syncedMelee.distance = HUMAN_EXECUTION_RANGE
+		  syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_phaseshift"
+		  syncedMelee.targetAnimation3p = "pt_mp_execution_victim_phaseshift"
+
+		  #if SERVER
+		  syncedMelee.attacker3pAnimEvents = [phase_shift_start,phase_shift_stop]
+		  syncedMelee.target3pAnimEvents = [phase_shift_explode]
+		  #endif
+		  syncedMelee.thirdPersonCameraAttachment = "VDU"
+		  syncedMelee.minDot = 0.2
+		  syncedMelee.isAttackerRef = false
+		  AddSyncedMelee( meleeChooser, syncedMelee )
+		  #if SERVER
+			  AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+		  #endif
+		}
+
+	    {
+		    // Stim Execution
+		    SyncedMelee syncedMelee
+		    syncedMelee.ref = "execution_stim"
+		    syncedMelee.direction = < -1, 0, 0 >
+		    syncedMelee.distance = HUMAN_EXECUTION_RANGE
+		    syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_stim"
+		    syncedMelee.targetAnimation3p = "pt_mp_execution_victim_stim"
+		    syncedMelee.thirdPersonCameraAttachment = "VDU"
+		    syncedMelee.minDot = 0.2
+		    syncedMelee.isAttackerRef = false
+		    AddSyncedMelee( meleeChooser, syncedMelee )
+		    #if SERVER
+			    AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+		    #endif
+	    }
+
+	    {
+	    	//Grapple Execution
+			AnimEventData headstabEvent
+			headstabEvent.eventName = "headstab_death"
+			headstabEvent.callback = AnimEvent_headstab_death
+
+			#if SERVER
+			AnimEventData grapple_stab
+			grapple_stab.eventName = "grapple_stab"
+			grapple_stab.callback = GrappleStabSound
+
+			AnimEventData grapple_bodyfall
+			grapple_bodyfall.eventName = "grapple_bodyfall"
+			grapple_bodyfall.callback = GrappleBodyfallSound
+			#endif
+
+			SyncedMelee syncedMelee
+			syncedMelee.ref = "execution_grapple"
+			syncedMelee.direction = < -1, 0, 0 >
+			syncedMelee.distance = HUMAN_EXECUTION_RANGE
+			syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_grapple"
+			syncedMelee.targetAnimation3p = "pt_mp_execution_victim_grapple"
+			syncedMelee.target3pAnimEvents = [headstabEvent]
+			#if SERVER
+			syncedMelee.target3pAnimEvents.append( grapple_stab )
+			syncedMelee.target3pAnimEvents.append( grapple_bodyfall )
+			#endif
+			syncedMelee.thirdPersonCameraAttachment = "VDU"
+			syncedMelee.minDot = 0.2
+		    syncedMelee.isAttackerRef = false
+			AddSyncedMelee( meleeChooser, syncedMelee )
+			#if SERVER
+				AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+			#endif
+		}
+
+		{
+			// Placeholder for the Random Execution
+			SyncedMelee syncedMelee
+			syncedMelee.ref = "execution_random"
+			syncedMelee.direction = < -1, 0, 0 >
+			syncedMelee.distance = HUMAN_EXECUTION_RANGE
+			syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_nb"
+			syncedMelee.targetAnimation3p = "pt_mp_execution_victim_nb"
+			syncedMelee.thirdPersonCameraAttachment = "VDU"
+			syncedMelee.minDot = 0.2
+			syncedMelee.isAttackerRef = false
+			AddSyncedMelee( meleeChooser, syncedMelee )
+			#if SERVER
+				AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+			#endif
+		}
+	}
+
+}
+
+const string KNIFE_TARGETNAME = "AnimEvent_attach_knife"
+
+void function AnimEvent_attach_knife( entity ent )
+{
+	entity knife = CreatePropDynamic( DATA_KNIFE_MODEL )
+	knife.kv.targetname = KNIFE_TARGETNAME
+	knife.SetParent( ent, "KNIFE", false, 0.0 )
+}
+
+
+void function AnimEvent_detach_knife( entity ent )
+{
+	var childEnt = ent.FirstMoveChild()
+
+	while ( childEnt != null )
+	{
+		if ( childEnt.kv.targetname == KNIFE_TARGETNAME )
+		{
+			childEnt.Destroy()
+			return
+		}
+
+		childEnt = expect entity( childEnt.NextMovePeer() )
+	}
+}
+
+
+
+const string PISTOL_TARGETNAME = "AnimEvent_attach_pistol"
+
+void function AnimEvent_attach_pistol( entity ent )
+{
+	ent.EndSignal( "OnDeath" )
+	entity pistol = CreatePropDynamic( STEAL_PISTOL_MODEL )
+
+	OnThreadEnd(
+	function() : ( pistol )
+		{
+			if ( IsValid( pistol ) )
+				pistol.Destroy()
+		}
+	)
+	pistol.kv.targetname = PISTOL_TARGETNAME
+	pistol.SetParent( ent, "KNIFE", false, 0.0 )
+
+	AddAnimEvent( pistol, "muzzle_flash", StealP2011MuzzleFlash )
+
+	float duration = pistol.GetSequenceDuration( "w_p2011_mp_execution_gun_steal" )
+	pistol.Anim_Play( "w_p2011_mp_execution_gun_steal" )
+
+	wait ( duration - 0.15 )
+}
+
+void function StealP2011MuzzleFlash( entity pistol )
+{
+	string attachName
+	asset effectName
+
+	if ( GetMapName() != "sp_skyway_v1" )
+	{
+		attachName = expect string( GetWeaponInfoFileKeyField_Global( "mp_weapon_semipistol", "fx_muzzle_flash_attach" ) )
+		effectName = GetWeaponInfoFileKeyFieldAsset_Global( "mp_weapon_semipistol", "fx_muzzle_flash_world" )
+	}
+	else // JFS
+	{
+		attachName = "muzzle_flash"
+		effectName = $"wpn_muzzleflash_pistol"
+	}
+
+	int muzzleTagIdx = pistol.LookupAttachment( attachName )
+
+	StartParticleEffectOnEntity( pistol, GetParticleSystemIndex( effectName ), FX_PATTACH_POINT_FOLLOW, muzzleTagIdx )
+
+	EmitSoundOnEntity( pistol, "Pilot_Gunshot_Execution_StealToUnload_3P" ) // sound above cannot play because it's an asset instead of a string
+}
+
+void function AnimEvent_detach_pistol( entity ent )
+{
+	var childEnt = ent.FirstMoveChild()
+
+	while ( childEnt != null )
+	{
+		if ( childEnt.kv.targetname == PISTOL_TARGETNAME )
+		{
+			childEnt.Destroy()
+			return
+		}
+
+		childEnt = expect entity( childEnt.NextMovePeer() )
+	}
+}
+
+
+void function AnimEvent_headshot_death( entity ent )
+{
+	#if SERVER
+	int tagIdx = ent.LookupAttachment( "HEADSHOT" )
+
+	if ( TryHeadshotDeathFX( ent ) )
+		return
+
+	if ( ent.IsMechanical() )
+		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( MECHANICAL_BLOOD_FX ), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
+	else
+		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( HUMAN_BLOOD_FX ), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
+	#endif
+}
+
+void function AnimEvent_back_shot_high( entity ent )
+{
+	int tagIdx = ent.LookupAttachment( "RIFLE_HOLSTER" )
+	if ( ent.IsMechanical() )
+		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( MECHANICAL_BLOOD_FX), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
+	else
+		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( HUMAN_BLOOD_FX ), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
+}
+
+void function AnimEvent_back_shot_low( entity ent )
+{
+	int tagIdx = ent.LookupAttachment( "ANTI_TITAN_HOLSTER" )
+	if ( ent.IsMechanical() )
+		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( MECHANICAL_BLOOD_FX ), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
+	else
+		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( HUMAN_BLOOD_FX ), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
+}
+
+void function AnimEvent_headstab_death( entity ent )
+{
+	#if SERVER
+	int tagIdx = ent.LookupAttachment( "HEADSHOT" )
+
+	//if ( TryHeadshotDeathFX( ent ) )
+		//return
+
+	if ( ent.IsMechanical() )
+		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( MECHANICAL_STAB_FX ), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
+	else
+		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( HUMAN_STAB_FX ), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
+	#endif
+}
+
+void function PhaseShiftExplodeSound( entity ent )
+{
+	PlaySoundsForBodyType( ent, "Pilot_Mvmt_Execution_Phaseshift_Pt4_Explo_Robo_3P", "Pilot_Mvmt_Execution_Phaseshift_Pt4_Explo_3P" )
+}
+
+void function PlaySoundsForBodyType( entity ent, string roboSound, string humanSound )
+{
+	if ( ent.IsMechanical() )
+	{
+		EmitSoundOnEntity( ent, roboSound )
+	}
+	else
+	{
+		EmitSoundOnEntity( ent, humanSound )
+	}
+}
+
+void function GrappleStabSound( entity ent )
+{
+	PlaySoundsForBodyType( ent, "Pilot_Mvmt_Execution_Grapple_Robot_Pt2_Stab", "Pilot_Mvmt_Execution_Grapple_Pt2_Stab" )
+}
+
+void function GrappleBodyfallSound( entity ent )
+{
+	PlaySoundsForBodyType( ent, "Pilot_Mvmt_Execution_Grapple_Robot_Pt3_Throwdown", "Pilot_Mvmt_Execution_Grapple_Pt3_Throwdown" )
+}

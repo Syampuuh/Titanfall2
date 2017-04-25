@@ -1,0 +1,11 @@
+"Spritecard"
+{
+	"$basetexture" "particle\muzzleflash\flash_cloud"
+	$RAMPTEXTURE "particle/ramps/flash_cloud_fire.vtf"
+	$texColorFromAlpha 1
+
+	"$vertexcolor" 1
+	"$translucent" "1"
+
+
+}

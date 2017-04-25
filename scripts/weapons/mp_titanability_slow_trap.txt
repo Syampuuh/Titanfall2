@@ -1,0 +1,179 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_TITAN_SLOW_TRAP"
+	"shortprintname"                              	"#WPN_TITAN_SLOW_TRAP_SHORT"
+	"description" 									"#WPN_TITAN_SLOW_TRAP_DESC"
+	"longdesc"										"#WPN_TITAN_SLOW_TRAP_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/tactical/titan_tactical_incendiary_menu"
+	"hud_icon"										"rui/titan_loadout/tactical/titan_tactical_incendiary"
+
+	"weaponClass" 									"titan"
+	"weaponType"									"tactical"
+	"fire_mode"   									"offhand_instant"
+	"minimap_reveal_distance"						"32000"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titanweapon_slow_trap"
+	"OnWeaponNPCPrimaryAttack"						"OnWeaponNPCPrimaryAttack_titanweapon_slow_trap"
+	"OnProjectileCollision"							"OnProjectileCollision_weapon_deployable"
+
+	"projectile_ignores_vortex"						"fall_vortex"
+
+	// Models
+	"projectilemodel" 								"models/weapons/titan_incendiary_trap/w_titan_incendiary_trap.mdl"
+
+	// Effects
+	"bounce_effect_table"							"titan_footstep"
+	"impact_effect_table" 							"triplethreat_frag"
+	"projectile_trail_attachment" 					"fx_top"
+	"projectile_trail_effect_0" 					"P_meteor_trap_trail"
+	"projectile_trail_effect_1" 					""
+	"vortex_absorb_effect"							"wpn_vortex_projectile_trip_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_trip"
+	"vortex_absorb_sound"							"Vortex_Shield_AbsorbRocket"
+	"vortex_absorb_sound_1p_vs_3p"					"Vortex_Shield_AbsorbRocket_1P_VS_3P"
+	"vortex_drain"									"0.0"
+	"projectile_adjust_to_gun_barrel"				"0"
+
+	"projectile_inherit_owner_velocity_scale"		"1"
+
+	"critical_hit"									"0"
+	"grenade_show_indicator_to_owner"				"0"
+	"grenade_orient_to_velocity"					"1"
+	"grenade_bounce_randomness"						"0"
+	"grenade_bounce_extra_vertical_randomness"		"0"
+
+	// Sound
+	"fire_sound_1_player_1p"						"incendiary_trap_deploy_1p"
+	"fire_sound_1_player_3p"						"incendiary_trap_deploy_3p"
+	"sound_dryfire"									"titan_dryfire"
+	"sound_weapon_ready"							"HUD_TitanUtilityAbility_replenished_1P"
+
+	// Damage - When Used by Players
+	"damage_type" 									"burn"
+	"damage_near_distance"							"800"
+	"damage_far_distance" 							"1200"
+	"damage_near_value"   							"0"
+	"damage_far_value"								"0"
+	"damage_near_value_titanarmor"					"0"
+	"damage_far_value_titanarmor" 					"0"
+	"explosion_damage"								"0"
+	"explosion_damage_heavy_armor"					"0"
+	"explosionradius" 								"320"
+	"explosion_inner_radius"						"140"
+	"impulse_force"   								"15000"
+
+	// Ammo
+	"ammo_display"									"bar"
+	"ammo_stockpile_max"							"90"
+	"ammo_clip_size"   								"90"
+	"ammo_default_total"							"90"
+	"ammo_per_shot"									"45"
+	"ammo_min_to_fire"								"45"
+	"cooldown_type"                                 "ammo_instant"
+
+	//Regen Ammo
+	"regen_ammo_refill_rate"						"3"
+	"regen_ammo_refill_start_delay"					"0.0"
+
+	// Behavior
+	"fire_rate"   									"4.0"
+	"burst_fire_delay"								"0.0"
+	"zoom_time_in"									"0.01"
+	"zoom_time_out"   								"0.01"
+	"zoom_fov"										"50"
+	"reload_time" 									"0"
+	"holster_time"									"0.01"
+	"deploy_time" 									"0.01"
+	"lower_time"  									"0.01"
+	"raise_time"  									"0.01"
+	"vortex_refire_behavior"  						"absorb"
+	"allow_empty_fire"								"0"
+	"reload_enabled"  								"0"
+	"allow_empty_click"   							"1"
+	"empty_reload_only"   							"0"
+	"trigger_snipercam"   							"1"
+	"allow_headshots" 								"0"
+	"projectile_gravity_scale"						"2"
+
+	// Spread
+	"spread_stand_hip"  							"0"
+	"spread_stand_ads"   							"0"
+
+	"ammo_suck_behavior"							"offhand_weapons"
+
+	// View Kick
+	"viewkick_spring" 								"pistol"
+
+	"viewkick_pitch_base" 							"0"
+	"viewkick_pitch_random"   						"0.5"
+	"viewkick_pitch_softScale"						"0.0"
+	"viewkick_pitch_hardScale"						"0.0"
+
+	"viewkick_yaw_base"   							"0"
+	"viewkick_yaw_random" 							"0.5"
+	"viewkick_yaw_softScale"  						"0.0"
+	"viewkick_yaw_hardScale"  						"0.0"
+
+	"viewkick_roll_base"  							"0.0"
+	"viewkick_roll_randomMin" 						"0.6"
+	"viewkick_roll_randomMax" 						"0.8"
+	"viewkick_roll_softScale" 						"0.2"
+	"viewkick_roll_hardScale" 						"0.0"
+
+	"viewkick_hipfire_weaponFraction" 				"0.4"
+	"viewkick_hipfire_weaponFraction_vmScale" 		"0.5"
+	"viewkick_ads_weaponFraction" 					"0.0"
+	"viewkick_ads_weaponFraction_vmScale" 			"0.0"
+
+	"viewpunch_multiplier"							"2.3"
+
+	// Rumble
+	"fire_rumble"									"rumble_titan_ordnanceeject"
+
+	// Sway
+
+	// NPC
+	"proficiency_poor_spreadscale"					"7.0"
+	"proficiency_average_spreadscale" 				"5.0"
+	"proficiency_good_spreadscale"					"3.33333"
+	"proficiency_very_good_spreadscale"   			"1.66667"
+
+	"proficiency_poor_additional_rest"				"20"
+	"proficiency_average_additional_rest"			"16"
+	"proficiency_good_additional_rest"				"6"
+	"proficiency_very_good_additional_rest"			"0"
+
+	"npc_min_range"   								"0"
+	"npc_max_range"   								"2000"
+	"npc_min_burst"   								"1"
+	"npc_max_burst"   								"1"
+	"npc_rest_time_between_bursts_min"				"12.0"
+	"npc_rest_time_between_bursts_max"				"16.0"
+	"npc_pre_fire_delay"							"1.5"
+	"npc_pre_fire_delay_interval"					"3"
+
+	// WeaponED Unhandled Key/Values and custom script Key/Values
+	"sway_turn_angle_factor"  						".8"
+	"sway_turn_origin_factor" 						"0.2"
+	"sway_turn_angle_factor_zoomed"   				"1.5"
+	"sway_turn_origin_factor_zoomed"  				"0.2"
+	"sway_move_angle_factor"  						"-2"
+	"sway_move_origin_factor" 						"-.2"
+	"sway_move_angle_factor_zoomed"   				"0"
+	"sway_move_origin_factor_zoomed"  				"0.03"
+	"sway_gain"   									"15.0"
+
+	"wave_max_count"								"3"
+	"wave_step_dist"								"75.0"
+	"charge_wave_max_count"							"3"
+	"charge_wave_step_dist"							"75.0"
+
+	// Crosshair
+
+	Mods
+	{
+
+	}
+}

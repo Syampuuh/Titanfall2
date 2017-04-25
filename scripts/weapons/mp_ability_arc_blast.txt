@@ -1,0 +1,47 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_ARC_BLAST"
+	"shortprintname"								"#WPN_ARC_BLAST"
+	"description" 									"#WPN_ARC_BLAST_DESC"
+	"longdesc"										"#WPN_ARC_BLAST_LONGDESC"
+
+	"menu_icon"										"ui/temp"
+	"hud_icon"										"ui/temp"
+
+	"weaponClass" 									"human"
+	"fire_mode"   									"offhand_instant"
+
+	"damage_type" 									"none"
+
+//	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_ability_arc_blast"
+	"offhand_default_inventory_slot"				"1"
+
+	// Ammo
+	"ammo_stockpile_max"							"50"
+	"ammo_clip_size"   								"50"
+	"ammo_default_total"							"50"
+	"ammo_per_shot"									"50"
+	"ammo_display"									"bar"
+	"ammo_min_to_fire"								"50"
+//	"regen_ammo_refill_rate"						"100"
+//	"regen_ammo_refill_start_delay"					"0.0"
+
+//	"ammo_stockpile_max"							"100"
+//	"ammo_clip_size"   								"100"
+//	"ammo_default_total"							"100"
+//	"regen_ammo_refill_rate"						"140"
+//	"regen_ammo_refill_start_delay"					"1"
+//	"ammo_display"									"bar"
+
+
+	// Behavior
+	"fire_rate"   									"100"
+	"fire_duration"									"1.0"
+
+	// Crosshair
+
+	Mods
+	{
+	}
+}

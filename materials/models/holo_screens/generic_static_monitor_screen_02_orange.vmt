@@ -1,0 +1,23 @@
+"UnlitTwoTexture"
+{
+	"$basetexture" "models/holo_screens/generic_static_monitor_screen_02_col"
+	"$additive" 1
+	"$color" "[1 .8 0]"
+	"$Texture2" "effects/dev_scanline"
+	"$translucent" 1
+
+			
+	"Proxies"
+	{
+		//Horizontal movement speed 
+		"UniformNoise"
+		{
+			"minVal" .8
+			"maxVal" 1
+			"resultVar" "$alpha"
+		}
+
+	}
+}
+
+

@@ -1,0 +1,56 @@
+untyped
+
+global function ClEmpTitans_Init
+
+// Player Effects -> copied and modified from arc_cannon.nut
+const ARC_TITAN_TITAN_SCREEN_SFX 		= "Titan_Offhand_ElectricSmoke_Titan_Damage_1P"
+const ARC_TITAN_PILOT_SCREEN_SFX 		= "Titan_Offhand_ElectricSmoke_Human_Damage_1P"
+
+const ARC_TITAN_EMP_DURATION			= 0.35
+const ARC_TITAN_EMP_FADEOUT_DURATION	= 0.35
+const ARC_TITAN_SCREEN_EFFECTS 			= 0.085
+
+function ClEmpTitans_Init()
+{
+	AddLocalPlayerTookDamageCallback( eDamageSourceId.titanEmpField, EmpField_DamagedEntity )
+}
+
+void function EmpField_DamagedEntity( float damage, vector damageOrigin, int damageType, int damageSourceId, entity attacker )
+{
+	entity target = GetLocalViewPlayer()
+
+	if ( !IsAlive( target ) )
+		return
+
+	entity titan = attacker
+
+	if ( !IsValid( titan ) )
+		 return
+
+	if ( damage <= 0 )
+		return
+
+	if ( damageType & DF_DOOMED_HEALTH_LOSS )
+		return
+
+	local attachID 	= titan.LookupAttachment( "hijack" )
+	local origin 	= titan.GetAttachmentOrigin( attachID )
+	local distSqr 	= DistanceSqr( origin, target.GetOrigin() )
+
+	local minDist 	= ARC_TITAN_EMP_FIELD_INNER_RADIUS_SQR
+	local maxDist 	= ARC_TITAN_EMP_FIELD_RADIUS_SQR
+	local empFxHigh = ARC_TITAN_SCREEN_EFFECTS
+	local empFxLow 	= ( ARC_TITAN_SCREEN_EFFECTS * 0.6 )
+	float screenEffectAmplitude = GraphCapped( distSqr, minDist, maxDist, empFxHigh, empFxLow )
+
+	if ( target.IsTitan() )
+	{
+		ServerCallback_TitanEMP( screenEffectAmplitude, ARC_TITAN_EMP_DURATION, ARC_TITAN_EMP_FADEOUT_DURATION, false, false )
+		EmitSoundOnEntity( target, ARC_TITAN_TITAN_SCREEN_SFX )
+	}
+	else
+	{
+		EmitSoundOnEntity( target, ARC_TITAN_PILOT_SCREEN_SFX )
+	}
+
+}

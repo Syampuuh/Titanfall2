@@ -1,0 +1,13 @@
+
+{ // Sound Meter Index 0
+	bus: "DIA_Titan_Int"
+	scale: 1.0
+}
+
+// { // Sound Meter Index 1
+// 	  bus: "Foobar"
+//    scale: 1.0
+// }
+
+// ...
+

@@ -1,0 +1,273 @@
+#base "loadout_buttons.res"
+resource/ui/menus/sptitanloadout.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		VerticleBar
+		{
+			ControlName				ImagePanel
+			xpos 					335            // % was too different for 16:9 vs 16:10.
+			ypos 					160
+			zpos					3
+			wide					4
+			tall					800
+			image					"vgui/HUD/white"
+			drawColor				"255 255 255 255"
+			visible					1
+			scaleImage				1
+		}
+
+		TitanLoadoutTitle
+		{
+			ControlName				Label
+			labelText				"#MENU_BT_LOADOUT_TITLE"
+			xpos 					0
+			ypos					75
+			zpos					3 // Needed or clicking on the background can hide this
+			auto_wide_tocontents 	1
+			tall					53
+			font					DefaultBold_53
+			allcaps					1
+			fgcolor_override		"255 255 255 255"
+			visible					1
+			pin_to_sibling 			BtnTitanLoadout00
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		TitanLoadoutSelectionTitle
+		{
+			ControlName				Label
+			//InheritProperties		MenuTitle
+			labelText				"THE GUN NAME GOES HERE"
+			xpos					25
+			ypos					-5
+			zpos					100
+			auto_wide_tocontents 	1
+			tall					53
+			font					DefaultBold_53
+			allcaps					0
+			fgcolor_override		"255 255 255 255"
+			visible					1
+			pin_to_sibling			VerticleBar
+			textAlignment			west
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+	    TitanLoadoutDisplay
+	    {
+		    ControlName				CNestedPanel
+		    xpos					10
+		    ypos					0
+		    zpos					10
+			wide					1300 // this is hard coded in the res file
+			tall					800  // this is hard coded in the res file
+		    visible					0
+		    enabled					0
+		    controlSettingsFile		"resource/ui/menus/panels/titanproperties_sp.res"
+
+			pin_to_sibling			VerticleBar
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+	    }
+
+		TitanLoadoutWeaponImage
+		{
+			ControlName				RuiPanel
+			classname				"TitanLoadoutWeaponImage"
+			rui                     "ui/sp_loadout_weapon_image.rpak"
+			xpos					-75
+			ypos					-115
+			zpos					100
+			scaleImage				1
+			wide 					512
+			tall 					256
+
+			visible 				1
+			pin_to_sibling			TitanLoadoutDisplay
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		LoadoutTipText
+		{
+			ControlName				Label
+			labelText				"#SP_TITAN_LOADOUT_FLAVOR_SCORCH"
+			xpos					-650
+			ypos					-160
+			zpos					100
+			wide 					640
+			tall 					80
+			wrap 					1
+			fgcolor_override        "255 255 255 255"
+			font 					DefaultBold_34
+
+			pin_to_sibling			TitanLoadoutDisplay
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		BtnTitanLoadout00
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			classname				BtnTitanLoadoutClass00
+			xpos 					100            // % was too different for 16:9 vs 16:10.
+			ypos 					160
+			zpos					10
+			tabPosition				1
+			navUp					BtnTitanLoadout07
+			navDown					BtnTitanLoadout01
+			labelText				""
+			textAlignment			east
+			fgcolor_override		"1 1 1 255"
+			visible					0
+		}
+		BtnTitanLoadout01
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			zpos					10
+			classname				BtnTitanLoadoutClass01
+			pin_to_sibling			BtnTitanLoadout00
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnTitanLoadout00
+			navDown					BtnTitanLoadout02
+			labelText				""
+			textAlignment			east
+			//fgcolor_override		"255 255 255 255"
+			visible					0
+		}
+		BtnTitanLoadout02
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			zpos					10
+			classname				BtnTitanLoadoutClass02
+			pin_to_sibling			BtnTitanLoadout01
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnTitanLoadout01
+			navDown					BtnTitanLoadout03
+			labelText				""
+			textAlignment			east
+			//fgcolor_override		"255 255 255 255"
+			visible					0
+		}
+		BtnTitanLoadout03
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			zpos					10
+			classname				BtnTitanLoadoutClass03
+			pin_to_sibling			BtnTitanLoadout02
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnTitanLoadout02
+			navDown					BtnTitanLoadout04
+			textAlignment			east
+			labelText				""
+			//fgcolor_override		"255 255 255 255"
+			visible					0
+		}
+		BtnTitanLoadout04
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			zpos					10
+			classname				BtnTitanLoadoutClass04
+			pin_to_sibling			BtnTitanLoadout03
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnTitanLoadout03
+			navDown					BtnTitanLoadout05
+			textAlignment			east
+			labelText				""
+			//fgcolor_override		"255 255 255 255"
+			visible					0
+		}
+		BtnTitanLoadout05
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			zpos					10
+			classname				BtnTitanLoadoutClass05
+			pin_to_sibling			BtnTitanLoadout04
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnTitanLoadout04
+			navDown					BtnTitanLoadout06
+			textAlignment			east
+			labelText				""
+			//fgcolor_override		"255 255 255 255"
+			visible					0
+		}
+		BtnTitanLoadout06
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			zpos					10
+			classname				BtnTitanLoadoutClass06
+			pin_to_sibling			BtnTitanLoadout05
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnTitanLoadout05
+			navDown					BtnTitanLoadout07
+			textAlignment			east
+			labelText				""
+			//fgcolor_override		"255 255 255 255"
+			visible					0
+		}
+		BtnTitanLoadout07
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			zpos					10
+			classname				BtnTitanLoadoutClass07
+			pin_to_sibling			BtnTitanLoadout06
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnTitanLoadout06
+			navDown					BtnTitanLoadout00
+			textAlignment			east
+			labelText				""
+			//fgcolor_override		"255 255 255 255"
+			visible					0
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+			zpos 					300
+		}
+	}
+}

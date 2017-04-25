@@ -1,0 +1,7 @@
+"TSAA"
+{
+	"$basetexture" "_rt_FullFrameFB"
+	"$lastframetexture" "_rt_FullScreen1"
+	"$ignorez" 1
+	"%noToolTexture" 1
+}

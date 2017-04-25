@@ -1,0 +1,253 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_TITAN_HEAT_SHIELD"
+	"shortprintname"   								"#WPN_TITAN_HEAT_SHIELD_SHORT"
+	"description" 									"#WPN_TITAN_HEAT_SHIELD_DESC"
+	"longdesc"										"#WPN_TITAN_HEAT_SHIELD_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/defensive/titan_defensive_heat_shield_menu"
+	"hud_icon"										"rui/titan_loadout/defensive/titan_defensive_heat_shield"
+
+	"hint_type"										"hold"
+
+	"weaponClass" 									"titan"
+	"weaponType"									"defense"
+	"fire_mode"   									"offhand"
+	"alwaysShow"									"1"
+	"minimap_reveal_distance"						"32000"
+
+	"OnWeaponActivate"								"OnWeaponActivate_titanweapon_heat_shield"
+	"OnWeaponDeactivate"							"OnWeaponDeactivate_titanweapon_heat_shield"
+	"OnWeaponCustomActivityStart"					"OnWeaponCustomActivityStart_titanweapon_heat_shield"
+	"OnWeaponVortexHitBullet"						"OnWeaponVortexHitBullet_titanweapon_heat_shield"
+	"OnWeaponVortexHitProjectile"					"OnWeaponVortexHitProjectile_titanweapon_heat_shield"
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titanweapon_heat_shield"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_titanweapon_heat_shield"
+	"OnWeaponChargeBegin"							"OnWeaponChargeBegin_titanweapon_heat_shield"
+	"OnWeaponChargeEnd"								"OnWeaponChargeEnd_titanweapon_heat_shield"
+	"OnWeaponAttemptOffhandSwitch"					"OnWeaponAttemptOffhandSwitch_titanweapon_heat_shield"
+	"OnWeaponOwnerChanged"							"OnWeaponOwnerChanged_titanweapon_heat_shield"
+
+	// Menu Stats
+
+	// Models
+	"viewmodel"   									"models/weapons/titan_vortex_blocker/atpov_vortexblocker_scorch.mdl"
+	"playermodel" 									"models/weapons/titan_vortex_blocker/w_vortexblocker.mdl"
+	"projectilemodel" 								"models/weapons/bullets/projectile_rocket.mdl"
+
+	//Sounds
+	"charge_sound_1p"								"heat_shield_1p_loop"
+	"charge_sound_3p"								"heat_shield_3p_loop"
+
+	// Effects
+	"vortex_absorb_effect"							"wpn_vortex_projectile_rifle_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_rifle"
+	"vortex_absorb_sound"							"Vortex_Shield_AbsorbBulletSmall"
+	"vortex_absorb_sound_1P_VS_3P"					"Vortex_Shield_AbsorbBulletSmall_1P_VS_3P"
+	"sound_weapon_ready"							"HUD_TitanDefenseAbility_replenished_1P"
+	"projectile_adjust_to_gun_barrel"				"1"
+
+	"explosionradius" 								"175"
+	"offhand_keep_primary_in_hand"					"1"
+
+	// Ammo
+	"ammo_stockpile_max"							"4500"
+	"ammo_clip_size"   								"-1"
+	"ammo_default_total"							"0"
+	"cooldown_type"                                 "vortex_drain"
+
+	"damage_type" 									"burn"
+
+	"npc_use_short_duration"						"0.7"
+	"npc_use_normal_duration"						"2.0"
+	"npc_use_min_damage"							"600"
+	"npc_use_max_damage"							"1200"
+
+	"aimassist_disable_hipfire_humansonly"			"1"
+	"aimassist_disable_ads_humansonly"				"1"
+
+	MP_BASE
+	{
+		// Charge settings
+		"charge_time" 									"4.0"
+		"charge_cooldown_time"							"8.0"
+		"charge_cooldown_delay"   						"1.0"
+		"charge_end_forces_fire"  						"0"
+		"charge_remain_full_when_fired"					"1"
+
+		// Damage - When Used by Players
+		"damage_near_distance"							"200"
+		"damage_far_distance" 							"200"
+		"damage_near_value"   							"25"
+		"damage_far_value"								"25"
+		"damage_near_value_titanarmor"					"200"
+		"damage_far_value_titanarmor" 					"200"
+		"impulse_force"   								"0"
+
+		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+	}
+
+	SP_BASE
+	{
+		// Charge settings
+		"charge_time" 									"3.0"
+		"charge_cooldown_time"							"8.0"
+		"charge_cooldown_delay"   						"1.0"
+		"charge_end_forces_fire"  						"0"
+		"charge_remain_full_when_fired"					"1"
+
+		// Damage - When Used by Players
+		"damage_near_distance"							"300"
+		"damage_far_distance" 							"300"
+		"damage_near_value"   							"25"
+		"damage_far_value"								"25"
+		"damage_near_value_titanarmor"					"200"
+		"damage_far_value_titanarmor" 					"200"
+		"impulse_force"   								"0"
+
+		"enable_highlight_networking_on_creation"		"1"
+	}
+	// NPC
+	"npc_min_burst"   								"0"		// this must be 0 so AI don't shoot vortex automatically
+	"npc_max_burst"   								"0"		// this must be 0 so AI don't shoot vortex automatically
+	"npc_rest_time_between_bursts_min"				"0.1"
+	"npc_rest_time_between_bursts_max"				"0.1"
+
+	// NPC
+	"proficiency_poor_additional_rest"				"20"
+	"proficiency_average_additional_rest"			"12"
+	"proficiency_good_additional_rest"				"6"
+	"proficiency_very_good_additional_rest"			"3"
+
+	// Behavior
+	"fire_rate"   									"5"
+	"zoom_time_in"									"0.125"
+	"zoom_time_out"   								"0.125"
+	"zoom_fov"										"75"
+	"holster_time"									".2"
+	"deploy_time" 									".2"
+	"lower_time"  									".2"
+	"raise_time"  									".2"
+	"play_offhand_charging_anim"  					"1"
+	"offhand_blocks_sprint"							"1"
+	"allow_empty_fire"								"1"
+	"reload_enabled"  								"1"
+	"allow_empty_click"   							"1"
+	"empty_reload_only"   							"0"
+	"trigger_snipercam"   							"0"
+	"allow_headshots" 								"0"
+
+	// Spread
+	"spread_stand_hip"  							"7"
+	"spread_stand_ads"   							"7"
+
+	"ammo_suck_behavior"							"offhand_weapons"
+
+	// View Kick
+	"viewkick_spring" 								"pistol"
+
+	// Bob
+	"bob_cycle_time"  								".7"
+	"bob_vert_dist"   								"1"
+	"bob_horz_dist"   								"1"
+	"bob_max_speed"   								"300"
+
+	// View Drift
+	"viewdrift_hipfire_stand_scale_pitch" 			"0.1"
+	"viewdrift_hipfire_crouch_scale_pitch"			"0.1"
+	"viewdrift_hipfire_air_scale_pitch"   			"0.1"
+	"viewdrift_hipfire_stand_scale_yaw"   			"0.075"
+	"viewdrift_hipfire_crouch_scale_yaw"  			"0.075"
+	"viewdrift_hipfire_air_scale_yaw" 				"0.075"
+	"viewdrift_hipfire_speed_pitch"   				"0.6"
+	"viewdrift_hipfire_speed_yaw" 					"1.22"
+
+	"viewdrift_ads_stand_scale_pitch" 				"0.05"
+	"viewdrift_ads_crouch_scale_pitch"				"0.05"
+	"viewdrift_ads_air_scale_pitch"   				"0.05"
+	"viewdrift_ads_stand_scale_yaw"   				"0.037"
+	"viewdrift_ads_crouch_scale_yaw"  				"0.037"
+	"viewdrift_ads_air_scale_yaw" 					"0.037"
+	"viewdrift_ads_speed_pitch"   					"0.6"
+	"viewdrift_ads_speed_yaw" 						"1.22"
+
+	// Rumble
+	"fire_rumble"									"rumble_titan_vortex_release"
+
+	"npc_lead_time_scale"							"0.0003"
+
+	"npc_min_range"   								"0"
+	"npc_max_range"   								"8000"
+
+	"npc_titan_ability"								"WTA_VORTEX_MELEE"
+
+
+	// WeaponED Unhandled Key/Values and custom script Key/Values
+	"sway_turn_angle_factor"  						"-0.5"
+	"sway_turn_origin_factor" 						"0"
+	"sway_turn_angle_factor_zoomed"   				"0"
+	"sway_turn_origin_factor_zoomed"  				"0.05"
+	"sway_move_angle_factor"  						"0.5"
+	"sway_move_origin_factor" 						"0.5"
+	"sway_move_angle_factor_zoomed"   				"0"
+	"sway_move_origin_factor_zoomed"  				"0.03"
+	"sway_gain"   									"15.0"
+
+	// Crosshair
+	"red_crosshair_range" 							"1200"
+
+	Mods
+	{
+		npc_normal_difficulty
+		{
+			"charge_cooldown_time"							"*2.0"
+			"charge_cooldown_delay"   						"*2.0"
+			"charge_time" 									"*2.0"
+		}
+		dev_infinite
+		{
+			"charge_time" 							"-1.0"
+			"charge_cooldown_time"					"0.0"
+			"charge_cooldown_delay"   				"0.0"
+		}
+		pas_scorch_shield
+		{
+			"charge_cooldown_time"							"*1.5"
+			"charge_time" 									"*1.5"
+			"damage_near_value"   							"*1.2"
+			"damage_far_value"								"*1.2"
+			"damage_near_value_titanarmor"					"*1.2"
+			"damage_far_value_titanarmor" 					"*1.2"
+		}
+	}
+
+	active_crosshair_count				"1"
+	rui_crosshair_index					"0"
+
+	RUI_CrosshairData
+	{
+		DefaultArgs
+		{
+			adjustedSpread				weapon_spread
+			adsFrac 					player_zoomFrac
+			isSprinting					player_is_sprinting
+			isReloading					weapon_is_reloading
+			teamColor					crosshair_team_color
+			isAmped						weapon_is_amped
+			crosshairMovementX          crosshair_movement_x
+			crosshairMovementY          crosshair_movement_y
+			chargeFrac                  player_chargeFrac
+		}
+
+		Crosshair_1
+		{
+			"ui"						"ui/crosshair_heat_shield"
+			"base_spread"				"3.0"
+			Args
+			{
+				isFiring				weapon_is_firing
+			}
+		}
+	}
+}

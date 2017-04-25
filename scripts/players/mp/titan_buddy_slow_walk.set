@@ -1,0 +1,28 @@
+#base "titan_buddy_spare.set"
+"titan_buddy_slow_walk"
+{
+	"global"
+	{
+		cockpit_spring_originDamping 	9
+		cockpit_spring_originConstant 	15
+		cockpit_spring_yawDamping 		9
+		cockpit_spring_yawConstant 		15
+		cockpit_spring_pitchDamping 	9
+		cockpit_spring_pitchConstant 	15
+		cockpit_spring_rollDamping 		9
+		cockpit_spring_rollConstant 	15
+
+		cockpit_stepJolt_origin		"0.0  0.0  60.0"
+		cockpit_stepJolt_angles		"50.0  20.0  40.0"
+	}
+	"crouch"
+	{
+		footstepInterval		2200
+	}
+
+	"stand"
+	{
+		footstepInterval		2200
+	}
+}
+

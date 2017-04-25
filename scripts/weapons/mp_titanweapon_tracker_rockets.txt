@@ -1,0 +1,265 @@
+#base "mp_titanweapon_salvo_rockets.txt"
+WeaponData
+{
+	"printname"   									"#WPN_TITAN_TRACKER_ROCKETS"
+	"description" 									"#WPN_TITAN_TRACKER_ROCKETS_DESC"
+	"shortprintname"								"#WPN_TITAN_TRACKER_ROCKETS"
+	"longdesc"										"#WPN_TITAN_TRACKER_ROCKETS_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/ordnance/tracking_rockets_menu"
+	"hud_icon"										"rui/titan_loadout/ordnance/tracking_rockets"
+
+	"weaponClass" 									"titan"
+	"weaponType"									"shoulder"
+
+	"fire_mode"   									"offhand"
+	"requires_lock"									"1"
+
+	// Models
+	"viewmodel"   									"models/weapons/titan_bt_rocket_pod/atpov_titan_bt_rocket_pod_right.mdl"
+	//"playermodel" 								""
+	"projectilemodel" 								"models/weapons/bullets/projectile_rocket_large.mdl"
+
+	"OnWeaponActivate"								"OnWeaponActivate_titanweapon_tracker_rockets"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNPCPrimaryAttack_titanweapon_tracker_rockets"
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titanweapon_tracker_rockets"
+	"OnWeaponAttemptOffhandSwitch"					"OnWeaponAttemptOffhandSwitch_titanweapon_tracker_rockets"
+
+	"aimassist_disable_hipfire_humansonly"			"1"
+	"aimassist_disable_ads_humansonly"				"1"
+
+	"critical_hit"									"0"
+
+	"gesture_attack_anim"							"0"
+
+	// Sound
+	"burst_or_looping_fire_sound_start_1p"			"weapon_trackingrockets_fire_1p"
+	"burst_or_looping_fire_sound_middle_1p"			""
+	"burst_or_looping_fire_sound_end_1p"			""
+
+	"burst_or_looping_fire_sound_start_3p"			"weapon_trackingrockets_fire_3P"
+	"burst_or_looping_fire_sound_middle_3p"			""
+	"burst_or_looping_fire_sound_end_3p"			""
+
+	"burst_or_looping_fire_sound_start_npc"			"weapon_trackingrockets_fire_3P"
+	"burst_or_looping_fire_sound_middle_npc"		""
+	"burst_or_looping_fire_sound_end_npc"			""
+	"sound_dryfire"									"titan_dryfire"
+
+	// Effects
+	"impact_effect_table" 							"exp_rocket_shoulder"
+	"projectile_trail_effect_0" 					"Rocket_Smoke_SMALL_Titan_2"
+	"projectile_trail_attachment" 					"exhaust"
+	"vortex_absorb_effect"							"wpn_vortex_projectile_rocket_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_rocket"
+	"vortex_absorb_sound"							"Vortex_Shield_AbsorbRocket"
+	"vortex_absorb_sound_1p_vs_3p"					"Vortex_Shield_AbsorbRocket_1P_VS_3P"
+	"sound_weapon_ready"							"HUD_TitanOffenseAbility_replenished_1P"
+	"projectile_adjust_to_gun_barrel"				"1"
+	"offhand_keep_primary_in_hand"					"1"
+
+	"projectile_drift_windiness"					"70"
+	"projectile_drift_intensity"					"10.96"
+	"projectile_straight_time_min"					"0"
+	"projectile_straight_time_max"					"0.1"
+	"projectile_straight_radius_min"				"5"
+	"projectile_straight_radius_max"				"10"
+
+	// Ammo
+	"ammo_stockpile_max"							"200"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+	"ammo_min_to_fire"								"200"
+
+	"reload_enabled"								"0"
+
+	// Regen Ammo
+	"regen_ammo_refill_rate"						"200.0"
+	"regen_ammo_refill_start_delay"					"0.1"
+
+	MP_BASE
+	{
+		"ammo_per_shot"									"200"
+		"burst_fire_count"								"6"
+		"damage_near_value"   							"350"
+		"damage_far_value"								"350"
+
+		"npc_damage_near_value"   						"<KEEP_DEFAULT>"
+		"npc_damage_far_value"							"<KEEP_DEFAULT>"
+		"npc_damage_near_value_titanarmor"				"<KEEP_DEFAULT>"
+		"npc_damage_far_value_titanarmor" 				"<KEEP_DEFAULT>"
+
+		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+	}
+
+	SP_BASE
+	{
+		"ammo_per_shot"									"200"
+		"burst_fire_count"								"6"
+		"damage_near_value"   							"350"
+		"damage_far_value"								"350"
+
+		"npc_damage_near_value"   						"150"
+		"npc_damage_far_value"							"150"
+		"npc_damage_near_value_titanarmor"				"150"
+		"npc_damage_far_value_titanarmor" 				"150"
+
+		"enable_highlight_networking_on_creation"		"1"
+	}
+
+	"fx_muzzle_flash_view"							"P_wpn_muzzleflash_smr_FP"
+	"fx_muzzle_flash_world"							"P_wpn_muzzleflash_smr"
+	"fx_muzzle_flash_attach"						"muzzle_flash"
+
+	"owner_muzzle_index"							"1"
+
+	"fire_rate"   									"14"
+	"burst_fire_delay"								"0.7"
+	"holster_time"									"0.2"
+	"deploy_time" 									"0.25"
+	"lower_time"  									"0.2"
+	"raise_time"  									"0.25"
+
+	"play_offhand_charging_anim"  					"1"
+	"play_offhand_start_end_anim"					"1"
+
+	"charge_time" 									"0.01"
+	"charge_cooldown_time"							"0.0"
+	"charge_cooldown_delay"   						"0.0"
+	"charge_end_forces_fire"  						"1"
+	"charge_require_input"							"1"
+
+	"impulse_force"									"40000"
+
+	// Bob
+	"bob_cycle_time"  								"0.69"
+	"bob_vert_dist"   								"0.6"
+	"bob_horz_dist"   								"0.1"
+	"bob_max_speed"   								"150"
+	"bob_pitch"   									"-0.75"
+	"bob_yaw" 										"1.7"
+	//"bob_roll"										"-1.2"
+
+	// Sway
+	"sway_rotate_attach"  							"jx_c_pov"
+	"sway_min_x"  									"-0.5"
+	"sway_min_y"  									"-2"
+	"sway_min_z"  									"-2.7"
+	"sway_max_x"  									"0.5"
+	"sway_max_y"  									"2"
+	"sway_max_z"  									"2.7"
+	"sway_min_pitch"  								"-3"
+	"sway_min_yaw"									"-2.5"
+	"sway_min_roll"   								"-4"
+	"sway_max_pitch"  								"3"
+	"sway_max_yaw"									"2.5"
+	"sway_max_roll"   								"4"
+	"sway_translate_gain" 							"2"
+	"sway_rotate_gain"								"7"
+	"sway_move_forward_translate_x"   				"-0.3"
+	"sway_move_forward_translate_z"   				"-0.1"
+	"sway_move_back_translate_x"  					"0.2"
+	"sway_move_back_translate_z"  					"-0.2"
+	"sway_move_left_translate_y"  					"-1"
+	"sway_move_left_translate_z"  					"-0.5"
+	"sway_move_left_rotate_roll"  					"-2"
+	"sway_move_right_translate_y" 					"1"
+	"sway_move_right_translate_z" 					"-0.5"
+	"sway_move_right_rotate_roll" 					"2"
+	"sway_move_up_translate_z"						"-1"
+	"sway_move_down_translate_z"  					"1"
+	"sway_turn_left_rotate_yaw"   					"-3"
+	"sway_turn_right_rotate_yaw"  					"3"
+
+	"sway_turn_left_translate_y"  					"-.1"
+	"sway_turn_right_translate_y"  					".1"
+	"sway_turn_up_translate_z"  					"-.5"
+	"sway_turn_down_translate_z"  					".5"
+	"sway_turn_up_translate_x"  					"-.1"
+	"sway_turn_down_translate_x"  					".1"
+
+	//"sway_turn_left_rotate_roll"   					"0.5"
+	//"sway_turn_right_rotate_roll"  					"-0.5"
+	"sway_turn_up_rotate_pitch"   					"3"
+	"sway_turn_down_rotate_pitch" 					"-3"
+	"sway_turn_up_rotate_roll"   					"-0.8"
+	"sway_turn_down_rotate_roll" 					"0.8"
+
+	// NPC
+	"npc_use_check_type"							"tracker_hit"
+
+	"proficiency_poor_spreadscale"					"7.0"
+	"proficiency_average_spreadscale" 				"5.0"
+	"proficiency_good_spreadscale"					"4.0"
+	"proficiency_very_good_spreadscale"   			"3.0"
+	"proficiency_perfect_spreadscale" 				"2.0"
+
+	"npc_accuracy_multiplier_pilot"					"0.5"
+
+	"npc_min_range"   								"0"
+	"npc_max_range"   								"7000"
+	"npc_min_burst"   								"8"
+	"npc_max_burst"   								"8"
+	"npc_rest_time_between_bursts_min"				"9"
+	"npc_rest_time_between_bursts_max"				"12"
+
+	"npc_charge_time_min"							"1.0"	// for rocketpod animation time
+	"npc_charge_time_max"							"1.0"
+
+	"smart_ammo_search_angle" 						"0.1"
+	"smart_ammo_search_distance"  					"15000"
+	"smart_ammo_search_npcs"						"1"
+	"smart_ammo_search_players"						"1"
+	"smart_ammo_search_projectiles"					"0"
+	"smart_ammo_titans_block_los"					"0"
+	"smart_ammo_new_target_delay"					"0"
+	"smart_ammo_max_targets"						"20"
+	"smart_ammo_max_targeted_burst"					"6"
+	"smart_ammo_always_do_burst"					"1"
+	"smart_ammo_targeting_time_min"					"0.0"
+	"smart_ammo_targeting_time_max"					"0.0"
+	"smart_ammo_target_max_locks_heavy"				"1"
+	"smart_ammo_lock_type"							"large"
+	"smart_ammo_allow_ads_lock"						"1"
+	"smart_ammo_allow_hip_fire_lock"				"1"
+	"smart_ammo_titan_lock_point0"					"SMART_AMMO_TORSO_FRONT"
+	"smart_ammo_titan_lock_point1"					"SMART_AMMO_TORSO_BACK"
+	"smart_ammo_titan_lock_point2"					"SMART_AMMO_LEG_LEFT"
+	"smart_ammo_titan_lock_point3"					"SMART_AMMO_LEG_RIGHT"
+	"smart_ammo_titan_lock_point4"					"SMART_AMMO_TORSO_BASE"
+	"smart_ammo_titan_lock_point5"					"SMART_AMMO_HEAD"
+	"smart_ammo_titan_lock_point6"					"SMART_AMMO_ARM_LEFT"
+	"smart_ammo_titan_lock_point7"					"SMART_AMMO_ARM_RIGHT"
+	"smart_ammo_allow_search_while_firing"			"0"
+	"smart_ammo_tracked_targets_check_visibility"	"0"
+	"smart_ammo_weapon_type"						"homing_missile"
+	"smart_ammo_points_search_tick_interval"		"6"
+	"smart_ammo_bounds_search_tick_interval"		"6"
+	"smart_ammo_player_targets_must_be_tracked"		"1"
+	"smart_ammo_npc_targets_must_be_tracked"		"1"
+	"smart_ammo_other_targets_must_be_tracked"		"1"
+	"smart_ammo_doBurstPerTarget"					"1"
+	"smart_ammo_max_trackers_per_target"			"3"
+	"smart_ammo_allow_search_while_inactive"		"1"
+
+	Mods
+	{
+		dev_mod_low_recharge
+		{
+			"regen_ammo_refill_rate"   						"*5.0"
+		}
+
+		burn_mod_titan_tracker_rockets
+		{
+			"damage_near_value"   							"*1.15"
+			"damage_far_value"								"*1.15"
+			"is_burn_mod"		"1"
+		}
+
+		pas_tone_rockets
+		{
+			"burst_fire_count"								"8"
+			"smart_ammo_max_targeted_burst"					"8"
+		}
+	}
+}

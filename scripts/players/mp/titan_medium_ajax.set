@@ -1,0 +1,14 @@
+#base "titan_atlas.set"
+"titan_medium_ajax"
+{
+	"global"
+	{
+		printname				"Ajax"
+		description				"Needs description text"
+
+		bodymodel			"models/titans/medium/titan_medium_ajax.mdl"
+		armsmodel			"models/weapons/arms/pov_titan_medium_ajax.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_medium_cockpit.mdl"
+	}
+}
+

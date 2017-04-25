@@ -1,0 +1,130 @@
+"resource/ui/menus/community_edit.menu"
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#MENUHEADER_COMMUNITY_EDIT"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		EditCommunityPanel
+		{
+			ControlName				CNestedPanel
+			zpos					3
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/community_edit.res"
+		}
+
+        PanelBackground
+        {
+    		ControlName		        RuiButton
+            xpos                    0
+            ypos                    0
+            wide                    %100
+            tall                    %100
+            visible                 0
+            image                   "vgui/white"
+            scaleImage              1
+            zpos                    5
+            labelText               ""
+			OverrideTallIfNotBitmap 0
+            drawColor               "0 0 0 128"
+    		rui                     "ui/basic_border_box.rpak"
+        }
+
+		EditCommunityLanguagesPanel
+		{
+			ControlName				CNestedPanel
+			xpos					600
+			ypos					200
+			zpos					10
+			wide					f0
+			tall					f0
+			visible					0
+			controlSettingsFile		"resource/ui/menus/panels/combo_select_panel.res"
+		}
+
+		EditCommunityRegionsPanel
+		{
+			ControlName				CNestedPanel
+			zpos					10
+			xpos					600
+			ypos					550
+			wide					f0
+			tall					f0
+			visible					0
+			controlSettingsFile		"resource/ui/menus/panels/combo_select_panel.res"
+		}
+
+		EditCommunityCategoriesPanel
+		{
+			ControlName				CNestedPanel
+			zpos					10
+			xpos					600
+			ypos					400
+			wide					f0
+			tall					f0
+			visible					0
+			controlSettingsFile		"resource/ui/menus/panels/combo_select_panel.res"
+		}
+
+		EditCommunityHappyHourPanel
+		{
+			ControlName				CNestedPanel
+			zpos					10
+			wide					f0
+			tall					f0
+			visible					0
+			controlSettingsFile		"resource/ui/menus/panels/community_edit_happyhour.res"
+		}
+
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

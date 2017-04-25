@@ -1,0 +1,276 @@
+#base "combo_buttons.res"
+resource/ui/menus/knowledgebase.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#KNB_MENU_HEADER"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+	    //CreditsAvailable
+	    //{
+	    //    ControlName             RuiPanel
+	    //    InheritProperties       CreditsAvailableProperties
+	    //}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		BtnKNBSubject00
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			//pin_to_sibling			SwchGamepadCustomEnabled
+			//pin_corner_to_sibling	TOP_LEFT
+			//pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					225
+			ypos					190
+			navUp					BtnKNBSubject14
+			navDown					BtnKNBSubject01
+			scriptID				0
+		}
+		BtnKNBSubject01
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject00
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject00
+			navDown					BtnKNBSubject02
+			scriptID				1
+		}
+		BtnKNBSubject02
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject01
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject01
+			navDown					BtnKNBSubject03
+			scriptID				2
+		}
+		BtnKNBSubject03
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject02
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject02
+			navDown					BtnKNBSubject04
+			scriptID				3
+		}
+		BtnKNBSubject04
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject03
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject03
+			navDown					BtnKNBSubject05
+			scriptID				4
+		}
+		BtnKNBSubject05
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject04
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject04
+			navDown					BtnKNBSubject06
+			scriptID				5
+		}
+		BtnKNBSubject06
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject05
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject05
+			navDown					BtnKNBSubject07
+			scriptID				6
+		}
+		BtnKNBSubject07
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject06
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject06
+			navDown					BtnKNBSubject08
+			scriptID				7
+		}
+		BtnKNBSubject08
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject07
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject07
+			navDown					BtnKNBSubject09
+			scriptID				8
+		}
+		BtnKNBSubject09
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject08
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject08
+			navDown					BtnKNBSubject10
+			scriptID				9
+		}
+		BtnKNBSubject10
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject09
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject09
+			navDown					BtnKNBSubject11
+			scriptID				10
+		}
+		BtnKNBSubject11
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject10
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject10
+			navDown					BtnKNBSubject12
+			scriptID				11
+		}
+		BtnKNBSubject12
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject11
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject11
+			navDown					BtnKNBSubject13
+			scriptID				12
+		}
+		BtnKNBSubject13
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject12
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject12
+			navDown					BtnKNBSubject14
+			scriptID				13
+		}
+		BtnKNBSubject14
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiKNBSubjectButton
+			pin_to_sibling			BtnKNBSubject13
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					8
+			navUp					BtnKNBSubject13
+			navDown					BtnKNBSubject00
+			scriptID				14
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		LabelDetails
+		{
+			ControlName				RuiPanel
+			xpos					875
+			ypos					160
+			wide 					850
+			tall					300
+			rui 					"ui/knowledgebase_panel_main.rpak"
+			wrap					1
+			visible					1
+			zpos					1
+		}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ButtonRowAnchor
+		{
+			ControlName				Label
+			labelText				""
+
+			xpos                    96
+			ypos                    160
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ButtonTooltip
+		{
+			ControlName				CNestedPanel
+			InheritProperties		ButtonTooltip
+		}
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

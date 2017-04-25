@@ -1,0 +1,122 @@
+WeaponData
+{
+	"printname"										"#TITANCORE_FLAME_WAVE"
+	"shortprintname"								"#TITANCORE_FLAME_WAVE"
+	"description"									"#TITANCORE_FLAME_WAVE_DESC"
+	"longdesc"										"#TITANCORE_FLAME_WAVE_DESC"
+
+	"menu_icon"										"rui/titan_loadout/core/titan_core_flame_wave"
+	"hud_icon"										"rui/titan_loadout/core/titan_core_flame_wave"
+
+	// General
+	"weaponClass" 									"titan"
+	"weaponType"									"titan_core"
+	"fire_mode"   									"offhand"
+
+	"damage_type" 									"none"
+
+	// Ammo
+	"ammo_stockpile_max"							"200"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+
+	// Behavior
+	"core_build_time"								"150"
+	"chargeup_time"									"0.85"
+	"core_duration"									"0.5"
+
+	"readymessage"									"#HUD_CORE_ONLINE_FLAME_WAVE"
+	"readyhint"										"#HUD_CORE_ONLINE_FLAME_WAVE_HINT"
+
+	"dialog_core_online"							"flamewavecoreOnline"
+	"dialog_core_activated"							"flamewavecoreActivated"
+
+	"OnWeaponActivate"								"OnWeaponActivate_titancore_flame_wave"
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titancore_flame_wave"
+	"OnWeaponChargeBegin"							"OnAbilityCharge_FlameWave"
+	"OnWeaponChargeEnd"								"OnAbilityChargeEnd_FlameWave"
+	"OnWeaponAttemptOffhandSwitch"					"CheckCoreAvailable"
+
+	"offhand_keep_primary_in_hand" 					"1"
+	"aimassist_disable_hipfire_humansonly"			"1"
+	"aimassist_disable_ads_humansonly"				"1"
+
+	//"sustained_discharge_duration"				"5.0" // core duration
+	//"sustained_discharge_pulse_frequency"			"0.5"
+	//"sustained_discharge_require_input"			"0"
+
+	// Charge settings
+	"charge_time" 									"0.75" // chargeup time
+	"charge_cooldown_time"							"1.0"
+	"charge_cooldown_delay"   						"1.0"
+	"charge_end_forces_fire"  						"1"
+	"charge_require_input"							"0"
+	"passive"										"PAS_FUSION_CORE" //Core Srcreen FX
+
+	"proficiency_poor_additional_rest"				"10"
+	"proficiency_average_additional_rest"			"8"
+	"proficiency_good_additional_rest"				"6"
+	"proficiency_very_good_additional_rest"			"0"
+
+	"npc_rest_time_between_bursts_min"				"16"
+	"npc_rest_time_between_bursts_max"				"16"
+
+	// Models
+	"playermodel" 									"models/weapons/empty_handed/w_empty_handed_titan.mdl"
+	"viewmodel"   									"models/weapons/empty_handed/atpov_emptyhand_flamewave.mdl"
+	"projectilemodel" 								"models/dev/empty_model.mdl"
+
+	"projectile_adjust_to_gun_barrel"				"1"
+	"show_grenade_indicator" 						"0"
+	"projectile_ignores_vortex"						"mirror"
+	//"projectile_trail_effect_0" 					"P_xo_meteorWave_trail"
+	"vortex_drain"									"0.0" //Vortex should ignore this core
+
+	// TEMP: SCRIPT WAVE SETTINGS
+	"wave_max_count"								"15"
+	"wave_step_dist"								"120.0"
+	"charge_wave_max_count"							"15"
+	"charge_wave_step_dist"							"120.0"
+
+	"special_3p_attack_anim" 						"1"
+
+	MP_BASE
+	{
+		"damage_near_value"   							"300"
+		"damage_far_value"								"300"
+		"damage_near_value_titanarmor"					"4500"
+		"damage_far_value_titanarmor"					"4500"
+
+		"npc_damage_near_value_titanarmor"				"<KEEP_DEFAULT>"
+		"npc_damage_far_value_titanarmor"				"<KEEP_DEFAULT>"
+
+		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+	}
+
+	SP_BASE
+	{
+		"damage_near_value"   							"300"
+		"damage_far_value"								"300"
+		"damage_near_value_titanarmor"					"4000"
+		"damage_far_value_titanarmor"					"4000"
+
+		"npc_damage_near_value_titanarmor"				"3000"
+		"npc_damage_far_value_titanarmor"				"3000"
+
+		"enable_highlight_networking_on_creation"		"1"
+	}
+
+	// NPC
+	"npc_use_check_type"							"ground_clear"
+	"npc_vortex_block"								"0"
+	"npc_min_range"   								"0"
+	"npc_max_range"   								"1700"
+
+	Mods
+	{
+		pas_scorch_flamecore
+		{
+
+		}
+	}
+}

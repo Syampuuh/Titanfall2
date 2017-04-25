@@ -1,0 +1,331 @@
+resource/ui/menus/audio.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		visible					1
+		enabled					1
+		pinCorner				0
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		Title
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#AUDIO"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		LblMenuItemDescription
+		{
+			ControlName				Label
+			InheritProperties		OptionMenuTooltip
+			classname 				MenuItemDescriptionClass
+			xpos					975
+			ypos					168
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		SldMasterVolume
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			xpos					120
+			ypos					160
+            tabPosition				1
+			navUp					SwchSoundWithoutFocus
+			navDown					SldSFXVolume
+			conCommand				"sound_volume"
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.05
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		SldSFXVolume
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			navUp					SldMasterVolume
+			navDown					SldDialogueVolume
+			conCommand				"sound_volume_sfx"
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.05
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+
+			pin_to_sibling			SldMasterVolume
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SldDialogueVolume
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			navUp					SldSFXVolume
+			navDown					SldMusicVolume
+			conCommand				"sound_volume_dialogue"
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.05
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+
+			pin_to_sibling			SldSFXVolume
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SldMusicVolume
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			navUp					SldDialogueVolume
+			navDown					SldLobbyMusicVolume
+			conCommand				"sound_volume_music_game"
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.05
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+
+			pin_to_sibling			SldDialogueVolume
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SldLobbyMusicVolume
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			navUp					SldMusicVolume
+			navDown					SldVoiceChatVolume
+			conCommand				"sound_volume_music_lobby"
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.05
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+
+			pin_to_sibling			SldMusicVolume
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SldVoiceChatVolume
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			navUp					SldLobbyMusicVolume
+			navDown					SwchSubtitles
+			conCommand				"sound_volume_voice"
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.05
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+
+			pin_to_sibling			SldLobbyMusicVolume
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwchSubtitles
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			navUp					SldVoiceChatVolume
+			navDown					SwchCalculateOcclusion
+			ConVar					"closecaption"
+			list
+			{
+				// If we enable hearing impaired captions, rather than use "cc_subtitles", "closecaption" should support a 3rd value
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SldVoiceChatVolume
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwchCalculateOcclusion
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			navUp					SwchSubtitles
+			navDown					SwchSoundWithoutFocus
+			ConVar					"miles_occlusion"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SwchSubtitles
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwchSoundWithoutFocus
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			navUp					SwchCalculateOcclusion
+			navDown					SldMasterVolume
+			ConVar					"sound_without_focus"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SwchCalculateOcclusion
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+
+		SwchSpeakerConfig
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			ypos					40
+			navUp					SwchSoundWithoutFocus
+			navDown					SldMasterVolume
+			ConVar					"miles_channels"
+			list
+			{
+			    "#SETTING_ONE_CHANNEL"      1
+				"#SETTING_TWO_CHANNEL"		2
+				"#SETTING_FOUR_CHANNEL"		4
+				"#SETTING_SIX_CHANNEL"		6
+				"#SETTING_SEVEN_CHANNEL"    7
+				"#SETTING_EIGHT_CHANNEL"	8
+				"#SETTING_NINE_CHANNEL"     9
+			}
+
+			pin_to_sibling			SwchSoundWithoutFocus
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		InputBlocker
+		{
+		    ControlName				Label
+		    zpos                    10
+			wide					740
+			tall					40
+            labelText               ""
+
+			pin_to_sibling			SwchSpeakerConfig
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

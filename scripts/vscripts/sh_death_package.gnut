@@ -1,0 +1,709 @@
+#if SERVER
+untyped
+#endif
+
+global function Death_Package_Init
+global function PrintDamageFlags
+global function GetDescStringForDamageFlags
+
+#if SERVER
+	table bodyGroupSkeletons
+
+	global function InitDamageStates
+	global function HandleDeathPackage
+	global function TransferDamageStates
+	global function UpdateDamageState
+
+	global function GetTagsForBodyGroup
+	global function IsBodyGroupBroken
+	global function GetStateCountForBodyGroup
+
+	global function GibTitan
+
+	global function DoomTitan
+	global function UndoomTitan_Body
+
+	global function GetNumBrokenLimbs
+	global function TryHeadshotDeathFX
+
+	global function PlayTitanDeathFx
+	global function PlayTitanDeathFxUp
+
+#endif
+
+const NPC_GRUNT_DEATH = "npc_grunt_death"
+const TITAN_GRUNT_SQUISH = "titan_grunt_squish"
+const TITAN_SPECTRE_SQUISH = "titan_spectre_squish"
+const TURRET_DEATH_FX = $"P_turret_exp_plasma"
+
+int TITAN_EXPLOSION_EFFECT
+const TITAN_EXPLOSION_GROUNDWASH_FX_TABLE = "titan_exp_ground"
+const TITAN_EXPLOSION_GROUNDWASH_HEIGHT = 250
+
+global const GRENADE_INDICATOR_ARROW_MODEL = $"models/hud/grenade_indicator/grenade_indicator_arrow.mdl"
+global const GRENADE_INDICATOR_FRAG_MODEL = $"models/hud/grenade_indicator/grenade_indicator_frag.mdl"
+global const GRENADE_INDICATOR_SONAR_MODEL = $"models/hud/grenade_indicator/grenade_indicator_sonar.mdl"
+#if SP
+global const GRENADE_INDICATOR_TICK_MODEL = $"models/hud/grenade_indicator/grenade_indicator_tick.mdl"
+#else
+global const GRENADE_INDICATOR_TICK_MODEL = $"models/hud/grenade_indicator/grenade_indicator_frag_sentry.mdl"
+#endif
+global const GRENADE_MODEL = $"models/weapons/grenades/m20_f_grenade.mdl"
+global const DAMAGEARROW_MODEL = $"models/weapons/bullets/damage_arrow.mdl"
+
+struct
+{
+	table hitDataCache
+	table<string,bool> disallowDissolveList
+} file
+
+global enum damageTypes
+{
+	gibs 				= (DF_GIB)
+	largeCaliberExp		= (DF_BULLET | DF_GIB | DF_EXPLOSION)
+	gibBullet			= (DF_BULLET | DF_GIB)
+	instant				= (DF_INSTANT)
+	dissolve			= (DF_DISSOLVE)
+	projectileImpact	= (DF_GIB)
+	pinkMist 			= (DF_GIB) //If updated from DF_GIB, change the DF_GIB in Arc Cannon to match.
+	ragdoll				= (DF_RAGDOLL)
+	titanStepCrush		= (DF_TITAN_STEP)
+	arcCannon			= (DF_DISSOLVE | DF_GIB | DF_ELECTRICAL )
+	electric			= (DF_ELECTRICAL) //Only increases Vortex Shield decay for bullet weapons atm.
+	explosive			= (DF_RAGDOLL | DF_EXPLOSION )
+	bullet				= (DF_BULLET)
+	largeCaliber		= (DF_BULLET | DF_KNOCK_BACK)
+	shotgun				= (DF_BULLET | DF_GIB | DF_SHOTGUN )
+	titanMelee			= (DF_MELEE | DF_RAGDOLL)
+	titanBerserkerMelee	= (DF_MELEE | DF_RAGDOLL)
+	titanEjectExplosion	= (DF_GIB | DF_EXPLOSION)
+	dissolveForce		= (DF_DISSOLVE | DF_KNOCK_BACK | DF_EXPLOSION)
+	rodeoBatteryRemoval	= (DF_RODEO | DF_EXPLOSION | DF_STOPS_TITAN_REGEN )
+}
+
+void function Death_Package_Init()
+{
+	// precaches for particles specified in "headshotFX" field of the aisettings and player set files
+	PrecacheParticleSystem( $"P_headshot_human" )
+	PrecacheParticleSystem( $"P_headshot_pilot" )
+	PrecacheParticleSystem( $"P_headshot_pilot_robot" )
+	PrecacheParticleSystem( $"xo_exp_death" )
+
+	#if SERVER
+		bodyGroupSkeletons = {}
+
+		file.disallowDissolveList[ "npc_drone" ]			<- true
+		file.disallowDissolveList[ "npc_gunship" ]			<- true
+		file.disallowDissolveList[ "npc_spectre" ]			<- true
+		file.disallowDissolveList[ "npc_stalker" ]			<- true
+		file.disallowDissolveList[ "npc_turret_mega" ]		<- true
+		file.disallowDissolveList[ "npc_turret_sentry" ] 	<- true
+		file.disallowDissolveList[ "npc_dropship" ] 		<- true
+
+		TITAN_EXPLOSION_EFFECT = GetParticleSystemIndex( $"xo_exp_death" )
+		PrecacheImpactEffectTable( TITAN_EXPLOSION_GROUNDWASH_FX_TABLE )
+		PrecacheEffect( $"P_wpn_dumbfire_burst_trail" )
+		PrecacheEffect( $"P_exp_spectre_death" )
+		PrecacheEffect( $"xo_exp_death" )
+
+		if ( SentryTurretsExplodeOnDeath() )
+			PrecacheEffect( TURRET_DEATH_FX )
+
+		PrecacheModel( $"models/gibs/human_gibs.mdl" )
+
+		PrecacheModel( GRENADE_INDICATOR_ARROW_MODEL )
+		PrecacheModel( GRENADE_INDICATOR_FRAG_MODEL )
+		PrecacheModel( GRENADE_INDICATOR_SONAR_MODEL )
+		PrecacheModel( GRENADE_INDICATOR_TICK_MODEL )
+		PrecacheModel( DAMAGEARROW_MODEL )
+
+		PrecacheModel( $"models/weapons/bullets/mgl_grenade.mdl" )
+		PrecacheModel( GRENADE_MODEL )
+	#endif
+}
+
+#if SERVER
+function InitDamageStates( ent )
+{
+	expect entity( ent )
+	asset modelName = ent.GetModelName()
+	if ( !(modelName in file.hitDataCache) )
+	{
+		local hitData = {}
+		file.hitDataCache[modelName] <- hitData
+
+		local entKVs = ent.CreateTableFromModelKeyValues()
+
+		hitData.hasHitData <- ("hit_data" in entKVs)
+		hitData.entKVs <- entKVs
+		hitData.damageStateInfo <- {}
+		hitData.skeletonData <- {}
+
+		if ( !hitData.hasHitData )
+			return
+
+		if ( !(ent.GetModelName() in bodyGroupSkeletons) )
+		{
+			// build a graph of bodygroup connections to calculate radial damage states
+			local skeletonData = {}
+
+			foreach ( bodyGroupName, bodyGroupData in entKVs.hit_data )
+			{
+				skeletonData[bodyGroupName] <- { siblings = [] }
+			}
+
+			foreach ( bodyGroupName, bodyGroupData in entKVs.hit_data )
+			{
+				if ( !("parent" in bodyGroupData ) )
+					continue
+
+				local parentName = bodyGroupData["parent"]
+
+				skeletonData[bodyGroupName].siblings.append( parentName )
+				skeletonData[parentName].siblings.append( bodyGroupName )
+			}
+
+			bodyGroupSkeletons[ ent.GetModelName() ] <- skeletonData
+		}
+
+		hitData.damageStateInfo <- {}
+		foreach ( bodyGroupName, bodyGroupData in entKVs.hit_data )
+		{
+			hitData.damageStateInfo[bodyGroupName] <- 0
+		}
+
+		hitData.skeletonData <- bodyGroupSkeletons[ ent.GetModelName() ]
+	}
+
+	ent.s.hasHitData <- file.hitDataCache[modelName].hasHitData
+	ent.s.entKVs <- clone file.hitDataCache[modelName].entKVs
+	ent.s.damageStateInfo <- clone file.hitDataCache[modelName].damageStateInfo
+	ent.s.skeletonData <- clone file.hitDataCache[modelName].skeletonData
+}
+
+
+void function TransferDamageStates( entity source, entity dest )
+{
+	// when you get in a titan from the other team, it wants to make your model match your team. grr.
+	if ( source.GetModelName() != dest.GetModelName() )
+		return
+
+	//Assert( source.GetModelName() == dest.GetModelName(), "Model name mismatch: " + source.GetModelName() + " " + dest.GetModelName() )
+
+	dest.SetFullBodygroup( source.GetFullBodygroup() )
+
+	if ( !HasDamageStates( dest ) )
+	{
+		dest.s.damageStateInfo <- null
+		dest.s.hasHitData <- null
+		dest.s.skeletonData <- null
+	}
+
+	dest.s.hasHitData = source.s.hasHitData
+	dest.s.damageStateInfo = source.s.damageStateInfo
+	dest.s.skeletonData = source.s.skeletonData
+}
+
+bool function TryHeadshotDeathFX( entity victim )
+{
+	asset headshotFX
+	headshotFX = victim.GetSettingsHeadshotFX()  // looks for "headshotFX" in an AI settings file or a player set file
+	if ( headshotFX == $"" )
+		return false
+
+	// Swap the head bodygroup
+	int bodyGroupIndex = victim.FindBodyGroup( "head" )
+
+	if ( bodyGroupIndex > -1 )
+	{
+		//The last body group should be the head swap
+		int stateIndex = victim.GetBodyGroupModelCount( bodyGroupIndex ) -1
+
+		victim.SetBodygroup( bodyGroupIndex, stateIndex )
+
+		printt( "Victim: " + victim + " BodyGroup: " + bodyGroupIndex + " StateIndex: " +  stateIndex )
+	}
+
+	int tagID = victim.LookupAttachment( "HEADSHOT" )
+	vector fxOrg = victim.GetAttachmentOrigin( tagID )
+	vector fxAng = victim.GetAttachmentAngles( tagID )
+
+	// Play FX
+	if ( victim.IsPlayer() )
+	{
+		//PlayFXOnEntity( headshotFX, victim, "HEADSHOT" )
+
+		int team = victim.GetTeam()
+
+		//Create friendly and enemy colored particle systems
+		entity friendlyColoredFX = CreateEntity( "info_particle_system" )
+		friendlyColoredFX.kv.start_active = 1
+		friendlyColoredFX.SetValueForEffectNameKey( headshotFX )
+		SetTeam( friendlyColoredFX, team )
+		friendlyColoredFX.kv.VisibilityFlags = ENTITY_VISIBLE_TO_FRIENDLY
+		SetTargetName( friendlyColoredFX, UniqueString() )
+		friendlyColoredFX.kv.cpoint1 = svGlobal.fx_CP_color_friendly.GetTargetName()
+		//friendlyColoredFX.SetOrigin( fxOrg )
+		//friendlyColoredFX.SetOwner( victim )
+		friendlyColoredFX.SetParent( victim, "HEADSHOT" )
+		DispatchSpawn( friendlyColoredFX )
+		thread DestroyAfterTime( friendlyColoredFX, 3.0 )
+
+		entity enemyColoredFX = CreateEntity( "info_particle_system" )
+		enemyColoredFX.kv.start_active = 1
+		enemyColoredFX.SetValueForEffectNameKey( headshotFX )
+		SetTeam( enemyColoredFX, team )
+		enemyColoredFX.kv.VisibilityFlags = ENTITY_VISIBLE_TO_ENEMY
+		SetTargetName( enemyColoredFX, UniqueString() )
+		enemyColoredFX.kv.cpoint1 = svGlobal.fx_CP_color_enemy.GetTargetName()
+		//friendlyColoredFX.SetOrigin( fxOrg )
+		//friendlyColoredFX.SetOwner( victim )
+		enemyColoredFX.SetParent( victim, "HEADSHOT" )
+		DispatchSpawn( enemyColoredFX )
+		thread DestroyAfterTime( enemyColoredFX, 3.0 )
+	}
+	else
+	{
+		PlayFX( headshotFX, fxOrg, fxAng, null )
+	}
+
+	return true
+}
+
+
+void function DestroyAfterTime( entity ent, float time )
+{
+	Assert( IsNewThread(), "Must be threaded off" )
+
+	ent.EndSignal( "OnDestroy" )
+
+	wait( time )
+
+	ent.Destroy()
+
+}
+
+void function HandleDeathPackage( entity ent, var damageInfo )
+{
+	if ( ent.IsMarkedForDeletion() )
+		return
+
+	// Code will disallow ragdoll in some cases, such on a player that is inside a dying titan.
+	if ( !DamageInfo_IsRagdollAllowed( damageInfo ) )
+		return
+
+	if ( DamageInfo_GetDamageSourceIdentifier( damageInfo ) == eDamageSourceId.round_end )
+		return
+
+	#if REVIVE_ENABLED == true
+	if ( ent.IsPlayer() && ShouldRevivePlayer( ent, damageInfo ) )
+	{
+		thread DeathPackage_PlayerRevive( ent )
+		return
+	}
+	#endif
+
+	int dpFlags = DamageInfo_GetCustomDamageType( damageInfo )
+
+	if ( ent.HasKey( "deathScriptFuncName" ) && ent.kv.deathScriptFuncName != "" )
+	{
+		var exceptions = ( dpFlags & DF_DISSOLVE ) && !( ent.GetClassName() in file.disallowDissolveList )
+		exceptions = exceptions || ( dpFlags & DF_GIB && ent.HasGibModel() )
+
+		if ( !exceptions )
+			return
+	}
+
+	Assert( !ent.e.forceGibDeath || !ent.e.forceRagdollDeath, ent + " had both ent.e.forceRagdollDeath and ent.e.forceGibDeath. Pick one!" )
+
+	bool forceRagdoll = ent.e.forceRagdollDeath
+
+	if ( dpFlags & DF_MELEE )
+	{
+		entity attacker = DamageInfo_GetAttacker( damageInfo )
+		DamageInfo_SetDeathPackage( damageInfo, "knockback" )
+	}
+
+	if ( SentryTurretsExplodeOnDeath() )
+	{
+		if ( IsTurret( ent ) )
+		{
+			if ( ent.GetClassName() == "npc_turret_sentry" )
+			{
+				PlayFX( TURRET_DEATH_FX, ent.GetOrigin(), ent.GetAngles() )
+				if ( ent.Dev_GetAISettingByKeyField( "turret_explode_on_death" ) == 1 )
+					ent.Destroy()
+
+				return
+			}
+		}
+	}
+
+	if ( !( "silentDeath" in ent.s ) )
+	{
+		PlayDeathSounds( ent, damageInfo )
+	}
+
+	if ( dpFlags <= 0 && !forceRagdoll )
+	{
+		if ( ent.IsTitan() )
+		{
+			// titan explodes!
+			PlayTitanDeathFx( ent )
+
+			GibTitan( ent, damageInfo )
+		}
+
+		return
+	}
+
+	if ( IsSuperSpectre( ent ) )
+	{
+		return	// handled in SuperSpectreDeath
+	}
+
+	if ( ( dpFlags & DF_HEADSHOT ) && IsHumanSized( ent ) && !ent.IsHologram() )
+		TryHeadshotDeathFX( ent )
+
+	if ( dpFlags & DF_INSTANT )
+		DamageInfo_SetDeathPackage( damageInfo, "instant" )
+	else if ( dpFlags & ( DF_KNOCK_BACK | DF_TITAN_STEP ) )
+		DamageInfo_SetDeathPackage( damageInfo, "knockback" )
+
+	if ( !forceRagdoll )
+	{
+		if ( ent.IsTitan() )
+		{
+			PlayTitanDeathFx( ent )
+
+			GibTitan( ent, damageInfo )
+			return
+		}
+		else
+		{
+			if ( dpFlags & DF_DISSOLVE && ( !(ent.GetClassName() in file.disallowDissolveList ) ) )
+			{
+				if ( dpFlags & DF_GIB && !ent.IsMechanical() )
+				{
+					ent.Dissolve( ENTITY_DISSOLVE_PINKMIST, Vector( 0, 0, 0 ), 500 )
+				}
+				else
+				{
+					ent.Dissolve( ENTITY_DISSOLVE_CORE, Vector( 0, 0, 0 ), 500 )
+				}
+			}
+		}
+
+		if ( ShouldDoHumanSizedGibs( ent, dpFlags ) )
+		{
+			HumanSizedGibDeath( ent, dpFlags, damageInfo )
+			return
+		}
+	}
+
+	if ( ((dpFlags & DF_RAGDOLL) && ent.GetArmorType() != ARMOR_TYPE_HEAVY) || forceRagdoll )
+	{
+		vector forceVec = DamageInfo_GetDamageForce( damageInfo )
+		float forceMag = Length( forceVec )
+		forceVec = Normalize( forceVec )
+		const MAX_FORCE = 30000
+		if ( forceMag > MAX_FORCE )
+			forceMag = MAX_FORCE
+
+		const bool SKIP_ANIMATION = true
+		ent.BecomeRagdoll( forceVec * forceMag, SKIP_ANIMATION )
+		return
+	}
+
+}
+
+bool function ShouldDoHumanSizedGibs( entity ent, int dpFlags )
+{
+	if ( !IsHumanSized( ent ) )
+		return false
+
+	if ( !ent.HasGibModel() )
+		return false
+
+	bool doGibs = false
+	if ( ent.e.forceGibDeath || ( dpFlags & DF_GIB ) )
+	{
+		doGibs = true
+	}
+	else if ( ( dpFlags & DF_SHOTGUN ) && ent.IsMechanical() && ent.IsNPC() )
+	{
+		if ( RandomInt( 2 ) == 1 )
+			doGibs = true
+	}
+
+	return doGibs
+}
+
+void function HumanSizedGibDeath( entity ent, int dpFlags, var damageInfo )
+{
+	vector forceVec = DamageInfo_GetDamageForce( damageInfo )
+	ent.Gib( forceVec )
+}
+
+void function GibTitan( entity titan, var damageInfo )
+{
+	if ( !HasHitData( titan ) )
+		return
+
+	DamageInfo_SetDeathPackage( damageInfo, "instant" )
+
+	local entKVs = titan.CreateTableFromModelKeyValues()
+	local hitData = entKVs["hit_data"]
+
+	foreach ( bodyGroupName, bodyGroupData in hitData )
+	{
+		if ( !("blank" in bodyGroupData) )
+			continue
+
+		local bodyGroupIndex = titan.FindBodyGroup( bodyGroupName )
+		local stateCount = titan.GetBodyGroupModelCount( bodyGroupIndex )
+		titan.SetBodygroup( bodyGroupIndex, stateCount - 1 )
+	}
+
+//	EmitSoundOnEntity( titan, "titan_death_explode" ) // moved to client side on bodygroup chang
+}
+
+
+void function UndoomTitan_Body( entity titan )
+{
+	if ( !HasHitData( titan ) )
+		return
+
+	local entKVs = titan.CreateTableFromModelKeyValues()
+	local hitData = entKVs["hit_data"]
+
+	foreach ( bodyGroupName, bodyGroupData in hitData )
+	{
+		int bodyGroupIndex = titan.FindBodyGroup( bodyGroupName )
+		titan.SetBodygroup( bodyGroupIndex, 0 )
+		//titan.SetBodygroup( bodyGroupIndex, stateCount - 1 )
+	}
+}
+
+void function DoomTitan( entity titan )
+{
+	if ( !HasHitData( titan ) )
+		return
+
+	local entKVs = titan.CreateTableFromModelKeyValues()
+	local hitData = entKVs["hit_data"]
+
+	foreach ( bodyGroupName, bodyGroupData in hitData )
+	{
+		bool hasBlank = ("blank" in bodyGroupData)
+
+		int bodyGroupIndex = titan.FindBodyGroup( bodyGroupName )
+		int stateCount = titan.GetBodyGroupModelCount( bodyGroupIndex )
+
+		if ( hasBlank )
+			stateCount -= 1
+
+		thread DelayedBodyGroupBreak( titan, bodyGroupIndex, stateCount - 1 )
+		//titan.SetBodygroup( bodyGroupIndex, stateCount - 1 )
+	}
+}
+
+void function DelayedBodyGroupBreak( entity titan, int bodyGroupIndex, int stateIndex )
+{
+	titan.EndSignal( "OnDeath" )
+	titan.EndSignal( "TitanEjectionStarted" )
+	titan.EndSignal( "TitanUnDoomed" )
+
+	if ( !HasSoul( titan ) )
+		return
+
+	entity soul = titan.GetTitanSoul()
+	soul.EndSignal( "OnDestroy" )
+
+	wait RandomFloat( 4.0 )
+
+	if ( !soul.HasValidTitan() )
+		return
+
+	titan = soul.GetTitan()
+
+	if ( titan == null )
+		return
+
+	titan.SetBodygroup( bodyGroupIndex, stateIndex )
+}
+
+
+void function ExplodeTitanBits( entity titan )
+{
+	if ( !HasHitData( titan ) )
+		return
+
+	local entKVs = titan.CreateTableFromModelKeyValues()
+	local hitData = entKVs["hit_data"]
+
+	foreach ( bodyGroupName, bodyGroupData in hitData )
+	{
+		local hasBlank = ("blank" in bodyGroupData)
+
+		local bodyGroupIndex = titan.FindBodyGroup( bodyGroupName )
+		local stateCount = titan.GetBodyGroupModelCount( bodyGroupIndex )
+
+		if ( hasBlank )
+			stateCount -= 1
+
+		titan.SetBodygroup( bodyGroupIndex, stateCount - 1 )
+	}
+}
+
+
+function UpdateDamageState( ent, damageInfo )
+{
+}
+
+
+function GetNumBrokenLimbs( titan )
+{
+	int brokenLimbs = 0
+
+	if ( titan.s.damageStateInfo["right_leg"] )
+		brokenLimbs++
+	if ( titan.s.damageStateInfo["left_leg"] )
+		brokenLimbs++
+	if ( titan.s.damageStateInfo["right_arm"] )
+		brokenLimbs++
+	if ( titan.s.damageStateInfo["left_arm"] )
+		brokenLimbs++
+
+	return brokenLimbs
+}
+
+function IsBodyGroupBroken( ent, bodyGroupName )
+{
+	if ( ent.IsTitan() )
+		return ( ent.s.damageStateInfo[bodyGroupName] )
+	else
+		return ( ent.s.damageStateInfo[bodyGroupName] > ( ent.GetMaxHealth() * TITAN_DAMAGE_STATE_ARMOR_HEALTH ) )
+}
+
+
+int function GetStateCountForBodyGroup( ent, bodyGroupName )
+{
+	local bodyGroupIndex = ent.FindBodyGroup( bodyGroupName )
+	local entKVs = ent.CreateTableFromModelKeyValues()
+	local hitData = entKVs["hit_data"]
+
+	int stateCount = expect int( ent.GetBodyGroupModelCount( bodyGroupIndex ) )
+
+	if ( "blank" in hitData[bodyGroupName] )
+		stateCount--
+
+	return stateCount
+}
+
+function GetTagsForBodyGroup( ent, bodyGroupName )
+{
+	local entKVs = ent.CreateTableFromModelKeyValues()
+
+	local hitData = entKVs["hit_data"]
+
+	local bodyGroupData = hitData[bodyGroupName]
+
+	local tags = []
+
+	foreach ( k, v in bodyGroupData )
+	{
+		if ( k.find( "tag" ) == null )
+			continue
+
+		tags.append( v )
+	}
+
+	return tags
+}
+
+function PlayTitanDeathFx( entity titan )
+{
+	PlayTitanDeathFx_Internal( titan, FX_PATTACH_POINT_FOLLOW )
+}
+
+function PlayTitanDeathFxUp( entity titan )
+{
+	PlayTitanDeathFx_Internal( titan, FX_PATTACH_POINT_FOLLOW_NOROTATE )
+}
+
+function PlayTitanDeathFx_Internal( entity titan, int attachType )
+{
+	int attachmentIndex = titan.LookupAttachment( "exp_torso_main" )
+	StartParticleEffectOnEntity( titan, TITAN_EXPLOSION_EFFECT, attachType, attachmentIndex )
+
+	TraceResults results = TraceLine( titan.GetOrigin(), titan.GetOrigin() + Vector( 0, 0, -TITAN_EXPLOSION_GROUNDWASH_HEIGHT ), [ titan ], TRACE_MASK_NPCSOLID_BRUSHONLY | TRACE_MASK_WATER, TRACE_COLLISION_GROUP_NONE )
+
+	if ( !results.startSolid && !results.allSolid && results.hitEnt )
+		PlayImpactFXTable( results.endPos, titan, TITAN_EXPLOSION_GROUNDWASH_FX_TABLE )
+}
+#endif
+
+const table<int, string> damageFlagsToNames =
+{
+	[DF_GIB					] = "DF_GIB",
+	[DF_DISSOLVE			] = "DF_DISSOLVE",
+	[DF_INSTANT				] = "DF_INSTANT",
+	[DF_NO_SELF_DAMAGE		] = "DF_NO_SELF_DAMAGE",
+	[DF_IMPACT				] = "DF_IMPACT",
+	[DF_BYPASS_SHIELD		] = "DF_BYPASS_SHIELD",
+	[DF_RAGDOLL				] = "DF_RAGDOLL",
+	[DF_TITAN_STEP 			] = "DF_TITAN_STEP",
+	[DF_RADIUS_DAMAGE 		] = "DF_RADIUS_DAMAGE",
+	[DF_ELECTRICAL 			] = "DF_ELECTRICAL",
+	[DF_BULLET 				] = "DF_BULLET",
+	[DF_EXPLOSION			] = "DF_EXPLOSION",
+	[DF_MELEE				] = "DF_MELEE",
+	[DF_NO_INDICATOR		] = "DF_NO_INDICATOR",
+	[DF_KNOCK_BACK			] = "DF_KNOCK_BACK",
+	[DF_STOPS_TITAN_REGEN	] = "DF_STOPS_TITAN_REGEN",
+	[DF_DISMEMBERMENT		] = "DF_DISMEMBERMENT",
+	[DF_MAX_RANGE			] = "DF_MAX_RANGE",
+	[DF_SHIELD_DAMAGE		] = "DF_SHIELD_DAMAGE",
+	[DF_CRITICAL			] = "DF_CRITICAL",
+	[DF_SKIP_DAMAGE_PROT	] = "DF_SKIP_DAMAGE_PROT",
+	[DF_HEADSHOT			] = "DF_HEADSHOT",
+	[DF_VORTEX_REFIRE		] = "DF_VORTEX_REFIRE",
+	[DF_RODEO				] = "DF_RODEO",
+	[DF_BURN_CARD_WEAPON	] = "DF_BURN_CARD_WEAPON",
+	[DF_KILLSHOT			] = "DF_KILLSHOT",
+	[DF_SHOTGUN				] = "DF_SHOTGUN",
+	[DF_SKIPS_DOOMED_STATE	] = "DF_SKIPS_DOOMED_STATE",
+	[DF_DOOMED_HEALTH_LOSS	] = "DF_DOOMED_HEALTH_LOSS",
+	[DF_DOOM_PROTECTED		] = "DF_DOOM_PROTECTED",
+	[DF_DOOM_FATALITY		] = "DF_DOOM_FATALITY",
+	[DF_NO_HITBEEP			] = "DF_NO_HITBEEP"
+}
+
+void function PrintDamageFlags( int flags )
+{
+	foreach ( int key, string value in damageFlagsToNames )
+	{
+		if ( flags & key )
+			printt( "Damage Flag: " + value + " was set    (" + key + ")" )
+	}
+}
+
+string function GetDescStringForDamageFlags( int flags )
+{
+	string appendedNames
+	int foundCount = 0
+	foreach ( int key, string value in damageFlagsToNames )
+	{
+		if ( !(flags & key) )
+			continue
+
+		if ( foundCount != 0 )
+			appendedNames += ", "
+		appendedNames = value
+
+		foundCount++
+	}
+
+	return ("(" + appendedNames + ")")
+}

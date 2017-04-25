@@ -1,0 +1,844 @@
+untyped
+
+globalize_all_functions
+
+
+
+
+global const ANALYSIS_PREVIEW_TIME = 5.0
+
+
+vector function GetOriginFromAttachPoint( AttachPoint point, vector origin, vector forward, vector right )
+{
+	origin += forward *  point.origin.x
+	origin += right *  -point.origin.y
+	origin += Vector(0,0, point.origin.z)
+	return origin
+}
+
+vector function GetOriginFromPoint( Point point, vector origin, vector forward, vector right )
+{
+	origin += forward *  point.origin.x
+	origin += right *  -point.origin.y
+	origin += Vector(0,0, point.origin.z)
+	return origin
+}
+
+vector function GetAnglesFromAttachPoint( AttachPoint point, vector angles )
+{
+	return AnglesCompose( angles, point.angles )
+}
+
+vector function GetAnglesFromPoint( Point point, vector angles )
+{
+	return AnglesCompose( angles, point.angles )
+}
+
+array<vector> function GetFlightPathPoints( FlightPath flightPath, vector origin, vector forward, vector right )
+{
+	array<vector> orgs = []
+	for ( int i = 0; i < flightPath.points.len(); i++ )
+	{
+		AttachPoint point = flightPath.points[i]
+		vector foundOrigin = GetOriginFromAttachPoint( point, origin, forward, right )
+
+		orgs.append( foundOrigin )
+	}
+
+	return orgs
+}
+
+#if SERVER
+void function InitCallinData( CallinData drop )
+{
+	drop.npcSpawnFuncs = [ CreateSoldier, CreateSoldier, CreateSoldier, CreateSoldier, CreateSoldier, CreateSoldier ]
+}
+
+
+function GetAnalysisNodePos( flightPath, node, hull )
+{
+	vector origin = GetNodePos( node )
+
+	if ( flightPath.model in level.superCallinOffset )
+	{
+		origin.z += expect float( level.superCallinOffset[ flightPath.model ] )
+	}
+
+	return origin
+}
+
+#endif // SERVER
+
+function GetPointFromPosition( dropship )
+{
+	local point = {}
+	point.origin <- dropship.GetOrigin()
+
+	local attach_id = dropship.LookupAttachment( "ORIGIN" )
+
+	if ( attach_id == 0 )
+	{
+		point.angles <- dropship.GetAngles()
+	}
+	else
+	{
+		point.angles <- dropship.GetAttachmentAngles( attach_id )
+	}
+
+	return point
+}
+
+bool function IsLegalFlightPath( FlightPath flightPath, vector origin, vector forward, vector right, bool draw = false )
+{
+	array<vector> orgs = GetFlightPathPoints( flightPath, origin, forward, right )
+
+	local endPos = orgs[ orgs.len()-1 ]
+
+	DoTraceCoordCheck( false )
+
+	for ( int i = 1; i < orgs.len(); i++ )
+	{
+		TraceResults result = TraceHull( orgs[i-1], orgs[i], flightPath.mins, flightPath.maxs, null, flightPath.traceMask, TRACE_COLLISION_GROUP_NONE )
+		if ( result.fraction < 1 )
+		{
+			if ( result.hitSky )
+			{
+//				DebugDrawLine( orgs[i-1], orgs[i], 0, 255, 0, true, ANALYSIS_PREVIEW_TIME )
+				continue
+			}
+
+			if ( Distance( result.endPos, endPos ) > 16 )
+			{
+//				if ( draw )
+//					DebugDrawLine( orgs[i-1], orgs[i], 255, 0, 0, true, ANALYSIS_PREVIEW_TIME )
+
+				DoTraceCoordCheck( true )
+				return false
+			}
+		}
+
+//		if ( draw )
+//			DebugDrawLine( orgs[i-1], orgs[i], 0, 255, 0, true, ANALYSIS_PREVIEW_TIME )
+	}
+
+//	DebugDrawLine( result.endPos, result.endPos + RandomVec( 50.0 ), 255, 255, 0, true, 0.2 )
+	DoTraceCoordCheck( true )
+	return true
+}
+
+bool function IsLegalFlightPath_OverTime( FlightPath flightPath, vector origin, vector forward, vector right, bool draw = false )
+{
+	array<vector> orgs = GetFlightPathPoints( flightPath, origin, forward, right )
+
+	local endPos = orgs[ orgs.len()-1 ]
+
+	DoTraceCoordCheck( false )
+
+	for ( int i = 1; i < orgs.len(); i++ )
+	{
+		TraceResults result = TraceHull( orgs[i-1], orgs[i], flightPath.mins, flightPath.maxs, null, flightPath.traceMask, TRACE_COLLISION_GROUP_NONE )
+		if ( result.fraction < 1 )
+		{
+			if ( result.hitSky )
+			{
+				if ( draw )
+					DebugDrawLine( orgs[i-1], orgs[i], 0, 255, 0, true, ANALYSIS_PREVIEW_TIME )
+				continue
+			}
+
+			if ( Distance( result.endPos, endPos ) > 16 )
+			{
+				if ( draw )
+					DebugDrawLine( orgs[i-1], orgs[i], 255, 0, 0, true, ANALYSIS_PREVIEW_TIME )
+
+				DoTraceCoordCheck( true )
+				return false
+			}
+		}
+
+		if ( draw )
+			DebugDrawLine( orgs[i-1], orgs[i], 0, 255, 0, true, ANALYSIS_PREVIEW_TIME )
+
+		WaitFrame()
+	}
+
+//	DebugDrawLine( result.endPos, result.endPos + RandomVec( 50.0 ), 255, 255, 0, true, 0.2 )
+	DoTraceCoordCheck( true )
+	return true
+}
+
+
+#if SERVER
+
+int function NodeAnalysis( FlightPath flightPath, int index, vector offset )
+{
+	array<bool> Array = []
+	Array.resize( ANALYSIS_STEPS )
+
+	vector origin = GetNodePos( index )
+	origin = origin + offset
+
+	TryAnalysisAtOrigin( flightPath, Array, origin )
+
+	int dataIndex = GetAnalysisDataIndex( flightPath )
+	int count = 0
+
+	for ( int p = 0; p < Array.len(); p++ )
+	{
+		if ( !Array[ p ] )
+		{
+			//printt( index + " " + p )
+			continue
+		}
+
+		SetNodeScriptData_Boolean( index, dataIndex + p, true )
+		count++
+		//printt( index + " *" + p + "*" )
+	}
+
+	return count
+}
+
+int function NodeAnalysisPreview( FlightPath flightPath, int index, vector offset )
+{
+	array<bool> Array = []
+	Array.resize( ANALYSIS_STEPS )
+
+	vector origin = GetNodePos( index )
+	origin = origin + offset
+
+	TryAnalysisAtOriginPreview( flightPath, Array, origin )
+	int dataIndex = GetAnalysisDataIndex( flightPath )
+	int count = 0
+
+	for ( int p = 0; p < Array.len(); p++ )
+	{
+		if ( !Array[ p ] )
+		{
+			printt( ( p + dataIndex ) + ": False" )
+			continue
+		}
+
+		printt( ( p + dataIndex ) + ": True" )
+		local yaw = p * ANALYSIS_YAW_STEP
+		vector angles = Vector( 0, yaw, 0 )
+		vector forward = AnglesToForward( angles )
+		//DebugDrawLine( origin, origin + forward * 80, 255, 100, 0, true, 5.0 )
+		count++
+	}
+
+	return count
+}
+
+void function TryAnalysisAtOriginPreview( FlightPath flightPath, array<bool> Array, vector origin )
+{
+	if ( FLIGHT_PATH_DEBUG )
+		DrawArrow( origin )
+	TryAnalysisAtOrigin( flightPath, Array, origin )
+}
+
+SpawnPointFP function GetNearestSpawnPointFromFunc( FlightPath flightPath, vector origin, int count, var functionref( int, int, float, float ) getFunc, float variable )
+{
+	//DebugDrawLine( origin, origin + Vector(0,0,100), 255, 0, 255, true, 2.0 )
+	int node = GetNearestNodeToPos( origin )
+	if ( node == -1 )
+	{
+		//DebugDrawLine( origin, origin + Vector(0,0,100), 255, 0, 0, true, 5.0 )
+		origin = OriginToGround( origin )
+		node = GetNearestNodeToPos( origin )
+
+		if ( node == -1 )
+		{
+			//DebugDrawLine( origin, origin + Vector(0,0,100), 255, 0, 0, true, 5.0 )
+			return InvalidSpawnPoint()
+		}
+	}
+
+	//DebugDrawLine( origin, GetNodePos( node, flightPath.hull ), 0, 255, 0, true, 5.0 )
+
+	int dataIndex = GetAnalysisDataIndex( flightPath )
+
+	if ( NodeAvailable( node ) )
+	{
+		var foundSpawnYaw = getFunc( node, dataIndex, variable, ANALYSIS_YAW_STEP )
+		if ( foundSpawnYaw != null )
+		{
+			expect float( foundSpawnYaw )
+			return CreateSpawnPoint( flightPath, node, foundSpawnYaw )
+		}
+	}
+
+	/*
+	// We don't support GetNeighborNodes with NavMesh 8/2015
+	array neighborNodes = GetNeighborNodes( node, count, flightPath.hull )
+
+	for ( int i = 0; i < neighborNodes.len(); i++ )
+	{
+		int neighborNode = expect int( neighborNodes[i] )
+		if ( !NodeAvailable( neighborNode ) )
+			continue
+		//DebugDrawLine( GetNodePos( neighborNode, HULL_HUMAN ), origin, 255, 255, 0, true, 2.0 )
+
+		var foundSpawnYaw = getFunc( neighborNode, dataIndex, variable, 0 )
+		if ( foundSpawnYaw != null )
+		{
+			expect float( foundSpawnYaw )
+			return CreateSpawnPoint( flightPath, neighborNode, foundSpawnYaw )
+		}
+	}
+	*/
+
+	return InvalidSpawnPoint()
+}
+
+SpawnPointFP function GetAnalysisSpawn_ClosestYaw( FlightPath flightPath, vector origin, float yaw, int nearestNodes = 10 )
+{
+	Assert( GetAINScriptVersion() == AIN_REV, "AIN out of date" )
+
+	yaw = FixYaw( yaw )
+
+	return GetNearestSpawnPointFromFunc( flightPath, origin, nearestNodes, GetSpawnPoint_ClosestYaw, yaw )
+}
+
+SpawnPointFP function GetAnalysisSpawn_Nearest( FlightPath flightPath, vector origin, int count )
+{
+	if ( GetAINScriptVersion() != AIN_REV )
+		return InvalidSpawnPoint()
+
+	return GetNearestSpawnPointFromFunc( flightPath, origin, count, GetSpawnPoint_Random, 0 )
+}
+#endif
+
+float function FixYaw( float yaw )
+{
+	yaw %= 360
+	if ( yaw < 0 )
+		yaw += 360
+	return yaw
+}
+
+#if SERVER
+SpawnPointFP function InvalidSpawnPoint()
+{
+	SpawnPointFP spawnPoint
+	return spawnPoint
+}
+
+SpawnPointFP function CreateSpawnPoint( FlightPath flightPath, int node, float spawnYaw )
+{
+	SpawnPointFP spawnPoint
+	vector origin = GetNodePos( node )
+	spawnPoint.angles = Vector( 0, spawnYaw, 0 )
+	spawnPoint.node = node
+	spawnPoint.valid = true
+
+	if ( flightPath.model in level.superCallinOffset )
+	{
+		origin.z += expect float( level.superCallinOffset[ flightPath.model ] )
+	}
+
+	spawnPoint.origin = origin
+	return spawnPoint
+}
+
+SpawnPointFP function CreateSpawnPointManual( vector origin, vector angles, int node )
+{
+	SpawnPointFP spawnPoint
+	spawnPoint.origin = origin
+	spawnPoint.angles = angles
+	spawnPoint.node = node
+	spawnPoint.valid = true
+	return spawnPoint
+}
+
+var function GetSpawnPoint_ClosestYaw( int nodeIndex, int dataIndex, float desiredYaw, float lowestYawDifference )
+{
+	float yaw
+	var closestYaw
+	float dif
+
+	for ( int i = 0; i < ANALYSIS_STEPS; i++ )
+	{
+//		local org = GetNodePos( nodeIndex, 0 )
+		if ( !GetNodeScriptData_Boolean( nodeIndex, i + dataIndex ) )
+		{
+//			DebugDrawLine( org, org + Vector(0,0,100 ), 255, 150, 0, true, 5.0 )
+			continue
+		}
+
+		yaw = i * ANALYSIS_YAW_STEP
+		dif = YawDifference( desiredYaw, yaw )
+		if ( dif > lowestYawDifference )
+		{
+//			DebugDrawLine( org, org + Vector(0,0,100 ), 0, 100, 255, true, 5.0 )
+			continue
+		}
+
+
+//		DebugDrawLine( org, org + Vector(0,0,100 ), 0, 255, 0, true, 5.0 )
+		lowestYawDifference = dif
+
+		closestYaw = yaw
+	}
+
+	if ( closestYaw != null )
+	{
+		Assert( closestYaw >= 0 && closestYaw <= 360 )
+	}
+
+	return closestYaw
+}
+
+var function GetSpawnPoint_Random( int nodeIndex, int dataIndex, float _1, float _2 )
+{
+	float yaw
+	array<float> legalYaws = []
+
+	for ( int i = 0; i < ANALYSIS_STEPS; i++ )
+	{
+		if ( !GetNodeScriptData_Boolean( nodeIndex, i + dataIndex ) )
+			continue
+
+		yaw = i * ANALYSIS_YAW_STEP
+		legalYaws.append( yaw )
+	}
+
+	if ( !legalYaws.len() )
+		return null
+
+	return legalYaws.getrandom()
+}
+
+SpawnPointFP function FindNearestDropPosWithYawAndFallback( FlightPath flightPath, CallinData drop )
+{
+	// try in front of us
+	return GetAnalysisSpawn_ClosestYaw( flightPath, drop.origin, drop.yaw, 30 )
+}
+
+SpawnPointFP function FindNearestDropPositionWithYaw( FlightPath flightPath, CallinData drop )
+{
+	vector angles = Vector( 0, drop.yaw, 0 )
+	vector forward = AnglesToForward( angles )
+
+	// try in front of us
+	return GetAnalysisSpawn_ClosestYaw( flightPath, drop.origin, drop.yaw, 10 )
+}
+
+SpawnPointFP function FindNearestDropPosition( FlightPath flightPath, CallinData drop )
+{
+//	vector angles = Vector( 0, drop.yaw, 0 )
+//	vector forward = AnglesToForward( angles )
+
+	// try in front of us
+	return GetAnalysisSpawn_Nearest( flightPath, drop.origin, 5 )
+}
+
+/*
+function FindSpawnpointAtDistance( flightPath, CallinData drop )
+{
+	local node, dist, origin
+	local pumpOrigin = drop.origin
+	local found = []
+
+	if ( drop.yaw )
+	{
+		vector forward = AnglesToForward( Vector(0, drop.yaw, 0) )
+		pumpOrigin += forward * drop.dist
+		drop.dist = 800
+	}
+
+	local maxDist = 0
+	local mostDistant = null
+
+	local spawnPoints = GetSpawnPoints( flightPath )
+
+	foreach ( node, yaws in spawnPoints )
+	{
+		if ( !yaws.len() )
+			continue
+
+		origin = GetNodePos( node, flightPath.hull )
+		dist = Distance( origin, pumpOrigin )
+
+		if ( dist > maxDist )
+		{
+			maxDist = dist
+		}
+
+		if ( dist >= drop.dist )
+		{
+			local spawn = CreateSpawnPoint( flightPath, node, yaws[0] )
+			spawn.dist <- dist // add this for sorting
+			found.append( spawn )
+		}
+	}
+
+
+	if ( !found.len() )
+	{
+		maxDist *= 0.9
+		foreach ( node, yaws in spawnPoints )
+		{
+			if ( !yaws.len() )
+				continue
+
+			origin = GetNodePos( node, flightPath.hull )
+			dist = Distance( origin, pumpOrigin )
+
+			if ( dist > maxDist )
+			{
+				local spawn = CreateSpawnPoint( flightPath, node, yaws[0] )
+				spawn.dist <- dist // add this for sorting
+				found.append( spawn )
+			}
+		}
+
+		if ( !found.len() )
+			return
+	}
+
+	found.sort( CallinCompare )
+	local result = found[0]
+
+	local vec = drop.origin - result.origin
+	vector angles = VectorToAngles( vec )
+
+	local Table = {}
+	Table.origin <- result.origin
+	Table.yaw <- angles.y
+
+	local betterResult = FindNearestDropPositionWithYaw( flightPath, Table )
+
+	if ( betterResult )
+	{
+		return betterResult
+	}
+
+	return result
+}
+*/
+
+function CallinCompare( a, b )
+{
+	if ( a.dist < b.dist )
+		return -1
+	if ( a.dist > b.dist )
+		return 1
+	return 0
+}
+
+
+
+function NodeInHotDropFov( int nearestNode, FlightPath flightPath, int dataIndex, vector startOrigin, vector forward )
+{
+	if ( !NodeHasFlightPath( dataIndex, nearestNode ) )
+		return false
+
+	local nearestNodeOrigin = GetNodePos( nearestNode )
+
+	// do a flat dot
+	nearestNodeOrigin.z = startOrigin.z
+
+	local nearestVec = nearestNodeOrigin - startOrigin
+	nearestVec.Norm()
+	local nearestDot = DotProduct( forward, nearestVec )
+
+	//if ( nearestDot >= 0.95 )
+	//{
+	//	local start = GetPlayerArray()[0].GetOrigin()
+	//	DebugDrawLine( start, start + forward * 1500, 255, 255, 0, true, 5.0 )
+	//	DebugDrawLine( start, start + nearestVec * 1500, 155, 255, 50, true, 5.0 )
+	//}
+	//printt( "dot " + nearestDot )
+	return nearestDot >= 0.95
+}
+
+int function GetClosestYawIndexFromYaw( float desiredYaw )
+{
+	float lowestYawDifference = 360
+	float yaw, dif
+	int yawIndex
+	bool foundYaw
+	for ( int i = 0; i < ANALYSIS_STEPS; i++ )
+	{
+		yaw = i * ANALYSIS_YAW_STEP
+		dif = YawDifference( desiredYaw, yaw )
+		if ( dif > lowestYawDifference )
+			continue
+
+		lowestYawDifference = dif
+		yawIndex = i
+		foundYaw = true
+	}
+
+	Assert( foundYaw )
+
+	return yawIndex
+}
+
+SpawnPointFP function FindSpawnpointFromYawOnly( FlightPath flightPath, CallinData drop )
+{
+	// find the yaw index we will be searching through
+	int yawIndex = GetClosestYawIndexFromYaw( drop.yaw )
+	float resultYaw = yawIndex * ANALYSIS_YAW_STEP // the yaw we'll actually be when we use the node
+
+	int iterator = flightPath.iterator
+	int dataIndex = GetAnalysisDataIndex( flightPath )
+
+	int nodeCount = GetNodeCount()
+	Assert( nodeCount > 0, "No nodes in level. Does this level have a nav mesh?" )
+
+	int nodeIndex
+	int nodeOffset = RandomInt( nodeCount )
+
+	for ( int i = 0; i < nodeCount; i++ )
+	{
+		// start on a randone node and go forwards until we get a legal node
+		nodeIndex = i + nodeOffset
+		nodeIndex %= nodeCount
+		vector origin = GetNodePos( nodeIndex )
+
+		if ( !GetNodeScriptData_Boolean( nodeIndex, yawIndex + dataIndex ) )
+			continue
+
+		if ( !NodeAvailable( nodeIndex ) )
+			continue
+
+		return CreateSpawnPoint( flightPath, nodeIndex, resultYaw )
+	}
+
+	return InvalidSpawnPoint()
+}
+
+
+function NodeAvailable( nodeIndex )
+{
+	if ( !( nodeIndex in level.spawnPointsInUse ) )
+		return true
+
+	return Time() > level.spawnPointsInUse[ nodeIndex ]
+}
+
+SpawnPointFP function TryFromOrigin_FallbackToNearest( FlightPath flightPath, CallinData drop )
+{
+	float range = drop.dist
+	Assert( range )
+	float yaw = drop.yaw
+	vector origin = drop.origin
+
+	yaw = FixYaw( yaw )
+
+	// try at origin
+	SpawnPointFP result = GetAnalysisSpawn_ClosestYaw( flightPath, origin, yaw, 30 )
+	if ( result.valid )
+		return result
+
+	vector angles = Vector( 0, yaw, 0 )
+	vector forward = AnglesToForward( angles )
+	vector right = AnglesToRight( angles )
+
+	// try to the right
+	result = GetAnalysisSpawn_ClosestYaw( flightPath, origin + right * range, yaw, 30 )
+	if ( result.valid )
+		return result
+
+	// left
+	result = GetAnalysisSpawn_ClosestYaw( flightPath, origin + right * -range, yaw, 30 )
+	if ( result.valid )
+		return result
+
+	// try in back
+	result = GetAnalysisSpawn_ClosestYaw( flightPath, origin + forward * -range, yaw, 30 )
+	if ( result.valid )
+		return result
+
+	// try in front
+	result = GetAnalysisSpawn_ClosestYaw( flightPath, origin + forward * range, yaw, 30 )
+	if ( result.valid )
+		return result
+
+	return GetAnalysisSpawn_Nearest( flightPath, origin, 5 )
+}
+
+
+void function SetCallinStyle( CallinData drop, int style )
+{
+	drop.style = style
+	drop.styleSet = true
+}
+
+void function SetCallinYaw( CallinData drop, float yaw )
+{
+	drop.yaw = yaw
+	drop.yawSet = true
+}
+
+void function SetCallinOwnerEyePos( CallinData drop, vector ownerEyePos )
+{
+	drop.ownerEyePos = ownerEyePos
+	drop.ownerEyePosSet = true
+}
+
+SpawnPointFP function GetSpawnPointForStyle( FlightPath flightPath, CallinData drop )
+{
+	if ( GetAINScriptVersion() != AIN_REV )
+		return InvalidSpawnPoint()
+
+	PerfStart( PerfIndexServer.GetSpawnPointForStyle )
+
+	int style = drop.style
+	if ( !drop.styleSet )
+	{
+		if ( !drop.yawSet )
+		{
+			style = eDropStyle.NEAREST
+		}
+		else
+		{
+			style = eDropStyle.NEAREST_YAW
+		}
+	}
+
+	SpawnPointFP spawnPoint
+
+	switch ( style )
+	{
+		case eDropStyle.NEAREST_YAW:
+			spawnPoint = FindNearestDropPositionWithYaw( flightPath, drop )
+			break
+
+		case eDropStyle.NEAREST:
+			spawnPoint = FindNearestDropPosition( flightPath, drop )
+			break
+
+		case eDropStyle.FLYER_PICKUP:
+		case eDropStyle.ZIPLINE_NPC:
+			spawnPoint = TryFromOrigin_FallbackToNearest( flightPath, drop )
+			break
+
+		case eDropStyle.RANDOM_FROM_YAW:
+			spawnPoint = FindSpawnpointFromYawOnly( flightPath, drop ) // owner, 1800 )
+			break
+
+		case eDropStyle.FORCED:
+			spawnPoint = CreateSpawnPointManual( drop.origin, Vector( 0, drop.yaw, 0 ), GetNearestNodeToPos( drop.origin ) )
+			break
+
+		case eDropStyle.NEAREST_YAW_FALLBACK:
+			spawnPoint = FindNearestDropPosWithYawAndFallback( flightPath, drop )
+			break
+
+//		case eDropStyle.FROM_SET_DISTANCE:
+//			spawnPoint = FindSpawnpointAtDistance( flightPath, CallinData drop )
+//
+//			break
+
+		default:
+			Assert(0, "Unknown style " + style )
+			break
+	}
+
+	PerfEnd( PerfIndexServer.GetSpawnPointForStyle )
+
+	if ( !spawnPoint.valid )
+		return InvalidSpawnPoint()
+
+	//DebugDrawLine( spawnPoint.origin, drop.origin, 255, 0, 255, true, 15.0 )
+	//printt( "Reserved " + spawnPoint.node )
+	// reserve the spawn point
+
+	//Assert( NodeAvailable( spawnPoint.node ) )
+	level.spawnPointsInUse[ spawnPoint.node ] <- Time() + SPAWNPOINT_USE_TIME
+
+	if ( AnalysisHasPrepSpawnpointFunc( flightPath ) )
+	{
+		var newOrg = RunAnalysisPrepFunc( flightPath, spawnPoint.origin, spawnPoint.angles.y )
+		if ( newOrg != null )
+			spawnPoint.origin = expect vector( newOrg )
+		// bring this assert back
+		//spawnPoint.origin = flightPath.analysisPrepSpawnpointFunc( spawnPoint.origin, spawnPoint.angles.y )
+		//Assert( spawnPoint.origin, "Spawnpoint failed prep!" )
+	}
+
+	return spawnPoint
+}
+
+Point function GetWarpinPosition( asset model, string animation, vector origin, vector angles )
+{
+	Point start
+
+	if ( HasAnalysisForModel( model, animation ) )
+	{
+		FlightPath flightPath = GetAnalysisForModel( model, animation )
+
+		Assert( flightPath.points.len(), "No points in flightPath" )
+		AttachPoint point = flightPath.points[0]
+		vector forward = AnglesToForward( angles )
+		vector right = AnglesToRight( angles )
+
+		start.origin = GetOriginFromAttachPoint( point, origin, forward, right )
+		start.angles = GetAnglesFromAttachPoint( point, angles )
+		return start
+	}
+
+	entity dummyDropship = CreatePropDynamic( model, origin, angles )
+	dummyDropship.Hide()
+	dummyDropship.SetOrigin( origin )
+    dummyDropship.SetAngles( angles )
+	Attachment attachResult = dummyDropship.Anim_GetAttachmentAtTime( animation, "ORIGIN", 0 )
+	start.origin = attachResult.position
+    start.angles = attachResult.angle
+	dummyDropship.Destroy()
+
+	return start
+}
+
+function NodeHasFlightPath( dataIndex, nodeIndex )
+{
+	for ( int p = 0; p < ANALYSIS_STEPS; p++ )
+	{
+		if ( GetNodeScriptData_Boolean( nodeIndex, p + dataIndex ) )
+			return true
+	}
+
+	return false
+}
+
+int function GetFlightPathCount( dataIndex, nodeIndex )
+{
+	int count = 0
+	for ( int p = 0; p < ANALYSIS_STEPS; p++ )
+	{
+		if ( GetNodeScriptData_Boolean( nodeIndex, p + dataIndex ) )
+			count++
+	}
+
+	return count
+}
+
+bool function FlightPathHasNodeAndMatchesAINData( FlightPath flightPath )
+{
+	local dataIndex = GetAnalysisDataIndex( flightPath )
+	vector offset = GetAnalysisOffset( flightPath )
+
+	int hits = 0
+	bool foundPass;
+	for ( int i = 0; i < GetNodeCount(); i++ )
+	{
+		for ( int p = 0; p < ANALYSIS_STEPS; p++ )
+		{
+			if ( !GetNodeScriptData_Boolean( i, p + dataIndex ) )
+				continue
+
+			float yaw = p * ANALYSIS_YAW_STEP
+			// should always succeed if the node data was writen as true, represents node data mismatch
+			if ( !PassedAnalysisFunc( flightPath, GetNodePos( i ) + offset, yaw ) )
+				return false
+
+			foundPass = true
+		}
+	}
+
+	return foundPass
+}
+#endif // SERVER

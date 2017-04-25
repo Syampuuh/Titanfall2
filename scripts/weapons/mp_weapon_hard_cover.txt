@@ -1,0 +1,34 @@
+#base "mp_weapon_deployable_cover.txt"
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_HARD_COVER"
+	"shortprintname"								"#WPN_HARD_COVER_SHORT"
+	"description" 									"#WPN_HARD_COVER_DESC"
+	"longdesc" 										"#WPN_HARD_COVER_LONGDESC"
+
+	"readymessage"              					"#HUD_BURNMETER_READY_HARD_COVER"
+	"readyhint"                 					"#HUD_BURNMETER_READY_HARD_COVER_HINT"
+
+	"menu_icon"										"rui/menu/boosts/boost_icon_shield"
+	"hud_icon"										"rui/menu/boosts/boost_icon_shield"
+
+	"weaponClass" 									"human"
+	"fire_mode"   									"offhand"
+	"offhand_toss"									"1"
+	"minimap_reveal_distance"						"32000"
+	"fast_swap_to"									"1"
+	"dev_menu_type"									"offhand" // fire_mode isn't readable from script
+
+	"battle_chatter_event"							"bc_pHardcover"
+
+	// Menu Stats
+	Mods
+	{
+		burn_card_weapon_mod
+		{
+
+		}
+
+	}
+}

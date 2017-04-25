@@ -1,0 +1,85 @@
+"UnlitTwoTexture"
+{
+	"$surfaceprop" "metal"
+	//"$basetexture" "models\titans\titan_ar_marker\titan_ar_marker_col"
+	"$basetexture" "effects\white"
+	$texture2 		effects\dev_scanline_small
+
+	$alpha 1
+
+	$nodecal 1
+	$model 1
+	$ignorez 1
+	$translucent 1
+	$nofog 1
+	$no_fullbright 1
+	$allowoverbright 1
+	$translucent 1
+	$additive 1
+
+	$screenspacecoordssquare2 1
+
+	$layercolor1 "[0.1 0.0 0.0]"
+	$layeralpha1 "0.1"
+	$layercolor2 "[0.4 0.05 0.0]"
+	$layeralpha2 "1.0"
+	$addlayers 1
+
+
+	$fresnel 0
+
+	$fresnelSharpness1 1.0
+	$fresnelOuterStrength1 0.0
+	$fresnelInnerStrength1 1.0
+
+	$fresnelSharpness2 0.0
+	$fresnelOuterStrength2 1.0
+	$fresnelInnerStrength2 0.0
+
+	$t2scroll		"[0 1]"
+	$t2scale		"[3 3]"
+
+	//$matchColor		"[0.0 0.25 0.4]"
+	//$mismatchColor	"[0.4 0.05 0.0]"
+	$matchColor		"[0.0 1.5 2.4]"
+	$mismatchColor	"[20. 0.60 0.0]"
+
+	Proxies
+	{
+		EntitySonarColor
+		{
+			sameTeamColorVar	$matchColor
+			otherTeamColorVar	$mismatchColor
+
+			resultvar	$layercolor2
+		}
+
+		EntitySonarColor
+		{
+			sameTeamColorVar	$matchColor
+			otherTeamColorVar	$mismatchColor
+
+			resultvar	$layercolor1
+		}
+
+		EntityScript
+		{
+			scriptFuncName	"VMTCallback_MPEntitySonarFrac"
+			resultVar $alpha
+		}
+
+		TextureScroll
+		{
+			"textureScrollVar" "$t2scroll"
+			"textureScrollRate" 0.8
+			"textureScrollAngle" -90
+		}
+
+		TextureTransform
+		{
+			translateVar	$t2scroll
+			scaleVar		$t2scale
+			resultVar 		$texture2transform
+		}
+	}
+}

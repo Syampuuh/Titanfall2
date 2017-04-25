@@ -1,0 +1,61 @@
+"UnlitTwoTexture"
+{
+	"$translucent"	1
+	"$additive" "1"
+	"$no_fullbright" 1
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+
+	"$decal" "1"
+	"$decalscale" 0.1
+	"$decalfadeduration" 2.00
+	"$decalfadetime" 0.25
+	"$decalsecondpass" 1
+
+	"$basetexture" "decals/bullets/metal_titan/shot1_mip0"
+//	"$Texture2" "effects/electric_anim"
+	"$Texture2" "effects/caustic_water_01"
+	"$texture2transform" "center .5 .5 scale 0.25 0.25 rotate 0 translate 0 0"
+
+	"$allowoverbright" 1
+//	"$color2" "[2 1.5 1]"
+	"$color2" "[2 1.5 1.5]"
+		
+	"$t2scale" "[0.1 0.1]"
+	"$t2rot" "1"
+	"$scroll" "[0 1]"
+	
+	"Proxies"
+	{
+		//Horizontal Scroll speed 
+		"LinearRamp"
+		{
+			"rate" .1
+			"resultVar" "$scroll[0]"
+		}
+
+		//Vertical Scroll speed 
+		"LinearRamp"
+		{
+			"rate" .1
+			"resultVar" "$scroll[1]"
+		}
+
+		//Rotate speed 
+		"LinearRamp"
+		{
+			"rate" 1
+			"resultVar" "$t2rot"
+		}
+
+		//Scale and scroll 2nd texture 
+		"TextureTransform"
+		{
+			"scaleVar" "$t2scale"
+			"rotateVar" "$t2rot"
+			"translateVar" "$scroll"
+			"resultvar" "$texture2transform"
+		}
+	}
+
+}

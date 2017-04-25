@@ -1,0 +1,183 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_TITAN_SWORD"
+	"shortprintname"								"#WPN_TITAN_SWORD_SHORT"
+	"description" 									"#WPN_TITAN_SWORD_DESC"
+	"longdesc"										"#WPN_TITAN_SWORD_LONGDESC"
+
+	"menu_icon"										"r2_ui/menus/loadout_icons/titan_weapon/titan_weapon_sword"
+	"hud_icon"										"r2_ui/menus/loadout_icons/titan_weapon/titan_weapon_sword"
+
+	"weaponClass" 									"titan"
+	"weaponType"									"melee"
+	"body_type"										"battle_rifle"
+	"fire_mode"   									"offhand_melee"
+	"never_drop"									"1"
+
+	"offhand_holster_primary"						"1"
+	"holster_type"									"pistol"
+	"offhand_transition_has_attach_detach_anim_events" "1"
+	"allow_empty_click"   							"1"
+
+	"OnWeaponActivate"								"OnWeaponActivate_titanweapon_sword"
+	"OnWeaponDeactivate"							"OnWeaponDeactivate_titanweapon_sword"
+
+	SP_BASE
+	{
+		"melee_range"									"325"
+		"melee_attack_animtime"							"1.2"
+
+		"melee_damage"									"625"
+		"melee_damage_heavyarmor"						"625"
+	}
+	MP_BASE
+	{
+		"melee_range"									"325"
+		"melee_attack_animtime"							"0.9"
+
+		"melee_damage"									"800"
+		"melee_damage_heavyarmor"						"800"
+	}
+
+	"npc_max_engage_range"							"250"
+	"npc_max_engage_range_heavy_armor"				"250"
+
+	"npc_min_burst"									"0"
+	"npc_max_burst"									"0"
+
+	// Models
+	"viewmodel"   									"models/weapons/titan_sword/atpov_titan_sword.mdl"
+	"playermodel" 									"models/weapons/titan_sword/w_titan_sword.mdl"
+	"holstermodel"    								"models/weapons/titan_sword/w_titan_sword.mdl"
+
+	// Melee
+	"melee_lunge_time"								"0.5"
+	"melee_raise_recovery_animtime_normal"			"0.5"
+	"melee_raise_recovery_animtime_quick"			"0.5"
+	"melee_can_hit_humansized"						"1"
+	"melee_can_hit_titans"							"1"
+	"melee_rumble_on_hit"							"titan_melee_hit_sword"
+	"melee_rumble_on_hit_partial"					"titan_melee_hit_partial"
+	"melee_freezelook_on_hit"						"0.25"
+	"melee_sound_attack_1p"							"ronin_sword_melee_1p"
+	"melee_sound_attack_3p"							"ronin_sword_melee_3p"
+	"melee_anim_1p_number"							"1"								// ACT_VM_MELEE_ATTACK1, 2, or 3
+	"melee_anim_3p"									"ACT_GESTURE_MELEE_ATTACK3"
+	"damage_flags"									"DF_MELEE | DF_GIB"
+	"impact_effect_table"							"titan_sword"
+	"impulse_force"   								"5000"
+
+	"zoom_effects"									"0"
+
+	"melee_lunge_target_range"						"100"
+	"melee_lunge_target_angle"						"45"
+
+	//
+	"ammo_suck_behavior"							"melee_weapons"
+	"viewkick_spring" 								"melee"
+
+	"viewkick_pitch_base" 							"-1.75"
+	"viewkick_pitch_random"   						"0.75"
+	"viewkick_pitch_softScale"						"0.3"
+	"viewkick_pitch_hardScale"						"10.5"
+
+	"viewkick_yaw_base"   							"-0.65"
+	"viewkick_yaw_random" 							"0.38"
+	"viewkick_yaw_softScale"  						"0.38"
+	"viewkick_yaw_hardScale"  						"30.5"
+
+	"viewkick_roll_base"  							"0"
+	"viewkick_roll_randomMin" 						"0.6"
+	"viewkick_roll_randomMax" 						"0.8"
+	"viewkick_roll_softScale" 						"0.2"
+	"viewkick_roll_hardScale" 						"40.75"
+
+	//
+	"damage_rodeo" 									"100"
+	"aimassist_disable_hipfire"						"1"
+	"aimassist_disable_ads"							"1"
+
+	// Bob
+	"bob_cycle_time"  								"0.7"
+	"bob_vert_dist"   								"1.5"
+	"bob_horz_dist"   								"2.5"
+	"bob_max_speed"   								"150"
+	"bob_pitch"   									"1"
+	"bob_yaw" 										"0.80"
+	"bob_roll"										"-2.25"
+
+	// View Drift
+	"viewdrift_hipfire_stand_scale_pitch" 			"0.5"
+	"viewdrift_hipfire_crouch_scale_pitch"			"0.1"
+	"viewdrift_hipfire_air_scale_pitch"   			"0.1"
+	"viewdrift_hipfire_stand_scale_yaw"   			"0.5"
+	"viewdrift_hipfire_crouch_scale_yaw"  			"0.075"
+	"viewdrift_hipfire_air_scale_yaw" 				"0.075"
+	"viewdrift_hipfire_speed_pitch"   				"0.6"
+	"viewdrift_hipfire_speed_yaw" 					"0.5"
+
+	// Sway
+	"sway_rotate_attach"  							"SWAY_ROTATE"
+	"sway_min_x"  									"-0.3"
+	"sway_min_y"  									"-0.5"
+	"sway_min_z"  									"-0.5"
+	"sway_max_x"  									"0.3"
+	"sway_max_y"  									"0.5"
+	"sway_max_z"  									"0.1"
+	"sway_min_pitch"  								"-3"
+	"sway_min_yaw"									"-3.5"
+	"sway_min_roll"   								"-1"
+	"sway_max_pitch"  								"3"
+	"sway_max_yaw"									"3.5"
+	"sway_max_roll"   								"2"
+	"sway_translate_gain" 							"10"
+	"sway_rotate_gain"								"12"
+	"sway_move_forward_translate_x"   				"0"
+	"sway_move_forward_translate_z"   				"-0.5"
+	"sway_move_back_translate_x"  					"-2"
+	"sway_move_back_translate_z"  					"-1"
+	"sway_move_left_translate_y"  					"-1"
+	"sway_move_left_translate_z"  					"-0.5"
+	"sway_move_left_rotate_roll"  					"-1"
+	"sway_move_right_translate_y" 					"1"
+	"sway_move_right_translate_z" 					"-0.5"
+	"sway_move_right_rotate_roll" 					"2"
+	"sway_move_up_translate_z"						"-1"
+	"sway_move_down_translate_z"  					"1"
+	"sway_turn_left_rotate_yaw"   					"-2"
+	"sway_turn_right_rotate_yaw"  					"2"
+	"sway_turn_up_rotate_pitch"   					"2"
+	"sway_turn_down_rotate_pitch" 					"-2"
+
+	// WeaponED Unhandled Key/Values and custom script Key/Values
+	"deployfirst_time"								"1.25"
+	//"sprintcycle_time"								".55"
+
+	"npc_max_range"   								"100"	// prevent COND_CAN_RANGE_ATTACK1
+
+	Mods
+	{
+		super_charged
+		{
+			"fire_mode"											"offhand_melee_hybrid"
+			"melee_damage"										"2200"
+			"melee_damage_heavyarmor"							"2200"
+			"attack_button_presses_melee"						"1"
+			"impact_effect_table"								"titan_sword"
+			"melee_rumble_on_hit"								"titan_melee_hit_swordcore"
+			"offhand_transition_has_attach_detach_anim_events"	"0"
+			"activitymodifier"									"melee_titan_sword_super_charged"
+			"melee_angle"										"45"
+		}
+
+		super_charged_SP
+		{
+			"melee_damage"										"*2.25"
+			"melee_damage_heavyarmor"							"*2.25"
+			"offhand_transition_has_attach_detach_anim_events" 	"0"
+			"activitymodifier"									"melee_titan_sword_super_charged"
+			"melee_angle"										"45"
+		}
+	}
+}

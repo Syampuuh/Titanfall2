@@ -1,0 +1,10 @@
+#base "titan_ogre.set"
+"titan_heavy_ogre"
+{
+	"global"
+	{
+		bodymodel			"models/titans/heavy/titan_heavy_ogre.mdl"
+		armsmodel			"models/weapons/arms/pov_titan_heavy_ogre.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_heavy_cockpit.mdl"
+	}
+}

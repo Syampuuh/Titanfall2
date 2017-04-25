@@ -1,0 +1,19 @@
+"SpriteCard"
+{
+	$basetexture "particle/smoke/smoke_charge_02/smoke_charge02_LP"
+	$texColorFromAlpha 1
+
+	$RAMPTEXTURE "particle/ramps/smoke_charge02_LP_grey.vtf"
+
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+	//$maxsize .8
+	$startfadesize .9
+	$endfadesize 1.3
+	$DEPTHBLEND 1
+	$depthblendscale 50
+
+	$vertexFogAmount 1
+
+}

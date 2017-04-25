@@ -1,0 +1,56 @@
+global function GetSaveName
+global function HasValidSaveGame
+global function SaveGame_LoadWithStartPointFallback
+
+string function GetSaveName()
+{
+	return "savegame"
+}
+
+bool function HasValidSaveGame()
+{
+	string saveName = GetSaveName()
+
+	printt( "SAVEGAME try is valid " + saveName )
+	if ( !SaveGame_IsValid( saveName ) )
+	{
+		printt( "SAVEGAME !isvalid" )
+		return false
+	}
+
+	printt( "SAVEGAME is valid  " + saveName )
+	return true
+}
+
+void function SaveGame_LoadWithStartPointFallback( int detent = DETENT_FORCE_DISABLE, bool coopersLog = COOPERS_LOG_FORCE_DISABLED )
+{
+	string saveName = GetSaveName()
+	string mapName = SaveGame_GetMapName( saveName )
+	int startPointIndex = SaveGame_GetStartPoint( saveName )
+
+	if ( SaveGame_GetVersion( saveName ) == SAVEGAME_VERSION )
+	{
+		// normal level load
+		array<string> clientCommands = GetLoadingClientCommands( mapName, startPointIndex, detent, coopersLog )
+		ExecuteClientCommands( clientCommands )
+		SaveGame_Load( saveName )
+		return
+	}
+
+	if ( DevStartPoints() )
+	{
+		if ( Dev_CommandLineHasParm( STARTPOINT_DEV_STRING ) )
+			Dev_CommandLineRemoveParm( STARTPOINT_DEV_STRING )
+	}
+
+	startPointIndex = GetStartPointToLastGameplayLegalStartPoint( mapName, startPointIndex )
+	ExecuteLoadingClientCommands_SetStartPoint( mapName, startPointIndex, detent, coopersLog )
+
+	#if UI
+	ClientCommand( "map " + mapName )
+	#endif
+
+	#if SERVER && SP
+	ClientCommand( GetFirstPlayer(), "map " + mapName )
+	#endif
+}

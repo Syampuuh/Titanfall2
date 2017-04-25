@@ -1,0 +1,15 @@
+"SpriteCard"
+{
+	"$basetexture" "particle/glows/glare_spike"
+
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+	$additive 1
+
+	$ignorez 1
+
+	$vertexFogAmount 1
+	$disabledof 1
+	$disabletsaa 1
+}

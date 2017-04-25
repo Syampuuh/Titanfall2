@@ -1,0 +1,297 @@
+untyped
+
+global function SideNotifications_Init
+global function ServerCallback_LoadoutNotification
+global function ServerCallback_ItemNotification
+
+global function AddNotification
+
+//GENERAL CONST
+const int MAX_NOTIFICATIONS = 7 //RES elements support this many displayed at once.
+const float NOTIFICATION_SLIDE_IN_TIME = 0.25
+const float NOTIFICATION_SLIDE_OUT_TIME = 0.1
+const int NOTIFICATION_X_OFFSET = 1000
+
+const int LOADOUT_NOTIFICATION_MAX_NUM =	7
+const float LOADOUT_NOTIFICATION_DURATION =	5.0
+const float LOADOUT_NOTIFICATION_FADE_TIME =	0.2
+const float LOADOUT_NOTIFICATION_DELAY = 0.0
+
+const int ITEM_NOTIFICATION_MAX_NUM = 3
+const float ITEM_NOTIFICATION_DURATION = 3.0
+const float ITEM_NOTIFICATION_FADE_TIME = 0.2
+const float ITEM_NOTIFICATION_DELAY = 0.05
+
+global struct NotificationData
+{
+	int systemIndex
+	string text = ""
+	string value = ""
+	asset image
+	bool useRectangleImage = false
+	string soundAlias = ""
+	array<int> color = [ 157, 196, 219, 255 ] //Default Blue
+}
+
+struct SystemData
+{
+	int maxDisplayNum
+	float duration
+	float fadeTime
+	float delayBetweenEvents
+	bool flareAnnouncement = false
+}
+
+struct NotificationGroup
+{
+	var group
+	var panel
+	var background
+	var foreground
+	var text
+	var value
+	var squareIcon
+	var rectangleIcon
+	var flare
+}
+
+struct
+{
+	SystemData[eSideNotificationSystems.count] systemProperties
+	NotificationGroup[ MAX_NOTIFICATIONS ] notificationGroups
+	array<NotificationData> queue
+	int nextHUDIndex = 0
+	int activeNotifications = 0
+	int activeSystemIndex = -1
+} file;
+
+void function SideNotifications_Init()
+{
+	CreateNotificationSystem( eSideNotificationSystems.loadoutDisplay, LOADOUT_NOTIFICATION_MAX_NUM, LOADOUT_NOTIFICATION_DURATION, LOADOUT_NOTIFICATION_FADE_TIME, LOADOUT_NOTIFICATION_DELAY, false )
+	CreateNotificationSystem( eSideNotificationSystems.itemAcquisition, ITEM_NOTIFICATION_MAX_NUM, ITEM_NOTIFICATION_DURATION, ITEM_NOTIFICATION_FADE_TIME, ITEM_NOTIFICATION_DELAY, true )
+
+	AddCreatePilotCockpitCallback( InitSideNotifications )
+	AddCreateTitanCockpitCallback( InitSideNotifications )
+}
+
+void function CreateNotificationSystem( int systemEnum, int maxDisplayNumber, float duration, float fadeTime, float delayBetweenEvents, bool shouldFlare )
+{
+	Assert( maxDisplayNumber <= MAX_NOTIFICATIONS, "Trying to display more notifications than res elements." )
+
+	file.systemProperties[systemEnum].maxDisplayNum = maxDisplayNumber
+	file.systemProperties[systemEnum].duration = duration
+	file.systemProperties[systemEnum].fadeTime = fadeTime
+	file.systemProperties[systemEnum].delayBetweenEvents = delayBetweenEvents
+	file.systemProperties[systemEnum].flareAnnouncement = shouldFlare
+}
+
+function ServerCallback_LoadoutNotification( int systemIndex, int itemType, int itemIndex )
+{
+	//printt( "LOADOUT CALLBACK:: ", "systemIndex ", systemIndex, " ", "itemType ", itemType, " ", "itemIndex ", itemIndex, " ")
+	//printt( "item ref = ", GetItemRefOfTypeByIndex( itemType, itemIndex ) )
+	if ( IsWatchingReplay() )
+		return
+
+	string itemRef = GetItemRefOfTypeByIndex( itemType, itemIndex )
+
+	NotificationData data
+	data.systemIndex = systemIndex
+	data.text = GetItemName( itemRef )
+	if ( PROTO_ItemTypeShouldUseRectangleIcon( itemType ) )
+		data.useRectangleImage = true
+	data.image = GetItemImage( itemRef )
+
+	AddNotification( data )
+
+	return
+}
+
+function ServerCallback_ItemNotification( int systemIndex, int itemType, int itemIndex )
+{
+	//printt( "ITEM CALLBACK:: ", "systemIndex ", systemIndex, " ", "itemType ", itemType, " ", "itemIndex ", itemIndex, " ")
+	//printt( "item ref = ", GetItemRefOfTypeByIndex( itemType, itemIndex ) )
+	if ( IsWatchingReplay() )
+		return
+
+	string itemRef = GetItemRefOfTypeByIndex( itemType, itemIndex )
+
+	NotificationData data
+	data.systemIndex = systemIndex
+	data.text = GetItemName( itemRef )
+	//data.color = [ 255, 0, 0, 255 ]
+	if ( PROTO_ItemTypeShouldUseRectangleIcon( itemType ) )
+		data.useRectangleImage = true
+
+	data.image = GetItemImage( itemRef )
+	data.soundAlias = "UI_InGame_CoOp_PointSlider"
+	AddNotification( data )
+
+	return
+}
+
+void function AddNotification( NotificationData data )
+{
+	InsertNotificationDataIntoQueue( data )
+	if ( file.queue.len() <= 1 )
+		thread ManageNotifications()
+}
+
+bool function PROTO_ItemTypeShouldUseRectangleIcon( itemType )
+{
+	switch( itemType )
+	{
+		case eItemTypes.PILOT_PRIMARY:
+		case eItemTypes.PILOT_SECONDARY:
+		case eItemTypes.TITAN_PRIMARY:
+			return true
+	}
+	return false
+}
+
+void function InsertNotificationDataIntoQueue( NotificationData data )
+{
+	int queueLength = file.queue.len()
+	int index = queueLength
+	for( int i = queueLength - 1; i >= 0; i-- )
+	{
+		if ( file.queue[i].systemIndex == data.systemIndex )
+		{
+			index = i + 1
+			break
+		}
+	}
+	file.queue.insert( index, data )
+}
+
+void function InitSideNotifications( entity cockpit, entity player )
+{
+	file.nextHUDIndex = 0
+	file.activeNotifications = 0
+	file.activeSystemIndex = -1
+
+	entity vgui = cockpit.e.mainVGUI
+	var panel = vgui.GetPanel()
+
+	for ( int i = 0; i < MAX_NOTIFICATIONS; i++ )
+	{
+	}
+
+	if ( file.queue.len() > 0 && !IsWatchingReplay() )
+	{
+		thread ManageNotifications()
+	}
+}
+
+void function ManageNotifications()
+{
+	//Manage element queue and movement.
+	entity player = GetLocalViewPlayer()
+	entity cockpit = player.GetCockpit()
+
+	if ( !IsValid( cockpit ) )
+		return
+
+	cockpit.EndSignal( "OnDestroy" )
+	player.EndSignal( "OnDestroy" )
+
+	wait 0.1
+
+	while( file.queue.len() > 0 )
+	{
+		NotificationData data = file.queue[0]
+		SystemData sysData = file.systemProperties[ data.systemIndex ]
+		//If there is another system wait to start until they've all gone away.
+		if ( file.activeSystemIndex != -1 && file.activeSystemIndex != data.systemIndex )
+		{
+			wait 0.1
+			continue
+		}
+		//Limit the number of things displayed at once.
+		if ( file.activeNotifications >= sysData.maxDisplayNum )
+		{
+			wait 0.1
+			continue
+		}
+
+		thread DisplayNotification( player, cockpit, data, sysData )
+
+		float delayBetweenEvents = sysData.delayBetweenEvents
+		file.queue.remove(0)
+
+		if ( delayBetweenEvents > 0 )
+			wait delayBetweenEvents
+ 	}
+}
+
+void function DisplayNotification( entity player, entity cockpit, NotificationData data, SystemData sysData )
+{
+	cockpit.EndSignal( "OnDestroy" )
+	player.EndSignal( "OnDestroy" )
+	entity vgui = cockpit.e.mainVGUI
+	vgui.EndSignal( "OnDestroy" )
+
+	int hudIndex = file.nextHUDIndex
+	file.nextHUDIndex++
+	file.activeNotifications++
+	NotificationGroup hudGroup = file.notificationGroups[hudIndex]
+	//hudGroup.group.Show()
+	//
+	//var panel = hudGroup.panel
+	//var basePos = panel.GetBasePos()
+	//panel.SetPos( basePos[0] + NOTIFICATION_X_OFFSET, basePos[1] )
+	//panel.MoveOverTime( basePos[0], basePos[1], NOTIFICATION_SLIDE_IN_TIME )
+	//hudGroup.foreground.SetColor( data.color[0], data.color[1], data.color[2], data.color[3] )
+	//if ( data.text != "" )
+	//{
+	//	hudGroup.text.SetText( data.text )
+	//	hudGroup.text.SetColor( data.color[0], data.color[1], data.color[2], data.color[3] )
+	//}
+	//else
+	//{
+	//	hudGroup.text.Hide()
+	//}
+	//
+	//if ( data.value != "" )
+	//{
+	//	hudGroup.value.SetText( data.value )
+	//	hudGroup.value.SetColor( data.color[0], data.color[1], data.color[2], data.color[3] )
+	//}
+	//else
+	//{
+	//	hudGroup.value.Hide()
+	//}
+	//
+	//if ( data.useRectangleImage == true )
+	//{
+	//	hudGroup.rectangleIcon.SetImage( data.image )
+	//	hudGroup.squareIcon.Hide()
+	//}
+	//else
+	//{
+	//	file.notificationGroups[hudIndex].squareIcon.SetImage( data.image )
+	//	file.notificationGroups[hudIndex].rectangleIcon.Hide()
+	//}
+	//
+	//if ( sysData.flareAnnouncement == true )
+	//	thread FlareNotification( hudGroup.flare, NOTIFICATION_SLIDE_IN_TIME, vgui )
+	//else
+	//	hudGroup.flare.Hide()
+
+	if ( data.soundAlias != "" )
+		EmitSoundOnEntity( player, data.soundAlias )
+
+	OnThreadEnd(
+	function() : ( hudGroup, hudIndex, vgui )
+		{
+			if( hudIndex < file.nextHUDIndex )
+				file.nextHUDIndex = hudIndex
+			file.activeNotifications--
+			if ( file.activeNotifications == 0 )
+				file.activeSystemIndex = -1
+		}
+	)
+
+	wait sysData.duration - NOTIFICATION_SLIDE_OUT_TIME
+
+	wait NOTIFICATION_SLIDE_OUT_TIME
+}

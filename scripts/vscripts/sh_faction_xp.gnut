@@ -1,0 +1,239 @@
+
+global function ShFactionXP_Init
+global function FactionGetMaxXP
+global function FactionGetMaxXPPerGen
+global function FactionGetNumPipsForXP
+global function FactionGetFilledPipsForXP
+global function FactionGetXPForLevel
+global function FactionGetRawLevelForXP
+global function FactionGetLevelForXP
+global function FactionGetGenForXP
+global function FactionGetRawLevel
+global function FactionGetLevel
+global function FactionGetGen
+global function FactionGetPreviousLevel
+global function FactionGetXP
+global function FactionGetPreviousXP
+global function FactionGetDisplayGenAndLevelForXP
+global function FactionGetDisplayGenAndLevel
+global function FactionGetDisplayGenAndLevelForRawLevel
+global function FactionGetMaxLevel
+
+global function GetAllFactionRefs
+
+global struct ShFactionXP
+{
+	array<string> factions
+}
+
+global ShFactionXP shFactionXP
+
+const MAX_FACTION_GEN = 99
+
+struct
+{
+	array<int> factionXPPipsPerLevel
+	array<int> factionXPForLevel
+	bool initialized = false
+	int maxLevelPerGen
+} file
+
+void function ShFactionXP_Init()
+{
+	if ( file.initialized )
+		return
+
+	file.initialized = true
+
+	var dataTable = GetDataTable( $"datatable/xp_per_faction_level.rpak" )
+	int numRows = GetDatatableRowCount( dataTable )
+
+	file.maxLevelPerGen = numRows
+
+	file.factionXPPipsPerLevel.resize( file.maxLevelPerGen + 1 )
+	file.factionXPForLevel.resize( file.maxLevelPerGen + 2 )
+
+	file.factionXPPipsPerLevel[ 0 ] = 0
+	file.factionXPForLevel[ 0 ] = 0
+	file.factionXPForLevel[ 1 ] = 0
+	for ( int i = 0; i < numRows; i++ )
+	{
+		int xpPerLevel = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "xpPerLevel" ) )
+		file.factionXPPipsPerLevel[ i + 1 ] = xpPerLevel
+		file.factionXPForLevel[ i + 2 ] = file.factionXPForLevel[ i + 1 ] + xpPerLevel
+	}
+
+	int enumCount =	PersistenceGetEnumCount( "faction" )
+
+	for ( int i = 0; i < enumCount; i++ )
+	{
+		string enumName = PersistenceGetEnumItemNameForIndex( "faction", i )
+		if ( enumName != "" )
+			shFactionXP.factions.append( enumName )
+	}
+}
+
+array<string> function GetAllFactionRefs()
+{
+	return shFactionXP.factions
+}
+
+int function FactionGetMaxXP( string factionRef )
+{
+	return FactionGetMaxXPPerGen( factionRef ) * MAX_FACTION_GEN
+}
+
+int function FactionGetMaxXPPerGen( string factionRef )
+{
+	return file.factionXPForLevel[ file.maxLevelPerGen ] + file.factionXPPipsPerLevel[ file.maxLevelPerGen ]
+}
+
+int function FactionGetNumPipsForXP( string factionRef, int factionXP )
+{
+	int maxXP = FactionGetMaxXP( factionRef )
+	if ( factionXP >= maxXP )
+		return 10
+
+	int factionLevel = FactionGetLevelForXP( factionRef, factionXP )
+
+	return file.factionXPPipsPerLevel[ factionLevel ]
+}
+
+int function FactionGetFilledPipsForXP( string factionRef, int factionXP )
+{
+	int maxXP = FactionGetMaxXP( factionRef )
+	if ( factionXP >= maxXP )
+		return 10
+
+	int startingLevel = FactionGetLevelForXP( factionRef, factionXP )
+	int baseXp = FactionGetXPForLevel( factionRef, startingLevel )
+
+	int maxXPPerGen = FactionGetMaxXPPerGen( factionRef )
+	return ( factionXP % maxXPPerGen ) - baseXp
+}
+
+int function FactionGetXPForLevel( string factionRef, int factionLevel )
+{
+	Assert( factionLevel > 0 && factionLevel <= file.maxLevelPerGen )
+
+	return file.factionXPForLevel[ factionLevel ]
+}
+
+int function FactionGetRawLevelForXP( string factionRef, int factionXP )
+{
+	int maxXP = FactionGetMaxXP( factionRef )
+	if ( factionXP >= maxXP )
+		return file.maxLevelPerGen * MAX_FACTION_GEN + 1
+
+	int genLevels = ( FactionGetGenForXP( factionRef, factionXP ) - 1 ) * file.maxLevelPerGen
+	int maxXPPerGen = FactionGetMaxXPPerGen( factionRef )
+	int xpIntoCurrentGen = factionXP % maxXPPerGen
+
+	foreach ( i, xpVal in file.factionXPForLevel )
+	{
+		if ( xpIntoCurrentGen < xpVal )
+			return genLevels + i - 1
+	}
+
+	unreachable
+}
+
+int function FactionGetLevelForXP( string factionRef, int factionXP )
+{
+	int maxXP = FactionGetMaxXP( factionRef )
+	if ( factionXP >= maxXP )
+		return 1
+
+	int maxXPPerGen = FactionGetMaxXPPerGen( factionRef )
+	int xpIntoCurrentGen = factionXP % maxXPPerGen
+
+	foreach ( i, xpVal in file.factionXPForLevel )
+	{
+		if ( xpIntoCurrentGen < xpVal )
+			return i - 1
+	}
+
+	unreachable
+}
+
+int function FactionGetGenForXP( string factionRef, int factionXP )
+{
+	int maxXPPerGen = FactionGetMaxXPPerGen( factionRef )
+	return int( floor( float( factionXP ) / float( maxXPPerGen ) ) ) + 1
+}
+
+int function FactionGetRawLevel( entity player, string faction )
+{
+	string persistenceVar = "factionXP[" + faction + "]"
+	return FactionGetRawLevelForXP( faction, player.GetPersistentVarAsInt( persistenceVar ) )
+}
+
+int function FactionGetLevel( entity player, string faction )
+{
+	return FactionGetLevelForXP( faction, player.GetPersistentVarAsInt( "factionXP[" + faction + "]" ) )
+}
+
+int function FactionGetGen( entity player, string factionClass )
+{
+	return FactionGetGenForXP( factionClass, player.GetPersistentVarAsInt( "factionXP[" + factionClass + "]" ) )
+}
+
+int function FactionGetPreviousLevel( entity player, string faction )
+{
+	return FactionGetLevelForXP( faction, player.GetPersistentVarAsInt( "previousFactionXP[" + faction + "]" ) )
+}
+
+int function FactionGetXP( entity player, string faction )
+{
+	return player.GetPersistentVarAsInt( "factionXP[" + faction + "]" )
+}
+
+int function FactionGetPreviousXP( entity player, string faction )
+{
+	return player.GetPersistentVarAsInt( "previousFactionXP[" + faction + "]" )
+}
+
+string function FactionGetDisplayGenAndLevelForXP( string factionRef, int factionXP )
+{
+	int gen = FactionGetGenForXP( factionRef, factionXP )
+	int level = FactionGetLevelForXP( factionRef, factionXP )
+
+	return FactionGetDisplayGenAndLevel( gen, level )
+}
+
+string function FactionGetDisplayGenAndLevel( int gen, int level )
+{
+	if ( gen == 1 )
+	{
+		#if SERVER
+			return string( level )
+		#else
+			return Localize( "#HUD_LEVEL_N", level )
+		#endif
+	}
+	else
+	{
+		string levelText = string( level - 1 )
+
+		#if SERVER
+			return string( gen ) + "." + levelText
+		#else
+			return Localize( "#HUD_GEN_LEVEL_N_N", gen, levelText )
+		#endif
+	}
+
+	unreachable
+}
+
+string function FactionGetDisplayGenAndLevelForRawLevel( int rawLevel )
+{
+	int gen = ( ( rawLevel - 1 ) / file.maxLevelPerGen ) + 1
+	int level = ( rawLevel - 1 ) % file.maxLevelPerGen + 1
+
+	return FactionGetDisplayGenAndLevel( gen, level )
+}
+
+int function FactionGetMaxLevel( string factionRef )
+{
+	return file.maxLevelPerGen
+}

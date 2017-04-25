@@ -1,0 +1,2766 @@
+global typedef IntFromEntityCompare int functionref( entity, entity )
+
+global const bool DEVSCRIPTS = false
+
+global const bool PRE_RELEASE_DEMO = false
+
+global const DIFFICULTY_EASY = 0
+global const DIFFICULTY_NORMAL = 1
+global const DIFFICULTY_HARD = 2
+global const DIFFICULTY_MASTER = 3
+
+global struct Point
+{
+	vector origin
+	vector angles
+}
+
+#if SP && !UI
+global const DEFAULT_PILOT_SETTINGS = "pilot_solo"
+#elseif !UI
+global const DEFAULT_PILOT_SETTINGS = "pilot_medium_male"
+#endif
+
+global const T_DAY = "tday"
+global const TEAM_DEATHMATCH = "tdm"
+global const PILOT_SKIRMISH = "ps"
+global const CAPTURE_POINT = "cp"
+global const ATTRITION = "at"
+global const CAPTURE_THE_FLAG = "ctf"
+global const MARKED_FOR_DEATH = "mfd"
+global const MARKED_FOR_DEATH_PRO = "mfdp"
+global const LAST_TITAN_STANDING = "lts"
+global const WINGMAN_LAST_TITAN_STANDING = "wlts"
+global const LTS_BOMB = "ltsbomb"
+global const AI_TDM = "aitdm"
+global const BOMB = "bomb"
+global const FFA = "ffa"
+global const SST = "sst"
+global const COLISEUM = "coliseum"
+global const WINGMAN_PILOT_SKIRMISH = "wps"
+global const HARDCORE_TDM = "htdm"
+global const FREE_AGENCY = "fra"
+global const FORT_WAR = "fw"
+global const HUNTED = "hunted"
+global const DON = "don"
+global const SPEEDBALL = "speedball"
+global const RAID = "raid"
+global const ATCOOP = "atcoop"
+global const CONQUEST = "cq"
+global const FD = "fd"
+global const PVE_SANDBOX = "pve_sandbox"
+
+global const VERBOSE_DAMAGE_PRINTOUTS = false
+
+global const SAVEGAME_VERSION = 10 // increment when saves need to be tossed
+global const PERSISTENCE_INIT_VERSION = 221
+
+global const TEMP_NETWORTH_VAR = "activeBCID"
+global const NETWORTH_VAR = "netWorth"
+
+global const TESTCONST = 99
+global const TEAM_BOTH = 4
+global const TEAM_COUNT = 31
+
+global const MAX_GAME_HISTORY = 20 // Matches code
+
+global const NON_RARES_PER_RARE = 12
+
+global const MAX_RANK = 24
+
+global const MAX_GEN = 10
+
+global const CPU_LEVEL_MINSPEC = 0
+global const CPU_LEVEL_DURANGO = 1
+global const CPU_LEVEL_HIGHEND = 2
+
+global const float MAX_WORLD_COORD = ( 1 << 16 ) - 1 //65535
+global const float COORD_RANGE = MAX_WORLD_COORD + MAX_WORLD_COORD + 1 //-65535 to 65535
+global const float MAX_WORLD_RANGE = sqrt( COORD_RANGE * COORD_RANGE + COORD_RANGE * COORD_RANGE + COORD_RANGE * COORD_RANGE )
+
+global const string INVERT_CONVAR_GAMEPAD 	= "joy_inverty"
+global const string INVERT_CONVAR_MOUSE 	= "m_invert_pitch"
+
+global const string AUTOSPRINT_CONVAR_NAME	= "autosprint_type"
+
+//AI TRACKING
+global const AI_HARD_LIMIT = 36
+global const MID_SPEC_PLAYER_CUTOFF = 8	// treat the server as high-end when the player count is less or equal to this.
+global const MID_SPEC_MAX_AI_COUNT = 9		// max number of AI per side when playing on less then high-end machines (durango)
+
+global const vector ZERO_VECTOR = < 0, 0, 0 >
+
+// If modified, keep these functions updated:
+// 		SetPersistentPilotLoadout()
+//		IsValidPilotLoadoutProperty()
+//		GetChildLoadoutProperties()
+//		GetParentLoadoutProperty()
+// 		PrintPilotLoadout()
+global struct PilotLoadoutDef
+{
+	string 			name
+	string			suit
+	string 			race
+	string 			execution
+	string 			primary
+	string 			primaryAttachment
+	string 			primaryMod1
+	string 			primaryMod2
+	string 			primaryMod3
+	string 			secondary
+	string 			secondaryMod1
+	string 			secondaryMod2
+	string 			secondaryMod3
+	string 			ordnance
+	string 			passive1
+	string 			passive2
+	int				skinIndex
+	int				camoIndex
+	int 			primarySkinIndex
+	int 			primaryCamoIndex
+	int 			secondarySkinIndex
+	int 			secondaryCamoIndex
+
+	// Everything above should be player choices that exist in persistent data
+	// Everything below should be derived properties from the above or otherwise set by script
+
+	string			setFile
+	array<string>	setFileMods
+
+	string 			special
+
+	string			melee = "melee_pilot_emptyhanded"
+	array<string>	meleeMods
+
+	array<string>	primaryAttachments
+	array<string>	primaryMods
+	int ornull		primaryModsBitfield = null
+
+	array<string>	secondaryMods
+	int ornull		secondaryModsBitfield = null
+
+	array<string>	specialMods
+	array<string>	ordnanceMods
+
+	// SP uses this to maintain ordnance ammo
+	int 			ordnanceAmmo = -1
+}
+
+// If modified, keep these functions updated:
+// 		SetPersistentTitanLoadout()
+//		IsValidTitanLoadoutProperty()
+//		GetChildLoadoutProperties()
+//		GetParentLoadoutProperty()
+// 		PrintTitanLoadout()
+global struct TitanLoadoutDef
+{
+	string 			name
+	string 			titanClass
+	string			primeTitanRef
+	string			setFile
+	string 			primaryMod
+	string			special
+	string			antirodeo
+	string 			passive1
+	string 			passive2
+	string          passive3
+	string          passive4
+	string          passive5
+	string          passive6
+	string 			voice = "titanos_bt"
+	int				skinIndex
+	int				camoIndex
+	int				decalIndex
+	int 			primarySkinIndex
+	int 			primaryCamoIndex
+	int 			difficulty
+	string 			isPrime //Really should be bool, but it is a massive pain to restructure existing script to work with bool loadout value type.
+	int 			primeSkinIndex		//Prime Titans don't have the same warpaints/nose arts than non Prime Titans have, so we need to store them separately
+	int 			primeCamoIndex		//Prime Titans don't have the same warpaints/nose arts than non Prime Titans have, so we need to store them separately
+	int 			primeDecalIndex		//Prime Titans don't have the same warpaints/nose arts than non Prime Titans have, so we need to store them separately
+
+
+	// Everything above should be player choices that exist in persistent data
+	// Everything below should be derived properties from the above or otherwise set by script
+
+	array<string>	setFileMods
+
+	string			melee
+	string 			coreAbility
+
+	string			primary
+	string			primaryAttachment
+	array<string>	primaryMods
+
+	string			ordnance
+	array<string>	ordnanceMods
+
+	array<string>	specialMods
+	array<string>	antirodeoMods
+}
+
+//////////////////////////////////////////////////
+
+//beacon types
+global enum eBeaconType
+{
+	TITAN_DROP,
+	SPECTRE_POD,
+	SUICIDE_POD,
+	//GUNSHIP_STRAFE
+}
+
+//NinjaAssassin ( elite pilot ) consts
+global const GRUNT_EXECUTE_MIN_DIST_FROM_PLAYER 		=	768		//ignore potential execution victim is outside this distance from player
+global const GRUNT_EXECUTE_COOLDOWN_MIN					= 	3
+global const GRUNT_EXECUTE_COOLDOWN_MAX					= 	4
+global const MAX_GRUNTS_TO_EXECUTE_AT_ONCE				= 	2
+global const GRUNT_EXECUTE_GROUP_COOLDOWN_MIN			= 	30
+global const GRUNT_EXECUTE_GROUP_COOLDOWN_MAX			= 	31
+
+
+//default to give for connecting players.  This might have to be changed to something else as right now it's controlling the "good" intro for fracture.
+global const CONNECT_TIME_DEFAULT = 23
+
+global const OUT_OF_BOUNDS_TIME_LIMIT = 8.0
+global const OUT_OF_BOUNDS_DECAY_TIME = 15.0
+global const OUT_OF_BOUNDS_DECAY_DELAY = 1.0
+
+global const MAX_TRACKED_CHALLENGES = 3
+
+// OFFICIAL
+global const int FRIENDLY_R = 87
+global const int FRIENDLY_G = 151
+global const int FRIENDLY_B = 219
+// 5797DB
+
+global const int ENEMY_R = 255
+global const int ENEMY_G = 120
+global const int ENEMY_B = 32
+// FF7820
+
+global const int LOCAL_R = 254
+global const int LOCAL_G = 184
+global const int LOCAL_B = 0
+// FFB800
+
+global const int PARTY_R = 91
+global const int PARTY_G = 255
+global const int PARTY_B = 31
+
+global const int BURN_R = 246
+global const int BURN_G = 134
+global const int BURN_B = 40
+
+global const vector TEAM_COLOR_ENEMY = 		<ENEMY_R, ENEMY_G, ENEMY_B>
+global const vector TEAM_COLOR_FRIENDLY = 	<FRIENDLY_R, FRIENDLY_G, FRIENDLY_B>
+global const vector TEAM_COLOR_PARTY = 		<PARTY_R, PARTY_G, PARTY_B>
+global const vector TEAM_COLOR_YOU = 		<LOCAL_R, LOCAL_G, LOCAL_B>
+global const vector BURN_COLOR = 			<BURN_R, BURN_G, BURN_B>
+// END OFFICIAL
+
+global const TIME_ZOFFSET = 11520
+
+global const LOCALPLAYER_NAME_COLOR 	= [ LOCAL_R, LOCAL_G, LOCAL_B ]
+
+// for HUD elements
+global const FRIENDLY_COLOR 			= TEAM_COLOR_FRIENDLY
+global const ENEMY_COLOR 				= TEAM_COLOR_ENEMY
+
+// for particle color control points
+global const FRIENDLY_COLOR_FX 		= TEAM_COLOR_FRIENDLY
+global const ENEMY_COLOR_FX 		= TEAM_COLOR_ENEMY
+global const NEUTRAL_COLOR_FX 		= < 220, 220, 220 >
+
+global const FRIENDLY_CROSSHAIR_COLOR = [FRIENDLY_R, FRIENDLY_G, FRIENDLY_B, 255]
+global const ENEMY_CROSSHAIR_COLOR = [ENEMY_R, ENEMY_G, ENEMY_B, 180] //252, 130, 21, 255 (ORANGE)
+
+global const OBITUARY_COLOR_BURN_WEAPON = <246, 134, 40>
+global const BURN_CARD_WEAPON_HUD_COLOR = [ 246, 134, 40, 255 ]
+global const BURN_CARD_WEAPON_HUD_COLOR_VECTOR = <0.965, 0.525, 0.157>
+
+//const BURN_CARD_WEAPON_HUD_COLOR_STRING = "47, 206, 62, 255"
+//const BURN_CARD_WEAPON_HUD_GLOW_STRING = "44 220 12 255"
+
+global const int SQUAD_SIZE = 4				// max size for a droppod squad
+
+global enum eWeaponProficiency
+{
+	POOR
+	AVERAGE
+	GOOD
+	VERYGOOD
+	PERFECT
+}
+
+global enum eCodeDialogueID
+{
+	MAN_DOWN		// 0
+	SALUTE			// 1
+	ENEMY_CONTACT	// 2
+	RUN_FROM_ENEMY	// 3
+	RELOADING		// 4
+	MOVE_TO_ASSAULT	// 5
+	MOVE_TO_SQUAD_LEADER 	// 6
+	FAN_OUT					// 7
+	TAKE_COVER_FROM_ENEMY	// 8
+	CHASE_ENEMY				// 9
+	GRENADE_OUT 			// 10
+	DANGEROUS_AREA_DISPLACE // 11
+	REACT_SURPRISED 		// 12
+	DIALOGUE_COUNT
+}
+
+global enum eTitanVO
+{
+	RODEO_RAKE
+	ENEMY_EJECTED
+	FRIENDLY_EJECTED
+	FRIENDLY_TITAN_DEAD
+	ENEMY_TITAN_DEAD
+	ENEMY_TARGET_ELIMINATED
+	FRIENDLY_TITAN_HELPING
+	PILOT_HELPING
+	FRIENDLY_RODEOING_ENEMY
+}
+
+// if we havent hurt the target recently then forget about it
+global const CURRENT_TARGET_FORGET_TIME = 8.0
+
+global enum scoreEventPointType
+{
+	DEFAULT
+	ASSAULT
+	DEFENSE
+	DETONATION
+	DISTANCE
+}
+
+global const BLINKING_BLUE_LIGHT_PARTICLE = "blue_light_large_blink"
+
+global enum eNPCTitanMode
+{
+	FOLLOW = 0
+	STAY = 1
+	//ROAM = 2
+
+	MODE_COUNT = 2
+}
+
+global enum eGruntCombatState
+{
+	IDLE 	= 0
+	ALERT 	= 1
+	COMBAT 	= 2
+}
+
+global const MAX_BULLET_PER_SHOT = 35
+
+//--------------------------------------------------
+// 				CONTROL PANELS
+//--------------------------------------------------
+
+global const ELIMINATION_FUSE_TIME = 45
+
+global enum ePanelState
+{
+	ENABLED,
+	DISABLED,
+}
+
+global enum crosshairPriorityLevel
+{
+	ROUND_WINNING_KILL_REPLAY,
+	MENU,
+	PREMATCH,
+	TITANHUD,
+	DEFAULT
+}
+
+global enum eSpectreSpawnStyle
+{
+	MORE_FOR_ENEMY_TITANS
+	MAP_PROGRESSION
+	AT_SCORE
+}
+
+
+global const USE_TIME_INFINITE = -1
+//--------------------------------------------------
+// 				MODELS
+//--------------------------------------------------
+
+
+global const CL_HIGHLIGHT_ARROW_X = 0.85
+global const CL_HIGHLIGHT_ARROW_Y = 0.80
+global const CL_HIGHLIGHT_ICON_X = 0.80
+global const CL_HIGHLIGHT_ICON_Y = 0.75
+global const CL_HIGHLIGHT_LABEL_X = 0.80
+global const CL_HIGHLIGHT_LABEL_Y = 0.75
+
+global const MFD_COUNTDOWN_TIME = 5
+global const MFDP_COUNTDOWN_TIME = 3
+global const MFD_BETWEEN_MARKS_TIME = 7
+global const MFD_ESCORT_RADIUS = 700
+global const MFD_ROUNDS_SKIPPED_AFTER_BEING_MARKED = 2
+global const MFD_PRO_KILL_ANNOUNCEMENT_WAIT = 0.12
+
+
+
+global const MAX_STAR_COUNT	= 3
+
+//------------------------
+// WEAPON & MODS
+//------------------------
+
+global const SHIELD_WALL_CHARGE_TIME = 15.0
+global const SHIELD_WALL_MAX_CHARGES = 2
+
+
+//  mp_weapon_smr
+global const TANK_MISSILE_DELAY = 1.5
+global const TANK_MISSILE_VELOCITY = 1800
+global const DEFAULT_WARNING_SFX = "Weapon_R1_Satchel.ArmedBeep"
+global const FORCE_SONAR_DEACTIVATE = "SonarDeactivate"
+global const BURN_CARD_SATCHEL_BURST_COUNT = 10
+global const BURN_CARD_SATCHEL_BURST_RANGE = 250
+
+global const NOT_IN_TITAN_QUEUE = -1
+
+global const TITAN_REQUEST_WAITING_FOR_WAVE = 0
+global const TITAN_REQUEST_WAVE_INCOMING = 1
+global const TITAN_REQUEST_WAVE_RESULTS = 2
+global const TITAN_REQUEST_WAVE_RESULTS_TIME = 3.5
+
+global const MGL_MAGNETIC_FORCE = 1600
+global const TT_MAGNETIC_FORCE = 1600.0
+
+global const PROX_MINE_MARKER_TIME = 3
+
+//--------------------------------------------------
+// 				TURRETS
+//--------------------------------------------------
+
+global const MEGA_TURRET_REPAIR_TIME	= 30
+global const LIGHT_TURRET_REPAIR_TIME	= 30
+
+
+// Titan soul
+global const EMBARKABLE_NEVER	 	= 0 // cant embark
+global const EMBARKABLE_INFRONT	= 1 // can embark if in dot
+global const EMBARKABLE_ANY		= 2	// can embark from any direction
+global const EMBARKABLE_ANY_PLAYER	= 3	// can embark by anybody
+
+
+// shared values for cluster rocket explosions
+global const CLUSTER_ROCKET_BURST_COUNT 				= 20 //number of bursts
+global const CLUSTER_ROCKET_BURST_COUNT_BURN			= 32 //number of bursts with burn card
+global const CLUSTER_ROCKET_BURST_COUNT_MOD				= 10 //Concentrated Payload has the higher initial damage but reduced duration of the secondary explosions.
+global const CLUSTER_ROCKET_BURST_DELAY 				= 0.5 //time before the popcors burst off +/- some randomness
+global const CLUSTER_ROCKET_BURST_OFFSET 				= 0.3 // how much + & - the delay to set off the explosions
+global const CLUSTER_ROCKET_BURST_RANGE 				= 250.0 //range of the bursts
+global const CLUSTER_ROCKET_BURST_GROUP_SIZE 			= 5 //number of explosions before a delay
+global const CLUSTER_ROCKET_BASE_FIRERATE 				= 0.1 //setting manually to avoid having the call the get function every frame
+global const CLUSTER_ROCKET_DURATION 					= 5.0 //duration of the bursts
+global const PAS_NORTHSTAR_CLUSTER_ROCKET_DURATION 		= 8.0 //duration of the bursts with northstar's kit
+global const CLUSTER_ROCKET_FX_TABLE 					= "exp_rocket_cluster_secondary"
+
+// the amount of damage needed to break melee assist
+global const DAMAGE_BREAK_MELEE_ASSIST = 1400
+
+global const TITAN_FOOTSTEP_DAMAGE 		= 350
+global const TITAN_FOOTSTEP_DAMAGE_WAIT	= 1.0  // min seconds after initial footstep damage to wait before doing more damage
+
+global const float REVIVE_TIME_TO_REVIVE = 4.0
+
+// ----------------------------
+//  LEVEL SCRIPT SHARED CONSTS
+// ----------------------------
+
+global enum eRankEnabledModes
+{
+	TOO_LATE
+	NOT_ENOUGH_PEOPLE
+	ALLOWED_DURING_PERSONAL_GRACE_PERIOD
+}
+
+// mp_outpost_207
+global enum eOutpostCannonTargets
+{
+	CAPITAL_SHIP,
+	DECOY_SHIP
+}
+
+// mp_harmony_mines
+global enum eDiggerState
+{
+	SPIN,
+	TWITCH
+}
+
+//mp_o2
+global const O2_EPILOGUE_DURATION = 51.5  // Custom duration set to match with the story VDU's and player nuking
+global enum eEvents
+{
+	none
+	mapStart
+	introFlight
+	MilitiaWarped
+}
+
+global enum eHardpoint
+{
+	warehouse
+	mainReactor
+	marvinBay
+}
+global const BLISK 	= 0
+global const GRAVES 	= 1
+global const BISH 		= 2
+global const BARKER 	= 3
+
+global const CRASHTIME = 16.05//13.55 + 2.5
+global const WAKEUPTIME = 1.5
+
+global const GATEVDUTIME = 9.2
+
+global const LEVEL_UNLOCKS_COUNT = [
+	{ level = "sp_training", count = 1 },
+	{ level = "sp_crashsite", count = 2 },
+	{ level = "sp_sewers1", count = 6 },
+	{ level = "sp_boomtown_start", count = 4 },
+	{ level = "sp_boomtown", count = 3 },
+	{ level = "sp_boomtown_end", count = 2 },
+	{ level = "sp_hub_timeshift", count = 2 },
+	{ level = "sp_timeshift_spoke02", count = 6 },
+	{ level = "sp_beacon", count = 9 },
+	{ level = "sp_beacon_spoke0", count = 2 },
+	{ level = "sp_tday", count = 3 },
+	{ level = "sp_s2s", count = 3 },
+	{ level = "sp_skyway_v1", count = 3 },
+	{ level = "sp_chadbox", count = 6 },
+]
+
+// ----------------------
+//  TITAN HUD
+// ----------------------
+
+global const OFFHAND_HUD_COLOR_FULL	= "180 246 85"	// green
+global const OFFHAND_HUD_COLOR_EMPTY	= "200 80 80"	// red
+
+global const EJECT_FADE_TIME = 3.0 // time for eject interface to fade out
+
+
+//-----------------------------------------------------
+// PROGRESS BAR
+//-----------------------------------------------------
+
+global const PROGRESS_BAR_FULL = "49 188 204 255"
+global const PROGRESS_BAR_EMPTY = "229 86 23 255"
+
+
+
+// DONT CHANGE THESE NAMES, THEY ARE USED BY TOOLS CODE
+// YOU CAN CHANGE THE ORDER, BUT DONT CHANGE THE NAMES!!
+global enum eDevStats
+{
+	DEATH,
+	SPAWN,
+	ROUND_END,	//Chad ToDo: - should be renamed as now it just contains player win/loss data, the new MATCH_END stat is the new match end data
+	MATCH_END,
+	MOVE,
+	FPS,
+	ENGAGEMENT,
+	BURN_CARD_EARNED
+}
+global const DEVSTATS_VERSION		= 3	// DONT CHANGE THIS UNLESS YOUR NAME IS CHAD G
+global const DEVSTATS_V2_VERSION	= 2 // DONT CHANGE THIS UNLESS YOUR NAME IS CHAD G
+global const DEVSTATS_SEPARATOR	= ";"
+global const DEV_STAT = "DEV_STAT"
+
+global const NUM_GAMES_TRACK_KDRATIO = 10
+global const NUM_GAMES_TRACK_WINLOSS_HISTORY = 10
+
+//-----------------------------------------------------
+// FLYERS
+//-----------------------------------------------------
+
+global const CONSTFLYERHEALTH		= 100
+global const CONSTFLYERHEALTHZERO	= 100000
+//const FX_FLYERDEATH 		= "blood_flyer_death_01" -> taking out temporarily, robot deleting old fx
+
+//XWING FLYER CREATION OPTIONS
+global enum eFlyerType
+{
+	Real
+	Cheap
+	Static
+	CheapMix
+	SwarmMix
+	Cheap500x
+	Cheap1000x
+}
+
+global enum eFlyerPathScale
+{
+	x1
+	x500
+	x1000
+}
+
+// types of ways drop calls can be used
+global enum eDropStyle
+{
+	NONE = 0
+	NEAREST
+	NEAREST_YAW 			// the node nearest the specified origin that fits the supplied yaw
+	FORCED				// force to spawn at the specified location
+	NEAREST_YAW_FALLBACK           // nearest node and yaw, with wider search area
+	FROM_SET_DISTANCE				// spawn at a set distance
+	ZIPLINE_NPC				// starts at the origin and works it's way out in four directions, with fallback
+	RANDOM_FROM_YAW		// spawn at a random node that meets the yaw requirement
+	FLYER_PICKUP		// same as ZIPLINE_NPC just a more suitable name, starts at the origin and works it's way out in four directions, with fallback
+}
+
+// nps states for capturepoint
+global enum eNPCStateCP
+{
+	NONE
+	SPREAD_OUT
+	CONVERGE
+	AT_POINT
+	AT_TERMINAL
+	SITTING_DOWN
+	STANDING_UP
+	USING_TERMINAL
+	MOVING_TO_TERMINAL
+}
+
+global enum eCapPointAIScoring
+{
+	PLAYERS_CAP_AI
+	CONTEST_ALWAYS
+}
+
+//-----------------------------------------------------
+// FIGHTER SHIPS
+//-----------------------------------------------------
+global enum eFighterAngles
+{
+	TARGET_ANGLES, 	// use angles of attachments or offsets
+	FACE_ORIGIN, 	// plays facing towards origin of target entity being attacked
+	FACE_ORIGIN_2D,	// plays facing towards origin of target entity being attacked, ignore z
+	FIXED_ANGLES,	// fixed angles
+	FIXED_POINT		// fixed source position
+	FIXED_POINT_2D	// fixed source position, ignore z
+}
+
+
+//Max Time spent after death before respawning again is DEATHCAM_TIME + KILL_REPLAY_BEFORE_KILL_TIME_TITAN + KILL_REPLAY_AFTER_KILL_TIME
+global const DEATHCAM_TIME = 3.5 // the amount of time spent watching the you-are-dead death cam (not kill replay)
+global const KILL_REPLAY_BEFORE_KILL_TIME_PILOT = 3.5
+global const KILL_REPLAY_BEFORE_KILL_TIME_TITAN = 6.8
+global const KILL_REPLAY_BEFORE_KILL_TIME_DROPPOD = 2.0
+global const KILL_REPLAY_AFTER_KILL_TIME = 2.0
+
+global const DEATHCAM_TIME_SHORT = 2.0
+global const KILL_REPLAY_BEFORE_KILL_TIME_SHORT = 3.5
+global const KILL_REPLAY_AFTER_KILL_TIME_SHORT = 1.0
+global const RESPAWN_BUTTON_BUFFER = 0.0 // the amount of time before you're allowed to respawn, after DEATHCAM_TIME
+
+global const DEFAULT_SCRIPTED_ANIMATION_BLEND_TIME = 0.2
+global const DEFAULT_SCRIPTED_ARRIVAL_DISTANCE 	= 16
+
+global const RODEO_APPROACH_FALLING_FROM_ABOVE = 0
+global const RODEO_APPROACH_JUMP_ON = 1
+
+global const SAFE_TITANFALL_DISTANCE = 125
+global const SAFE_TITANFALL_DISTANCE_CTF = 270
+
+global const NUM_PERSISTENT_PILOT_LOADOUTS = 10
+#if DEVSCRIPTS
+global const NUM_PERSISTENT_TITAN_LOADOUTS = 7
+#else
+global const NUM_PERSISTENT_TITAN_LOADOUTS = 6
+#endif
+
+global const EMBARK_TIMEOUT = 13.0 // how long you have to reach your titan before it stands up and bubble shield starts to fade
+
+
+//-----------------------------------------------------
+// EMP GRENADES
+//-----------------------------------------------------
+global const EMP_GRENADE_PILOT_SCREEN_EFFECTS_DURATION_MIN = 1.5 // duration of emp screen effects when you're at the edge of the damage radius
+global const EMP_GRENADE_PILOT_SCREEN_EFFECTS_DURATION_MAX = 2.5 // duration of emp screen effects when you're at the center of the explosion
+global const EMP_GRENADE_PILOT_SCREEN_EFFECTS_FADE = 1.0
+global const EMP_GRENADE_PILOT_SCREEN_EFFECTS_MIN = 0.15
+global const EMP_GRENADE_PILOT_SCREEN_EFFECTS_MAX = 0.4
+
+global const EMP_IMPARED_SOUND = "EMP_VisualImpair"
+
+
+ // increment integer when ain node format changes. Forces new ain file on maps
+global const AIN_REV = 21
+
+
+// dialogue
+global const VOICE_COUNT = 6
+global const TEST_ALL_ALIASES = false
+
+
+//--------------------------------------------------
+// 				ARMOR TYPES
+//--------------------------------------------------
+
+global const ARMOR_TYPE_HEAVY = 1
+global const ARMOR_TYPE_NORMAL = 0
+
+global const SKYBOXLEVEL	= "skybox_cam_level"
+global const SKYBOXSPACE 	= "skybox_cam_intro"
+
+global const WARPINFXTIME = 2.7
+
+global const MATCH_PROGRESS_RED_EYE_AND_ARMADA = 1
+global const MATCH_PROGRESS_AIR_ZINGERS = 4
+global const MATCH_PROGRESS_REFUEL_GOBLINS = 8
+
+//--------------------------------------------------
+// 				INTRO SKYSCALE SETTINGS
+//--------------------------------------------------
+global const SKYSCALE_SPACE			= 0.0
+global const SKYSCALE_DEFAULT			= 1.0
+global const SKYSCALE_FRACTURE_WARP	= 0.25
+global const SKYSCALE_FRACTURE_DOOROPEN_ACTOR = 0.5
+global const SKYSCALE_FRACTURE_DOOROPEN_PLAYER = 0.33
+global const SKYSCALE_FRACTURE_IMC_ACTOR	= 0.5
+global const SKYSCALE_FRACTURE_IMC_SHIP	= 0.5
+global const SKYSCALE_FRACTURE_IMC_PLAYER	= 0.5
+
+global const SKYSCALE_COLONY_IMC_ACTOR		= 0.85
+global const SKYSCALE_COLONY_IMC_SHIP		= 0.7
+global const SKYSCALE_COLONY_IMC_PLAYER	= 0.7
+global const SKYSCALE_COLONY_MCOR_ACTOR	= 0.65
+global const SKYSCALE_COLONY_MCOR_SHIP		= 0.65
+global const SKYSCALE_COLONY_MCOR_PLAYER	= 0.65
+
+global const SKYSCALE_RELIC_IMC_ACTOR		= 0.9
+global const SKYSCALE_RELIC_IMC_SHIP		= 0.5
+global const SKYSCALE_RELIC_IMC_PLAYER		= 0.85
+global const SKYSCALE_RELIC_MCOR_ACTOR		= 0.5
+global const SKYSCALE_RELIC_MCOR_SHIP		= 0.5
+global const SKYSCALE_RELIC_MCOR_PLAYER	= 0.5
+
+global const SKYSCALE_OUTPOST_IMC_ACTOR	= 0.4
+global const SKYSCALE_OUTPOST_IMC_SHIP		= 0.4
+global const SKYSCALE_OUTPOST_IMC_PLAYER	= 0.4
+global const SKYSCALE_OUTPOST_DOOROPEN_IMC_ACTOR	= 0.9
+global const SKYSCALE_OUTPOST_DOOROPEN_IMC_SHIP	= 0.8
+global const SKYSCALE_OUTPOST_DOOROPEN_IMC_PLAYER	= 0.9
+global const SKYSCALE_OUTPOST_MCOR_ACTOR	= 0.5
+global const SKYSCALE_OUTPOST_MCOR_SHIP	= 0.4
+global const SKYSCALE_OUTPOST_MCOR_PLAYER	= 0.4
+global const SKYSCALE_OUTPOST_DOOROPEN_MCOR_ACTOR	= 1.0
+global const SKYSCALE_OUTPOST_DOOROPEN_MCOR_SHIP	= 0.8
+global const SKYSCALE_OUTPOST_DOOROPEN_MCOR_PLAYER	= 0.6
+
+global const SKYSCALE_BONEYARD_MCOR_ACTOR	= 0.5
+global const SKYSCALE_BONEYARD_MCOR_SHIP	= 0.6
+global const SKYSCALE_BONEYARD_MCOR_PLAYER	= 0.5
+global const SKYSCALE_BONEYARD_DOOROPEN_MCOR_ACTOR	= 0.85
+global const SKYSCALE_BONEYARD_DOOROPEN_MCOR_SHIP	= 1.0
+global const SKYSCALE_BONEYARD_DOOROPEN_MCOR_PLAYER= 0.8
+global const SKYSCALE_BONEYARD_IMC_ACTOR	= 0.5
+global const SKYSCALE_BONEYARD_IMC_SHIP	= 0.35
+global const SKYSCALE_BONEYARD_IMC_PLAYER	= 0.5
+global const SKYSCALE_BONEYARD_DOOROPEN_IMC_ACTOR	= 0.8
+global const SKYSCALE_BONEYARD_DOOROPEN_IMC_SHIP	= 1.0
+global const SKYSCALE_BONEYARD_DOOROPEN_IMC_PLAYER	= 0.8
+
+global const SKYSCALE_AIRBASE_MCOR_ACTOR	= 0.95
+global const SKYSCALE_AIRBASE_MCOR_SHIP	= 0.95
+global const SKYSCALE_AIRBASE_MCOR_PLAYER	= 0.95
+
+global const SKYSCALE_O2_MCOR_ACTOR		= 0.4
+global const SKYSCALE_O2_MCOR_SHIP			= 0.4
+global const SKYSCALE_O2_MCOR_PLAYER		= 0.4
+global const SKYSCALE_O2_DOOROPEN_MCOR_ACTOR		= 1.0
+global const SKYSCALE_O2_DOOROPEN_MCOR_SHIP		= 1.1
+global const SKYSCALE_O2_DOOROPEN_MCOR_PLAYER		= 0.9
+
+global const IMC_TRANSITION_TIME 				= 18.0
+global const IMC_ENTER_ATMOS_FX_TIME			= 4.0
+global const SKYSCALE_O2_FIRE_BUILDUP_TIME		= 14 //IMC_TRANSITION_TIME - IMC_ENTER_ATMOS_FX_TIME
+global const SKYSCALE_EJECT_TIME				= 1.0
+
+
+//--------------------------------------------------
+// 				CLASSIC_MP
+//--------------------------------------------------
+
+global const MIN_PICK_LOADOUT_TIME					= 5.0
+
+
+//--------------------------------------------------
+// 				PERFORMANCE
+//--------------------------------------------------
+
+// Performance
+global enum PerfIndexClient
+{
+	str1,
+	PlayerCanEmbarkTitan1,
+	PlayerCanEmbarkTitan2,
+	FindBestEmbark,
+	FindUserEvent,
+
+	RunThreadsFrame,
+	HudElementUpdate,
+	HudElemUpdateLoop,
+	CodeCallback_PreClientThreads,
+	ClientCodeCallback_HUDThink,
+	ClientCodeCallback_HUDThink_1,
+	ClientCodeCallback_HUDThink_2,
+	ClientCodeCallback_HUDThink_3,
+	ClientCodeCallback_HUDThink_4,
+	ClientCodeCallback_HUDThink_5,
+	ClientCodeCallback_HUDThink_6,
+	FriendIconsTrace_Update,
+	FriendIconsHUD_Update,
+	HealthBarOverlayHUD_Update,
+	UpdateCrosshair,
+	SmartAmmo_UpdateHUD,
+	OnEntityCreation,
+	OnEntityDestroy,
+	DamageIndicator,
+	GrenadeIndicator,
+	PilotThreatHud_Update,
+	UpdateThreatIcons,
+	UpdateDamageStates,
+	UpdateEscalationDpadIcons,
+	UpdateTitanModeHUD,
+	Fracture_AATracers_1,
+	Fracture_AATracers_2,
+	Fracture_RefuelShips,
+	ClusterShipsFireRocketsThink,
+	CreateIndividualShipsFromCluster,
+}
+
+global enum PerfIndexServer
+{
+	str1,
+	PlayerCanEmbarkTitan1,
+	PlayerCanEmbarkTitan2,
+	FindBestEmbark,
+	FindUserEvent,
+
+	GetSpawnPointForStyle,
+	CB_FindLeechTarget,
+	CB_OnServerAnimEvent,
+	CB_ClientCommand,
+	TraceLine,
+	GetZiplineForPlayer,
+	RespawnTitanPilot,
+	NoSpawnAreaCheck,
+	AIChatter,
+
+	PersistentStatTracking,
+	AirtimeChecks,
+	DroneLogic
+}
+
+global const PROMO_SCORE_ADVANCE_REQ = 50 // points required for promo win
+
+global const RANKED_GEM_PROGRESSION_ENABLED = true
+global const RANKED_RECALC_TIMESLICE = 1.8
+global const RANKED_PLAY = "ranked"
+
+global enum eRankedContributionType
+{
+	ASSAULT_PLUS_DEFENSE
+	ASSAULT
+	DEFENSE
+	CTF_FLAG_ASSISTS
+	CTF_FLAG_RETURNS
+	CTF_FLAG_CAPTURES
+	CTF_FLAG_CARRIER_KILLS
+	DAMAGED_TITAN
+	DAMAGED_PILOT
+	DAMAGED_SPECTRE
+	DAMAGED_GRUNT
+	KILLS_TITAN
+	KILLS_PILOT
+	TDM_PILOT_KILLS
+	TDM_PILOT_ASSISTS
+	LOSS_PILOT_DEATH
+	LOSS_TITAN_DEATH
+	MarkedSurvival
+	MarkedKilledMarked
+	MarkedOutlastedEnemyMarked
+	MarkedTargetKilled
+	MarkedEscort
+	LTS_PILOT_KILL
+	TOTAL
+}
+
+global const RANKED_TIER_COUNT 	= 5
+global const RANKED_DIVISION_COUNT = 5
+
+global const RANKED_DECAY_GEMS_LOST_PER_DAY = 1
+global const RANKED_INVALID_SEASON = -12345
+global const RANKED_SEASON_OFFSET = 539	// THIS NEEDS TO BE UPDATED AS SOON AS WE KNOW WHEN RANKED PLAY WILL SHIP SO THE FIRST PUBLIC SEASON IS SEASON 1, NOT > 1
+global const RANKED_SEASONS_PER_MONTH = 1
+
+global const RANKED_SPLASH_COLORS_MAIN = [ 139, 195, 98 ]
+global const RANKED_SPLASH_COLORS_GLOW = [ 34, 90, 65, 255 ]
+
+global const RANKED_SPLASH_COLORS_MAIN_STRING = "164 229 117 255"
+global const RANKED_SPLASH_COLORS_GLOW_STRING = "34 90 65 255"
+
+global const SharedPerfIndexStart = 100
+
+global enum PerfIndexShared
+{
+	RunThread,
+	SmartAmmo_UpdateTargets,
+	StringToColors,
+	CB_IsLeechable,
+}
+
+global const TITAN_CORE_ACTIVE_TIME = 12.6
+global const TITAN_CORE_MARATHON_CORE_MULTIPLIER = 1.42
+global const TITAN_CORE_FIRST_BUILD_TIME = 200
+global const TITAN_CORE_BUILD_TIME = 200
+global const TITAN_CORE_CHARGE_TIME = 0.0
+global const TITAN_CORE_TIC_RATE = 3.8
+
+global const SHIELD_BOOST_R = 255
+global const SHIELD_BOOST_G = 225
+global const SHIELD_BOOST_B = 100
+
+// global const SHIELD_BOOST_DAMAGE_DAMPEN = 0.5 // how much does ogre core protect shields?
+global const SHIELD_BEACON_REGEN_RATE = 20
+
+global const EVAC_SHIP_DAMAGE_MULTIPLIER_AGAINST_NUCLEAR_CORE = 0.5 //Multiply damage done against evac ship from nuclear core
+global const EVAC_SHIP_SHIELD_REGEN_TIME = 2.0 //Multiply damage done against evac ship from nuclear core
+global const EVAC_SHIP_SHIELD_REGEN_DELAY = 6.0 //Multiply damage done against evac ship from nuclear core
+
+global const EVAL_PASSENGER_INVULNERABILITY = true
+
+global enum ProgressSource
+{
+	PROGRESS_SOURCE_SCRIPTED,
+	PROGRESS_SOURCE_ENTITY_HEALTH,
+	PROGRESS_SOURCE_PLAYER_SUIT_POWER,
+	PROGRESS_SOURCE_PLAYER_GRAPPLE_POWER,
+	PROGRESS_SOURCE_FRIENDLY_TEAM_SCORE,
+	PROGRESS_SOURCE_ENEMY_TEAM_SCORE,
+	PROGRESS_SOURCE_TOP_COMPETITOR_SCORE,
+	PROGRESS_SOURCE_WEAPON_CHARGE_FRACTION,
+	PROGRESS_SOURCE_WEAPON_READY_TO_FIRE_FRACTION,
+	PROGRESS_SOURCE_WEAPON_CLIP_AMMO_FRACTION,
+	PROGRESS_SOURCE_WEAPON_CLIP_AMMO_FRACTION_WITH_REGEN,
+	PROGRESS_SOURCE_WEAPON_REMAINING_AMMO_FRACTION,
+	PROGRESS_SOURCE_BOOST_METER_FRACTION,
+	PROGRESS_SOURCE_GLIDE_METER_FRACTION,
+	PROGRESS_SOURCE_SHIELD_FRACTION,
+
+	PROGRESS_SOURCE_COUNT
+};
+
+global const HOTDROP_IMPACT_FX_TABLE = "droppod_impact"
+global const HUMAN_RAGDOLL_IMPACT_TABLE = "ragdoll_human"
+
+// cinematic event flags; server controlled cinematics should set/clear these when active
+//global const CE_FLAG___						= 0x0001
+global const CE_FLAG_INTRO					= 0x0002
+global const CE_FLAG_EXECUTION				= 0x0004 // unused?
+global const CE_FLAG_EMBARK					= 0x0008
+global const CE_FLAG_DISEMBARK				= 0x0010
+global const CE_FLAG_TITAN_HOT_DROP			= 0x0020 // unused?
+global const CE_FLAG_CLASSIC_MP_SPAWNING	= 0x0040
+global const CE_FLAG_HIDE_MAIN_HUD			= 0x0080
+global const CE_FLAG_TITAN_3P_CAM			= 0x0100
+global const CE_FLAG_WAVE_SPAWNING			= 0x0200
+global const CE_FLAG_EOG_STAT_DISPLAY		= 0x0400
+
+global const TITAN_DAMAGE_STAGE_FULL = 1.0
+global const TITAN_DAMAGE_STAGE_1 = 0.75
+global const TITAN_DAMAGE_STAGE_2 = 0.5
+global const TITAN_DAMAGE_STAGE_3 = 0.25
+global const TITAN_DAMAGE_STAGE_DOOMED = 0.0
+global const int DOOMED_MIN_HEALTH = 1
+
+global const ABILITY_STIM_SPEED_MOD = 2.0
+global const ABILITY_STIM_REGEN_DELAY = 2.0
+global const ABILITY_STIM_REGEN_MOD = 2.0
+
+global const BERSERKER_INCOMING_DAMAGE_DAMPEN = 0.5
+global const BERSERKER_DASH_VELOCITY = 1200
+global const BERSERKER_AOE_RADIUS = 120
+global const BERSERKER_AOE_DAMAGE = 500
+// should be in the anim file, but can't add anim events to viewmodels anims?
+global const BERSERKER_PRE_DASH_TIME = 0.4
+global const BERSERKER_DASH_TIME = 0.6
+
+global const float SONAR_GRENADE_RADIUS = 1250.0
+global const float SONAR_GRENADE_PULSE_DURATION = 6.0
+// these numbers should be kept in sync with bakery assets: inside_sonar, outline_sonar
+global const float SONAR_PULSE_SPACE = 400.0
+global const float SONAR_PULSE_SPEED = 300.0
+
+global const DASH_MELEE_SPEED 				= 1.35
+
+global const WALLRUN_CLOAK_DURATION		= 15.0
+global const WALLRUN_CLOAK_TRANSITION_TIME	= 0.2
+global const WALLHANG_CLOAK_DURATION		= 15.0
+global const WALLHANG_CLOAK_TRANSITION_TIME = 0.2
+
+global const TITAN_HEALTHDROP_REGENFRAC	= 0.3
+global const TITAN_HEALTHDROP_REGENTIME	= 5.0
+global const TITAN_HEALTHDROP_TIMEOUT		= 30.0
+
+global const SOLDIER_SHIELD_REGEN_THREAD = "SoldierShieldRegenThink"
+global const SOLDIER_SHIELD_ZEROED = "SoldierShieldZeroed"
+global const SOLDIER_SHIELD_RESTART = "SoldierShieldRestart"
+
+global const MAX_WEAPON_FIRE_ID	= 4
+
+global const OFFHAND_RIGHT			= 0
+global const OFFHAND_LEFT			= 1
+global const OFFHAND_ANTIRODEO		= 2
+global const OFFHAND_EQUIPMENT		= 3
+global const OFFHAND_INVENTORY		= 4
+global const OFFHAND_MELEE			= 5
+global const OFFHAND_TITAN_CENTER	= 2
+
+global const TITANMENU_NO_CUSTOMIZATION = 0x00001
+global const TITANMENU_FORCE_NON_PRIME = 0x00002
+global const TITANMENU_FORCE_PRIME = 0x00004
+
+global const OFFHAND_COUNT			= 6
+
+global const OFFHAND_ORDNANCE		= OFFHAND_RIGHT
+global const OFFHAND_SPECIAL		= OFFHAND_LEFT
+
+global const SHIELD_REGEN_TICK_TIME 					= 0.1
+global const HARVESTER_BEAM_TICK_TIME					= 1.0
+global const TITAN_DOOMED_REGEN_DELAY					= 0.5
+global const TITAN_DOOMED_REGEN_AMOUNT					= 0.0025
+
+#if SP
+global const TITAN_SHIELD_REGEN_DELAY					= 3.0
+global const TITAN_SHIELD_REGEN_TIME					= 2.0
+#else
+global const TITAN_SHIELD_REGEN_DELAY					= 6.0
+global const TITAN_SHIELD_REGEN_TIME					= 6.0
+#endif
+
+global const TITAN_SHIELD_PERMAMENT_DAMAGE_FRAC			= 0.0
+global const TITAN_SHIELD_PERMAMENT_DAMAGE_FRAC_PILOT	= 0.0
+
+// vdu static. Maybe have a client only _consts?
+global const STATIC_RANDOM = 0
+global const STATIC_HEAVY = 1
+global const STATIC_LIGHT = 2
+global const STATIC_VERY_HEAVY = 3
+
+global const SATCHEL_DETONATE_DELAY = 0.0
+
+//Match Progress.
+global const MATCH_PROGRESS_EARLY = 30
+global const MATCH_PROGRESS_MID = 60
+global const MATCH_PROGRESS_LATE = 90
+global const MATCH_PROGRESS_OVER_NO_ANNOUNCEMENT = 120
+global const MATCH_PROGRESS_THRESHOLDS = [ MATCH_PROGRESS_EARLY, MATCH_PROGRESS_MID, MATCH_PROGRESS_LATE, MATCH_PROGRESS_OVER_NO_ANNOUNCEMENT ]
+
+// IMPORTANT: Please add new items types to the *bottom* of this enum list!
+// This enum is mirrored in C++ so deleting, inserting before or rearranging
+// existing item types will break C++ code. Adding new items to the end will not!
+global enum eItemTypes
+{
+	PILOT_PRIMARY,
+	PILOT_SECONDARY,
+	PILOT_SPECIAL,
+	PILOT_ORDNANCE,
+	PILOT_PRIMARY_ATTACHMENT,
+	PILOT_PRIMARY_MOD,
+	PILOT_SECONDARY_MOD,
+	PILOT_WEAPON_MOD3,
+	PILOT_PASSIVE1,
+	PILOT_PASSIVE2,
+	TITAN_PRIMARY,
+	TITAN_SPECIAL,
+	TITAN_ANTIRODEO,
+	TITAN_ORDNANCE,
+	TITAN_PRIMARY_MOD,
+	TITAN_OS,
+	RACE,
+	NOT_LOADOUT,
+	TITAN_NOSE_ART,
+	PILOT_SUIT,
+	TITAN_CORE_ABILITY,
+	BURN_METER_REWARD,
+	PILOT_MELEE,
+	TITAN,
+	PRIME_TITAN,
+	FEATURE,
+	WEAPON_FEATURE,
+	CALLING_CARD,
+	CALLSIGN_ICON,
+	CAMO_SKIN,
+	CAMO_SKIN_PILOT,
+	CAMO_SKIN_TITAN,
+	SUB_PILOT_WEAPON_MOD,
+	SUB_PILOT_WEAPON_ATTACHMENT,
+	FACTION,
+	PILOT_EXECUTION,
+	TITAN_GENERAL_PASSIVE,
+	TITAN_TITANFALL_PASSIVE,
+	TITAN_RONIN_PASSIVE,
+	TITAN_NORTHSTAR_PASSIVE,
+	TITAN_ION_PASSIVE,
+	TITAN_TONE_PASSIVE,
+	TITAN_SCORCH_PASSIVE,
+	TITAN_LEGION_PASSIVE,
+	TITAN_VANGUARD_PASSIVE,
+	TITAN_UPGRADE1_PASSIVE,
+	TITAN_UPGRADE2_PASSIVE,
+	TITAN_UPGRADE3_PASSIVE,
+	TITAN_WARPAINT,
+	PRIME_TITAN_NOSE_ART, //Not needed anymore since Prime Titans now share nose arts, but since the comment above suggests not deleting entries we're keeping this in here
+	GAME_MODE,
+	COMMS_ICON,
+	COUNT
+}
+
+//server passives. Client has the var so it can create burn cards etc. but doesn't know which server passives the player has.
+global const SFLAG_DOUBLE_XP			= 0x00001
+global const SFLAG_FAST_BUILD1 			= 0x00002
+global const SFLAG_HUNTER_GRUNT 		= 0x00004
+global const SFLAG_HUNTER_SPECTRE		= 0x00008
+global const SFLAG_HUNTER_PILOT 		= 0x00010
+global const SFLAG_HUNTER_TITAN 		= 0x00020
+global const SFLAG_FAST_BUILD2 			= 0x00040
+//global const SFLAG_					= 0x00080
+//global const SFLAG_					= 0x00100
+global const SFLAG_SPECTRE_VIRUS		= 0x00200
+global const SFLAG_INSTANT_HACK			= 0x00400
+//global const SFLAG_					= 0x00800
+global const SFLAG_BC_DASH_CAPACITY		= 0x01000
+global const SFLAG_COOP_ORDNANCE_CAPACITY_1 = 0x02000
+//global const SFLAG_			= 0x04000
+//global const SFLAG_			= 0x08000
+global const SFLAG_TITAN_SMASH	= 0x10000
+//global const SFLAG_ 			= 0x20000
+//::SFLAG_					= 0x40000
+//::SFLAG_					= 0x80000
+//::SFLAG_					= 0x100000
+//::SFLAG_					= 0x200000
+//::SFLAG_					= 0x400000
+//::SFLAG_					= 0x800000
+//::SFLAG_					= 0x1000000
+//::SFLAG_					= 0x2000000
+//::SFLAG_					= 0x4000000
+//::SFLAG_					= 0x8000000
+//::SFLAG_					= 0x10000000
+//::SFLAG_					= 0x20000000
+//::SFLAG_					= 0x40000000
+//::SFLAG_					= 0x80000000
+
+
+global const RACE_HUMAN_FEMALE = "race_human_female"
+
+global const BURN_CARD_MAP_LOOT_DROP = 1
+global const BURNCARD_WARNING_COUNT = 5
+
+global const MAX_BURN_CARD_PACKS_EVER = 50
+global const BURNCARD_INDEX_EMPTY = -1
+// burn card groups
+global const BCGROUP_SPEED 	= 0
+global const BCGROUP_STEALTH	= 1
+global const BCGROUP_INTEL		= 2
+global const BCGROUP_BONUS 	= 3
+global const BCGROUP_NPC 		= 4
+global const BCGROUP_WEAPON 	= 5
+global const BCGROUP_MISC 		= 6
+global const BCGROUP_DICE 		= 7
+global const BC_GROUPINGS		= 8
+
+global const BURNCARDS_PER_PACK = 7
+global const DECK_STYLE_BURNCARDS = false
+global const BURN_CARD_NEVER_COLLECTED = -1
+
+global const BURNCARD_PACK_PER_XP = 8000.0
+global const BURNCARD_COMMON = 0
+global const BURNCARD_RARE = 2
+global const CARDS_PER_PAGE = 12.0
+global const CARDS_PER_ROW = 6.0
+
+global const BURN_CARD_WARMUP_TIME = 3.0
+global const INGAME_BURN_CARDS = 3
+global const MAX_BURN_CARDS = 72
+global const MAX_UNOPENED_BURNCARDS = 25
+global const MAX_UNOPENED_EXCHANGED_BURNCARDS = 6
+global const MAX_MAILED_CARDS = 30
+global const MAX_UNOPENED_PACKS = 99
+
+global const PILE_DECK = 0
+global const PILE_ACTIVE = 1
+global const PILE_COLLECTION = 2
+//const PILE_MAIL = 1
+
+//const NEW_CARD_DELIVERY_PACK 				= 0x00001
+//const NEW_CARD_DELIVERY_CARDS				= 0x00002
+//const NEW_CARD_DELIVERY_EXCHANGE 			= 0x00004
+//const NEW_CARD_DELIVERY_FULL	 			= 0x00008
+//const NEW_CARD_DELIVERY_REQUEST_EXCHANGE 	= 0x00010
+//const NEW_CARD_DELIVERY_NEW_SLOT		 	= 0x00020
+
+
+global const READING_NONE = -1
+global const READING_IN_PROGRESS 			= 0
+global const READING_WAITING_TO_CONTINUE 	= 1
+global const READING_DONE					= 2
+
+
+global const BURNCARD_REWARD_VAL_1 =  80  // 40
+global const BURNCARD_REWARD_VAL_2 = 140  //100
+global const BURNCARD_REWARD_VAL_3 = 260  //160
+
+global const BURNCARD_STORY_PROGRESS_NONE 		= 0
+global const BURNCARD_STORY_PROGRESS_INTRO 	= 1
+//const BURNCARD_STORY_PROGRESS_HINT 		= 2
+//const BURNCARD_STORY_PROGRESS_3CARDS	= 3
+//const BURNCARD_STORY_PROGRESS_MORECARDS	= 4
+global const BURNCARD_STORY_PROGRESS_COMPLETE	= 5
+
+global const BURNCARD_AUTO_SONAR_INTERVAL = 6.5
+global const BURNCARD_AUTO_SONAR_IMAGE_DURATION = 1.5
+
+global enum eTitanAvailability
+{
+	Default,
+	Always,
+	Once,
+	Never,
+	Custom,
+	TitanRequested,
+	FirstOneFree,
+	Escalation,
+
+	LastTitanAvailability
+}
+
+global enum eBoostAvailability
+{
+	Default,
+	Disabled,
+
+	LastBoostAvailability
+}
+
+global enum eTitanExitEnabled
+{
+	Default,
+	Always,
+	Never,
+	DisembarkOnly,
+
+	LastTitanExit
+}
+
+global enum eSpawnAsTitan
+{
+	Default,
+	Always,
+	Once,
+	Never,
+
+	LastSpawnAsTitan
+}
+
+global enum eWaveSpawnType
+{
+	DISABLED,				// not used
+	FIXED_INTERVAL,			// spawn every 30 seconds (depending on playlist var "wave_spawn_interval")
+	PLAYER_DEATH,			// spawn 30 seconds after the first player to die in a new wave. (per team)
+	MANUAL					// set the spawn time manually
+}
+
+global enum ePilotGroundSpawnMethod
+{
+	SPAWNPOINT,
+	REMATCH,
+	SPAWN_ON_FRIENDLY,
+}
+
+global enum eAllowNPCs
+{
+	None,
+	Default,
+	PlayerControlledOnly,
+	GruntOnly,
+	SpectreOnly,
+
+	LastAllowNPCs
+}
+
+
+global const DROPSHIP_TITAN_PICKUP_RADIUS = 256
+
+global enum eObjective
+{
+	RETRIEVAL,
+	PLAYERMOVE,
+	DEFEND,
+}
+
+global enum eFloorIsLava
+{
+	Default,
+	Enabled,
+	Disabled,
+
+	LastFloorIsLava
+}
+
+global enum eMinimapState
+{
+	Default,
+	Hidden,
+
+	LastMinimapState
+}
+
+global enum eOSPState
+{
+	Default,
+	PistolsOnly,
+	FromTitanOnly,
+	FirstSpawnOnly,
+
+	LastOSPState
+}
+
+global enum eAmmoLimit
+{
+	Default,
+	Limited,
+	None,
+
+	LastAmmoLimit
+}
+
+global enum eEliminationMode
+{
+	Default,
+	Pilots,
+	Titans,
+	PilotsTitans,
+
+	LastEliminationMode
+}
+
+global enum ePlayerBleedout
+{
+	Default, //off
+	Enabled,
+	Disabled,
+
+	LastPlayerBleedout
+}
+
+/*
+	pistols only
+	loadout from titan only (pistols only implied)
+	loadout on first spawn only (pistols only implied)
+*/
+
+global enum eFlagState
+{
+	None,
+	Home,
+	Held,
+	Away,
+}
+
+global const COUNT_ENABLED = 1
+global const BURN_CARD_COUNT_MAX = 99
+
+global const CLOAK_INCLUDE_FADE_IN_TIME = true
+global const CLOAK_EXCLUDE_FADE_IN_TIME = false
+
+global const MARVIN_TYPE_SHOOTER      = 0
+global const MARVIN_TYPE_WORKER       = 1
+global const MARVIN_TYPE_MARVINONE    = 2
+global const MARVIN_TYPE_FIREFIGHTER  = 3
+
+global enum eLobbyType
+{
+	SOLO,
+	PARTY_LEADER,
+	PARTY_MEMBER,
+	MATCH,
+	PRIVATE_MATCH
+}
+
+global enum userSignInState
+{
+	ERROR,
+	SIGNING_IN,
+	SIGNED_IN,
+	SIGNED_OUT
+}
+
+// Don't remove items from this list once the game is in production
+// Xbox live analytics needs the numbers for each map to stay the same
+// Only add new entries to the bottom of the list
+global enum eMaps
+{
+	invalid = -1,
+	mp_lobby,
+
+	mp_forwardbase_kodai
+	mp_grave
+	mp_homestead
+	mp_thaw
+	mp_black_water_canal
+	mp_eden
+	mp_drydock
+	mp_crashsite3
+	mp_complex3
+	mp_coliseum
+	mp_angel_city
+}
+
+global enum ePrivateMatchMaps
+{
+	mp_forwardbase_kodai
+	mp_grave
+	mp_homestead
+	mp_thaw
+	mp_black_water_canal
+	mp_eden
+	mp_drydock
+	mp_crashsite3
+	mp_complex3
+	mp_angel_city
+	mp_colony02
+}
+
+global enum ePrivateMatchModes
+{
+	aitdm
+	tdm
+	cp
+	at
+	ctf
+	lts
+	ps
+}
+
+global enum eEventNotifications
+{
+	Clear,
+	PlayerHasEnemyFlag,
+	PlayerCapturedEnemyFlag,
+	PlayerReturnedEnemyFlag,
+	PlayerDroppedEnemyFlag,
+	PlayerHasFriendlyFlag,
+	PlayerCapturedFriendlyFlag,
+	PlayerReturnedFriendlyFlag,
+	PlayerDroppedFriendlyFlag,
+	ReturnedFriendlyFlag,
+	ReturnedEnemyFlag,
+	YouHaveTheEnemyFlag,
+	YouCapturedTheEnemyFlag,
+	YouDroppedTheEnemyFlag,
+	YouReturnedFriendlyFlag,
+	YouWillRespawnNextRound,
+	BurnCardRematch,
+	YouveBeenSpotted,
+	MarkedForDeathWaitingForMarkedToSpawn,
+	MarkedForDeathMarkedDisconnected,
+	MarkedForDeathYouWillBeMarkedNext,
+	MarkedForDeathCountdownToNextMarked,
+	MarkedForDeathKill,
+	BeingRevived,
+	TurretAvailable,
+	MaxTurretsPlaced,
+	SST_ScoreChange,
+	RoundWinningKillReplayCancelled,
+	FriendlyPlayerSpawnedOnYou,
+	SpawnedOnFriendlyPlayer,
+	HarvesterTitanDamageOnly,
+	HarvesterBombDamageOnly,
+	TurretTitanDamageOnly,
+	TEMP_HoldUseToReleaseTurret,
+	TEMP_KillTheTarget,
+	TEMP_KillTheTarget_Success,
+	TEMP_KillTheTarget_Fail,
+	TEMP_VortexDefence,
+	TEMP_RodeoExpress_Success,
+	TEMP_RodeoExpress_Fail,
+	TEMP_TitanGreenRoom,
+	TEMP_FindTheMcGuffin,
+	TEMP_GetToEvacPoint,
+	TDay_ActivatedBeacon,
+	TDay_TDayIncoming,
+	TDay_Arrived,
+	TDay_KnockedOff,
+	CapturePointIsLocked_HardpointOnStartTouch,
+	CapturePointIsLocked_HardpointOnEndTouch,
+	Rodeo_BatteryRemoved,
+	Rodeo_YouStoleBattery,
+	Rodeo_TitanPickedUpBattery,
+	Rodeo_PilotPickedUpBattery,
+	Rodeo_YouAppliedBatteryToTitan,
+	Rodeo_YouAppliedBatteryToPetTitan
+	Rodeo_PilotAppliedBatteryToYou,
+	Rodeo_PilotAppliedBatteryToYourPetTitan,
+	Rodeo_YouDroppedABattery,
+	Rodeo_YouEmbarkedWithABattery,
+	Rodeo_DisembarkToPickUpBattery,
+	Rodeo_FriendlyPickedUpBattery,
+	Rodeo_RequestBattery,
+	Rodeo_ShowBatteryHint,
+	Rodeo_HideBatteryHint,
+	BurnMeter_RewardUsed,
+	BurnMeter_FriendlyUsedMapScan,
+	BurnMeter_RewardAvailable,
+	BurnMeter_CantSummonReaper,
+	BurnMeter_RadarJammerUsed,
+	SpreeRewards_WeaponAmped,
+	Grapple_WasGrappled_ByTitan,
+	Grapple_WasGrappled_ByPilot,
+	EnemyTeamEliminated,
+	LimitedTitans_CountDownTimer,
+	AT_BlackBoxDied,
+	AT_SupplyDropIncomingIn,
+	AT_SupplyDropIncoming,
+	AT_SupplyDropCaptured,
+	AT_SupplyDropExpired,
+	WEAP_AmmoFull,
+	WEAP_GotAmmo,
+	HUNTED_PlayerBecomesHunter,
+	HUNTED_PlayerSecuresAsset,
+	HUNTED_PlayerDropsAsset,
+	HUNTED_Reinforcements,
+	SPEEDBALL_FlagPickedUp,
+	SPEEDBALL_FlagDropped,
+	DON_Reinforcements,
+	BLEEDOUT_SelfHealPrompt,
+	BATT_HealthFull,
+	BATT_Full,
+	VANGUARD_ShieldGain
+}
+
+global enum ePermanentEventNotifications
+{
+	Empty = -1,
+	CTF_YouAreCarryingFlag,
+	CTF_RodeoPilotIsCarryingFlag,
+	MFD_YouAreTheMark,
+}
+
+global enum ePrivateMatchStartState
+{
+	NOT_READY,
+	READY,
+	STARTING,
+}
+
+global const float TITANFALL_INNER_RADIUS = 90.0
+global const float TITANFALL_OUTER_RADIUS = 120.0
+
+global const TITANHOTDROP_DISABLE_ENEMY_TITANFALL_RADIUS = 450
+
+// mp_o2
+global const FIRST_WARNING_PROGRESS  = 27
+global const SECOND_WARNING_PROGRESS = 54
+global const THIRD_WARNING_PROGRESS  = 76
+global const O2_DEV_DISABLE_SKYSHOW 		= false
+
+
+global const RESPAWN_DEBOUNCE_TIME = 0.75 // time until "A Load Checkpoint" appears
+
+
+
+//--------------------------------------------------
+// 				COOP / TOWER DEFENSE
+//--------------------------------------------------
+global enum eMissionType
+{
+	BOUNTY			// 0
+	TOWERDEFENSE	// 1
+	SCAVENGERHUNT	// 2
+
+	// must be last
+	MISSION_COUNT
+}
+
+global const WAVESPAWN_PROTECTION_TIME				= 3.0
+
+global const COOP_MAX_ACTIVE_TITANS					= 10
+global const COOP_MAX_ACTIVE_CLOAKED_DRONES			= 3
+
+global const COOP_SENTRY_TURRET_MAX_COUNT_PET		= 3	// don't try to set it to more then 3
+global const COOP_SENTRY_TURRET_MAX_COUNT_INV		= 3
+
+global const GENERATOR_SHIELD_REGEN_DELAY			= 10.0
+global const GENERATOR_SHIELD_REGEN_TIME			= 10.0
+
+global const GENERATOR_DAMAGE_STREAK_TIMEOUT 					= 10.0  // NPCs have to damage the generator within this amount of time to keep a "damage streak" alive
+
+global const GENERATOR_THREAT_WARN_STREAKDMG_GLOBAL 			= 10000
+global const GENERATOR_THREAT_WARN_DIST_TITAN 					= 2500
+global const GENERATOR_THREAT_WARN_STREAKDMG_MORTAR_TITANS 		= 4000  // these types of AI have to do much damage in a streak to trigger a warning
+global const GENERATOR_THREAT_WARN_STREAKDMG_SUICIDE_SPECTRES 	= 1500  // (150 dmg per suicide explosion)
+global const GENERATOR_THREAT_WARN_DIST_INFANTRY 				= 1500
+global const GENERATOR_THREAT_WARN_NUM_REQ_INFANTRY 			= 16
+
+global const DEPLOYABLE_TURRET_ACCURACY_MULTIPLIER	= 2.0	// 1.0 old
+global const DEPLOYABLE_TURRET_HEALTH				= 600	// 1200 old
+
+global const TIME_BETWEEN_OBJ					= 10
+global const TIME_BEFORE_CHECKPOINT_RESTART		= 1
+global const TIME_BEFORE_OBJECTIVE_RESTART		= 6
+
+global const MINION_BUBBLE_SHIELD_RADIUS		= 230
+global const MINION_BUBBLE_SHIELD_RADIUS_SQR	= 51984		//228 * 228 ... we give some slack for floating point error
+
+global const MAX_LOADOUT_CRATE_COUNT			= 10
+global const MINIMAP_LOADOUT_CRATE_SCALE		= 0.075
+global const RADAR_JAM_TIME						= 10.0
+
+// Generator damage callback sometimes tweaks AI weapon damage numbers to be better for coop
+global const GENERATOR_DAMAGE_NUKE_CORE_MULTIPLIER		= 5.0
+global const GENERATOR_DAMAGE_MORTAR_ROCKET_MULTIPLIER	= 0.8 // increased the value since we now only fire 7 missiles per mortar
+
+//titan tactical ability slots
+global enum eTAC_ABILITY //DO NOT CHANGE THE ORDER OF THESE - they are referenced by code
+{
+	NONE,
+	VORTEX,
+	WALL,
+	SMOKE,
+
+	LAST_INDEX //always last
+}
+
+global const HARVESTER_GRAPH_DATA_POINTS						= 20 	// Number of plot points on Harvester Health Graph
+
+global const SPECTRE_MAX_SIGHT_DIST = 3000
+
+global const ARC_TITAN_EMP_FIELD_RADIUS 			= 330
+global const ARC_TITAN_EMP_FIELD_RADIUS_SQR 		= 108900 //pow( 330, 2 )
+global const ARC_TITAN_EMP_FIELD_INNER_RADIUS 		= 150
+global const ARC_TITAN_EMP_FIELD_INNER_RADIUS_SQR	= 22500 //pow( 150, 2 )
+
+global const TITAN_GRAPPLE_DAMAGE 					= 600
+global const TITAN_GRAPPLE_DEBOUNCE_TIME 			= 1.0
+
+global const CLOAKED_DRONE_SPEED		= 1800
+global const CLOAKED_DRONE_ACC		= 1.75
+global const CLOAKED_DRONE_YAWRATE	= 150
+global const CLOAKED_DRONE_LOOPING_SFX = "Coop_CloakDrone_Beam"
+global const CLOAKED_DRONE_WARP_IN_SFX = "Coop_DroneTeleport_In"
+global const CLOAKED_DRONE_WARP_OUT_SFX = "Coop_DroneTeleport_Out"
+global const CLOAKED_DRONE_CLOAK_START_SFX = "CloakDrone_Cloak_On"
+global const CLOAKED_DRONE_CLOAK_LOOP_SFX = "CloakDrone_Cloak_Sustain_Loop"
+global const CLOAKED_DRONE_HOVER_LOOP_SFX = "AngelCity_Scr_DroneSearchHover"
+
+global const MINIMAP_CLOAKED_DRONE_SCALE 		= 0.070
+
+
+//--------------------------------------------------
+// 				BLACK MARKET
+//--------------------------------------------------
+global const CURRENCY_COIN_WALLET_MIN 			= 0
+global const CURRENCY_COIN_WALLET_MAX 			= 999999
+global const CURRENCY_COIN_WALLET_START_AMOUNT = 10000
+global const MAX_XP_TO_COINS_AMOUNT 			= 5000
+global const COIN_REWARD_SELL_COMMON 			= 100
+global const COIN_REWARD_SELL_RARE 			= 400
+global const COIN_REWARD_MATCH_COMPLETION      = 500
+global const COIN_REWARD_MATCH_VICTORY         = 250
+global const COIN_REWARD_FIRST_WIN_OF_DAY      = 1000
+global const COIN_REWARD_DAILY_CHALLENGE		= 500
+global const COST_BC_MATCHLONG_UPGRADE			= 3000
+
+global enum eShopResponseType
+{
+	FAIL_UNKNOWN_ERROR,
+	FAIL_NOT_ENOUGH_COINS,
+	FAIL_BURN_CARDS_FULL,
+	FAIL_ITEM_LEVEL_LOCKED,
+	FAIL_ALREADY_UNLOCKED,
+	FAIL_PRIVATE_MATCH,
+	SUCCESS_PERISHABLE,
+	SUCCESS,
+}
+
+global enum eCoinRewardCategory
+{
+	MATCH_COMPLETION,
+	MATCH_VICTORY,
+	DAILIES,
+	MISC,
+
+	_NUM_CATEGORIES,
+}
+
+global enum eCoinRewardType
+{
+	// CANT ADD TO THIS ENUM WITHOUT UPDATING PERSISTENT DATA AND ALSO THE MENUS
+	MATCH_COMPLETION,
+	MATCH_VICTORY,
+	FIRST_WIN_OF_DAY,
+	DAILY_CHALLENGE,
+	DISCARD,
+	MAX_LEVEL_CONVERSION,
+
+	_NUM_TYPES,
+}
+
+global enum eShopItemType
+{
+	PERISHABLE,
+	BURNCARD_PACK,
+	TITAN_OS_VOICE_PACK,
+	TITAN_DECAL,
+	CHALLENGE_SKIP,
+}
+
+//--------------------------------------------------
+// 					CHALLENGES
+//--------------------------------------------------
+
+global enum eChallengeCategory
+{
+	ROOT,				// Only used by challenges menu
+
+	GENERAL,
+	TIME,
+	DISTANCE,
+	KILLS,
+	MOBILITY_KILLS,
+	MELEE_KILLS,
+
+	TITAN_PRIMARY,		// Only used by challenges menu
+
+	WEAPON_40MM,
+	WEAPON_XO16,
+	WEAPON_TITAN_SNIPER,
+	WEAPON_ARC_CANNON,
+	WEAPON_ROCKET_LAUNCHER,
+	//WEAPON_TRIPLE_THREAT,
+
+	TITAN_ORDNANCE,
+
+	WEAPON_SALVO_ROCKETS,
+	WEAPON_HOMING_ROCKETS,
+	WEAPON_DUMBFIRE_ROCKETS,
+	//WEAPON_SHOULDER_ROCKETS,
+
+	PILOT_PRIMARY,		// Only used by challenges menu
+
+	WEAPON_SMART_PISTOL,
+	WEAPON_SHOTGUN,
+	WEAPON_R97,
+	WEAPON_CAR,
+	WEAPON_LMG,
+	WEAPON_RSPN101,
+	WEAPON_HEMLOK,
+	WEAPON_G2,
+	WEAPON_DMR,
+	WEAPON_SNIPER,
+
+	PILOT_SECONDARY,	// Only used by challenges menu
+
+	WEAPON_SMR,
+	WEAPON_MGL,
+	WEAPON_ARCHER,
+	WEAPON_DEFENDER,
+
+	PILOT_ORDNANCE,
+
+	WEAPON_FRAG_GRENADE,
+	WEAPON_EMP_GRENADE,
+	//WEAPON_PROXIMITY_MINE,
+	WEAPON_SATCHEL,
+
+	COOP,
+	DAILY,
+
+	CATEGORY_COUNT,
+}
+
+//--------------------------------------------------
+// 				DAILIES / TIME FUNCTIONS
+//--------------------------------------------------
+
+global const SECONDS_PER_WEEK				= 604800
+global const SECONDS_PER_DAY				= 86400
+global const SECONDS_PER_HOUR				= 3600
+global const SECONDS_PER_MINUTE				= 60
+global const FNF_SCHEDULE_RESET_SECONDS		= 27000 // 7.5 hours
+global const PST_TIME_ZONE_OFFSET			= -7
+global const DAILY_RESET_TIME_ZONE_OFFSET	= -10 	// subtract 10 hours to UTC time. This will cause dailies to reset at 3am PST(-8) / 6am EST(-5)
+
+
+
+
+
+
+global const pmSettingsMap =
+{
+	pm_score_limit =
+	{
+		at =
+		[
+	200,
+	250,
+	300,
+	350,
+	400,
+	500,
+	750,
+	1000,
+		],
+		ctf =
+		[
+	3,
+	4,
+	5,
+	6,
+	7,
+	8,
+	9,
+	10,
+		],
+		lts =
+		[
+	2,
+	3,
+	4,
+	5,
+	6,
+	7,
+	8,
+	9,
+		],
+		tdm =
+		[
+	10,
+	20,
+	30,
+	40,
+	50,
+	60,
+	75,
+	100,
+		],
+		cp =
+		[
+	150,
+	200,
+	250,
+	300,
+	350,
+	400,
+	500,
+	750,
+		],
+		mfd =
+		[
+	1,
+	3,
+	5,
+	7,
+	10,
+	20,
+	30,
+	50,
+		],
+	},
+
+	pm_pilot_health =
+	[
+	0,
+	100,
+	300,
+	],
+
+	pm_pilot_ammo =
+	[
+	0,
+	1,
+	2,
+	],
+
+	pm_pilot_minimap =
+	[
+	0,
+	1,
+	],
+
+	pm_titan_shields =
+	[
+	0, // default
+	-1, // disabled
+	1125,
+	4500,
+	],
+
+	pm_ai_type =
+	[
+	0, // default
+	0,
+	2,
+	3,
+	],
+
+	pm_ai_lethality =
+	[
+	0, // default
+	1,
+	2,
+	],
+
+	pm_burn_cards =
+	[
+	0,
+	1,
+	2,
+	3,
+	4,
+	5,
+	6,
+	7,
+	8,
+	9,
+	10,
+	],
+}
+
+
+global const playlistVarMap = {
+// Pilot
+	pm_score_limit 			= "",
+	pm_time_limit 			= "",
+	pm_pilot_health 		= "pilot_health",
+	pm_pilot_ammo 			= "riff_ammo_limit",
+	pm_pilot_minimap 		= "riff_minimap_state",
+	pm_pilot_respawn_delay 	= "respawn_delay",
+	pm_titan_build			= "titan_build_time",
+	pm_titan_rebuild 		= "titan_rebuild_time",
+	pm_titan_shields 		= "titan_shield_health",
+	pm_ai_type 				= "riff_allow_npcs",
+	pm_ai_lethality 		= "riff_ai_lethality",
+	pm_burn_cards 			= "burn_cards_set",
+/*
+	pilot_health 			= "pm_pilot_health",
+	riff_ammo_limit 		= "pm_pilot_ammo",
+	riff_minimap_state		= "pm_pilot_minimap",
+	titan_build_time 		= "pm_titan_build",
+	titan_rebuild_time 		= "pm_titan_rebuild",
+	titan_shield_health 	= "pm_titan_shields",
+	riff_allow_npcs 		= "pm_ai_type",
+	riff_ai_lethality 		= "pm_ai_lethality",
+*/
+}
+
+// 				Titan OS Voice packs
+//--------------------------------------------------
+
+//Table that maps the enum titanVoice (Defined in persistent data) to the string modifier used in constructing the appropriate sound alias
+global const TITAN_OS_VOICE_PACK = [
+	"Bt",
+	"Legion",
+	"Scorch",
+	"Ronin",
+	"Northstar",
+	"ion",
+	"Tone",
+	"Vanguard",
+]
+
+global enum eMusicPieceID
+{
+	LEVEL_INTRO,
+	LEVEL_WIN,
+	LEVEL_LOSS,
+	LEVEL_DRAW,
+	LEVEL_THREE_MINUTE,
+	LEVEL_LAST_MINUTE,
+	LEVEL_SUDDEN_DEATH,
+	LEVEL_CINEMATIC_1,
+	LEVEL_CINEMATIC_2,
+	LEVEL_CINEMATIC_3,
+	LEVEL_CINEMATIC_4,
+	TITAN_ACTION_LOW_1,
+	TITAN_ACTION_LOW_2,
+	TITAN_ACTION_HIGH_1,
+	TITAN_ACTION_HIGH_2,
+	PILOT_ACTION_LOW_1,
+	PILOT_ACTION_LOW_2,
+	PILOT_ACTION_HIGH_1,
+	PILOT_ACTION_HIGH_2,
+	GAMEMODE_1,
+	GAMEMODE_2,
+	COOP_OPENING,
+	COOP_GAMEWON,
+	COOP_GAMELOST,
+	COOP_WAVEWON,
+	COOP_WAVELOST,
+	COOP_WAITINGFORWAVE,
+	COOP_WAITINGFORFIRSTWAVE,
+	COOP_WAITINGFORFINALWAVE,
+	COOP_ACTIONMUSIC_LOW,
+	COOP_ACTIONMUSIC_MED,
+	COOP_ACTIONMUSIC_HIGH,
+	COOP_FINALWAVE_BEGIN,
+	ROUND_BASED_GAME_WON,
+	ROUND_BASED_GAME_LOST,
+	BOOST_TIMED_EFFECT,
+	SP_NPCSTATE_IDLE,
+	SP_NPCSTATE_ALERT,
+	SP_NPCSTATE_COMBAT,
+	SP_PROTO1_TITANBOOT_COMBAT,
+	SP_PROTO1_EXFIL,
+	SP_PROTO1_DEFENDLZ,
+	SP_PROTO1_OUTRO,
+	SP_PROTO1_BASE,
+	SP_PROTO1_INTRO,
+}
+
+global enum eEOGRankPage
+{
+	ALL_PLAYERS,
+	MY_TEAM,
+	ENEMY_TEAM
+}
+
+/*
+Enable/Disable/SetNPCFlag
+
+NPC_ALLOW_PATROL
+NPC_ALLOW_INVESTIGATE
+NPC_ALLOW_FLEE
+NPC_ALLOW_HAND_SIGNALS
+NPC_STAY_CLOSE_TO_SQUAD
+NPC_ALWAYS_INDOOR
+NPC_DISABLE
+NPC_ANIM_FOV
+NPC_ANIM_ADVANCE_CYCLE_EVERY_FRAME
+NPC_LOOK_FOR_CORPSE
+NPC_DIRECTIONAL_MELEE
+NPC_RAGDOLL_IMMEDIATE
+NPC_DIE_ON_ANY_DAMAGE
+NPC_AIM_DIRECT_AT_ENEMY	// instead of at LSP
+NPC_MUTE_TEAMMATE
+NPC_NO_LISTEN_TEAMMATE
+NPC_IGNORE_FRIENDLY_SOUND
+NPC_NEW_ENEMY_FROM_SOUND
+NPC_TEAM_SPOTTED_ENEMY
+NPC_PAIN_IN_SCRIPTED_ANIM
+NPC_NO_PAIN
+NPC_NO_GESTURE_PAIN
+NPC_CROUCH_COMBAT
+NPC_IGNORE_ALL
+NPC_DISABLE_SENSING
+NPC_USE_SHOOTING_COVER
+NPC_NO_WEAPON_DROP
+NPC_NO_MOVING_PLATFORM_DEATH
+
+
+Enable/Disable/SetNPCMoveFlag
+
+NPCMF_INDOOR_ACTIVITY_OVERRIDE
+NPCMF_IGNORE_CLUSTER_DANGER_TIME
+NPCMF_FOLLOW_SAFE_PATHS
+NPCMF_PREFER_SPRINT
+NPCMF_WALK_ALWAYS
+NPCMF_WALK_NONCOMBAT
+
+*/
+
+global const PILOT_HARD_LANDING_SCALE = 1.1 // > 1 == disabled
+global const NWRP_HARD_LANDING_SCALE = 0.5
+
+global const TDAY_SCORE_PILOT		= 1
+global const TDAY_SCORE_TITAN		= 10
+global const TDAY_SCORE_POD			= 1
+
+global const ATTRITION_SCORE_BOUNTY_SURVIVAL= 400
+global const ATTRITION_SCORE_BOSS   		= 100
+global const ATTRITION_SCORE_BOSS_DAMAGE	= 400
+global const ATTRITION_SCORE_TITAN   		= 0//40//100
+global const ATTRITION_SCORE_SUPER_SPECTRE 	= 50//100//50
+global const ATTRITION_SCORE_MEGATURRET		= 50
+global const ATTRITION_SCORE_SENTRYTURRET	= 10
+global const ATTRITION_SCORE_PILOT   		= 0//20
+global const ATTRITION_SCORE_AIR_DRONE 		= 10//20
+global const ATTRITION_SCORE_PROWLER  		= 10//5
+global const ATTRITION_SCORE_GRUNT   		= 10//5
+global const ATTRITION_SCORE_SPECTRE 		= 15//20//10
+global const ATTRITION_SCORE_STALKER 		= 20//30//25//10
+global const ATTRITION_SCORE_MARVIN  		= 00
+global const ATTRITION_SCORE_BONUS			= 00
+global const ATTRITION_SCORE_BONUS_STOLEN	= 00
+global const ATTRITION_SCORE_PILOT_MIN		= 10 //The minimum amount of bonus money you get for a player pilot kill
+global const ATTRITION_SCORE_TITAN_MIN		= 50 //The minimum amount of bonus money you get for a player titan kill
+
+global const ATCOOP_SCORE_BOUNTY_SURVIVAL	= 200
+global const ATCOOP_SCORE_BOSS   			= 50
+global const ATCOOP_SCORE_BOSS_DAMAGE		= 200
+global const ATCOOP_SCORE_TITAN   			= 0//40//100
+global const ATCOOP_SCORE_SUPER_SPECTRE 	= 25//100//50
+global const ATCOOP_SCORE_MEGATURRET		= 25
+global const ATCOOP_SCORE_SENTRYTURRET		= 5
+global const ATCOOP_SCORE_PILOT   			= 0//20
+global const ATCOOP_SCORE_AIR_DRONE 		= 5//20
+global const ATCOOP_SCORE_PROWLER  			= 5//5
+global const ATCOOP_SCORE_GRUNT   			= 5//5
+global const ATCOOP_SCORE_SPECTRE 			= 10//20//10
+global const ATCOOP_SCORE_STALKER 			= 10//30//25//10
+global const ATCOOP_SCORE_MARVIN  			= 00
+global const ATCOOP_SCORE_BONUS				= 00
+global const ATCOOP_SCORE_BONUS_STOLEN		= 00
+global const ATCOOP_SCORE_PILOT_MIN			= 5 //The minimum amount of bonus money you get for a player pilot kill
+global const ATCOOP_SCORE_TITAN_MIN			= 25 //The minimum amount of bonus money you get for a player titan kill
+
+global const PVE_SANDBOX_SCORE_BOUNTY_SURVIVAL	= 200
+global const PVE_SANDBOX_SCORE_BOSS   			= 50
+global const PVE_SANDBOX_SCORE_BOSS_DAMAGE		= 200
+global const PVE_SANDBOX_SCORE_TITAN   			= 0//40//100
+global const PVE_SANDBOX_SCORE_SUPER_SPECTRE 	= 25//100//50
+global const PVE_SANDBOX_SCORE_MEGATURRET		= 25
+global const PVE_SANDBOX_SCORE_SENTRYTURRET		= 5
+global const PVE_SANDBOX_SCORE_PILOT   			= 0//20
+global const PVE_SANDBOX_SCORE_AIR_DRONE 		= 5//20
+global const PVE_SANDBOX_SCORE_PROWLER  		= 5//5
+global const PVE_SANDBOX_SCORE_GRUNT   			= 5//5
+global const PVE_SANDBOX_SCORE_SPECTRE 			= 10//20//10
+global const PVE_SANDBOX_SCORE_STALKER 			= 10//30//25//10
+global const PVE_SANDBOX_SCORE_MARVIN  			= 00
+global const PVE_SANDBOX_SCORE_BONUS			= 00
+global const PVE_SANDBOX_SCORE_BONUS_STOLEN		= 00
+global const PVE_SANDBOX_SCORE_PILOT_MIN		= 5 //The minimum amount of bonus money you get for a player pilot kill
+global const PVE_SANDBOX_SCORE_TITAN_MIN		= 25 //The minimum amount of bonus money you get for a player titan kill
+
+global const ZIPLINE_IDLE_ANIM = "pt_zipline_slide_idle"
+
+global const DEFAULT_CONVERSATION_DEBOUNCE_TIME = 10.0
+global const AI_CONVERSATION_RANGE_SQR = 20250000
+global const AI_CONVERSATION_RANGE = 4500 // should match above
+
+global const MAX_VOICE_DIST_SQRD = 9000000 // 3000 * 3000
+
+global const AI_FRIENDLY_CHATTER_RANGE_SQR = 4410000
+global const AI_FRIENDLY_CHATTER_RANGE = 2100 // should match above
+
+global const PLAYER_SHIELD_WALL_RADIUS = 30
+global const PLAYER_SHIELD_WALL_FOV = 120
+global const PLAYER_SHIELD_WALL_HEALTH = 500
+global const PLAYER_SHIELD_WALL_REGEN_WAIT_TIME = 8
+global const PLAYER_SHIELD_WALL_REGEN_INCREMENT = 25
+
+global const AIRVEHICLE_FLAG_AWAIT_INPUT	= 0x040
+
+global const HIGHLIGHT_FAR_MAX = 999999999999999.0
+
+global const REQUIRES_ANY = 0
+global const REQUIRES_PILOT = 1
+global const REQUIRES_TITAN = 2
+
+global struct HighlightContext
+{
+	int highlightId
+	int contextId
+	string name
+	int insideSlot = 0
+	bool entityVisible = true
+	int outsideSlot = 0
+	float outlineRadius = 1
+	bool adsFade = true
+	bool afterPostProcess = false
+
+	vector[2] paramVecs
+
+	float nearDist = 0
+	float farDist = -1.0 // will use default code value instead
+	float farFadeInDist
+	bool requiresNotFullHealth
+	bool requiresCanPickupOrdnance
+	bool requiresCanPickupClip
+	int requiresClass = REQUIRES_ANY
+	bool requiresWeakPointsVisible
+	bool requiresOwnedByLocalPlayer = false
+	bool requiresStationary = false
+
+	int drawFuncId = 0
+	void functionref( entity ) thinkFunction
+}
+
+global struct ShGlobals
+{
+	PilotLoadoutDef[ NUM_PERSISTENT_PILOT_LOADOUTS ] 	defaultPilotLoadouts
+	TitanLoadoutDef[ NUM_PERSISTENT_TITAN_LOADOUTS ] 	defaultTitanLoadouts
+
+	PilotLoadoutDef[ NUM_PERSISTENT_PILOT_LOADOUTS ]	cachedPilotLoadouts
+	TitanLoadoutDef[ NUM_PERSISTENT_TITAN_LOADOUTS ]	cachedTitanLoadouts
+
+	float proto_soldierShieldRegenDelay = 6.0
+	bool proto_pilotHealthPickupsEnabled = false
+	bool proto_npcsDropGrenades = false
+	bool proto_pilotHealthRegenDisabled = false
+	int waveSpawnType = eWaveSpawnType.DISABLED
+	float waveSpawnInterval = 15.0
+
+	table<string,array<void functionref(entity, var)> >	deathCallbacks
+	table<int,array<void functionref(entity, var)> >	damageSourceIdCallbacks
+
+	table<string, HighlightContext> highlight
+}
+
+global const GAMEMODE_SP = "solo"
+
+global ShGlobals shGlobal
+
+global const NEW_LOADOUTS = true
+
+#if SP
+global const HEALTH_PER_HEALTH_BAR_SEGMENT = 1500
+#else
+global const HEALTH_PER_HEALTH_BAR_SEGMENT = 2500
+#endif
+
+global const HIGHLIGHT_FILL_DEFAULT = 110
+
+global const HIGHLIGHT_OUTLINE_GENERIC = 110
+
+global enum ePresentationType
+{
+	INACTIVE,
+	DEFAULT,
+	STORE_CAMO_PACKS,
+	STORE_FRONT,
+	STORE_PRIME_TITANS,
+	PILOT,
+	PILOT_LOADOUT_EDIT,
+	PILOT_CHARACTER,
+	PILOT_WEAPON,
+	TITAN,
+	TITAN_LOADOUT_EDIT,
+	TITAN_WEAPON,
+	TITAN_NOSE_ART,
+	NO_MODELS,
+	FACTIONS,
+	BOOSTS,
+	SEARCH,
+	CALLSIGN,
+	KNOWLEDGEBASE_MAIN,
+	KNOWLEDGEBASE_SUB,
+	PVE_MAIN,
+	COUNT
+}
+
+global enum ePrimaryWeaponCategory
+{
+	AR,
+	SMG,
+	LMG,
+	SNIPER,
+	SHOTGUN,
+	SPECIAL,
+	COUNT
+}
+
+global enum eSecondaryWeaponCategory
+{
+	AT,
+	PISTOL,
+	COUNT
+}
+
+global enum eMenuAnimClass
+{
+	SMALL,
+	MEDIUM,
+	LARGE,
+	CUSTOM
+}
+
+global enum eSideNotificationSystems
+{
+	loadoutDisplay
+	itemAcquisition
+	coopWaveDisplay
+	count
+}
+
+
+global enum ePlayerMovementEvents
+{
+	JUMP,
+	DOUBLE_JUMP,
+	DODGE,
+	LEAVE_GROUND,
+	TOUCH_GROUND,
+	MANTLE,
+	BEGIN_WALLRUN,
+	END_WALLRUN,
+	BEGIN_WALLHANG,
+	END_WALLHANG
+}
+/* Valid inputs. Taken from code, pasted here for easy reference
+IN_ATTACK
+IN_JUMP
+IN_DUCK
+IN_FORWARD
+IN_BACK
+IN_USE
+IN_PAUSEMENU
+IN_LEFT
+IN_RIGHT
+IN_MOVELEFT
+IN_MOVERIGHT
+IN_EXIT (Exiting a vehicle)
+IN_RELOAD
+IN_WEAPON_PICKUP
+IN_WEAPON_DISCARD
+IN_SPEED (Sprint)
+IN_WEAPON_PICKUP_AND_CYCLE
+IN_ZOOM (Aim down-sight)
+IN_ZOOM_TOGGLE
+IN_MELEE
+IN_WEAPON_CYCLE
+IN_OFFHAND0
+IN_OFFHAND1
+IN_OFFHAND2
+IN_OFFHAND3
+IN_OFFHAND4
+IN_OFFHAND_QUICK
+IN_DUCKTOGGLE
+IN_USE_AND_RELOAD
+IN_DODGE
+IN_VARIABLE_SCOPE_TOGGLE
+IN_PING
+*/
+
+global string RERUN_LAUNCH_STARTPOINT
+
+global enum eUIEvent
+{
+	MENU_OPEN,
+	MENU_CLOSE,
+	MENU_SHOW,
+	MENU_HIDE,
+	MENU_NAVIGATE_BACK,
+	MENU_TAB_CHANGED,
+	PANEL_SHOW,
+	PANEL_HIDE
+}
+
+
+global const PILOT_WEAPON_MOD_COMMON_COLUMN = 0
+global const PILOT_WEAPON_MOD_COMMON_TYPE_COLUMN = 1
+global const PILOT_WEAPON_MOD_COMMON_NAME_COLUMN = 2
+global const PILOT_WEAPON_MOD_COMMON_DESCRIPTION_COLUMN = 4
+global const PILOT_WEAPON_MOD_COMMON_IMAGE_COLUMN = 5
+
+global const PILOT_WEAPON_MOD_COLUMN = 0
+global const PILOT_WEAPON_MOD_WEAPON_COLUMN = 1
+global const PILOT_WEAPON_MOD_DAMAGEDISPLAY_COLUMN = 2
+global const PILOT_WEAPON_MOD_ACCURACYDISPLAY_COLUMN = 3
+global const PILOT_WEAPON_MOD_RANGEDISPLAY_COLUMN = 4
+global const PILOT_WEAPON_MOD_FIRERATEDISPLAY_COLUMN = 5
+global const PILOT_WEAPON_MOD_CLIPSIZEDISPLAY_COLUMN = 6
+global const PILOT_WEAPON_MOD_HIDDEN_COLUMN = 7
+
+global const TITAN_PRIMARY_COLUMN = 0
+global const TITAN_PRIMARY_HIDDEN_COLUMN = 1
+
+global const TITAN_PRIMARY_MOD_COMMON_COLUMN = 0
+global const TITAN_PRIMARY_MOD_COMMON_NAME_COLUMN = 1
+global const TITAN_PRIMARY_MOD_COMMON_DESCRIPTION_COLUMN = 2
+global const TITAN_PRIMARY_MOD_COMMON_IMAGE_COLUMN = 3
+
+global const TITAN_PRIMARY_MOD_COLUMN = 0
+global const TITAN_PRIMARY_MOD_WEAPON_COLUMN = 1
+global const TITAN_PRIMARY_MOD_DAMAGEDISPLAY_COLUMN = 2
+global const TITAN_PRIMARY_MOD_ACCURACYDISPLAY_COLUMN = 3
+global const TITAN_PRIMARY_MOD_RANGEDISPLAY_COLUMN = 4
+global const TITAN_PRIMARY_MOD_FIRERATEDISPLAY_COLUMN = 5
+global const TITAN_PRIMARY_MOD_CLIPSIZEDISPLAY_COLUMN = 6
+global const TITAN_PRIMARY_MOD_HIDDEN_COLUMN = 7
+
+global const TITAN_ABILITY_COLUMN = 0
+global const TITAN_ABILITY_TYPE_COLUMN = 1
+global const TITAN_ABILITY_DAMAGESOURCE_COLUMN = 2
+global const TITAN_ABILITY_HIDDEN_COLUMN = 3
+
+global const TITAN_PASSIVE_COLUMN = 0
+global const TITAN_PASSIVE_TYPE_COLUMN = 1
+global const TITAN_PASSIVE_NAME_COLUMN = 2
+global const TITAN_PASSIVE_DESCRIPTION_COLUMN = 3
+global const TITAN_PASSIVE_LONGDESCRIPTION_COLUMN = 4
+global const TITAN_PASSIVE_IMAGE_COLUMN = 5
+global const TITAN_PASSIVE_HIDDEN_COLUMN = 6
+
+global const TITAN_VOICE_COLUMN = 0
+global const TITAN_VOICE_NAME_COLUMN = 1
+global const TITAN_VOICE_DESCRIPTION_COLUMN = 2
+global const TITAN_VOICE_IMAGE_COLUMN = 3
+global const TITAN_VOICE_HIDDEN_COLUMN = 4
+
+global const string BURN_REF_COLUMN_NAME = "itemRef"
+global const string BURN_NAME_COLUMN_NAME = "name"
+global const string BURN_DESCRIPTION_COLUMN_NAME = "description"
+global const string BURN_IMAGE_COLUMN_NAME = "image"
+global const string BURN_COST_COLUMN_NAME = "activationCost"
+global const string BURN_TIER_COLUMN_NAME = "tier"
+global const string BURN_AVAILABLE_COLUMN_NAME = "rewardAvailableFor"
+global const string BURN_WEAPON_COLUMN_NAME = "weaponName"
+global const string BURN_EXTRA_WEAPON_MOD_NAME = "extraWeaponMod"
+
+global const string BATTLE_CHATTER_CONVERSATION_NAME_COLUMN_NAME = "conversationname"
+global const string BATTLE_CHATTER_PRIORITY_COLUMN_NAME = "priority"
+global const string BATTLE_CHATTER_DEBOUNCE_COLUMN_NAME = "debounce"
+
+global const string FACTION_DIALOGUE_CONVERSATION_NAME_COLUMN_NAME = "conversationname"
+global const string FACTION_DIALOGUE_PRIORITY_COLUMN_NAME = "priority"
+global const string FACTION_DIALOGUE_DEBOUNCE_COLUMN_NAME = "debounce"
+
+global const string FACTION_LEADERS_PERSISTENCE_REF_COLUMN_NAME = "persistenceRef"
+global const string FACTION_LEADERS_FACTION_DIALOGUE_PREFIX_COLUMN_NAME = "factionDialoguePrefix"
+global const string FACTION_LEADERS_IMAGE_COLUMN_NAME = "image"
+global const string FACTION_LEADERS_NAME_COLUMN_NAME = "name"
+global const string FACTION_LEADERS_DESCRIPTION_COLUMN_NAME = "description"
+global const string FACTION_LEADERS_MODEL_NAME_COLUMN_NAME = "modelName"
+global const string FACTION_LEADERS_DROPSHIP_ANIM_NAME_COLUMN_NAME = "dropshipAnimName"
+global const string FACTION_LEADERS_PROP_MODEL_NAME_COLUMN_NAME = "propModelName"
+global const string FACTION_LEADERS_PROP_ATTACHMENT_COLUMN_NAME = "propAttachment"
+
+global const NON_LOADOUT_WEAPON_COLUMN = 0
+
+global const NON_LOADOUT_MOD_COLUMN = 0
+global const NON_LOADOUT_MOD_PARENT_COLUMN = 1
+global const NON_LOADOUT_MOD_NAME_COLUMN = 2
+global const NON_LOADOUT_MOD_DESCRIPTION_COLUMN = 3
+global const NON_LOADOUT_MOD_IMAGE_COLUMN = 4
+
+global const int PHYS_EXPLOSION_SMALL = 100
+global const int PHYS_EXPLOSION_MEDIUM = 250
+global const int PHYS_EXPLOSION_LARGE = 500
+global const int PHYS_EXPLOSION_HUGE = 10000
+
+global enum ePowerUps
+{
+	weaponEPG
+	armorSmall
+	armorMedium
+	armorLarge
+	titanTimeReduction
+	LTS_TitanTimeReduction
+	pilotUpgrade
+	weaponHELL
+	weaponLSTAR
+	weaponSHOTGUN
+	ticks
+	count
+}
+
+global const COLLECTIBLE_PICKUP_EFFECT = $"ar_item_pickup_CP" // "ar_item_pickup"
+
+//LAST TITAN STANDING
+global const float LTS_TEAM_SELECTION_LENGTH = 15.0
+
+//BOMB MODE
+global const int GAMEMODE_BOMB_SCORE_PLANT = 1000
+global const int GAMEMODE_BOMB_SCORE_DEFUSE = 1
+global const int GAMEMODE_BOMB_SCORE_EXPLODE = 1
+global const int GAMEMODE_BOMB_SCORE_CARRY = 250 //Subdiving distance between Harvesters
+global const int GAMEMODE_BOMB_SCORE_KILL_TITAN = 100
+global const int GAMEMODE_BOMB_SCORE_KILL_PILOT = 50
+
+//Raid Mode
+global const int GAMEMODE_RAID_SCORE_PLANT = 1
+
+global const int TITAN_WEAK = 0
+global const int TITAN_HENCH = 1
+global const int TITAN_MERC = 2
+global const int TITAN_AUTO = 3
+global const int TITAN_BOSS = 4
+
+global const float COMBO_METER_MAX = 3.0
+
+// TEMPHACK
+global const DREW_MODE = 0 // 0 = off, 1 = no menu models, 2 = menu green screen
+global const GREEN_SCREEN_MODEL = $"models/test/green_screen.mdl"
+
+global const DEFAULT_MENU_ENVIRONMENT_MODEL = $"models/menu/default_environment.mdl"
+
+global const float COCKPIT_UI_XOFFSET = 22
+global const float COCKPIT_UI_WIDTH = 41.4
+global const float COCKPIT_UI_HEIGHT = COCKPIT_UI_WIDTH / 1.7665
+
+global const float COCKPIT_RUI_WIDTH = 34
+global const float COCKPIT_RUI_HEIGHT = COCKPIT_RUI_WIDTH / 1.7665
+global const float COCKPIT_RUI_RADIUS = 350
+global const vector COCKPIT_RUI_OFFSET = < -218, 0, 0 >
+global const vector COCKPIT_RUI_OFFSET_1610_TEMP = < -216, 0, 0 >
+global const float COCKPIT_RUI_SUBDIV = 3.5
+
+global const float TITAN_COCKPIT_RUI_SCREEN_WIDTH = 21.0
+global const float TITAN_COCKPIT_TOPO_RADIUS = 150.0
+global const float TITAN_COCKPIT_ROTATION_ANGLE = 0.0
+global const float TITAN_COCKPIT_LOWER_RUI_SCREEN_SQUARE_SIZE = 24.0
+global const float TITAN_COCKPIT_LOWER_RUI_SCREEN_HEIGHT_SCALE = 1.3125
+global const float TITAN_COCKPIT_INSTRUMENT1_RUI_SCREEN_SQUARE_SIZE = 4.5
+
+global const float SPOT_ASSIST_TIME = 10.0
+global const int NUM_SPOTS_AVAILABLE = 20
+global const float SPOT_CONE_HEIGHT = 8000.0
+global const float SPOT_CONE_ANGLE_TO_AXIS = 4.5
+global const float SPOT_TRACE_DISTANCE = MAX_WORLD_RANGE
+global const float SPOT_HIGHLIGHT_TIME = 5.0
+global const float SPOT_HIGHLIGHT_FADE_IN_TIME = 0.15
+global const float SPOT_HIGHLIGHT_FADE_OUT_TIME = 3.0
+global const float SPOT_MODEL_SNAPSHOT_TIME = 8.0
+global const float GROUND_SPOT_VISIBLE_TIME = 2.0
+global const float SPOT_GLOBAL_VO_COOLDOWN = 4.0
+
+global enum eWeaponStatType
+{
+	DAMAGE,
+	ACCURACY,
+	RANGE,
+	FIRE_RATE,
+	CAPACITY,
+	COUNT
+}
+
+global enum eTitanStatType
+{
+	SPEED,
+	DAMAGE,
+	HEALTH,
+	DASHES,
+	COUNT
+}
+
+global const string EARNMETER_MODE = "earnMeterMode"
+global const string EARNMETER_OWNEDFRAC = "earnMeterOwnedFrac"
+global const string EARNMETER_EARNEDFRAC = "earnMeterFrac"
+global const string EARNMETER_REWARDFRAC = "earnMeterRewardFrac"
+global const string EARNMETER_REWARDID = "earnMeterRewardId"
+global const string EARNMETER_GOALID = "earnMeterGoalId"
+
+global const string TOP_INVENTORY_ITEM_BURN_CARD_ID = "topInventoryItemBurnCardID"
+
+global const float ANTI_RODEO_RESULT_DURATION = 3.0
+
+global const int RUI_SORT_SCREENFADE = 1000
+
+global const bool R1_VGUI_MINIMAP = false
+global const int TITAN_HINT_DASH = 5
+
+global const string CALLING_CARD_REF_COLUMN_NAME = "itemRef"
+global const string CALLING_CARD_NAME_COLUMN_NAME = "name"
+global const string CALLING_CARD_LAYOUT_COLUMN_NAME = "layoutType"
+global const string CALLING_CARD_IMAGE_COLUMN_NAME = "image"
+
+global const string CALLSIGN_ICON_REF_COLUMN_NAME = "itemRef"
+global const string CALLSIGN_ICON_NAME_COLUMN_NAME = "name"
+global const string CALLSIGN_ICON_IMAGE_COLUMN_NAME = "image"
+global const string CALLSIGN_ICON_SMALL_IMAGE_COLUMN_NAME = "smallImage"
+
+global const string CAMO_REF_COLUMN_NAME = "itemRef"
+global const string CAMO_PILOT_REF_COLUMN_NAME = "pilotRef"
+global const string CAMO_TITAN_REF_COLUMN_NAME = "titanRef"
+global const string CAMO_IMAGE_COLUMN_NAME = "image"
+global const string CAMO_NAME_COLUMN_NAME = "name"
+global const string CAMO_DESCRIPTION_COLUMN_NAME = "description"
+global const string CAMO_PILOT_COST_COLUMN_NAME = "pilotCost"
+global const string CAMO_TITAN_COST_COLUMN_NAME = "titanCost"
+global const string CAMO_PILOT_WEAPON_COST_COLUMN_NAME = "pilotWeaponCost"
+global const string CAMO_TITAN_WEAPON_COST_COLUMN_NAME = "titanWeaponCost"
+global const string CAMO_CATEGORY_COLUMN_NAME = "category"
+
+global const int CAMO_INDEX_BASE = 0
+global const int SKIN_INDEX_BASE = 0
+global const int SKIN_INDEX_IMC = 1
+global const int SKIN_INDEX_MILITIA = 0
+global const int PILOT_SKIN_INDEX_CAMO = 1
+global const int PILOT_SKIN_INDEX_GHOST = 1 // In mlt_hero_jack.qc the holo skin should really be the 3rd skin so it and camo never overlaps
+global const int TITAN_SKIN_INDEX_CAMO = 2
+global const int TITAN_WARPAINT_CAMO_INDEX = -1
+global const int WEAPON_SKIN_INDEX_CAMO = 1
+global const int WEAPON_SKIN_INDEX_GHOST = 2
+global const int PLAYER_WEAPON_SKIN_INDEX_CAMO = 1
+
+global const int FWTS_HIDDEN 		= 1 << 0
+global const int FWTS_IMC 			= 1 << 1
+global const int FWTS_MILITIA 		= 1 << 2
+global const int FWTS_SHIELDED 		= 1 << 3
+global const int FWTS_THREAT 		= 1 << 4
+
+
+global const int MINIMAP_Z_BASE 			= 500
+global const int MINIMAP_Z_LAYER 			= MINIMAP_Z_BASE + 1
+global const int MINIMAP_Z_THREAT_WEDGES 	= MINIMAP_Z_BASE + 2
+global const int MINIMAP_Z_YOU 				= MINIMAP_Z_BASE + 200
+
+global const int MINIMAP_Z_OBJECT 			= 25
+global const int MINIMAP_Z_OBJECTIVE 		= 50
+global const int MINIMAP_Z_NPC 				= 75
+global const int MINIMAP_Z_PLAYER 			= 100
+
+global const string SP_STARTING_TITAN_LOADOUT_KIT = "mp_titanweapon_xo16_shorty"
+global const string SP_FIRST_TITAN_LOADOUT_KIT = "mp_titanweapon_sticky_40mm"
+
+global const bool HAS_WORLD_CALLSIGN = true
+
+// must match values in global_defs.rui
+global const int IMAGE_ATLAS_MENU = 0
+global const int IMAGE_ATLAS_HUD = 1
+global const int IMAGE_ATLAS_CALLINGCARD = 2
+global const int IMAGE_ATLAS_FACTION_LOGO = 3
+global const int IMAGE_ATLAS_CAMO = 4
+global const int IMAGE_ATLAS_COMMS = 5
+
+global const float EARN_METER_CORE_MULTIPLIER = 1.25
+
+// Must match values in ajax_cockpit.rui ( two locations )
+global const float COCKPIT_COLOR_BLUE = 0.0
+global const float COCKPIT_COLOR_YELLOW = 0.05
+global const float COCKPIT_COLOR_RED = 0.15
+global const float COCKPIT_COLOR_SIEGE = 0.25
+global const float COCKPIT_COLOR_THREAT = 0.35
+global const float COCKPIT_COLOR_HIDDEN = 0.45
+global const float COCKPIT_COLOR_VANGUARD = 0.55
+
+global const SP_RODEO_BOOST = 300 // Used to boost the player off the titan to prevent rodeo spam in SP
+
+global const int PRO_SCREEN_INT_LIFETIME_KILLS = 0
+global const int PRO_SCREEN_INT_MATCH_KILLS = 1
+
+// Achievements/Trophys
+global enum achievements
+{
+	GAUNTLET_BEAT_ANDERSON 	= 1
+	GAUNTLET_TOPTHREE
+	COMPLETE_TRAINING
+	POWERED_BT
+	BEAT_KANE
+	SAVE_TITANS
+	ENTER_FOUNDRY
+	SIDEWAYS_TOWN
+	BEAT_REAPERS
+	BEAT_ASH
+	TIMESHIFT_PROWLER
+	VIEW_LOG
+	COMPLETE_OP217
+	GET_ARC_TOOL
+	POWER_BEACON
+	GET_MODULE
+	BEAT_RICHTER
+	HACK_STALKERS
+	LOCATE_ARK
+	BEAT_VIPER
+	SECURE_ARK
+	NEW_BT
+	RISING_WORLD_RUN
+	BEAT_SLONE
+	CORE_BURST
+	CORE_FLIGHT
+	CORE_SALVO
+	CORE_SWORD
+	CORE_LASER
+	CORE_SMART
+	CORE_FLAME
+	EXECUTE_BOSS
+	CORE_MULTIKILL
+	INFANTRY_MULTIKILL
+	PILOT_TITANKILL
+	WALLRUN_KILLS
+	SLIDE_KILLS
+	RODEO
+	CLOAK_TAKEDOWN
+	HACK_ROBOTS
+	COMPLETE_NORMAL
+	COMPLETE_HARD
+	COMPLETE_MASTER
+	TITAN_LOADOUTS
+	COLLECTIBLES_1
+	COLLECTIBLES_2
+	COLLECTIBLES_3
+	MP_WIN
+	CUSTOMIZE_LOADOUT
+	JOIN_NETWORK
+
+	MAX_ACHIVEMENTS
+}
+
+global const int ACHIEVEMENT_COLLECTIBLES_1_COUNT = 10
+global const int ACHIEVEMENT_COLLECTIBLES_2_COUNT = 25
+
+global const int MERIT_STATE_AVAILABLE = 0
+global const int MERIT_STATE_SUCCESS = 1
+global const int MERIT_STATE_FAILURE = 2
+global const int MERIT_STATE_DISABLED = 3
+global const int MERIT_STATE_HIDDEN = 4
+
+global const int MAX_MAIL_COUNT = 9
+
+global enum eLaunching
+{
+	FALSE,
+	SINGLEPLAYER_NEW,
+	SINGLEPLAYER_CONTINUE,
+	SINGLEPLAYER_MISSION_SELECT,
+	MULTIPLAYER,
+	MULTIPLAYER_INVITE,
+	COUNT
+}
+
+global enum eConsoleSettingsMenu //Meant only for console, not PC
+{
+	FALSE,
+	CONTROLS_MENU,
+	AUDIO_VISUAL_MENU, //console has audio/visual in one menu
+	COUNT
+}
+
+global struct Friend
+{
+	string id
+	string name
+	int status
+}
+
+global struct FriendsData
+{
+	array<Friend> friends
+	bool isValid
+}
+
+global enum eFriendStatus
+{
+	ONLINE_INVITABLE,
+	OFFLINE,
+	ONLINE_PARTY_MEMBER,
+	COUNT
+}
+
+global struct DpadCommListItem
+{
+	int phraseIndex
+	string displayString
+	string nextMenu
+	string phrase
+}
+

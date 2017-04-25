@@ -1,0 +1,12 @@
+#base "pilot_medium.set"
+"pilot_medium_male"
+{
+	"global"
+	{
+		bodymodel			"models/humans/pilots/pilot_medium_reaper_m.mdl"
+		armsmodel			"models/weapons/arms/pov_pilot_medium_reaper_m.mdl"
+		cockpitmodel		"models/weapons/arms/human_pov_cockpit.mdl"
+
+		quadMoveAnims		0
+	}
+}

@@ -1,0 +1,35 @@
+
+global const TEAM_IMC_GRUNT_MODEL 			= $"models/humans/grunts/imc_grunt_rifle.mdl"
+global const TEAM_IMC_GRUNT_MODEL_LMG		= $"models/humans/grunts/imc_grunt_lmg.mdl"
+global const TEAM_IMC_GRUNT_MODEL_RIFLE		= $"models/humans/grunts/imc_grunt_rifle.mdl"
+global const TEAM_IMC_GRUNT_MODEL_ROCKET 	= $"models/humans/grunts/imc_grunt_shotgun.mdl"
+global const TEAM_IMC_GRUNT_MODEL_SHOTGUN	= $"models/humans/grunts/imc_grunt_shotgun.mdl"
+global const TEAM_IMC_GRUNT_MODEL_SMG		= $"models/humans/grunts/imc_grunt_smg.mdl"
+
+// LEECHING
+global const DATA_KNIFE_MODEL = $"models/weapons/data_knife/v_data_knife.mdl"
+global const STEAL_PISTOL_MODEL = $"models/weapons/p2011/w_p2011.mdl"
+
+global const SENTRY_TURRET_MODEL = $"models/Robots/turret_plasma/turret_plasma.mdl"
+global const ROCKET_TURRET_MODEL = $"models/Robots/turret_rocket/turret_rocket.mdl"
+global const PLASMA_TURRET_MODEL = $"models/Robots/turret_plasma/turret_plasma.mdl"
+global const HITSCAN_TURRET_MODEL = $"models/Robots/turret_hitscan/turret_hitscan.mdl"
+
+global const asset CONTROL_PANEL_MODEL = $"models/communication/terminal_usable_imc_01.mdl"
+global const asset RODEO_BATTERY_MODEL = $"models/titans/medium/titan_medium_battery_static.mdl"
+global const asset MODEL_GENERATOR = $"models/beacon/charge_generator_01_glass.mdl"
+
+#if SERVER || CLIENT
+global function ShCommonModels_Init
+
+void function ShCommonModels_Init()
+{
+	PrecacheModel( $"models/weapons/sentry_frag/sentry_frag.mdl" ) // need to derive this from weapon
+	PrecacheModel( $"models/robots/drone_frag/drone_frag.mdl" ) // need to derive this from weapon
+
+	if ( !IsLobby() )
+	{
+		PrecacheModel( CONTROL_PANEL_MODEL )
+	}
+}
+#endif

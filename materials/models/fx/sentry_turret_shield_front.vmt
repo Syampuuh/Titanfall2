@@ -1,0 +1,49 @@
+"UnlitTwoTexture"
+{
+//	"$nocull" "1"
+	"$nodecal" "1"
+	"$additive" "1"
+	"$no_fullbright" 1
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+	"$model" "1"
+	"$translucent" 1
+
+	$allowoverbright 1
+
+	$addlayers 1
+
+	$fresnel 1
+	$fresnelsharpness1 1
+	$fresnelouterstrength1 7
+	$fresnelinnerstrength1 1
+
+
+	"$basetexture" "models\holo_screens\holo_map_grid"
+	"$Texture2" "dev\noise_post"
+
+//	$screenspacecoordssquare2 "1"
+
+
+	"$t1scroll"	0
+
+	"Proxies"
+	{
+		"AnimatedTexture"
+		{
+			"animatedtexturevar" "$texture2"
+			"animatedtextureframenumvar" "$frame2"
+			"animatedtextureframerate" 30
+		}
+
+		"TextureTransform"
+		{
+			"translateVar" "1"
+			"scaleVar" "10"
+			"rotateVar" "0"
+			"resultvar" "$texture2transform"
+		}
+
+	}
+
+}

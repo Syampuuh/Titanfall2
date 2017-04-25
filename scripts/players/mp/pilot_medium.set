@@ -1,0 +1,13 @@
+#base "pilot_mp.set"
+"pilot_medium"
+{
+	"global"
+	{
+		sound_standToCrouch		"Pilot_CrouchDown_1P"
+		sound_crouchToStand		"Pilot_CrouchStand_1P"
+		sound_wallHangSlip		"Pilot_CrouchDown_1P"
+
+		footstep_type          	"human"
+	}
+}
+

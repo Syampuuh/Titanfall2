@@ -1,0 +1,25 @@
+#base "titan_ogre_meteor.set"
+"titan_ogre_scorch_prime"
+{
+	 //titanCharacterName "scorch_prime"    //Need to change this?
+
+	 isPrime				1
+
+	 execution_anim		"titan_ogre_scorch_prime"
+
+	 aiSettingsFile			"npc_titan_auto_ogre_scorch_prime" //mp only
+	 //sp_aiSettingsFile		"npc_titan_ogre_meteor" //sp only, not needed for prime
+	 at_aiSettingsFile		"npc_titan_ogre_scorch_prime_bounty" //at only
+
+	"global"
+	{
+		printname			"#NPC_TITAN_AUTO_OGRE_METEOR"
+
+		bodymodel			"models/titans/heavy/titan_heavy_scorch_prime.mdl" [$mp]
+		bodymodel			"models/titans/heavy/sp_titan_heavy_ogre.mdl" [$sp]
+
+		armsmodel			"models/weapons/arms/pov_titan_heavy_scorch_prime.mdl" [$mp]
+		armsmodel			"models/weapons/arms/pov_titan_heavy_ogre.mdl" [$sp]
+
+	}
+}

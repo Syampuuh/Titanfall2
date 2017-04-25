@@ -1,0 +1,51 @@
+"UnlitTwoTexture"
+{
+
+	"$nodecal" "1"
+	$allowoverbright 1
+
+	"$additive" "1"
+//	"$no_fullbright" 1
+//	"$vertexcolor" 1
+	"$vertexalpha" 1
+	"$model" "1"
+	"$translucent" 1
+	"$nocull" "1"	
+	"$color2" "[1 1 1]"
+
+//	"$color" "[1 0 0]"
+//	"$color2" "[0 0 1]"
+	
+//	$fresnel 1
+//	$fresnelsharpness1 1
+//	$fresnelouterstrength1 10
+//	$fresnelinnerstrength1 1
+	
+	$addlayers 1
+
+
+	"$basetexture" "effects\tvscreen_noise001b"
+	"$Texture2" "effects\caustic_water_01"
+
+
+
+	
+	"Proxies"
+	{
+//		{
+//		"$t2scale" 1
+//		}
+			"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" .35
+			"texturescrollangle" 70
+		}
+				"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" .3
+			"texturescrollangle" 95
+		}
+	}
+}

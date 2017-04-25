@@ -1,0 +1,983 @@
+untyped
+
+globalize_all_functions
+
+global struct AttackerDisplayNameStruct
+{
+	string attackerName
+	string attackerPetName
+	float healthFrac
+	int damageSourceId
+}
+
+
+string dev_messageString = ""
+string dev_messageSubString = ""
+
+global const int RUMBLE_FLAGS_NONE 				= 0x0000
+global const int RUMBLE_FLAG_STOP				= 0x0001 // Stop any instance of this type of effect that's already playing.
+global const int RUMBLE_FLAG_LOOP				= 0x0002 // Make this effect loop.
+global const int RUMBLE_FLAG_RESTART			= 0x0004 // If this effect is already playing, restart it.
+global const int RUMBLE_FLAG_UPDATE_SCALE		= 0x0008 // Apply DATA to this effect if already playing, but don't restart.
+global const int RUMBLE_FLAG_ONLYONE			= 0x0010 // Don't play this effect if it is already playing.
+global const int RUMBLE_FLAG_RANDOM_AMPLITUDE	= 0x0020 // Amplitude scale will be randomly chosen. Between 10% and 100%
+global const int RUMBLE_FLAG_INITIAL_SCALE		= 0x0040 // Data is the initial scale to start this effect ( * 100 )
+
+
+/***************************************************
+Code constants already registered for script
+
+enum GameMovementImpactEventType
+{
+	GM_IET_LANDING = 0
+	GM_IET_WALLSLAM
+	GM_IET_WALLSLAM_AIR
+	GM_IET_HUMANFOOTSTEP
+	GM_IET_TITANFOOTSTEP
+
+	GM_IET_COUNT
+	GM_IET_INVALID
+}
+
+enum Crosshair_State
+{
+	CROSSHAIR_STATE_SHOW_ALL = 0
+	CROSSHAIR_STATE_HIT_INDICATORS_ONLY
+	CROSSHAIR_STATE_HIDE_ALL
+
+	CROSSHAIR_STATE_COUNT
+}
+
+***************************************************/
+
+array function StringToColorArray( string colorString, string delimiter = " " )
+{
+	table Table = StringToColors( colorString, delimiter )
+	array arr
+	arr.append( Table.r )
+	arr.append( Table.g )
+	arr.append( Table.b )
+
+	if ( "a" in Table )
+		arr.append( Table.a )
+	else
+		arr.append( 255 )
+
+	return arr
+}
+
+string function TimeToString( float time, bool msec = false, bool msecExpanded = false )
+{
+	int minsleft = int( time / 60 )
+	int secsleft = int( time ) % 60
+	if ( msec )
+	{
+		float msecsleft = time - int( time )
+		if ( msecExpanded )
+			return format( "%02d:%02d:%02d", minsleft, secsleft, msecsleft * 100 )
+		else
+			return format( "%02d:%02d", secsleft, msecsleft * 100 )
+	}
+
+	return format( "%02d:%02d", minsleft, secsleft )
+}
+
+float function GetFraction( float value, float min, float max )
+{
+	return ( value - min ) / ( max - min )
+}
+
+float function GetFractionClamped( float value, float min, float max )
+{
+	float frac = GetFraction( value, min, max )
+	return clamp( frac, 0.0, 1.0 )
+}
+
+float function GetValueFromFraction( float value, float value_min, float value_max, float return_min, float return_max )
+{
+	float frac = GetFractionClamped( value, value_min, value_max )
+	float retVal = return_min + ( ( return_max - return_min ) * frac )
+	return clamp( retVal, return_min, return_max )
+}
+
+function ReloadScripts()
+{
+	reloadingScripts = true
+	reloadedScripts = true
+
+	ReloadingScriptsBegin()
+
+//	DeregisterRespawnCommands()
+
+	TitanEmbark_Init()
+
+	ReloadScriptCallbacks()
+
+	reloadingScripts = false
+
+	ReloadingScriptsEnd()
+
+	return ( "reloaded client scripts" )
+}
+
+void function AddLocalPlayerTookDamageCallback( int damageSourceId, void functionref( float, vector, int, int, entity ) callbackFunc )
+{
+	if ( !( damageSourceId in clGlobal.onLocalPlayerTookDamageCallback ) )
+		clGlobal.onLocalPlayerTookDamageCallback[ damageSourceId ] <- []
+
+	Assert( !( clGlobal.onLocalPlayerTookDamageCallback[ damageSourceId ].contains( callbackFunc ) ) )
+	clGlobal.onLocalPlayerTookDamageCallback[ damageSourceId ].append( callbackFunc )
+}
+
+void function AddLocalPlayerDidDamageCallback( void functionref( entity, entity, vector, int ) callbackFunc )
+{
+	Assert( !( clGlobal.onLocalPlayerDidDamageCallback.contains( callbackFunc ) ) )
+	clGlobal.onLocalPlayerDidDamageCallback.append( callbackFunc )
+}
+
+void function AddScoreEventCallback( int scoreEventInt, void functionref( int, entity ) callbackFunc )
+{
+	Assert( !( scoreEventInt in clGlobal.onScoreEventCallback ) )
+	clGlobal.onScoreEventCallback[ scoreEventInt ] <- callbackFunc
+}
+
+void function AddCreateCallback( string className, void functionref( entity ) callbackFunc )
+{
+	if ( !( className in clGlobal.onCreateCallbacks ) )
+		clGlobal.onCreateCallbacks[ className ] <- []
+
+#if DEV
+	foreach ( func in clGlobal.onCreateCallbacks[ className ] )
+	{
+		Assert( func != callbackFunc )
+	}
+#endif
+
+	clGlobal.onCreateCallbacks[ className ].append( callbackFunc )
+}
+
+void function AddTargetNameCreateCallback( string targetName, void functionref( entity ) callbackFunc )
+{
+	if ( !( targetName in clGlobal.onTargetNameCreateCallbacks ) )
+		clGlobal.onTargetNameCreateCallbacks[ targetName ] <- []
+
+#if DEV
+	foreach ( func in clGlobal.onTargetNameCreateCallbacks[ targetName ] )
+	{
+		Assert( func != callbackFunc )
+	}
+#endif
+
+	clGlobal.onTargetNameCreateCallbacks[ targetName ].append( callbackFunc )
+}
+
+void function AddCallback_MinimapEntSpawned( void functionref( entity ) callbackFunc )
+{
+	Assert( !clGlobal.onMinimapEntSpawnedCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddCallback_MinimapEntSpawned" )
+	clGlobal.onMinimapEntSpawnedCallbacks.append( callbackFunc )
+}
+
+void function AddCallback_UseEntGainFocus( void functionref( entity objectOfFocus) callbackFunc )
+{
+	Assert( !clGlobal.onUseEntGainFocusCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddCallback_UseEntGainFocus" )
+	clGlobal.onUseEntGainFocusCallbacks.append( callbackFunc )
+}
+
+void function AddCallback_UseEntLoseFocus( void functionref( entity objectOfFocus) callbackFunc )
+{
+	Assert( !clGlobal.onUseEntLoseFocusCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddCallback_UseEntLoseFocus" )
+	clGlobal.onUseEntLoseFocusCallbacks.append( callbackFunc )
+}
+
+void function AddCallback_LocalViewPlayerSpawned( void functionref( entity ) callbackFunc )
+{
+	Assert( !clGlobal.onLocalViewPlayerSpawnedCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddLocalViewPlayerSpawnedCallback" )
+	clGlobal.onLocalViewPlayerSpawnedCallbacks.append( callbackFunc )
+}
+
+void function AddCallback_LocalClientPlayerSpawned( void functionref( entity ) callbackFunc )
+{
+	Assert( !clGlobal.onLocalClientPlayerSpawnedCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddLocalClientPlayerSpawnedCallback" )
+	clGlobal.onLocalClientPlayerSpawnedCallbacks.append( callbackFunc )
+}
+
+void function AddCallback_KillReplayStarted( void functionref() callbackFunc )
+{
+	Assert( !clGlobal.killReplayStartCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddKillReplayStartedCallback" )
+	clGlobal.killReplayStartCallbacks.append( callbackFunc )
+}
+
+void function AddCallback_KillReplayEnded( void functionref() callbackFunc )
+{
+	Assert( !clGlobal.killReplayEndCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddKillReplayEndedCallback" )
+	clGlobal.killReplayEndCallbacks.append( callbackFunc )
+}
+
+void function AddFirstPersonSpectateStartedCallback( void functionref( entity spectatingPlayer, entity spectatorTarget ) callbackFunc )
+{
+	Assert( !clGlobal.firstPersonSpectateStartCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddFirstPersonSpectateStartedCallback" )
+	clGlobal.firstPersonSpectateStartCallbacks.append( callbackFunc )
+}
+
+void function AddFirstPersonSpectateEndedCallback( void functionref( entity spectatingPlayer, entity spectatorTarget ) callbackFunc )
+{
+	Assert( !clGlobal.firstPersonSpectateEndCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddFirstPersonSpectateEndedCallback" )
+	clGlobal.firstPersonSpectateEndCallbacks.append( callbackFunc )
+}
+
+void function AddThirdPersonSpectateStartedCallback( void functionref( entity spectatingPlayer, entity spectatorTarget  ) callbackFunc )
+{
+	Assert( !clGlobal.thirdPersonSpectateStartCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddThirdPersonSpectateStartedCallback" )
+	clGlobal.thirdPersonSpectateStartCallbacks.append( callbackFunc )
+}
+
+void function AddThirdPersonSpectateEndedCallback( void functionref( entity spectatingPlayer, entity spectatorTarget ) callbackFunc )
+{
+	Assert( !clGlobal.thirdPersonSpectateEndCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddThirdPersonSpectateEndedCallback" )
+	clGlobal.thirdPersonSpectateEndCallbacks.append( callbackFunc )
+}
+
+void function AddOnSpectatorTargetChangedCallback( void functionref( entity spectatingPlayer, entity prevSpectatorTarget, entity newSpectatorTarget ) callbackFunc )
+{
+	Assert( !clGlobal.onSpectatorTargetChangedCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddOnSpectatorTargetChangedCallback" )
+	clGlobal.onSpectatorTargetChangedCallbacks.append( callbackFunc )
+}
+
+void function AddCallback_OnSelectedWeaponChanged( void functionref( entity ) callbackFunc )
+{
+	Assert( !clGlobal.onWeaponChangedCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddCallback_OnSelectedWeaponChanged" )
+	clGlobal.onWeaponChangedCallbacks.append( callbackFunc )
+}
+
+
+void function AddDestroyCallback( string className, void functionref( entity ) callbackFunc )
+{
+	if ( !( className in clGlobal.onDestroyedCallbacks ) )
+		clGlobal.onDestroyedCallbacks[ className ] <- []
+
+	Assert( !clGlobal.onDestroyedCallbacks[ className ].contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddDestroyCallback" )
+
+	clGlobal.onDestroyedCallbacks[ className ].append( callbackFunc )
+}
+
+void function AddOnDeathCallback( string className, void functionref( entity ) callbackFunc )
+{
+	if ( !( className in clGlobal.onDeathCallbacks ) )
+		clGlobal.onDeathCallbacks[ className ] <- []
+
+	Assert( !clGlobal.onDeathCallbacks[ className ].contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddOnDeathCallback" )
+
+	clGlobal.onDeathCallbacks[ className ].append( callbackFunc )
+
+	// Check if DoDeathCallback has already been enabled for class
+	foreach ( func in clGlobal.onCreateCallbacks[ className ] )
+	{
+		if ( func == __OnDeathCallbackEnable )
+			return
+	}
+	AddCreateCallback( className, __OnDeathCallbackEnable )
+}
+
+void function AddOnDeathOrDestroyCallback( string className, void functionref( entity ) callbackFunc )
+{
+	if ( !( className in clGlobal.onDeathOrDestroyCallbacks ) )
+		clGlobal.onDeathOrDestroyCallbacks[ className ] <- []
+
+	clGlobal.onDeathOrDestroyCallbacks[ className ].append( callbackFunc )
+
+	// Check if DoDeathCallback has already been enabled for class
+	if ( className in clGlobal.onCreateCallbacks )
+	{
+		foreach ( func in clGlobal.onCreateCallbacks[ className ] )
+		{
+			if ( func == __OnDeathCallbackEnable )
+				return
+		}
+	}
+	AddCreateCallback( className, __OnDeathCallbackEnable )
+}
+
+void function __OnDeathCallbackEnable( entity ent )
+{
+	ent.DoDeathCallback( true )
+}
+
+void function AddCinematicEventFlagChangedCallback( int flag, void functionref( entity ) callbackFunc ) //Only for local player. Clients don't get sent information about other clients' cinematicEventFlags
+{
+	if ( !( flag in clGlobal.onCinematicEventFlagChangedCallback ) )
+		clGlobal.onCinematicEventFlagChangedCallback[ flag ] <- []
+
+	Assert( !clGlobal.onCinematicEventFlagChangedCallback[ flag ].contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddCinematicEventFlagChangedCallback" )
+
+	//printt( "Adding callback for flag: " + flag + " with function: " + callbackFunc )
+
+	clGlobal.onCinematicEventFlagChangedCallback[ flag ].append( callbackFunc )
+}
+
+void function PrintAspectRatioInfo( float desiredWidth, float width, float height )
+{
+	float aspectRatio = height / width
+	printt( "Width/Height:", desiredWidth, ( ( desiredWidth * aspectRatio ) + 0.5 ).tointeger() )
+}
+
+// returns array of client ents that match a classname and name mask
+array<entity> function GetClientEntArray( classname, nameMask )
+{
+	expect string( classname )
+	expect string( nameMask )
+
+	array<entity> ents = GetClientEntArrayBySignifier( classname )
+
+	array<entity> returns
+	foreach ( ent in ents )
+	{
+		if ( ent.GetTargetName().find( nameMask ) == 0 )
+			returns.append( ent )
+	}
+
+	return returns
+}
+
+// testing functions
+function vdu()
+{
+	entity player = GetLocalViewPlayer()
+	player.Signal( "EndGuidance" )
+	player.EndSignal( "EndGuidance" )
+
+	for ( ;; )
+	{
+		vdufunc( player )
+		WaitFrame()
+	}
+}
+
+function vdufunc( player )
+{
+	local attach = player.LookupAttachment( "hijack" )
+	local origin = player.GetAttachmentOrigin( attach )
+	local angles = player.GetAttachmentAngles( attach )
+	local forward = AnglesToForward( angles )
+	local right = AnglesToRight( angles )
+	local up = AnglesToUp( angles )
+
+	//angles = AnglesCompose( angles, Vector( 0, 180, 0 ) )
+	origin += forward * -200
+	//origin += up * 50
+
+	level.camera.SetOrigin( origin )
+	level.camera.SetAngles( angles )
+
+}
+
+//-----------------------------------------------------------
+// CreatePropDynamic( model ) - create a generic prop_dynamic with default properties
+//------------------------------------------------------------
+entity function CreatePropDynamic( asset model, var origin = null, var angles = null )
+{
+	if( !origin )
+		origin = Vector( 0, 0, 0 )
+	if( !angles )
+		angles = Vector( 0, 0, 0 )
+
+	entity prop_dynamic = CreateClientSidePropDynamic( origin, angles, model )
+
+	return prop_dynamic
+}
+
+//-----------------------------------------------------------
+// CreateScriptRef() - create a script ref
+//------------------------------------------------------------
+entity function CreateScriptRef( origin = null, angles = null )
+{
+	entity ent = CreatePropDynamic( $"models/dev/editor_ref.mdl" )
+
+	ent.Hide()
+
+	if ( origin )
+		ent.SetOrigin( origin )
+	if ( angles )
+		ent.SetAngles( angles )
+
+	return ent
+}
+
+string function GetComputerName( entity player )
+{
+	string name = player.GetPlayerName()
+	array<string> msg = split( name, " " )
+	if ( msg.len() < 2 )
+		return ""
+
+	msg = split( msg.top(), "(" )
+	if ( msg.len() < 1 )
+		return ""
+
+	msg = split( msg[0], "-" )
+
+	if ( msg.len() < 1 )
+		return ""
+
+	return msg[0]
+}
+
+void function AddPlayerFunc( void functionref(entity player) func )
+{
+	clGlobal.addPlayerFuncs.append( func )
+}
+
+
+//CLIENT VERSION OF SERVER WARP FUNCS
+void function CLWarpoutEffect( entity dropship )
+{
+	if ( !IsValid( dropship ) )
+		return
+
+	__WarpOutEffectShared( dropship )
+
+	thread __DelayDropshipDelete( dropship )
+}
+
+void function __DelayDropshipDelete( entity dropship )
+{
+	dropship.EndSignal( "OnDeath" )
+
+	wait 0.1 // so the dropship wont pop out before it warps out
+
+	dropship.Destroy()
+}
+
+function CLWarpinEffect( asset model, string animation, vector origin, vector angles, string sfx = "" )
+{
+	//we need a temp dropship to get the anim offsets
+	Point start = __GetWarpinPosition( model, animation, origin, angles )
+
+	__WarpInEffectShared( start.origin, start.angles, sfx )
+}
+
+
+Point function __GetWarpinPosition( asset model, string animation, vector origin, vector angles )
+{
+	Point start
+
+	entity dummyDropship = CreatePropDynamic( model, origin, angles )
+	dummyDropship.Hide()
+	dummyDropship.SetOrigin( origin )
+    dummyDropship.SetAngles( angles )
+	Attachment attachment = dummyDropship.Anim_GetAttachmentAtTime( animation, "ORIGIN", 0 )
+	start.origin = attachment.position
+    start.angles = attachment.angle
+	dummyDropship.Destroy()
+
+	return start
+}
+
+function CoreActivatedVO( entity player )
+{
+	player.EndSignal( "OnDeath" )
+
+	string ornull conversationName = GetCoreOSConversationName( player, "core_activated" )
+	if ( conversationName == null )
+		return
+
+	expect string( conversationName )
+	TitanCockpit_PlayDialog( player, conversationName )
+}
+
+function MonitorFlickerAndChange( screen, modelname )
+{
+	screen.EndSignal( "OnDestroy" )
+
+	screen.SetModel( modelname )
+	bool state = false
+	int flickers = RandomIntRange( 2, 6 ) * 2 + 1// always an odd number
+
+	for ( int i = 0; i < flickers; i++ )
+	{
+		if ( !state )
+		{
+			screen.Show()
+			state = true
+		}
+		else
+		{
+			screen.Hide()
+			state = false
+		}
+		wait RandomFloat( 0.15 )
+	}
+}
+
+void function AddCallback_OnClientScriptInit( void functionref( entity ) callbackFunc )
+{
+	clGlobal.onClientScriptInitCallback.append( callbackFunc )
+}
+
+void function AddCreateMainHudCallback( void functionref( var, entity ) callbackFunc )
+{
+	clGlobal.onMainHudCreatedCallbacks.append( callbackFunc )
+}
+
+void function AddCreatePilotCockpitCallback( void functionref (entity, entity ) callbackFunc )
+{
+	clGlobal.pilotHudCallbacks.append( callbackFunc )
+}
+
+void function AddCreateTitanCockpitCallback( void functionref (entity, entity ) callbackFunc )
+{
+	clGlobal.titanHudCallbacks.append( callbackFunc )
+}
+
+// ???: player not used
+bool function PlayerProgressionAllowed( player = null )
+{
+	if ( IsPrivateMatch() )
+		return false
+
+	return IsMultiplayer()
+}
+
+bool function ShouldDrawHUD( player )
+{
+	if ( GetGameState() <= eGameState.Prematch )
+		return false
+
+	return true
+}
+
+function ShowScriptHUD( entity player )
+{
+	if ( !ShouldDrawHUD( player ) )
+		return
+
+	foreach ( group in level.menuHideGroups )
+		group.Show()
+
+	player.ShowHUD()
+	player.SetScriptMenuOff()
+}
+
+function HideScriptHUD( entity player )
+{
+	foreach ( group in level.menuHideGroups )
+		group.Hide()
+
+	player.HideHUD()
+	player.SetScriptMenuOn()
+}
+
+int function PlayFXOnTag( entity ent, int playFxID, int tagID )
+{
+	int fxID = StartParticleEffectOnEntity( ent, playFxID, FX_PATTACH_POINT_FOLLOW, tagID )
+	return fxID
+}
+
+function UpdateEquipmentHud( entity cockpit, entity player )
+{
+	ReCalculatePetTurretNumbers()
+
+	if ( !( "offhandHud" in cockpit.s ) )
+		return
+
+	cockpit.s.offhandHud[OFFHAND_EQUIPMENT].bg.Show()
+	cockpit.s.offhandHud[OFFHAND_EQUIPMENT].icon.Show()
+	cockpit.s.offhandHud[OFFHAND_EQUIPMENT].hint.Show()
+	cockpit.s.offhandHud[OFFHAND_EQUIPMENT].count.Show()
+
+	local ammoCount = level.sentryTurretInventory // is always between 0 and 3
+
+	cockpit.s.offhandHud[OFFHAND_EQUIPMENT].count.SetText( "#HUDAUTOTEXT_ACTIVEWEAPONMAGAZINECOUNT", ammoCount )
+	cockpit.s.offhandHud[OFFHAND_EQUIPMENT].icon.SetImage( $"vgui/hud/coop/mini_turret_counter" )
+
+	foreach ( index, elem in cockpit.s.offhandHud[OFFHAND_EQUIPMENT].dots )
+	{
+		if ( index < level.petSentryTurrets )
+			elem.Show()
+		else
+			elem.Hide()
+	}
+
+	if ( ammoCount <= 0 || level.petSentryTurrets >= COOP_SENTRY_TURRET_MAX_COUNT_PET || player.IsTitan() )
+	{
+		cockpit.s.offhandHud[OFFHAND_EQUIPMENT].icon.SetColor( 128, 128, 128, 255 )
+	 	cockpit.s.offhandHud[OFFHAND_EQUIPMENT].bar.SetAlpha( 64 )
+ 		cockpit.s.offhandHud[OFFHAND_EQUIPMENT].hint.SetAlpha( 64 )
+	}
+	else
+	{
+		cockpit.s.offhandHud[OFFHAND_EQUIPMENT].icon.ReturnToBaseColor()
+	 	cockpit.s.offhandHud[OFFHAND_EQUIPMENT].bar.ReturnToBaseColor()
+ 		cockpit.s.offhandHud[OFFHAND_EQUIPMENT].hint.ReturnToBaseColor()
+	}
+
+	if ( player.IsTitan() )
+		cockpit.s.offhandHud[OFFHAND_EQUIPMENT].hint.Hide()
+	else
+		cockpit.s.offhandHud[OFFHAND_EQUIPMENT].hint.Show()
+}
+
+
+function ReCalculatePetTurretNumbers()
+{
+	entity clientPlayer = GetLocalClientPlayer()
+	if ( !IsValid( clientPlayer ) )
+		return
+
+	array<entity> allTurrets = GetNPCArrayByClass( "npc_turret_sentry" )
+	int petTurrets = 0
+
+	foreach ( turret in allTurrets )
+	{
+		if ( turret.GetBossPlayer() == clientPlayer )
+			petTurrets++
+	}
+
+	level.petSentryTurrets = petTurrets
+}
+
+function Dev_BuildClientMessage( Type, ...)
+{
+	if ( Type == 0 )
+		for ( int i = 0; i < vargc; i++ )
+			dev_messageString += format("%c", vargv[i] )
+	else if ( Type == 1 )
+		for ( int i = 0; i < vargc; i++ )
+			dev_messageSubString += format("%c", vargv[i] )
+}
+
+function Dev_PrintClientMessage( float duration )
+{
+	entity player = GetLocalClientPlayer()
+	AnnouncementData announcement = Announcement_Create( dev_messageString )
+	Announcement_SetSubText( announcement, dev_messageSubString )
+	Announcement_SetHideOnDeath( announcement, false )
+	Announcement_SetDuration( announcement, duration )
+	Announcement_SetPurge( announcement, true )
+	AnnouncementFromClass( player, announcement )
+
+	dev_messageString = ""
+	dev_messageSubString = ""
+}
+
+void function ServerCallback_CollectibleFoundMessage( int numCollectiblesFound, int totalNumCollectibles )
+{
+	// Temp hud until RUI is made
+	entity player = GetLocalClientPlayer()
+	AnnouncementData announcement = Announcement_Create( "#MSG_COLLECTIBLE_FOUND" )
+	Announcement_SetSubText( announcement, "#SUBMSG_COLLECTIBLE_FOUND" )
+	Announcement_SetOptionalSubTextArgsArray( announcement, [string(numCollectiblesFound), string(totalNumCollectibles)] )
+	Announcement_SetHideOnDeath( announcement, false )
+	Announcement_SetDuration( announcement, 3.5 )
+	Announcement_SetPurge( announcement, true )
+	AnnouncementFromClass( player, announcement )
+}
+
+void function ClientCodeCallback_OnDevnetBugScreenshot()
+{
+	printt( "(devnet screenshot client script callback)" )
+
+	entity player = GetLocalClientPlayer()
+	player.ClientCommand( "OnDevnetBugScreenshot" )
+}
+
+array<float> function GetTitanDamageStateHealthValues()
+{
+	return [ TITAN_DAMAGE_STAGE_1, TITAN_DAMAGE_STAGE_2, TITAN_DAMAGE_STAGE_3 ]
+}
+
+float[2] function GetScreenSpaceClamped( vector origin )
+{
+	var screenSize = Hud.GetScreenSize()
+	var result = Hud.ToScreenSpaceClamped( origin )
+	result = Hud.ClipScreenPositionToBox( result[0], result[1], 0, screenSize[0], 0, screenSize[1] )
+
+	float[2] coordinates
+	coordinates[0] = float( result[0] ) / float( screenSize[0] )
+	coordinates[1] = float( result[1] ) / float( screenSize[1] )
+
+	return coordinates
+}
+
+float[2] function GetScreenSize()
+{
+	array screenSize = expect array( Hud.GetScreenSize() )
+	float[2] floatArray
+	floatArray[0] = float( screenSize[0] )
+	floatArray[1] = float( screenSize[1] )
+	return floatArray
+}
+
+float function GetNextRespawnTime( entity player )
+{
+	return expect float( player.nv.nextRespawnTime - 0.0 ) // - 0.0 to force this to be a float
+}
+
+#if DEV
+void function TwoPinTest()
+{
+	entity player = gp()[0]
+	var rui = RuiCreate( $"ui/twopin_test.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 0 )
+}
+#endif
+
+AttackerDisplayNameStruct function GetAttackerDisplayNamesFromClassname( entity ent, bool victimIsOwnedTitan = false )
+{
+	AttackerDisplayNameStruct names
+
+	//If the victim is a titan being doomed with a player inside, need to say the victim is "player's titan" instead of just "player"
+	if ( victimIsOwnedTitan )
+	{
+		//Can't just check IsPlayer && IsTitan because we might get pilots whose titans have already been obituaried
+		names.attackerName = ent.GetPlayerName()
+		names.attackerPetName = "#NPC_TITAN"
+	}
+	else if ( ent == GetLocalClientPlayer() )
+	{
+		names.attackerName = ent.GetPlayerName()
+	}
+	else if ( ent.IsPlayer() )
+	{
+		names.attackerName = ent.GetPlayerName()
+	}
+	else if ( ent instanceof C_AI_BaseNPC )
+	{
+		string bossPlayerName = ent.GetBossPlayerName()
+
+		if ( bossPlayerName != "" )
+		{
+			///////////////////////
+			// dev only - remove (machinename-re)
+			if ( developer() != 0 )
+			{
+				local index = bossPlayerName.find( " (", 1 )
+				if ( index != null )
+					bossPlayerName = bossPlayerName.slice( 0, index )
+			}
+			///////////////////////
+
+			// player autotitans are titled "follow mode" or "guard mode" so we need to change the obit display name
+			if ( IsTurret( ent ) )
+			{
+				names.attackerName = bossPlayerName
+			}
+			else if ( ent.IsTitan() )
+			{
+				names.attackerName = bossPlayerName
+				names.attackerPetName = "#NPC_AUTO_TITAN"
+			}
+			else if ( IsGrunt( ent ) )
+			{
+				names.attackerName = bossPlayerName
+				names.attackerPetName = "#NPC_CONSCRIPT"
+			}
+			else if ( IsSpectre( ent ) )
+			{
+				names.attackerName = bossPlayerName
+				names.attackerPetName = "#NPC_SPECTRE"
+			}
+			else if ( IsAttackDrone( ent ) )
+			{
+				names.attackerName = bossPlayerName
+				names.attackerPetName = "#NPC_DRONE"
+			}
+			else if ( IsSuperSpectre( ent ) )
+			{
+				names.attackerName = bossPlayerName
+				names.attackerPetName = "#NPC_SUPER_SPECTRE"
+			}
+			else if ( IsProwler( ent ) )
+			{
+				names.attackerName = bossPlayerName
+				names.attackerPetName = "#NPC_PROWLER"
+			}
+			else if ( IsFragDrone( ent ) )
+			{
+				names.attackerName = bossPlayerName
+				names.attackerPetName = "#WPN_FRAG_DRONE"
+			}
+			else
+			{
+				names.attackerName = bossPlayerName
+				names.attackerPetName = "_Noun"
+			}
+		}
+
+		if ( developer() != 0 && IsMultiplayer() )
+		{
+			string title = ent.GetTitleForUI()
+			string classname = ent.GetClassName()
+			if ( title == "" )
+			{
+				printt( "-----------------------------------------------" )
+				printt( "Tried to print name in obituary for an entity that didn't call SetTitle()" )
+				printt( "    ent classname:", classname )
+				printt( "    ent title:", title )
+				printt( "    ent bossPlayerName:", bossPlayerName )
+				printt( "-----------------------------------------------" )
+				//title = damageSourceStrings[ damagedef_unknownBugIt ]
+			}
+		}
+
+		if ( names.attackerName == "" )
+			names.attackerName = ent.GetTitleForUI()
+	}
+
+	return names
+}
+
+string function GetAttackerDisplayNamesDamageSourceId( damageSourceId )
+{
+	/*
+		this is not a great solution for bugs #79124, #79124, #78831 etc.
+		but unfortunately the current damage/death system assumes entites exist on the client to
+		ask for names etc. this turns out to be a problem when a player disconnects or an entity
+		is removed just after he caused a death. I think we should rewrite how it works for R2
+	*/
+
+	string killerName = ""
+	switch( damageSourceId )
+	{
+		case eDamageSourceId.suicideSpectreAoE:
+			killerName = "#NPC_SPECTRE_SUICIDE"
+			break
+	}
+
+	return killerName
+}
+
+var function CreateCockpitRui( asset ruiAsset, int sortKey = 0 )
+{
+	var rui = RuiCreate( ruiAsset, clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, sortKey )
+	//float[2] screenSize = GetScreenSize()
+	//RuiSetResolution( rui, screenSize[0], screenSize[1] )
+	return rui
+}
+
+var function CreateFullscreenRui( asset ruiAsset, int sortKey = 0 )
+{
+	var rui = RuiCreate( ruiAsset, clGlobal.topoFullScreen, RUI_DRAW_HUD, sortKey )
+	//float[2] screenSize = GetScreenSize()
+	//RuiSetResolution( rui, screenSize[0], screenSize[1] )
+	return rui
+}
+
+var function CreatePermanentCockpitRui( asset ruiAsset, int sortKey = 0 )
+{
+	var rui = RuiCreate( ruiAsset, clGlobal.topoCockpitHudPermanent, RUI_DRAW_COCKPIT, sortKey )
+	return rui
+}
+
+var function CreateTitanCockpitRui( asset ruiAsset, int sortKey = 0 )
+{
+	var rui = RuiCreate( ruiAsset, clGlobal.topoTitanCockpitHud, RUI_DRAW_COCKPIT, sortKey )
+	entity player = GetLocalViewPlayer()
+	TitanCockpitRUI tcRUI
+	tcRUI.rui = rui
+	player.p.titanCockpitRUIs.append( tcRUI )
+	return rui
+}
+
+var function CreateTitanCockpitLowerRui( asset ruiAsset, int sortKey = -1 )
+{
+	var rui = RuiCreate( ruiAsset, clGlobal.topoTitanCockpitLowerHud, RUI_DRAW_COCKPIT, sortKey )
+	entity player = GetLocalViewPlayer()
+	TitanCockpitRUI tcRUI
+	tcRUI.rui = rui
+	player.p.titanCockpitRUIs.append( tcRUI )
+	return rui
+}
+
+var function CreateTitanCockpitInstrument1Rui( asset ruiAsset, int sortKey = -1 )
+{
+	var rui = RuiCreate( ruiAsset, clGlobal.topoTitanCockpitInstrument1, RUI_DRAW_COCKPIT, sortKey )
+	entity player = GetLocalViewPlayer()
+	TitanCockpitRUI tcRUI
+	tcRUI.rui = rui
+	player.p.titanCockpitRUIs.append( tcRUI )
+	return rui
+}
+
+/*
+Moved to code:
+bool function IsWatchingThirdPersonKillReplay()
+{
+	if ( !IsWatchingKillReplay() )
+		return false
+
+	entity viewPlayer = GetLocalViewPlayer()
+	if ( !IsValid( viewPlayer ) )
+		return false
+
+	entity viewEntity = GetViewEntity()
+	if ( viewPlayer == viewEntity )
+		return false
+
+	return true
+}
+*/
+
+bool function IsSpectatingThirdPerson()
+{
+	return IsSpectating() && clGlobal.observerMode == OBS_MODE_CHASE
+}
+
+bool function IsSpectating()
+{
+	return clGlobal.isSpectating
+}
+
+void function RuiSetResolutionToScreenSize( var rui )
+{
+	float[2] screenSize = GetScreenSize()
+	RuiSetResolution( rui, screenSize[0], screenSize[1] )
+}
+
+void function ServerCallback_UpdateHeroStats()
+{
+	printt( "#################################" )
+	printt( "UPDATING HERO STATS" )
+
+	int collectiblesFound = 0
+	float spProgress = 0.0
+
+	if ( !Script_IsRunningTrialVersion() )
+	{
+		// Collectibles Found
+		collectiblesFound = GetTotalLionsCollected()
+		printt( "  Collectibles Found:", collectiblesFound )
+
+		#if DURANGO_PROG
+			Durango_SetCollectiblesFound( collectiblesFound )
+		#endif
+
+		// Single Player Progress
+		spProgress = GetLastLevelUnlocked() / 9.0
+		printt( "  SP Progress:", spProgress )
+
+		#if DURANGO_PROG
+			Durango_SetSpProgress( spProgress )
+		#endif
+	}
+
+	// Game Progress ( campaign progress + collectible progress + MP player level )
+	// Campaign and MP level each count as 40%, the remaining 20% is collectibles
+	float campaignFrac = GraphCapped( spProgress, 0.0, 1.0, 0.0, 0.4 )
+	printt( "    campaignFrac:", campaignFrac )
+	int mpLevel = GetConVarInt( "mp_player_level" )
+	printt( "    mpLevel:", mpLevel )
+	var dataTable = GetDataTable( $"datatable/xp_per_player_level.rpak" )
+	int maxPlayerLevel = GetDatatableRowCount( dataTable )
+	printt( "    maxPlayerLevel:", maxPlayerLevel )
+	float mpLevelFrac = GraphCapped( mpLevel, 0.0, maxPlayerLevel, 0.0, 0.4 )
+	printt( "    mpLevelFrac:", mpLevelFrac )
+	float collectiblesFrac = GraphCapped( collectiblesFound, 0, GetTotalLionsInGame(), 0.0, 0.2 )
+	printt( "    collectiblesFrac:", collectiblesFrac )
+	float gameProgressFrac = campaignFrac + mpLevelFrac + collectiblesFrac
+	printt( "  Game Progress:", gameProgressFrac )
+
+	#if DURANGO_PROG
+		Durango_SetGameProgress(gameProgressFrac)
+	#endif
+
+	printt( "#################################" )
+}

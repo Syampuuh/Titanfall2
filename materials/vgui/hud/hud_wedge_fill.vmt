@@ -1,0 +1,32 @@
+// v1.01
+//This file is auto-generated from reVaMpT. Edit at your own risk.
+"UnlitTwoTexture"
+{
+	"$basetexture" "vgui/hud/titan_healthbar_alpha"
+	"$texture2" "vgui/hud/hud_wedge_col"
+//	"$texture2" "vgui/hud/healthbar_doomed"
+
+	"$translucent" "1"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$ignorez"     "1"
+	
+	"$scale"	"[1.0 1.0]"
+	"$center"	"[0.0 0.5]"
+	
+	"Proxies"
+	{
+		"TextureTransform"
+		{
+			"centerVar" "$center"
+			"scaleVar" "$scale"
+			"resultvar" "$basetexturetransform"
+		}
+
+		"ScriptModify"
+		{
+			"scriptFuncName" "VMTCallback_SuperBarFill"
+			"resultVar"	"$scale"
+		}
+	}	
+}

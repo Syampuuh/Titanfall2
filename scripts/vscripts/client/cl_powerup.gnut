@@ -1,0 +1,9 @@
+global function CLPowerUps_Init
+
+void function CLPowerUps_Init()
+{
+	SH_PowerUp_Init()
+
+//	if ( GetCurrentPlaylistVarInt( "power_ups_enabled", 0 ) == 0 )
+//		return
+}

@@ -1,0 +1,13 @@
+"SpriteCard"
+{
+	$basetexture "particle\glows\glow_ring_01"
+	$vertexcolor 1
+
+	$translucent 	1
+	$nocull	1
+
+	$additive 1
+	$ignorez 1
+
+	$vertexFogAmount 0
+}

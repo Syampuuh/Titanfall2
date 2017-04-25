@@ -1,0 +1,62 @@
+"UnlitTwoTexture"
+{
+	"$znearer" 1
+	"$nodecal" "1"
+	"$nofog" "1"
+//	"$mod2x" "1"
+//	"$additive" "1"
+
+
+	"$basetexture" "models\robots\marvin\marvin_face_sad"
+	"$Texture2" "effects/dev_scanline"
+	"$color" "[1 1 1]"
+	"$color2" "[2.68 2.68 2.68]"
+		
+	"$t2offset" 0
+	"$t2scale" 1
+	"$t2rot" 0
+	"$scroll" "[0 1]"
+	
+	"Proxies"
+	{
+		//Horizontal movement speed 
+		"UniformNoise"
+		{
+			"minVal" 0
+			"maxVal" 0.0
+			"resultVar" "$scroll[0]"
+		}
+		//Vertical movement speed 
+		"UniformNoise"
+		{
+			"minVal" 0
+			"maxVal" 10.021
+			"resultVar" "$scroll[1]"
+		}
+		//Move the 2nd texture using horiz and vert speed
+		"TextureTransform"
+		{
+			"translateVar" "$scroll"
+			"scaleVar" "$t2scale"
+			"rotateVar" "$t2rot"
+			"resultvar" "$texture2transform"
+		}
+		//Pulse Alpha	of BaseTexture
+//		"Sine"
+//		{
+//			"sineperiod" ".25"
+//			"sinemin"	"0.8"
+//			"sinemax"	"1"
+//			"resultVar" "$alpha"
+//		}
+//		//chevron flicker
+//		"UniformNoise"
+//		{
+//			"minVal" 0.75
+//			"maxVal" 2.05
+//			"resultVar" "$color"
+//		}
+	}
+}
+
+

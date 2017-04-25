@@ -1,0 +1,111 @@
+"pilot_titan_cockpit"
+{
+	"global"
+	{
+		weaponClass			"human"
+		class				"pilot"
+		subclass			"wallrun"
+		wallrun			1
+		automantle		1
+		healthpacks		1
+		jump			1
+		doublejump		1
+		fov				70
+		viewmodelfov	70
+		jumpheight		80
+		health			200
+		stepheight		18
+		viewkickFallDistMin			10
+		viewkickFallDistMax			70
+		viewkickFallDistMaxScale	12
+		ziplineSpeed				600
+
+		bodymodel			"models/Humans/imc_pilot/male_br/imc_pilot_male_br.mdl"
+		armsmodel			"models/weapons/arms/pov_imc_pilot_male_br.mdl"
+//		cockpitmodel		"models/weapons/arms/human_pov_cockpit.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_medium_cockpit.mdl"
+
+		ArmorType		normal
+		context_action_can_melee	1
+		leech_range					64
+		context_action_can_use		1
+
+		aimAngleBackwardEnd		-120
+		aimAngleForwardStart	-60
+		aimAngleForwardEnd		60
+		aimAngleBackwardStart	120
+
+		cockpitSwayTurnAngleFactor		-0.6
+		cockpitSwayTurnAngleRollFactor	0.2
+		cockpitSwayTurnOriginFactor		-0.15
+		cockpitSwayMoveAngleFactor		-0.4
+		cockpitSwayMoveAngleRollFactor	-0.2
+		cockpitSwayMoveOriginFactor		-0.15
+		cockpitSwayGain					5.0
+
+		sound_superJump			"Player.SuperJump"
+		sound_superJumpFail		"Player.SuperJumpFail"
+		sound_dodge_1p			""
+		sound_dodge_3p			""
+		sound_dodgeFail			""
+		sound_groundImpact		"Pilot.GroundImpact"
+		sound_wallrunImpact		"wallrun_impact"
+
+		ClassMods
+		{
+			pas_stealth_movement
+			{
+			}
+			pas_wall_runner
+			{
+				wallrun_timeLimit		"2.5++"
+				wallrun_hangTimeLimit	"21++"
+			}
+		}
+	}
+	"crouch"
+	{
+		footstepPrefix "human.crouch."
+		footstepWalkSoundRadius	32
+		footstepRunSoundRadius	64
+		footstepMinSpeed		100
+		footstepInterval 		450
+
+		viewheight "0 0 38"
+		firstpersonproxyoffset "0 0 -38"
+		hull_min "-16 -16 0"
+		hull_max "16 16 47"
+
+		speed					75
+	}
+
+	"dead"
+	{
+		viewheight "0 0 14"
+	}
+
+	"observe"
+	{
+		hull_min "-10 -10 -10"
+		hull_max "10 10 10"
+	}
+
+	"stand"
+	{
+		footstepPrefix "human.stand."
+		footstepWalkSoundRadius	32
+		footstepRunSoundRadius	256
+		footstepMinSpeed		80
+		footstepInterval		400
+		footstepIntervalSprint	275
+
+		viewheight "0 0 60"
+		firstpersonproxyoffset "0 0 -60"
+		hull_min "-16 -16 0"
+		hull_max "16 16 72"
+
+		speed			172
+		sprintspeed		257
+	}
+}
+

@@ -1,0 +1,12 @@
+untyped
+
+global function ServerCallback_ScreenShake
+
+
+function ServerCallback_ScreenShake( amplitude, frequency, duration, direction = Vector( 0,0,0 ) )
+{
+	// TODO: is this really the best way to fix this?  Track down the source of the screenshake call
+	amplitude = min( amplitude, 20.0 )
+	amplitude = max( amplitude, 0.0 )
+	ClientScreenShake( amplitude, frequency, duration, direction )
+}

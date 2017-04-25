@@ -1,0 +1,14 @@
+"SpriteCard"
+{
+	"$basetexture" "cable\grapple_col"
+	$translucent 1
+	//$addself 	2
+	//$overbrightfactor 6
+
+	//"$nocull"	1
+	$splinetype	1
+	"$tsaaResponsive" "1"
+
+	$alphaTrailFade -1
+	//$radiusTrailFade 0
+}

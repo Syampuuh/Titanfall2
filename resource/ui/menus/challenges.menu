@@ -1,0 +1,478 @@
+resource/ui/menus/challenges.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+		MenuTitle
+		{
+			ControlName				Label
+			classname				"MenuTitle"
+			InheritProperties		MenuTitle
+			labelText				"#CHALLENGE_CATEGORY_ROOT"
+		}
+
+		MenuCommon
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/menu_common.res"
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+		ChallengeTrackerBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuChallengeTrackerBackground
+			classname				ChallengeTrackerBackground
+			visible					0
+		}
+
+		ChallengeTrackerTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuChallengeTrackerText
+			labelText				"#CHALLENGE_TRACKER_TITLE"
+			classname				ChallengeTrackerTitle
+			visible					0
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		NoChallengesLabel
+		{
+			ControlName				Label
+			classname				"NoChallengesLabel"
+			xpos					-72
+			ypos					0
+			zpos					100
+			wide					715
+			tall					674
+			visible					1
+			font					Default_28_Outline
+			labelText				"#DAILY_CHALLENGES_EMPTY"
+			textAlignment			center
+			centerWrap				1
+			allcaps					0
+			fgcolor_override		"230 161 23 255"
+
+			pin_to_sibling			ChallengeDetailsPanel
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+		}
+
+		BtnChallengeCategory_0
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_0
+			xpos					67
+			ypos					193
+			zpos 					3
+			scriptID				0
+			navUp					BtnChallengeCategory_16
+			navDown					BtnChallengeCategory_1
+			tabPosition 			1
+		}
+
+		BtnChallengeCategory_1
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_1
+			scriptID				1
+			navUp					BtnChallengeCategory_0
+			navDown					BtnChallengeCategory_2
+
+			pin_to_sibling			BtnChallengeCategory_0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_2
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_2
+			scriptID				2
+			navUp					BtnChallengeCategory_1
+			navDown					BtnChallengeCategory_3
+
+			pin_to_sibling			BtnChallengeCategory_1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_3
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_3
+			scriptID				3
+			navUp					BtnChallengeCategory_2
+			navDown					BtnChallengeCategory_4
+
+			pin_to_sibling			BtnChallengeCategory_2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_4
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_4
+			scriptID				4
+			navUp					BtnChallengeCategory_3
+			navDown					BtnChallengeCategory_5
+
+			pin_to_sibling			BtnChallengeCategory_3
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_5
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_5
+			scriptID				5
+			navUp					BtnChallengeCategory_4
+			navDown					BtnChallengeCategory_6
+
+			pin_to_sibling			BtnChallengeCategory_4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_6
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_6
+			scriptID				6
+			navUp					BtnChallengeCategory_5
+			navDown					BtnChallengeCategory_7
+
+			pin_to_sibling			BtnChallengeCategory_5
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_7
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_7
+			scriptID				7
+			navUp					BtnChallengeCategory_6
+			navDown					BtnChallengeCategory_8
+
+			pin_to_sibling			BtnChallengeCategory_6
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_8
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_8
+			scriptID				8
+			navUp					BtnChallengeCategory_7
+			navDown					BtnChallengeCategory_9
+
+			pin_to_sibling			BtnChallengeCategory_7
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_9
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_9
+			scriptID				9
+			navUp					BtnChallengeCategory_8
+			navDown					BtnChallengeCategory_10
+
+			pin_to_sibling			BtnChallengeCategory_8
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_10
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_10
+			scriptID				10
+			navUp					BtnChallengeCategory_9
+			navDown					BtnChallengeCategory_11
+
+			pin_to_sibling			BtnChallengeCategory_9
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_11
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_11
+			scriptID				11
+			navUp					BtnChallengeCategory_10
+			navDown					BtnChallengeCategory_12
+
+			pin_to_sibling			BtnChallengeCategory_10
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_12
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_12
+			scriptID				12
+			navUp					BtnChallengeCategory_11
+			navDown					BtnChallengeCategory_13
+
+			pin_to_sibling			BtnChallengeCategory_11
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_13
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_13
+			scriptID				13
+			navUp					BtnChallengeCategory_12
+			navDown					BtnChallengeCategory_14
+
+			pin_to_sibling			BtnChallengeCategory_12
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_14
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_14
+			scriptID				14
+			navUp					BtnChallengeCategory_13
+			navDown					BtnChallengeCategory_15
+
+			pin_to_sibling			BtnChallengeCategory_13
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_15
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_15
+			scriptID				15
+			navUp					BtnChallengeCategory_14
+			navDown					BtnChallengeCategory_16
+
+			pin_to_sibling			BtnChallengeCategory_14
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnChallengeCategory_16
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		ChallengeCategoryButton
+			classname 				BtnChallengeCategory_16
+			scriptID				16
+			navUp					BtnChallengeCategory_15
+			navDown					BtnChallengeCategory_0
+
+			pin_to_sibling			BtnChallengeCategory_15
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnTrackedChallenge_0
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		TrackedChallengeListButton
+			classname 				BtnTrackedChallenge_0
+			scriptID				13
+			xpos					1045
+			ypos					223
+			zpos 					3
+			navUp					BtnTrackedChallenge_2
+			navDown					BtnTrackedChallenge_1
+			visible					0
+		}
+
+		BtnTrackedChallenge_1
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		TrackedChallengeListButton
+			classname 				BtnTrackedChallenge_1
+			scriptID				14
+			navUp					BtnTrackedChallenge_0
+			navDown					BtnTrackedChallenge_2
+
+			pin_to_sibling			BtnTrackedChallenge_0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					-27
+			visible					0
+		}
+
+		BtnTrackedChallenge_2
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		TrackedChallengeListButton
+			classname 				BtnTrackedChallenge_2
+			scriptID				15
+			navUp					BtnTrackedChallenge_1
+			navDown					BtnTrackedChallenge_0
+
+			pin_to_sibling			BtnTrackedChallenge_1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos					-27
+			visible					0
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ButtonTooltip
+		{
+			ControlName				CNestedPanel
+			InheritProperties		ButtonTooltip
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		// Challenge Details
+		ChallengeDetailsPanel
+		{
+			ControlName				CNestedPanel
+			classname				"ChallengeDetailsPanel"
+			xpos					c-854
+			ypos					c-360
+			zpos					3
+			wide					1709
+			tall					764
+			visible					1
+			controlSettingsFile		"resource/UI/menus/challengedetails.res"
+		}
+
+		// Challenge List
+		ListBoxContainer
+		{
+			ControlName				CNestedPanel
+			classname				"ListBoxContainer"
+			xpos					-31
+			ypos					0
+			zpos					100
+			wide					776
+			tall					742
+			visible					1
+			controlSettingsFile		"resource/UI/menus/challenge_menu_list_box_container.res"
+
+			pin_to_sibling				ChallengeDetailsPanel
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		BtnScrollUpPC
+		{
+			ControlName					BaseModHybridButton
+			InheritProperties			MenuArrowButtonUp
+			xpos						-382
+			ypos						-393
+			zpos						200
+			activeInputExclusivePaint	keyboard
+
+			pin_to_sibling				ChallengeDetailsPanel
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		BtnScrollDownPC
+		{
+			ControlName					BaseModHybridButton
+			InheritProperties			MenuArrowButtonDown
+			xpos						-382
+			ypos						360
+			zpos						200
+			activeInputExclusivePaint	keyboard
+
+			pin_to_sibling				ChallengeDetailsPanel
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		DailyTimerLabel
+		{
+			ControlName				Label
+			xpos					0
+			ypos					0
+			zpos 					400
+			textAlignment			center
+			centerWrap	 			1
+			wide 					776
+			auto_tall_tocontents 	1
+			visible					1
+			font					Default_23_Outline
+			labelText				"[Timer]"
+			allcaps					1
+			fgcolor_override		"230 161 23 255"//"204 234 255 255"
+			pin_to_sibling			ListBoxContainer
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					r119
+			zpos					4
+			wide					f0
+			tall					36
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+		}
+	}
+}

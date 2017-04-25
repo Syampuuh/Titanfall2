@@ -1,0 +1,364 @@
+global function RodeoSharedTitan_Init
+
+global function GetTitanBeingRodeoed
+global function GetFriendlyTitanBeingRodeoed
+global function GetRodeoPackage_PlayerToTitan
+global function CreateRodeoPackage_PlayerToTitan
+global function IsValidTitanRodeoTarget
+global function GetBatteryOnBack
+global function PlayerHasBattery
+global function GetNewRodeoPosition
+global function GetSoulBatteryCount
+global function ShouldLetPlayerRequestBattery
+global function ShouldShowOfferRodeoBatteryHint
+
+global const OFFER_RODEO_BATTERY_COOLDOWN = 5.0
+global const REQUEST_RODEO_BATTERY_COOLDOWN = 10.0
+global const REQUEST_RODEO_BATTERY_HINT_COOLDOWN = 30.0
+global const REQUEST_RODEO_BATTERY_SHOW_ICON_TIME = 30.0
+global const REQUEST_RODEO_BATTERY_HEALTH_PERCENTAGE_THRESHOLD = 0.8
+
+//-----------------------------------------------------------------------------
+//  _rodeo_titan.nut
+//
+//  Script for a player (pilot) rodoeing a titan.
+//
+//-----------------------------------------------------------------------------
+
+enum eRodeoAnim
+{
+	DUMMY
+	LANDON_ABOVE
+	LANDON_BACK
+	CLIMBON_FRONT
+	CLIMBON_BACK
+	CLIMBON_BACKMID
+	CLIMBON_LEFT
+	CLIMBON_RIGHT
+}
+
+global enum eRodeoPositions
+{
+	INVALID = -1
+	BACK_RIGHT
+	BACK_LEFT
+	FRONT
+}
+
+global enum eRodeoClamberDirection
+{
+	FORWARD
+	BACK
+	LEFT
+	RIGHT
+}
+
+global const RODEO_BATTERY_THIEF_ICON_DURATION = 10.0
+
+void function RodeoSharedTitan_Init()
+{
+	RodeoSharedTitanAnim_Init()
+	RegisterSignal( "RodeoStarted" )
+	RegisterSignal( "RodeoOver" )
+	RegisterSignal( "RodeoKilledTitan" )
+}
+
+bool function IsValidTitanRodeoTarget( entity player, entity rodeoTitan )
+{
+	if ( !HasSoul( rodeoTitan ) )
+		return false
+
+	entity soul = rodeoTitan.GetTitanSoul()
+	if ( !IsValid( soul ) )
+		return false
+
+	if ( GetRodeoPilot( rodeoTitan ) )
+		return false
+
+	//RodeoPackageStruct package = CreateRodeoPackage_PlayerToTitan( player, rodeoTitan )
+	//
+	//if ( package.rodeoDirection == eRodeoDirection.FRONT_LOWER )
+	//	return false
+
+	//if ( PlayerHasBattery( player ) && rodeoTitan.GetTeam() != player.GetTeam() )
+	//	return false
+
+	if ( "hotDropPlayer" in rodeoTitan.s )
+		return false
+
+	if ( IsValid( player.GetTitanSoulBeingRodeoed() ) )  //TODO: Remove/rename when code removes/renames GetTitanSoulBeingRodeoed()
+		return false
+
+	if ( soul.IsEjecting() )
+		return false
+
+	// if we are both phased, cool.  if we are both not phased, also cool
+	if ( player.IsPhaseShifted() != rodeoTitan.IsPhaseShifted() )
+		return false
+
+	return true
+}
+
+
+RodeoPackageStruct function CreateRodeoPackage_PlayerToTitan( entity player, entity titan )
+{
+	RodeoPackageStruct package
+	entity titanSoul 	 = titan.GetTitanSoul()
+	string titanSubClass = GetSoulTitanSubClass( titanSoul )
+
+	package.rodeoTargetType = titanSubClass
+	int rodeoDirection
+	string attachPoint    = "hijack"
+
+
+	// Find out where the player is coming from
+	if ( RiderIsFallingOntoRodeoTarget( player, titan, attachPoint ) )
+	{
+		rodeoDirection = GetRodeoDirectionFromAbove( player, titan, attachPoint )
+		package.rodeoDirection = rodeoDirection
+		package.method = RODEO_APPROACH_FALLING_FROM_ABOVE
+	}
+	else
+	{
+		rodeoDirection = GetRodeoDirection( player, titan, attachPoint )
+		package.rodeoDirection = rodeoDirection
+		package.method = RODEO_APPROACH_JUMP_ON
+	}
+
+	// Customize the rodeoPackage based on the direction the player is mounting from
+	switch ( rodeoDirection )
+	{
+		case eRodeoDirection.FRONT_LOWER:
+			package.thirdPersonAnim = GetAnimFromAlias( titanSubClass, "pt_rodeo_move_front_lower_entrance" )
+			package.firstPersonAnim = GetAnimFromAlias( titanSubClass, "ptpov_rodeo_move_front_lower_entrance" )
+			package.worldSound 		= "Rodeo_" + titanSubClass + "_Rodeo_ClimbOn_Front_Exterior"
+			package.cockpitSound 	= "Rodeo_" + titanSubClass + "_Rodeo_ClimbOn_Front_Interior"
+			break
+
+		case eRodeoDirection.FRONT_UPPER:
+			package.thirdPersonAnim =  GetAnimFromAlias( titanSubClass, "pt_rodeo_move_front_entrance" )
+			package.firstPersonAnim = GetAnimFromAlias( titanSubClass, "ptpov_rodeo_move_front_entrance" )
+			package.worldSound 		= "Rodeo_" + titanSubClass + "_Rodeo_LandOn_Above_Exterior"
+			package.cockpitSound 	= "Rodeo_" + titanSubClass + "_Rodeo_LandOn_Above_Interior"
+			break
+
+		case eRodeoDirection.REAR_LOWER:
+			package.thirdPersonAnim = GetAnimFromAlias( titanSubClass, "pt_rodeo_move_back_lower_entrance" )
+			package.firstPersonAnim = GetAnimFromAlias( titanSubClass, "ptpov_rodeo_move_back_lower_entrance" )
+			package.worldSound 		= "Rodeo_" + titanSubClass + "_Rodeo_ClimbOn_Back_Exterior"
+			package.cockpitSound 	= "Rodeo_" + titanSubClass + "_Rodeo_ClimbOn_Back_Interior"
+			break
+
+		case eRodeoDirection.REAR_MIDDLE:
+			package.thirdPersonAnim = GetAnimFromAlias( titanSubClass, "pt_rodeo_move_back_mid_entrance" )
+			package.firstPersonAnim = GetAnimFromAlias( titanSubClass, "ptpov_rodeo_move_back_mid_entrance" )
+			package.worldSound 		= "Rodeo_" + titanSubClass + "_Rodeo_ClimbOn_Back_Mid_Exterior"
+			package.cockpitSound 	= "Rodeo_" + titanSubClass + "_Rodeo_ClimbOn_Back_Mid_Interior"
+			break
+
+		case eRodeoDirection.REAR_UPPER:
+			package.thirdPersonAnim = GetAnimFromAlias( titanSubClass, "pt_rodeo_move_back_entrance" )
+			package.firstPersonAnim = GetAnimFromAlias( titanSubClass, "ptpov_rodeo_move_back_entrance" )
+			package.worldSound 		= "Rodeo_" + titanSubClass + "_Rodeo_LandOn_Back_Exterior"
+			package.cockpitSound 	= "Rodeo_" + titanSubClass + "_Rodeo_LandOn_Back_Interior"
+			break
+
+		case eRodeoDirection.LEFT:
+			package.thirdPersonAnim = GetAnimFromAlias( titanSubClass, "pt_rodeo_move_left_entrance" )
+			package.firstPersonAnim = GetAnimFromAlias( titanSubClass, "ptpov_rodeo_move_left_entrance" )
+			package.worldSound 		= "Rodeo_" + titanSubClass + "_Rodeo_ClimbOn_Left_Exterior"
+			package.cockpitSound 	= "Rodeo_" + titanSubClass + "_Rodeo_ClimbOn_Left_Interior"
+			break
+
+		case eRodeoDirection.RIGHT:
+			package.thirdPersonAnim = GetAnimFromAlias( titanSubClass, "pt_rodeo_move_right_entrance" )
+			package.firstPersonAnim = GetAnimFromAlias( titanSubClass, "ptpov_rodeo_move_right_entrance" )
+			package.worldSound		= "Rodeo_" + titanSubClass + "_Rodeo_ClimbOn_Right_Exterior"
+			package.cockpitSound 	= "Rodeo_" + titanSubClass + "_Rodeo_ClimbOn_Right_Interior"
+			break
+
+		default:
+			unreachable
+			break
+	}
+
+	package.rodeoSlot = 0 //Only one slot possible
+
+	return package
+}
+
+
+RodeoPackageStruct function GetRodeoPackage_PlayerToTitan( entity player, entity titan )
+{
+	return CreateRodeoPackage_PlayerToTitan( player, titan )
+}
+
+
+entity function GetTitanBeingRodeoed( entity player )
+{
+	entity soul = player.GetTitanSoulBeingRodeoed() //TODO: Remove/rename when code removes/renames GetTitanSoulBeingRodeoed()
+	if ( !IsValid( soul ) )
+		return null
+
+	return soul.GetTitan()
+}
+
+entity function GetFriendlyTitanBeingRodeoed( entity player )
+{
+	entity titan = GetTitanBeingRodeoed( player )
+
+	if ( !IsValid( titan ) )
+		return null
+
+	if ( titan.GetTeam() == player.GetTeam() )
+		return titan
+
+	return null
+}
+
+entity function GetBatteryOnBack( entity player )
+{
+	Assert( IsValid( player.GetPlayerNetEnt( "batteryOnBack" ) ) )
+	#if CLIENT
+		Assert( player == GetLocalViewPlayer(), "Can't get batteryOnBack for non-client player!" ) //look into making the var synched to all clients if need be.
+	#endif
+	return player.GetPlayerNetEnt( "batteryOnBack" )
+}
+
+bool function PlayerHasBattery( entity player )
+{
+	#if CLIENT
+		Assert( player == GetLocalViewPlayer(), "Can't get batteryOnBack for non-client player!" ) //look into making the var synched to all clients if need be.
+	#endif
+	return ( IsValid( player.GetPlayerNetEnt( "batteryOnBack" ) ) )
+}
+
+int function GetNewRodeoPosition( int currentPosition, int directionHeaded )
+{
+	//Trying only 2 rodeo spots
+	if ( currentPosition ==  eRodeoPositions.BACK_RIGHT )
+		return eRodeoPositions.BACK_LEFT
+
+	if ( currentPosition ==  eRodeoPositions.BACK_LEFT )
+		return eRodeoPositions.BACK_RIGHT
+
+	unreachable
+
+	//Basically a giant switch-case. Might be a more systemic way to do this but I don't think it's worth it.
+	/*switch ( currentPosition )
+	{
+		case eRodeoPositions.BACK_RIGHT:
+		{
+			if ( directionHeaded == eRodeoClamberDirection.LEFT )
+				return eRodeoPositions.BACK_LEFT
+
+			if ( directionHeaded == eRodeoClamberDirection.RIGHT )
+				return eRodeoPositions.FRONT
+
+			unreachable
+		}
+
+		case eRodeoPositions.BACK_LEFT:
+		{
+			if ( directionHeaded == eRodeoClamberDirection.LEFT )
+				return eRodeoPositions.FRONT
+
+			if ( directionHeaded == eRodeoClamberDirection.RIGHT )
+				return eRodeoPositions.BACK_RIGHT
+
+			unreachable
+		}
+
+		case eRodeoPositions.FRONT:
+		{
+			if ( directionHeaded == eRodeoClamberDirection.LEFT )
+				return eRodeoPositions.BACK_RIGHT
+
+			if ( directionHeaded == eRodeoClamberDirection.RIGHT )
+				return eRodeoPositions.BACK_LEFT
+
+			unreachable
+		}
+	}
+
+	unreachable*/
+
+}
+
+int function GetSoulBatteryCount( entity soul )
+{
+	return soul.GetTitanSoulNetInt( "rodeoBatteryCount" )
+}
+
+bool function ShouldLetPlayerRequestBattery( entity playerTitan )
+{
+	return false //Turning off temporarily until we do a more automatic version
+
+	if ( !playerTitan.IsTitan() )
+		return false
+
+	if ( !IsAlive( playerTitan ) )
+		return false
+
+	#if CLIENT //Doesn't exist on the server
+		if ( IsWatchingReplay() )
+			return false
+	#endif
+
+	if ( playerTitan.ContextAction_IsActive() )
+		return false
+
+	if ( playerTitan.GetHealth() >= playerTitan.GetMaxHealth() * REQUEST_RODEO_BATTERY_HEALTH_PERCENTAGE_THRESHOLD ) //Stop players asking for battery if they are near full health. Might be too onerous, we can test.
+		return false
+
+	if ( playerTitan.GetPlayerNetTime( "requestRodeoBatteryLastUsedTime" ) > 0.0 && Time() - playerTitan.GetPlayerNetTime( "requestRodeoBatteryLastUsedTime" ) < REQUEST_RODEO_BATTERY_COOLDOWN )
+		return false
+
+	return true
+}
+
+bool function ShouldShowOfferRodeoBatteryHint( entity player, entity target )
+{
+	if ( player.IsTitan() )
+		return false
+
+	if ( !IsAlive( player ) )
+		return false
+
+	#if CLIENT //Doesn't exist on the server
+		if ( IsWatchingReplay() )
+			return false
+	#endif
+
+	if ( player.ContextAction_IsActive() )
+		return false
+
+	if ( Time() - player.GetPlayerNetTime( "offerRodeoBatteryLastUsedTime" ) <  OFFER_RODEO_BATTERY_COOLDOWN  )
+		return false
+
+	if ( !PlayerHasBattery( player ) )
+		return false
+
+	if ( !IsValid( target ) )
+		return false
+
+	if ( !target.IsTitan() )
+		return false
+
+	if ( !target.IsPlayer() )
+		return false
+
+	if ( target.GetTeam() != player.GetTeam() )
+		return false
+
+	if ( GetDoomedState( target ) )
+		return false
+
+	if ( !PlayerCanSee( player, target, true, 40 ) )
+		return false
+
+	if ( IsValid( GetFriendlyRodeoPilot( target ) ) )
+		return false
+
+	return true
+}

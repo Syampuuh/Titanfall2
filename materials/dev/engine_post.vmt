@@ -1,0 +1,63 @@
+"engine_post"
+{
+	// Master disable bools
+	"$AllowVignette" "1"
+	"$AllowNoise" "1"
+	"$AllowLocalContrast" "1"
+	"$AAEnable" "1"
+
+	// Standard params
+	"$basetexture" "_rt_SmallFB0"
+	"$fbtexture" "_rt_FullFrameFB"
+	"$screenEffectTexture" "_rt_SmallFB1"
+	"$wideBlurTexture" "_rt_TinyFB0"
+	"$additive" 0
+	"$ignorez" 1
+	"$nocull" 1
+	"%noToolTexture" 1
+
+	// Post Params
+	"$noiseScale" "1.0"
+	"$noiseTexture" "dev/noise_post"
+
+	// Vomit
+	//"$vomitColor1" "[0.675 0.735 0.0]"
+	//"$vomitColor2" "[0.599 0.646 0.0]"
+	//"$vomitRefractScale" "0.22"
+
+	// Proxies
+	"$localcontrastenable" "1"
+	"$noiseEnable" "1"
+	"$vignetteEnable" "1"
+	"$vomitRefractScale" "0.10"
+	"Proxies"
+	{
+		"Engine_Post"
+		{
+		}
+
+		//"ConVar"
+		//{
+		//	"resultVar" "$localcontrastenable"
+		//	"convar" "mat_local_contrast_enable"
+		//}
+
+		//"ConVar"
+		//{
+		//	"resultVar" "$noiseEnable"
+		//	"convar" "mat_grain_enable"
+		//}
+
+		//"ConVar"
+		//{
+		//	"resultVar" "$vignetteEnable"
+		//	"convar" "mat_vignette_enable"
+		//}
+
+		//"ConVar"
+		//{
+		//	"resultVar" "$vomitRefractScale"
+		//	"convar" "player_paint_screen_effect_refraction_scale"
+		//}
+	}
+}

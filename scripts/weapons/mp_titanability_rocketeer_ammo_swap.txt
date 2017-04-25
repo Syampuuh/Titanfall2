@@ -1,0 +1,47 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_TITAN_ROCKET_AMMO_SWAP"
+	"shortprintname"  								"#WPN_TITAN_ROCKET_AMMO_SWAP_SHORT"
+	"description" 									"#WPN_TITAN_ROCKET_AMMO_SWAP_DESC"
+	"longdesc"										"#WPN_TITAN_ROCKET_AMMO_SWAP_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/tactical/titan_tactical_ammo_swap_menu"
+	"hud_icon"										"rui/titan_loadout/tactical/titan_tactical_ammo_swap"
+
+	"weaponClass" 									"titan"
+	//"weaponType"									"tactical"
+	"fire_mode"   									"offhand_instant"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_rocketeer_ammo_swap"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_rocketeer_ammo_swap"
+
+	"damage_type" 									"none"
+
+	// Sound
+	"sound_dryfire"									"titan_dryfire"
+
+	// Ammo
+	"ammo_stockpile_max"							"200"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+	"ammo_no_remove_from_clip"						"1"
+
+	// Behavior
+	"fire_rate"   									"0.03"
+	"breaks_cloak"									"1"
+
+	// NPC
+	"npc_min_range"   								"100"
+	"npc_max_range"   								"1500"
+	"npc_min_burst"   								"1"
+	"npc_max_burst"   								"1"
+
+	"npc_rest_time_between_bursts_min"				"30"
+	"npc_rest_time_between_bursts_max"				"40"
+
+	Mods
+	{
+
+	}
+}

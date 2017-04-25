@@ -1,0 +1,4 @@
+// Steady
+
+LINEAR	1.0		1.0
+TRANSFORM: cubed

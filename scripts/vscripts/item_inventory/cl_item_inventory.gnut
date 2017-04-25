@@ -1,0 +1,5 @@
+global function Cl_ItemInventory_Init
+
+void function Cl_ItemInventory_Init()
+{
+}

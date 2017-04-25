@@ -1,0 +1,61 @@
+"Refract"
+{
+	"%tooltexture" "world/windows/glass_waterfall_tool"
+//	"$mappingwidth" 256
+//	"$mappingheight" 256
+
+	"$surfaceprop" "glass"
+
+	$ignorez 1
+
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$vertexcolormodulate" "1"
+
+ 	"$model" 1
+	"$translucent" 1
+
+//	"$fadeoutonsilhouette" 1
+//	"$bluramount" 1
+	"$refractamount" "0.2"
+//	"$refracttint" "[.8 .8 .8]"
+
+//	"$envmap" "env_cubemap"
+//	"$envmaptint" "[.7 .7 .7]"
+
+//	"$normalmap" "particle\refract\shockwave_nml"
+	"$normalmap" "world/windows/glass_waterfall_nml"
+//	"$normalmap2" "world/windows/glass_waterfall_nml"
+
+
+//	"$REFRACTTINTTEXTURE" "world/windows/glass_waterfall_col"
+
+	"$t1scale" 1
+	"$t1rot" 0
+	"$t1scroll" "[0 1]"
+
+	"Proxies"
+	{
+		//NormalMap1 Horizontal movement speed passed to TextureTransform
+		"LinearRamp"
+		{
+			"rate" 0.1
+			"resultVar" "$t1scroll[0]"
+		}
+		//NormalMap1 Horizontal movement speed passed to TextureTransform
+		"LinearRamp"
+		{
+			"rate" -1
+			"resultVar" "$t1scroll[1]"
+		}
+		//Move NormalMap1 using horiz and vert speed
+		"TextureTransform"
+		{
+			"translateVar" "$t1scroll"
+			"scaleVar" "$t1scale"
+			"rotateVar" "$t1rot"
+			"resultvar" "$bumptransform"
+		}
+
+	}
+}

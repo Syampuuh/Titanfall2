@@ -1,0 +1,15 @@
+"SpriteCard"
+{
+	"$basetexture" "particle/smoke/sniper_trail_add"
+	"$additive" 	"1"
+	//$overbrightfactor 1
+	$translucent 	1
+	"$nocull"	1
+	$splinetype	1
+	$orientation 4
+
+	$vertexFogAmount 1
+}
+
+
+

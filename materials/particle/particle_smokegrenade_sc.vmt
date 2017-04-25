@@ -1,0 +1,12 @@
+"SpriteCard"
+{
+	"$basetexture" "particle/particle_smokegrenade"
+	"$translucent" "1"
+	"$no_fullbright" 1
+	//"srgb?$alpha" ".27"
+	//"!srgb?$alpha" "1" 
+	$depthblend 0
+	
+	$vertexFogAmount 1
+	
+}

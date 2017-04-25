@@ -1,0 +1,52 @@
+"UnlitTwoTexture"
+{
+	"$nodecal" "1"
+	$allowoverbright 1
+	"$vertcoloristint" "1"
+
+	"$godray" "1"
+	"$godrayMinFadeDist" "5"
+	"$godrayMaxFadeDist" "500"
+
+//	"$additive" "1"
+//	"$no_fullbright" 1
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+	//"$model" "1"
+	"$translucent" 1
+	"$nocull" "1"
+	"$color2" "[2 2 2]"
+
+	$fresnel 1
+	$fresnelsharpness1 3
+	$fresnelouterstrength1 2
+	$fresnelinnerstrength1 0
+
+	"$basetexture" "effects\caustic_water_01_alpha"
+	"$Texture2" "effects\caustic_water_01_alpha"
+
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" .1
+			"texturescrollangle" 60
+		}
+			"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" .2
+			"texturescrollangle" -20
+		}
+		//flicker Alpha
+        "UniformNoise"
+        {
+            "minVal" 1
+            "maxVal" 0.25
+            "resultVar" "$alpha"
+        }
+
+
+	}
+}

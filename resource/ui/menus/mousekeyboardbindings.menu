@@ -1,0 +1,126 @@
+resource/ui/menus/mousekeyboardbindings.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		visible					1
+		enabled					1
+		pinCorner				0
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#KEY_BINDINGS"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		lblKeyBindingLegendPilot
+		{
+			ControlName				Label
+			font					DefaultBold_30
+			xpos					96
+			ypos					160
+
+			wide					360
+			tall					28
+			labelText				"#GAMEPAD_BUTTON_LAYOUT_LEGEND"
+			textinsetx				5
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		listpanel_keybindlist
+		{
+			ControlName				SectionedListPanel
+			ypos					12
+			zpos					100
+			wide					1088
+			tall					749
+			autoResize				0
+			pinCorner				0
+			visible					1
+			enabled					1
+			linespacing				36
+			paintborder				0
+            tabPosition				1
+
+			pin_to_sibling			lblKeyBindingLegendPilot
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ClearKeyButton
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		KeyBindingsButton
+			ypos					14
+			navLeft					ChangeKeyButton
+			navRight				ChangeKeyButton
+			labelText				"#CLEAR_KEY"
+			Command					ClearKey
+
+			pin_to_sibling			listpanel_keybindlist
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	BOTTOM_RIGHT
+		}
+		ChangeKeyButton
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		KeyBindingsButton
+			navLeft					ClearKeyButton
+			navRight				ClearKeyButton
+			labelText				"#EDIT_KEY"
+			//tabPosition				1
+			Command					ChangeKey
+
+			pin_to_sibling			ClearKeyButton
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

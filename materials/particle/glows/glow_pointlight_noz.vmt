@@ -1,0 +1,10 @@
+"spritecard"
+{
+	"$basetexture" "particle\glows\glow_pointlight"
+	$additive 1
+	$muloutputbyalpha 1
+
+	$ignorez 1
+	$depthblend 0
+
+}

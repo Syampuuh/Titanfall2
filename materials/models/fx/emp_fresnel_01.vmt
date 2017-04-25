@@ -1,0 +1,80 @@
+"UnlitTwoTexture"
+{
+//	"$nocull" "1"	
+	"$nodecal" "1"
+	//$allowoverbright 1
+//	$fresnel 1
+//	$fresnelsharpness1 1
+//	$fresnelouterstrength1 5
+//	$fresnelinnerstrength1 1
+
+
+	$fresnel 1
+	$fresnelsharpness1 0
+	$fresnelouterstrength1 2
+	$fresnelinnerstrength1 5
+
+	$fresnel2 1
+	$fresnelsharpness2 0
+	$fresnelouterstrength2 1
+	$fresnelinnerstrength2 10
+
+	//$addlayers 1
+
+	"$translucent" 1
+	"$additive" "1"
+//	"$no_fullbright" 1
+//	"$vertexcolor" 1
+	"$vertexalpha" 1
+	"$model" "1"
+	//"$nocull" "1"	
+	"$color2" "[1 1 1]"
+
+	"$basetexture" "effects\electric_anim"
+	"$Texture2" "effects\electric_anim"
+
+	//"$basetexture" "effects\caustic_water_01"
+	//"$Texture2" "effects\caustic_water_01"
+
+	//"$basetexture" "effects\tvscreen_noise001b"
+	//"$texture2" "effects\tvscreen_noise001b"
+
+
+//	"$color" "[0.43 0.43 0.43]"
+//	"$color2" "[0.72 2 0.71]"
+	
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" .2
+			"texturescrollangle" 40
+			"texturescale"	2
+
+		}
+		"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" .4
+			"texturescrollangle" -90
+			"texturescale"	1
+		}
+		
+		//Play baseTexture frames
+		"AnimatedTexture"
+		{
+			"animatedtexturevar" "$basetexture"
+			"animatedtextureframenumvar" "$frame"
+			"animatedtextureframerate" "12" 
+		}
+		//Play texture2 frames
+		"AnimatedTexture"
+		{
+			"animatedtexturevar" "$texture2"
+			"animatedtextureframenumvar" "$frame2"
+			"animatedtextureframerate" "0" 
+		}
+
+	}
+}

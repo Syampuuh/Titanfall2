@@ -1,0 +1,48 @@
+"Refract"
+{
+	"$translucent" 1
+
+	"$bluramount" 1
+	"$refractamount" ".25"
+	"$refracttint" "[.8 .8 .8]"
+
+	"$vertexcolormodulate" "1"
+	"$vertexalpha"	"1"
+
+	"$normalmap" "particle\refract\mosaic_nml"
+	"$normalmap2" "particle\refract\mosaic_nml"
+
+	//"$normalmap" "vgui\HUD\digital_distortion"
+	//"$normalmap2" "vgui\HUD\digital_distortion"
+
+	"$t2offset" 0
+	"$t2scale" 200
+	"$t2rot" 0
+	"$scroll" "[0 1]"
+
+	"Proxies"
+	{
+		//Horizontal movement speed
+		"UniformNoise"
+		{
+			"minVal" 0
+			"maxVal" 10.0
+			"resultVar" "$scroll[0]"
+		}
+		//Vertical movement speed
+		"UniformNoise"
+		{
+			"minVal" 0
+			"maxVal" 10
+			"resultVar" "$scroll[1]"
+		}
+		//Move the 2nd texture using horiz and vert speed
+		"TextureTransform"
+		{
+			"translateVar" "$scroll"
+			"scaleVar" "$t2scale"
+			"rotateVar" "$t2rot"
+			"resultvar" "$bumptransform"
+		}
+	}
+}

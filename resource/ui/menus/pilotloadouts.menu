@@ -1,0 +1,134 @@
+#base "loadout_selection_buttons.res"
+resource/ui/menus/pilotloadouts.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#MENU_PILOT_LOADOUTS"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+	    CreditsAvailable
+	    {
+	        ControlName             RuiPanel
+	        InheritProperties       CreditsAvailableProperties
+	    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ButtonRowAnchor
+		{
+			ControlName				Label
+			labelText				""
+            wide                    10
+            tall                    0
+			xpos                    132
+			ypos                    160
+		}
+
+	    UnlockReq
+	    {
+	        ControlName             RuiPanel
+	       	InheritProperties       UnlockReqProperties
+	       	xpos                    157
+			ypos					825
+			visible                 1
+	        font                    Default_23
+			labelText               ""
+			fgcolor_override        "255 184 0 255"
+			rui                     "ui/unlock_req_label.rpak"
+
+			wide                    650
+	    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	    PilotLoadoutDisplay
+	    {
+		    ControlName				CNestedPanel
+		    xpos					450
+    	    ypos                    76
+		    zpos					10
+			wide					1048
+			tall					1080
+		    visible					1
+		    enabled                 0
+		    controlSettingsFile		"resource/ui/menus/panels/pilotloadout.res"
+	    }
+
+        InputBlocker // Cover loadout display so item buttons aren't accessible
+        {
+			ControlName				Label
+		    zpos					11
+			wide					1048
+			tall					1080
+			labelText				""
+            //bgcolor_override        "0 0 0 50"
+            //paintbackground         1
+
+            pin_to_sibling			PilotLoadoutDisplay
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_LEFT
+        }
+
+        ModelRotateMouseCapture
+        {
+            ControlName				CMouseMovementCapturePanel
+            xpos                    910
+            zpos					12
+            wide                    1010
+            tall                    %100
+        }
+
+	    ButtonTooltip
+		{
+			ControlName				CNestedPanel
+			InheritProperties		ButtonTooltip
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

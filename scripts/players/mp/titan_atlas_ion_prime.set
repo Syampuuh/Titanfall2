@@ -1,0 +1,25 @@
+#base "titan_atlas_stickybomb.set"
+"titan_atlas_ion_prime"
+{
+
+	isPrime 			1
+
+	execution_anim		"titan_atlas_ion_prime"
+
+	aiSettingsFile			"npc_titan_auto_atlas_ion_prime" //mp_only
+	// sp_aiSettingsFile		"npc_titan_atlas_stickybomb" //sp only, not needed for prime titan
+	at_aiSettingsFile		"npc_titan_atlas_ion_prime_bounty" //at only
+
+	"global"
+	{
+
+		bodymodel			"models/titans/medium/titan_medium_ion_prime.mdl" [$mp]
+		bodymodel			"models/titans/medium/sp_titan_medium_ajax.mdl" [$sp]
+
+		armsmodel			"models/weapons/arms/pov_titan_medium_ion_prime.mdl" [$mp]
+		armsmodel			"models/weapons/arms/pov_titan_medium_ajax.mdl" [$sp]
+
+
+	}
+}
+

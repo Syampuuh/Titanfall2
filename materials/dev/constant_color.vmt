@@ -1,0 +1,11 @@
+"screenspace_general"
+{
+	"$C0_X" "0"
+	"$C0_Y" "1"
+	"$C0_Z" "0"
+	"$C0_W" "1"
+	"$PIXSHADER" "constant_color"
+	"%noToolTexture" 1
+	"$DISABLE_COLOR_WRITES" "1"
+	"$WRITEALPHA" "1"
+}

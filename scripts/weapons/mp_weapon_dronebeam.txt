@@ -1,0 +1,227 @@
+WeaponData
+{
+	// General
+	"printname"   									""
+	"shortprintname"								""
+	"description" 									""
+	"weaponClass" 									"drone"
+	"fire_mode"   									"auto"
+
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_DroneBeam"
+
+	"pass_through_depth"							"96"
+	"pass_through_damage_preserved_scale"			"0.5"
+
+	"vortex_absorb_effect"							"P_impact_lstar_default"
+	"vortex_absorb_effect_third_person"				"P_impact_lstar_default"
+	"vortex_refire_behavior"  						"absorb"
+
+	// Effects
+	"tracer_effect"   								"P_wpn_defender_beam"
+	"tracer_effect_first_person"  					"P_wpn_defender_beam"
+	"impact_effect_table" 							"exp_defender"
+	"projectile_adjust_to_gun_barrel"				"1"
+
+			"burst_fire_count"								"3"
+			"burst_fire_delay"								"0.25"
+
+	// Sounds
+	"sound_trigger_pull"							"Drone_Beam_TargetPlayer"
+	//"sound_trigger_release" 						"Drone_Beam_Charge"
+	//"sound_zoom_in"									"Weapon_ChargeRifle_ADS_In"
+	//"sound_zoom_out"								"Weapon_ChargeRifle_ADS_Out"
+	"fire_sound_1_player_1p"						"Drone_Beam_Fire"
+	"fire_sound_1_player_3p"						"Drone_Beam_Fire"
+	"fire_sound_1_npc"								"Drone_Beam_Fire"
+
+	"damage_type" 									"bullet"
+	"impulse_force"   								"5000"
+	"critical_hit"									"1"
+
+	MP_BASE
+	{
+		"ammo_default_total"							"100"
+		"ammo_stockpile_max"							"100"
+        "ammo_no_remove_from_clip"                      "1"
+        "ammo_no_remove_from_stockpile"                 "1"
+    	"ammo_clip_size"   								"1"
+
+		// Damage - When Used by Players
+		"damage_near_value"   							"100"
+		"damage_far_value"								"100"
+		"damage_near_value_titanarmor"					"2000"
+		"damage_far_value_titanarmor" 					"2000"
+		"damage_rodeo"									"2000"
+		"damage_near_distance"							"200"
+		"damage_far_distance" 							"15000"
+
+		"red_crosshair_range" 							"10000"
+
+		// Damage - When Used by NPCs
+		"npc_damage_near_value"   						"30"
+		"npc_damage_far_value"							"35"
+		"npc_damage_near_value_titanarmor"				"1150"
+		"npc_damage_far_value_titanarmor" 				"1150"
+		"npc_damage_near_distance"						"200"
+		"npc_damage_far_distance" 						"15000"
+
+		// NPC
+		"npc_min_engage_range"							"400"
+		"npc_max_engage_range"							"1500"
+		"npc_min_engage_range_heavy_armor"				"400"
+		"npc_max_engage_range_heavy_armor"				"400"
+		"npc_min_range"   								"0"
+		"npc_max_range"   								"5000"
+
+		"npc_min_burst"   								"1"
+		"npc_max_burst"   								"1"
+		"npc_rest_time_between_bursts_min"				"2.5"
+		"npc_rest_time_between_bursts_max"				"2.5"
+	}
+
+	SP_BASE
+	{
+		"ammo_default_total"							"10"
+		"ammo_stockpile_max"							"20"
+        "ammo_no_remove_from_clip"                      "0"
+        "ammo_no_remove_from_stockpile"                 "0"
+    	"ammo_clip_size"   								"10"
+
+		// Damage - When Used by Players
+		"damage_near_value"   							"100"
+		"damage_far_value"								"100"
+		"damage_near_value_titanarmor"					"1000"
+		"damage_far_value_titanarmor" 					"1000"
+		"damage_rodeo"									"2000"
+		"damage_near_distance"							"200"
+		"damage_far_distance" 							"15000"
+
+		"red_crosshair_range" 							"10000"
+
+		// Damage - When Used by NPCs
+		"npc_damage_near_value"   						"35"
+		"npc_damage_far_value"							"35"
+		"npc_damage_near_value_titanarmor"				"400"
+		"npc_damage_far_value_titanarmor" 				"400"
+		"npc_damage_near_distance"						"200"
+		"npc_damage_far_distance" 						"15000"
+
+		// NPC
+		"npc_min_engage_range"							"200"
+		"npc_max_engage_range"							"1500"
+		"npc_min_engage_range_heavy_armor"				"0"
+		"npc_max_engage_range_heavy_armor"				"2500"
+		"npc_min_range"   								"0"
+		"npc_max_range"   								"4000"
+
+		"npc_min_burst"   								"1"
+		"npc_max_burst"   								"1"
+		"npc_rest_time_between_bursts_min"				"2.5"
+		"npc_rest_time_between_bursts_max"				"2.5"
+	}
+
+	"npc_charge_time_min"							"1.0"
+	"npc_charge_time_max"							"1.3"
+
+	//"npc_pre_fire_delay"							"1.3"
+	//"npc_pre_fire_delay_interval"					"2.0"
+	"npc_rest_time_between_bursts_expedite"			"1.0"
+
+	// Behavior
+	"fire_rate"   									"1"
+	"zoom_time_in"									"0.15"
+	"zoom_time_out"   								"0.1"
+	"zoom_fov"										"45"
+	"reload_time" 									"3.5"
+	"reloadempty_time"								"3.5"
+	"bypass_semiauto_hold_protection"				"1"
+
+	"charge_time" 									"1.3"
+
+	"charge_sound_1p"								"Drone_Beam_Charge"
+	"charge_sound_3p"								"Drone_Beam_Charge"
+	"charge_sound_npc"								"Drone_Beam_Charge"
+	"charge_sound_stop_when_full"					"1"
+	"charge_sound_seek_to_charge_fraction"			"1"
+//	"charge_drain_sound_1p"							"Drone_Beam_Charge"
+//	"charge_drain_sound_3p"							"Drone_Beam_Charge"
+	"charge_drain_sound_stop_when_empty"			"1"
+	"charge_drain_sound_seek_to_charge_fraction"	"1"
+	"charge_effect_1p"								"P_wpn_defender_charge_FP"
+	"charge_effect_3p"								"P_wpn_defender_charge"
+	"charge_effect_attachment"						"muzzle_flash"
+	"charge_effect2_3p"								"defender_charge_CH_dlight"
+	"charge_effect2_attachment"						"muzzle_flash"
+	"charge_rumble_min"								"10"
+	"charge_rumble_max"								"30"
+
+	"sprint_fractional_anims"						"0"
+
+	"aimassist_disable_hipfire"						"0"
+	"aimassist_disable_ads"							"0"
+	"aimassist_disable_hipfire_humansonly"			"1"
+	"aimassist_disable_ads_humansonly"				"1"
+
+	// Spread
+	"spread_stand_hip"								"3.0"
+	"spread_stand_hip_run"							"3.0"
+	"spread_stand_ads"								"0.35"
+	"spread_stand_hip_sprint"                       "3"
+	"spread_crouch_hip"   							"3.0"
+	"spread_crouch_ads"   							"0.35"
+	"spread_air_hip"  								"3.0"
+	"spread_air_ads"  								"0.5"
+
+	"ammo_suck_behavior"							"primary_weapons"
+
+	// View Kick
+	"viewkick_spring" 								"titan_arc"
+
+	"viewkick_pitch_base" 							"-1"
+	"viewkick_pitch_random"   						"1.5"
+	"viewkick_pitch_softScale"						"0"
+	"viewkick_pitch_hardScale"						"3"
+
+	"viewkick_yaw_base"   							"0"
+	"viewkick_yaw_random" 							"0.5"
+	"viewkick_yaw_softScale"  						"1"
+	"viewkick_yaw_hardScale"  						"0"
+
+	"viewkick_roll_base"  							"0.0"
+	"viewkick_roll_randomMin" 						"0.6"
+	"viewkick_roll_randomMax" 						"0.9"
+	"viewkick_roll_softScale" 						"0.5"
+	"viewkick_roll_hardScale" 						"2.6"
+
+	"viewkick_hipfire_weaponFraction" 				"0.5"
+	"viewkick_hipfire_weaponFraction_vmScale" 		"0.75"
+	"viewkick_ads_weaponFraction" 					"0.6"
+	"viewkick_ads_weaponFraction_vmScale" 			"0.2"
+
+
+	// Bob
+	"bob_cycle_time"  								"0.4"
+	"bob_vert_dist"   								"0.19"
+	"bob_horz_dist"   								"0.1"
+	"bob_max_speed"   								"150"
+	"bob_pitch"   									"0.75"
+	"bob_yaw" 										"-1.7"
+	"bob_roll"										"1.2"
+
+	// Bob zoomed
+	"bob_cycle_time_zoomed"								"0.4"
+	"bob_vert_dist_zoomed" 								"0.19"
+	"bob_horz_dist_zoomed" 								"0.1"
+	"bob_max_speed_zoomed" 								"150"
+	"bob_pitch_zoomed" 									"0.75"
+	"bob_yaw_zoomed" 									"-1.7"
+	"bob_roll_zoomed"									"1.2"
+
+	// Rumble
+	"fire_rumble"									"pilot_singleshot_verystrong_fire"
+
+	"sound_dryfire"   								"titan_dryfire"
+	"npc_reload_enabled"  							"0"
+	"sprintcycle_time"								"0.55"
+	"arc_switch_activator"							"1"
+}

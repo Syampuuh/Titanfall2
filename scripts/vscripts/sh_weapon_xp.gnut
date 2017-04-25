@@ -1,0 +1,296 @@
+
+global function ShWeaponXP_Init
+global function WeaponSetXPPerLevelType
+global function WeaponGetMaxXP
+global function WeaponGetMaxXPPerGen
+global function WeaponGetNumPipsForXP
+global function WeaponGetFilledPipsForXP
+global function WeaponGetXPForLevel
+global function WeaponGetRawLevelForXP
+global function WeaponGetLevelForXP
+global function WeaponGetGenForXP
+global function WeaponGetRawLevel
+global function WeaponGetLevel
+global function WeaponGetGen
+global function WeaponGetPreviousLevel
+global function WeaponGetXP
+global function WeaponGetPreviousXP
+global function WeaponGetProScreenKills
+global function WeaponGetPreviousProScreenKills
+global function WeaponGetDisplayGenAndLevelForXP
+global function WeaponGetDisplayGenAndLevel
+global function WeaponGetDisplayGenAndLevelForRawLevel
+global function WeaponGetMaxLevel
+global function WeaponGetMaxRawLevel
+
+global function GetAllWeaponXPItemRefs
+global function ShouldTrackXPForWeapon
+
+global struct ShWeaponXP
+{
+	array<string> weaponClassNames
+}
+
+global ShWeaponXP shWeaponXP
+
+const MAX_WEAPON_GEN = 99
+
+struct
+{
+	table<string, array<int> > weaponXPPipsPerLevel
+	table<string, array<int> > weaponXPForLevel
+	bool initialized = false
+	int maxLevelPerGen
+	table<string, string> xpPerLevelTypes
+} file
+
+void function ShWeaponXP_Init()
+{
+	if ( file.initialized )
+		return
+
+	file.initialized = true
+
+	shWeaponXP.weaponClassNames.clear()
+	shWeaponXP.weaponClassNames.extend( GetAllItemRefsOfType( eItemTypes.PILOT_PRIMARY ) )
+	shWeaponXP.weaponClassNames.extend( GetAllItemRefsOfType( eItemTypes.PILOT_SECONDARY ) )
+
+	array<string> uniqueXPPerLevelTypes
+
+	foreach ( xpPerLevelType in file.xpPerLevelTypes )
+	{
+		if ( uniqueXPPerLevelTypes.contains( xpPerLevelType ) )
+			continue
+
+		uniqueXPPerLevelTypes.append( xpPerLevelType )
+	}
+
+
+	var dataTable = GetDataTable( $"datatable/xp_per_weapon_level.rpak" )
+	int numRows = GetDatatableRowCount( dataTable )
+
+	file.maxLevelPerGen = numRows
+
+	foreach ( xpPerLevelType in uniqueXPPerLevelTypes )
+	{
+		file.weaponXPPipsPerLevel[ xpPerLevelType ] <- []
+		file.weaponXPForLevel[ xpPerLevelType ] <- []
+
+		file.weaponXPPipsPerLevel[ xpPerLevelType ].resize( file.maxLevelPerGen + 1 )
+		file.weaponXPForLevel[ xpPerLevelType ].resize( file.maxLevelPerGen + 2 )
+
+		file.weaponXPPipsPerLevel[ xpPerLevelType ][ 0 ] = 0
+		file.weaponXPForLevel[ xpPerLevelType ][ 0 ] = 0
+		file.weaponXPForLevel[ xpPerLevelType ][ 1 ] = 0
+
+		for ( int i = 0; i < numRows; i++ )
+		{
+			int xpPerLevel = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, xpPerLevelType ) )
+
+			file.weaponXPPipsPerLevel[ xpPerLevelType ][ i + 1 ] = xpPerLevel
+			file.weaponXPForLevel[ xpPerLevelType ][ i + 2 ] = file.weaponXPForLevel[ xpPerLevelType ][ i + 1 ] + xpPerLevel
+		}
+	}
+}
+
+array<string> function GetAllWeaponXPItemRefs()
+{
+	return shWeaponXP.weaponClassNames
+}
+
+bool function ShouldTrackXPForWeapon( string weaponClassName )
+{
+	return shWeaponXP.weaponClassNames.contains( weaponClassName )
+}
+
+void function WeaponSetXPPerLevelType( string weaponClassName, string xpPerLevelType )
+{
+	file.xpPerLevelTypes[ weaponClassName ] <- xpPerLevelType
+}
+
+int function WeaponGetMaxXP( string weaponClassName )
+{
+	return WeaponGetMaxXPPerGen( weaponClassName ) * MAX_WEAPON_GEN
+}
+
+int function WeaponGetMaxXPPerGen( string weaponClassName )
+{
+	string xpPerLevelType = file.xpPerLevelTypes[ weaponClassName ]
+	return file.weaponXPForLevel[ xpPerLevelType ][ file.maxLevelPerGen ] + file.weaponXPPipsPerLevel[ xpPerLevelType ][ file.maxLevelPerGen ]
+}
+
+int function WeaponGetNumPipsForXP( string weaponClassName, int weaponXP )
+{
+	int maxXP = WeaponGetMaxXP( weaponClassName )
+	if ( weaponXP >= maxXP )
+		return 10
+
+	int weaponLevel = WeaponGetLevelForXP( weaponClassName, weaponXP )
+
+	string xpPerLevelType = file.xpPerLevelTypes[ weaponClassName ]
+	return file.weaponXPPipsPerLevel[ xpPerLevelType ][ weaponLevel ]
+}
+
+int function WeaponGetFilledPipsForXP( string weaponClassName, int weaponXP )
+{
+	int maxXP = WeaponGetMaxXP( weaponClassName )
+	if ( weaponXP >= maxXP )
+		return 10
+
+	int startingLevel = WeaponGetLevelForXP( weaponClassName, weaponXP )
+	int baseXp = WeaponGetXPForLevel( weaponClassName, startingLevel )
+
+	int maxXPPerGen = WeaponGetMaxXPPerGen( weaponClassName )
+	return ( weaponXP % maxXPPerGen ) - baseXp
+}
+
+int function WeaponGetXPForLevel( string weaponClassName, int weaponLevel )
+{
+	Assert( weaponLevel > 0 && weaponLevel <= file.maxLevelPerGen )
+
+	string xpPerLevelType = file.xpPerLevelTypes[ weaponClassName ]
+	return file.weaponXPForLevel[ xpPerLevelType ][ weaponLevel ]
+}
+
+int function WeaponGetRawLevelForXP( string weaponClassName, int weaponXP )
+{
+	int maxXP = WeaponGetMaxXP( weaponClassName )
+	if ( weaponXP >= maxXP )
+		return file.maxLevelPerGen * MAX_WEAPON_GEN + 1
+
+	int genLevels = ( WeaponGetGenForXP( weaponClassName, weaponXP ) - 1 ) * file.maxLevelPerGen
+	int maxXPPerGen = WeaponGetMaxXPPerGen( weaponClassName )
+	int xpIntoCurrentGen = weaponXP % maxXPPerGen
+
+	string xpPerLevelType = file.xpPerLevelTypes[ weaponClassName ]
+	foreach ( i, xpVal in file.weaponXPForLevel[ xpPerLevelType ] )
+	{
+		if ( xpIntoCurrentGen < xpVal )
+			return genLevels + i - 1
+	}
+
+	unreachable
+}
+
+int function WeaponGetLevelForXP( string weaponClassName, int weaponXP )
+{
+	int maxXP = WeaponGetMaxXP( weaponClassName )
+	if ( weaponXP >= maxXP )
+		return 1
+
+	int maxXPPerGen = WeaponGetMaxXPPerGen( weaponClassName )
+	int xpIntoCurrentGen = weaponXP % maxXPPerGen
+
+	string xpPerLevelType = file.xpPerLevelTypes[ weaponClassName ]
+	foreach ( i, xpVal in file.weaponXPForLevel[ xpPerLevelType ] )
+	{
+		if ( xpIntoCurrentGen < xpVal )
+			return i - 1
+	}
+
+	unreachable
+}
+
+int function WeaponGetGenForXP( string weaponClassName, int weaponXP )
+{
+	int maxXPPerGen = WeaponGetMaxXPPerGen( weaponClassName )
+	return int( floor( float( weaponXP ) / float( maxXPPerGen ) ) ) + 1
+}
+
+int function WeaponGetRawLevel( entity player, string weaponRef )
+{
+	string persistenceVar = GetItemPersistenceStruct( weaponRef ) + ".weaponXP"
+	return WeaponGetRawLevelForXP( weaponRef, player.GetPersistentVarAsInt( persistenceVar ) )
+}
+
+int function WeaponGetLevel( entity player, string weaponRef )
+{
+	string persistenceVar = GetItemPersistenceStruct( weaponRef ) + ".weaponXP"
+	return WeaponGetLevelForXP( weaponRef, player.GetPersistentVarAsInt( persistenceVar ) )
+}
+
+int function WeaponGetGen( entity player, string weaponRef )
+{
+	string persistenceVar = GetItemPersistenceStruct( weaponRef ) + ".weaponXP"
+	return WeaponGetGenForXP( weaponRef, player.GetPersistentVarAsInt( persistenceVar ) )
+}
+
+int function WeaponGetPreviousLevel( entity player, string weaponRef )
+{
+	string persistenceVar = GetItemPersistenceStruct( weaponRef ) + ".previousWeaponXP"
+	return WeaponGetLevelForXP( weaponRef, player.GetPersistentVarAsInt( persistenceVar ) )
+}
+
+int function WeaponGetXP( entity player, string weaponRef )
+{
+	string persistenceVar = GetItemPersistenceStruct( weaponRef ) + ".weaponXP"
+	return player.GetPersistentVarAsInt( persistenceVar )
+}
+
+int function WeaponGetPreviousXP( entity player, string weaponRef )
+{
+	string persistenceVar = GetItemPersistenceStruct( weaponRef ) + ".previousWeaponXP"
+	return player.GetPersistentVarAsInt( persistenceVar )
+}
+
+int function WeaponGetProScreenKills( entity player, string weaponRef )
+{
+	string persistenceVar = GetItemPersistenceStruct( weaponRef ) + ".proScreenKills"
+	return player.GetPersistentVarAsInt( persistenceVar )
+}
+
+int function WeaponGetPreviousProScreenKills( entity player, string weaponRef )
+{
+	string persistenceVar = GetItemPersistenceStruct( weaponRef ) + ".previousProScreenKills"
+	return player.GetPersistentVarAsInt( persistenceVar )
+}
+
+string function WeaponGetDisplayGenAndLevelForXP( string weaponClassName, int weaponXP )
+{
+	int gen = WeaponGetGenForXP( weaponClassName, weaponXP )
+	int level = WeaponGetLevelForXP( weaponClassName, weaponXP )
+
+	return WeaponGetDisplayGenAndLevel( gen, level )
+}
+
+string function WeaponGetDisplayGenAndLevel( int gen, int level )
+{
+	if ( gen == 1 )
+	{
+		#if SERVER
+			return string( level )
+		#else
+			return Localize( "#HUD_LEVEL_N", level )
+		#endif
+	}
+	else
+	{
+		string levelText = string( level - 1 )
+
+		#if SERVER
+			return string( gen ) + "." + levelText
+		#else
+			return Localize( "#HUD_GEN_LEVEL_N_N", gen, levelText )
+		#endif
+	}
+
+	unreachable
+}
+
+string function WeaponGetDisplayGenAndLevelForRawLevel( int rawLevel )
+{
+	int gen = ( ( rawLevel - 1 ) / file.maxLevelPerGen ) + 1
+	int level = ( rawLevel - 1 ) % file.maxLevelPerGen + 1
+
+	return WeaponGetDisplayGenAndLevel( gen, level )
+}
+
+int function WeaponGetMaxLevel( string weaponClassName )
+{
+	return file.maxLevelPerGen
+}
+
+int function WeaponGetMaxRawLevel( string weaponClassName )
+{
+	return WeaponGetRawLevelForXP( weaponClassName, WeaponGetMaxXP( weaponClassName ) )
+}

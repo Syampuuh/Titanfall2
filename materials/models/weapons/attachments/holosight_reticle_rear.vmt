@@ -1,0 +1,82 @@
+UnlitTwoTexture
+{
+	"$nocull" "1"
+	"$nodecal" "1"
+//	"$additive" "1"
+	"$no_fullbright" 1
+	"$model" "1"
+	"$nofog" "1"
+	"$allowoverbright" "1"
+	"$translucent" "1"
+
+
+	"$basetexture" "models\weapons\attachments\holo_reflex_reticle_rear_col"
+	"$Texture2" "dev\noise_post"
+	"$color" "[1 1 1]"
+	"$color2" "[1 3 5]"
+
+	"$t2offset" 0
+	"$t2scale" 3
+	"$t2rot" 0
+	"$scroll" "[0 1]"
+
+	$holoOffset "[0.1 0]"
+
+	"Proxies"
+	{
+		//Horizontal movement speed
+		"UniformNoise"
+		{
+			"minVal" 0.5
+			"maxVal" 1
+			"resultVar" "$scroll[0]"
+		}
+		//Vertical movement speed
+		"UniformNoise"
+		{
+			"minVal" 0.5
+			"maxVal" 1
+			"resultVar" "$scroll[1]"
+		}
+		//Move the 2nd texture using horiz and vert speed
+		"TextureTransform"
+		{
+			"translateVar" "$scroll"
+			"scaleVar" "$t2scale"
+			"rotateVar" "$t2rot"
+			"resultvar" "$texture2transform"
+		}
+		//chevron flicker
+		"UniformNoise"
+		{
+			"minVal" 0.8
+			"maxVal" 1.00
+			"resultVar" "$color"
+		}
+
+		"HoloSight"
+		{
+			resultVar $alpha
+		}
+
+		//EntityScript
+		//{
+		//	scriptFuncName	"VMTCallback_HoloSightOffset_RSPN101_Rear"
+		//	resultVar $holoOffset
+		//}
+
+		"HoloSightOffset"
+		{
+			attachmentName		"HOLO_REAR"
+			horizontalScalar	"0.5"
+			verticalScalar		"-0.3"
+			resultVar			$holoOffset
+		}
+
+		"TextureTransform"
+		{
+			"translateVar" "$holoOffset"
+			"resultvar" "$basetexturetransform"
+		}
+	}
+}

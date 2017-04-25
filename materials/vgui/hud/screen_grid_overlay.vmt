@@ -1,0 +1,23 @@
+"UnlitTwoTexture"
+{
+	"$baseTexture" "models\holo_screens\military_screen_grid_col"
+	"$texture2" "effects/dev_scanline"
+	"$additive" 1
+	"$translucent" 1
+
+	//Set this color to what you want the frame color to be.
+	"$color" "[0 1 1]"
+
+	"$allowoverbright" "1"
+
+	"Proxies"
+	{
+		//Alpha Flicker
+		"UniformNoise"
+		{
+			"minVal" .8
+			"maxVal" 1
+			"resultVar" "$alpha"
+		}
+	}
+}

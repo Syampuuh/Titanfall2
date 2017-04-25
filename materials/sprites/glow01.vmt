@@ -1,0 +1,9 @@
+//Old HL2 Material called from code, should be removed.
+
+"Sprite"
+{
+	$nosrgb 1
+	"$spriteorientation" "vp_parallel"
+	"$spriteorigin" "[ 0.50 0.50 ]"
+	"$basetexture" "particle\glows\glow_pointlight"
+}

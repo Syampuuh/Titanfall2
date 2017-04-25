@@ -1,0 +1,17 @@
+// hand made from the minimap vmt -Mackey
+"UnlitTwoTexture"
+{
+	"$basetexture" "vgui\hud\VDU_hud_monitor_widescreen"
+
+	"$Texture2" "_rt_Camera"
+
+	"$translucent" "1"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$ignorez"     "1"
+
+
+	"Proxies"
+	{
+	}
+}

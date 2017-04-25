@@ -1,0 +1,164 @@
+resource/ui/menus/playlist.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			classname				MenuTitle
+			labelText				"#MENU_HEADER_FIND_GAME"
+		}
+
+        ImgTopBar
+        {
+            ControlName				ImagePanel
+            InheritProperties		MenuTopBar
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ContentDescriptionTitle
+		{
+			ControlName				Label
+			InheritProperties		R2_ContentDescriptionTitle
+			font					DefaultBold_44
+			labelText				"Bounty Hunt"
+			ypos					200
+			xpos                    -64
+    		fgcolor_override		"255 184 0 255"
+
+			pin_to_sibling			GridPanel
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		ContentBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		R2_ContentBackground
+			xpos					0
+			ypos					-10
+			wide					%50
+			tall					170
+			visible					1
+			drawColor				"0 0 0 0"
+
+			pin_to_sibling			ContentDescriptionTitle
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		ContentDescription
+		{
+			ControlName				Label
+			InheritProperties		R2_ContentDescription
+			labelText				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas suscipit nisi "
+			ypos					0
+			zpos					3 // Needed or clicking on the background can hide this
+			wide					%50
+			tall					100
+			wrap					1
+			auto_tall_tocontents 	1
+            textalign               north
+			textAlignment			north
+    		fgcolor_override		"255 255 255 255"
+
+            font		Default_27             [!$JAPANESE && !$TCHINESE]
+            font		Default_31             [$JAPANESE || $TCHINESE]
+
+			pin_to_sibling			ContentBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		PlayerCount
+		{
+			ControlName				Label
+			labelText				"Player Count?"
+			auto_wide_tocontents    1
+			tall                    30
+
+			font					Default_27
+			allcaps					0
+			fgcolor_override		"255 255 255 255"
+
+			pin_to_sibling			ContentBackground
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		LevelsBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		R2_ContentBackground
+			ypos					r620
+			wide					%100
+			tall					400
+			visible					1
+    		drawColor				"0 0 0 220"
+		}
+
+	    UnlockReq
+	    {
+	        ControlName             RuiPanel
+	       	InheritProperties       UnlockReqProperties
+			xpos					230
+			ypos					20
+			rui                     "ui/unlock_req_label.rpak"
+
+			pin_to_sibling			LevelsBackground
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	BOTTOM
+	    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		GridPanel
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					-16
+			wide					1632
+			tall					450
+			visible					1
+			tabPosition				1
+			controlSettingsFile		"Resource/UI/menus/panels/playlist_panel.res"
+
+			pin_to_sibling			LevelsBackground
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	TOP
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

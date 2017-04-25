@@ -1,0 +1,8 @@
+"SpriteCard"
+{
+	"$basetexture" "particle/water/splash_foam"
+	//"$mod2x" "1"
+	"$translucent" "1"
+
+	$vertexFogAmount 1
+}

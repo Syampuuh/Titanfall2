@@ -1,0 +1,39 @@
+#base "pilot_solo.set"
+"civilian_solo_skyway"
+{
+	"global"
+	{
+		class						"pilot"
+		subclass					"wallrun"
+
+		stepheight					18
+		jumpHeight					25
+		ziplineSpeed				600
+
+		airSpeed					70
+		airAcceleration				540
+
+		wallrun						0
+		doublejump					0
+
+		slide						1
+		slideRequiredStartSpeed		150 //200
+		slidevelocitydecay			0.6 //0.7
+		slideSpeedBoost				100 // 150
+
+		sprintStartDuration			0.4
+
+		fov 						60
+	}
+
+	"crouch"
+	{
+		speed						60
+	}
+
+	"stand"
+	{
+		speed						120
+		sprintspeed					200
+	}
+}

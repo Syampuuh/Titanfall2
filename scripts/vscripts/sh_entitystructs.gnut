@@ -1,0 +1,22 @@
+
+global struct RodeoPackageStruct
+{
+	string thirdPersonAnim = "pt_rodeo_move_atlas_front_lower_entrance"
+	string firstPersonAnim = "ptpov_rodeo_move_atlas_front_lower_entrance"
+	string thirdPersonAnimIdle = ""
+	string firstPersonAnimIdle = ""
+	string worldSound 	   = "Rodeo_Atlas_Rodeo_ClimbOn_Front_Exterior"
+	string cockpitSound    = "Rodeo_Atlas_Rodeo_ClimbOn_Front_Interior"
+	int method 				= RODEO_APPROACH_JUMP_ON //TODO: Maybe look into removing this
+ 	string attachPoint		= "hijack"
+ 	string rodeoTargetType 	= ""
+ 	bool useAttachAngles	= true 	//true: animate relative to attach tag angles. false: use player angles, like on drones where direction is irrelevant
+ 	int rodeoSlot 				    = 0
+ 	int rodeoDirection		= 0
+
+ 	//following stuff is npc rider specific
+	bool npcUseWeapon				=  false
+ 	string npcAttackAnim 			= ""
+ 	string npcJumpAnim 				= ""
+}
+

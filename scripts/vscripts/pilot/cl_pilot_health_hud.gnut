@@ -1,0 +1,391 @@
+untyped
+
+global function ClHealthHud_Init
+
+global function HealthHUD_AddPlayer
+global function HealthHUD_Update
+global function DamageOverlayUpdate
+global function PilotEMP_Internal
+global function HealthHUD_ClearFX
+
+global function SetHealthDisplayRange
+
+global function hfx
+
+const HEALTHDMGSTATE1_MP = 0.75
+const HEALTHDMGSTATE2_MP = 0.50
+const HEALTHDMGSTATE3_MP = 0.375
+
+const SHOW_HEALTH_THRESHOLD_SP = 90  // don't show nearby health items if player health is above this value (100 health max)
+const SHOW_HEALTH_MAXDIST_SP = 2048
+const SHOW_HEALTH_VIEWDOT_SP = 0.5
+const SHOW_HEALTH_SPRITESCALE_SP = 0.125
+
+const SHOW_HEALTH_THRESHOLD_MP = 90
+const SHOW_HEALTH_MAXDIST_MP = 2048
+const SHOW_HEALTH_VIEWDOT_MP = 0.5
+const SHOW_HEALTH_SPRITESCALE_MP = 0.125
+
+const SHOW_HEALTH_REFRESHWAIT = 1.0
+
+struct
+{
+	var colorCorrection
+	var healthFX
+
+	float healthDisplayMax
+	float healthDisplayMin
+
+	int healthFXCount = 0
+} file
+
+function hfx()
+{
+	printt( file.healthFXCount )
+}
+
+function ClHealthHud_Init()
+{
+	file.colorCorrection = ColorCorrection_Register( "materials/correction/bw_super_constrast.raw" )
+	ColorCorrection_SetExclusive( file.colorCorrection, false )
+
+	PrecacheParticleSystem( $"P_health_hex" )
+	file.healthFX = GetParticleSystemIndex( $"P_health_hex" )
+
+	RegisterSignal( "End_HealthHUD_Update" )
+	RegisterSignal( "EMPScreenFX" )
+
+	AddCallback_KillReplayStarted( KillReplayHealthUpdate )
+
+	file.healthDisplayMin = DEFAULT_HEALTH_DISPLAY_MIN
+	file.healthDisplayMax = DEFAULT_HEALTH_DISPLAY_MAX
+
+	AddPlayerFunc( HealthHUD_AddPlayer )
+}
+
+
+function PilotEMP_Internal( maxValue, duration, fadeTime, doFlash = true, doSound = true )
+{
+	entity player = GetLocalViewPlayer()
+
+	player.EndSignal( "OnDeath" )
+	player.Signal( "EMPScreenFX", { maxValue = maxValue, duration = duration, fadeTime = fadeTime } )
+
+	if ( doSound )
+	{
+		EmitSoundOnEntity( player, EMP_IMPARED_SOUND )
+		wait duration
+		FadeOutSoundOnEntity( player, EMP_IMPARED_SOUND, fadeTime )
+		wait fadeTime
+	}
+}
+
+const DEFAULT_HEALTH_DISPLAY_HEALTH = 240.0
+const DEFAULT_HEALTH_DISPLAY_MIN = 0.2
+const DEFAULT_HEALTH_DISPLAY_MAX = 1.0
+
+function InitHealthDisplayRange( entity player )
+{
+	float rangeScaler
+
+	// use the overridden scalar if it has been specified
+	if ( clGlobal.pilotRedDamageWarningScalar != 1.0 )
+	{
+		rangeScaler = clGlobal.pilotRedDamageWarningScalar
+	}
+	else
+	{
+		float maxHealth = float( player.GetMaxHealth() )
+		rangeScaler = DEFAULT_HEALTH_DISPLAY_HEALTH / maxHealth
+	}
+
+	float minValue = DEFAULT_HEALTH_DISPLAY_MIN * rangeScaler
+	float maxValue = min( DEFAULT_HEALTH_DISPLAY_MAX * rangeScaler, 1.0 )
+	printt( minValue, maxValue )
+	SetHealthDisplayRange( minValue, maxValue )
+}
+
+function InitTitanHealthDisplayRange( entity player )
+{
+	SetHealthDisplayRange( 0.32, 1.0 )
+}
+
+function SetHealthDisplayRange( float minValue, float maxValue )
+{
+	file.healthDisplayMin = minValue
+	file.healthDisplayMax = maxValue
+}
+
+function FlashBang_TonemappingUpdate()
+{
+	const START_DURATION = 4.0
+	const TONEMAP_MAX = 5
+	const TONEMAP_MIN = 2
+
+	while ( true )
+ 	{
+ 		if ( !GetLocalViewPlayer().s.inTitanCockpit )
+ 			break;
+ 		WaitFrame()
+ 	}
+
+	//SetCockpitLightingEnabled( 0, false );
+	AutoExposureSetMaxExposureMultiplier( 500 )
+	AutoExposureSetExposureCompensationBias( TONEMAP_MAX )
+	AutoExposureSnap()
+
+	wait 0.15
+
+//	TitanDisembarkDSP( 0.5 )
+
+	local startTime = Time()
+	while( 1 )
+	{
+		local time = Time() - startTime
+		float factor = GraphCapped( time, 0, START_DURATION, 1, 0 )
+		local toneMapScale = TONEMAP_MIN + (TONEMAP_MAX - TONEMAP_MIN) * factor
+		AutoExposureSetExposureCompensationBias( toneMapScale )
+		AutoExposureSnap()
+		wait  0
+		if ( factor == 0 )
+			break;
+	}
+
+	AutoExposureSetExposureCompensationBias( 0 )
+
+	// Ramp the exposure max multiplier back down to 1
+	const TONEMAP_3_START_DURATION = 5
+	const TONEMAP_3_MAX = 10
+	const TONEMAP_3_MIN = 1
+	startTime = Time()
+	while( 1 )
+	{
+		local time = Time() - startTime
+		float factor = GraphCapped( time, 0, TONEMAP_3_START_DURATION, 1, 0 )
+		local scale = TONEMAP_3_MIN + (TONEMAP_3_MAX - TONEMAP_3_MIN) * factor
+		AutoExposureSetMaxExposureMultiplier( scale );
+		wait  0
+		if ( factor == 0 )
+			break;
+	}
+}
+
+
+void function HealthHUD_AddPlayer( entity player )
+{
+	if ( IsMenuLevel() )
+		return
+
+	player.InitHudElem( "damageOverlayRedBloom" )
+	player.InitHudElem( "damageOverlayOrangeBloom" )
+
+	player.s.healthFX <- []
+
+	player.EnableHealthChangedCallback()
+
+	thread SettingsChange_Update( player )
+}
+
+function SettingsChange_Update( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+
+	player.hudElems.damageOverlayRedBloom.Hide()
+	player.hudElems.damageOverlayOrangeBloom.Hide()
+
+	while ( true )
+	{
+		switch( player.GetPlayerClass() )
+		{
+			// case "titan":
+			// 	InitTitanHealthDisplayRange( player )
+			// 	thread HealthHUD_Update( player )
+			// 	break
+			case "pilot":
+				InitHealthDisplayRange( player )
+				thread HealthHUD_Update( player )
+				break
+			default:
+				printt( player.GetPlayerClass() )
+				player.Signal( "End_HealthHUD_Update" )
+				player.hudElems.damageOverlayRedBloom.Hide()
+				player.hudElems.damageOverlayOrangeBloom.Hide()
+		}
+
+		player.WaitSignal( "SettingsChanged" )
+	}
+}
+
+function HealthHUD_Update( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+	player.EndSignal( "End_HealthHUD_Update" )
+	if ( shGlobal.proto_pilotHealthRegenDisabled )
+	{
+		SetHealthDisplayRange( 0.1, 0.33 )
+	}
+
+	local healthFrac = GetHealthFrac( player )
+	if ( healthFrac < 1.0 )
+		DamageOverlayUpdate( player, healthFrac, 0.99 )
+
+	local lastHealthFrac = GetHealthFrac( player )
+
+	void functionref( entity ) waitFunc
+	bool refreshHealthConstantly = shGlobal.proto_pilotHealthRegenDisabled
+
+	if ( refreshHealthConstantly )
+		waitFunc = PlayerWaittillHealthChanged_OrTimeout
+	else
+		waitFunc = PlayerWaittillHealthChanged
+
+	player.hudElems.damageOverlayRedBloom.Hide()
+	player.hudElems.damageOverlayOrangeBloom.Hide()
+
+	while ( true )
+	{
+		waitthread waitFunc( player )
+
+		if ( IsWatchingReplay() && GetLocalViewPlayer() == GetLocalClientPlayer() )
+			continue
+
+		if ( IsSpectatingThirdPerson() )
+			continue
+
+		if ( !IsAlive( player ) )
+		{
+			KillReplayHealthUpdate()
+		}
+		else
+		{
+			local healthFrac = GetHealthFrac( player )
+			DamageOverlayUpdate( player, healthFrac, lastHealthFrac )
+			lastHealthFrac = healthFrac
+
+			if ( refreshHealthConstantly )
+				lastHealthFrac += 0.1
+		}
+	}
+}
+
+void function PlayerWaittillHealthChanged( entity player )
+{
+	player.WaitSignal( "HealthChanged" )
+}
+
+void function PlayerWaittillHealthChanged_OrTimeout( entity player )
+{
+	player.EndSignal( "HealthChanged" )
+	wait 3
+}
+
+
+void function KillReplayHealthUpdate()
+{
+	entity player = GetLocalClientPlayer()
+
+	if ( GetLocalClientPlayer() != GetLocalViewPlayer() )
+		return
+
+	player.hudElems.damageOverlayRedBloom.Hide()
+	player.hudElems.damageOverlayOrangeBloom.Hide()
+
+	HealthHUD_ClearFX( player, true )
+
+}
+
+
+function HealthHUD_ClearFX( entity player, bool destroyEffect = false )
+{
+	if ( !( "healthFX" in player.s ) )
+		return
+
+	for ( local index = player.s.healthFX.len(); index > 0; index-- )
+	{
+		local fxHandle = player.s.healthFX[index - 1]
+
+		if ( EffectDoesExist( fxHandle ) )
+			EffectStop( fxHandle, destroyEffect, true )
+
+		player.s.healthFX.remove( index - 1 )
+		file.healthFXCount--
+	}
+}
+
+
+function DamageOverlayUpdate( entity player, healthFrac, lastHealthFrac )
+{
+	float OVER_TIME_VAL = 0.0;
+
+	if ( healthFrac <= 0 )
+	{
+		if ( lastHealthFrac > 0 )
+		{
+			player.hudElems.damageOverlayRedBloom.ColorOverTime( 255, 255, 255, 255, OVER_TIME_VAL )
+			player.hudElems.damageOverlayOrangeBloom.ColorOverTime( 255, 255, 255, 255, OVER_TIME_VAL )
+
+			player.hudElems.damageOverlayRedBloom.Show()
+			player.hudElems.damageOverlayOrangeBloom.Show()
+		}
+
+		HealthHUD_ClearFX( player )
+		return
+	}
+	else if ( healthFrac >= file.healthDisplayMax )
+	{
+		player.hudElems.damageOverlayRedBloom.Hide()
+		player.hudElems.damageOverlayOrangeBloom.Hide()
+
+		HealthHUD_ClearFX( player )
+	}
+	else if ( lastHealthFrac >= file.healthDisplayMax && healthFrac < file.healthDisplayMax )
+	{
+		player.hudElems.damageOverlayRedBloom.SetColor( 0, 0, 0 )
+		player.hudElems.damageOverlayOrangeBloom.SetColor( 0, 0, 0 )
+
+		player.hudElems.damageOverlayRedBloom.Show()
+		player.hudElems.damageOverlayOrangeBloom.Show()
+	}
+
+	for ( local index = player.s.healthFX.len(); index > 0; index-- )
+	{
+		if ( !EffectDoesExist( player.s.healthFX[index - 1] ) )
+		{
+			file.healthFXCount--
+			player.s.healthFX.remove( index - 1 )
+		}
+	}
+
+	while ( player.s.healthFX.len() > 10 )
+	{
+		local fxHandle = player.s.healthFX.remove( 0 )
+		file.healthFXCount--
+
+		if ( EffectDoesExist( fxHandle ) )
+			EffectStop( fxHandle, true, false )
+	}
+
+	entity cockpit = player.GetCockpit()
+	if ( healthFrac < file.healthDisplayMax && healthFrac < lastHealthFrac && cockpit )
+	{
+		local fxHandle = StartParticleEffectOnEntity( cockpit, file.healthFX, FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
+		player.s.healthFX.append( fxHandle )
+		file.healthFXCount++
+
+		//local extraFx = fabs( (lastHealthFrac - healthFrac) * 8 )
+		//for ( int index = 0; index < extraFx; index++ )
+		//{
+		//	local fxHandle = StartParticleEffectOnEntity( cockpit, file.healthFX, FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
+		//	player.s.healthFX.append( fxHandle )
+		//	file.healthFXCount++
+		//}
+	}
+
+	local midPoint = file.healthDisplayMin + (file.healthDisplayMax - file.healthDisplayMin) * 0.7
+
+	local bloomFracR = GraphCapped( healthFrac, file.healthDisplayMax, midPoint, 0, 220 ).tointeger()
+	local bloomFracGB = GraphCapped( healthFrac, midPoint, file.healthDisplayMin, bloomFracR, 48 ).tointeger()
+	player.hudElems.damageOverlayRedBloom.ColorOverTime( bloomFracR, bloomFracGB, bloomFracGB, 255, OVER_TIME_VAL )
+	player.hudElems.damageOverlayOrangeBloom.ColorOverTime( bloomFracR, bloomFracGB, bloomFracGB, 255, OVER_TIME_VAL )
+
+}

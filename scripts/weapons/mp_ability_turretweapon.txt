@@ -1,0 +1,93 @@
+WeaponData
+{
+	// General
+	"printname"   									"BURNCARD_DEBUG"
+	"shortprintname"   								"BURNCARD_DEBUG"
+	"description" 									"BURNCARD_DEBUG"
+	"longdesc"										"BURNCARD_DEBUG"
+
+	"menu_icon"										"ui/temp"
+    "hud_icon"				                        "ui/temp"
+    "readymessage"                                  "BUG IT"
+    "readyhint"                                     "BUG IT"
+
+	"weaponClass" 									"human"
+	"fire_mode"   									"offhand_hybrid"
+	"offhand_toss"                                  "0"
+	"offhand_default_inventory_slot"				"4"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_turretweapon"
+	"OnWeaponActivate"							    "OnWeaponActivate_turretweapon"
+	"OnWeaponDeactivate"							"OnWeaponDeactivate_turretweapon"
+    "OnWeaponAttemptOffhandSwitch"                  "OnWeaponAttemptOffhandSwitch_burncardweapon"
+
+	// Ammo
+	"ammo_display"									"bar"
+	"ammo_stockpile_max"							"200"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+	"ammo_per_shot"									"200"
+	"ammo_min_to_fire"								"200"
+	"ammo_drains_to_empty_on_fire"					"0"
+	"ammo_no_remove_from_clip"						"1"
+
+	"offhand_switch_force_draw"						"1"
+
+	// Regen Ammo
+	"regen_ammo_refill_rate"						"5"
+	"regen_ammo_refill_start_delay"					"0.0"
+
+	// Damage
+	"damage_type" 									"none"
+	"explosion_damage_heavy_armor"					"0"
+	"damage_near_distance"							"0"
+	"damage_far_distance" 							"0"
+	"damage_near_value"   							"0"
+	"damage_far_value"								"0"
+
+	"zoom_effects"									"0"
+
+	// Rumble
+	"rumble"  										"-1"
+
+	// Behavior
+	"fire_rate"   									"10000.0"
+	"fire_duration"									"0.001"
+	"fire_anim_rate"								"5.0"
+	"holster_time"									"0.15"
+	"deploy_time" 									"0.25"
+	"lower_time"  									"0.25"
+	"raise_time"  									"0.2"
+	"allow_empty_fire"								"0"
+	"reload_enabled"								"0"
+	"empty_reload_only"   							"0"
+	"allow_empty_click"   							"0"
+	"trigger_snipercam"   							"0"
+	"allow_headshots" 								"0"
+	"breaks_cloak"									"0"
+	"primary_fire_does_not_block_sprint"			"1"
+	"aimassist_disable_hipfire"						"1"
+	"aimassist_disable_ads"							"1"
+	"cooldown_type"									"ammo"
+
+	Mods
+	{
+		burn_card_weapon_mod
+		{
+
+		}
+
+		burnmeter_ap_turret_weapon
+		{
+			"hud_icon"				   "rui/menu/boosts/boost_icon_personel_sentry"
+            "readymessage"              "#HUD_BURNMETER_READY_AP_TURRET"
+            "readyhint"                 "#HUD_BURNMETER_READY_AP_TURRET_HINT"
+		}
+		burnmeter_at_turret_weapon
+		{
+			"hud_icon"				    "rui/menu/boosts/boost_icon_titan_sentry"
+            "readymessage"              "#HUD_BURNMETER_READY_AT_TURRET"
+            "readyhint"                 "#HUD_BURNMETER_READY_AT_TURRET_HINT"
+		}
+	}
+}

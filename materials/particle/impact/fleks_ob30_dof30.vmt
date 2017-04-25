@@ -1,0 +1,23 @@
+"SpriteCard"
+{
+	"$basetexture" "particle\impact\fleks.vtf"
+	$vertexcolor 1
+	$vertexalpha 1
+
+
+//	$alphatest 1
+//	$AlphaTestReference 0.3
+
+	$translucent 1
+	$depthblend 1
+
+	$nocull 1
+	$overbrightfactor 30
+
+	$blendframes 0
+
+	$vertexFogAmount 1
+
+	$dofOpacityScaler 30
+
+}

@@ -1,0 +1,178 @@
+resource/ui/menus/viewstats_time.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#STATS_TIME"
+		}
+
+		MenuCommon
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/menu_common.res"
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+		StatsBackground
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			xpos 						c-674
+			ypos						c-353
+			zpos						100
+			wide						1349
+			tall						764
+			visible						1
+		}
+
+		ClassPieChart
+		{
+			ControlName					CNestedPanel
+			classname					"ClassPieChart"
+			xpos						-90
+			ypos						-150
+			zpos						300
+			wide						350
+			tall						674
+			visible						1
+			controlSettingsFile			"resource/UI/menus/stats_pie_chart.res"
+
+			pin_to_sibling				StatsBackground
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		ChassisPieChart
+		{
+			ControlName					CNestedPanel
+			classname					"ChassisPieChart"
+			xpos						60
+			ypos						0
+			zpos						300
+			wide						350
+			tall						674
+			visible						1
+			controlSettingsFile			"resource/UI/menus/stats_pie_chart.res"
+
+			pin_to_sibling				ClassPieChart
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+
+		ModesPieChart
+		{
+			ControlName					CNestedPanel
+			classname					"ModesPieChart"
+			xpos						60
+			ypos						0
+			zpos						300
+			wide						350
+			tall						674
+			visible						1
+			controlSettingsFile			"resource/UI/menus/stats_pie_chart.res"
+
+			pin_to_sibling				ChassisPieChart
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Stat0
+		{
+			ControlName					RuiPanel
+			rui							"ui/stat_box_a.rpak"
+			xpos						-312
+			ypos						-22
+			zpos						225
+			wide						236
+			tall						128
+			visible						1
+
+			pin_to_sibling				StatsBackground
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		Stat1
+		{
+			ControlName					RuiPanel
+			rui							"ui/stat_box_a.rpak"
+			xpos						8
+			zpos						225
+			wide						236
+			tall						128
+			visible						1
+
+			pin_to_sibling				Stat0
+			pin_corner_to_sibling		BOTTOM_LEFT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+
+		Stat2
+		{
+			ControlName					RuiPanel
+			rui							"ui/stat_box_a.rpak"
+			xpos						8
+			zpos						225
+			wide						236
+			tall						128
+			visible						1
+
+			pin_to_sibling				Stat1
+			pin_corner_to_sibling		BOTTOM_LEFT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					r119
+			wide					f0
+			tall					36
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+		}
+	}
+}

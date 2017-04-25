@@ -1,0 +1,114 @@
+global function ShCamoSkin_Init
+
+global function CamoSkins_GetCount
+global function CamoSkins_GetByIndex
+global function CamoSkins_GetByRef
+
+global function CamoSkin_GetDesc
+global function CamoSkin_GetImage
+global function CamoSkin_GetName
+global function CamoSkin_GetRef
+global function CamoSkin_GetPilotRef
+global function CamoSkin_GetTitanRef
+
+#if SERVER
+#endif
+
+global struct CamoSkin
+{
+	string ref = ""
+	string pilotCamoRef = ""
+	string titanCamoRef = ""
+	asset image = $""
+	string name = ""
+	string desc = ""
+	int categoryId = 0
+}
+
+struct
+{
+	table<string, CamoSkin> camoSkins
+	array<CamoSkin> camoSkinByIndex
+} file
+
+
+
+void function ShCamoSkin_Init()
+{
+	var dataTable = GetDataTable( $"datatable/camo_skins.rpak" )
+	for ( int row = 0; row < GetDatatableRowCount( dataTable ); row++ )
+	{
+		string camoRef = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, CAMO_REF_COLUMN_NAME ) )
+		string pilotCamoRef = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, CAMO_PILOT_REF_COLUMN_NAME ) )
+		string titanCamoRef = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, CAMO_TITAN_REF_COLUMN_NAME ) )
+		asset image = GetDataTableAsset( dataTable, row, GetDataTableColumnByName( dataTable, CAMO_IMAGE_COLUMN_NAME ) )
+		string name = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, CAMO_NAME_COLUMN_NAME ) )
+		string desc = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, CAMO_DESCRIPTION_COLUMN_NAME ) )
+		int categoryId = GetDataTableInt( dataTable, row, GetDataTableColumnByName( dataTable, CAMO_CATEGORY_COLUMN_NAME ) )
+
+		CamoSkin camoSkin
+		camoSkin.ref = camoRef
+		camoSkin.pilotCamoRef = pilotCamoRef
+		camoSkin.titanCamoRef = titanCamoRef
+		camoSkin.image = image
+		camoSkin.name = name
+		camoSkin.desc = desc
+		camoSkin.categoryId = categoryId
+
+		file.camoSkins[camoRef] <- camoSkin
+		file.camoSkinByIndex.append( camoSkin )
+	}
+}
+
+
+int function CamoSkins_GetCount()
+{
+	return file.camoSkinByIndex.len()
+}
+
+
+CamoSkin function CamoSkins_GetByRef( string camoRef )
+{
+	Assert( camoRef in file.camoSkins )
+
+	return file.camoSkins[camoRef]
+}
+
+
+CamoSkin function CamoSkins_GetByIndex( int index )
+{
+	Assert( index < CamoSkins_GetCount() )
+
+	return file.camoSkinByIndex[index]
+}
+
+
+string function CamoSkin_GetRef( CamoSkin camoSkin )
+{
+	return camoSkin.ref
+}
+
+string function CamoSkin_GetPilotRef( CamoSkin camoSkin )
+{
+	return camoSkin.pilotCamoRef
+}
+
+string function CamoSkin_GetTitanRef( CamoSkin camoSkin )
+{
+	return camoSkin.titanCamoRef
+}
+
+asset function CamoSkin_GetImage( CamoSkin camoSkin )
+{
+	return camoSkin.image
+}
+
+string function CamoSkin_GetName( CamoSkin camoSkin )
+{
+	return camoSkin.name
+}
+
+string function CamoSkin_GetDesc( CamoSkin camoSkin )
+{
+	return camoSkin.desc
+}

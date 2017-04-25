@@ -1,0 +1,79 @@
+#base "pilot_base.set"
+"pilot_solo_gravtest"
+{
+	"global"
+	{
+		//R1 GRAVITY SETTINGS - allows toggle between new (default) and old (this)
+
+		armsmodel					"models/weapons/arms/pov_mlt_hero_jack.mdl"
+
+		class						"pilot"
+		subclass					"wallrun"
+
+		stepheight					18
+		jumpHeight					80
+		ziplineSpeed				600
+
+		airSpeed					70
+		airAcceleration				540
+
+		wallrun						1
+		doublejump					1
+
+		sprintStartDuration			0.4
+
+		// 75% speed settings
+		/*
+		jumpheight					60
+		gravityscale				0.75
+		wallrunJumpOutwardSpeed		240 // 188 matches mp, 240 nicely matches r1 diagonal jump distance
+		wallrunJumpUpSpeed			240
+		wallrunJumpInputDirSpeed	40
+
+		superjumpMinHeight			60
+		superjumpMaxHeight			60
+		superjumpHorzSpeed			180
+
+		wallrunMaxSpeedVertical		225
+		wallrunMaxSpeedHorizontal	340
+		wallrunAccelerateVertical 	360 // 80%
+		wallrunAccelerateHorizontal 1400 // 80%
+		*/
+
+		wallrunAdsType				"ADS"
+
+        slideFOVScale               1.1 // scales fov by this amount while sliding
+        slideFOVLerpInTime          0.25 // lerp in over this time
+        slideFOVLerpOutTime         0.25 // lerp out over this time
+
+//75% speed NOTES
+//  BUG: beacon throws and fans push player too far
+//  BUG: Diagonal jump distance isn't as far - differs from R1 but only affects wallrun challenges in minor ways
+
+		ClassMods
+		{
+			disable_doublejump
+			{
+				doublejump		"0"
+			}
+
+			disable_wallrun
+			{
+				wallrun			"0"
+			}
+		}
+	}
+
+	"crouch"
+	{
+		speed						80
+	}
+
+	"stand"
+	{
+		speed						162.5
+		sprintspeed					243
+	}
+}
+
+

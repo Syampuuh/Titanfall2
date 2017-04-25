@@ -1,0 +1,57 @@
+untyped
+
+global function ClMelee_Init
+
+global function GetHeadAttachOrigin
+global function ClientCodeCallback_ShowMeleePrompt
+
+function ClMelee_Init()
+{
+	MeleeShared_Init()
+
+	FlagInit( "HideMeleePrompt" )
+}
+
+vector function GetHeadAttachOrigin( entity ent )
+{
+	int index = ent.LookupAttachment( "hatch_head" )
+	return ent.GetAttachmentOrigin( index )
+}
+
+bool function ClientCodeCallback_ShowMeleePrompt( entity player )
+{
+	if ( !IsValid( player ) )
+		return false
+
+	if ( Flag( "HideMeleePrompt" ) )
+		return false
+
+	// Titans never show a melee prompt
+	if ( player.IsTitan() )
+		return false
+
+	if ( player.IsPhaseShifted() )
+		return false
+
+	entity target = PlayerMelee_LungeConeTrace( player, SHARED_CB_IS_VALID_MELEE_EXECUTION_TARGET )
+	if ( !IsValid( target ) )
+		return false
+
+	if ( IsSingleplayer() ) //In SP spectres can be hacked as well as leeched. Don't show melee prompt in SP because we want leech prompt to have priority
+	{
+		if ( IsSpectre( target ) ) //Special case for spectre: Don't show prompt, but allow melee execution
+			return false
+	}
+
+	SyncedMeleeChooser ornull actions = GetSyncedMeleeChooserForPlayerVsTarget( player, target )
+	Assert( actions != null, "No melee action for " + player + " vs " + target )
+	expect SyncedMeleeChooser( actions )
+
+	SyncedMelee ornull action = FindBestSyncedMelee( player, target, actions )
+
+	if ( action == null )
+		return false
+	expect SyncedMelee( action )
+
+	return actions.displayMeleePrompt
+}

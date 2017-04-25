@@ -1,0 +1,40 @@
+"UnlitTwoTexture"
+{
+
+
+	$allowoverbright 1
+	"$vertexalpha" 1
+	"$model" "1"
+	"$translucent" 1
+	"$color2" "[4 4 4]"
+
+	"$godray" "1"
+	"$godrayMinFadeDist" "120"
+	"$godrayMaxFadeDist" "500"
+
+
+	"$basetexture" "effects\caustic_water_01_alpha"
+	//basetexture" "effects\tvscreen_noise001b"
+	"$Texture2" "effects\caustic_water_01_alpha"
+
+
+
+	"Proxies"
+	{
+
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" 0.3
+			"texturescrollangle" -45
+				"texturescale" 1
+		}
+		"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" .15
+			"texturescrollangle" 225
+			"texturescale" 1
+		}
+	}
+}

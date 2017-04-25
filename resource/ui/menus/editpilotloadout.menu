@@ -1,0 +1,101 @@
+resource/ui/menus/editpilotloadout.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+	    CreditsAvailable
+	    {
+	        ControlName             RuiPanel
+	        InheritProperties       CreditsAvailableProperties
+	    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	    PilotLoadoutButtons
+	    {
+		    ControlName				CNestedPanel
+	        xpos					96
+    	    ypos                    76
+		    zpos					10
+			wide					1048
+			tall					1080
+		    visible					1
+		    tabPosition				1
+		    controlSettingsFile		"resource/ui/menus/panels/pilotloadout.res"
+	    }
+
+        ItemDetails
+        {
+            ControlName				RuiPanel
+            InheritProperties		ItemDetails
+	        xpos					660
+    	    ypos                    782
+		    zpos					10
+        }
+
+	    ItemStats
+	    {
+		    ControlName				CNestedPanel
+	        xpos					800
+    	    ypos                    200
+		    zpos					10
+			wide					1048
+			tall					1080
+		    visible					0
+		    controlSettingsFile		"resource/ui/menus/panels/item_stats.res"
+	    }
+
+        ModelRotateMouseCapture
+        {
+            ControlName				CMouseMovementCapturePanel
+            xpos                    810
+            zpos					12
+            wide                    1110
+            tall                    %100
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

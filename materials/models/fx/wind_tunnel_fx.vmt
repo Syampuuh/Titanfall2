@@ -1,0 +1,48 @@
+"UnlitTwoTexture"
+{
+//	"$nocull" "1"
+	"$nodecal" "1"
+	$allowoverbright 1
+
+	"$additive" "1"
+//	"$no_fullbright" 1
+//	"$vertexcolor" 1
+	"$vertexalpha" 1
+	"$model" "1"
+	"$translucent" 1
+	"$nocull" "1"
+	"$color2" "[2 2 2]"
+
+	//"$godray" "1"
+	//"$godrayMinFadeDist" "50"
+	//"$godrayMaxFadeDist" "100"
+
+
+	//"$basetexture" "effects\tvscreen_noise001b"
+	"$basetexture" "effects\caustic_water_01"
+	"$Texture2" "effects\caustic_water_01"
+
+
+
+//	"$color" "[0.43 0.43 0.43]"
+//	"$color2" "[0.72 2 0.71]"
+
+	"Proxies"
+	{
+//		{
+//		"$t2scale" 1
+//		}
+			"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" 3
+			"texturescrollangle" 1
+		}
+				"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" 2
+			"texturescrollangle" -3
+		}
+	}
+}

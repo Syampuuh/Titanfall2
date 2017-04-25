@@ -1,0 +1,12 @@
+#base "titan_buddy.set"
+"titan_buddy_spare"
+{
+	sp_aiSettingsFile			"npc_titan_buddy_skyway"
+
+	"global"
+	{
+		bodymodel			"models/titans/buddy/titan_buddy_skyway.mdl"
+		armsmodel			"models/weapons/arms/buddypov_skyway.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_medium_cockpit.mdl"
+	}
+}

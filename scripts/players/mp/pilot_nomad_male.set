@@ -1,0 +1,12 @@
+#base "pilot_nomad.set"
+"pilot_nomad_male"
+{
+	"global"
+	{
+		bodymodel				"models/humans/pilots/pilot_light_jester_m.mdl"
+		armsmodel				"models/weapons/arms/pov_pilot_light_jester_m.mdl"
+		cockpitmodel			"models/weapons/arms/human_pov_cockpit.mdl"
+
+		quadMoveAnims			0
+	}
+}

@@ -1,0 +1,327 @@
+#base "combo_buttons.res"
+resource/ui/menus/knowledgebase_submenu.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"TitleText"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+	    //CreditsAvailable
+	    //{
+	    //    ControlName             RuiPanel
+	    //    InheritProperties       CreditsAvailableProperties
+	    //}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		BtnKNBSubQuestion00
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			xpos					225
+			ypos					190
+			//navUp					BtnKNBSubQuestion19
+			navDown					BtnKNBSubQuestion01
+			scriptID				0
+		}
+		BtnKNBSubQuestion01
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion00
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion00
+			navDown					BtnKNBSubQuestion02
+			scriptID				1
+		}
+		BtnKNBSubQuestion02
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion01
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion01
+			navDown					BtnKNBSubQuestion03
+			scriptID				2
+		}
+		BtnKNBSubQuestion03
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion02
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion02
+			navDown					BtnKNBSubQuestion04
+			scriptID				3
+		}
+		BtnKNBSubQuestion04
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion03
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion03
+			navDown					BtnKNBSubQuestion05
+			scriptID				4
+		}
+		BtnKNBSubQuestion05
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion04
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion04
+			navDown					BtnKNBSubQuestion06
+			scriptID				5
+		}
+		BtnKNBSubQuestion06
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion05
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion05
+			navDown					BtnKNBSubQuestion07
+			scriptID				6
+		}
+		BtnKNBSubQuestion07
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion06
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion06
+			navDown					BtnKNBSubQuestion08
+			scriptID				7
+		}
+		BtnKNBSubQuestion08
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion07
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion07
+			navDown					BtnKNBSubQuestion09
+			scriptID				8
+		}
+		BtnKNBSubQuestion09
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion08
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion08
+			navDown					BtnKNBSubQuestion10
+			scriptID				9
+		}
+		BtnKNBSubQuestion10
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion09
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion09
+			navDown					BtnKNBSubQuestion11
+			scriptID				10
+		}
+		BtnKNBSubQuestion11
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion10
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion10
+			navDown					BtnKNBSubQuestion12
+			scriptID				11
+		}
+		BtnKNBSubQuestion12
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion11
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion11
+			navDown					BtnKNBSubQuestion13
+			scriptID				12
+		}
+		BtnKNBSubQuestion13
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion12
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion12
+			navDown					BtnKNBSubQuestion14
+			scriptID				13
+		}
+		BtnKNBSubQuestion14
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion13
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion13
+			navDown					BtnKNBSubQuestion15
+			scriptID				14
+		}
+		BtnKNBSubQuestion15
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion14
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion14
+			navDown					BtnKNBSubQuestion16
+			scriptID				15
+		}
+		BtnKNBSubQuestion16
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion15
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion15
+			navDown					BtnKNBSubQuestion17
+			scriptID				16
+		}
+		BtnKNBSubQuestion17
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion16
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion16
+			navDown					BtnKNBSubQuestion18
+			scriptID				17
+		}
+		BtnKNBSubQuestion18
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion17
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion17
+			navDown					BtnKNBSubQuestion19
+			scriptID				18
+		}
+		BtnKNBSubQuestion19
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			pin_to_sibling			BtnKNBSubQuestion18
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnKNBSubQuestion18
+			//navDown					BtnKNBSubQuestion00
+			scriptID				19
+		}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Screen
+        {
+            ControlName		ImagePanel
+			wide					f0
+			tall					f0
+            visible			1
+            scaleImage		1
+            fillColor		"0 0 0 0"
+            drawColor		"0 0 0 0"
+        }
+
+		LabelDetails
+		{
+			ControlName				RuiPanel
+			xpos					775
+			ypos					160
+			tall					800
+//			tall					573
+			wide 					950
+			rui 					"ui/knowledgebase_panel.rpak"
+			wrap					1
+			visible					1
+			zpos					1
+		}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ButtonRowAnchor
+		{
+			ControlName				Label
+			labelText				""
+
+			xpos                    96
+			ypos                    160
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ButtonTooltip
+		{
+			ControlName				CNestedPanel
+			InheritProperties		ButtonTooltip
+		}
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

@@ -1,0 +1,37 @@
+#base "titan_atlas.set"
+"titan_atlas_burncard"
+{
+	enable_tracker_icon		1
+	aiSettingsFile			"npc_titan_auto_atlas_tracker" //mp only
+	sp_aiSettingsFile		"npc_titan_atlas_tracker" //sp only
+
+	titanCharacterName "emergencytitan" //Making it return "emergencytitan" for the cockpit sound alias. If this needs to be something else (like "Emergency Titan" ) we should re-examine
+
+	"global"
+	{
+		printname			"#NPC_TITAN_AUTO_ATLAS_TRACKER"
+
+		bodymodel			"models/titans/medium/titan_medium_ajax.mdl"
+		armsmodel			"models/weapons/arms/pov_titan_medium_atlas.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_medium_cockpit.mdl"
+
+		dodge  1
+		dodgePowerDrain		100
+		powerregenrate 12.5
+
+		//healthPerSegment 1600	[$mp]
+		//health			4800	[$mp]
+		//healthDoomed	2500	[$mp]
+
+		ClassMods
+		{
+			pas_mobility_dash_capacity
+			{
+				dodge  1
+				powerregenrate		6.25
+			    dodgePowerDrain		50
+			}
+		}
+	}
+}
+

@@ -1,0 +1,259 @@
+untyped
+
+global function ClRodeo_Init
+
+global function ServerCallback_RodeoScreenShake
+global function GetLocalPlayerFromSoul
+global function ClientCodeCallback_RodeoHitTimeChanged
+global function ShouldDrawRodeoVGUI
+global function DrawRodeoAlertIcons
+global function ClientCodeCallback_TitanRodeoedUpdated
+
+global function TitanCockpitDialog_RodeoAnnounce
+
+global function ServerCallback_UpdateRodeoRiderHud
+
+
+const RODEO_SMOOTHING_ENABLED = 0
+
+struct {
+	bool smoothing = false
+
+	var antiRodoRui
+
+	bool antiRodeoIsTitan = false
+	float antiRodeoServerTime
+	float antiRodeoStartTime
+	float antiRodeoStartDelay = 0.2
+	float antiRodeoDrainDuration = 1.0
+	float antiRodeoWindowStartFrac = 0.65
+	float antiRodeoWindowEndFrac = 0.72
+} file
+
+// TODO: why doesn't signaling on file work
+table rodeoDummy
+
+function ClRodeo_Init()
+{
+	RodeoShared_Init()
+
+	RegisterSignal( "ClientRodeoOver" )
+	RegisterSignal( "RodeoAlertStarted" )
+	RegisterSignal( "StopRodeoAlert" )
+	RegisterSignal( "StartRodeoAlert" )
+	RegisterSignal( "UpdateRodeoAlert" )
+	RegisterSignal( "client_rodeo_change" )
+
+	PrecacheMaterial( $"vgui/HUD/rodeo_icon_enemy" )
+	PrecacheMaterial( $"vgui/HUD/rodeo_icon_friendly" )
+
+	ClRodeoTitan_Init()
+
+	file.antiRodoRui = CreateCockpitRui( $"ui/rodeo_alert.rpak", 10 )
+}
+
+void function OnKillReplayStarted()
+{
+
+}
+
+
+void function OnAntiRodeoButtonPressed( var thing )
+{
+	float pressFrac = GraphCapped( Time(), file.antiRodeoStartTime + file.antiRodeoStartDelay, file.antiRodeoStartTime + file.antiRodeoStartDelay + file.antiRodeoDrainDuration, 0.0, 1.0 )
+	RuiSetGameTime( file.antiRodoRui, "pressTime", Time() )
+	RuiSetFloat( file.antiRodoRui, "pressFrac", pressFrac )
+
+	bool isEarly = Time() < file.antiRodeoStartTime + file.antiRodeoStartDelay + (file.antiRodeoWindowStartFrac * file.antiRodeoDrainDuration)
+	bool isLate = Time() > file.antiRodeoStartTime + file.antiRodeoStartDelay + (file.antiRodeoWindowEndFrac * file.antiRodeoDrainDuration)
+
+	if ( !file.antiRodeoIsTitan )
+		GetLocalClientPlayer().ClientCommand( "AntiRodeoPressedPilot " + file.antiRodeoServerTime + " " + (pressFrac - file.antiRodeoWindowStartFrac) )
+	else if ( !isEarly && !isLate )
+		GetLocalClientPlayer().ClientCommand( "AntiRodeoPressedTitan " + file.antiRodeoServerTime + " " + (pressFrac - file.antiRodeoWindowStartFrac) )
+
+	//if ( !file.antiRodeoIsTitan || (!isEarly && !isLate) )
+	//{
+	//	GetLocalClientPlayer().ClientCommand( "AntiRodeoPressed " + file.antiRodeoServerTime + " " + (pressFrac - file.antiRodeoWindowStartFrac) )
+	//}
+}
+
+
+void function ClientCodeCallback_RodeoHitTimeChanged( entity soul )
+{
+	//Defensive fix temporarily. Code probably shouldn't just pass us null. Remove when bug 36907 is resolved.
+	if ( !IsValid( soul ) )
+		return
+
+	entity titan = GetLocalPlayerFromSoul( soul )
+	if ( !IsAlive( titan ) )
+		return
+
+	if ( ShouldDrawRodeoVGUI( titan ) )
+	{
+		if ( IsValid( GetEnemyRodeoPilot( titan ) ) )
+			TitanCockpitDialog_RodeoAnnounce( titan )
+
+		thread DrawRodeoAlertIcons( soul )
+	}
+	else
+	{
+		soul.Signal( "StopRodeoAlert" )
+	}
+}
+
+function ServerCallback_RodeoScreenShake()
+{
+	Assert( IsClient() )
+	entity player = GetLocalViewPlayer()
+
+	local max = 3
+	for ( int i = 1; i <= max; i++ )
+	{
+		local direction = RandomVec( 1.0 )
+		local frac = i / max
+		frac *= 0.3
+		// hack! this command is horrible and does not give desired result.
+		ClientScreenShake( 15 * frac, 1.95 * frac, 0.40 * frac, direction )
+		//printt( "direction ", direction )
+		//		ClientScreenShake( 24, 4.95, 0.40, direction )
+	}
+	//local direction = RandomVec( 1.0 )
+	//	local direction = Vector(0,0,0)
+	////	ClientScreenShake( 12, 2.95, 0.40, direction )
+	//	ClientScreenShake( 24, 4.95, 0.40, direction )
+	//	ClientScreenShake( 80, 10.95, 0.50, direction )
+}
+
+entity function GetLocalPlayerFromSoul( entity soul )
+{
+	if ( !soul.HasValidTitan() )
+		return null
+
+	entity titan = soul.GetTitan()
+
+	if ( !IsValid( titan ) )
+		return null
+
+	if ( titan.IsNPC() )
+		return null
+
+	Assert( titan.IsPlayer(), titan + " should be a player" )
+
+	if ( titan != GetLocalViewPlayer() )
+		return null
+
+	return titan
+}
+
+function TitanCockpitDialog_RodeoAnnounce( entity titan )
+{
+	Assert( ShouldDrawRodeoVGUI( titan ) )
+
+	entity riderEnt = GetRodeoPilot( titan )
+	if ( !IsValid( riderEnt ) )
+		return
+
+	if ( riderEnt.GetTeam() == titan.GetTeam() )
+		TitanCockpit_PlayDialog( GetLocalViewPlayer(), "allyRodeoAttach" )
+	else
+		TitanCockpit_PlayDialog( GetLocalViewPlayer(), "rodeoWarning" )
+}
+
+//Show or hide the indication that you are rodeoing
+void function ClientCodeCallback_TitanRodeoedUpdated( entity player )
+{
+	entity localPlayer = GetLocalViewPlayer()
+	if ( player != localPlayer )
+		return
+
+	player.Signal( "UpdateRodeoAlert" )
+
+	if ( file.smoothing )
+	{
+		if ( !ShouldEnableRodeoSmoothing( player ) )
+		{
+			StopClientRodeo( player )
+			return
+		}
+	}
+	else
+	{
+		if ( ShouldEnableRodeoSmoothing( player ) )
+		{
+			thread StartClientRodeo( player )
+			return
+		}
+	}
+}
+
+function StopClientRodeo( player )
+{
+	player.Signal( "client_rodeo_change" )
+	player.Signal( "ClientRodeoOver" )
+	if ( RODEO_SMOOTHING_ENABLED )
+		player.Rodeo_StopCameraSmoothing( 0.25 )
+	file.smoothing = false
+}
+
+function StartClientRodeo( player )
+{
+	player.Signal( "client_rodeo_change" )
+	player.EndSignal( "client_rodeo_change" )
+
+	wait 1.5 // setting smoothing right when we parent makes a pop
+	if ( RODEO_SMOOTHING_ENABLED )
+		player.Rodeo_StartCameraSmoothing( 0.25 )
+	file.smoothing = true
+}
+
+function ShouldEnableRodeoSmoothing( player )
+{
+	local npc = player.GetTitanSoulBeingRodeoed()    //TODO: Remove/rename when code removes/renames GetTitanSoulBeingRodeoed()
+	if ( !npc )
+		return false
+
+	return npc.GetTeam() == player.GetTeam()
+}
+
+void function DrawRodeoAlertIcons( entity soul )
+{
+	entity player = GetLocalViewPlayer()
+
+	soul.EndSignal( "OnDestroy" )
+	soul.Signal( "StopRodeoAlert" )
+	soul.EndSignal( "StopRodeoAlert" )
+
+	OnThreadEnd(
+		function() : ( player )
+		{
+			player.Signal( "UpdateRodeoAlert" )
+		}
+	)
+
+	player.Signal( "UpdateRodeoAlert" )
+
+	WaitForever()
+}
+
+bool function ShouldDrawRodeoVGUI( entity player )
+{
+	if ( !IsAlive( player ) )
+		return false
+
+	if ( !player.IsTitan() )
+		return false
+
+	entity soul = player.GetTitanSoul()
+	entity titan = soul.GetTitan()
+	if ( IsValid( GetFriendlyRodeoPilot( titan ) ) )
+		return true
+
+	return soul.GetLastRodeoHitTime() > 0
+}
+
+void function ServerCallback_UpdateRodeoRiderHud()
+{
+	entity player = GetLocalViewPlayer()
+	player.Signal( "UpdateRodeoAlert" )
+}

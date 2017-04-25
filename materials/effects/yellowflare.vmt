@@ -1,0 +1,7 @@
+"Basic"
+{
+	"$basetexture" "effects/yellowflare"
+	"$additive" "1"
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+}

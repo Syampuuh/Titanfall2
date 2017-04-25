@@ -1,0 +1,16 @@
+"SpriteCard"
+{
+	"$basetexture" "particle/smoke/rocket_trail_soft_edge"
+	//"$additive" 	"1"
+	//$overbrightfactor 1
+	$translucent 	1
+	"$nocull"	1
+	$splinetype	1
+	$DEPTHBLEND 1
+	$depthblendscale 20
+
+	$vertexFogAmount 1
+}
+
+
+

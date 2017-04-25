@@ -1,0 +1,174 @@
+"titan_ctt"
+{
+	"global"
+	{
+		printname				"#CHASSIS_OGRE_NAME"
+		description				"#CHASSIS_OGRE_DESCRIPTION"
+
+		class				"titan"
+		weaponClass			"titan"
+		subclass			"ogre"
+		wallrun			0
+		automantle		0
+		healthpacks		1
+		jump			0
+		doublejump		0
+		dodge			1
+		fov				75
+		viewmodelfov	75
+		jumpheight		15
+		hardFallDist	40
+		viewkickFallDistMin			10
+		viewkickFallDistMax			120
+		viewkickFallDistMaxScale	6
+
+		viewPunchSpring		punch_titan_ogre
+
+		friction		2
+		speedScaleSide	0.85
+		speedScaleBack	0.6
+
+		magneticRange	190
+
+		aimAngleBackwardEnd		-120
+		aimAngleForwardStart	-40
+		aimAngleForwardEnd		40
+		aimAngleBackwardStart	120
+
+		dodgeDuration		0.27
+        dodgeAnimDuration	0.5
+        dodgeInterval		0.2
+        dodgeSpeed			610
+        dodgeStopSpeed		400
+        dodgeHeight			10
+        dodgeHeightMax		15
+        dodgePowerDrain		50
+        powerregenrate		16
+        dodgePowerDelay		0.3
+
+		health			10500
+		stepheight		80
+		stepTestDist	35
+
+		physicsMass				3000
+		physicsIgnoreBelowMass	500
+		physicsSoftBelowMass	1000
+		physicsPushMassLimit	5000
+		physicsPushSpeedLimit	200
+
+		damageImpulseScale		0.4
+		damageImpulseScaleAir	0.1
+		damageImpulseSpeedBoostLimit	930
+		damageImpulseSpeedLossLimit		930
+
+		bodymodel			"models/titans/heavy/titan_heavy_ogre.mdl"
+		armsmodel			"models/weapons/arms/ogrepov.mdl"
+		cockpitmodel		"models/weapons/arms/ogrepov_cockpit.mdl"
+
+		ArmorType		heavy
+		context_action_can_melee		1
+		context_action_can_use			1
+
+		deathcamDistanceMin			230
+		deathcamDistanceMax			500
+		deathcamDistanceGrowRate	130
+		deathcamExtraHeight			200
+		deathcamMinHeight			60
+
+		chasecamMaxOrbitDepth		120
+
+		impactSpeed 1000
+
+		sound_superJump			""
+		sound_superJumpFail		""
+		sound_dodge_1p			"Ogre.Dash"
+		sound_dodge_3p			"Ogre.Dash"
+		sound_dodgeFail			"Player.DodgeFail"
+		sound_groundImpact		"Titan.GroundImpact"
+		sound_wallrunImpact		""
+		sound_standToCrouch		"Titan_CrouchDown_1P"
+		sound_crouchToStand		"Titan_CrouchStand_1P"
+
+		sprinttiltMaxRoll		2
+
+		aiEnemy_priority		50
+
+		footstep_type           "ogre"
+
+		titan_footstep_damage_height_check_ratio 0.15
+
+		ClassMods
+		{
+			pas_dash_recharge
+			{
+		        powerregenrate	2.5++
+			}
+			sflag_bc_dash_capacity
+			{
+				dodgePowerDrain		50
+				powerregenrate		11
+			}
+		}
+	}
+	"crouch"
+	{
+		footstepInterval 500
+		footstepWalkSoundRadius	500
+		footstepRunSoundRadius	700
+		footstepMinSpeed	0
+
+		viewheight "0 0 125"
+		firstpersonproxyoffset "0 0 -125"
+		hull_min "-60 -60 0"
+		hull_max "60 60 140"
+
+		speed			112
+		acceleration	150
+		deceleration	375
+	}
+
+	"dead"
+	{
+		viewheight "0 0 90"
+	}
+
+	"observe"
+	{
+		hull_min "-10 -10 -10"
+		hull_max "10 10 10"
+	}
+
+	"stand"
+	{
+		footstepInterval 700
+		footstepIntervalSprint 415
+		footstepWalkSoundRadius	700
+		footstepRunSoundRadius	1000
+		footstepMinSpeed	0
+
+		viewheight "0 0 185"
+		firstpersonproxyoffset "0 0 -185"
+		hull_min "-60 -60 0"
+		hull_max "60 60 235"
+
+		speed				230
+		acceleration		380
+		deceleration		1200
+
+		sprintspeed			265
+		sprintAcceleration	100
+		sprintDeceleration	600
+
+		//speed				265
+		//acceleration		380
+		//deceleration		1200
+
+		//sprintspeed			400
+		//sprintAcceleration	100
+		//sprintDeceleration	600
+
+
+		lowSpeed			160
+		lowAcceleration		1400
+	}
+}

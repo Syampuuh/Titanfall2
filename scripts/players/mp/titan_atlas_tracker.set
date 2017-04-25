@@ -1,0 +1,49 @@
+#base "titan_atlas.set"
+"titan_atlas_tracker"
+{
+	enable_tracker_icon		1
+	aiSettingsFile			"npc_titan_auto_atlas_tracker" //mp only
+	sp_aiSettingsFile		"npc_titan_atlas_tracker" //sp only
+	at_aiSettingsFile		"npc_titan_atlas_tracker_bounty" //at only
+
+	titanCharacterName "tone"
+
+    hud_follow_icon     "rui/hud/earn_meter/ajax_follow"
+    hud_guard_icon      "rui/hud/earn_meter/ajax_guard"
+
+    core_building_icon  "rui/titan_loadout/core/titan_core_salvo"
+    core_ready_icon     "rui/titan_loadout/core/titan_core_salvo"
+
+    startup_sound		"tone_power_up"
+	execution_anim		"titan_atlas_tracker"
+
+    readymessage        "#HUD_TONE_READY"
+    readyhint           "#HUD_TONE_READY_HINT"
+
+	"global"
+	{
+		printname			"#NPC_TITAN_AUTO_ATLAS_TRACKER"
+
+		bodymodel			"models/titans/medium/titan_medium_wraith.mdl" [$mp]
+		bodymodel			"models/titans/medium/sp_titan_medium_wraith.mdl" [$sp]
+
+		armsmodel			"models/weapons/arms/pov_titan_medium_wraith.mdl"
+
+		dodge  1
+		dodgePowerDrain		100
+		powerregenrate 		16.66
+
+		    footstep_type			"tone"
+
+		ClassMods
+		{
+			pas_mobility_dash_capacity
+			{
+				dodge  1
+				powerregenrate		8.33
+			    dodgePowerDrain		50
+			}
+		}
+	}
+}
+

@@ -1,0 +1,92 @@
+#base "mp_weapon_defender.txt"
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_ARENA3"
+    "shortprintname"                            	"#WPN_ARENA3"
+	"description" 									"#WPN_ARENA3"
+	"longdesc"										"#WPN_ARENA3"
+	"weaponClass" 									"human"
+	"fire_mode"   									"semi-auto"
+	"weaponType"									"default"
+	"body_type"										"stalker"
+
+	"impulse_force"						        	"40000"
+
+	"ammo_clip_size"   								"25"
+
+	MP_BASE
+	{
+		"ammo_default_total"							"150"
+		"ammo_stockpile_max"							"150"
+        "ammo_no_remove_from_clip"                      "1"
+        "ammo_no_remove_from_stockpile"                 "1"
+
+		"damage_near_value"   							"150"
+		"damage_far_value"								"150"
+		"damage_near_value_titanarmor"					"1000"
+		"damage_far_value_titanarmor" 					"1000"
+		"damage_near_distance"							"200"
+		"damage_far_distance" 							"15000"
+	}
+
+	SP_BASE
+	{
+		"ammo_default_total"							"150"
+		"ammo_stockpile_max"							"150"
+        "ammo_no_remove_from_clip"                      "0"
+        "ammo_no_remove_from_stockpile"                 "0"
+
+		"damage_near_value"   							"150"
+		"damage_far_value"								"150"
+		"damage_near_value_titanarmor"					"1000"
+		"damage_far_value_titanarmor" 					"1000"
+		"damage_near_distance"							"200"
+		"damage_far_distance" 							"15000"
+	}
+
+	"charge_time" 									"0.01"
+	"charge_cooldown_time"							"0.66"
+	"charge_cooldown_delay"   						"0.0"
+	"charge_end_forces_fire"						"0"
+
+	"damage_headshot_scale"							"2.0"
+	"critical_hit"									"1"
+	"critical_hit_damage_scale"						"2.0"
+
+	"allow_headshots"								"1"
+
+	"fire_rate"   									"1.5"
+
+	"spread_stand_hip"								"0"
+	"spread_stand_hip_run"							"0"
+	"spread_stand_hip_sprint"                       "0"
+	"spread_crouch_hip"   							"0"
+	"spread_air_hip"  								"0"
+
+	"spread_stand_ads"								"0.0" //"0.5"
+	"spread_crouch_ads"   							"0.0" //"0.5"
+	"spread_air_ads"  								"0.0" //"0.5"
+
+	"spread_kick_on_fire_stand_hip"   				"0"
+	"spread_kick_on_fire_crouch_hip"  				"0"
+	"spread_kick_on_fire_air_hip" 					"0"
+
+	"spread_kick_on_fire_stand_ads"   				"0"
+	"spread_kick_on_fire_crouch_ads"  				"0"
+	"spread_kick_on_fire_air_ads" 					"0"
+
+	"spread_max_kick_stand_hip"   					"0"
+	"spread_max_kick_crouch_hip"  					"0"
+	"spread_max_kick_air_hip" 						"0"
+
+	"spread_max_kick_stand_ads"   					"0"
+	"spread_max_kick_crouch_ads"  					"0"
+	"spread_max_kick_air_ads" 						"0"
+
+	"spread_wallrunning"  							"0"
+	"spread_wallhanging"  							"0"
+
+	"spread_decay_delay"  							"0.1"
+	"spread_decay_rate"   							"40"
+}

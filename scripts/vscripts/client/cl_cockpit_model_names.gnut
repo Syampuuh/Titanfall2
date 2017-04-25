@@ -1,0 +1,23 @@
+
+global function IsTitanCockpitModelName
+global function IsHumanCockpitModelName
+
+
+const TitanModels = {
+	[ $"models/weapons/arms/atlaspov_cockpit2.mdl" ] = true,
+	[ $"models/weapons/arms/ogrepov_cockpit.mdl" ] = true,
+	[ $"models/weapons/arms/stryderpov_cockpit.mdl" ] = true,
+	[ $"models/weapons/arms/pov_titan_light_cockpit.mdl" ] = true,
+	[ $"models/weapons/arms/pov_titan_medium_cockpit.mdl" ] = true,
+	[ $"models/weapons/arms/pov_titan_heavy_cockpit.mdl" ] = true,
+}
+
+bool function IsTitanCockpitModelName( asset cockpitModelName )
+{
+	return cockpitModelName in TitanModels
+}
+
+bool function IsHumanCockpitModelName( asset cockpitModelName )
+{
+	return cockpitModelName == $"models/weapons/arms/human_pov_cockpit.mdl"
+}

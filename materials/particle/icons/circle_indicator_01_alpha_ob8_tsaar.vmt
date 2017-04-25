@@ -1,0 +1,18 @@
+"SpriteCard"
+{
+	$basetexture "particle\icons\circle_indicator_01"
+	$vertexcolor 1
+	$vertexalpha 1
+	$overbrightfactor 8
+	$translucent 	1
+	$nocull	1
+
+	$vertexFogAmount 1
+
+	$disableTSAA 0
+	$tsaaResponsive 1
+	//$tsaaFullyResponsive 1
+	$tsaaMotionAlphaThreshold 0.1
+	$tsaaMotionAlphaRamp 1
+
+}

@@ -1,0 +1,14 @@
+#base "titan_atlas.set"
+"titan_medium_wraith"
+{
+	"global"
+	{
+		printname				"Wraith"
+		description				"Needs description text"
+
+		bodymodel			"models/titans/medium/titan_medium_wraith.mdl"
+		armsmodel			"models/weapons/arms/pov_titan_medium_wraith.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_medium_cockpit.mdl"
+	}
+}
+

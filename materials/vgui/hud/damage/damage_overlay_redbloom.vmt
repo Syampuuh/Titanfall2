@@ -1,0 +1,40 @@
+// v1.01
+//This file is auto-generated from reVaMpT. Edit at your own risk.
+"UnlitTwoTexture"
+{
+	"$basetexture" "vgui\HUD\damage\damage_alpha"
+	"$texture2" "vgui\HUD\damage\damage_overlay_redbloom_col"
+	"$rotatespeed" .25
+	"$translucent" 1
+//	"$alphatest"			1
+//  "$vertexalpha" "1"
+	"$additive" "1"
+	"$vertexcolor" "1"
+	$dofEnable 0
+
+	"$surfaceprop" "default"
+
+	"Proxies"
+	{
+
+
+	//Start of freehand input from reVaMpT//
+
+//	"$detailscale" "8"
+
+		//rotate the basetexture using a variable
+		"Sine"
+		{
+			"sineMin" 0
+			"sineMax" -360
+			"sinePeriod" 60
+			"resultVar" "$rotatespeed"
+		}
+
+				"TextureTransform"
+		{
+			"rotateVar" "$rotatespeed"
+			"resultvar" "$basetexturetransform"
+		}
+	}
+}

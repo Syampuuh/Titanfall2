@@ -1,0 +1,220 @@
+resource/ui/menus/advocate_letter.menu
+{
+	menu
+	{
+		ControlName					Frame
+		xpos						0
+		ypos						0
+		zpos						3
+		wide						f0
+		tall						f0
+		autoResize					0
+		pinCorner					0
+		visible						1
+		enabled						1
+		PaintBackgroundType			0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+		BackgroundImage
+		{
+			ControlName				ImagePanel
+			classname				BackgroundImageClass
+			zpos					3
+			wide					f0
+			tall					f0
+			visible					1
+			scaleImage				1
+			image 					"vgui/black"
+		}
+
+		BlackBackground
+		{
+			ControlName				ImagePanel
+			classname				BlackBackground
+			xpos					0
+			ypos					0
+			zpos					9
+			wide					%100
+			tall					%100
+			visible					1
+			scaleImage				1
+			image					"vgui/HUD/white"
+			drawColor				"0 0 0 255"
+		}
+
+		RankPlayImage
+		{
+			ControlName				ImagePanel
+			xpos					c-128
+			ypos					c-450
+			zpos					200
+			wide					256
+			tall					256
+			visible					1
+			image 					"ui/scoreboard_secret_logo_noscan"
+			alpha 					200
+			visible					1
+			scaleImage				1
+		}
+
+
+		AdvocateLine0
+		{
+			ControlName				Label
+			classname 				AdvocateLine
+			xpos					0
+			ypos					c-169
+			zpos					10
+			tall					36
+			wide					f0
+			visible					1
+			font					Default_28
+			allcaps					1
+			textAlignment			center
+			fgcolor_override		"204 234 255 255"
+			labelText				"--"
+		}
+
+		AdvocateLine1
+		{
+			ControlName				Label
+			InheritProperties		AdvocateLine
+			zpos					10
+
+			pin_to_sibling			AdvocateLine0
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	BOTTOM
+		}
+
+		AdvocateLine2
+		{
+			ControlName				Label
+			InheritProperties		AdvocateLine
+			zpos					10
+
+			pin_to_sibling			AdvocateLine1
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	BOTTOM
+		}
+
+		AdvocateLine3
+		{
+			ControlName				Label
+			InheritProperties		AdvocateLine
+			zpos					10
+
+			pin_to_sibling			AdvocateLine2
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	BOTTOM
+		}
+
+		AdvocateLine4
+		{
+			// for future use of this menu, should make alt
+			// right-justified lines for byline, so its not
+			// hard coded to 5th line
+			ControlName				Label
+			classname 				AdvocateLine
+			xpos					225
+			zpos					10
+			tall					36
+			wide					f0
+			visible					1
+			font					Default_28
+			allcaps					1
+			fgcolor_override		"204 234 255 255"
+			labelText				"--"
+
+			pin_to_sibling			AdvocateLine3
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	BOTTOM
+			textAlignment			center
+		}
+
+		AdvocateLine5
+		{
+			ControlName				Label
+			InheritProperties		AdvocateLine
+			zpos					10
+
+			pin_to_sibling			AdvocateLine4
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	BOTTOM
+		}
+
+		AdvocateLine6
+		{
+			ControlName				Label
+			InheritProperties		AdvocateLine
+			zpos					10
+
+			pin_to_sibling			AdvocateLine5
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	BOTTOM
+		}
+
+		AdvocateLine7
+		{
+			ControlName				Label
+			InheritProperties		AdvocateLine
+			zpos					10
+
+			pin_to_sibling			AdvocateLine6
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	BOTTOM
+		}
+
+		NextGenIcon
+		{
+			ControlName				ImagePanel
+			classname				NextGenIcon
+			xpos					c-90
+			ypos					c+169
+			zpos					10
+			wide					180
+			tall					90
+			visible					1
+			scaleImage				1
+			image 					"ui/menu/generation_icons/generation_2"
+		}
+
+		AcceptButton
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		CenterButton
+			xpos					c-225
+			ypos					c+315
+			zpos					11
+			tabPosition 			1
+			labelText				"xxx"
+			textAlignment			center
+			navDown					DeclineButton
+		}
+
+		DeclineButton
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		CenterButton
+			xpos					c-225
+			ypos					c+360
+			zpos					11
+			tabPosition 			1
+			labelText				"xxx"
+			textAlignment			center
+			navUp 					AcceptButton
+		}
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					r119
+			zpos 					300
+			wide					f0
+			tall					36
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+		}
+	}
+}

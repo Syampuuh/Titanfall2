@@ -1,0 +1,8 @@
+#base "pilot_solo.set"
+"pilot_solo_training"
+{
+	"global"
+	{
+		armsmodel					"models/weapons/arms/pov_mlt_hero_jack_rifleman.mdl"
+	}
+}

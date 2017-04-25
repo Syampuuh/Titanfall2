@@ -1,0 +1,17 @@
+"Basic"
+{
+	"$basetexture" "models\holo_screens\wallscreen_scroll_text_col"
+	//"$selfillum" "1"
+	"$translucent" "1"
+	"$surfaceprop" "default"
+	
+	"Proxies"
+	{
+		"TextureScroll"
+		{
+			"textureScrollVar" "$basetexturetransform"
+			"textureScrollRate" .50
+			"textureScrollAngle" 90
+		}
+	}
+}

@@ -1,0 +1,305 @@
+untyped
+
+global function RiffSettings_Init
+
+global function Riff_TitanAvailability
+global function Riff_TitanExitEnabled
+global function Riff_SpawnAsTitan
+global function Riff_ShouldSpawnAsTitan
+global function Riff_AllowNPCs
+global function Riff_AILethality
+global function Riff_MinimapState
+global function Riff_OSPState
+global function Riff_AmmoLimit
+global function Riff_EliminationMode
+global function Riff_TitanQueueLimit
+global function Riff_BoostAvailability
+
+#if SERVER
+	global function Riff_IsTitanAvailable
+	global function Riff_ForceSetSpawnAsTitan
+	global function Riff_ForceTitanAvailability
+	global function Riff_ForceTitanExitEnabled
+	global function Riff_ForcePlayerBleedout
+	global function Riff_ForceBoostAvailability
+
+	global function Riff_ForceSetEliminationMode
+	global function Riff_ForceAllowNPCs
+#endif // SERVER
+
+global function Riff_FloorIsLava
+global function Riff_PlayerBleedout
+global function ShouldIntroSpawnAsTitan
+
+function RiffSettings_Init()
+{
+	#if SERVER
+		level.damageModifierForAiLethality <- {}
+
+		int spawnAsTitan = GetCurrentPlaylistVarInt( "riff_spawn_as_titan", eSpawnAsTitan.Default )
+		Assert( spawnAsTitan < eSpawnAsTitan.LastSpawnAsTitan )
+		level.nv.spawnAsTitan = spawnAsTitan
+
+		int titanAvailability = GetCurrentPlaylistVarInt( "riff_titan_availability", eTitanAvailability.Default )
+		Assert( titanAvailability < eTitanAvailability.LastTitanAvailability )
+		level.nv.titanAvailability = titanAvailability
+
+		int titanExitEnabled = GetCurrentPlaylistVarInt( "riff_titan_exit_enabled", eTitanExitEnabled.Default )
+		Assert( titanExitEnabled < eTitanExitEnabled.LastTitanExit )
+		level.nv.titanExitEnabled = titanExitEnabled
+
+		int allowNPCs = GetCurrentPlaylistVarInt( "riff_allow_npcs", eAllowNPCs.Default )
+		Assert( allowNPCs < eAllowNPCs.LastAllowNPCs )
+		level.nv.allowNPCs = allowNPCs
+
+		if ( IsMultiplayer() )
+		{
+			SetupDamageModifiersForAiLethality()
+
+			int aiLethality = GetCurrentPlaylistVarInt( "riff_ai_lethality", eAILethality.Low )
+			Assert( aiLethality < eAILethality.len() )
+			SetAILethality( aiLethality )
+		}
+
+		int minimapState = GetCurrentPlaylistVarInt( "riff_minimap_state", eMinimapState.Default )
+		Assert( minimapState < eMinimapState.LastMinimapState )
+		level.nv.minimapState = minimapState
+
+		int ospState = GetCurrentPlaylistVarInt( "riff_osp", eOSPState.Default )
+		Assert( ospState < eOSPState.LastOSPState )
+		level.nv.ospState = ospState
+
+		int ammoLimit = GetCurrentPlaylistVarInt( "riff_ammo_limit", eAmmoLimit.Default )
+		Assert( ammoLimit < eAmmoLimit.LastAmmoLimit )
+		level.nv.ammoLimit = ammoLimit
+
+		int eliminationMode = GetCurrentPlaylistVarInt( "riff_elimination", eEliminationMode.Default )
+		Assert( eliminationMode < eEliminationMode.LastEliminationMode )
+		level.nv.eliminationMode = eliminationMode
+
+		int floorIsLava = GetCurrentPlaylistVarInt( "riff_floorislava", eFloorIsLava.Default )
+		Assert( floorIsLava < eFloorIsLava.LastFloorIsLava )
+		level.nv.floorIsLava = floorIsLava
+
+		int playerBleedout = GetCurrentPlaylistVarInt( "riff_player_bleedout", ePlayerBleedout.Default )
+		Assert( playerBleedout < ePlayerBleedout.LastPlayerBleedout )
+		level.nv.playerBleedout = playerBleedout
+
+		int riff_titan_queue = GetCurrentPlaylistVarInt( "riff_titan_queue", 0 )
+		level.nv.titanQueueLimit = riff_titan_queue
+
+		int boostsAvailable = GetCurrentPlaylistVarInt( "boosts_enabled", eBoostAvailability.Default )
+		level.nv.boostAvailability = boostsAvailable
+
+		level.titanAvailabilityCheck <- function( player ) { return false }
+	#endif // SERVER
+}
+
+#if SERVER
+function SetupDamageModifiersForAiLethality()
+{
+	// emp grenade
+	AddDamageModifierForAiLethality( eDamageSourceId.mp_weapon_grenade_emp, eAILethality.High, "npc_spectre", 0.8 )
+	AddDamageModifierForAiLethality( eDamageSourceId.mp_weapon_grenade_emp, eAILethality.VeryHigh, "npc_spectre", 0.6 )
+
+	// arc cannon
+	AddDamageModifierForAiLethality( eDamageSourceId.mp_titanweapon_arc_cannon, eAILethality.High, "npc_spectre", 0.75 )
+	AddDamageModifierForAiLethality( eDamageSourceId.mp_titanweapon_arc_cannon, eAILethality.VeryHigh, "npc_spectre", 0.61 )
+}
+
+
+function Riff_ForceSetSpawnAsTitan( eState )
+{
+	Assert( eState < eSpawnAsTitan.LastSpawnAsTitan )
+	level.nv.spawnAsTitan = eState
+}
+
+function Riff_ForceTitanAvailability( eState )
+{
+	Assert( eState < eTitanAvailability.LastTitanAvailability )
+	level.nv.titanAvailability = eState
+}
+
+void function Riff_ForceBoostAvailability( eState )
+{
+	Assert( eState < eBoostAvailability.LastBoostAvailability )
+	level.nv.boostAvailability = eState
+}
+
+function Riff_ForceTitanExitEnabled( eState )
+{
+	Assert( eState < eTitanExitEnabled.LastTitanExit )
+	level.nv.titanExitEnabled = eState
+}
+
+function Riff_ForcePlayerBleedout( eState )
+{
+	Assert( eState < ePlayerBleedout.LastPlayerBleedout )
+	level.nv.playerBleedout = eState
+}
+
+function Riff_ForceSetEliminationMode( eState )
+{
+	Assert( eState < eEliminationMode.LastEliminationMode )
+	level.nv.eliminationMode = eState
+}
+
+function Riff_ForceAllowNPCs( eState )
+{
+	Assert( eState < eAllowNPCs.LastAllowNPCs )
+	level.nv.allowNPCs = eState
+}
+
+#endif // SERVER
+
+function Riff_AmmoLimit()
+{
+	return GetServerVar( "ammoLimit" )
+}
+
+function Riff_FloorIsLava()
+{
+	return GetServerVar( "floorIsLava" )
+}
+
+function Riff_PlayerBleedout()
+{
+	return GetServerVar( "playerBleedout" )
+}
+
+function Riff_OSPState()
+{
+	return GetServerVar( "ospState" )
+}
+
+function Riff_MinimapState()
+{
+	return GetServerVar( "minimapState" )
+}
+
+int function Riff_AILethality()
+{
+	return expect int( GetServerVar( "aiLethality" ) )
+}
+
+function Riff_SpawnAsTitan()
+{
+	return GetServerVar( "spawnAsTitan" )
+}
+
+function Riff_TitanAvailability()
+{
+	return GetServerVar( "titanAvailability" )
+}
+
+int function Riff_BoostAvailability()
+{
+	return expect int( GetServerVar( "boostAvailability" ) )
+}
+
+function Riff_TitanExitEnabled()
+{
+	return GetServerVar( "titanExitEnabled" )
+}
+
+int function Riff_TitanQueueLimit()
+{
+	return expect int( GetServerVar( "titanQueueLimit" ) )
+}
+
+function Riff_AllowNPCs()
+{
+	return GetServerVar( "allowNPCs" )
+}
+
+function Riff_EliminationMode()
+{
+	return GetServerVar( "eliminationMode" )
+}
+
+
+bool function Riff_ShouldSpawnAsTitan( player )
+{
+	switch ( GetServerVar( "spawnAsTitan" ) )
+	{
+		case eSpawnAsTitan.Always:
+			return true
+
+		case eSpawnAsTitan.Never:
+			return false
+	}
+
+	Assert( 0, "Should not query this when setting is default" )
+	unreachable
+}
+
+#if SERVER
+bool function Riff_IsTitanAvailable( entity player )
+{
+	switch ( Riff_TitanAvailability() )
+	{
+		case eTitanAvailability.Always:
+			return true
+
+		case eTitanAvailability.Custom:
+		case eTitanAvailability.Escalation:
+			return svGlobal.titanAvailabilityCheck( player )
+
+		case eTitanAvailability.Never:
+			return false
+
+		case eTitanAvailability.Once:
+			return (player.titansBuilt == 0)
+
+		default:
+			Assert( 0, "Should not query this when setting is default" )
+			unreachable
+	}
+
+	unreachable
+}
+#endif
+
+function ShouldIntroSpawnAsTitan()
+{
+	return ( Riff_SpawnAsTitan() == eSpawnAsTitan.Always || Riff_SpawnAsTitan() == eSpawnAsTitan.Once )
+}
+
+#if SERVER
+function AddDamageModifierForAiLethality( int id, int aiLethality, string classname, float multiplier )
+{
+	Assert( "damageModifierForAiLethality" in level )
+
+	if ( !( id in level.damageModifierForAiLethality ) )
+	{
+		level.damageModifierForAiLethality[id] <- {}
+		AddDamageCallbackSourceID( id, ModifyDamageForAiLethality )
+	}
+
+	if ( !( classname in level.damageModifierForAiLethality[id] ) )
+		level.damageModifierForAiLethality[id][classname] <- {}
+
+	Assert( !( aiLethality in level.damageModifierForAiLethality[id][classname] ) )
+	level.damageModifierForAiLethality[id][classname][aiLethality] <- multiplier
+}
+
+// use AddDamageModifierForAiLethality( damageSourceId, aiLethality, classname, multiplier ) to register damage multipliers
+void function ModifyDamageForAiLethality( entity ent, var damageInfo )
+{
+	int damageSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo )
+	Assert( damageSourceId in level.damageModifierForAiLethality )
+
+	int aiLethality = Riff_AILethality()
+	string classname = ent.GetClassName()
+
+	if ( !( classname in level.damageModifierForAiLethality[damageSourceId] ) )
+		return
+
+	if ( !( aiLethality in level.damageModifierForAiLethality[damageSourceId][classname] ) )
+		return
+
+	float multiplier = expect float( level.damageModifierForAiLethality[damageSourceId][classname][aiLethality] )
+	float newDamage = DamageInfo_GetDamage( damageInfo ) * multiplier
+	DamageInfo_SetDamage( damageInfo, newDamage )
+}
+#endif // SERVER

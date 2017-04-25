@@ -1,0 +1,79 @@
+
+global function ServerCallback_TitanXPAdded
+global function ServerCallback_TitanLeveledUp
+global function ServerCallback_TitanChallengeCompleted
+global function Display_TitanLeveledUp
+
+void function ServerCallback_TitanXPAdded( int titanClassIndex, int totalXp, int xpAdded )
+{
+	var rui = CreateCockpitRui( $"ui/titan_xp_added.rpak" )
+	RuiSetGameTime( rui, "startTime", Time() )
+
+	string titanClass = shTitanXP.titanClasses[ titanClassIndex ]
+	string titanSetFile = GetSetFileForTitanClassAndPrimeStatus( titanClass )
+	string titanName = Localize( expect string( GetPlayerSettingsFieldForClassName( titanSetFile, "printname" ) ) )
+
+	int numPips = TitanGetNumPipsForXP( titanClass, totalXp )
+	int filledPips = TitanGetFilledPipsForXP( titanClass, totalXp )
+
+	RuiSetFloat( rui, "numSegments", float( numPips ) )
+	RuiSetFloat( rui, "filledSegments", float( filledPips ) )
+
+	RuiSetString( rui, "text", Localize( titanName ) + " +" + string( xpAdded ) + " XP" )
+}
+
+void function ServerCallback_TitanLeveledUp( int titanClassIndex, int gen, int level, int unlockId1 = -1, int unlockId2 = -1, int unlockId3 = -1 )
+{
+	LevelUpData levelUpData
+	levelUpData.itemIndex = titanClassIndex
+	levelUpData.gen = gen
+	levelUpData.level = level
+
+	if ( GetConVarInt( "hud_setting_showLevelUp" ) == 0 )
+	{
+		EmitSoundOnEntity( GetLocalClientPlayer(), "HUD_level_up_titan_1P" )
+		return
+	}
+
+	string titanClass = shTitanXP.titanClasses[ titanClassIndex ]
+	string titanSetFile = GetSetFileForTitanClassAndPrimeStatus( titanClass )
+	string titanName = Localize( expect string( GetPlayerSettingsFieldForClassName( titanSetFile, "printname" ) ) )
+
+	AnnouncementMessageSweep( GetLocalClientPlayer(), Localize( "#TITAN_LEVEL_UP_N", titanName ), TitanGetDisplayGenAndLevel( gen, level ), <0.99, 0.59, 0.0>, $"", "HUD_level_up_titan_1P" )
+
+	// bounce this message though the announcement system so that it displays without overlapping, etc...
+	//LevelUpMessage( ANNOUNCEMENT_STYLE_TITAN_LEVEL, levelUpData )
+}
+
+void function ServerCallback_TitanChallengeCompleted( int titanClassIndex, int refGuid, int parentRefGuid )
+{
+	if ( GetConVarInt( "hud_setting_showLevelUp" ) == 0 )
+	{
+		EmitSoundOnEntity( GetLocalClientPlayer(), "HUD_level_up_titan_1P" )
+		return
+	}
+
+	string titanClass = shTitanXP.titanClasses[ titanClassIndex ]
+	string titanSetFile = GetSetFileForTitanClassAndPrimeStatus( titanClass )
+	string titanName = Localize( expect string( GetPlayerSettingsFieldForClassName( titanSetFile, "printname" ) ) )
+
+	ItemDisplayData titanDisplayData = GetItemDisplayData( titanClass )
+	ItemDisplayData itemDisplayData = GetItemDisplayDataFromGuid( refGuid, parentRefGuid )
+	AnnouncementMessageSweep( GetLocalClientPlayer(), Localize( "#CHALLENGE_COMPLETED_TITAN", titanName ), GetStatUnlockReq( itemDisplayData.ref, itemDisplayData.parentRef ), TEAM_COLOR_PARTY / 255.0, $"", "HUD_level_up_titan_1P" )
+}
+
+var function Display_TitanLeveledUp( int titanClassIndex, int gen, int level )
+{
+	var rui = CreateCockpitRui( $"ui/titan_level_up.rpak", MINIMAP_Z_BASE + 200 )
+	RuiSetGameTime( rui, "startTime", Time() )
+
+	string titanClass = shTitanXP.titanClasses[ titanClassIndex ]
+	string titanSetFile = GetSetFileForTitanClassAndPrimeStatus( titanClass )
+	string titanName = Localize( expect string( GetPlayerSettingsFieldForClassName( titanSetFile, "printname" ) ) )
+
+	RuiSetString( rui, "levelupText", titanName + " leveled up! " + TitanGetDisplayGenAndLevel( gen, level ) )
+
+	EmitSoundOnEntity( GetLocalClientPlayer(), "HUD_level_up_titan_1P" )
+
+	return rui
+}

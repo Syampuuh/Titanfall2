@@ -1,0 +1,57 @@
+WeaponData
+{
+	"printname"										"#TITANCORE_DASH"
+	"shortprintname"								"#TITANCORE_DASH_SHORT"
+	"description"									"<description needed>"
+	"longdesc"										""
+
+	"menu_icon"										"ui/temp"
+	"hud_icon"										"ui/temp"
+
+	"enable_highlight_networking_on_creation"		"1"
+
+	// General
+	"weaponClass" 									"titan"
+	"weaponType"									"titan_core"
+	"fire_mode"   									"offhand_instant"
+
+	"OnWeaponPrimaryAttack"							"OnAbilityStart_Dash_Core"
+	"OnWeaponChargeBegin"							"OnCoreCharge_Dash_Core"
+	"OnWeaponChargeEnd"								"OnCoreChargeEnd_Dash_Core"
+
+	"damage_type" 									"none"
+	"fire_rate"										"0.0"	// prevent triggering a fire animation event on client
+
+	// Ammo
+	"ammo_stockpile_max"							"200"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+
+	"damage_protection"								"0"
+
+	// Behavior
+	"core_build_time"								"120"
+	"chargeup_time"									"1.0"
+	"core_duration"									"12.0" // Needs to match charge_cooldown_delay
+	// "passive"									"PAS_SHIFT_CORE"
+
+	"readymessage"									"#HUD_CORE_ONLINE_STRYDER"
+	"readyhint"										"#HUD_CORE_ONLINE_STRYDER_HINT"
+
+	// Charge settings
+	"charge_time" 									"1.0" // chargeup time
+	"charge_cooldown_time"							"15.0"
+	"charge_cooldown_delay"   						"12.0"
+	"charge_end_forces_fire"  						"1"
+	"charge_require_input"							"0"
+
+	"npc_rest_time_between_bursts_min"				"30"
+	"npc_rest_time_between_bursts_max"				"30"
+
+	"dialog_core_online"							"CORE_ONLINE_DASH"
+	"dialog_core_activated"							"CORE_ACTIVATED_DASH"
+	"dialog_core_fired"								"CORE_DESC_DASH"
+	"dialog_core_expiring"							"CORE_EXPIRING_DASH"
+	"dialog_core_offline"							"CORE_OFFLINE_DASH"
+	"dialog_core_denied"							"CORE_DENIED_DASH"
+}

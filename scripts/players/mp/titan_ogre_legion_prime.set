@@ -1,0 +1,21 @@
+#base "titan_ogre_minigun.set"
+"titan_ogre_legion_prime"
+{
+	 isPrime				1
+
+	 execution_anim		"titan_ogre_legion_prime"
+
+	 aiSettingsFile			"npc_titan_auto_ogre_legion_prime" //mp only
+	 at_aiSettingsFile		"npc_titan_ogre_scorch_legion_bounty" //at only
+
+	"global"
+	{
+		printname			"#NPC_TITAN_AUTO_OGRE_MINIGUN"
+
+		bodymodel			"models/titans/heavy/titan_heavy_legion_prime.mdl" [$mp]
+		bodymodel			"models/titans/heavy/sp_titan_heavy_deadbolt.mdl" [$sp]
+
+		armsmodel			"models/weapons/arms/pov_titan_heavy_legion_prime.mdl" [$mp]
+		armsmodel			"models/weapons/arms/pov_titan_heavy_deadbolt.mdl" [$sp]
+	}
+}

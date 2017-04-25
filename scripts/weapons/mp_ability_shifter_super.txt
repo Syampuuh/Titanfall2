@@ -1,0 +1,166 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_SHIFTER"
+	"shortprintname"   								"#WPN_SHIFTER"
+	"description" 									"#WPN_SHIFTER_DESC"
+	"longdesc"										"#WPN_SHIFTER_LONGDESC"
+
+	"menu_icon"										"rui/pilot_loadout/tactical/pilot_tactical_phase_shift"
+	"hud_icon"										"rui/pilot_loadout/tactical/pilot_tactical_phase_shift"
+
+	"weaponClass" 									"human"
+	"fire_mode"   									"offhand"
+	"offhand_default_inventory_slot"				"1"
+	//"offhand_interupts_weapon_anims"				"1"
+	"offhand_hold_enabled"							"0"
+
+	"Offhand_toss"									"1"
+	"toss_pullout_time"								"0.1"
+	"toss_time"										"0.8"
+	"toss_overhead_time"							"0.1"
+
+	"instant_swap_to"								"1"
+
+	"OnWeaponTossReleaseAnimEvent"					"OnWeaponPrimaryAttack_shifter_super"
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_shifter_super"
+
+	// Models
+	"viewmodel"   									"models/weapons/empty_handed/ptpov_phaseshift_device.mdl"
+	"playermodel"									"models/weapons/empty_handed/w_empty_handed_human.mdl"
+	"leveled_pickup"								"1"
+	"dev_menu_type"									"offhand" // fire_mode isn't readable from script
+
+	"offhand_keep_primary_in_hand"					"1"
+
+	// Sounds
+	"sound_dryfire"									"coop_sentrygun_deploymentdeniedbeep"
+	"battle_chatter_event"							"bc_pPhase"
+
+	"sound_weapon_ready"							"HUD_kit_meter_replenished_1P"
+
+	"zoom_effects"									"0"
+
+	// Regen Ammo
+	"regen_ammo_refill_start_delay"					"0.0"
+
+	"ammo_suck_behavior"							"offhand_weapons"
+
+	// Damage
+	"damage_type" 									"none"
+	"explosion_damage_heavy_armor"					"0"
+	"damage_near_distance"							"0"
+	"damage_far_distance" 							"0"
+	"damage_near_value"   							"0"
+	"damage_far_value"								"0"
+
+	// Rumble
+	"rumble"  										"-1"
+
+	// Behavior
+	"fire_rate"   									"15.0"
+	"fire_anim_rate"								"1.0"
+	"holster_time"									"0.1"
+	"deploy_time" 									"0.1"
+	"lower_time"  									"0.1"
+	"raise_time"  									"0.1"
+	"allow_empty_fire"								"0"
+	"reload_enabled"								"0"
+	"empty_reload_only"   							"0"
+	"allow_empty_click"   							"0"
+	"trigger_snipercam"   							"0"
+	"allow_headshots" 								"0"
+	"breaks_cloak"									"0"
+	"primary_fire_does_not_block_sprint"			"1"
+	"aimassist_disable_hipfire"						"1"
+	"aimassist_disable_ads"							"1"
+	"cooldown_type"									"ammo_instant"
+
+	MP_BASE
+	{
+		"ammo_clip_size"   								"200"
+		"ammo_default_total"							"200"
+		"ammo_display"									"bar"
+		"ammo_min_to_fire"								"100"
+		"ammo_per_shot"									"100"
+		"ammo_stockpile_max"							"200"
+		"fire_duration"									"1"
+		"regen_ammo_refill_rate"						"100"
+
+		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+	}
+
+	SP_BASE
+	{
+		"ammo_clip_size"   								"200"
+		"ammo_default_total"							"200"
+		"ammo_display"									"bar"
+		"ammo_min_to_fire"								"200"
+		"ammo_per_shot"									"200"
+		"ammo_stockpile_max"							"200"
+		"fire_duration"									"3"
+		"regen_ammo_refill_rate"						"10"
+
+		"enable_highlight_networking_on_creation"		"1"
+	}
+
+	// Crosshair
+
+	Mods
+	{
+		pas_power_cell
+		{
+			"regen_ammo_refill_rate"	"*1.35"
+		}
+
+		dev_mod_low_recharge
+		{
+			"fire_rate"   									"*20"
+		}
+
+		long_last_shifter
+		{
+			"fire_duration"	"*2.0"
+		}
+		short_shift
+		{
+			"fire_duration"	"*0.375"
+		}
+		sp_shift
+		{
+			"fire_duration"	"*1.0"
+			"fire_rate"   	"0.05"
+		}
+		spree_lvl1_shifter
+		{
+		}
+		spree_lvl2_shifter
+		{
+		}
+		spree_lvl3_shifter
+		{
+			"fire_rate"										"*2.25"
+		}
+	}
+
+	"ordnance_crosshair_always_on_start_index"	"0"
+
+	RUI_CrosshairData
+	{
+		DefaultArgs
+		{
+			crosshairMovementX          crosshair_movement_x
+		    crosshairMovementY          crosshair_movement_y
+		}
+
+		Crosshair_2
+		{
+			"ui"						"ui/crosshair_tactical"
+			Args
+			{
+			    ammoFrac                "progress_weapon_clip_ammo_frac"
+			    dryfireTime             "weapon_latest_dryfire_time"
+			}
+		}
+	}
+}

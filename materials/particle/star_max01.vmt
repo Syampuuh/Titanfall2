@@ -1,0 +1,13 @@
+"SpriteCard"
+{
+	"$basetexture" "effects/yellowflare"
+	"$additive" "1"
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+	$depthblend 0
+
+	$maxsize 0.01
+	$minsize 0.001
+	
+	$vertexFogAmount 1
+}

@@ -1,0 +1,28 @@
+// v1.01
+//This file is auto-generated from reVaMpT. Edit at your own risk.
+"Basic"
+{
+	"$basetexture" "vgui\HUD\sram\sram_targeting_outer_ring"
+	"$vertexcolor" "1"
+	"$vertcoloristint" "1"
+	"$vertexalpha" "1"
+	"$additive" "1"
+
+	"$basetexturerot" "0"
+
+	"Proxies"
+	{
+		"LinearRamp"
+		{
+			"rate" "325"
+			"initialValue" "0"
+			"resultvar"	"$basetexturerot"
+		}
+	
+		"TextureTransform"
+		{
+			"rotateVar" "$basetexturerot"
+			"resultvar" "$basetexturetransform"
+		}
+	}	
+}

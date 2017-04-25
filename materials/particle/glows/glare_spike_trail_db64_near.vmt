@@ -1,0 +1,17 @@
+"SpriteCard"
+{
+	// Original shader: AddTexture
+	"$basetexture" "particle/glows/glare_spike"
+	$vertexcolor 1
+	$vertexalpha 1
+	$additive 1
+	$splinetype 2
+
+	$depthblend 1
+	$depthblendscale 64
+
+	$startfadesize .5
+	$endfadesize 1
+
+	$vertexFogAmount 1
+}

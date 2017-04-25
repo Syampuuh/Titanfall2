@@ -1,0 +1,127 @@
+#base "pilot_base.set"
+
+"pilot_spectre"
+{
+	"global"
+	{
+		weaponClass			"human"
+		class				"pilot"
+		subclass			"wallrun"
+		wallrun			1
+		automantle		1
+		healthpacks		1
+		jump			1
+		doublejump		1
+		fov				70
+		viewmodelfov	70
+		jumpheight		80
+		health			200
+		stepheight		18
+		viewkickFallDistMin			10
+		viewkickFallDistMax			70
+		viewkickFallDistMaxScale	12
+		ziplineSpeed				600
+
+		viewPunchSpring		punch_pilot
+		impactSpeed					380
+
+		// No model
+			/// turned off because spectre model no longer has human anims
+			/// we will need to make a human with spectre skin or MP anims
+			/// for spectre if we want to continue to support this burncard.
+
+		ArmorType		normal
+		context_action_can_melee	1
+		leech_range					64
+		context_action_can_use		1
+
+		aimAngleBackwardEnd		-120
+		aimAngleForwardStart	-60
+		aimAngleForwardEnd		60
+		aimAngleBackwardStart	120
+
+		cockpitSwayTurnAngleFactor		-0.6
+		cockpitSwayTurnAngleRollFactor	0.2
+		cockpitSwayTurnOriginFactor		-0.15
+		cockpitSwayMoveAngleFactor		-0.4
+		cockpitSwayMoveAngleRollFactor	-0.2
+		cockpitSwayMoveOriginFactor		-0.15
+		cockpitSwayGain					5.0
+
+		sound_superJump			"Player.SuperJump"
+		sound_superJumpFail		"Player.SuperJumpFail"
+		sound_dodge_1p			""
+		sound_dodge_3p			""
+		sound_dodgeFail			""
+		sound_groundImpact		"Pilot.GroundImpact"
+		sound_wallrunImpact		"wallrun_impact"
+		sound_wallrunSlip		""
+		sound_wallrunFall		""
+		sound_standToCrouch		"Spectre_CrouchDown_1P"
+		sound_crouchToStand		"Spectre_CrouchStand_1P"
+		sound_wallHangStart		"Default.WallCling_Attach"
+		sound_wallHangComplete	"Pilot_CrouchStand_1P"
+		sound_wallHangSlip		"Spectre_CrouchDown_1P"
+		sound_wallHangFall		"Default.WallCling_Detach"
+
+		footstep_type           "robot"
+
+		sprinttiltMaxRoll		2
+
+		ClassMods
+		{
+			pas_stealth_movement
+			{
+			}
+
+			pas_wall_runner
+			{
+				wallrun_timeLimit		"2.5++"
+				wallrun_hangTimeLimit	"21++"
+			}
+		}
+	}
+	"crouch"
+	{
+		footstepWalkSoundRadius	32
+		footstepRunSoundRadius	64
+		footstepMinSpeed		30
+		footstepInterval 		450
+
+		viewheight "0 0 38"
+		firstpersonproxyoffset "0 0 -38"
+		hull_min "-16 -16 0"
+		hull_max "16 16 47"
+
+		speed					80
+	}
+
+	"dead"
+	{
+		viewheight "0 0 14"
+	}
+
+	"observe"
+	{
+		hull_min "-10 -10 -10"
+		hull_max "10 10 10"
+	}
+
+	"stand"
+	{
+		footstepWalkSoundRadius	32
+		footstepRunSoundRadius	256
+		footstepMinSpeed		80
+		footstepInterval		400
+		footstepIntervalSprint	275
+
+		viewheight "0 0 60"
+		firstpersonproxyoffset "0 0 -60"
+		hull_min "-16 -16 0"
+		hull_max "16 16 72"
+
+		speed			162.5
+		sprintspeed		243
+	}
+}
+

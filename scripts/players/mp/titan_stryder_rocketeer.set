@@ -1,0 +1,38 @@
+#base "titan_stryder.set"
+"titan_stryder_rocketeer"
+{
+	aiSettingsFile			"npc_titan_auto_atlas_rocketeer" //mp only
+	sp_aiSettingsFile		"npc_titan_stryder_rocketeer" //sp only
+
+	titanCharacterName "brute4"
+
+    hud_follow_icon     "rui/hud/earn_meter/stryder_follow"
+    hud_guard_icon      "rui/hud/earn_meter/stryder_guard"
+
+    core_building_icon  "rui/titan_loadout/core/titan_core_flight"
+    core_ready_icon     "rui/titan_loadout/core/titan_core_flight"
+
+	"global"
+	{
+		printname			"#NPC_TITAN_AUTO_STRYDER_ROCKET"
+
+		bodymodel			"models/titans/light/titan_light_raptor.mdl" [$mp]
+		bodymodel			"models/titans/light/sp_titan_light_raptor.mdl"	[$sp]
+		armsmodel			"models/weapons/arms/pov_titan_light_raptor.mdl"
+
+		dodge  2
+		powerregenrate		6.25
+	    dodgePowerDrain		50
+
+		ClassMods
+		{
+			pas_mobility_dash_capacity
+			{
+				dodge  3
+				powerregenrate		6.25
+			    dodgePowerDrain		50
+			}
+		}
+	}
+}
+

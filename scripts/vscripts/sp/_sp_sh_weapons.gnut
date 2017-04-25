@@ -1,0 +1,226 @@
+global function SPWeapons_GetWeaponID
+global function SPWeapons_GetWeaponFromID
+global function GetAllSPWeapons
+global function PrecacheSPWeapons
+global function SpShWeaponsInit
+global function GetTitanLoadoutIndex
+global function GetTitanWeaponFromIndex
+global function GetSPTitanLoadoutForIndex_PrimaryWeapon
+global function GetSPTitanLoadoutForIndex_MenuItem
+global function GetSPTitanLoadoutForIndex_Title
+global function GetSPTitanLoadoutForIndex_SubTitle
+global function GetSPTitanLoadoutForIndex_MenuDescription
+global function GetSPTitanLoadoutForIndex_FlavorText
+global function GetSPTitanLoadoutForIndex_WeaponImage
+global function GetSPTitanLoadoutIndexForWeapon
+global function GetSPTitanLoadoutHasEverBeenSelected
+global function SetSPTitanLoadoutHasEverBeenSelected
+global function GetSPTitanLoadoutMax
+global function GetSPTitanLoadoutsUnlocked
+
+struct SPTitanLoadoutDef
+{
+	string menuItem
+	string title
+	string subTitle
+	string longDesc
+	string flavorText
+	string weapon
+	asset weaponImage
+}
+
+struct
+{
+	array<SPTitanLoadoutDef> spTitanLoadoutDefs
+	table<string,int> titanWeaponToIndex
+} file
+
+void function SpShWeaponsInit()
+{
+	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
+	int numRows = GetDatatableRowCount( dataTable )
+
+	string searchString = "titanLoadoutInSP"
+	int spColumn = GetDataTableColumnByName( dataTable, searchString )
+	int menuItemColumn = GetDataTableColumnByName( dataTable, "menuItem" )
+	Assert( menuItemColumn > -1 )
+	int menuTitleColumn = GetDataTableColumnByName( dataTable, "menuTitle" )
+	Assert( menuTitleColumn > -1 )
+	int menuSubTitleColumn = GetDataTableColumnByName( dataTable, "menuSubTitle" )
+	Assert( menuSubTitleColumn > -1 )
+	int menuLongDescColumn = GetDataTableColumnByName( dataTable, "menuLongDesc" )
+	Assert( menuLongDescColumn > -1 )
+	int menuFlavorTextColumn = GetDataTableColumnByName( dataTable, "menuFlavorText" )
+	Assert( menuFlavorTextColumn > -1 )
+	int menuWeaponImage = GetDataTableColumnByName( dataTable, "weaponImage" )
+	Assert( menuWeaponImage > -1 )
+
+	for ( int r = 0; r < numRows; r++ )
+	{
+		if ( !GetDataTableBool( dataTable, r, spColumn ) )
+			continue
+
+		TitanLoadoutDef loadout = GetTitanLoadoutForRow( dataTable, r )
+		string weapon = loadout.primary
+
+		SPTitanLoadoutDef def
+		def.weapon = weapon
+		def.menuItem = GetDataTableString( dataTable, r, menuItemColumn )
+		def.title = GetDataTableString( dataTable, r, menuTitleColumn )
+		def.subTitle = GetDataTableString( dataTable, r, menuSubTitleColumn )
+		def.longDesc = GetDataTableString( dataTable, r, menuLongDescColumn )
+		def.flavorText = GetDataTableString( dataTable, r, menuFlavorTextColumn )
+		def.weaponImage = GetDataTableAsset( dataTable, r, menuWeaponImage )
+		file.titanWeaponToIndex[ weapon ] <- file.spTitanLoadoutDefs.len()
+		file.spTitanLoadoutDefs.append( def )
+	}
+}
+
+int function GetSPTitanLoadoutMax()
+{
+	return file.spTitanLoadoutDefs.len()
+}
+
+int function GetTitanLoadoutIndex( string weaponName )
+{
+	Assert( weaponName in file.titanWeaponToIndex, weaponName + " is not a legal titan weapon loadout" )
+	return file.titanWeaponToIndex[ weaponName ]
+}
+
+string function GetTitanWeaponFromIndex( int index )
+{
+	return file.spTitanLoadoutDefs[ index ].weapon
+}
+
+void function PrecacheSPWeapons()
+{
+	#if SERVER
+	foreach ( weapon in GetAllSPWeapons() )
+	{
+//		printt( "SERVER PRECACHING " + weapon )
+		PrecacheWeapon( weapon )
+	}
+	#endif
+
+	#if CLIENT
+	foreach ( weapon in GetAllSPWeapons() )
+	{
+//		printt( "CLIENT PRECACHING " + weapon )
+		PrecacheWeapon( weapon )
+	}
+	#endif
+}
+
+array<string> function GetAllSPWeapons()
+{
+	var dataTable = GetDataTable( $"datatable/sp_weapons.rpak" )
+	array<string> spWeapons
+
+	int column = GetDataTableColumnByName( dataTable, "itemName" )
+	for ( int row = 0; row < GetDatatableRowCount( dataTable ); row++ )
+	{
+		string weapon = GetDataTableString( dataTable, row, column )
+		spWeapons.append( weapon )
+	}
+
+	return spWeapons
+}
+
+///////////////////////
+
+string function GetSPTitanLoadoutForIndex_PrimaryWeapon( int index )
+{
+	return file.spTitanLoadoutDefs[index].weapon;
+}
+
+string function GetSPTitanLoadoutForIndex_MenuItem( int index )
+{
+	return file.spTitanLoadoutDefs[index].menuItem;
+}
+
+string function GetSPTitanLoadoutForIndex_Title( int index )
+{
+	return file.spTitanLoadoutDefs[index].title;
+}
+
+string function GetSPTitanLoadoutForIndex_SubTitle( int index )
+{
+	return file.spTitanLoadoutDefs[index].subTitle;
+}
+
+string function GetSPTitanLoadoutForIndex_MenuDescription( int index )
+{
+	return file.spTitanLoadoutDefs[index].longDesc;
+}
+
+string function GetSPTitanLoadoutForIndex_FlavorText( int index )
+{
+	return file.spTitanLoadoutDefs[index].flavorText;
+}
+
+asset function GetSPTitanLoadoutForIndex_WeaponImage( int index )
+{
+	return file.spTitanLoadoutDefs[index].weaponImage;
+}
+
+int function GetSPTitanLoadoutIndexForWeapon( string weaponName )
+{
+	for ( int idx = 0; idx < GetSPTitanLoadoutMax(); idx++ )
+	{
+		if ( GetSPTitanLoadoutForIndex_PrimaryWeapon( idx ) == weaponName )
+			return idx
+	}
+
+	return -1
+}
+
+bool function GetSPTitanLoadoutHasEverBeenSelected( int loadoutIndex )
+{
+	int selectedBits = GetConVarInt( "sp_titanLoadoutsSelected" )
+	if ( selectedBits & (1 << loadoutIndex) )
+		return true
+
+	return false
+}
+
+void function SetSPTitanLoadoutHasEverBeenSelected( int loadoutIndex )
+{
+	int selectedBits = GetConVarInt( "sp_titanLoadoutsSelected" )
+	selectedBits = (selectedBits | (1 << loadoutIndex))
+	SetConVarInt( "sp_titanLoadoutsSelected", selectedBits )
+}
+
+///////////////////////
+
+int function SPWeapons_GetWeaponID( string weaponName )
+{
+	var dataTable = GetDataTable( $"datatable/sp_weapons.rpak" )
+	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "itemName" ), weaponName )
+	return row
+}
+
+string function SPWeapons_GetWeaponFromID( int itemNum )
+{
+	var dataTable = GetDataTable( $"datatable/sp_weapons.rpak" )
+
+	Assert( itemNum < GetDatatableRowCount( dataTable ) )
+
+	string itemName = GetDataTableString( dataTable, itemNum, GetDataTableColumnByName( dataTable, "itemName" ) )
+	return itemName
+}
+
+array<string> function GetSPTitanLoadoutsUnlocked()
+{
+	array<string> unlocked
+
+	for ( int idx = 0; idx < GetSPTitanLoadoutMax(); idx++ )
+	{
+		if ( IsBTLoadoutUnlocked( idx ) )
+		{
+			string name = GetTitanWeaponFromIndex( idx )
+			unlocked.append( name )
+		}
+	}
+
+	return unlocked
+}

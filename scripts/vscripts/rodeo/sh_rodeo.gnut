@@ -1,0 +1,469 @@
+// Shared Client & Server
+// entity.GetFirstRodeoRider(). Returns the first rodeo rider found or null if there are none.
+// entity.GetRodeoRider( int ). Returns rodeo rider (if there is one) at the given slot.
+// entity.GetNumRodeoSlots(). Returns number of rodeo slots available on this entity.
+
+// Server only
+// entity.SetRodeoRider( int, entity ). Sets the rodeo rider at the given slot.
+// entity.SetNumRodeoSlots( int ). Sets the maximum number of rodeo slots available on this entity.
+
+global function RodeoShared_Init
+
+global function PlayerIsRodeoingTitan
+global function GetRodeoDirection
+global function GetRodeoDirectionFromAbove
+global function GetRodeoSpotOrigin
+global function GetRodeoSpotAngles
+global function RiderIsFallingOntoRodeoTarget
+global function RodeoDistanceIsTooFar
+global function CodeCallback_IsValidRodeoTarget
+global function CodeCallback_OnRodeoAttach
+global function GetRodeoSlotOfRider
+global function GetAvailableRodeoSlot
+global function GetRodeoPilot
+global function GetFriendlyRodeoPilot
+global function GetEnemyRodeoPilot
+global function CodeCallback_TitanRiderEntVarChanged
+
+//-----------------------------------------------------------------------------
+//  _rodeo_shared.nut
+//
+//  Contains functions used by all types of rodeo (player, npc, etc.)
+//
+//  Terminology:
+//      rider = entity jumping onto another entity
+//      rodeoTarget = entity being jumped on
+//      attachPoint = the attachment in the rodeoTarget model to attach rider to
+//-----------------------------------------------------------------------------
+
+global enum eRodeoDirection
+{
+	DUMMY
+	FRONT_LOWER
+	FRONT_UPPER
+	REAR_LOWER
+	REAR_MIDDLE
+	REAR_UPPER
+	LEFT
+	RIGHT
+}
+
+struct
+{
+	table< entity, bool > holdToRodeoState
+} file
+
+global const RODEO_DRAIN_TIME = 10.0
+
+void function RodeoShared_Init()
+{
+	//Most of these are just setting up the animations
+	RodeoSharedTitan_Init()
+
+	#if HAS_RODEO_HOLD_OPTION
+		#if SERVER
+			AddClientCommandCallback( "HoldToRodeo", ClientCommand_HoldToRodeo )
+			AddCallback_OnClientConnected( Rodeo_OnClientConnected )
+		#else
+			AddCallback_OnClientScriptInit( ClRodeo_OnClientScriptInit )
+		#endif
+	#endif
+}
+
+var function CodeCallback_OnRodeoAttach( entity rider, entity rodeoTarget )
+{
+	if ( !rider.IsPlayer() )
+		return null
+
+	RodeoPackageStruct package = GetRodeoPackageForPlayer( rider, rodeoTarget )
+
+	if ( RodeoDistanceIsTooFar( rider, rodeoTarget, package ) )
+		return null
+
+	FirstPersonSequenceStruct sequence
+	sequence.attachment = package.attachPoint
+
+	SetRodeoAnimsFromPackage( sequence, package )
+	#if SERVER
+		rider.p.rodeoPackage = package //This is only ever checked on the server, even though CodeCallback_OnRodeoAttach is a shared function
+	#endif
+
+	table result //Hack: Not returning a struct because code expects a table, and code can't take an arbitrary struct. Thus, just return a table with only the info needed to code
+	result.attachment <- sequence.attachment
+	result.firstPersonAnim <- sequence.firstPersonAnim
+	result.thirdPersonAnim <- sequence.thirdPersonAnim
+	result.rodeoSlot <- package.rodeoSlot
+
+	return result
+}
+
+
+bool function CodeCallback_IsValidRodeoTarget( entity player, entity rodeoTarget )
+{
+	if ( IsPlayerDisembarking( player ) )
+		return false
+
+	if ( !rodeoTarget.IsTitan() )
+		return false
+
+	if ( HoldToRodeoEnabled( player ) )
+	{
+		#if CLIENT
+			if ( IsValidTitanRodeoTarget( player, rodeoTarget ) )
+				HoldToRodeoUpdate( player )
+		#endif
+
+		if( !player.IsInputCommandHeld( IN_USE ) )
+			return false
+	}
+
+	return IsValidTitanRodeoTarget( player, rodeoTarget )
+}
+
+
+bool function PlayerIsRodeoingTitan( entity player, entity titan = null )
+{
+	if ( !player.IsPlayer() )
+		return false
+
+	if ( player.IsTitan() )
+		return false
+
+	if ( !titan )
+		return player.GetTitanSoulBeingRodeoed() != null
+
+	if ( !titan.IsTitan() )
+		return false
+
+	return player.GetTitanSoulBeingRodeoed() == titan.GetTitanSoul()
+}
+
+int function GetRodeoDirection( entity rider, entity rodeoTarget, string optionalTag = "" )
+{
+	FrontRightDotProductsStruct result = GetFrontRightDots( rodeoTarget, rider, optionalTag )
+	float forwardDot 		= result.forwardDot
+	vector riderOrigin 		= rider.GetOrigin()
+	vector rodeoTargetOrigin = rodeoTarget.GetOrigin()
+	bool fromBelow 		= rodeoTargetOrigin.z - riderOrigin.z > -70
+	int direction 		= eRodeoDirection.DUMMY
+
+	if ( fromBelow )
+	{
+		if ( forwardDot > 0.0 )
+			direction = eRodeoDirection.FRONT_LOWER
+		else
+			direction = eRodeoDirection.REAR_LOWER
+	}
+	else if ( forwardDot > 0.45 )
+	{
+		direction = eRodeoDirection.FRONT_LOWER
+	}
+	else if ( forwardDot < -0.75 )
+	{
+		if ( fromBelow )
+			direction = eRodeoDirection.REAR_LOWER
+		else
+			direction = eRodeoDirection.REAR_MIDDLE
+	}
+	else
+	{
+		if ( result.rightDot > 0 )
+			direction = eRodeoDirection.RIGHT
+		else
+			direction = eRodeoDirection.LEFT
+	}
+
+	//printt("GetRodeoDirection returning direction=", direction )
+
+	return direction
+}
+
+
+int function GetRodeoDirectionFromAbove( entity rider, entity rodeoTarget, string optionalTag = "" )
+{
+	FrontRightDotProductsStruct Table = GetFrontRightDots( rodeoTarget, rider, optionalTag )
+	float forwardDot 		= Table.forwardDot
+	float rightDot 			= Table.rightDot
+	int direction 		= eRodeoDirection.DUMMY
+
+	if ( forwardDot > 0.1  )
+	{
+		direction = eRodeoDirection.FRONT_UPPER
+	}
+	else
+	if ( forwardDot < -0.88  )
+	{
+		direction = eRodeoDirection.REAR_UPPER
+	}
+	else
+	{
+		if ( rightDot < 0 )
+		{
+			//Reuse the same animation as climb on
+			direction = eRodeoDirection.LEFT
+		}
+		else
+		{
+			//Reuse the same animation as climb on
+			direction = eRodeoDirection.RIGHT
+		}
+	}
+
+	//printt("GetRodeoDirectionFromAbove returning direction=", direction )
+
+	return direction
+}
+
+RodeoPackageStruct function GetRodeoPackageForPlayer( entity rider, entity rodeoTarget )
+{
+	Assert( rider.IsPlayer )
+
+	// Player jumps on titan
+	if (  rodeoTarget.IsTitan() )
+		return GetRodeoPackage_PlayerToTitan( rider, rodeoTarget )
+
+	unreachable
+}
+
+
+bool function RodeoDistanceIsTooFar( entity rider, entity rodeoTarget, RodeoPackageStruct rodeoPackage )
+{
+	float distanceThreshold = 180.0
+	if ( rodeoTarget.IsPlayer() )
+	{
+		vector vecToRider2D = rider.CameraPosition() - rodeoTarget.CameraPosition()
+		vecToRider2D = Normalize( <vecToRider2D.x, vecToRider2D.y, 0> )
+
+		vector viewVector2D = Normalize( <rodeoTarget.GetViewVector().x, rodeoTarget.GetViewVector().y, 0> )
+
+		float dotToTarget = vecToRider2D.Dot( viewVector2D )
+		distanceThreshold = GraphCapped( dotToTarget, 1.0, 0.5, 100, 180 )
+	}
+
+	vector targetPos = GetRodeoSpotOrigin( rodeoTarget, rodeoPackage.attachPoint )
+	vector riderOrigin = rider.GetOrigin()
+
+#if MP
+	if ( rider.GetTeam() != rodeoTarget.GetTeam() )
+	{
+		float timeSinceRodeoHit = Time() - rodeoTarget.GetTitanSoul().GetLastRodeoHitTime()
+		if ( timeSinceRodeoHit < 2.0 )
+			distanceThreshold *= 0.6
+	}
+#endif
+
+	float distance = Distance( targetPos, riderOrigin )
+	if ( distance > distanceThreshold )
+		return true
+
+	return false
+}
+
+
+vector function GetRodeoSpotOrigin( entity rodeoTarget, string attachment )
+{
+	int hijackAttachIndex = rodeoTarget.LookupAttachment( attachment )
+	Assert( hijackAttachIndex > 0 )
+	return rodeoTarget.GetAttachmentOrigin( hijackAttachIndex ) + Vector(0,0,40)
+}
+
+
+vector function GetRodeoSpotAngles( entity rodeoTarget, string attachment )
+{
+	int hijackAttachIndex = rodeoTarget.LookupAttachment( attachment )
+	Assert( hijackAttachIndex > 0 )
+	return rodeoTarget.GetAttachmentAngles( hijackAttachIndex )
+}
+
+bool function RiderIsFallingOntoRodeoTarget( entity rider, entity rodeoTarget, string attachPoint )
+{
+	vector targetPos 	 = GetRodeoSpotOrigin( rodeoTarget, attachPoint )
+	float verticalOffset = rider.GetOrigin().z - targetPos.z
+	float dot
+
+	if ( verticalOffset < 40 )
+		return false
+
+	vector velocity = rider.GetVelocity()
+	if ( velocity.z > -120 )
+		return false
+
+	// Are we looking at the titan as a player?
+	if ( rider.IsPlayer() )
+		dot = VectorDot_PlayerToOrigin( rider, targetPos )
+
+	// Are we falling towards the titan?
+	if ( dot < 0.8 )
+		return false
+
+	velocity = Normalize( velocity )
+	dot = VectorDot_DirectionToOrigin( rider, velocity, targetPos )
+
+	// Are we falling towards the titan?
+	if ( dot < 0.8 )
+		return false
+
+	return true
+}
+
+
+// ---------------------------------------------------------------------------------
+// Rodeo slot utility functions
+// ---------------------------------------------------------------------------------
+int function GetRodeoSlotOfRider( entity rodeoTarget, entity rodeoRider ) //Kind of deprecated with only 1 rodeo slot
+{
+	int maxRodeoSlots = rodeoTarget.GetNumRodeoSlots()
+
+	for ( int i = 0; i < maxRodeoSlots; i++ )
+	{
+		entity rider = rodeoTarget.GetRodeoRider( i )
+
+		if ( !IsValid( rider ) )
+			continue
+
+		if ( rider == rodeoRider )
+			return i
+	}
+
+	return eRodeoPositions.INVALID
+}
+
+
+int function GetAvailableRodeoSlot( entity rodeoTarget ) //Kind of deprecated with only 1 rodeo slot
+{
+	int maxRodeoSlots = rodeoTarget.GetNumRodeoSlots()
+
+	for ( int i = 0; i < maxRodeoSlots; i++ )
+	{
+		entity rider = rodeoTarget.GetRodeoRider( i )
+
+		if ( !IsValid( rider ) )	// No valid rider means we have an available slot
+			return i
+	}
+
+	return eRodeoPositions.INVALID
+}
+
+
+entity function GetRodeoPilot( entity rodeoTarget )
+{
+	entity rider  = rodeoTarget.GetRodeoRider( 0 ) //Can do .rodeoTarget.GetNumRodeoSlots() to see what the upper limit for .GetRodeoRider() is
+	if ( IsValid( rider) && IsAlive( rider ) && IsPilot( rider ) )
+		return rider
+
+	return null
+}
+
+entity function GetFriendlyRodeoPilot( entity rodeoTarget )
+{
+	entity rodeoPlayer = GetRodeoPilot( rodeoTarget )
+
+	if ( !IsValid( rodeoPlayer ) )
+		return null
+
+	if ( rodeoPlayer.GetTeam() != rodeoTarget.GetTeam() )
+		return null
+
+	return rodeoPlayer
+}
+
+
+entity function GetEnemyRodeoPilot( entity rodeoTarget )
+{
+	entity rodeoPlayer = GetRodeoPilot( rodeoTarget )
+
+	if ( !IsValid( rodeoPlayer ) )
+		return null
+
+	if ( rodeoPlayer.GetTeam() == rodeoTarget.GetTeam() )
+		return null
+
+	return rodeoPlayer
+}
+
+void function CodeCallback_TitanRiderEntVarChanged( entity soul, int rodeoSlotIndex, entity oldRider, entity newRider )
+{
+	if ( !IsValid( soul ) )
+		return
+
+#if SERVER
+	soul.Signal( "RodeoRiderChanged" )
+#else
+	entity titan = soul.GetTitan()
+	entity rider = GetRodeoPilot( titan )
+ 	entity player = GetLocalViewPlayer()
+ 	if ( !IsAlive( rider ) )
+ 	{
+ 		soul.Signal( "StopRodeoAlert" )
+
+ 		if ( !IsValid( player.p.previousRiderEnt ) )
+ 			return
+ 		if ( player.p.previousRiderEnt.GetTeam() == player.GetTeam() )
+ 		{
+ 			TitanCockpit_PlayDialog( GetLocalViewPlayer(), "allyRodeoDetach" )
+ 			player.p.previousRiderEnt = null
+ 		}
+
+ 		return
+ 	}
+
+ 	entity localPlayer = GetLocalPlayerFromSoul( soul )
+ 	if ( !IsValid( localPlayer ) )
+ 		return
+
+ 	player.p.previousRiderEnt = rider
+
+ 	// trapped hatch draws it always
+ 	if ( ShouldDrawRodeoVGUI( localPlayer ) )
+ 	{
+ 		TitanCockpitDialog_RodeoAnnounce( localPlayer )
+ 		thread DrawRodeoAlertIcons( soul )
+ 	}
+#endif
+}
+
+bool function HoldToRodeoEnabled( entity player )
+{
+	#if HAS_RODEO_HOLD_OPTION
+		#if SERVER
+			return file.holdToRodeoState[player]
+		#else
+			return GetConVarBool( "cl_hold_to_rodeo_enable" )
+		#endif
+	#else
+		return false
+	#endif
+}
+
+#if CLIENT
+const float RODEO_HOLD_HINT_DEBOUNCE = 0.25
+
+void function HoldToRodeoUpdate( entity player )
+{
+	AddPlayerHint( RODEO_HOLD_HINT_DEBOUNCE, 0.25, $"", "#HINT_RODEO" )
+}
+
+void function ClRodeo_OnClientScriptInit( entity player )
+{
+	player.ClientCommand( "HoldToRodeo " + (HoldToRodeoEnabled( player ) ? 1 : 0) )
+}
+#endif
+
+#if SERVER
+void function Rodeo_OnClientConnected( entity player )
+{
+	file.holdToRodeoState[player] <- false
+}
+
+
+bool function ClientCommand_HoldToRodeo( entity player, array<string> args )
+{
+	if ( args.len() != 1 )
+		return true
+
+	bool holdToRodeoState = (args[0].tointeger() > 0)
+	file.holdToRodeoState[player] = holdToRodeoState
+
+	return true
+}
+#endif

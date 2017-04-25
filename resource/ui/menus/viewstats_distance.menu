@@ -1,0 +1,491 @@
+resource/ui/menus/viewstats_distance.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#STATS_DISTANCE"
+		}
+
+		MenuCommon
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/menu_common.res"
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+		StatsBackground
+		{
+			ControlName					ImagePanel
+			xpos 						c-674
+			ypos						c-353
+			zpos						100
+			wide						1349
+			tall						764
+			image						"ui/menu/personal_stats/ps_main_back_4"
+			visible						1
+			scaleImage					1
+		}
+
+		StatsBackgroundInset
+		{
+			ControlName					ImagePanel
+			xpos 						-45
+			ypos						0
+			zpos						101
+			wide						674
+			tall						674
+			image						"ui/menu/personal_stats/ps_main_back_5"
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				StatsBackground
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		ClassPieChart
+		{
+			ControlName					CNestedPanel
+			classname					"ClassPieChart"
+			xpos						-34
+			ypos						-45
+			zpos						300
+			wide						674
+			tall						315
+			visible						1
+			controlSettingsFile			"resource/UI/menus/stats_pie_chart.res"
+
+			pin_to_sibling				StatsBackgroundInset
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		ChassisPieChart
+		{
+			ControlName					CNestedPanel
+			classname					"ChassisPieChart"
+			xpos						-34
+			ypos						-337
+			zpos						300
+			wide						674
+			tall						315
+			visible						1
+			controlSettingsFile			"resource/UI/menus/stats_pie_chart.res"
+
+			pin_to_sibling				StatsBackgroundInset
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		StatBackground0
+		{
+			ControlName					ImagePanel
+			xpos 						324
+			ypos						27
+			zpos						200
+			wide						270
+			tall						135
+			image						"ui/menu/personal_stats/ps_game_stats_back_2"
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				StatsBackgroundInset
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+
+		StatBackground1
+		{
+			ControlName					ImagePanel
+			xpos 						0
+			ypos						-16
+			zpos						200
+			wide						270
+			tall						135
+			image						"ui/menu/personal_stats/ps_game_stats_back_2"
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				StatBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		StatBackground2
+		{
+			ControlName					ImagePanel
+			xpos 						0
+			ypos						-16
+			zpos						200
+			wide						270
+			tall						135
+			image						"ui/menu/personal_stats/ps_game_stats_back_2"
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				StatBackground1
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		StatBackground3
+		{
+			ControlName					ImagePanel
+			xpos 						0
+			ypos						-16
+			zpos						200
+			wide						270
+			tall						135
+			image						"ui/menu/personal_stats/ps_game_stats_back_2"
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				StatBackground2
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		StatBackground4
+		{
+			ControlName					ImagePanel
+			xpos 						0
+			ypos						-16
+			zpos						200
+			wide						270
+			tall						135
+			image						"ui/menu/personal_stats/ps_game_stats_back_2"
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				StatBackground3
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		StatBackground5
+		{
+			ControlName					ImagePanel
+			xpos 						0
+			ypos						-16
+			zpos						200
+			wide						270
+			tall						135
+			image						"ui/menu/personal_stats/ps_game_stats_back_2"
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				StatBackground4
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		GamesStatValue0
+		{
+			ControlName					Label
+			classname					"GamesStatValue0"
+			xpos						0
+			ypos						-27
+			zpos						226
+			wide						337
+			tall						58
+			visible						1
+			font						Default_31
+			labelText					"Stat Value 0"
+			allcaps						0
+			textAlignment				center
+			fgcolor_override 			"46 49 51 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				StatBackground0
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		TOP
+		}
+
+		GamesStatName0
+		{
+			ControlName					Label
+			classname					"GamesStatName0"
+			xpos						0
+			ypos						-9
+			zpos						227
+			wide						337
+			tall						27
+			visible						1
+			font						Default_21
+			labelText					"Stat Name 0"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"100 107 111 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				GamesStatValue0
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		BOTTOM
+		}
+
+		GamesStatValue1
+		{
+			ControlName					Label
+			classname					"GamesStatValue1"
+			xpos						0
+			ypos						-27
+			zpos						226
+			wide						337
+			tall						58
+			visible						1
+			font						Default_31
+			labelText					"Stat Value 1"
+			allcaps						0
+			textAlignment				center
+			fgcolor_override 			"46 49 51 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				StatBackground1
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		TOP
+		}
+
+		GamesStatName1
+		{
+			ControlName					Label
+			classname					"GamesStatName1"
+			xpos						0
+			ypos						-9
+			zpos						227
+			wide						337
+			tall						27
+			visible						1
+			font						Default_21
+			labelText					"Stat Name 1"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"100 107 111 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				GamesStatValue1
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		BOTTOM
+		}
+
+		GamesStatValue2
+		{
+			ControlName					Label
+			classname					"GamesStatValue2"
+			xpos						0
+			ypos						-27
+			zpos						226
+			wide						337
+			tall						58
+			visible						1
+			font						Default_31
+			labelText					"Stat Value 2"
+			allcaps						0
+			textAlignment				center
+			fgcolor_override 			"46 49 51 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				StatBackground2
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		TOP
+		}
+
+		GamesStatName2
+		{
+			ControlName					Label
+			classname					"GamesStatName2"
+			xpos						0
+			ypos						-9
+			zpos						227
+			wide						337
+			tall						27
+			visible						1
+			font						Default_21
+			labelText					"Stat Name 2"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"100 107 111 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				GamesStatValue2
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		BOTTOM
+		}
+
+		GamesStatValue3
+		{
+			ControlName					Label
+			classname					"GamesStatValue3"
+			xpos						0
+			ypos						-27
+			zpos						226
+			wide						337
+			tall						58
+			visible						1
+			font						Default_31
+			labelText					"Stat Value 3"
+			allcaps						0
+			textAlignment				center
+			fgcolor_override 			"46 49 51 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				StatBackground3
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		TOP
+		}
+
+		GamesStatName3
+		{
+			ControlName					Label
+			classname					"GamesStatName3"
+			xpos						0
+			ypos						-9
+			zpos						227
+			wide						337
+			tall						27
+			visible						1
+			font						Default_21
+			labelText					"Stat Name 3"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"100 107 111 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				GamesStatValue3
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		BOTTOM
+		}
+
+		GamesStatValue4
+		{
+			ControlName					Label
+			classname					"GamesStatValue4"
+			xpos						0
+			ypos						-27
+			zpos						226
+			wide						337
+			tall						58
+			visible						1
+			font						Default_31
+			labelText					"Stat Value 4"
+			allcaps						0
+			textAlignment				center
+			fgcolor_override 			"46 49 51 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				StatBackground4
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		TOP
+		}
+
+		GamesStatName4
+		{
+			ControlName					Label
+			classname					"GamesStatName4"
+			xpos						0
+			ypos						-9
+			zpos						227
+			wide						337
+			tall						27
+			visible						1
+			font						Default_21
+			labelText					"Stat Name 4"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"100 107 111 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				GamesStatValue4
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		BOTTOM
+		}
+
+		GamesStatValue5
+		{
+			ControlName					Label
+			classname					"GamesStatValue5"
+			xpos						0
+			ypos						-27
+			zpos						226
+			wide						337
+			tall						58
+			visible						1
+			font						Default_31
+			labelText					"Stat Value 5"
+			allcaps						0
+			textAlignment				center
+			fgcolor_override 			"46 49 51 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				StatBackground5
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		TOP
+		}
+
+		GamesStatName5
+		{
+			ControlName					Label
+			classname					"GamesStatName5"
+			xpos						0
+			ypos						-9
+			zpos						227
+			wide						337
+			tall						27
+			visible						1
+			font						Default_21
+			labelText					"Stat Name 5"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"100 107 111 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				GamesStatValue5
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		BOTTOM
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					r119
+			wide					f0
+			tall					36
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+		}
+	}
+}

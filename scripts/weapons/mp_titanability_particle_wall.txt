@@ -1,0 +1,114 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_TITAN_SHIELD_WALL"
+	"shortprintname"  								"#WPN_TITAN_SHIELD_WALL_SHORT"
+	"description" 									"#WPN_TITAN_SHIELD_WALL_DESC"
+	"longdesc"										"#WPN_TITAN_SHIELD_WALL_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/defensive/titan_defensive_particle_wall_menu"
+	"hud_icon"										"rui/titan_loadout/defensive/titan_defensive_particle_wall"
+
+	"weaponClass" 									"titan"
+	"weaponType"									"defense"
+	"fire_mode"   									"offhand_instant"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_particle_wall"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_particle_wall"
+
+	"projectilemodel"								"models/weapons/grenades/m20_f_grenade.mdl"
+
+	"damage_type" 									"none"
+
+	// Sound
+	"fire_sound_1_player_1p"						"ShieldWall_Deploy"
+	"fire_sound_1_player_3p"						"ShieldWall_Deploy"
+	"sound_dryfire"									"titan_dryfire"
+	"sound_weapon_ready"							"HUD_TitanDefenseAbility_replenished_1P"
+
+	// Ammo
+	"cooldown_type"                                 "ammo_instant"
+	"ammo_clip_size"   								"140"
+	"ammo_default_total"							"140"
+	"ammo_display"									"bar"
+	"ammo_min_to_fire"								"140"
+	"ammo_per_shot"									"140"
+	"ammo_stockpile_max"							"140"
+	"ammo_drains_to_empty_on_fire"					"1"
+
+	//Regen Ammo
+	"regen_ammo_refill_rate"						"10"
+	"regen_ammo_refill_start_delay"					"0.0"
+
+	"reload_enabled"								"0"
+
+	// Behavior
+	"fire_rate"   									"1000.0"
+
+	"fire_rumble"									"rumble_titan_ordnanceeject"
+
+	"breaks_cloak"									"0"
+
+	// NPC
+	"npc_use_min_damage"							"700"
+	"npc_use_max_damage"							"1400"
+	"npc_use_min_projectile_damage"					"300"
+	"npc_titan_ability"								"WTA_WALL"
+
+	"npc_rest_time_between_bursts_min"				"15"
+	"npc_rest_time_between_bursts_max"				"20"
+
+	// NPC
+	"proficiency_poor_additional_rest"				"15"
+	"proficiency_average_additional_rest"			"8"
+	"proficiency_good_additional_rest"				"4"
+	"proficiency_very_good_additional_rest"			"2"
+
+	Mods
+	{
+		pas_defensive_core
+		{
+			"fire_rate" 									"*1.25"
+		}
+
+		dev_mod_low_recharge
+		{
+			"fire_rate"   									"*20"
+		}
+		burn_mod_titan_particle_wall
+		{
+			"ammo_clip_size"   								"2"
+            "sound_dryfire"                            		"titan_dryfire"
+	        "fire_rate"   									"2.0"
+	        "fire_duration"									"0.0"
+			"is_burn_mod"		"1"
+		}
+
+		npc_normal_difficulty
+		{
+			"proficiency_poor_additional_rest"					"30"
+			"proficiency_average_additional_rest"				"30"
+		}
+
+		amped_wall
+		{
+
+		}
+		sur_level_0
+		{
+
+		}
+		sur_level_1
+		{
+
+		}
+		sur_level_2
+		{
+
+		}
+		sur_level_3
+		{
+
+		}
+	}
+}

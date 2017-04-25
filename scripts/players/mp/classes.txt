@@ -1,0 +1,82 @@
+"class list"
+{
+	// Pilot MP
+	import	"pilot_light_male.set"
+	import	"pilot_light_female.set"
+	import	"pilot_medium_male.set"
+	import	"pilot_medium_female.set"
+	import	"pilot_heavy_male.set"
+	import	"pilot_heavy_female.set"
+	import	"pilot_boost_male.set"
+	import	"pilot_boost_female.set"
+	import	"pilot_geist_male.set"
+	import	"pilot_geist_female.set"
+	import	"pilot_nomad_male.set"
+	import	"pilot_nomad_female.set"
+	import	"pilot_stalker_male.set"
+	import	"pilot_stalker_female.set"
+	import	"pilot_grapple_male.set"
+	import	"pilot_grapple_female.set"
+	import	"pilot_coliseum_male.set"
+	import	"pilot_coliseum_female.set"
+
+	// Pilot SP
+	import	"pilot_solo.set"
+	import	"pilot_solo_timeshift.set"
+	import 	"pilot_solo_training.set"
+	import	"pilot_solo_gravtest.set"
+	import  "pilot_solo_rising_world_run.set"
+
+
+	// SP starting class
+	import	"civilian_solo.set"
+	import	"civilian_solo_pilot.set"
+	import	"civilian_solo_skyway.set"
+
+	// Pilot Misc
+	import	"pilot_spectre.set"
+	import	"pilot_titan_cockpit.set" // used for scripted sequences for pilot in titan
+	import	"pilot_training.set"
+
+	// Titan
+	import	"titan_atlas.set"
+	import	"titan_atlas_stickybomb.set"
+	import	"titan_atlas_ion_prime.set"
+	import	"titan_atlas_tracker.set"
+	import	"titan_atlas_vanguard.set"
+
+	import	"titan_buddy.set"
+	import	"titan_buddy_spare.set"
+	import	"titan_buddy_slow_walk.set"
+
+	import	"titan_heavy_deadbolt.set"
+	import	"titan_heavy_ogre.set"
+
+	import	"titan_light_locust.set"
+	import	"titan_light_raptor.set"
+
+	import	"titan_medium_ajax.set"
+	import	"titan_medium_wraith.set"
+
+	import	"titan_ogre.set"
+	import	"titan_ogre_berserker.set"
+	import	"titan_ogre_minigun.set"
+	import	"titan_ogre_meteor.set"
+	import	"titan_ogre_scorch_prime.set"
+	import  "titan_ogre_legion_prime.set"
+
+	import	"titan_stryder.set"
+	import	"titan_stryder_arc.set"
+	import	"titan_stryder_rocketeer.set"
+	import	"titan_stryder_leadwall.set"
+	import	"titan_stryder_sniper.set"
+	import  "titan_stryder_northstar_prime.set"
+
+	// Titan Misc
+	import	"titan_ctt.set"
+	import	"titan_atlas_burncard.set"
+
+	// Special Cases
+	import	"spectator.set"
+	import	"lobby_view.set"
+}

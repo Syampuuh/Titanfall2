@@ -1,0 +1,121 @@
+#base "combo_buttons.res"
+resource/ui/menus/armory.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+		Screen
+		{
+			ControlName				ImagePanel
+			wide					%100
+			tall					%100
+			visible					1
+			scaleImage				1
+			fillColor				"0 0 0 0"
+			drawColor				"0 0 0 0"
+		}
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			classname				MenuTitle
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+	    CreditsAvailable
+	    {
+	        ControlName             RuiPanel
+	        InheritProperties       CreditsAvailableProperties
+	    }
+
+        Screen
+        {
+            ControlName		ImagePanel
+			wide					f0
+			tall					f0
+            visible			1
+            scaleImage		1
+            fillColor		"0 0 0 0"
+            drawColor		"0 0 0 0"
+        }
+
+		CallsignCard
+		{
+			ControlName				RuiPanel
+			rui                     "ui/callsign_basic.rpak"
+			pin_to_sibling          Screen
+            pin_corner_to_sibling	TOP_RIGHT
+            pin_to_sibling_corner	TOP_RIGHT
+            xpos					-96
+            ypos					-136
+			wide                    320
+			tall                    172
+			visible					1
+			scaleImage				1
+			image					vgui/white
+            fillColor               "255 255 255 255"
+			zpos -1
+		}
+
+	    CreditsAvailable
+	    {
+	        ControlName             RuiPanel
+	        InheritProperties       CreditsAvailableProperties
+	    }
+
+		// BUTTONROWANCHOR //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ButtonRowAnchor
+		{
+			ControlName				Label
+			labelText				""
+
+			xpos                    96
+			ypos                    160
+		}
+
+// FOOTER //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

@@ -1,0 +1,39 @@
+// v1.01
+//This file is auto-generated from reVaMpT. Edit at your own risk.
+"UnlitTwoTexture"
+{
+	"$surfaceprop" 	"default"
+	"$basetexture" 	"vgui\HUD\compass_ticker_col"
+	"$texture2"		"vgui\HUD\compass_ticker_alpha"
+
+	"$translucent" 	"1"
+	"$vertexcolor" 	"1"
+	"$vertexalpha" 	"1"
+	"$ignorez"     	"1"
+	"$additive"		"1"
+
+	"$scale"	"[0.225 0.95]"
+	"$offset"	"[0.0 0.0]"
+
+	Proxies
+	{
+		TextureTransform
+		{
+			"scaleVar" "$scale"
+			"translateVar" "$offset"
+			"resultvar" "$basetexturetransform"
+		}
+
+		ScriptModify
+		{
+			"scriptFuncName" "VMTCallback_CompassTickerOffset"
+			"resultVar"	"$offset"
+		}
+
+//		ScriptModify
+//		{
+//			"scriptFuncName" "VMTCallback_CompassTickerScale"
+//			"resultVar"	"$scale"
+//		}
+	}
+}

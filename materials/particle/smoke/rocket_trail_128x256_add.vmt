@@ -1,0 +1,15 @@
+"SpriteCard"
+{
+	$basetexture "particle/smoke/rocket_trail_128x256"
+	$additive 	1
+	//$overbrightfactor 1
+	$translucent 	1
+	$nocull	1
+	$splinetype	1
+	
+	$vertexFogAmount 1
+	
+}
+
+
+

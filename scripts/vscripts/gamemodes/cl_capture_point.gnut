@@ -1,0 +1,427 @@
+untyped
+
+global function ClCapturePoint_Init
+
+global function CapturePoint_AddPlayer
+global function SetHardPointLabelTextOptions
+global function ShowHardpointIcons
+global function HideHardpointIcons
+global function VarChangedCallback_GameStateChanged
+global function HardpointChanged
+global function HardpointEntityChanged
+global function GetNumOwnedHardpoints
+global function GetHardpointCount
+
+global function InitializeHardpointClient
+
+global function HideHardpointHUD
+
+global function ShowHardpointHUD
+
+global function CapturePointHudInit
+
+global function UpdateHardpointVisibility
+
+global function ServerCallback_HardpointChanged
+
+global function SetCapturePointIconVisibleGameStates
+global function SetCapturePointHandleForcedOffset
+
+#if DEV
+	//global function ServerCallback_CP_PrintHardpointOccupants
+#endif
+
+//********************************************************************************************
+//	capture_point mp gametype client script
+//********************************************************************************************
+
+global const TEAM_NEUTRAL = 0
+global const TEAM_FRIENDLY = 1
+global const TEAM_ENEMY = 2
+
+global enum eCPLabelVisibility
+{
+	always,
+	requireCurrentHardpoint
+}
+
+global enum eCPLabelText
+{
+	cpName,
+	attackDefend,
+	linked
+}
+
+struct
+{
+	table capturePointColor
+
+	struct
+	{
+		int visibility = eCPLabelVisibility.requireCurrentHardpoint
+		int textType = eCPLabelText.cpName
+	} labelTextOptions
+
+	int firstIconVisibleGameState = eGameState.Playing
+	int lastIconVisibleGameState = eGameState.Playing
+
+} file
+
+
+global const CAPTURE_POINT_UI_UPDATE = "CapturePointUIUpdate"
+
+function CapturePointHudInit( entity player )
+{
+	player.cv.hardpointElems <- {}
+}
+
+function ClCapturePoint_Init()
+{
+	file.capturePointColor[ TEAM_NEUTRAL ] <- StringToColors( CAPTURE_POINT_COLOR_NEUTRAL )
+	file.capturePointColor[ TEAM_ENEMY ] <- StringToColors( CAPTURE_POINT_COLOR_ENEMY )
+	file.capturePointColor[ TEAM_FRIENDLY ] <- StringToColors( CAPTURE_POINT_COLOR_FRIENDLY )
+	file.capturePointColor[ "TEAM_ENEMY_CAP" ] <- StringToColors( CAPTURE_POINT_COLOR_ENEMY_CAP )
+	file.capturePointColor[ "TEAM_FRIENDLY_CAP" ] <- StringToColors( CAPTURE_POINT_COLOR_FRIENDLY_CAP )
+
+	RegisterServerVarChangeCallback( "gameState", VarChangedCallback_GameStateChanged )
+
+	AddPlayerFunc( CapturePoint_AddPlayer )
+
+	RegisterSignal( "HardpointCaptureStateChanged" )
+	RegisterSignal( CAPTURE_POINT_UI_UPDATE )
+	RegisterSignal( "CapturePointUnlocked" )
+	RegisterSignal( "LockCapturePointForTeam" )
+	RegisterSignal( "UnlockCapturePointForTeam" )
+
+	AddCreateCallback( "info_hardpoint", OnHardpointCreated )
+
+	AddCallback_EntitiesDidLoad( EntitiesDidLoad )
+
+	level.hardpointIDsToOwner <- {}
+
+	clGlobal.onHardpointChangedCallback = OnHardpointChanged
+	clGlobal.onHardpointIDChangedCallback = OnHardpointIDChanged
+	clGlobal.onHardpointEntityChangedCallback = OnHardpointEntityChanged
+}
+
+void function SetCapturePointHandleForcedOffset( vector offset )
+{
+}
+
+void function OnHardpointIDChanged( entity hp )
+{
+	int ID = hp.GetHardpointID()
+	if ( ID == -1 )
+	{
+		HideHardpointHUD( hp )
+		return
+	}
+
+	InitializeHardpointClient( hp )
+	ShowHardpointHUD( hp )
+	HardpointChanged( hp )
+}
+
+void function OnHardpointChanged( entity hardpoint )
+{
+	if ( !IsValid( hardpoint ) )
+		return
+
+	HardpointChanged( hardpoint )
+	hardpoint.Signal( "HardpointStateChanged" )
+}
+
+void function OnHardpointEntityChanged( entity player )
+{
+	if ( !IsValid( player ) )
+		return
+
+	HardpointEntityChanged( player )
+}
+
+// INITIALIZATION
+
+void function CapturePoint_AddPlayer( entity player )
+{
+	if ( IsMenuLevel() )
+		return
+
+	if ( "hardpointArray" in player.s )
+		return
+	//---------------------------------------------
+	// Create HUD elements for capturing capture points
+	//---------------------------------------------
+	player.s.captureBarData <- {
+		startProgress = null
+		goalProgress = null
+		durationToCapture = null
+		color = null
+		labelText = null
+		statusText = null
+		isVisible = null
+		arrowCount = null
+	}
+
+	player.s.hardpointsHidden <- true
+	player.s.hardpointArray <- []
+}
+
+void function OnHardpointCreated( entity hardpoint )
+{
+	hardpoint.s.currentProgress <- 0
+	hardpoint.s.lastOwner <- null
+
+	hardpoint.s.startProgress <- null
+	hardpoint.s.goalProgress <- null
+	hardpoint.s.durationToCapture <- null
+	hardpoint.s.color <- null
+
+	//---------------------------------------------
+	// Create icons for the capture points
+	// The have unique names but the same icons
+	// Also adds status indicator to the HUD
+	//---------------------------------------------
+
+	InitializeHardpointClient( hardpoint )
+}
+
+void function EntitiesDidLoad()
+{
+	entity player = GetLocalViewPlayer()
+
+	foreach(  hardpoint in player.s.hardpointArray  )
+	{
+		HardpointChanged( hardpoint ) // This is needed here for Attack/Defend modes, level.nv.attackingTeam isn't known until this point
+	}
+}
+
+function InitializeHardpointClient( hardpoint )
+{
+	entity player = GetLocalViewPlayer()
+	if ( !player )
+		return
+
+	// cleared?
+	local index = hardpoint.GetHardpointID() //TODO: Locked hardpoints need to be differentiated from hardpoints that aren't meant to be enabled for the entire match
+	if ( index < 0 )
+		return
+
+	// why would this have to be here? Because the hardpoint might get created before the player? seems bad
+	if ( !( "hardpointArray" in player.s ) )
+		CapturePoint_AddPlayer( player )
+
+	if ( "initialized" in hardpoint.s  )
+		return
+
+	Assert( player.s.hardpointArray.len() <= 10 ) //10 sets of capture_point hud elems. Create more if needed.
+
+	hardpoint.s.worldIcon <- HudElementGroup( "CapturePoint_" + index )
+	hardpoint.s.worldIcon.CreateElement( "CapturePointIcon_" + index )
+	hardpoint.s.progressBar <- hardpoint.s.worldIcon.CreateElement( "CapturePointIconBG_" + index )
+	hardpoint.s.statusText <- HudElement( "CaptureBarStatus_" + index )
+	hardpoint.s.labelText <- HudElement( "CaptureBarLabel_" + index )
+	hardpoint.s.initialized <- true
+	hardpoint.s.lockedOutForTeamsTable <- {} //Should probably be in code!
+	hardpoint.s.worldIcon.Show()
+	hardpoint.s.lastCaptureTime <- null
+	hardpoint.s.lastCaptureTeam <- -1
+
+	// Locked state is reset when we come back from kill replay, remote calls lock the hardpoints that should be locked. Restore alpha here for default state.
+	hardpoint.s.worldIcon.Show()
+	hardpoint.s.progressBar.Show()
+	hardpoint.s.statusText.Show()
+	hardpoint.s.worldIcon.SetAlpha( hardpoint.s.worldIcon.GetBaseAlpha() )
+	hardpoint.s.progressBar.SetAlpha( hardpoint.s.progressBar.GetBaseAlpha() ) // foreground alpha
+	hardpoint.s.progressBar.SetColorBG( 80, 80, 80, 200 ) // just trying to restore background alpha, will need SetAlphaBG/GetBaseAlphaBG in new HUD tech
+	hardpoint.s.statusText.SetAlpha( hardpoint.s.statusText.GetBaseAlpha() )
+
+	if ( player == GetLocalClientPlayer() )
+		player.cv.hardpointElems[ index ] <- [ hardpoint.s.worldIcon, hardpoint.s.progressBar, hardpoint.s.statusText, hardpoint.s.labelText ]
+
+	UpdateHardpointIconPosition( player, hardpoint )
+
+	if ( !( index in level.hardpointIDsToOwner ) )
+		level.hardpointIDsToOwner[index] <- null
+
+	level.hardpointIDsToOwner[ index ] = hardpoint.GetTeam()
+
+	//---------------------------------------------
+	// Set up data about the hardpoint
+	//---------------------------------------------
+
+	player.s.hardpointArray.append( hardpoint )
+
+	HardpointChanged( hardpoint )
+}
+
+function SetHardPointLabelTextOptions( int visibility, int textType )
+{
+	file.labelTextOptions.visibility = visibility
+	file.labelTextOptions.textType = textType
+}
+
+function HideHardpointHUD( hardpoint )
+{
+	if ( !("initialized" in hardpoint.s ) )
+		return
+
+	hardpoint.s.worldIcon.Hide()
+	hardpoint.s.progressBar.Hide()
+	hardpoint.s.statusText.Hide()
+	hardpoint.s.labelText.Hide()
+}
+
+function ShowHardpointHUD( hardpoint )
+{
+	hardpoint.s.worldIcon.Show()
+	hardpoint.s.progressBar.Show()
+	hardpoint.s.statusText.Show()
+
+	entity player = GetLocalViewPlayer()
+	local currentHardpoint = player.GetHardpointEntity()
+
+	if ( file.labelTextOptions.visibility == eCPLabelVisibility.requireCurrentHardpoint )
+	{
+		if ( hardpoint == currentHardpoint )
+			hardpoint.s.labelText.Show()
+		else
+			hardpoint.s.labelText.Hide()
+	}
+	else
+	{
+		hardpoint.s.labelText.Show()
+	}
+}
+
+
+
+function UpdateHardpointIconPosition( player, hardpoint )
+{
+}
+
+function SetCapturePointIconVisibleGameStates( int firstState, int lastState )
+{
+}
+
+// DOESNT NEED COCKPIT
+
+void function UpdateHardpointVisibility()
+{
+	entity player = GetLocalViewPlayer()
+
+	local gameState = GetGameState()
+	bool shouldHideIconsForGameState = gameState < file.firstIconVisibleGameState || gameState > file.lastIconVisibleGameState
+
+	if ( shouldHideIconsForGameState || player.s.hardpointsHidden )
+	{
+		foreach ( hardpoint in player.s.hardpointArray )
+		{
+			HideHardpointHUD( hardpoint )
+		}
+	}
+	else
+	{
+		foreach ( hardpoint in player.s.hardpointArray )
+		{
+			expect entity( hardpoint )
+
+			if ( hardpoint.Enabled() == false )
+				HideHardpointHUD( hardpoint )
+			else
+				ShowHardpointHUD( hardpoint )
+		}
+	}
+
+	clGlobal.levelEnt.Signal( CAPTURE_POINT_UI_UPDATE )
+}
+
+function HideHardpointIcons( player )
+{
+	player.s.hardpointsHidden = true
+}
+
+function ShowHardpointIcons( player )
+{
+	player.s.hardpointsHidden = false
+}
+
+function HardpointEntityChanged( player )
+{
+	if ( player != GetLocalViewPlayer() )
+		return
+
+	foreach ( hardpoint in player.s.hardpointArray )
+	{
+		UpdateHardpointIconPosition( player, hardpoint )
+	}
+
+}
+
+function ServerCallback_HardpointChanged( capturePointHandle ) //HACK: this refreshes the icon for Linked Hardpoints
+{
+	entity capturePoint = GetEntityFromEncodedEHandle( capturePointHandle )
+
+	if ( !IsValid( capturePoint ) )
+		return
+
+	HardpointChanged( capturePoint )
+}
+
+void function HardpointChanged( hardpoint )
+{
+	expect entity( hardpoint )
+	if ( !hardpoint.Enabled() )
+		return
+
+	if ( !("initialized" in hardpoint.s ) ) //Weirdness has to do with disabling a hardpoint while you are in kill replay. TODO: Rewrite this.
+		InitializeHardpointClient( hardpoint )
+
+	int index = hardpoint.GetHardpointID()
+	level.hardpointIDsToOwner[ index ] = hardpoint.GetTeam()
+
+	entity player = GetLocalViewPlayer()
+	if ( !IsValid( player ) )
+		return
+
+	table powerTable = GetCapPower( hardpoint )
+	int cappingTeam = expect int( powerTable.strongerTeam )
+
+	clGlobal.levelEnt.Signal( CAPTURE_POINT_UI_UPDATE )
+
+}
+
+void function VarChangedCallback_GameStateChanged()
+{
+	clGlobal.levelEnt.Signal( CAPTURE_POINT_UI_UPDATE )
+}
+
+function GetNumOwnedHardpoints( team )
+{
+	local ownedHardpoints = 0
+	foreach ( hardpointTeam in level.hardpointIDsToOwner )
+	{
+		if ( hardpointTeam != team )
+			continue
+
+		ownedHardpoints++
+	}
+
+	return ownedHardpoints
+}
+
+function GetHardpointCount()
+{
+	local count = level.hardpointIDsToOwner.len()
+	return count
+}
+
+/*
+#if DEV
+	void function ServerCallback_CP_PrintHardpointOccupants( int pilotCount, int titanCount, int aiCount )
+	{
+		printt( "Pilots: " + pilotCount )
+		printt( "Titans: " + titanCount )
+		printt( "AI: " + aiCount )
+	}
+#endif
+*/

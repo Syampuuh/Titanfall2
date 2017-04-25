@@ -1,0 +1,9 @@
+"Basic"
+{
+	"$color" "[ 0.00 0.00 1.00 ]"
+	"$ignorez" 1
+	"$decal" 1
+	"$model" 1
+	"$wireframe" 1
+	"%noToolTexture" 1
+}

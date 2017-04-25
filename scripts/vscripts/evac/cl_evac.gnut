@@ -1,0 +1,239 @@
+untyped
+
+global function ClEvac_Init
+
+global function ServerCallback_EvacObit
+global function ServerCallback_ShowTurretHint
+global function ServerCallback_HideTurretHint
+global function ServerCallback_ShowTurretInUseHint
+global function ServerCallback_DisableHudForEvac
+
+function ClEvac_Init()
+{
+	EvacShared_Init()
+ 	AddEvacObjectives()
+
+ 	PrecacheHUDMaterial( $"vgui/HUD/minimap_evac_location_friendly" )
+ 	PrecacheHUDMaterial( $"vgui/HUD/minimap_evac_location_enemy" )
+
+ 	AddPlayerFunc( Evac_AddPlayer )
+}
+
+void function Evac_AddPlayer( entity player )
+{
+	if ( IsMenuLevel() )
+		return
+}
+
+function AddEvacObjectives()
+{
+	//Commented out defensively. See bug 66889
+	/*if ( !EvacEnabled() )
+		return*/
+
+	//		AddObjective( "O2_noEvacEnding", "#HUD_O2_EPILOGUE_NO_EVAC_TITLE", "#HUD_O2_EPILOGUE_NO_EVAC_DESC" )
+
+	AddObjectiveWithAutoTextAndObjectiveFunction( "EG_DropshipExtract",  	"#EVAC_OBJ_TITLE_GET_TO_SHIP", 				"HATT_CHECK_HUD_EVAC_ETA", 					CreateShipIconForEvacTeam  )
+	AddObjectiveWithAutoTextAndObjectiveFunction( "EG_DropshipExtract2", 	"#EVAC_OBJ_TITLE_GET_TO_SHIP", 				"HATT_FRIENDLY_EVAC_HERE_LEAVING_TIME", 	CreateShipLeavingIconForEvacTeam )
+	AddObjective( "EG_DropshipExtractDropshipFlyingAway", 					"#EVAC_OBJ_TITLE_EVAC_STARTED", 			"#EVAC_OBJ_DESC_EVAC_STARTED" )
+	AddObjective( "EG_DropshipExtractSuccessfulEscape", 					"#EVAC_OBJ_TITLE_EVAC_COMPLETE", 			"#EVAC_OBJ_DESC_EVAC_COMPLETE" )
+	AddObjective( "EG_DropshipExtractFailedEscape", 						"#EVAC_OBJ_TITLE_EVAC_DENIED", 				"#EVAC_OBJ_DESC_EVAC_DENIED"  )
+	AddObjective( "EG_DropshipExtractDropshipDestroyed", 					"#EVAC_OBJ_TITLE_EVAC_DENIED", 				"#EVAC_OBJ_DESC_DROPSHIP_DESTROYED" )
+	AddObjective( "EG_DropshipExtractEvacPlayersKilled", 					"#EVAC_OBJ_TITLE_EVAC_DENIED", 				"#EVAC_OBJ_DESC_YOUR_TEAM_ELIMINATED" )
+	AddObjective( "EG_DropshipExtractPursuitPlayersKilled", 				"#EVAC_OBJ_TITLE_EVAC_SECURE", 				"#EVAC_OBJ_DESC_ENEMY_TEAM_ELIMINATED"  )
+	AddObjectiveWithObjectiveFunction( "EG_StopExtract", 					"#EVAC_OBJ_TITLE_PREVENT_EVAC", 			"#EVAC_OBJ_DESC_KILLED_ENEMY_PILOTS", 		CreateShipIconForPursuitTeam )
+	AddObjectiveWithAutoTextAndObjectiveFunction( "EG_StopExtract2", 		"#EVAC_OBJ_TITLE_PREVENT_EVAC", 			"HATT_ENEMY_EVAC_HERE_LEAVING_TIME", 		CreateShipLeavingIconForPursuitTeam )
+	AddObjectiveWithObjectiveFunction( "EG_StopExtractDropshipFlyingAway", 	"#EVAC_OBJ_TITLE_EVAC_STARTED", 			"#EVAC_OBJ_DESC_DESTROY_DROPSHIP", 		CreateShipLeavingIconForPursuitTeam )
+	AddObjective( "EG_StopExtractDropshipSuccessfulEscape", 				"#EVAC_OBJ_TITLE_ENEMY_EVAC_COMPLETE", 		"#EVAC_OBJ_DESC_ENEMY_EVAC_COMPLETE" )
+	AddObjective( "EG_StopExtractDropshipDestroyed", 						"#EVAC_OBJ_TITLE_ENEMY_DROPSHIP_DESTROYED", "#EVAC_OBJ_DESC_ENEMY_EVAC_DENIED" )
+	AddObjective( "EG_StopExtractEvacPlayersKilled", 						"#EVAC_OBJ_TITLE_ENEMY_PILOTS_KILLED", 		"#EVAC_OBJ_DESC_ENEMY_EVAC_DENIED" )
+	AddObjective( "EG_StopExtractPursuitPlayersKilled",						"#EVAC_OBJ_TITLE_ENEMY_SECURED_EVAC", 		"#EVAC_OBJ_DESC_YOUR_TEAM_ELIMINATED" )
+}
+
+function CreateShipIconForEvacTeam( ent )
+{
+	entity player = GetLocalClientPlayer()
+	AnnouncementMessage( player, "#EOG_XPTYPE_CATEGORY_EPILOGUE", "#EVAC_OBJ_TITLE_GET_TO_SHIP" )
+
+	thread CreateEvacShipWorldFX( ent, 61, 211, 255 )
+	CreateEvacShipIcon_Internal( ent,  61, 211, 255, 200, player.GetTeam() ) // blocking call...
+}
+
+function CreateShipIconForPursuitTeam( ent )
+{
+	entity player = GetLocalClientPlayer()
+	AnnouncementMessage( player, "#EOG_XPTYPE_CATEGORY_EPILOGUE", "#EVAC_OBJ_DESC_KILLED_ENEMY_PILOTS" )
+
+	CreateEvacShipIcon_Internal( ent, 255, 128, 0, 200, GetOtherTeam( player.GetTeam() ) ) // blocking call...
+}
+
+function CreateEvacShipIcon_Internal( ent, r, g, b, a, team )
+{
+	entity player = GetLocalClientPlayer()
+	//Assert( !( "rescueIcon" in player.s ) )
+	//local icon 	= HudElementGroup( "RescueIconHUD_0" )
+
+	var iconRui = CreateCockpitRui( $"ui/overhead_icon_evac.rpak" )
+	RuiSetBool( iconRui, "isVisible", true )
+	RuiTrackFloat3( iconRui, "pos", ent, RUI_TRACK_ABSORIGIN_FOLLOW )
+
+	OnThreadEnd(
+		function() : ( iconRui )
+		{
+			RuiDestroy( iconRui )
+		}
+	)
+
+	player.EndSignal( "ObjectiveChanged" )
+	player.EndSignal( "OnDestroy" )
+
+	local endTime = player.GetObjectiveEndTime()
+	local timeToWait = endTime - Time()
+
+	if ( team == player.GetTeam() )
+	{
+		RuiSetImage( iconRui, "icon", $"rui/hud/common/evac_location_friendly" )
+		RuiSetString( iconRui, "statusText", "#EVAC_ARRIVAL" )
+		RuiSetGameTime( iconRui, "finishTime", endTime )
+	}
+	else
+	{
+		RuiSetImage( iconRui, "icon", $"rui/hud/common/evac_location_enemy" )
+		RuiSetString( iconRui, "statusText", "#EVAC_INTERCEPT" )
+		RuiSetGameTime( iconRui, "finishTime", RUI_BADGAMETIME )
+	}
+
+	wait timeToWait
+}
+
+function CreateEvacShipWorldFX( ent, r, g, b )
+{
+	entity player = GetLocalClientPlayer()
+
+	int fxId = GetParticleSystemIndex( FX_EVAC_MARKER )
+	player.s.rescueWorldFx <- StartParticleEffectInWorldWithHandle( fxId, ent.GetOrigin(), Vector( 0,0,1 ) )
+	EffectSetControlPointVector( player.s.rescueWorldFx, 1, Vector( r, g, b ) )
+
+	player.EndSignal( "ObjectiveChanged" )
+	player.EndSignal( "OnDestroy" )
+
+	OnThreadEnd(
+		function() : ( player )
+		{
+			StopEvacWorldFX( player )
+		}
+	)
+
+	//Kill the titanfall AR effect 2 seconds before the dropship actually gets to the point
+	local endTime = player.GetObjectiveEndTime() - 2.0
+	local timeToWait = endTime - Time()
+
+	wait timeToWait
+
+	StopEvacWorldFX( player )
+}
+
+
+
+function CreateShipLeavingIconForEvacTeam( ent )
+{
+	entity player = GetLocalClientPlayer()
+
+	CreateShipLeavingIcon_Internal( ent,  61, 211, 255, 200, player.GetTeam() )
+}
+
+function CreateShipLeavingIconForPursuitTeam( ent )
+{
+	entity player = GetLocalClientPlayer()
+
+	CreateShipLeavingIcon_Internal( ent, 255, 128, 0, 200, GetOtherTeam( player.GetTeam() ) )
+}
+
+function CreateShipLeavingIcon_Internal( ent, r, g, b, a, team )
+{
+	entity player = GetLocalClientPlayer()
+
+	var iconRui = CreateCockpitRui( $"ui/overhead_icon_evac.rpak" )
+	RuiSetBool( iconRui, "isVisible", true )
+	RuiTrackFloat3( iconRui, "pos", ent, RUI_TRACK_ABSORIGIN_FOLLOW )
+
+	OnThreadEnd(
+		function() : ( iconRui )
+		{
+			RuiDestroy( iconRui )
+		}
+	)
+
+	player.EndSignal( "OnDestroy" )
+	player.EndSignal( "ObjectiveChanged" )
+
+	local endTime = player.GetObjectiveEndTime()
+	local timeToWait = endTime - Time()
+
+	if ( team == player.GetTeam() )
+	{
+		RuiSetImage( iconRui, "icon", $"rui/hud/common/evac_location_friendly" )
+		RuiSetString( iconRui, "statusText", "#EVAC_LEAVING" )
+		RuiSetGameTime( iconRui, "finishTime", endTime )
+	}
+	else
+	{
+		RuiSetImage( iconRui, "icon", $"rui/hud/common/evac_location_enemy" )
+		RuiSetString( iconRui, "statusText", "#HUD_DESTROY" )
+		RuiSetGameTime( iconRui, "finishTime", RUI_BADGAMETIME )
+
+		timeToWait += 3.0 // arbitrary time... as the dropship flies off
+
+		ent.EndSignal( "OnDeath" )
+	}
+
+	wait timeToWait
+}
+
+function StopEvacWorldFX( player )
+{
+	if ( "rescueWorldFx" in player.s )
+	{
+		if ( EffectDoesExist( player.s.rescueWorldFx ) )
+			EffectStop( player.s.rescueWorldFx, true, false )
+	}
+
+}
+
+function ServerCallback_EvacObit( playerEHandle )
+{
+	entity pilot = GetEntityFromEncodedEHandle( playerEHandle )
+
+	if ( !IsValid( pilot ) )
+		return
+
+	if ( !pilot.IsPlayer() )
+		return
+
+	string pilotName = pilot.GetPlayerNameWithClanTag()
+	vector pilotNameColor = OBITUARY_COLOR_ENEMY
+	if ( pilot.GetTeam() == GetLocalViewPlayer().GetTeam() )
+		pilotNameColor = OBITUARY_COLOR_FRIENDLY
+	Obituary_Print( pilotName, "#EVAC_OBIT", "", pilotNameColor, OBITUARY_COLOR_WEAPON, OBITUARY_COLOR_WEAPON  )
+}
+
+void function ServerCallback_DisableHudForEvac()
+{
+	thread MainHud_TurnOff_RUI()
+}
+
+void function ServerCallback_ShowTurretHint()
+{
+	entity player = GetLocalViewPlayer()
+}
+
+void function ServerCallback_HideTurretHint()
+{
+	entity player = GetLocalViewPlayer()
+	// AddPlayerHint
+}
+
+void function ServerCallback_ShowTurretInUseHint()
+{
+	thread SetTimedEventNotification( 3.0, "Another player is using the turret." )
+}

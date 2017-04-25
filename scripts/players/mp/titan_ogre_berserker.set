@@ -1,0 +1,58 @@
+#base "titan_ogre.set"
+"titan_ogre_berserker"
+{
+//	titan_tint 		titan_tint_fighter
+
+	"global"
+	{
+		printname				"#CHASSIS_OGRE_NAME"
+		description				"#CHASSIS_OGRE_DESCRIPTION"
+
+		subclass			"ogre"
+		viewPunchSpring		punch_titan_ogre
+
+		friction		2
+		speedScaleSide	1.0
+		speedScaleBack	1.0
+
+		dodgeDuration		0.6
+        dodgeAnimDuration	0.6
+        dodgeInterval		3.0
+        dodgeSpeed			480
+        dodgeStopSpeed		100
+        dodgeHeight			70
+        dodgeHeightMax		110
+        dodgePowerDrain		100
+        powerregenrate		33.33
+        dodgePowerDelay		0.0
+        dodgeKeepSpeedFrac 	0.65
+
+	}
+	"crouch"
+	{
+		lowSpeed			220
+		lowAcceleration		500
+		lowDeceleration		200
+
+		speed				220
+		acceleration		500
+		deceleration		200
+	}
+
+	"stand"
+	{
+		lowSpeed			240
+		lowAcceleration		1600
+		lowDeceleration		1900
+
+		speed				300
+		acceleration		160
+		deceleration		160
+
+		sprintspeed			600
+		sprintAcceleration	160
+		sprintDeceleration	160
+
+		footstepIntervalSprint 715
+	}
+}

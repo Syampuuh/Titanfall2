@@ -1,0 +1,94 @@
+
+global function ServerCallback_WeaponXPAdded
+global function ServerCallback_WeaponLeveledUp
+global function ServerCallback_WeaponChallengeCompleted
+global function Display_WeaponLeveledUp
+
+struct
+{
+	var activeRui = null
+} file
+
+void function ServerCallback_WeaponXPAdded( int weaponIndex, int totalXp, int xpAdded )
+{
+	string weaponClassName = shWeaponXP.weaponClassNames[ weaponIndex ]
+	string weaponName = GetWeaponInfoFileKeyField_GlobalString( weaponClassName, "shortprintname" )
+
+	entity weapon = GetLocalViewPlayer().GetActiveWeapon()
+	if ( !weapon )
+		return
+
+	if ( weapon.GetWeaponClassName() != weaponClassName )
+		return
+
+	if ( file.activeRui != null )
+		RuiDestroyIfAlive( file.activeRui )
+	file.activeRui = CreateCockpitRui( $"ui/weapon_xp_added.rpak" )
+	RuiSetGameTime( file.activeRui, "startTime", Time() )
+
+	int numPips = WeaponGetNumPipsForXP( weaponClassName, totalXp )
+	int filledPips = WeaponGetFilledPipsForXP( weaponClassName, totalXp )
+
+	RuiSetFloat( file.activeRui, "numSegments", float( numPips ) )
+	RuiSetFloat( file.activeRui, "filledSegments", float( filledPips ) )
+
+	RuiSetString( file.activeRui, "text", Localize( weaponName ) )
+}
+
+void function ServerCallback_WeaponLeveledUp( int weaponIndex, int gen, int level, int unlockId1 = -1, int unlockId2 = -1, int unlockId3 = -1 )
+{
+	LevelUpData levelUpData
+	levelUpData.itemIndex = weaponIndex
+	levelUpData.gen = gen
+	levelUpData.level = level
+
+	if ( GetConVarInt( "hud_setting_showLevelUp" ) == 0 )
+	{
+		EmitSoundOnEntity( GetLocalClientPlayer(), "HUD_level_up_weapon_1P" )
+		return
+	}
+
+	string weaponClassName = shWeaponXP.weaponClassNames[ weaponIndex ]
+	string weaponName = GetWeaponInfoFileKeyField_GlobalString( weaponClassName, "shortprintname" )
+
+	AnnouncementMessageSweep( GetLocalClientPlayer(), Localize( "#WEAPON_LEVEL_UP_N", weaponName ), WeaponGetDisplayGenAndLevel( gen, level ), <0.99, 0.59, 0.0>, GetWeaponInfoFileKeyFieldAsset_Global( weaponClassName, "hud_icon" ), "HUD_level_up_weapon_1P" )
+
+	// bounce this message though the announcement system so that it displays without overlapping, etc...
+	//LevelUpMessage( ANNOUNCEMENT_STYLE_WEAPON_LEVEL, levelUpData )
+}
+
+
+void function ServerCallback_WeaponChallengeCompleted( int weaponIndex, int refGuid, int parentRefGuid )
+{
+	if ( GetConVarInt( "hud_setting_showLevelUp" ) == 0 )
+	{
+		EmitSoundOnEntity( GetLocalClientPlayer(), "HUD_level_up_weapon_1P" )
+		return
+	}
+
+	string weaponClassName = shWeaponXP.weaponClassNames[ weaponIndex ]
+	string weaponName = GetWeaponInfoFileKeyField_GlobalString( weaponClassName, "shortprintname" )
+
+	ItemDisplayData itemDisplayData = GetItemDisplayDataFromGuid( refGuid, parentRefGuid )
+	AnnouncementMessageSweep( GetLocalClientPlayer(), Localize( "#CHALLENGE_COMPLETED_WEAPON", weaponName ), GetStatUnlockReq( itemDisplayData.ref, itemDisplayData.parentRef ), TEAM_COLOR_PARTY / 255.0, GetWeaponInfoFileKeyFieldAsset_Global( weaponClassName, "hud_icon" ), "HUD_level_up_weapon_1P" )
+}
+
+var function Display_WeaponLeveledUp( int weaponIndex, int gen, int level )
+{
+	if ( file.activeRui != null )
+		RuiDestroyIfAlive( file.activeRui )
+	file.activeRui = CreateCockpitRui( $"ui/weapon_level_up.rpak", MINIMAP_Z_BASE + 200 )
+	RuiSetGameTime( file.activeRui, "startTime", Time() )
+
+	RuiSetBool( file.activeRui, "isTitan", GetLocalClientPlayer().IsTitan() )
+
+	string weaponClassName = shWeaponXP.weaponClassNames[ weaponIndex ]
+	string weaponName = GetWeaponInfoFileKeyField_GlobalString( weaponClassName, "shortprintname" )
+	RuiSetString( file.activeRui, "weaponLevelAndGen", "Level " + WeaponGetDisplayGenAndLevel( gen, level ) )
+	RuiSetString( file.activeRui, "weaponName", weaponName )
+	RuiSetImage( file.activeRui, "weaponImage", GetWeaponInfoFileKeyFieldAsset_Global( weaponClassName, "hud_icon" ) )
+
+	EmitSoundOnEntity( GetLocalClientPlayer(), "HUD_level_up_weapon_1P" )
+
+	return file.activeRui
+}

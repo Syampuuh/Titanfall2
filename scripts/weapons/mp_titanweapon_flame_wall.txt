@@ -1,0 +1,204 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_TITAN_FIREWALL"
+	"description" 									"#WPN_TITAN_FIREWALL_DESC"
+	"shortprintname"								"#WPN_TITAN_FIREWALL"
+	"longdesc"										"#WPN_TITAN_FIREWALL_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/ordnance/flame_wall_menu"
+	"hud_icon"										"rui/titan_loadout/ordnance/flame_wall"
+
+	"weaponClass"									"titan"
+	"weaponType"									"shoulder"
+	"fire_mode"										"offhand"
+	"offhand_toss"									"1"
+	"minimap_reveal_distance"						"32000"
+
+	"OnWeaponActivate"								"OnWeaponActivate_titancore_flame_wall"
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_FlameWall"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_FlameWall"
+
+	"projectile_ignores_vortex"						"mirror"
+
+	"OnProjectileCollision"							"OnProjectileCollision_FlameWall"
+
+	// Models
+	"playermodel" 									"models/weapons/empty_handed/w_empty_handed_titan.mdl"
+	"viewmodel"   									"models/weapons/empty_handed/atpov_emptyhand_flamewall.mdl"
+	"projectilemodel" 								"models/weapons/bullets/triple_threat_projectile.mdl"
+
+	// Effects
+	"impact_effect_table"							"exp_small"
+//	"projectile_trail_effect_0"						"wpn_grenade_TT_activate"
+	"vortex_absorb_effect"							"wpn_vortex_projectile_frag_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_frag"
+	"vortex_absorb_sound"							"Vortex_Shield_AbsorbBulletLarge"
+	"vortex_absorb_sound_1p_vs_3p"					"Vortex_Shield_AbsorbBulletLarge_1P_VS_3P"
+	"sound_weapon_ready"							"HUD_TitanOffenseAbility_replenished_1P"
+	"vortex_drain"									"0.0"
+	"projectile_adjust_to_gun_barrel"				"1"
+	"offhand_keep_primary_in_hand" 					"1"
+
+	"special_3p_attack_anim" 						"1"
+
+	SP_BASE
+	{
+		// Damage - When Used by Players
+		"damage_near_distance"							"1000"
+		"damage_far_distance"							"3000"
+		"damage_near_value"								"0"
+		"damage_far_value"								"0"
+		"damage_near_value_titanarmor"					"0"
+		"damage_far_value_titanarmor"					"0"
+		"explosion_damage"								"0"
+		"explosion_damage_heavy_armor"					"0"
+
+		"enable_highlight_networking_on_creation"		"1"
+	}
+
+	MP_BASE
+	{
+        // Damage - When Used by Players
+        "damage_near_distance"							"1000"
+        "damage_far_distance"							"3000"
+        "damage_near_value"								"0"
+        "damage_far_value"								"0"
+        "damage_near_value_titanarmor"					"0"
+        "damage_far_value_titanarmor"					"0"
+        "explosion_damage"								"0"
+        "explosion_damage_heavy_armor"					"0"
+
+        "enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+	}
+
+	"damage_type"									"burn"
+	//"damage_flags"									"DF_RAGDOLL | DF_EXPLOSION"
+
+	"duration_mod_amped_weapon"						"1.8"
+
+	"show_grenade_indicator"						"0"
+
+	"critical_hit"									"0"
+
+	"explosion_inner_radius"						"5"
+	"explosionradius"								"100"
+	"impulse_force"									"3000"
+	"explosion_shake_radius"						"500"
+	"explosion_shake_amplitude"						"60"
+	"explosion_shake_frequency"						"45"
+	"explosion_shake_duration"						"0.75"
+
+	// Ammo
+	"ammo_stockpile_max"							"200"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+	"ammo_per_shot"                                 "200"
+	"ammo_min_to_fire"								"200"
+	"regen_ammo_refill_rate"						"20"
+	"regen_ammo_refill_start_delay"					"1"
+	"ammo_display"									"bar"
+	"cooldown_type"                                 "ammo_instant"
+
+	// TEMP: SCRIPT WAVE SETTINGS
+	"wave_max_count"								"15"
+	"wave_step_dist"								"100.0"
+	"charge_wave_max_count"							"15"
+	"charge_wave_step_dist"							"100.0"
+
+	// Behavior
+	"grenade_fuse_time"								"10.0"
+	"fire_rate"										"1.25"
+	"deploy_time"									"0.15"
+	"vortex_refire_behavior"						"frag_grenade"
+	"allow_empty_fire"								"0"
+	"reload_enabled"								"0"
+	"allow_empty_click"								"1"
+	"empty_reload_only"								"0"
+	"trigger_snipercam"								"0"
+	"grenade_bounce_vel_frac_shallow"				"0.5"
+	"grenade_bounce_vel_frac_sharp"					"0.3"
+	"grenade_bounce_vel_frac_along_normal"			"0.5"
+	"grenade_bounce_randomness"						"0.2"
+	"grenade_bounce_extra_vertical_randomness"		"0.2"
+	"grenade_roll_vel_frac_per_second"				"0.1"
+	"aimassist_disable_hipfire_humansonly"			"1"
+	"aimassist_disable_ads_humansonly"				"1"
+	"toss_pullout_time"								"0.15"
+	"toss_time"										"0.15"
+	"toss_overhead_time"							"0.15"
+
+//	"projectile_inherit_owner_velocity_scale"		"1.0"
+
+	"charge_time" 									"0.2"
+	"charge_cooldown_time"							"0.0"
+	"charge_cooldown_delay"   						"0.0"
+	"charge_end_forces_fire"  						"1"
+	"charge_require_input"							"1"
+
+	"ammo_suck_behavior"							"offhand_weapons"
+
+	// View Kick
+	"viewkick_spring"									"pistol"
+
+	// View Drift
+	"viewdrift_hipfire_stand_scale_pitch" 			"0.325"
+	"viewdrift_hipfire_crouch_scale_pitch"			"0.275"
+	"viewdrift_hipfire_air_scale_pitch"   			"0.5"
+	"viewdrift_hipfire_stand_scale_yaw"   			"0.12"
+	"viewdrift_hipfire_crouch_scale_yaw"  			"0.10"
+	"viewdrift_hipfire_air_scale_yaw" 				"0.22"
+	"viewdrift_hipfire_speed_pitch"   				"0.6"
+	"viewdrift_hipfire_speed_yaw" 					"1.22"
+
+	// Rumble
+	"fire_rumble"									"rumble_titan_flamewall"
+
+	// Sway
+
+	// NPC
+	"npc_use_check_type"							"ground_clear"
+	"npc_vortex_block"								"0"
+	"npc_min_range"   								"300"
+	"npc_max_range"   								"1500"
+	"npc_min_engage_range"							"300"
+	"npc_min_engage_range_heavy_armor"				"300"
+
+	"npc_min_burst"									"1"
+	"npc_max_burst"									"1"
+	"npc_rest_time_between_bursts_min"				"12"
+	"npc_rest_time_between_bursts_max"				"16"
+
+	// NPC
+	"proficiency_poor_additional_rest"				"20"
+	"proficiency_average_additional_rest"			"16"
+	"proficiency_good_additional_rest"				"6"
+	"proficiency_very_good_additional_rest"			"0"
+
+
+	"npc_lead_time_scale"							"0.0012"
+
+	// WeaponED Unhandled Key/Values and custom script Key/Values
+	"allow_headshots"									"0"
+	"fire_anim_rate"									"1"
+
+	Mods
+	{
+
+		dev_mod_low_recharge
+		{
+			"regen_ammo_refill_rate"						"*5.0"
+		}
+
+		burn_mod_titan_flame_wall
+		{
+			"explosion_damage"								"*1.15"
+			"explosion_damage_heavy_armor"					"*1.15"
+			"is_burn_mod"		"1"
+		}
+		pas_scorch_firewall
+		{
+			"regen_ammo_refill_rate"						"25"
+		}
+	}
+}

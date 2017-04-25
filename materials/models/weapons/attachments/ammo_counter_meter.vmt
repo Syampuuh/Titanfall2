@@ -1,0 +1,39 @@
+"Basic"
+{
+	"$surfaceprop" "default"
+
+	"$basetexture" "models\weapons\attachments\ammo_counter_meter_col"
+	"$selfillummask" "models\weapons\attachments\ammo_counter_meter_ilm"
+	"$translucent" "1"
+	//"$selfillum" "1"
+	"$decal" 1 
+	"$decalscale" 0.25
+	
+	"$remainingAmmo" "0"
+	"$maxCarryAmmo" "0"
+	
+	"Proxies"
+	{
+		"RemainingAmmo"
+		{
+			"resultVar" "$remainingAmmo"
+		}
+		
+		"MaxCarryAmmo"
+		{
+			"resultVar" "$maxCarryAmmo"
+		}
+		
+		"ProgressBar"
+		{
+			"value"			"$remainingAmmo"
+			"max"			"$maxCarryAmmo"
+			"resultVar"		"$basetexturetransform"
+		}
+
+		"RemainingAmmoColor"
+		{
+			"resultVar"			"$color"
+		}
+	}
+}

@@ -1,0 +1,47 @@
+#base "pilot_solo.set"
+"civilian_solo"
+{
+	"global"
+	{
+		armsmodel					"models/weapons/arms/pov_mlt_hero_jack_rifleman.mdl"
+		bodymodel					"models/humans/heroes/mlt_hero_jack_rifleman.mdl"
+
+		class						"pilot"
+		subclass					"wallrun"
+
+		stepheight					18
+		jumpHeight					25
+		ziplineSpeed				600
+
+		airSpeed					70
+		airAcceleration				540
+
+		wallrun						0
+		doublejump					0
+
+		slide						1
+		slideRequiredStartSpeed		150 //200
+		slidevelocitydecay			0.6 //0.7
+		slideSpeedBoost				100 // 150
+
+		sprintStartDuration			0.4
+
+		sound_pain_layer1_loop 			"GruntCooper_Wounded_Loop_1P"
+		sound_pain_layer1_end  			"GruntCooper_WoundedLoop_End_1P"
+		sound_pain_layer2_start 		"GruntCooper_Critical_Breath_Start_1P"
+		sound_pain_layer2_loop 			"GruntCooper_Critical_Drone_Loop_1P"
+		sound_pain_layer3_loop			"GruntCooper_Critical_Breath_Loop_1P"
+		sound_pain_layer3_end 			"GruntCooper_Wounded_BreathLoop_End_1P"
+	}
+
+	"crouch"
+	{
+		speed						60
+	}
+
+	"stand"
+	{
+		speed						120
+		sprintspeed					200
+	}
+}

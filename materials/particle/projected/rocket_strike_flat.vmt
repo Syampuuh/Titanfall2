@@ -1,0 +1,7 @@
+Spritecard
+{
+	$basetexture "particle/projected/rocket_strike_flat"
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+}

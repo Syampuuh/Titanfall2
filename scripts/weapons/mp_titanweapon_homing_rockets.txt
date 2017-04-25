@@ -1,0 +1,223 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_TITAN_HOMING_ROCKETS"
+	"description" 									"#WPN_TITAN_HOMING_ROCKETS_DESC"
+	"shortprintname"								"#WPN_TITAN_HOMING_ROCKETS"
+	"longdesc"										"#WPN_TITAN_HOMING_ROCKETS_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/ordnance/tracking_rockets_menu"
+	"hud_icon"										"rui/titan_loadout/ordnance/tracking_rockets"
+
+	"weaponClass" 									"titan"
+	"weaponType"									"shoulder"
+	"fire_mode"   									"offhand_instant"
+	"alwaysShow"									"1"
+	"minimap_reveal_distance"						"32000"
+
+	"OnWeaponOwnerChanged"							"OnWeaponOwnerChanged_titanweapon_homing_rockets"
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titanweapon_homing_rockets"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_titanweapon_homing_rockets"
+
+	"projectile_drift_windiness"					"7"
+	"projectile_drift_intensity"					"0.96"
+	"projectile_straight_time_min"					"0.6"
+	"projectile_straight_time_max"					"0.9"
+	"projectile_straight_radius_min"				"0"
+	"projectile_straight_radius_max"				"1"
+
+	// Menu Stats
+	"stat_damage" 									"95"
+	"stat_range"  									"90"
+	"stat_accuracy"   								"50"
+	"stat_rof"										"20"
+
+	// Sound
+	"fire_sound_1_player_1p"						"ShoulderRocket_Homing_Fire_1P"
+	"fire_sound_1_player_3p"						"ShoulderRocket_Homing_Fire_3P"
+	"sound_dryfire"									"titan_dryfire"
+
+	// Models
+	"projectilemodel" 								"models/weapons/bullets/projectile_rocket_large.mdl"
+
+	// Effects
+	"impact_effect_table" 							"exp_rocket_shoulder"
+	"projectile_trail_effect_0" 					"Rocket_Smoke_SMALL_Titan_2"
+	"projectile_trail_attachment" 					"exhaust"
+	"vortex_absorb_effect"							"wpn_vortex_projectile_rocket_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_rocket"
+	"vortex_absorb_sound"							"Vortex_Shield_AbsorbRocket"
+	"vortex_absorb_sound_1p_vs_3p"					"Vortex_Shield_AbsorbRocket_1P_VS_3P"
+	"projectile_adjust_to_gun_barrel"				"1"
+
+	"damage_type" 									"bullet"
+
+	"critical_hit"									"0"
+
+	"explosionradius" 								"120"
+	"impulse_force"   								"1"
+
+	// Ammo
+	"ammo_stockpile_max"							"400"
+	"ammo_clip_size"   								"400"
+	"ammo_default_total"							"400"
+
+	MP_BASE
+	{
+		// Damage - When Used by Players
+		"damage_near_distance"							"800"
+		"damage_far_distance" 							"1200"
+		"damage_near_value"   							"125"
+		"damage_far_value"								"125"
+		"explosion_damage"								"1"
+		"explosion_damage_heavy_armor"					"2"
+	}
+
+	SP_BASE
+	{
+		// Damage - When Used by Players
+		"damage_near_distance"							"800"
+		"damage_far_distance" 							"1200"
+		"damage_near_value"   							"125"
+		"damage_far_value"								"125"
+		"explosion_damage"								"1"
+		"explosion_damage_heavy_armor"					"2"
+
+		// Damage - When Used by NPCs
+
+	}
+
+	// Behavior
+	"fire_rate"   									"1.5"
+	"burst_fire_count"								"10"
+	"burst_fire_delay"								"14"
+	"zoom_time_in"									"0.01"
+	"zoom_time_out"   								"0.01"
+	"zoom_fov"										"50"
+	"reload_time" 									"0"
+	"holster_time"									"0.01"
+	"deploy_time" 									"0.01"
+	"lower_time"  									"0.01"
+	"raise_time"  									"0.01"
+	"vortex_refire_behavior"  						"rocket"
+	"allow_empty_fire"								"0"
+	"reload_enabled"  								"1"
+	"allow_empty_click"   							"1"
+	"empty_reload_only"   							"0"
+	"trigger_snipercam"   							"1"
+	"allow_headshots" 								"0"
+
+	// Spread
+	"spread_stand_hip"  							"0"
+	"spread_stand_ads"   							"0"
+
+	"ammo_suck_behavior"							"offhand_weapons"
+
+	// View Kick
+	"viewkick_spring" 								"pistol"
+
+	"viewkick_pitch_base" 							"-0.0"
+	"viewkick_pitch_random"   						"1.50"
+	"viewkick_pitch_softScale"						"0.75"
+	"viewkick_pitch_hardScale"						"0.1"
+
+	"viewkick_yaw_base"   							"0"
+	"viewkick_yaw_random" 							"0.1"
+	"viewkick_yaw_softScale"  						"1.5"
+	"viewkick_yaw_hardScale"  						"0.25"
+
+	"viewkick_roll_base"  							"0.0"
+	"viewkick_roll_randomMin" 						"0.25"
+	"viewkick_roll_randomMax" 						"0.5"
+	"viewkick_roll_softScale" 						"0.2"
+	"viewkick_roll_hardScale" 						"3.0"
+
+	"viewkick_hipfire_weaponFraction" 				"0.4"
+	"viewkick_hipfire_weaponFraction_vmScale" 		"0.5"
+	"viewkick_ads_weaponFraction" 					"0.0"
+	"viewkick_ads_weaponFraction_vmScale" 			"0.0"
+
+	"viewpunch_multiplier"							"5.5"
+
+	// Bob
+
+	// View Drift
+
+	// Rumble
+	"rumble"  										"6"
+
+	// Sway
+
+	// NPC
+	"proficiency_poor_spreadscale"					"7.0"
+	"proficiency_average_spreadscale" 				"5.0"
+	"proficiency_good_spreadscale"					"3.33333"
+	"proficiency_very_good_spreadscale"   			"1.66667"
+
+	"npc_min_range"   								"0"
+	"npc_max_range"   								"5000"
+	"npc_min_burst"   								"1"
+	"npc_max_burst"   								"1"
+	"npc_rest_time_between_bursts_min"					"14"
+	"npc_rest_time_between_bursts_max"					"16"
+
+	// WeaponED Unhandled Key/Values and custom script Key/Values
+	"sway_turn_angle_factor"  						".8"
+	"sway_turn_origin_factor" 						"0.2"
+	"sway_turn_angle_factor_zoomed"   				"1.5"
+	"sway_turn_origin_factor_zoomed"  				"0.2"
+	"sway_move_angle_factor"  						"-2"
+	"sway_move_origin_factor" 						"-.2"
+	"sway_move_angle_factor_zoomed"   				"0"
+	"sway_move_origin_factor_zoomed"  				"0.03"
+	"sway_gain"   									"15.0"
+	"smart_ammo_search_angle" 						"40"
+	"smart_ammo_search_distance"  					"4000"
+	"smart_ammo_search_npcs"						"1"
+	"smart_ammo_search_players"						"1"
+	"smart_ammo_search_projectiles"					"0"
+	"smart_ammo_humans_only"						"0"
+	"smart_ammo_titans_block_los"					"1"
+	"smart_ammo_points_search_tick_interval"		"6"
+	"smart_ammo_bounds_search_tick_interval"		"6"
+	"smart_ammo_max_targets"						"1"
+	"smart_ammo_max_targeted_burst"					"4"
+	"smart_ammo_always_do_burst"					"1"
+	"smart_ammo_targeting_time_min"					"1.5"
+	"smart_ammo_targeting_time_max"					"1.5"
+	"smart_ammo_hud_lock_style"						"titan_missile"
+	"smart_ammo_weapon_type"						"homing_missile"
+	"smart_ammo_looping_sound_acquiring"			"ShoulderRocket_Homing_AcquireTarget"
+	"smart_ammo_looping_sound_locked"				"ShoulderRocket_Homing_TargetLocked"
+	"smart_ammo_lock_type"							"large"
+	"smart_ammo_allow_ads_lock"						"1"
+	"smart_ammo_allow_hip_fire_lock"				"1"
+	"smart_ammo_allow_search_while_inactive"		"1"
+
+	// Crosshair
+	Mods
+	{
+		mod_ordnance_core
+		{
+			"burst_fire_delay"   									"/1.25"
+		}
+
+		dev_mod_low_recharge
+		{
+			"burst_fire_delay"   									"/20"
+		}
+		burn_mod_titan_homing_rockets
+		{
+			"smart_ammo_max_targeted_burst"					"1++"
+			"fire_rate"   									"*1.25"
+			"burst_fire_delay"								"/1.5"
+			"smart_ammo_targeting_time_min"					"*0.6"
+			"smart_ammo_targeting_time_max"					"*0.6"
+
+			"damage_near_value"   							"205" //was 185
+			"damage_far_value"								"205" //was 185
+
+			"is_burn_mod"		"1"
+		}
+	}
+}

@@ -1,0 +1,136 @@
+WeaponData
+{
+	"printname"   									"#WPN_TITAN_TETHER_TRAP"
+	"shortprintname"								"#WPN_TITAN_TETHER_TRAP_SHORT"
+	"description" 									"#WPN_TITAN_TETHER_TRAP_DESC"
+	"longdesc"										"#WPN_TITAN_TETHER_TRAP_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/ordnance/tether_menu"
+	"hud_icon"										"rui/titan_loadout/ordnance/tether"
+
+	"weaponClass" 									"titan"
+	"weaponType"									"tactical" // this is the only tactical on LB, may cause errors if loadouts are given randomly
+	"npc_target_armor_type"							"heavy"
+
+	"fire_mode"   									"offhand_instant"
+	"minimap_reveal_distance"						"32000"
+	"offhand_keep_primary_in_hand" 					"1"
+
+	// Models
+	"viewmodel"   									"models/weapons/titan_vortex_blocker/atpov_vortexblocker.mdl"
+	"projectilemodel" 								"models/weapons/caber_shot/caber_shot_thrown_xl.mdl"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titanweapon_tether_trap"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_titanweapon_tether_trap"
+	"OnProjectileCollision"							"OnProjectileCollision_weapon_tether"
+	"OnWeaponOwnerChanged"							"OnWeaponOwnerChanged_titanweapon_tether_trap"
+
+	"show_grenade_indicator"						"0"
+	"mine_only"										"1"
+
+	"projectile_max_deployed"						"4"
+
+	// Effects
+	"impact_effect_table" 							"exp_smr"
+	"vortex_absorb_effect"							"wpn_vortex_projectile_prox_mine_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_prox_mine"
+	"vortex_absorb_sound"							"Vortex_Shield_AbsorbBulletLarge"
+	"vortex_absorb_sound_1p_vs_3p"					"Vortex_Shield_AbsorbBulletLarge_1P_VS_3P"
+	"sound_weapon_ready"							"HUD_TitanDefenseAbility_replenished_1P"
+	"vortex_drain"									"0.0"
+	"projectile_adjust_to_gun_barrel"				"0"
+
+	"projectile_launch_speed"						"1"
+	"vortex_refire_behavior"  						"grenade_long_fuse"
+
+	"critical_hit"									"0"
+
+	"damage_type" 									"burn"
+
+	// Ammo
+	"cooldown_type"                                 "ammo_instant"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+	"ammo_min_to_fire"								"200"
+	"ammo_per_shot"									"200"
+	"ammo_stockpile_max"							"200"
+	"ammo_drains_to_empty_on_fire"					"1"
+	"ammo_no_remove_from_clip"						"1"
+
+	//Regen Ammo
+	"regen_ammo_refill_rate"						"10"
+	"regen_ammo_refill_start_delay"					"0.0"
+
+	"fire_duration"                                 "0.1"
+
+	"reload_enabled"								"0"
+
+	// Rumble
+	"fire_rumble"									"rumble_titan_ordnanceeject"
+
+	MP_BASE
+	{
+		"damage_near_distance"							"800"
+		"damage_far_distance" 							"1200"
+		"damage_near_value"   							"0"
+		"damage_far_value"								"0"
+		"damage_near_value_titanarmor"   				"0"
+		"damage_far_value_titanarmor"					"0"
+		"explosion_damage"								"0"
+		"explosion_damage_heavy_armor"					"0"
+	}
+
+	SP_BASE
+	{
+		"damage_near_distance"							"800"
+		"damage_far_distance" 							"1200"
+		"damage_near_value"   							"0"
+		"damage_far_value"								"0"
+		"damage_near_value_titanarmor"   				"0"
+		"damage_far_value_titanarmor"					"0"
+		"explosion_damage"								"0"
+		"explosion_damage_heavy_armor"					"0"
+	}
+
+	"fx_muzzle_flash_view"							"P_wpn_muzzleflash_smr_FP"
+	"fx_muzzle_flash_world"							"P_wpn_muzzleflash_smr"
+	"fx_muzzle_flash_attach"						"muzzle_flash"
+
+	"fire_rate"   									"1000.0"
+	"holster_time"									"0.5"
+	"deploy_time" 									"0.2"
+	"lower_time"  									"0.5"
+	"raise_time"  									"0.2"
+
+	"npc_min_burst"									"1"
+	"npc_max_burst"									"1"
+	"npc_rest_time_between_bursts_min"				"14.0"
+	"npc_rest_time_between_bursts_max"				"18.0"
+	"npc_pre_fire_delay"							"1.5"
+	"npc_pre_fire_delay_interval"					"3"
+
+	"npc_min_range"   								"0"
+	"npc_max_range"   								"3000"
+
+	// Sound
+	"fire_sound_1_player_1p"						"Wpn_TetherTrap_Deploy_1P"
+	"fire_sound_1_player_3p"						"Wpn_TetherTrap_Deploy_3P"
+	"sound_dryfire"									"titan_dryfire"
+
+	"explosionradius" 								"320"
+	"explosion_inner_radius"						"140"
+
+	Mods
+	{
+		npc_normal_difficulty
+		{
+			"npc_rest_time_between_bursts_min"				"*2"
+			"npc_rest_time_between_bursts_max"				"*2"
+		}
+
+		pas_northstar_trap
+		{
+
+		}
+	}
+}

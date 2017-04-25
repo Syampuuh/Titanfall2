@@ -1,0 +1,380 @@
+
+globalize_all_functions
+
+const int STARTING_CREDITS = 20
+
+#if SERVER
+void function InitPersistentData( entity player )
+{
+#if MP
+	int initializedVersion = player.GetPersistentVarAsInt( "initializedVersion" )
+	bool previouslyInitialized = initializedVersion > 0
+
+	if ( !previouslyInitialized )
+	{
+		//printt( "======================================================================================="  )
+		//printt( "Setting persistent data defaults ======================================================"  )
+		//printt( "======================================================================================="  )
+
+		// TODO: REPLACE THIS WITH A DATA DRIVEN SOURCE
+
+		SetPersistentLoadoutsToDefaults( player ) // Should only be called once
+		SetPersistentUnlocksToDefaults( player )
+		InitBurnMeterPersistentData( player )
+
+		InitFactionDialoguePersistence( player )
+
+		// Set player, titan and weapon xp to max level
+		player.SetPersistentVar( "xp", 0 )
+		player.SetPersistentVar( "previousXP", 0 )
+		player.SetPersistentVar( "gen", 1 )
+		player.XPChanged()
+
+		SetAvailableCredits( player, STARTING_CREDITS )
+
+		player.SetPersistentVar( "activeCallsignIconIndex", 56 ) // hardcoded to the "Titanfall A"
+
+		CallingCard callingCard = CallingCard_GetByRef( "callsign_16_col" )
+		player.SetPersistentVar( "activeCallingCardIndex", callingCard.index ) // hardcoded to the some arbitrary thing
+
+
+		ResetPlayerProgression( player )
+
+		//array<string> itemRefs = GetAllItemRefsOfType( eItemTypes.PILOT_PRIMARY )
+		//itemRefs.extend( GetAllItemRefsOfType( eItemTypes.PILOT_SECONDARY ) )
+		//itemRefs.extend( GetAllItemRefsOfType( eItemTypes.TITAN_PRIMARY ) )
+		//foreach ( itemRef in itemRefs )
+		//{
+		//	string persistenceVar = GetItemPersistenceStruct( itemRef ) + ".weaponXP"
+		//	player.SetPersistentVar( persistenceVar, 2147483647 ) //WeaponGetMaxXP( itemRef ) )
+		//
+		//	persistenceVar = GetItemPersistenceStruct( itemRef ) + ".unlockedMods"
+		//	player.SetPersistentVar( persistenceVar, 2147483647 )
+		//}
+		//
+		int arrayCount = PersistenceGetArrayCount( "pilotWeapons" )
+		for ( int i = 0; i < arrayCount; i++ )
+		{
+			player.SetPersistentVar( "pilotWeapons[" + i + "].weaponXP", 0 )
+			player.SetPersistentVar( "pilotWeapons[" + i + "].previousWeaponXP", 0 )
+			player.SetPersistentVar( "pilotWeapons[" + i + "].newMods", 0 )
+			player.SetPersistentVar( "pilotWeapons[" + i + "].unlockedMods", 0 )
+			{
+				int unlockArrayCount = PersistenceGetArrayCount( "pilotWeapons[" + i + "].newWeaponSkins" )
+				for ( int j = 0; j < unlockArrayCount; j++ )
+				{
+					player.SetPersistentVar( "pilotWeapons[" + i + "].newWeaponSkins[" + j + "]", 0 )
+				}
+			}
+			{
+				int unlockArrayCount = PersistenceGetArrayCount( "pilotWeapons[" + i + "].newWeaponSkins" )
+				for ( int j = 0; j < unlockArrayCount; j++ )
+				{
+					player.SetPersistentVar( "pilotWeapons[" + i + "].unlockedWeaponSkins[" + j + "]", 0 )
+				}
+			}
+		}
+
+		{
+			int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+			for ( int i = 0; i < enumCount; i++ )
+			{
+				string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
+				if ( enumName != "" )
+				{
+					player.SetPersistentVar( "titanXP[" + enumName + "]", 0 )
+					player.SetPersistentVar( "previousTitanXP[" + enumName + "]", 0 )
+				}
+			}
+		}
+
+		{
+			int enumCount =	PersistenceGetEnumCount( "faction" )
+			for ( int i = 0; i < enumCount; i++ )
+			{
+				string enumName = PersistenceGetEnumItemNameForIndex( "faction", i )
+				if ( enumName != "" )
+				{
+					player.SetPersistentVar( "factionXP[" + enumName + "]", 0 )
+					player.SetPersistentVar( "previousFactionXP[" + enumName + "]", 0 )
+				}
+			}
+		}
+	}
+
+	// fix for faction gifts that weren't awarded properly
+	if ( player.GetPersistentVar( "factionGiftsFixed" ) == false )
+	{
+		player.SetPersistentVar( "factionGiftsFixed", true )
+
+		bool awardedItems = false
+
+		int factionEnumCount = PersistenceGetEnumCount( "faction" )
+		for ( int i = 0; i < factionEnumCount; i++ )
+		{
+			string factionRef = PersistenceGetEnumItemNameForIndex( "faction", i )
+			if ( factionRef != "" )
+			{
+				int maxLevelPerGen = FactionGetMaxLevel( factionRef )
+				int rawLevel = FactionGetRawLevel( player, factionRef )
+
+				if ( rawLevel <= maxLevelPerGen )
+					continue
+
+				AwardRandomItemsForFactionLevels( player, factionRef, maxLevelPerGen + 1, rawLevel )
+				awardedItems = true
+			}
+		}
+
+		if ( !awardedItems )
+			AwardRandomItem( player, eUnlockType.FACTION_LEVEL, "faction_apex" )
+	}
+
+	if ( player.GetPersistentVar( "custom_emoji_initialized" ) == false )
+	{
+		player.SetPersistentVar( "custom_emoji_initialized", true )
+		int firstIndex = 0
+		for ( int i=0; i<4; i++ )
+		{
+			int index = player.GetPersistentVarAsInt( "custom_emoji[" + i + "]" )
+			if ( index == 0 )
+			{
+				index = firstIndex + i
+				player.SetPersistentVar( "custom_emoji[" + i + "]", index )
+			}
+		}
+	}
+
+	// Handle updating NETWORTH_VAR ("netWorth") having a correct value based on previously used TEMP_NETWORTH_VAR ("activeBCID")
+	if ( player.GetPersistentVarAsInt( TEMP_NETWORTH_VAR ) > 0 )
+	{
+		int tempNetWorth = player.GetPersistentVarAsInt( TEMP_NETWORTH_VAR )
+		int netWorth = player.GetPersistentVarAsInt( NETWORTH_VAR )
+		netWorth += tempNetWorth
+		player.SetPersistentVar( NETWORTH_VAR, netWorth )
+		player.SetPersistentVar( TEMP_NETWORTH_VAR, -tempNetWorth )
+	}
+
+	if ( initializedVersion < 219 )
+	{
+		int pilotWeaponCount = PersistenceGetArrayCount( "pilotWeapons" )
+		for ( int i = 0; i < pilotWeaponCount; i++ )
+		{
+			player.SetPersistentVar( "pilotWeapons[" + i + "].proScreenKills", player.GetPersistentVarAsInt( "pilotWeapons[" + i + "].weaponXP" ) )
+			player.SetPersistentVar( "pilotWeapons[" + i + "].previousProScreenKills", player.GetPersistentVarAsInt( "pilotWeapons[" + i + "].previousWeaponXP" ) )
+		}
+	}
+
+	if ( initializedVersion < 220 )
+	{
+		player.SetPersistentVar( "hasSeenStore", false )
+	}
+
+	//Vanguard
+	if ( initializedVersion < 220 )
+	{
+		InitDefaultLoadouts() //Repopulate Default loadouts before getting the value for default loadout
+		#if DEVSCRIPTS
+		SetPersistentTitanLoadout( player, 6, GetDefaultTitanLoadout( 6 ) )
+		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", 6 )
+		if ( enumName != "" )
+		{
+			player.SetPersistentVar( "titanXP[" + enumName + "]", 0 )
+			player.SetPersistentVar( "previousTitanXP[" + enumName + "]", 0 )
+		}
+		#endif
+	}
+	if ( initializedVersion < 221 )
+	{
+		if ( GetPersistentSpawnLoadoutIndex( player, "titan" ) > (NUM_PERSISTENT_TITAN_LOADOUTS - 1) )
+			SetPersistentSpawnLoadoutIndex( player, "titan", 0 )
+	}
+
+	player.SetPersistentVar( "initializedVersion", PERSISTENCE_INIT_VERSION )
+	player.SetPersistentVar( "spawnAsTitan", false )
+
+	int loadoutIndex = 5
+	printt( player.GetPersistentVar( "titanLoadouts[" + loadoutIndex + "].skinIndex" ) )
+	printt( player.GetPersistentVar( "titanLoadouts[" + loadoutIndex + "].camoIndex" ) )
+	printt( player.GetPersistentVar( "titanLoadouts[" + loadoutIndex + "].primarySkinIndex" ) )
+	printt( player.GetPersistentVar( "titanLoadouts[" + loadoutIndex + "].primaryCamoIndex" ) )
+
+#endif // MP
+}
+
+void function ResetPlayerProgression( entity player )
+{
+	SetPersistentUnlocksToDefaults( player )
+
+	// Set player and weapons to max level
+	player.SetPersistentVar( "xp", 0 )
+	player.SetPersistentVar( "previousXP", 0 )
+	player.XPChanged()
+
+	array<string> itemRefs = GetAllItemRefsOfType( eItemTypes.PILOT_PRIMARY )
+	itemRefs.extend( GetAllItemRefsOfType( eItemTypes.PILOT_SECONDARY ) )
+	itemRefs.extend( GetAllItemRefsOfType( eItemTypes.TITAN_PRIMARY ) )
+	foreach ( itemRef in itemRefs )
+	{
+		string persistenceVar = GetItemPersistenceStruct( itemRef ) + ".weaponXP"
+		player.SetPersistentVar( persistenceVar, 0 )
+
+		persistenceVar = GetItemPersistenceStruct( itemRef ) + ".unlockedMods"
+		player.SetPersistentVar( persistenceVar, 0 )
+	}
+}
+
+// Setup order is reversed so the last loadout is 0 (default). Otherwise some menu state would show loadout 9 initially.
+void function SetPersistentLoadoutsToDefaults( entity player )
+{
+	for ( int i = NUM_PERSISTENT_PILOT_LOADOUTS-1; i >= 0; i-- )
+		SetPersistentPilotLoadout( player, i, GetDefaultPilotLoadout( i ) )
+
+	for ( int i = NUM_PERSISTENT_TITAN_LOADOUTS-1; i >= 0; i-- )
+		SetPersistentTitanLoadout( player, i, GetDefaultTitanLoadout( i ) )
+}
+
+void function RegenPersistentLoadouts( entity player )
+{
+	for ( int loadoutIndex = NUM_PERSISTENT_PILOT_LOADOUTS-1; loadoutIndex >= 0; loadoutIndex-- )
+	{
+		PilotLoadoutDef loadout = GetDefaultPilotLoadout( loadoutIndex )
+
+		// NOT reset: name
+		// TODO: Don't reset owned items
+
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "suit",				loadout.suit )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "race",				loadout.race )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primary",			loadout.primary )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryAttachment",	loadout.primaryAttachment )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod1",		loadout.primaryMod1 )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod2",		loadout.primaryMod2 )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod3",		loadout.primaryMod3 )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondary",			loadout.secondary )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod1",		loadout.secondaryMod1 )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod2",		loadout.secondaryMod2 )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod3",		loadout.secondaryMod3 )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "ordnance",			loadout.ordnance )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive1",			loadout.passive1 )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive2",			loadout.passive2 )
+	}
+
+	for ( int loadoutIndex = NUM_PERSISTENT_TITAN_LOADOUTS-1; loadoutIndex >= 0; loadoutIndex-- )
+		SetPersistentTitanLoadout( player, loadoutIndex, GetDefaultTitanLoadout( loadoutIndex ) )
+}
+
+void function SetPersistentUnlocksToDefaults( entity player )
+{
+	array<string> itemRefs = GetAllItemRefsOfType( eItemTypes.PILOT_PRIMARY )
+	itemRefs.extend( GetAllItemRefsOfType( eItemTypes.PILOT_SECONDARY ) )
+	itemRefs.extend( GetAllItemRefsOfType( eItemTypes.TITAN_PRIMARY ) )
+
+	foreach ( itemRef in itemRefs )
+	{
+		//if ( IsItemLockedForLevel( player, itemRef ) )
+		//	LockItem( player, itemRef, "")
+		//else
+		//	UnlockItem( player, itemRef, "", false )
+		//
+		//array<string> subRefs = GetAllSubitemRefs( itemRef )
+		//
+		//foreach ( subRef in subRefs )
+		//{
+		//	if ( IsItemLockedForLevel( player, itemRef, subRef ) )
+		//		LockItem( player, itemRef, subRef )
+		//	else
+		//		UnlockItem( player, itemRef, subRef, false )
+		//}
+	}
+}
+
+// Get a script array from a persistent int array
+array<int> function GetPersistentIntArray( entity player, string variableName )
+{
+	array<int> Array
+	int size = PersistenceGetArrayCount( variableName )
+
+	for ( int i = 0; i < size; i++ )
+	{
+		int element = player.GetPersistentVarAsInt( variableName + "[" + i + "]" )
+
+		Array.append( element )
+	}
+
+	return Array
+}
+
+// Sets element values in a persistent array from a script array. Modifies elements up to the size of the script array, but not more than the persistent array size.
+void function SetPersistentIntArray( entity player, string variableName, array<int> Array )
+{
+	int size = PersistenceGetArrayCount( variableName )
+
+	for ( int i = 0; i < size; i++ )
+	{
+		if ( i >= Array.len() )
+			break
+
+		player.SetPersistentVar( variableName + "[" + i + "]", Array[i] )
+	}
+}
+
+void function SetAchievement( entity player, string achievementName, bool state )
+{
+
+}
+
+bool function GetAchievement( entity player, string achievementName )
+{
+	return false
+}
+
+void function SetPersistenceBitfield( entity player, string persistenceVar, int bitIndex, int value )
+{
+	Assert( value == 0 || value == 1 )
+
+	int arrayIndex = bitIndex / 32;
+	int bitOffset = bitIndex % 32;
+
+	int decimalValue = 1 << bitOffset
+
+	Assert( arrayIndex < PersistenceGetArrayCount( persistenceVar ), "Need to increase the array size of the persistenceVar " + persistenceVar )
+	persistenceVar = persistenceVar + "[" + arrayIndex + "]"
+
+	int currentVal = player.GetPersistentVarAsInt( persistenceVar )
+	if ( value == 0 )
+		player.SetPersistentVar( persistenceVar, currentVal & ~decimalValue )
+	else
+		player.SetPersistentVar( persistenceVar, currentVal | decimalValue )
+}
+
+#endif // SERVER
+
+bool function IsPersistenceBitSet( entity player, string persistenceVar, int bitIndex )
+{
+	int arrayIndex = bitIndex / 32;
+	int bitOffset = bitIndex % 32;
+
+	int decimalValue = 1 << bitOffset
+
+	Assert( arrayIndex < PersistenceGetArrayCount( persistenceVar ), "Need to increase the array size of the persistenceVar " + persistenceVar )
+	persistenceVar = persistenceVar + "[" + arrayIndex + "]"
+
+	return ( ( player.GetPersistentVarAsInt( persistenceVar ) & decimalValue ) != 0 )
+}
+
+bool function IsAnyPersistenceBitSet( entity player, string persistenceVar )
+{
+	int arrayCount = PersistenceGetArrayCount( persistenceVar )
+	for ( int i = 0; i < arrayCount; i++ )
+	{
+#if UI
+		if ( GetCachedNewItemsVar( persistenceVar + "[" + i + "]" ) > 0 )
+			return true
+#else
+		if ( player.GetPersistentVarAsInt( persistenceVar + "[" + i + "]" ) > 0 )
+			return true
+#endif
+	}
+
+	return false
+}

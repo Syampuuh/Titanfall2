@@ -1,0 +1,594 @@
+resource/ui/menus/store_camo.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			classname				MenuTitle
+			ypos					74
+		}
+
+		StoreHeaderBg
+		{
+			ControlName				RuiPanel
+		    textAlignment           west
+			xpos					256
+            ypos                    10
+            zpos                    17
+		    rui                     "ui/store_title_bg.rpak"
+            wide					1600
+            tall					240
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+			zpos                    2
+		}
+
+///////////////////////////////////////////////////////////////////////////////////////////////// ///////////////////////////////////////////
+
+		GridPanel
+		{
+			ControlName				CNestedPanel
+			xpos					96
+            ypos                    160
+            zpos                    16
+			wide					850
+			tall					680
+			visible					1
+			tabPosition				1
+			controlSettingsFile		"Resource/UI/menus/panels/store_callsign_card_selection_grid.res"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        ItemDetails
+        {
+            ControlName				RuiPanel
+            InheritProperties		ItemDetails
+	        xpos					72
+
+            pin_to_sibling			GridPanel
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+        }
+
+
+		CallsignCard
+		{
+			ControlName				RuiPanel
+			rui                     "ui/callsign_basic.rpak"
+			pin_to_sibling          GridPanel
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
+            xpos					84//96
+            ypos					-93
+			wide                    640
+			tall                    344
+			visible					1
+			scaleImage				1
+			image					vgui/white
+            fillColor               "255 255 255 255"
+			zpos                    -1
+		}
+
+		Title
+		{
+		    ControlName				RuiPanel
+		    InheritProperties       NameProperties
+		    textAlignment           center
+		    centerWrap              1
+            zpos                    17
+		    rui                     "ui/dialog_grid_pager_title.rpak"
+
+		    pin_to_sibling          CallsignCard
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	BOTTOM_LEFT
+
+			xpos					131
+            ypos                    10
+            wide					900
+		}
+
+		CallsignIcon0x0
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			198
+			ypos			636
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+
+			navUp			GridButton4x0
+			navRight		CallsignIcon0x1
+			navDown			CallsignIcon1x0
+		}
+
+		CallsignIcon0x1
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon0x0
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			GridButton4x0
+			navLeft			CallsignIcon0x0
+			navRight		CallsignIcon0x2
+			navDown			CallsignIcon1x1
+		}
+
+		CallsignIcon0x2
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon0x1
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			GridButton4x1
+			navLeft			CallsignIcon0x1
+			navRight		CallsignIcon0x3
+			navDown			CallsignIcon1x2
+		}
+
+		CallsignIcon0x3
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon0x2
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			GridButton4x1
+			navLeft			CallsignIcon0x2
+			navRight		CallsignIcon0x4
+			navDown			CallsignIcon1x3
+		}
+
+		CallsignIcon0x4
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon0x3
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			GridButton4x1
+			navLeft			CallsignIcon0x3
+			navRight		CallsignIcon0x5
+			navDown			CallsignIcon1x4
+		}
+
+		CallsignIcon0x5
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon0x4
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			GridButton4x2
+			navLeft			CallsignIcon0x4
+			navRight		CallsignIcon0x6
+			navDown			CallsignIcon1x5
+		}
+
+		CallsignIcon0x6
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon0x5
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			GridButton4x2
+			navLeft			CallsignIcon0x5
+			navRight		CallsignIcon0x7
+			navDown			CallsignIcon1x6
+		}
+
+		CallsignIcon0x7
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon0x6
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			GridButton4x2
+			navLeft			CallsignIcon0x6
+			navRight		CallsignIcon0x8
+			navDown			CallsignIcon1x7
+		}
+
+		CallsignIcon0x8
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon0x7
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			GridButton4x3
+			navLeft			CallsignIcon0x7
+			navRight		CallsignIcon0x9
+			navDown			CallsignIcon1x8
+		}
+
+		CallsignIcon0x9
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon0x8
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			GridButton4x3
+			navLeft			CallsignIcon0x8
+			navDown			CallsignIcon1x9
+		}
+
+
+
+		CallsignIcon1x0
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			0
+			ypos			4
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon0x0
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	BOTTOM_LEFT
+
+			navUp			CallsignIcon0x0
+			navRight		CallsignIcon1x1
+			navDown			BuyButton
+		}
+
+		CallsignIcon1x1
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon1x0
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			CallsignIcon0x1
+			navLeft			CallsignIcon1x0
+			navRight		CallsignIcon1x2
+			navDown			BuyButton
+		}
+
+		CallsignIcon1x2
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon1x1
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			CallsignIcon0x2
+			navLeft			CallsignIcon1x1
+			navRight		CallsignIcon1x3
+			navDown			BuyButton
+		}
+
+		CallsignIcon1x3
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon1x2
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			CallsignIcon0x3
+			navLeft			CallsignIcon1x2
+			navRight		CallsignIcon1x4
+			navDown			BuyButton
+		}
+
+		CallsignIcon1x4
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon1x3
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
+
+			navUp			CallsignIcon0x4
+			navLeft			CallsignIcon1x3
+			navRight		CallsignIcon1x5
+			navDown			BuyButton
+		}
+
+		CallsignIcon1x5
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon1x4
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			CallsignIcon0x5
+			navLeft			CallsignIcon1x4
+			navRight		CallsignIcon1x6
+			navDown			BuyButton
+		}
+
+		CallsignIcon1x6
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon1x5
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			CallsignIcon0x6
+			navLeft			CallsignIcon1x5
+			navRight		CallsignIcon1x7
+			navDown			BuyButton
+		}
+
+		CallsignIcon1x7
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon1x6
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			CallsignIcon0x7
+			navLeft			CallsignIcon1x6
+			navRight		CallsignIcon1x8
+			navDown			BuyButton
+		}
+
+		CallsignIcon1x8
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon1x7
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			CallsignIcon0x8
+			navLeft			CallsignIcon1x7
+			navRight		CallsignIcon1x9
+			navDown			BuyButton
+		}
+
+		CallsignIcon1x9
+		{
+			ControlName			RuiButton
+			InheritProperties	CallsignIconStore
+			xpos			8
+			zpos			50
+			wide			61
+			tall			92
+			visible			1
+			scaleImage		1
+			tabPosition		1
+			drawColor		"255 255 255 255"
+			pin_to_sibling          CallsignIcon1x8
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+
+			navUp			CallsignIcon0x9
+			navLeft			CallsignIcon1x8
+			navDown			BuyButton
+		}
+
+        BuyButton
+        {
+            ControlName				RuiButton
+            InheritProperties		RuiStoreBuyButton
+            classname				CategorySelectClass
+            scriptID				0
+            xpos					378
+            ypos                    850
+            navUp					CallsignIcon1x4
+        }
+
+//        UnlockDetails
+//        {
+//            ControlName				RuiPanel
+//	        xpos					384
+//
+//            wide                    640
+//			tall					150
+//            rui						"ui/unlock_details.rpak"
+//
+//            pin_to_sibling			GridPanel
+//            pin_corner_to_sibling	LEFT
+//            pin_to_sibling_corner	RIGHT
+//        }
+
+
+// FOOTER //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

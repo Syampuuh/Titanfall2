@@ -1,0 +1,25 @@
+"UnlitTwoTexture"
+{
+	"$translucent"	1
+	"$additive" "1"
+	"$no_fullbright" 1
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+
+	"$decal" "1"
+	"$decalscale" 0.1
+	"$decalfadeduration" 1
+	"$decalfadetime" 0
+	"$decalsecondpass" 1
+
+//	$alphaerosion .5
+
+	"$basetexture" "decals/bullets/thermite/shot2"
+//	"$Texture2" "effects/electric_anim"
+	"$Texture2" "effects/white"
+
+	"$allowoverbright" 1
+
+	"$color2" "[1.5 1 .5]"
+
+}

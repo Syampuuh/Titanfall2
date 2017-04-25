@@ -1,0 +1,860 @@
+
+global function DeathHints_Init
+global function GetHintForTitanLoadout
+
+#if SERVER
+global function ShowDeathHint
+
+#if SP
+global function ShowDeathHintSP
+#endif
+
+#endif
+
+#if CLIENT
+global function ServerCallback_ShowDeathHint
+global function DeathHintDisplay
+#endif
+
+const int NUM_CLASS_NAME_COLUMNS = 5
+const int MAX_REMEMBERED_HINTS_SP = 10
+
+const DEATH_HINT_COLOR = <0.0, 0.0, 0.0>
+const DEATH_HINT_BGALPHA = 0.5
+const DEATH_HINT_COLOR_FRIENDLY = <0.34, 0.59, 0.86>
+const DEATH_HINT_COLOR_ENEMY = <1.0, 0.36, 0.12>
+
+
+// these are the usuable source names in the csv
+enum eHints
+{
+	titan_class
+	is_pilot
+	pilot_slide
+	custom
+	weapon
+	self_damage
+	npc_title
+	damage_source_id
+	damage_def
+
+	total
+}
+
+
+struct DeathHint
+{
+	int id
+	string hint
+}
+
+struct DeathHintGroup
+{
+	array<DeathHint> hints
+	float weight
+}
+
+struct
+{
+	array<table<string, array<DeathHint> > > deathHints
+	array<string> indexToHintString
+	table<string,int> hintStringToIndex
+	var deathHintRUI
+	int numForcedSelfHints
+} file
+
+void function DeathHints_Init()
+{
+	#if SERVER
+	AddCallback_OnClientConnected( DeathHint_PlayerConnect )
+	FlagInit( "DeathHintsEnabled", true )
+	#endif
+
+	file.numForcedSelfHints = RandomIntRangeInclusive( 3, 4 )
+
+	#if SP
+		var dataTable = GetDataTable( $"datatable/death_hints_sp.rpak" )
+	#else
+		var dataTable = GetDataTable( $"datatable/death_hints_mp.rpak" )
+	#endif
+
+	int numRows = GetDatatableRowCount( dataTable )
+
+	file.deathHints.resize( eHints.total )
+
+	int sourceColumn = GetDataTableColumnByName( dataTable, "source" )
+	int classNameColumn = GetDataTableColumnByName( dataTable, "className" )
+	int locStringColumn = GetDataTableColumnByName( dataTable, "locString" )
+	int mapNameColumn = GetDataTableColumnByName( dataTable, "mapName" )
+
+	string currMapName
+
+	#if SERVER || CLIENT
+	currMapName = GetMapName()
+	#endif
+
+	#if UI
+	currMapName = uiGlobal.loadedLevel
+	#endif
+
+	for ( int i = 0; i < numRows; i++ )
+	{
+		string sourceName = GetDataTableString( dataTable, i, sourceColumn )
+		string className = GetDataTableString( dataTable, i, classNameColumn )
+		string locString = GetDataTableString( dataTable, i, locStringColumn )
+		string mapName = GetDataTableString( dataTable, i, mapNameColumn )
+
+		#if DEV
+		if ( !( sourceName in eHints ) )
+		{
+			CodeWarning( "Unhandled death hint source " + sourceName )
+			continue
+		}
+		#endif
+
+		if ( mapName != "" && mapName != currMapName )
+			continue
+
+		int source = eHints[ sourceName ]
+		int index
+
+		if ( locString in file.hintStringToIndex )
+		{
+			index = file.hintStringToIndex[ locString ]
+		}
+		else
+		{
+			index = file.indexToHintString.len()
+			file.hintStringToIndex[ locString ] <- index
+			file.indexToHintString.append( locString )
+		}
+
+		DeathHint dh
+		dh.id = index
+		dh.hint = locString
+
+		if ( !( className in file.deathHints[ source ] ) )
+			file.deathHints[ source ][ className ] <- [ dh ]
+		else
+			file.deathHints[ source ][ className ].append( dh )
+	}
+}
+
+array<DeathHintGroup> function GetHintGroupsWithWeighting( int source, array<string> classNames, array<float> groupWeights )
+{
+	array<DeathHintGroup> hintGroups
+
+	foreach ( index, className in classNames )
+	{
+		if ( !( className in file.deathHints[ source ] ) )
+			continue
+
+		DeathHintGroup hg
+
+		foreach ( hint in file.deathHints[ source ][ className ] )
+		{
+			hg.hints.append( hint )
+		}
+		hg.weight = groupWeights[ index ]
+
+		if ( hg.hints.len() )
+			hintGroups.append( hg )
+	}
+
+	return hintGroups
+}
+
+DeathHintGroup ornull function GetHintGroup_OrNull( int source, string className )
+{
+	if ( !( className in file.deathHints[ source ] ) )
+		return null
+
+	DeathHintGroup hg
+	foreach ( hint in file.deathHints[ source ][ className ] )
+	{
+		hg.hints.append( hint )
+	}
+	hg.weight = 0
+
+	if ( !hg.hints.len() )
+		return null
+
+	return hg
+}
+
+array<DeathHintGroup> function GetHintGroups( int source, string classname )
+{
+	DeathHintGroup ornull deathHintGroup = GetHintGroup_OrNull( source, classname )
+	if ( deathHintGroup != null )
+	{
+		expect DeathHintGroup( deathHintGroup )
+		return [ deathHintGroup ]
+	}
+
+	return []
+}
+
+string function GetHintForTitanLoadout( TitanLoadoutDef loadout )
+{
+	array<DeathHintGroup> hints = GetHintGroups( eHints.titan_class, loadout.titanClass )
+
+	if ( hints.len() > 0 )
+	{
+		DeathHintGroup hint = hints.getrandom()
+		DeathHint h = hint.hints.getrandom()
+		return h.hint
+	}
+
+	return ""
+}
+
+#if SERVER
+void function DeathHint_PlayerConnect( entity player )
+{
+	player.p.deathHintViews.resize( file.indexToHintString.len() )
+}
+
+bool function ShowDeathHint( entity player, var damageInfo )
+{
+	Assert( IsValid( player ) )
+
+	if ( IsPlayerEliminated( player ) )
+		return false
+
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+
+	// show hints on first death, two deaths later, then every third death repeated
+	int numDeaths = player.p.numberOfDeaths
+	if ( numDeaths == 2 || ( numDeaths > 3 && ( numDeaths % 3 ) > 0 ) )
+		return false
+
+	//bool shouldForceSelfHint = player.p.numberOfDeaths <= file.numForcedSelfHints
+	bool shouldForceSelfHint = true // only show hints for self
+
+	entity hintEnt
+	if ( shouldForceSelfHint || !IsValid( attacker ) )
+		hintEnt = player
+	else
+		hintEnt = attacker
+
+	if ( !hintEnt.IsPlayer() )
+		return false
+
+	array<DeathHintGroup> hintGroups = GetDeathHintGroups_FromPlayerLoadout( hintEnt, damageInfo )
+
+	if ( !hintGroups.len() )
+		return false
+
+	int hintId = GetHintIDFromHintGroups_WeightedByPreviousViews( player, hintGroups )
+	player.p.deathHintViews[ hintId ]++
+	Remote_CallFunction_NonReplay( player, "ServerCallback_ShowDeathHint", hintId )
+	return true
+}
+
+array<int> function GetHintIdsFromGroups( array<DeathHintGroup> hintGroups )
+{
+	array<int> hintIds
+	foreach ( hintGroup in hintGroups )
+	{
+		foreach ( deathHint in hintGroup.hints )
+		{
+			hintIds.append( deathHint.id )
+		}
+	}
+	return hintIds
+}
+
+void function SetHintViewedRecently( int hintId )
+{
+	array<int> hints = GetHintViewedRecently()
+
+	hints.insert( 0, hintId )
+	string hintString
+	foreach ( index, hint in hints )
+	{
+		if ( index >= MAX_REMEMBERED_HINTS_SP )
+			break
+
+		hintString += hint + " "
+	}
+
+	SetConVarString( "sp_lastdeathhints", hintString )
+}
+
+bool function HintViewedRecently( int hintId )
+{
+	array<int> hints = GetHintViewedRecently()
+	return hints.contains( hintId )
+}
+
+array<int> function GetHintViewedRecently()
+{
+	string hintString = GetConVarString( "sp_lastdeathhints" )
+	array<string> tokens = split( hintString, " " )
+
+	array<int> hints
+	foreach ( token in tokens )
+	{
+		int hint = int( token )
+
+		hints.append( hint )
+	}
+
+	return hints
+}
+
+bool function GroupsContainNonViewedRecentlyHints( array<DeathHintGroup> deathHintGroups )
+{
+	array<int> hints = GetHintIdsFromGroups( deathHintGroups )
+	RemoveViewedRecently( hints )
+	return hints.len() > 0
+}
+
+void function RemoveViewedRecently( array<int> hints )
+{
+	for ( int i = 0; i < hints.len(); i++ )
+	{
+		if ( !HintViewedRecently( hints[i] ) )
+			continue
+
+		hints.remove( i )
+		i--
+	}
+}
+
+#if SP
+bool function ShowDeathHintSP( entity player, var damageInfo )
+{
+	Assert( IsValid( player ) )
+	if ( !Flag( "DeathHintsEnabled" ) )
+		return false
+
+	if ( IsDamageFromDamageTrigger( damageInfo ) )
+		return false
+
+	array<DeathHintGroup> hintGroups = GetHintGroupForSPDeath( player, damageInfo )
+	if ( !hintGroups.len() )
+		return false
+
+	array<int> hints = GetHintIdsFromGroups( hintGroups )
+	RemoveViewedRecently( hints )
+	hints.randomize()
+
+	foreach ( hint in hints )
+	{
+		if ( HintViewedRecently( hint ) )
+			continue
+
+		SetHintViewedRecently( hint )
+		Remote_CallFunction_NonReplay( player, "ServerCallback_ShowDeathHint", hint )
+		return true
+	}
+
+	SetHintViewedRecently( 0 ) // push out old hints
+
+	return false
+}
+
+array<DeathHintGroup> function GetHintGroupForSPDeath( entity player, var damageInfo )
+{
+	float lastLoadTime = GetLastCheckPointLoadTime()
+
+	if ( player.IsTitan() )
+	{
+		//add hint if we hurt ourselves
+		array<AttackerDamage> attackerDamages = GetDamageSortedByAttacker( player.GetTitanSoul(), MAX_DAMAGE_HISTORY_TIME )
+		DeathHintGroup ornull deathHint = GetDeathHintForSelfDamage( player, attackerDamages, 0.33 )
+		if ( deathHint != null )
+		{
+			expect DeathHintGroup( deathHint )
+			return [ deathHint ]
+		}
+
+		array<DeathHintGroup> deathHintGroups
+
+		if ( player.p.lastSelectSPTitanLoadoutTime < lastLoadTime && GetSPTitanLoadoutsUnlocked().len() > 1 )
+		{
+			// havent switched titan loadouts this life?
+			DeathHintGroup ornull deathHint = GetHintGroup_OrNull( eHints.custom, "titan_switch_weapons" )
+			if ( deathHint != null )
+			{
+				expect DeathHintGroup( deathHint )
+				deathHintGroups.append( deathHint )
+			}
+		}
+
+		// what haven't I used this life?
+		array<int> unusedOffhands = GetUnusedTitanOffhands( player, lastLoadTime )
+		deathHintGroups.extend( GetDeathHintGroupsFromUnusedOffhands( player, unusedOffhands ) )
+
+		if ( GroupsContainNonViewedRecentlyHints( deathHintGroups ) )
+			return deathHintGroups
+
+		// ok what about the rest of my stuff?
+		TitanLoadoutDef ornull titanLoadout = GetCurrentTitanLoadoutForPlayer( player )
+		if ( titanLoadout != null )
+		{
+			expect TitanLoadoutDef( titanLoadout )
+			deathHintGroups.extend( GetHintGroups( eHints.titan_class, titanLoadout.titanClass ) )
+			deathHintGroups.extend( GetDeathHintGroups_FromPlayerLoadout( player, damageInfo ) )
+		}
+
+		return deathHintGroups
+	}
+	else
+	{
+		Assert( IsPilot( player ) )
+
+		array<AttackerDamage> attackerDamages = GetDamageSortedByAttacker( player, 5.0 )
+
+		DeathHintGroup ornull deathHint = GetDeathHintForSelfDamage( player, attackerDamages, 0.66 )
+		if ( deathHint != null )
+		{
+			expect DeathHintGroup( deathHint )
+			if ( GroupsContainNonViewedRecentlyHints( [ deathHint ] ) )
+				return [ deathHint ]
+		}
+
+		int damageSourceId = DamageInfo_GetDamageSourceIdentifier( damageInfo )
+		if ( ( DamageInfo_GetDamage( damageInfo ) == 0 ) || ( damageSourceId == eDamageSourceId.toxic_sludge ) )  // toxic_sludge does more than 0 damage, but other env. hazards don't
+		{
+			string sourceName = DamageSourceIDToString( damageSourceId )
+			array<DeathHintGroup> moreGroups = GetHintGroups( eHints.damage_source_id, sourceName )
+			if ( GroupsContainNonViewedRecentlyHints( moreGroups ) )
+				return moreGroups
+		}
+
+		array<DeathHintGroup> deathHintGroups
+
+		// what haven't I used this life?
+		array<int> unusedOffhands = GetUnusedPilotOffhands( player, lastLoadTime )
+		array<DeathHintGroup> unusedOffhandsGroups = GetDeathHintGroupsFromUnusedOffhands( player, unusedOffhands )
+		deathHintGroups.extend( unusedOffhandsGroups )
+
+		// my loadout
+		deathHintGroups.extend( GetHintGroupsForMyPilotLoadout( player ) )
+
+		// general pilot tips
+		deathHintGroups.extend( GetHintGroups( eHints.is_pilot, "any" ) )
+
+		float lastSlideTime = SP_PlayerLastSlideTime()
+		if ( lastSlideTime == 0 || Time() - lastSlideTime > 120 )
+		{
+			// general pilot tips
+			deathHintGroups.extend( GetHintGroups( eHints.pilot_slide, "any" ) )
+		}
+
+		// if #1 damager was npc then add them
+		if ( attackerDamages.len() )
+		{
+			foreach ( attackerDamage in attackerDamages )
+			{
+				entity attacker = attackerDamage.attacker
+				if ( attacker == player )
+					continue
+
+				if ( IsValid( attacker ) && attacker.IsNPC() )
+				{
+					deathHintGroups.extend( GetDeathHintGroups_FromNPC( attacker, damageInfo ) )
+
+					foreach ( sourceID, damage in attackerDamage.damageBySource )
+					{
+						if ( damage <= 0 )
+							continue
+
+						string sourceName = DamageSourceIDToString( sourceID )
+						array<DeathHintGroup> moreGroups = GetHintGroups( eHints.damage_source_id, sourceName )
+						deathHintGroups.extend( moreGroups )
+					}
+				}
+				break
+			}
+		}
+
+		return deathHintGroups
+	}
+
+	unreachable
+}
+
+#endif
+
+TitanLoadoutDef ornull function GetCurrentTitanLoadoutForPlayer( entity player )
+{
+	array<entity> weapons = player.GetMainWeapons()
+	foreach ( weapon in weapons )
+	{
+		TitanLoadoutDef ornull titanLoadout = GetTitanLoadoutForPrimary( weapon.GetWeaponClassName() )
+		if ( titanLoadout == null )
+			return null
+		expect TitanLoadoutDef( titanLoadout )
+		return titanLoadout
+	}
+
+	return null
+}
+
+array<DeathHintGroup> function GetHintGroupsForMyPilotLoadout( entity player )
+{
+	array<string> weapons
+	array<float> groupWeights
+
+	entity weap = player.GetActiveWeapon()
+	if ( IsValid( weap ) )
+	{
+		weapons.append( weap.GetWeaponClassName() )
+	}
+
+	weap = player.GetOffhandWeapon( OFFHAND_RIGHT )
+	if ( IsValid( weap ) )
+	{
+		weapons.append( weap.GetWeaponClassName() )
+	}
+
+	weap = player.GetOffhandWeapon( OFFHAND_LEFT )
+	if ( IsValid( weap ) )
+	{
+		weapons.append( weap.GetWeaponClassName() )
+	}
+
+	weap = player.GetOffhandWeapon( OFFHAND_ANTIRODEO )
+	if ( IsValid( weap ) )
+	{
+		weapons.append( weap.GetWeaponClassName() )
+	}
+
+	weap = player.GetOffhandWeapon( OFFHAND_EQUIPMENT )
+	if ( IsValid( weap ) )
+	{
+		weapons.append( weap.GetWeaponClassName() )
+	}
+
+	groupWeights.resize( weapons.len() )
+
+	return GetHintGroupsWithWeighting( eHints.weapon, weapons, groupWeights )
+}
+
+
+array<DeathHintGroup> function GetDeathHintGroupsFromUnusedOffhands( entity player, array<int> unusedOffhands )
+{
+	array<DeathHintGroup> deathHintGroups
+
+	array<entity> offhandWeapons = player.GetOffhandWeapons()
+	foreach ( offhandIndex in unusedOffhands )
+	{
+		entity weapon = player.GetOffhandWeapon( offhandIndex )
+		if ( !IsValid( weapon ) )
+			continue
+		DeathHintGroup ornull deathHintGroup = GetHintGroup_OrNull( eHints.weapon, weapon.GetWeaponClassName() )
+		if ( deathHintGroup == null )
+			continue
+
+		expect DeathHintGroup( deathHintGroup )
+		deathHintGroups.append( deathHintGroup )
+	}
+
+	return deathHintGroups
+}
+
+DeathHintGroup ornull function GetDeathHintForSelfDamage( entity target, array<AttackerDamage> attackerDamages, float selfDamageRatio )
+{
+	foreach ( attackerDamage in attackerDamages )
+	{
+		// see if we hurt ourselves significantly
+		if ( attackerDamage.attacker != target )
+			continue
+
+		if ( attackerDamage.totalDamage < target.GetMaxHealth() * selfDamageRatio )
+			continue
+
+		// hurt ourselves substantially
+		// if damagesource is a self_damage, use that
+		// otherwise use generic line
+
+		string highestDamageID
+		float highestDamage
+		foreach ( source, damage in attackerDamage.damageBySource )
+		{
+			if ( damage <= highestDamage )
+				continue
+
+			highestDamage = damage
+			highestDamageID = DamageSourceIDToString( source )
+		}
+
+		DeathHintGroup ornull deathHintDamageID = GetHintGroup_OrNull( eHints.self_damage, highestDamageID )
+		if ( deathHintDamageID != null )
+		{
+			expect DeathHintGroup( deathHintDamageID )
+			return deathHintDamageID
+		}
+
+		DeathHintGroup ornull deathHintGeneric = GetHintGroup_OrNull( eHints.custom, "killed_self_generic" )
+		if ( deathHintGeneric != null )
+		{
+			expect DeathHintGroup( deathHintGeneric )
+			return deathHintGeneric
+		}
+
+		return null
+	}
+
+	return null
+}
+
+array<int> function GetUnusedTitanOffhands( entity player, float useTimeLimit )
+{
+	// haven't used offhands?
+	array<int> unusedOffhandTypes
+	foreach ( offhandType, lastUseTime in player.p.lastTitanOffhandUseTime )
+	{
+		if ( lastUseTime > useTimeLimit )
+			continue
+		unusedOffhandTypes.append( offhandType )
+	}
+	return unusedOffhandTypes
+}
+
+array<int> function GetUnusedPilotOffhands( entity player, float useTimeLimit )
+{
+	// haven't used offhands?
+	array<int> unusedOffhandTypes
+	foreach ( offhandType, lastUseTime in player.p.lastPilotOffhandUseTime )
+	{
+		if ( lastUseTime > useTimeLimit )
+			continue
+		unusedOffhandTypes.append( offhandType )
+	}
+	return unusedOffhandTypes
+}
+
+
+array<DeathHintGroup> function GetDeathHintGroups_FromPlayerLoadout( entity hintPlayer, var damageInfo )
+{
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	bool hintPlayerIsTitan = hintPlayer.IsTitan()
+
+	float replayTime = hintPlayerIsTitan ? KILL_REPLAY_BEFORE_KILL_TIME_TITAN : KILL_REPLAY_BEFORE_KILL_TIME_PILOT
+	float preferredTime = replayTime + 2.0
+
+	array<string> weapons
+	array<float> groupWeights
+
+	entity weap = hintPlayer.GetActiveWeapon()
+	if ( IsValid( weap ) )
+	{
+		weapons.append( weap.GetWeaponClassName() )
+		groupWeights.append( 0.0 )
+	}
+
+	weap = hintPlayer.GetOffhandWeapon( OFFHAND_RIGHT )
+	if ( IsValid( weap ) )
+	{
+		weapons.append( weap.GetWeaponClassName() )
+		float lastOffhandUseTime = hintPlayerIsTitan ? hintPlayer.p.lastTitanOffhandUseTime[ OFFHAND_RIGHT ] : hintPlayer.p.lastPilotOffhandUseTime[ OFFHAND_RIGHT ]
+		groupWeights.append( Graph( Time() - lastOffhandUseTime, preferredTime, 0.0, 0.0, 1.0 ) )
+	}
+
+	weap = hintPlayer.GetOffhandWeapon( OFFHAND_LEFT )
+	if ( IsValid( weap ) )
+	{
+		weapons.append( weap.GetWeaponClassName() )
+		float lastOffhandUseTime = hintPlayerIsTitan ? hintPlayer.p.lastTitanOffhandUseTime[ OFFHAND_LEFT ] : hintPlayer.p.lastPilotOffhandUseTime[ OFFHAND_LEFT ]
+		groupWeights.append( Graph( Time() - lastOffhandUseTime, preferredTime, 0.0, 0.0, 1.0 ) )
+	}
+
+	weap = hintPlayer.GetOffhandWeapon( OFFHAND_ANTIRODEO )
+	if ( IsValid( weap ) )
+	{
+		weapons.append( weap.GetWeaponClassName() )
+		groupWeights.append( Graph( Time() - hintPlayer.p.lastTitanOffhandUseTime[ OFFHAND_ANTIRODEO ], preferredTime, 0.0, 0.0, 1.0 ) )
+	}
+
+	weap = hintPlayer.GetOffhandWeapon( OFFHAND_EQUIPMENT )
+	if ( IsValid( weap ) )
+	{
+		weapons.append( weap.GetWeaponClassName() )
+		groupWeights.append( Graph( Time() - hintPlayer.p.lastTitanOffhandUseTime[ OFFHAND_EQUIPMENT ], preferredTime, 0.0, 0.0, 1.0 ) )
+	}
+
+	if ( hintPlayer == attacker ) // Ensures the hint player is the actual attacker before getting the weapon from damageInfo
+	{
+		var damageWeap = DamageInfo_GetDamageWeaponName( damageInfo )
+		if ( IsValid( damageWeap ) )
+		{
+			expect string( damageWeap )
+			if ( !weapons.contains( damageWeap ) )
+			{
+				weapons.append( damageWeap )
+				groupWeights.append( 0.0 )
+			}
+		}
+	}
+
+	return GetHintGroupsWithWeighting( eHints.weapon, weapons, groupWeights )
+}
+
+array<DeathHintGroup> function GetDeathHintGroups_FromNPC( entity hintNpc, var damageInfo )
+{
+	array<string> deathMethods
+	array<float> groupWeights
+
+	// killed by this type of thing
+	string title = hintNpc.GetSettingTitle()
+	deathMethods.append( title )
+	groupWeights.append( 0.0 )
+
+/*
+	entity weap = hintNpc.GetActiveWeapon()
+	if ( IsValid( weap ) )
+	{
+		deathMethods.append( weap.GetWeaponClassName() )
+		groupWeights.append( 0.0 )
+	}
+
+	var damageWeap = DamageInfo_GetDamageWeaponName( damageInfo )
+	if ( IsValid( damageWeap ) )
+	{
+		expect string( damageWeap )
+		if ( !deathMethods.contains( damageWeap ) )
+		{
+			deathMethods.append( damageWeap )
+			groupWeights.append( 0.0 )
+		}
+	}
+
+	if ( hintNpc.HasKey( "grenadeWeaponName" ) )
+	{
+		string grenadeWeaponName = expect string( hintNpc.kv.grenadeWeaponName )
+		if ( grenadeWeaponName != "" && !deathMethods.contains( grenadeWeaponName ) )
+		{
+			deathMethods.append( grenadeWeaponName )
+			groupWeights.append( 0.0 )
+		}
+	}
+*/
+
+	return GetHintGroupsWithWeighting( eHints.npc_title, deathMethods, groupWeights )
+}
+
+int function GetHintIDFromHintGroups_WeightedByPreviousViews( entity player, array<DeathHintGroup> hintGroups )
+{
+	Assert( IsMultiplayer() )
+	// collect an array of group indexes with the least views (for any individual tip)
+	int minViews
+	array<int> hintGroupsWithLeastViews
+
+	foreach ( idx, group in hintGroups )
+	{
+		foreach ( i, hint in group.hints )
+		{
+			if ( ( idx == 0 && i == 0 ) || player.p.deathHintViews[ hint.id ] < minViews )
+			{
+				minViews = player.p.deathHintViews[ hint.id ]
+				hintGroupsWithLeastViews.clear()
+			}
+
+			if ( player.p.deathHintViews[ hint.id ] <= minViews )
+			{
+				if ( !( hintGroupsWithLeastViews.contains( idx ) ) )
+					hintGroupsWithLeastViews.append( idx )
+			}
+		}
+	}
+
+	// within the groups with least views, collect an array of group indexes with the highest weight
+	float maxWeight
+	array<int> hintGroupsWithHighestWeight
+
+	foreach ( i, idx in hintGroupsWithLeastViews )
+	{
+		if ( i == 0 || hintGroups[ idx ].weight > maxWeight )
+		{
+			maxWeight = hintGroups[ idx ].weight
+			hintGroupsWithHighestWeight.clear()
+		}
+
+		if ( hintGroups[ idx ].weight >= maxWeight )
+			hintGroupsWithHighestWeight.append( idx )
+	}
+
+	// within the groups that have the highest weight, collect a group of potential hint ids
+	array<int> potentialIds
+
+	foreach ( idx in hintGroupsWithHighestWeight )
+	{
+		foreach ( hint in hintGroups[ idx ].hints )
+		{
+			if ( player.p.deathHintViews[ hint.id ] < minViews )
+			{
+				minViews = player.p.deathHintViews[ hint.id ]
+				potentialIds.clear()
+			}
+
+			if ( player.p.deathHintViews[ hint.id ] <= minViews )
+				potentialIds.append( hint.id )
+		}
+	}
+
+	return potentialIds.getrandom()
+}
+
+
+#endif // SERVER
+
+#if CLIENT
+void function ServerCallback_ShowDeathHint( int hintId )
+{
+	thread ShowDeathHintThread( file.indexToHintString[ hintId ] )
+}
+
+void function ShowDeathHintThread( string hint )
+{
+	#if SP
+	Assert( IsSingleplayer() )
+	DisableDeathBlur()
+	wait 1.0
+	#endif
+
+	//waitthread WaitSignalOrTimeout( clGlobal.levelEnt, delay, "LocalClientPlayerRespawned" )
+	if ( IsMultiplayer() )
+	{
+		WaitSignal( clGlobal.levelEnt, "LocalClientPlayerRespawned" )
+	}
+
+	wait 0.5
+
+	DeathHintDisplay( hint )
+}
+
+void function DeathHintDisplay( string hint )
+{
+	if ( file.deathHintRUI != null )
+		RuiDestroyIfAlive( file.deathHintRUI )
+
+	if ( IsWatchingReplay() ) // returns true if you're spectating or watching a replay
+		return
+
+	if ( !DeathHintsSettingIsEnabled() )
+		return
+
+	#if SP
+	DisplayRespawnPrompt()
+	#endif
+
+	if ( GetConVarInt( "hud_setting_showTips" ) == 0 )
+		return
+
+	if ( IsMultiplayer() )
+		file.deathHintRUI = CreatePermanentCockpitRui( $"ui/death_hint_mp.rpak" )
+	else
+		file.deathHintRUI = CreateFullscreenRui( $"ui/death_hint_sp.rpak", RUI_SORT_SCREENFADE + 100 )
+
+	RuiSetResolutionToScreenSize( file.deathHintRUI )
+	RuiSetString( file.deathHintRUI, "hintText", hint )
+	RuiSetGameTime( file.deathHintRUI, "startTime", Time() )
+	RuiSetFloat3( file.deathHintRUI, "bgColor", DEATH_HINT_COLOR )
+	RuiSetFloat( file.deathHintRUI, "bgAlpha", DEATH_HINT_BGALPHA )
+}
+#endif
+

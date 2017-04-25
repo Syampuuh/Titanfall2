@@ -1,0 +1,13 @@
+"SpriteCard"
+{
+	"$basetexture" "particle\beam\straight_beam_wide"
+	$translucent 1
+	$addself 	2
+	$overbrightfactor 6
+
+	//"$nocull"	1
+	$splinetype	1
+
+	//$alphaTrailFade -1
+	//$radiusTrailFade 0
+}

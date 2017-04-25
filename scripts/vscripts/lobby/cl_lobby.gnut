@@ -1,0 +1,20 @@
+untyped
+
+
+global function Lobby_AddPlayer
+
+//********************************************************************************************
+//	Lobby
+//********************************************************************************************
+
+function Lobby_AddPlayer( entity player )
+{
+	WaitFrame()
+
+	player.FreezeControlsOnClient()
+	player.HideCrosshairNames()
+
+	SetStandardAbilityBindingsForPilot( player )
+
+	thread LoopLobbyMusic()
+}

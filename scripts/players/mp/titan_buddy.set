@@ -1,0 +1,143 @@
+#base "titan_base.set"
+"titan_buddy"
+{
+	titan_regen_delay		6.0
+
+	sp_aiSettingsFile			"npc_titan_buddy"
+
+	titanCharacterName "bt" //Making it return bt for the cockpit sound alias. If this needs to be something else (like "Buddy Titan" ) we should re-examine
+	hasLeftRightEmbarks		1
+
+	keep_title_on_autotitan			1
+	start_with_shields				1
+	use_damage_states				0
+
+    hud_follow_icon     "rui/hud/earn_meter/titan_building"
+    hud_guard_icon      "rui/hud/earn_meter/titan_building"
+
+    core_building_icon  "rui/titan_loadout/core/titan_core_smart"
+    core_ready_icon     "rui/titan_loadout/core/titan_core_smart"
+
+    autoprecache_script	buddy
+
+    startup_sound		"bt_power_up"
+    execution_anim		"titan_buddy"
+
+	precache_gibModel0	"models/gibs/titan_gibs/at_gib1.mdl"
+	precache_gibModel1	"models/gibs/titan_gibs/at_gib7_r_shin.mdl"
+	precache_gibModel2	"models/gibs/titan_gibs/at_gib8_l_thigh1.mdl"
+	precache_gibModel3	"models/gibs/titan_gibs/at_gib8_l_thigh2.mdl"
+	precache_gibModel4	"models/gibs/titan_gibs/at_gib9_l_bicep1.mdl"
+	precache_gibModel5	"models/gibs/titan_gibs/at_gib_hatch_d.mdl"
+	precache_gibModel6	"models/gibs/titan_gibs/at_gib_l_arm1_d.mdl"
+	precache_gibModel7	"models/gibs/titan_gibs/at_gib_l_arm2_d.mdl"
+	precache_gibModel8	"models/gibs/titan_gibs/at_gib_r_arm1_d.mdl"
+	precache_gibModel9	"models/gibs/titan_gibs/at_gib_r_arm2_d.mdl"
+
+	rodeo_allow 			0
+
+	"global"
+	{
+		printname			"#NPC_BT_NAME"[$sp]
+		printname			"Buddy Atlas"[$mp]
+		description				"#CHASSIS_ATLAS_DESCRIPTION"
+
+		subclass			"buddy"
+		viewPunchSpring		punch_titan_atlas
+
+	    ui_targetinfo			"" [$mp]
+	    ui_targetinfo			"ui/targetinfo_cockpit_name"    [$sp]
+
+		friction		2
+		speedScaleSide	1.0
+		speedScaleBack	1.0
+
+		dodgeDuration		0.3
+        dodgeAnimDuration	0.5
+        dodgeInterval		0.2
+        dodgeSpeed			685
+        dodgeStopSpeed		350
+        dodgeHeight			12 //25
+        dodgeHeightMax		25
+        dodgePowerDrain		50
+        powerregenrate		12.0
+        dodgePowerDelay		0.2
+
+		healthPerSegment	1500
+		health				9000 // not used by segmented health
+		healthShield		1000
+		healthDoomed		2500
+
+		bodymodel			"models/titans/buddy/titan_buddy.mdl"
+		armsmodel			"models/weapons/arms/buddypov.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_medium_cockpit.mdl"
+
+		cockpit_stepJolt_origin		"0.0  0.0  -5.0"
+		cockpit_stepJolt_angles		"0.0  0.0  0.0"
+
+		sound_superJump			""
+		sound_superJumpFail		""
+		sound_dodge_1p			"tone_dash_1p"
+		sound_dodge_3p			"tone_dash_3p"
+		sound_dodgeFail			"Player.DodgeFail"
+		sound_groundImpact		"Titan.GroundImpact"
+		sound_wallrunImpact		""
+		sound_standToCrouch		"ion_crouchdown_1p"
+		sound_crouchToStand		"ion_crouchstand_1p"
+
+		sprinttiltMaxRoll		3
+
+		damageImpulseSpeedBoostLimit	1200
+
+		footstep_type           "buddy"
+
+		quadMoveAnims				0
+
+		ClassMods
+		{
+			pas_dash_recharge
+			{
+		        powerregenrate	2.5++
+			}
+			sflag_bc_dash_capacity
+			{
+				dodgePowerDrain		33
+				powerregenrate		8
+			}
+			pas_mobility_dash_capacity
+			{
+				dodgePowerDrain		33
+			}
+			disable_dodge
+			{
+				dodge				0
+				powerregenrate		0
+			}
+			disable_sprint
+			{
+				sprint				0
+			}
+		}
+	}
+	"crouch"
+	{
+		speed			150
+		acceleration	200
+		deceleration	500
+	}
+
+	"stand"
+	{
+		speed				280
+		acceleration		900
+		deceleration		1500
+
+		sprintspeed			420
+		sprintAcceleration	120
+		sprintDeceleration	400
+
+		lowSpeed			200
+		lowAcceleration		1500
+	}
+}
+

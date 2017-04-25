@@ -1,0 +1,32 @@
+#base "pilot_mp.set"
+"pilot_nomad"
+{
+	"global"
+	{
+		mechanical				1
+
+		gibModel0				"models/humans/pilots/pilot_light_ged_m_head_gib.mdl"
+		gibModel1				"models/humans/pilots/pilot_light_ged_m_l_arm_gib.mdl"
+		gibModel2				"models/humans/pilots/pilot_light_ged_m_r_arm_gib.mdl"
+		gibModel3				"models/humans/pilots/pilot_light_ged_m_l_leg_gib.mdl"
+		gibModel4				"models/humans/pilots/pilot_light_ged_m_r_leg_gib.mdl"
+		gibAttachment0			"HEADFOCUS"
+		gibAttachment1			"L_HAND"
+		gibAttachment2			"R_HAND"
+		gibAttachment3			"vent_left"
+		gibAttachment4			"vent_right"
+		gibSpeed				200
+		gibAngualarSpeed		30
+		gibFX					"P_exp_spectre_death"
+		gibSound				"Explo_Spectre"
+
+		headshotFX 				"P_headshot_pilot_robot"
+
+		sound_standToCrouch		"RoboPilot_CrouchDown_1P"
+		sound_crouchToStand		"RoboPilot_CrouchStand_1P"
+		sound_wallHangSlip		"RoboPilot_CrouchDown_1P"
+
+		footstep_type          	"robopilot"
+	}
+}
+

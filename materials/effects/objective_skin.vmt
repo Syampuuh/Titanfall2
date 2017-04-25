@@ -1,0 +1,64 @@
+"UnlitTwoTexture"
+{
+//	"$nocull" "1"	
+	"$nodecal" "1"
+	"$additive" "1"
+	"$no_fullbright" 1
+//	"$vertexcolor" 1
+//	"$vertexalpha" 1
+	"$model" "1"
+	"$translucent" 1
+	$allowoverbright 1
+
+	"$basetexture" "effects\white"
+	"$Texture2" "dev\noise_post"
+
+//	"$color" "[.8 .8 1]"
+	"$color2" "[1 1 1]"
+		
+	"$t1scroll"	0
+
+	"$t2offset" 0
+	"$t2scale" 4
+	"$t2rot" 0
+	"$scroll" "[0 1]"
+	
+	"Proxies"
+	{
+		"AnimatedTexture"
+		{
+			"animatedtexturevar" "$texture2"
+			"animatedtextureframenumvar" "$frame2"
+			"animatedtextureframerate" 30 
+		}
+		//Horizontal jitter speed 
+		"UniformNoise"
+		{
+			"minVal" -1
+			"maxVal" 1
+			"resultVar" "$scroll[0]"
+		}
+		//Vertical jitter speed 
+		"UniformNoise"
+		{
+			"minVal" -1
+			"maxVal" 1
+			"resultVar" "$scroll[1]"
+		}
+		//Move the 2nd texture using horiz and vert speed
+		"TextureTransform"
+		{
+			"translateVar" "$scroll"
+			"scaleVar" "$t2scale"
+			"rotateVar" "$t2rot"
+			"resultvar" "$texture2transform"
+		}
+		//Scroll the base texture
+		"TextureScroll"
+		{
+			"texturescrollvar" $basetexturetransform
+			"texturescrollrate" $t1scroll
+			"texturescrollangle" 90
+		}
+	}
+}

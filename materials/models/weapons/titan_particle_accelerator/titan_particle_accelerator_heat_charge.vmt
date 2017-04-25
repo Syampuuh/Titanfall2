@@ -1,0 +1,55 @@
+"UnlitTwoTexture"
+{
+	"$surfaceprop"	"metal"
+
+	"$basetexture" "models\weapons\titan_particle_accelerator\titan_particle_accelerator_heat_col"
+	"$texture2" "effects\laserplane_atmosphere"
+
+	$allowoverbright 1
+
+	$decal 1
+
+//	"$nocull"      1
+	"$translucent" 1
+
+	"$additive" 1
+
+	$layercolor1 "[2 1.38 1]"
+	$layeralpha1 "1"
+
+	$layercolor2 "[3 1 0.5]"
+	$layeralpha2 "1"
+
+
+	//Proxy Variables
+	$one "1.0"
+	$ClipAmmoFraction "1.0"
+
+	"Proxies"
+	{
+
+		"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" "-0.05"
+			"texturescrollangle" "180"
+			"texturescale"	.25
+		}
+
+		//Get the Fraction of ammo left
+		//"ClipAmmoFraction"
+		//{
+		//	"resultVar" "$ClipAmmoFraction"
+		//}
+
+		//invert the fraction
+		"Subtract"
+		{
+			"srcVar1" "$one"
+			"srcVar2" "$ClipAmmoFraction"
+			"resultVar" "$alpha"
+		}
+
+	}
+
+}

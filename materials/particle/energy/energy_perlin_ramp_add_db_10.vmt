@@ -1,0 +1,27 @@
+"SpriteCard"
+{
+
+	$basetexture "particle/smoke/fog_round_perlin"
+
+// RAMPTEXTURE and POWERFUNCTION are mutually exclusive:
+
+	$RAMPTEXTURE "particle/ramps/basic_white_ramp.vtf"
+
+//	$POWERFUNCTION "[0.8 2.5 5]"
+
+//	$texAlphafromColor 4
+	$DEPTHBLEND 1
+	$depthblendscale 10
+
+	$texColorFromAlpha 1
+
+	$additive 1
+
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+
+	$addself 2
+
+	$vertexFogAmount 1
+}

@@ -1,0 +1,159 @@
+untyped
+
+global function SegmentedHealthShouldShowSingleHealthBars
+global function DisplayTripleHealthBar
+
+global function ClTripleHealthInit
+global function ServerCallback_TitanLostHealthSegment
+
+function ClTripleHealthInit()
+{
+	PrecacheParticleSystem( $"P_titan_state_change" )
+	AddCreateTitanCockpitCallback( TripleHealthTitan_CockpitInit )
+}
+
+void function TripleHealthTitan_CockpitInit( entity cockpit, entity player )
+{
+	entity mainVGUI = cockpit.e.mainVGUI
+	local panel = mainVGUI.GetPanel()
+
+	SetHealthDisplayRange( 0.25, 0.75 )
+	thread HudHealthFeedback( cockpit, player )
+}
+
+function ServerCallback_TitanLostHealthSegment( eHandleVictim, eHandleAttacker, x, y, z )
+{
+	entity titan = GetEntityFromEncodedEHandle( eHandleVictim )
+	entity attacker
+
+	if ( eHandleAttacker != -1 )
+		attacker = GetEntityFromEncodedEHandle( eHandleAttacker )
+
+	if ( titan != null )
+	{
+		entity player = GetLocalViewPlayer()
+
+		if ( titan.IsTitan() )
+		{
+			if ( titan == player && IsAlive( titan ) )
+			{
+				entity cockpit = player.GetCockpit()
+
+				if ( cockpit && IsTitanCockpitModelName( cockpit.GetModelName() ) )
+				{
+					thread LostChunk_DamageFeedback( player, cockpit, Vector( x, y, z ) )
+					if ( GetDoomedState( player ) )
+					{
+						TitanCockpit_PlayDialog( player, "doomState" )
+					}
+				}
+			}
+			else if ( attacker == player )
+			{
+				ClientScreenShake( 8, 10, 1, Vector( 0, 0, 0 ))
+			}
+
+
+			if ( titan != player )
+			{
+				local shieldBreakFX = GetParticleSystemIndex( $"P_titan_state_change" )
+				local attachID = titan.LookupAttachment( "exp_torso_main" )
+
+				if ( IsAlive( titan ) )
+				{
+					StartParticleEffectOnEntity( titan, shieldBreakFX, FX_PATTACH_POINT_FOLLOW, attachID )
+				}
+			}
+		}
+	}
+}
+
+const HEALTH_COLOR_CORRECTION_MAX = 0.85
+
+function LostChunk_DamageFeedback( player, cockpit, damageOrigin )
+{
+	cockpit.EndSignal( "OnDestroy" )
+
+	local color = Vector( 1, 0.06, 0 )
+	local radius = 70.0
+	thread FlashCockpitLight( cockpit, color, radius, 3.0 )
+}
+
+// copied from cl_pilot_health_hud for now
+void function HudHealthFeedback( entity cockpit, entity player )
+{
+	if ( !IsAlive( player ) )
+		return
+
+	cockpit.EndSignal( "OnDestroy" )
+	player.EndSignal( "OnDeath" )
+
+	if ( !player.IsTitan() )
+		return
+
+	float healthFrac = GetHealthSegmentFrac( player )
+	float lastHealthFrac = GetHealthSegmentFrac( player )
+
+	bool wasDoomed = GetDoomedState( player )
+
+	while ( IsAlive( player ) && player.IsTitan() )
+	{
+		WaitFrame()
+
+		if ( IsWatchingReplay() && GetLocalViewPlayer() == GetLocalClientPlayer() )
+			continue
+
+		float flashFrac = 0.5
+
+		healthFrac = GetHealthFrac( player )
+		flashFrac = 0.75
+
+		healthFrac = max( GetShieldHealthFrac( player ), healthFrac )
+
+		if ( IsMultiplayer() )
+			flashFrac = 0.5
+
+		if ( GetHealthFrac( player ) < flashFrac )
+			cockpit.s.forceFlash = true
+		else
+			cockpit.s.forceFlash = false
+
+		if ( healthFrac < 0.6 && healthFrac < lastHealthFrac )
+		{
+			if ( player.p.nextAllowWarningTime < Time() )
+			{
+				if ( GetDoomedState( player ) )
+				{
+					TitanCockpit_PlayDialog( player, "halfDoomState" )
+				}
+				else
+				{
+					//Turned off for rodeo battery giving shield
+					TitanCockpit_PlayDialog( player, "briefCriticalDamage" )
+				}
+
+				player.p.nextAllowWarningTime = Time() + 20.0
+			}
+		}
+
+		if ( healthFrac == 1.0 )
+			player.p.nextAllowWarningTime = 0.0
+
+		lastHealthFrac = healthFrac
+
+		WaitSignal( player, "HealthChanged", "UpdateShieldBar" )
+	}
+}
+
+bool function SegmentedHealthShouldShowSingleHealthBars()
+{
+	return GetCurrentPlaylistVarString( "titan_health_bar_display", "default" ) == "overlap"
+}
+
+bool function DisplayTripleHealthBar()
+{
+	return (
+		GetCurrentPlaylistVarString( "titan_health_bar_display", "default" ) == "triple" ||
+		GetCurrentPlaylistVarString( "titan_health_bar_display", "default" ) == "overlap"
+		)
+}

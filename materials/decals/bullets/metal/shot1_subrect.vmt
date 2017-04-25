@@ -1,0 +1,10 @@
+"Subrect"
+{
+	"$Material"	"decals/bullets/metal/shot1"
+	"$Pos"		"0 0"
+	"$Size"		"256 256"
+	"$decalscale" 	".015"
+	"$decalScaleVariation" "0.1"
+
+	"$modelmaterial" "decals/bullets/metal/shot1_mdl"
+}

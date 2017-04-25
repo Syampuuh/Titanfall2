@@ -1,0 +1,381 @@
+resource/ui/menus/advanced_hud.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		visible					1
+		enabled					1
+		pinCorner				0
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		Title
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#ADVANCED_HUD"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		//LblMenuItemDescription
+		//{
+		//	ControlName				Label
+		//	InheritProperties		OptionMenuTooltip
+		//	classname 				MenuItemDescriptionClass
+		//	xpos					975
+		//	ypos					168
+		//}
+		LblMenuItemDescription
+		{
+			ControlName				RuiPanel
+			xpos					975
+			ypos					158
+			tall					370
+			wide 					844
+            rui                     "ui/control_options_description.rpak"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		LblGeneral
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			CategorySplit1
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"#MENU_ADVANCED_HUD_GENERAL"
+		}
+
+		CategorySplit1
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackgroundWide
+			xpos					120
+			ypos					160
+			wide 					%40
+		}
+
+		SwitchShowButtonHints
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			xpos					0
+			ypos					10
+			tabPosition				1
+			navUp					SwitchPartyColors [$GAMECONSOLE]
+			navUp					SwitchChatMessages [!$GAMECONSOLE]
+			navDown					SwitchShowTips
+			ConVar					"hud_setting_showButtonHints"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+			pin_to_sibling			CategorySplit1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwitchShowTips
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchShowButtonHints
+			navDown					SwitchShowWeaponFlyouts
+			ConVar					"hud_setting_showTips"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SwitchShowButtonHints
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwitchShowWeaponFlyouts
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchShowTips
+			navDown					SwitchDofEnable
+			ConVar					"hud_setting_showWeaponFlyouts"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SwitchShowTips
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwitchDofEnable
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchShowWeaponFlyouts
+			navDown					SwitchShowCallsignEvents
+			ConVar					"hud_setting_adsDof"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SwitchShowWeaponFlyouts
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		LblMP
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			CategorySplit2
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"#MENU_ADVANCED_HUD_MP"
+		}
+		CategorySplit2
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackgroundWide
+			ypos					40
+			pin_to_sibling			SwitchDofEnable
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			wide 					%40
+		}
+		SwitchShowCallsignEvents
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchDofEnable
+			navDown					SwitchShowLevelUp
+			ConVar					"hud_setting_showCallsigns"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+			xpos					0
+			ypos					10
+			pin_to_sibling			CategorySplit2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwitchShowLevelUp
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchShowCallsignEvents
+			navDown					SwitchShowMedals
+			ConVar					"hud_setting_showLevelUp"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SwitchShowCallsignEvents
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwitchShowMedals
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchShowLevelUp
+			navDown					SwitchShowMeter
+			ConVar					"hud_setting_showMedals"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SwitchShowLevelUp
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwitchShowMeter
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchShowMedals
+			navDown					SwitchShowObituary
+			ConVar					"hud_setting_showMeter"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SwitchShowMedals
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwitchShowObituary
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchShowMeter
+			navDown					SwitchPilotDamageIndicators
+			ConVar					"hud_setting_showObituary"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SwitchShowMeter
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwitchPilotDamageIndicators
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchShowObituary
+			navDown					SwitchTitanDamageIndicators
+			ConVar					"damage_indicator_style_pilot"
+			list
+			{
+				"#SETTING_INDICATOR_2D_ONLY"	0
+				"#SETTING_INDICATOR_3D_ONLY"	2
+				"#SETTING_INDICATOR_BOTH"	    1
+			}
+
+			pin_to_sibling			SwitchShowObituary
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwitchTitanDamageIndicators
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchPilotDamageIndicators
+			navDown					SwitchPartyColors
+			ConVar					"damage_indicator_style_titan"
+			list
+			{
+				"#SETTING_INDICATOR_2D_ONLY"	0
+				"#SETTING_INDICATOR_3D_ONLY"	2
+				"#SETTING_INDICATOR_BOTH"	    1
+			}
+
+			pin_to_sibling			SwitchPilotDamageIndicators
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SwitchPartyColors
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchTitanDamageIndicators
+			navDown					SwitchShowButtonHints [$GAMECONSOLE]
+			navDown					SwitchChatMessages [!$GAMECONSOLE]
+			ConVar					"party_color_enabled"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SwitchTitanDamageIndicators
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SwitchChatMessages [!$GAMECONSOLE]
+		{
+			ControlName				RuiButton
+			InheritProperties		ControlsSwitchButton
+			style					DialogListButton
+			navUp					SwitchPartyColors
+			navDown					SwitchShowButtonHints
+			ConVar					"hudchat_visibility"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+
+			pin_to_sibling			SwitchPartyColors
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		LabelHudWarning
+		{
+			ControlName				Label
+			xpos					192
+			ypos					860
+			wide                    600
+			auto_tall_tocontents    1
+			labelText				"#ADVANCED_HUD_WARNING"
+
+			font					Default_27_ShadowGlow
+			wrap					1
+			textAlignment			"north-west"
+			fgcolor_override		"192 192 192 255"
+			bgcolor_override		"0 0 0 60"
+			visible					1
+		}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

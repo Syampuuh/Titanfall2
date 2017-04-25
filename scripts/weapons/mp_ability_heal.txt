@@ -1,0 +1,181 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_STIM"
+	"shortprintname"								"#WPN_STIM"
+	"description" 									"#WPN_STIM_DESC"
+	"longdesc"										"#WPN_STIM_LONGDESC"
+
+	"menu_icon"										"rui/pilot_loadout/tactical/pilot_tactical_stim"
+	"hud_icon"										"rui/pilot_loadout/tactical/pilot_tactical_stim"
+
+	"weaponClass" 									"human"
+	"fire_mode"   									"offhand_instant"
+	"offhand_default_inventory_slot"				"1"
+	//"offhand_interupts_weapon_anims"				"1"
+	"fast_swap_to"									"1"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_ability_heal"
+	"leveled_pickup"								"1"
+	"dev_menu_type"									"offhand" // fire_mode isn't readable from script
+
+	// Models
+	//"viewmodel"   									"models/weapons/clacker_detonator/ptpov_clacker_detonator.mdl"
+	//"playermodel" 									"models/weapons/clacker_detonator/w_detonator_satchel.mdl"
+	"playermodel"									"models/weapons/empty_handed/w_empty_handed_human.mdl"
+	//"projectilemodel" 								"models/dev/empty_model.mdl"
+
+	// Sound
+	"fire_sound_1_player_1p"						"pilot_stimpack_activate_1P"
+	"fire_sound_1_player_3p"						"pilot_stimpack_activate_3P"
+	"sound_dryfire"									"coop_sentrygun_deploymentdeniedbeep"
+	"battle_chatter_event"							"bc_pStim"
+
+	"sound_weapon_ready"							"HUD_kit_meter_replenished_1P"
+	MP_BASE
+	{
+		"ammo_clip_size"   								"200"
+		"ammo_default_total"							"200"
+		"ammo_display"									"bar"
+		"ammo_drains_to_empty_on_fire"					"1"
+		"ammo_min_to_fire"								"200"
+		"ammo_no_remove_from_clip"						"1"
+		"ammo_per_shot"									"200"
+		"ammo_stockpile_max"							"200"
+		"fire_duration"									"3.0"
+		"regen_ammo_refill_rate"						"8"
+
+		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+	}
+
+	SP_BASE
+	{
+		"ammo_clip_size"   								"200"
+		"ammo_default_total"							"200"
+		"ammo_display"									"bar"
+		"ammo_drains_to_empty_on_fire"					"1"
+		"ammo_min_to_fire"								"200"
+		"ammo_no_remove_from_clip"						"1"
+		"ammo_per_shot"									"200"
+		"ammo_stockpile_max"							"200"
+		"fire_duration"									"2.0"
+		"regen_ammo_refill_rate"						"8"
+
+		"enable_highlight_networking_on_creation"		"1"
+	}
+
+
+	// Regen Ammo
+	"regen_ammo_refill_start_delay"					"0.0"
+
+	"fire_rate"   									"1000.0"
+	// Damage
+	"damage_type" 									"none"
+	"explosion_damage_heavy_armor"					"0"
+	"damage_near_distance"							"0"
+	"damage_far_distance" 							"0"
+	"damage_near_value"   							"0"
+	"damage_far_value"								"0"
+
+	// Rumble
+	"rumble"  										"-1"
+
+	// Behavior
+	"fire_anim_rate"								"3.0"
+	"holster_time"									"0.15"
+	"deploy_time" 									"0.25"
+	"lower_time"  									"0.25"
+	"raise_time"  									"0.2"
+	"allow_empty_fire"								"0"
+	"reload_enabled"								"0"
+	"empty_reload_only"   							"0"
+	"allow_empty_click"   							"0"
+	"primary_fire_does_not_block_sprint"			"1"
+	"aimassist_disable_hipfire"						"1"
+	"aimassist_disable_ads"							"1"
+	"trigger_snipercam"   							"0"
+	"allow_headshots" 								"0"
+	"cooldown_type"									"ammo"
+
+	// Crosshair
+
+	Mods
+	{
+		bc_super_stim
+		{
+			"fire_rate"	"*2.0"
+			"fire_duration"	"*2.0"
+			"is_burn_mod"		"1"
+		}
+
+		bc_fast_cooldown_stim1
+		{
+			"fire_rate"	"*1.5"
+			"is_burn_mod"		"1"
+		}
+
+		bc_fast_cooldown_stim2
+		{
+			"fire_rate"	"*3.0"
+			"is_burn_mod"		"1"
+		}
+
+		bc_long_stim1
+		{
+			"fire_duration"	"*1.5"
+			"is_burn_mod"		"1"
+		}
+
+		bc_long_stim2
+		{
+			"fire_duration"	"*2.0"
+			"is_burn_mod"		"1"
+		}
+
+		pas_power_cell
+		{
+			"regen_ammo_refill_rate"	"*1.35"
+		}
+
+		dev_mod_low_recharge
+		{
+			"regen_ammo_refill_rate"			"600"
+		}
+		spree_lvl1_heal
+		{
+		}
+			spree_lvl2_heal
+		{
+		}
+		spree_lvl3_heal
+		{
+			"fire_rate"										"*2.25"
+		}
+
+		burn_card_weapon_mod
+		{
+
+		}
+	}
+
+	"ordnance_crosshair_always_on_start_index"	"0"
+
+	RUI_CrosshairData
+	{
+		DefaultArgs
+		{
+			crosshairMovementX          crosshair_movement_x
+		    crosshairMovementY          crosshair_movement_y
+		}
+
+		Crosshair_2
+		{
+			"ui"						"ui/crosshair_tactical"
+			Args
+			{
+			    ammoFrac                "progress_weapon_clip_ammo_frac"
+			    dryfireTime             "weapon_latest_dryfire_time"
+			}
+		}
+	}
+}

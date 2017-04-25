@@ -1,0 +1,15 @@
+#base "melee_titan_punch.txt"
+
+WeaponData
+{
+	SP_BASE
+	{
+		"melee_sound_attack_1p"							"scorch_melee_1p"//BT 1p sound
+		"melee_sound_attack_3p"							"scorch_melee_3p"
+	}
+	MP_BASE
+	{
+		"melee_sound_attack_1p"							"scorch_melee"
+		"melee_sound_attack_3p"							"scorch_melee_3p"
+	}
+}

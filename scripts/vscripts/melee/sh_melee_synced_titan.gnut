@@ -1,0 +1,22 @@
+untyped
+
+global function MeleeSyncedTitanShared_Init
+
+
+function MeleeSyncedTitanShared_Init()
+{
+	SyncedMeleeChooser chooser = CreateSyncedMeleeChooser( "titan", "titan" )
+
+	chooser.displayMeleePrompt = false
+
+	#if SERVER
+		MeleeSyncedTitan_Init()
+	#endif
+
+	SyncedMelee action
+	action.direction = Vector( 1, 0, 0 )
+	action.distance = TITAN_EXECUTION_RANGE
+	action.isAttackerRef = false
+
+	AddSyncedMelee( chooser, action )
+}

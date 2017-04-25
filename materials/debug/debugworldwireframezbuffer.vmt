@@ -1,0 +1,7 @@
+"Basic"
+{
+	"$color" "[0 1 .5]"
+	"$ignoreZ" 0
+	"$wireframe" 1
+	"%noToolTexture" 1
+}

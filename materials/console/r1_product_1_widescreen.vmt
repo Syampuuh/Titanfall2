@@ -1,0 +1,15 @@
+"Basic"
+{
+	"$basetexture" "console/R1_product_1_widescreen"
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+	"$ignorez" 1
+	"$no_fullbright" "1"
+	"$nofog" "1"
+	"$nolod" "1"
+	"$dofEnable" "0"
+//	"%noToolTexture" 1
+
+	"$SHADERSRGBREAD360" 1
+
+}

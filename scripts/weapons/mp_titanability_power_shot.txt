@@ -1,0 +1,133 @@
+WeaponData
+{
+	"printname"   									"#WPN_TITAN_POWER_SHOT"
+	"description" 									"#WPN_TITAN_POWER_SHOT_DESC"
+	"shortprintname"								"#WPN_TITAN_POWER_SHOT_SHORT"
+	"longdesc"										"#WPN_TITAN_POWER_SHOT_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/ordnance/concussive_shot_short_menu"
+	"hud_icon"										"rui/titan_loadout/ordnance/concussive_shot_short"
+
+	"weaponClass" 									"titan"
+	"weaponType"									"shoulder"
+	"fire_mode"   									"offhand_instant"
+	"minimap_reveal_distance"						"32000"
+
+	SP_BASE
+	{
+		"enable_highlight_networking_on_creation"		"1"
+	}
+
+	MP_BASE
+	{
+        "enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+	}
+
+	// Models
+	"projectilemodel" 								"models/weapons/bullets/projectile_40mm.mdl"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_power_shot"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_power_shot"
+
+	"show_grenade_indicator" 						"0"
+
+	"projectile_drift_windiness"					"1"
+	"projectile_drift_intensity"					"0.06"
+	"projectile_straight_time_min"					"0.7"
+	"projectile_straight_time_max"					"1.0"
+	"projectile_straight_radius_min"				"0"
+	"projectile_straight_radius_max"				"1"
+	"projectile_adjust_to_gun_barrel"				"0"
+	"bolt_hitsize"									"10.0"
+
+	"critical_hit"									"1"
+	"critical_hit_damage_scale"						"1.5"
+
+	// Ammo
+	"ammo_display"									"bar"
+	"ammo_stockpile_max"							"80"
+	"ammo_clip_size"   								"80"
+	"ammo_default_total"							"80"
+	"ammo_per_shot"									"80"
+	"ammo_min_to_fire"								"80"
+
+	"reload_enabled"								"0"
+	"sound_dryfire"									"titan_dryfire"
+	"sound_weapon_ready"							"HUD_TitanOffenseAbility_replenished_1P"
+
+	// Regen Ammo
+	"regen_ammo_refill_rate"						"10.0"
+	"regen_ammo_refill_start_delay"					"1.0"
+
+	"damage_near_value"   							"200"
+	"damage_far_value"								"50"
+	"damage_near_value_titanarmor"					"2000"
+	"damage_far_value_titanarmor"					"2000"
+	"explosion_damage"								"200"
+	"explosion_damage_heavy_armor"					"2000"
+	"explosion_damages_owner"						"1"
+	"explosion_inner_radius"						"50"
+	"explosionradius" 								"150"
+	"impulse_force"   								"5000"
+	"explosion_shake_radius"						"200"
+	"explosion_shake_amplitude"						"5"
+	"explosion_shake_frequency"						"55"
+	"explosion_shake_duration"						"0.25"
+	"damage_near_distance"							"800"
+	"damage_far_distance" 							"1200"
+
+	// Effects
+	"tracer_effect"   								"P_weapon_tracers_predator"
+	"impact_effect_table" 							"40mm_bullet"
+	"projectile_trail_effect_0" 					"P_proj_predator_alt_pwr"
+	"vortex_absorb_effect"							"wpn_vortex_projectile_40mm_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_40mm"
+	"vortex_absorb_sound"							"Vortex_Shield_AbsorbBulletLarge"
+	"vortex_absorb_sound_1p_vs_3p"					"Vortex_Shield_AbsorbBulletLarge_1P_VS_3P"
+	"vortex_drain"									"0.0"
+	"projectile_adjust_to_gun_barrel"				"0"
+
+	"fire_rate"   									"9"
+	"holster_time"									"0.5"
+	"deploy_time" 									"0.2"
+	"lower_time"  									"0.5"
+	"raise_time"  									"0.2"
+
+	"npc_min_burst"									"1"
+	"npc_max_burst"									"1"
+
+	"npc_rest_time_between_bursts_min"				"8.0"
+	"npc_rest_time_between_bursts_max"				"12.0"
+	"projectile_lifetime"							"0.5"
+
+	"spread_stand_hip"								"16.0"
+	"spread_stand_hip_run"							"16.0"
+	"spread_stand_hip_sprint"                       "16.0"
+	"spread_crouch_hip"   							"16.0"
+	"spread_air_hip"  								"16.0"
+	"spread_stand_ads"								"16.0"
+	"spread_crouch_ads"   							"16.0"
+	"spread_air_ads"  								"16.0"
+
+	Mods
+	{
+		CloseRangeShot
+		{
+			"impact_effect_table" 							"predator_bullet"
+		}
+		power_shot_ranged_mode
+		{
+			"hud_icon"										"rui/titan_loadout/ordnance/concussive_shot_long"
+		}
+		SiegeMode
+		{
+			"regen_ammo_refill_rate"						"*10"
+		}
+		pas_legion_chargeshot
+		{
+			"ammo_per_shot"									"40"
+			"ammo_min_to_fire"								"40"
+			"regen_ammo_refill_rate"						"*0.5"
+		}
+	}
+}

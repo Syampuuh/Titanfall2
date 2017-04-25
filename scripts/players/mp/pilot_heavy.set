@@ -1,0 +1,19 @@
+#base "pilot_mp.set"
+"pilot_heavy"
+{
+	"global"
+	{
+		sound_standToCrouch			"Pilot_CrouchDown_1P"
+		sound_crouchToStand			"Pilot_CrouchStand_1P"
+		sound_wallHangSlip			"Pilot_CrouchDown_1P"
+
+		footstep_type          		"human"
+
+		bodymodel			"models/humans/pilots/pilot_medium_geist_m.mdl"
+		armsmodel			"models/weapons/arms/pov_pilot_medium_geist_m.mdl"
+		cockpitmodel		"models/weapons/arms/human_pov_cockpit.mdl"
+
+		quadMoveAnims				0
+	}
+}
+

@@ -1,0 +1,445 @@
+untyped
+
+global function CodeCallbacksShared_Init
+
+global function CodeCallback_AnimationDone
+global function CodeCallback_AnimationInterrupted
+global function CodeCallback_CanUseEntity
+global function CodeCallback_CanUseZipline
+global function CodeCallback_PlayerClassChanged
+global function CodeCallback_OnUseEntity
+global function ShouldStopLunging
+//global function CodeCallback_OnUsePressed
+global function CodeCallback_OnUseReleased
+global function CodeCallback_ForceScriptError
+
+global function AddCallback_PlayerClassChanged
+
+#if CLIENT
+global function CodeCallback_OnTurretCancelPressed
+#endif
+
+#if SERVER
+global function CodeCallback_OnWeaponReload
+global function SetCallback_OnPlayerReload
+#endif
+
+#if SP
+#if CLIENT
+global function ClientCodeCallback_OnPickup_MatchCandy
+#endif // CLIENT
+#if SERVER
+global function CodeCallback_ClaimClientSidePickup_MatchCandy
+#endif // SERVER
+#endif
+
+
+#if SERVER
+struct
+{
+	void functionref( entity ) Callback_OnPlayerReload
+} file
+#endif
+
+#if CLIENT
+struct
+{
+	var disembarkRUI
+} file
+#endif
+
+function CodeCallbacksShared_Init()
+{
+    RegisterSignal( "OnAnimationDone" )
+    RegisterSignal( "OnAnimationInterrupted" )
+    RegisterSignal( "SettingsChanged" )
+    RegisterSignal( "OnPrimaryAttack" )
+    RegisterSignal( "OnPlayerUse" )
+
+	level.unusableByTitan <- {}
+	level.unusableByTitan[ "prop_control_panel" ] <- true
+
+	#if CLIENT
+	RegisterSignal( "CancelDisembark" )
+	RegisterConCommandTriggeredCallback( "-useAndReload", CancelDisembark )
+	RegisterConCommandTriggeredCallback( "-use", CancelDisembark )
+	#endif
+
+	#if SERVER
+	AddClientCommandCallback( "DisembarkTitan", ClientCommand_DisembarkTitan )
+	SetCallback_OnPlayerReload( PlayerReloadGamemodeLogic_Default )
+	#endif
+}
+
+void function CodeCallback_AnimationDone( entity ent )
+{
+	Signal( ent, "OnAnimationDone" )
+}
+
+void function CodeCallback_AnimationInterrupted( entity ent )
+{
+	Signal( ent, "OnAnimationInterrupted" )
+}
+
+// better to not define these than just return true. Otherwise code will call these function for no reason
+
+bool function CodeCallback_CanUseEntity( entity player, entity ent )
+{
+	if ( !IsAlive( player ) )
+		return false
+
+	if ( player.IsPhaseShifted() ) // it's not really there!
+		return false
+
+	// player could be trying to use self as a titan
+	if ( ent == player )
+	{
+		if ( player.IsTitan() )
+		{
+			if ( Riff_TitanExitEnabled() == eTitanExitEnabled.Never )
+				return false
+
+			#if SERVER
+				// client doesn't know these things
+				if ( IsPlayerDisembarking( player ) )
+					return false
+				if ( IsPlayerEmbarking( player ) )
+					return false
+			#endif
+
+			return true
+		}
+		return false
+	}
+
+	if ( ent.IsNPC() )
+	{
+		// handle leeching separately
+		if ( Leech_IsLeechable( ent ) )
+			return false
+	}
+
+	if ( player.IsTitan() )
+	{
+		return !ent.IsTitan()
+	}
+
+	if ( ent.IsTitan() && ent.GetBossPlayer() == player )
+	{
+		return PlayerCanEmbarkTitan( player, ent )
+	}
+
+	if ( ent.IsNPC() )
+	{
+		// player titan can't use NPCs
+		if ( !player.IsTitan() )
+		{
+			// not titan NPCs are not usable
+			//if ( !( ent.IsTitan() || IsTurret( ent ) ) )
+			//	return false
+
+			if ( !IsAlive( ent ) )
+				return false
+
+
+		}
+	}
+
+	// custom overwritable usefunction
+	return expect bool( ent.useFunction( player, ent ) ) // useFunction should be moved to a struct and given a proper function type
+}
+
+bool function CodeCallback_CanUseZipline( entity player, entity zipline, vector ziplineClosestPoint )
+{
+	if ( !player.IsHuman() )
+		return false
+
+	return true
+}
+
+void function AddCallback_PlayerClassChanged( void functionref( entity ) callbackFunc )
+{
+	#if SERVER
+		svGlobal.onPlayerClassChangedCallbacks.append( callbackFunc )
+	#else
+		clGlobal.onPlayerClassChangedCallbacks.append( callbackFunc )
+	#endif
+}
+
+void function CodeCallback_PlayerClassChanged( entity player )
+{
+	if ( !IsValid( player ) )
+		return
+
+	if ( IsLobby() )
+		return
+
+	player.Signal( "SettingsChanged" )
+	string newClass = player.GetPlayerClass()
+
+	#if SERVER
+		foreach ( callbackFunc in svGlobal.onPlayerClassChangedCallbacks )
+		{
+			callbackFunc( player )
+		}
+		#if MP
+		if ( IsAlive( player ) && GetCurrentPlaylistVarInt( "pilot_health", 0 ) != 0 )
+		{
+			int pilotHealth = GetCurrentPlaylistVarInt( "pilot_health", 0 )
+
+			player.SetMaxHealth( pilotHealth )
+			player.SetHealth( pilotHealth )
+		}
+		#endif
+	#else
+		foreach ( callbackFunc in clGlobal.onPlayerClassChangedCallbacks )
+		{
+			callbackFunc( player )
+		}
+	#endif
+
+	#if CLIENT
+		player.classChanged = true
+		// Force titan to cast shadows in first person
+		//player.ForceShadowVisible( newClass == "titan" );
+
+		if ( newClass == level.pilotClass )
+			thread ClientPilotSpawned( player )
+
+		UpdatePlayerStatusCounts()
+
+		/*if ( IsWatchingReplay() )
+			UpdateKillReplayIconPosition()*/
+	#else
+		player.kv.renderColor = "255 255 255 255"
+
+		InitDamageStates( player )
+	#endif
+
+	//if ( IsClient() && !player.IsTitan() )
+	//	HideRodeoAlert()
+
+	//if ( IsPilot( player ) )
+	//	thread PilotHardLandingThink( player )
+
+	#if SERVER
+		player.Signal( "OnChangedPlayerClass" )
+
+		UpdatePlayerMinimapMaterials( player )
+	#endif
+}
+
+#if SERVER
+void function CodeCallback_OnWeaponReload( entity weapon )
+{
+	entity weaponOwner = weapon.GetWeaponOwner()
+	if ( !IsAlive( weaponOwner ) )
+		return
+
+	if ( !weaponOwner.IsPlayer() )
+		return
+
+	if ( !IsPilot( weaponOwner )  )
+		return
+
+	//This calls a function that can be set per gamemode. Runs an empty function by default.
+	file.Callback_OnPlayerReload( weaponOwner )
+
+	#if GRUNTCHATTER_ENABLED
+	if ( NPC_GruntChatterSPEnabled( weaponOwner ) )
+		GruntChatter_TryPlayerPilotReloading( weaponOwner )
+	#endif
+
+	#if BATTLECHATTER_ENABLED
+		PlayBattleChatterLine( weaponOwner, "bc_pReload" )
+	#endif
+}
+
+void function SetCallback_OnPlayerReload( void functionref( entity ) rules )
+{
+	file.Callback_OnPlayerReload = rules
+}
+
+void function PlayerReloadGamemodeLogic_Default ( entity player )
+{
+
+}
+#endif
+
+bool function CodeCallback_OnUseEntity( entity player, entity ent )
+{
+#if SERVER
+	// use AddCallback_OnUseEntity( ent, callbackFunc ) to add a on use callback function
+	if ( "onUseEntityCallbacks" in ent.s )
+	{
+		foreach ( callbackFunc in ent.s.onUseEntityCallbacks )
+		{
+			callbackFunc( ent, player )
+		}
+	}
+
+	if ( ent.IsTitan() )
+	{
+		if ( player == ent ) //player is disembarking/using self
+		{
+			ClientCommand_DisembarkTitan( player, [] )
+		}
+		else if ( ent.GetBossPlayer() == player )
+		{
+			Assert( !player.IsTitan() )
+			PlayerLungesToEmbark( player, ent )
+			return false
+		}
+	}
+
+	Signal( ent, "OnPlayerUse", { player = player } )
+#endif // SERVER
+
+// #if CLIENT
+// 	if ( ent.IsTitan() && player == ent && IsSingleplayer() )
+// 		thread BeginDisembark( player )
+// #endif
+
+	// return true to tell code to run its code to use the entity
+	return true
+}
+
+#if CLIENT
+void function BeginDisembark( entity player )
+{
+	Signal( player, "CancelDisembark" )
+	EndSignal( player, "CancelDisembark" )
+
+	float startTime = Time()
+	float disembarkDelay = 0.75
+
+	ShowDisembarkRUI( Time() + disembarkDelay )
+
+	while( Time() - startTime < disembarkDelay )
+	{
+		wait 0.05
+
+		if ( !PlayerCanDisembarkTitan( player ) )
+			return
+	}
+
+	player.ClientCommand( "DisembarkTitan" )
+	thread CancelDisembark( player )
+}
+
+void function CancelDisembark( entity player )
+{
+	Signal( player, "CancelDisembark" )
+
+	if ( file.disembarkRUI != null )
+	{
+		RuiDestroy( file.disembarkRUI )
+		file.disembarkRUI = null
+	}
+}
+
+void function ShowDisembarkRUI( float endTime )
+{
+	if ( file.disembarkRUI != null )
+	{
+		RuiDestroy( file.disembarkRUI )
+		file.disembarkRUI = null
+	}
+
+	var rui = RuiCreate( $"ui/disembarking_progress.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 5000 )
+	RuiSetGameTime( rui, "startTime", Time() )
+	RuiSetGameTime( rui, "endTime", endTime )
+	file.disembarkRUI = rui
+}
+#endif
+
+#if SERVER
+bool function ClientCommand_DisembarkTitan( entity player, array<string> args )
+{
+	if ( PlayerCanDisembarkTitan( player ) )
+	{
+		ScreenFade( player, 0, 1, 0, 255, 0.2, 0.2, FFADE_IN | FFADE_PURGE )
+		player.CockpitStartDisembark()
+		Remote_CallFunction_Replay( player, "ServerCallback_TitanDisembark" )
+		thread PlayerDisembarksTitan( player )
+	}
+	return true
+}
+#endif // SERVER
+
+function IsUsableByTitan( player, ent )
+{
+	local classname
+	#if SERVER
+		classname = ent.GetClassName()
+	#else
+		classname = ent.GetSignifierName()
+	#endif
+
+	if ( player.IsTitan() && classname in level.unusableByTitan )
+		return false
+	else
+		return true
+}
+
+function ShouldStopLunging( player, target )
+{
+	expect entity( player )
+	expect entity( target )
+
+	if ( !IsAlive( player )  )
+		return true
+
+	if ( !IsAlive( target ) )
+		return true
+
+	if ( !target.IsTitan() )
+		return true
+
+	// ejecting?
+	return target.GetTitanSoul().IsEjecting()
+}
+
+/*
+void function CodeCallback_OnUsePressed( entity player )
+{
+}
+*/
+
+void function CodeCallback_OnUseReleased( entity player )
+{
+	if ( player.Lunge_IsActive() )
+		player.Lunge_ClearTarget()
+}
+
+#if SP
+#if CLIENT
+void function ClientCodeCallback_OnPickup_MatchCandy( int points, int CSPUFLAGflags )
+{
+	Assert( 0, "Unexpected usage." )
+}
+#endif // CLIENT
+#if SERVER
+void function CodeCallback_ClaimClientSidePickup_MatchCandy( entity player, int amount, int flags, int recieptID )
+{
+	Assert( 0, "Unexpected usage." )
+}
+#endif // SERVER
+#endif
+
+
+#if CLIENT
+void function CodeCallback_OnTurretCancelPressed( entity player )
+{
+	if ( InPrediction() && !IsFirstTimePredicted() )
+		return
+
+	ScreenFade( player, 0, 0, 0, 255, 0.1, 1.0, FFADE_OUT );
+}
+#endif // #if CLIENT
+
+// code triggering script error with useful message
+void function CodeCallback_ForceScriptError( entity ent, string errorMsg )
+{
+	Assert( 0, errorMsg )
+}

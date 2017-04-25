@@ -1,0 +1,82 @@
+"Refract"
+{
+	"$surfaceprop" "glass"
+
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$vertexcolormodulate" "1"
+
+ 	"$model" 1
+	"$translucent" 1
+
+//	"$fadeoutonsilhouette" 1
+	"$bluramount" 1
+	"$refractamount" ".25"
+	"$refracttint" "[.8 .8 .8]"
+	
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.7 .7 .7]"
+
+	"$normalmap" "world/windows/glass_waterfall_nml"
+	"$normalmap2" "world/windows/glass_waterfall_nml"
+	
+
+	"$REFRACTTINTTEXTURE" "world/windows/glass_waterfall_col"
+
+	"$t1scale" 1
+	"$t1rot" 5
+	"$t1scroll" "[0 1]"
+
+		
+	"$t2scale" 1.5
+	"$t2rot" -5
+	"$t2scroll" "[0 1]"
+	
+	"Proxies"
+	{
+		//NormalMap1 Horizontal movement speed passed to TextureTransform
+		"LinearRamp"
+		{
+			"rate" 0.05
+			"resultVar" "$t1scroll[0]"
+		}
+		//NormalMap1 Horizontal movement speed passed to TextureTransform
+		"LinearRamp"
+		{
+			"rate" -.42
+			"resultVar" "$t1scroll[1]"
+		}
+		//Move NormalMap1 using horiz and vert speed
+		"TextureTransform"
+		{
+			"translateVar" "$t1scroll"
+			"scaleVar" "$t1scale"
+			"rotateVar" "$t1rot"
+			"resultvar" "$bumptransform"
+		}
+
+		//---------------------------------------------------------------
+		//---------------------------------------------------------------	
+		//NormalMap2 Horizontal movement speed passed to TextureTransform
+		"LinearRamp"
+		{
+			"rate" 0
+			"resultVar" "$t2scroll[0]"
+		}
+		//NormalMap2 Horizontal movement speed passed to TextureTransform
+		"LinearRamp"
+		{
+			"rate" -0.5
+			"resultVar" "$t2scroll[1]"
+		}
+		//Move NormalMap2 using horiz and vert speed
+		"TextureTransform"
+		{
+			"translateVar" "$t2scroll"
+			"scaleVar" "$t2scale"
+			"rotateVar" "$t2rot"
+			"resultvar" "$bumptransform2"
+		}
+		
+	}
+}

@@ -1,0 +1,7 @@
+#base "npc_drone.txt"
+npc_drone_cloaked
+{
+	DefaultWeapon			""
+	title					#NPC_DRONE_CLOAKED
+	drone_type				"drone_type_cloaked"
+}

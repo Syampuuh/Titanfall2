@@ -1,0 +1,223 @@
+global function SPObjectiveStringsInit
+
+global function GetObjectiveStringID
+global function GetObjectiveStringFromID
+global function ObjectiveStringsReady
+
+const int FIRST_STRING_INDEX = 1
+
+struct
+{
+	int _currentStringIndex = FIRST_STRING_INDEX
+	table< string, int > _stringToIndex
+	table< int, string > _indexToString
+} file
+
+
+void function RegisterObjectiveString( string thestring )
+{
+	Assert( thestring.find( "#" ) == 0, "Cannot register unlocalized string \"" + thestring + "\"" )
+
+	int index = file._currentStringIndex
+
+	file._stringToIndex[thestring] <- index
+	file._indexToString[index] <- thestring
+
+	file._currentStringIndex++
+}
+
+
+int function GetObjectiveStringID( string thestring )
+{
+	Assert( thestring in file._stringToIndex, "String \"" + thestring + "\" has not been registered" )
+
+	return file._stringToIndex[thestring]
+}
+
+
+string function GetObjectiveStringFromID( int index )
+{
+	Assert( index in file._indexToString )
+
+	return file._indexToString[index]
+}
+
+
+bool function ObjectiveStringsReady()
+{
+	if ( file._indexToString.len() <= 0 )
+		return false
+
+	if ( file._stringToIndex.len() <= 0 )
+		return false
+
+	return true
+}
+
+
+void function SPObjectiveStringsInit()
+{
+	string mapName
+
+	file._currentStringIndex = FIRST_STRING_INDEX
+	file._stringToIndex = {}
+	file._indexToString = {}
+
+	#if UI
+		mapName = GetActiveLevel()
+	#else
+		mapName = GetMapName()
+	#endif
+
+	switch ( mapName )
+	{
+		case "sp_training":
+			RegisterObjectiveString( "#TRAINING_OBJ_DEFAULT" )
+			RegisterObjectiveString( "#TRAINING_OBJ_GAUNTLET_FIRSTRUN" )
+			RegisterObjectiveString( "#TRAINING_OBJ_GAUNTLET_CHALLENGE" )
+			RegisterObjectiveString( "#TRAINING_OBJ_GAUNTLET_CHALLENGE_INSTALLING" )
+			RegisterObjectiveString( "#TRAINING_OBJ_CALL_TITAN" )
+			break
+
+		case "sp_crashsite":
+			RegisterObjectiveString( "#WILDS_OBJECTIVE_NIGHTTIME" )
+			RegisterObjectiveString( "#WILDS_OBJECTIVE_FIELD_PROMOTION" )
+			RegisterObjectiveString( "#WILDS_OBJECTIVE_BATTERY2" )
+			RegisterObjectiveString( "#WILDS_OBJECTIVE_BATTERY2_RETURN" )
+			RegisterObjectiveString( "#WILDS_OBJECTIVE_BATTERY3" )
+			RegisterObjectiveString( "#WILDS_OBJECTIVE_BATTERY3_RETURN" )
+			RegisterObjectiveString( "#WILDS_OBJECTIVE_SECURE_AREA" )
+			RegisterObjectiveString( "#WILDS_OBJECTIVE_INSTALL_BATTERY" )
+			RegisterObjectiveString( "#WILDS_OBJECTIVE_EMBARK_BT" )
+			RegisterObjectiveString( "#WILDS_OBJECTIVE_ANDERSON" )
+			break
+
+		case "sp_sewers1":
+			RegisterObjectiveString( "#SEWERS_OBJ_ENEMY_TERRITORY" )
+			RegisterObjectiveString( "#SEWERS_OBJ_OPEN_BT_GATE" )
+			RegisterObjectiveString( "#SEWERS_OBJ_FIND_BT" )
+			RegisterObjectiveString( "#SEWERS_OBJ_DEFEAT_STALKERS" )
+			RegisterObjectiveString( "#SEWERS_OBJ_GO_DEEPER" )
+			RegisterObjectiveString( "#SEWERS_OBJ_PIPE_CLIMB" )
+			RegisterObjectiveString( "#SEWERS_OBJ_SEWER_ARENA_ASSAULT" )
+			RegisterObjectiveString( "#SEWERS_OBJ_SEWER_ARENA_DEFEND" )
+			RegisterObjectiveString( "#SEWERS_OBJ_SEWER_ARENA_JOIN_BT" )
+			RegisterObjectiveString( "#SEWERS_OBJ_DEFEAT_KANE" )
+			RegisterObjectiveString( "#SEWERS_OBJ_TAKE_HELMET" )
+			RegisterObjectiveString( "#SEWERS_OBJ_LEAVE_SEWERS" )
+			break
+
+		case "sp_boomtown_start":
+			RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_FIND_EXIT" )
+			RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_RAISE_ELEVATOR" )
+			RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_ACTIVATE_ELEVATOR" )
+			RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_FOLLOW_BT" )
+			RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_RETURN_TO_BT" )
+			break
+
+		case "sp_boomtown":
+			RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_LOCATE_BT" )
+			RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_ASSEMBLY" )
+        	RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_TOWN_CLIMB" )
+        	RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_RIDE_PLATFORM" )
+			RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_ARM_UP" )
+			RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_DEFEAT_REAPERS" )
+			RegisterObjectiveString( "#BOOMTOWN_OBJECTIVE_ESCAPE_DOME" )
+			break
+
+		case "sp_boomtown_end":
+			RegisterObjectiveString( "#BOOMTOWN_END_OBJECTIVE_LOCATE_BT" )
+			RegisterObjectiveString( "#BOOMTOWN_END_OBJECTIVE_JOIN_BT" )
+			RegisterObjectiveString( "#BOOMTOWN_END_OBJECTIVE_FIND_EXIT" )
+			RegisterObjectiveString( "#BOOMTOWN_END_OBJECTIVE_DEFEAT_ASH" )
+			RegisterObjectiveString( "#BOOMTOWN_END_OBJECTIVE_ESCAPE" )
+			break
+
+
+		case "sp_hub_timeshift":
+		case "sp_timeshift_spoke02":
+			RegisterObjectiveString( "#TIMESHIFT_OBJECTIVE_START" )
+			RegisterObjectiveString( "#TIMESHIFT_OBJECTIVE_EXPLORE_LOBBY" )
+			RegisterObjectiveString( "#TIMESHIFT_OBJECTIVE_TAKE_HELMET" )
+			RegisterObjectiveString( "#TIMESHIFT_OBJECTIVE_BACK_TO_BT_WITH_HELMET" )
+			RegisterObjectiveString( "#TIMESHIFT_OBJECTIVE_LAB_EXPLORE" )
+			RegisterObjectiveString( "#TIMESHIFT_OBJECTIVE_ZIPLINE" )
+			RegisterObjectiveString( "#TIMESHIFT_OBJECTIVE_TAKE_TIME_DEVICE" )
+			RegisterObjectiveString( "#TIMESHIFT_OBJECTIVE_RETURN" )
+			RegisterObjectiveString( "#TIMESHIFT_OBJECTIVE_BRIDGE_EXTEND" )
+			RegisterObjectiveString( "#TIMESHIFT_OBJECTIVE_SCAN" )
+			break
+
+		case "sp_beacon":
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_GO_TO_BEACON" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_HELP_CONTROL_ROOM_MILITIA" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_GO_TO_CONTROL_ROOM" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_GET_ARC_TOOL" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_RETURN_WITH_ARC_TOOL" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_ACTIVATE_POWER_RELAYS" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_FIND_REPLACEMENT_MODULE" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_GET_TO_SECOND_DISH" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_FASTBALL1" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_RETURN_TO_BEACON" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_ELIMINATE_BEACON_THREATS" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_INSTALL_TARGETING_MODULE" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_RETURN_TO_CONTROL_ROOM" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_ELIMINATE_IMC_THREATS" )
+			break
+
+		case "sp_beacon_spoke0":
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_LOCATE_ARC_TOOL" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_DISABLE_TURBINE" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_GET_ARC_TOOL_FROM_MARVIN" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_RETURN_WITH_ARC_TOOL" )
+			RegisterObjectiveString( "#BEACON_OBJECTIVE_USE_ARC_TOOL_ON_TURBINE" )
+			break
+
+		case "sp_beacon_spoke2":
+			//RegisterObjectiveString( "#BEACON_OBJECTIVE_FOLLOW_TRANSPONDER" )
+			//RegisterObjectiveString( "#BEACON_OBJECTIVE_RETURN_TO_BEACON_CONTROL" )
+			break
+
+		case "sp_tday":
+			RegisterObjectiveString( "#TDAY_OBJECTIVE_DESTROY_WALL" )
+			RegisterObjectiveString( "#TDAY_OBJECTIVE_RETRIEVE_ARK" )
+			break
+
+		case "sp_s2s":
+			RegisterObjectiveString( "#S2S_OBJECTIVE_BOARDDRACONIS" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_BOARDMALTA" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_FASTBALL1" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_FASTBALL2pre" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_FASTBALL2" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_CLEARGUNS" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_RENDEZVOUS" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_TAKECONTROL1" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_TAKECONTROL2" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_HACKBRIDGE" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_STEERSHIP" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_VIPERBOSS" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_KILLVIPER" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_SECUREARK" )
+			RegisterObjectiveString( "#S2S_OBJECTIVE_ESCAPE" )
+			break
+
+		case "sp_skyway_v1":
+			RegisterObjectiveString( "#SKYWAY_OBJECTIVE_SURVIVE" )
+			RegisterObjectiveString( "#SKYWAY_OBJECTIVE_ESCAPE" )
+			RegisterObjectiveString( "#SKYWAY_OBJECTIVE_REACH_BRIDGE" )
+			RegisterObjectiveString( "#SKYWAY_OBJECTIVE_CALL_IN_TITAN" )
+			RegisterObjectiveString( "#SKYWAY_OBJECTIVE_INITIALIZE_TITAN" )
+			RegisterObjectiveString( "#SKYWAY_OBJECTIVE_STOP_SLONE" )
+			RegisterObjectiveString( "#SKYWAY_OBJECTIVE_STOP_ARK" )
+			RegisterObjectiveString( "#SKYWAY_OBJECTIVE_DESTROY_ARK" )
+			RegisterObjectiveString( "#SKYWAY_OBJECTIVE_LOAD_BT" )
+			RegisterObjectiveString( "#SKYWAY_OBJECTIVE_LZ" )
+			break
+
+		case "sp_chadbox":
+			RegisterObjectiveString( "#OBJECTIVE_TEST_LOCATION" )
+			RegisterObjectiveString( "#OBJECTIVE_TEST_NO_LOCATION" )
+			RegisterObjectiveString( "#OBJECTIVE_TEST_ENTITY" )
+			break
+	}
+}

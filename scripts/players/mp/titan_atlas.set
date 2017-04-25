@@ -1,0 +1,134 @@
+#base "titan_base.set"
+"titan_atlas"
+{
+	titan_healthbar_scale 1.0
+
+	aiSettingsFile 				"npc_titan_auto_atlas"
+
+	precache_gibModel0	"models/gibs/titan_gibs/at_gib1.mdl"
+	precache_gibModel1	"models/gibs/titan_gibs/at_gib_hatch_d.mdl"
+	precache_gibModel2	"models/gibs/titan_gibs/at_gib7_r_shin.mdl"
+	precache_gibModel3	"models/gibs/titan_gibs/at_gib8_l_thigh1.mdl"
+	precache_gibModel4	"models/gibs/titan_gibs/at_gib8_l_thigh2.mdl"
+	precache_gibModel5	"models/gibs/titan_gibs/at_gib9_l_bicep1.mdl"
+	precache_gibModel6	"models/gibs/titan_gibs/at_gib_l_arm1_d.mdl"
+	precache_gibModel7	"models/gibs/titan_gibs/at_gib_l_arm2_d.mdl"
+	precache_gibModel8	"models/gibs/titan_gibs/at_gib_r_arm1_d.mdl"
+	precache_gibModel9	"models/gibs/titan_gibs/at_gib_r_arm2_d.mdl"
+
+    autoprecache_script	atlas
+    hatchmodel 			"models/titans/medium/titan_medium_rodeo_battery.mdl"
+
+	"global"
+	{
+		subclass			"atlas"
+		viewPunchSpring		punch_titan_atlas
+
+		friction		2
+		speedScaleSide	1.0
+		speedScaleBack	1.0
+
+		dodgeDuration		0.2
+        dodgeAnimDuration	0.5
+        dodgeInterval		0.3
+        dodgeSpeed			700
+        dodgeStopSpeed		450
+        dodgeHeight			5
+        dodgeHeightMax		5
+        dodgePowerDrain		50
+        powerregenrate		12.0
+        dodgePowerDelay		0.2
+        dodgeKeepSpeedFrac 	0.0
+
+		healthPerSegment 1500	[$sp]
+		health			9000	[$sp]
+		healthDoomed	4000	[$sp]
+
+		healthPerSegment 2500	[$mp]
+		health			10000	[$mp]
+		healthDoomed	2500	[$mp]
+
+		healthShield	2500	[$mp]
+		healthShield	2500	[$sp]
+
+		printname				"Ajax"
+		description				"Needs description text"
+		bodymodel			"models/titans/medium/titan_medium_ajax.mdl"
+		armsmodel			"models/weapons/arms/pov_titan_medium_ajax.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_medium_cockpit.mdl"
+
+		cockpit_stepJolt_origin		"0.0  0.0  -5.0"
+		cockpit_stepJolt_angles		"0.0  0.0  0.0"
+
+		sound_superJump			""
+		sound_superJumpFail		""
+		sound_dodge_1p			"tone_dash_1p"
+		sound_dodge_3p			"tone_dash_3p"
+		sound_dodgeFail			"Player.DodgeFail"
+		sound_groundImpact		"Titan.GroundImpact"
+		sound_wallrunImpact		""
+		sound_standToCrouch		"ion_crouchdown_1p"
+		sound_crouchToStand		"ion_crouchstand_1p"
+
+		sprinttiltMaxRoll		3
+
+		footstep_type           "atlas"
+
+		quadMoveAnims				0
+
+		ClassMods
+		{
+			pas_dash_recharge
+			{
+		        powerregenrate	2.5++
+			}
+			sflag_bc_dash_capacity
+			{
+				dodgePowerDrain		33
+				powerregenrate		8
+			}
+			sur_level_0
+			{
+				health		2000--
+			}
+			sur_level_1
+			{
+				health		2000++
+			}
+			sur_level_2
+			{
+				health		2000++
+			}
+			sur_level_3
+			{
+				health		2000++
+			}
+			pas_titan_hardcore_settings
+			{
+				health			5000
+				healthDoomed	1250
+			}
+		}
+	}
+	"crouch"
+	{
+		speed			150
+		acceleration	200
+		deceleration	500
+	}
+
+	"stand"
+	{
+		speed				250//280
+		acceleration		900
+		deceleration		1500
+
+		sprintspeed			380
+		sprintAcceleration	120
+		sprintDeceleration	700
+
+		lowSpeed			200
+		lowAcceleration		1500
+	}
+}
+

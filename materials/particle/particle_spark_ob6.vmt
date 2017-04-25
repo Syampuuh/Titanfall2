@@ -1,0 +1,13 @@
+"SpriteCard"
+{
+	// Original shader: AddTexture
+	"$basetexture" "effects/spark"
+	$vertexcolor 1
+	$vertexalpha 1
+	"$additive" 1
+	$splinetype 2
+
+	$overbrightfactor 30
+
+
+}

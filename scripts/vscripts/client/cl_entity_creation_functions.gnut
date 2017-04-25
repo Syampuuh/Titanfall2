@@ -1,0 +1,8 @@
+untyped
+
+global function ClEntityCreationFunctions_Init
+
+function ClEntityCreationFunctions_Init()
+{
+	AddCreateCallback( "npc_dropship", CreateCallback_Dropship )
+}

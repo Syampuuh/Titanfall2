@@ -1,0 +1,46 @@
+#base "titan_ogre.set"
+"titan_ogre_meteor"
+{
+	aiSettingsFile			"npc_titan_auto_ogre_meteor" //mp only
+	sp_aiSettingsFile		"npc_titan_ogre_meteor" //sp only
+	at_aiSettingsFile		"npc_titan_ogre_meteor_bounty" //at only
+
+	titanCharacterName "scorch"
+
+    hud_follow_icon     "rui/hud/earn_meter/ogre_follow"
+    hud_guard_icon      "rui/hud/earn_meter/ogre_guard"
+
+    core_building_icon  "rui/titan_loadout/core/titan_core_flame_wave"
+    core_ready_icon     "rui/titan_loadout/core/titan_core_flame_wave"
+
+    startup_sound		"scorch_power_up"
+	execution_anim		"titan_ogre_meteor"
+
+    readymessage        "#HUD_SCORCH_READY"
+    readyhint           "#HUD_SCORCH_READY_HINT"
+
+	"global"
+	{
+		printname			"#NPC_TITAN_AUTO_OGRE_METEOR"
+
+		bodymodel			"models/titans/heavy/titan_heavy_ogre.mdl" [$mp]
+		bodymodel			"models/titans/heavy/sp_titan_heavy_ogre.mdl" [$sp]
+
+		armsmodel			"models/weapons/arms/pov_titan_heavy_ogre.mdl"
+
+		dodge 0
+		dodgePowerDrain 101
+
+		    footstep_type			"scorch"
+
+		ClassMods
+		{
+			pas_mobility_dash_capacity
+			{
+				dodge  1
+				dodgePowerDrain		100
+				powerregenrate 		16.66
+			}
+		}
+	}
+}

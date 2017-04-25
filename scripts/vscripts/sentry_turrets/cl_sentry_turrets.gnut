@@ -1,0 +1,501 @@
+untyped
+
+globalize_all_functions
+
+struct
+{
+	bool sentryTurretProjection = false
+	bool sentryTurretHidden = true
+	bool sentryTurretPlaced = false
+	var turretHullDeferredTrace
+	var turretLineDeferredTrace
+	var sentryTurretIcon
+} file;
+
+function Cl_Sentry_Turrets_Init()
+{
+	RegisterSignal( "PlaceEngineerTurret" )
+	RegisterSignal( "CancelPlaceEngineerTurret" )
+	RegisterSignal( "DestroyTurretProjection" )
+	RegisterSignal( "SentryTurretPlacementNag_Stop" )
+
+
+	//var rui = CreateCockpitRui( $"ui/reward_hud.rpak" )
+	//RuiSetBool( rui, "isVisible", false )
+	//RuiSetInt( rui, "xPos", 1 )
+	//RuiSetImage( rui, "hudIcon", $"rui/hud/bounty_hunt/sentry_turret_icon" )
+	//RuiSetString( rui, "hintText", "%scriptCommand1%" )
+	//file.sentryTurretIcon = rui
+}
+
+void function ClSentryTurret_RegisterNetworkFunctions()
+{
+	RegisterNetworkedVariableChangeCallback_int( "sentryTurretCount", TryUpdateTurretIcon )
+}
+
+void function TryUpdateTurretIcon( entity player, int old, int new, bool actuallyChanged )
+{
+	UpdateTurretIcon( player )
+
+	if ( actuallyChanged && new > old )
+	{
+		SentryTurretUpdateVO()
+	}
+}
+
+function ButtonCallback_InitTurretPlacement( player )
+{
+	expect entity( player )
+
+	Assert( player == GetLocalClientPlayer() )
+
+	if ( IsWatchingKillReplay() )
+		return
+
+	if ( !IsAlive( player ) || player.IsTitan() )
+		return
+
+	if ( player.GetPlayerNetInt( "sentryTurretCount" ) <= 0 )
+		return
+
+	if ( player.ContextAction_IsActive() )
+		return
+
+	if ( level.petSentryTurrets >= COOP_SENTRY_TURRET_MAX_COUNT_PET )
+	{
+		EventNotification( eEventNotifications.MaxTurretsPlaced, player, 0 )
+		return
+	}
+
+	if ( file.sentryTurretProjection == true )
+		return
+
+	if ( file.sentryTurretProjection == false && player.IsWeaponDisabled() )
+		return
+
+	if ( player.GetCinematicEventFlags() & CE_FLAG_WAVE_SPAWNING )
+		return
+
+	local parentEnt = player.GetParent()
+	if ( parentEnt != null )
+		return
+
+	RegisterButtonPressedCallback( MOUSE_LEFT, ButtonCallback_PlaceCoopTurret )
+	RegisterButtonPressedCallback( BUTTON_TRIGGER_RIGHT, ButtonCallback_PlaceCoopTurret )
+	RegisterConCommandTriggeredCallback( "+weaponCycle", ButtonCallback_AbortTurretPlacement )
+	RegisterConCommandTriggeredCallback( "+weaponPickupAndCycle", ButtonCallback_AbortTurretPlacement )
+	RegisterConCommandTriggeredCallback( "+scriptCommand1", ButtonCallback_AbortTurretPlacement )
+	RegisterConCommandTriggeredCallback( "+use", ButtonCallback_PlaceCoopTurret )
+	RegisterConCommandTriggeredCallback( "+useAndReload", ButtonCallback_PlaceCoopTurret )
+
+	// this will holster the weapon of the player on the server.
+	player.ClientCommand( "InitSentryTurretPlacement" )
+
+	thread ProjectTurret( player )
+	thread CoopTurretPlacementCleanupThread( player )
+}
+
+function CoopTurretPlacementCleanupThread( player )
+{
+	expect entity( player )
+
+	player.EndSignal( "OnDeath" )
+	player.EndSignal( "OnDestroy" )
+
+	OnThreadEnd(
+		function() : ()
+		{
+			file.sentryTurretProjection = false
+
+			ClearDeferredTraces()
+
+			DeregisterButtonPressedCallback( MOUSE_LEFT, ButtonCallback_PlaceCoopTurret )
+			DeregisterButtonPressedCallback( BUTTON_TRIGGER_RIGHT, ButtonCallback_PlaceCoopTurret )
+			DeregisterConCommandTriggeredCallback( "+weaponCycle", ButtonCallback_AbortTurretPlacement )
+			DeregisterConCommandTriggeredCallback( "+weaponPickupAndCycle", ButtonCallback_AbortTurretPlacement )
+			DeregisterConCommandTriggeredCallback( "+scriptCommand1", ButtonCallback_AbortTurretPlacement )
+			DeregisterConCommandTriggeredCallback( "+use", ButtonCallback_PlaceCoopTurret )
+			DeregisterConCommandTriggeredCallback( "+useAndReload", ButtonCallback_PlaceCoopTurret )
+
+			TurretPlacementHintVisiblity( false )
+			TurretPlacementHintInvalid( false )
+		}
+	)
+
+	player.WaitSignal( "DestroyTurretProjection" )
+}
+
+function ButtonCallback_PlaceCoopTurret( player )
+{
+	expect entity( player )
+
+	if ( !IsValid( player ) )
+		return
+
+	SentryTurretPlacementInfo result = CalculateViewBasedTurretLocation( player )
+
+	if ( result.success == false || file.sentryTurretHidden == true )
+	{
+		// play bleep sound or some such.
+		EmitSoundOnEntity( player, "CoOp_SentryGun_DeploymentDeniedBeep" )
+		return false
+	}
+
+	local origin = player.EyePosition() // result.origin
+	local angles = player.EyeAngles() // result.angles
+
+	local commandString = format( "PlaceSentryTurret %d %d %d %d %d %d", origin.x.tointeger(), origin.y.tointeger(), origin.z.tointeger(), angles.x.tointeger(), angles.y.tointeger(), angles.z.tointeger() )
+
+	player.ClientCommand( commandString )
+
+	entity cockpit = player.GetCockpit()
+	// if ( IsValid( cockpit ) )
+	// 	UpdateEquipmentHud( cockpit, player )
+
+	UpdateTurretIcon( player )
+
+	DestroyTurretProjection( player )
+}
+
+function ButtonCallback_AbortTurretPlacement( player )
+{
+	AbortTurretPlacement( player )
+}
+
+
+void function SentryTurret_MainHud( var mainVGUI, entity player )
+{
+	//turret placement hints
+}
+
+function Turret_Client_GameStateChangedCallback()
+{
+	entity player = GetLocalClientPlayer()
+	local gameState = GetGameState()
+
+	if ( gameState == eGameState.WinnerDetermined )
+		player.Signal( "SentryTurretPlacementNag_Stop" )
+}
+
+function ServerCallback_GiveSentryTurret()
+{
+
+}
+
+void function UpdateTurretIcon( entity player )
+{
+	//if ( player.GetPlayerNetInt( "sentryTurretCount" ) > 0 && !player.IsTitan() )
+	//	RuiSetBool( file.sentryTurretIcon, "isVisible", true )
+	//else
+	//	RuiSetBool( file.sentryTurretIcon, "isVisible", false )
+}
+
+void function TurretOnDeathCallback( entity turret )
+{
+	entity player = turret.GetBossPlayer()
+	if ( !IsValid( player ) )
+		return
+
+	if ( player != GetLocalClientPlayer() )
+		return
+
+	bool justDied = true
+	SentryTurretUpdateVO( justDied )
+}
+
+function SentryTurretUpdateVO( justDied = false )
+{
+	local freeRoom 			= level.petSentryTurrets < COOP_SENTRY_TURRET_MAX_COUNT_PET
+	local isAvailable 		= GetLocalViewPlayer().GetPlayerNetInt( "sentryTurretCount" ) > 0
+	local canInformPlayer 	= CanInformPlayerAboutTurretUpdate()
+
+	//one just died, and you've got none in the inventory
+	if ( justDied && !isAvailable && canInformPlayer )
+		PlayConversationToLocalClient( "CoopTD_TurretDestroyed" )			//Hey your turrets been taken out, I'll get you another one as soon as I can
+
+	//one just died, and you've got more in the inventory
+	else if ( justDied && isAvailable && freeRoom )
+	{
+		if ( canInformPlayer )
+		{
+			PlayConversationToLocalClient( "CoopTD_TurretDeadAndReady" )		//Hey your turrets been destroyed, but you've got another one in reserve. Just deploy it somewhere.
+			EventNotification( eEventNotifications.TurretAvailable, null, 0 )
+		}
+		thread SentryTurretPlacementNag()
+	}
+
+	//you just got a new turret and you have room to place it
+	else if ( isAvailable && freeRoom )
+	{
+		if ( canInformPlayer )
+		{
+			PlayConversationToLocalClient( "CoopTD_TurretAvailable" )			//Pilot, you've got a turret available, put it some place where it can do some damage
+			EventNotification( eEventNotifications.TurretAvailable, null, 0 )
+		}
+		thread SentryTurretPlacementNag()
+	}
+}
+
+function CanInformPlayerAboutTurretUpdate()
+{
+	entity player = GetLocalClientPlayer()
+
+	if ( !IsAlive( player ) )
+		return false
+
+	if ( IsWatchingReplay() )
+		return false
+
+	if ( GetGameState() != eGameState.Playing )
+		return false
+
+	return true
+}
+
+function SentryTurretPlacementNag()
+{
+	entity player = GetLocalClientPlayer()
+
+	if ( GetGameState() != eGameState.Playing )
+		return
+
+	player.EndSignal( "OnDestroy" )
+	player.Signal( "SentryTurretPlacementNag_Stop" )
+	player.EndSignal( "SentryTurretPlacementNag_Stop" )
+	player.EndSignal( "DestroyTurretProjection" )
+
+	local curInventory = GetLocalViewPlayer().GetPlayerNetInt( "sentryTurretCount" )
+
+	if ( CanInformPlayerAboutTurretUpdate() )
+	{
+		entity parentEnt = player.GetParent()
+		if ( IsValid( parentEnt ) )
+		{
+			local delay = 0
+			if ( parentEnt.IsTitan() )
+				delay = 2.5
+			if ( IsDropship( parentEnt ) )
+				delay = 15.0
+			wait delay
+		}
+	}
+
+	local nags = 0
+	// as long as the inventory hasn't changed - keep nagging
+	while ( curInventory == GetLocalViewPlayer().GetPlayerNetInt( "sentryTurretCount" ) )
+	{
+		//wait first - don't nag immediately
+		local waitTime = GraphCapped( nags++, 0, 4, 1, 3 ).tointeger() * 45
+		wait waitTime
+
+		if ( !CanInformPlayerAboutTurretUpdate() )
+			continue
+
+		if ( file.sentryTurretProjection != false )
+			continue
+
+		if ( level.petSentryTurrets >= COOP_SENTRY_TURRET_MAX_COUNT_PET )
+			continue
+
+		entity cockpit = player.GetCockpit()
+		if ( !IsValid( cockpit ) )
+			continue
+
+		PlayConversationToLocalClient( "CoopTD_TurretAvailableNag" )
+		//EventNotification( eEventNotifications.TurretAvailable, null )
+	}
+}
+
+function DestroyTurretProjection( player )
+{
+	file.sentryTurretPlaced = true
+	player.Signal( "DestroyTurretProjection" )
+}
+
+function AbortTurretPlacement( player ) //This is specific to Turrets as an offhand weapon
+{
+	if ( IsWatchingReplay() )
+		return
+
+	if ( !IsValid( player ) )
+		return
+
+	player.ClientCommand( "AbortSentryTurret" )
+
+	player.Signal( "DestroyTurretProjection" )
+	player.Signal( "CancelPlaceEngineerTurret" )
+}
+
+function ProjectTurret( player )
+{
+	player.EndSignal( "OnDeath" )
+	player.EndSignal( "OnDestroy" )
+	player.EndSignal( "StartPhaseShift" )
+	player.EndSignal( "DestroyTurretProjection" )
+
+	if ( IsWatchingReplay() )
+		return
+
+	entity player = GetLocalClientPlayer()
+	local turret = CreateClientSidePropDynamic( player.GetOrigin(), Vector( 0, 0, 0 ), SENTRY_TURRET_MODEL )
+	turret.Hide()
+	turret.EnableRenderAlways()
+	turret.SetSkin( 2 )	// Not sure how to know that it's index 2.
+
+	local origin, offset, angles
+
+	file.sentryTurretProjection = true
+	file.sentryTurretPlaced = false
+
+	OnThreadEnd(
+		function() : ( player, turret )
+		{
+			if ( !file.sentryTurretPlaced )
+				AbortTurretPlacement( player )
+
+			if ( IsValid( turret ) )
+				turret.Destroy()
+		}
+	)
+
+	SentryTurretPlacementInfo result = CalculateViewBasedTurretLocation( player )
+
+	while( true )
+	{
+		wait 0.016 // HACK - this is a test to see if it's worth putting more effort into. If placeable turrets isn't super fun we will scrap it.
+
+		local onWall = player.IsWallRunning() || player.IsWallHanging()
+		local onGround = player.IsOnGround()
+
+		if ( player.ContextAction_IsActive() )
+		{
+			// player started to leech or hack a turret so we have to abort the placement of the turret.
+			return
+		}
+
+		/*if ( onWall || !onGround )
+		{
+			TurretPlacementHintVisiblity( false )
+			TurretPlacementHintInvalid( false )
+			file.sentryTurretHidden = true
+			turret.Hide()
+			continue
+		}*/
+
+		result = CalculateViewBasedTurretLocation( player )
+
+		file.sentryTurretHidden = false
+		turret.Show()
+
+		if ( result.success == true )
+		{
+			TurretPlacementHintVisiblity( true )
+			TurretPlacementHintInvalid( false )
+			turret.SetSkin( 2 )
+		}
+		else
+		{
+			turret.SetSkin( 3 )
+			TurretPlacementHintVisiblity( false )
+			TurretPlacementHintInvalid( true )
+		}
+
+		turret.SetOrigin( result.origin )
+		turret.SetAngles( result.angles )
+	}
+}
+
+function TurretPlacementHintVisiblity( show )
+{
+	if ( show == true )
+	{
+		level.turretPlacementHints.keyboard.Show()
+		level.turretPlacementHints.gamepad.Show()
+	}
+	else
+	{
+		level.turretPlacementHints.keyboard.Hide()
+		level.turretPlacementHints.gamepad.Hide()
+	}
+}
+
+function TurretPlacementHintInvalid( show )
+{
+	if ( show == true )
+	{
+		level.turretPlacementHints.invalid.Show()
+	}
+	else
+	{
+		level.turretPlacementHints.invalid.Hide()
+	}
+}
+
+SentryTurretPlacementInfo function CalculateViewBasedTurretLocation( player, newTrace = true )
+{
+	expect entity( player )
+	vector viewVec = player.GetViewVector()
+	vector eyePos = player.EyePosition()
+	vector origin = <0,0,0>
+	vector angles = Vector( 0, VectorToAngles( viewVec ).y, 0 )
+
+	var prevHullDeferredTrace = file.turretHullDeferredTrace
+	var prevLineDeferredTrace = file.turretLineDeferredTrace
+
+	SentryTurretPlacementInfo info
+
+	// for next frame
+	if ( newTrace == true )
+	{
+		file.turretHullDeferredTrace = DeferredTraceHull( eyePos, eyePos + viewVec * SENTRY_TURRET_PLACEMENT_RANGE, Vector( -30, -30, 0 ), Vector( 30, 30, 60 ), player, TRACE_MASK_SOLID | TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
+		file.turretLineDeferredTrace = DeferredTraceLine( eyePos, eyePos + viewVec * SENTRY_TURRET_PLACEMENT_RANGE, player, TRACE_MASK_SOLID | TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
+	}
+
+	// use prev frame trace results
+	if ( !IsDeferredTraceFinished( prevHullDeferredTrace ) || !IsDeferredTraceFinished( prevLineDeferredTrace ) )
+	{
+		info.success = false
+		info.origin = origin
+		info.angles = angles
+		return info
+	}
+
+	TraceResults hullResult = GetDeferredTraceResult( prevHullDeferredTrace )
+	TraceResults lineResult = GetDeferredTraceResult( prevLineDeferredTrace )
+
+	return CalculateViewBasedTurretLocation_Shared( player, hullResult, lineResult )
+}
+
+
+function GetSlope( angles )
+{
+	Assert( fabs( angles.x ) <= 360 )
+	Assert( fabs( angles.z ) <= 360 )
+
+	local x = fabs( angles.x ) > 180 ? fabs( angles.x - 360 ) : fabs( angles.x )
+	local z = fabs( angles.z ) > 180 ? fabs( angles.z - 360 ) : fabs( angles.z )
+
+	return ( x + z )
+}
+
+void function ClearDeferredTraces()
+{
+	file.turretHullDeferredTrace = null
+	file.turretLineDeferredTrace = null
+}
+
+void function ServerCallback_TurretReport( float timeAlive, int scoreEarned, int killsEarned )
+{
+	var rui = RuiCreate( $"ui/turret_report.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 500 )
+	RuiSetString( rui, "hintText", "Turret Report" )
+	RuiSetGameTime( rui, "startTime", Time() )
+	RuiSetFloat3( rui, "bgcolor", <0,0,0> )
+	RuiSetFloat( rui, "timeAlive", timeAlive )
+	RuiSetInt( rui, "scoreEarned", killsEarned )
+	RuiSetInt( rui, "killsEarned", scoreEarned )
+}
+
+void function ClSentryTurret_OnCreateCockpit( entity cockpit, entity player )
+{
+	UpdateTurretIcon( player )
+}

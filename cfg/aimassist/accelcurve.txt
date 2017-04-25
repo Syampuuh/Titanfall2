@@ -1,0 +1,8 @@
+// Look-accel curve:
+
+LINEAR		0.3		0.15
+LINEAR		0.6		0.4
+LINEAR		1.0		1.0
+
+
+TRANSFORM: linear

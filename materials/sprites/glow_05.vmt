@@ -1,0 +1,8 @@
+//Default material used by env_sprite and env_sprite_clientside
+
+"Sprite"
+{
+	"$spriteorientation" "vp_parallel"
+	"$spriteorigin" "[ 0.50 0.50 ]"
+	"$basetexture" "particle\glows\pfx_glow_05"
+}

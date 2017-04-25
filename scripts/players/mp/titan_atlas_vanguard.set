@@ -1,0 +1,48 @@
+#base "titan_atlas.set"
+"titan_atlas_vanguard"
+{
+	aiSettingsFile			"npc_titan_auto_atlas_vanguard" //mp only
+	sp_aiSettingsFile		"npc_titan_atlas_vanguard" //sp only
+	at_aiSettingsFile		"npc_titan_atlas_vanguard_bounty" //at only
+
+	titanCharacterName "vanguard"
+
+    hud_follow_icon     "rui/hud/earn_meter/ajax_follow"
+    hud_guard_icon      "rui/hud/earn_meter/ajax_guard"
+
+    core_building_icon  "rui/titan_loadout/core/titan_core_vanguard"
+    core_ready_icon     "rui/titan_loadout/core/titan_core_vanguard"
+
+    startup_sound		"bt_power_up"
+	execution_anim		"titan_atlas_vanguard"
+
+    readymessage        "#HUD_VANGUARD_READY"
+    readyhint           "#HUD_VANGUARD_READY_HINT"
+
+	"global"
+	{
+		printname			"#NPC_TITAN_AUTO_ATLAS_VANGUARD"
+
+		dodge  1
+		dodgePowerDrain		100
+		powerregenrate 		16.66
+
+		footstep_type			"buddy"
+
+		ClassMods
+		{
+			pas_mobility_dash_capacity
+			{
+				dodge  1
+				powerregenrate		8.33
+			    dodgePowerDrain		50
+			}
+
+			pas_vanguard_shield
+			{
+
+			}
+		}
+	}
+}
+

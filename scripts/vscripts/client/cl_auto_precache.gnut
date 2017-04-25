@@ -1,0 +1,64 @@
+global function AP_PrecacheWeapon
+global function AP_PrecacheModel
+global function ClAutoPrecache_Init
+
+void function AP_PrecacheWeapon( string weapon, int count )
+{
+	PrecacheWeapon( weapon )
+}
+
+void function AP_PrecacheModel( asset Model )
+{
+	PrecacheModel( Model )
+}
+
+void function ClAutoPrecache_Init()
+{
+	#if DEV
+	if ( IsTestMap() )
+	{
+		// test maps dont have auto precache so just setup all the titans
+
+		array<TitanLoadoutDef> titanLoadouts = GetAllowedTitanLoadouts()
+
+		foreach ( loadout in titanLoadouts )
+		{
+			var autoprecache_script = Dev_GetPlayerSettingByKeyField_Global( loadout.setFile, "autoprecache_script" )
+			if ( autoprecache_script == null )
+				continue
+
+			expect string( autoprecache_script )
+			Assert( autoprecache_script != "" )
+
+			asset bodyModel = GetPlayerSettingsAssetForClassName( loadout.setFile, "bodymodel" )
+			if ( ModelHasFXGroup( bodyModel ) )
+				continue
+
+			switch ( autoprecache_script )
+			{
+				case "atlas":
+					ClTitanAtlas_Init( bodyModel )
+					break
+
+				case "ogre":
+					ClTitanOgre_Init( bodyModel )
+					break
+
+				case "stryder":
+					ClTitanStryder_Init( bodyModel )
+					break
+
+				case "buddy":
+				#if SP
+					ClTitanBuddy_Init( bodyModel )
+				#endif
+					break
+
+				default:
+					Assert( 0, "Unknown autoprecache_script key " + autoprecache_script )
+					break
+			}
+		}
+	}
+	#endif
+}

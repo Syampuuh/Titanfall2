@@ -1,0 +1,140 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_TITANABILITY_REARM"
+	"shortprintname"   								"#WPN_TITANABILITY_REARM"
+	"description" 									"#WPN_TITANABILITY_REARM_DESC"
+	"longdesc" 										"#WPN_TITANABILITY_REARM_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/tactical/titan_tactical_rearm_menu"
+	"hud_icon"										"rui/titan_loadout/tactical/titan_tactical_rearm"
+
+	"damage_type" 									"bullet"
+	"damage_flags"									"DF_NO_INDICATOR | DF_NO_HITBEEP"
+
+	// General
+	"weaponClass" 									"titan"
+	"weaponType"									"tactical"
+	"fire_mode"   									"offhand"
+
+	"viewmodel"   									"models/weapons/titan_bt_rocket_pod/atpov_titan_monarch_pods.mdl"
+
+	// Ammo
+    "cooldown_type"                                 "ammo_instant"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+	//"ammo_display"								"bar"
+	"ammo_min_to_fire"								"200"
+	"ammo_per_shot"									"200"
+	"ammo_stockpile_max"							"200"
+	"fire_rate"   									"2"
+	"regen_ammo_refill_rate"						"11.333"
+	"regen_ammo_refill_start_delay"					"0.0"
+
+	"offhand_keep_primary_in_hand" 					"1"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titanability_rearm"
+	"OnWeaponNPCPrimaryAttack"						"OnWeaponNPCPrimaryAttack_titanability_rearm"
+	"OnWeaponAttemptOffhandSwitch"					"OnWeaponAttemptOffhandSwitch_titanability_rearm"
+
+	MP_BASE
+	{
+		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+	}
+	SP_BASE
+	{
+		"enable_highlight_networking_on_creation"		"1"
+	}
+
+	// Sounds
+	"fire_sound_1_player_1p"						"Titan_Tone_SonarLock_Fired_ShoulderPod_1P"
+	"fire_sound_1_player_3p"						"Titan_Tone_SonarLock_Fired_ShoulderPod_3P"
+	"sound_weapon_ready"							"HUD_TitanUtilityAbility_replenished_1P"
+	"sound_trigger_pull"							"Weapon_ChargeRifle_TriggerOn"
+	"sound_trigger_release" 						"Weapon_ChargeRifle_TriggerOff"
+
+	"charge_time" 									"0.5"
+	"charge_cooldown_time"							"0.0"
+	"charge_cooldown_delay"   						"0.0"
+	"charge_end_forces_fire"  						"1"
+	"charge_require_input"							"0"
+	"charge_remain_full_when_fired"					"1"
+
+	// Behavior
+	"allow_empty_fire"								"0"
+	"reload_enabled"  								"0"
+	"allow_empty_click"   							"1"
+	"empty_reload_only"   							"0"
+	"bypass_semiauto_hold_protection"				"1"
+	"vortex_drain"									"0.0"
+
+	"ammo_suck_behavior"							"offhand_weapons"
+
+	// NPC
+	"proficiency_poor_spreadscale"					"5.0"
+	"proficiency_average_spreadscale" 				"4.0"
+	"proficiency_good_spreadscale"					"3.0"
+	"proficiency_very_good_spreadscale"   			"2.0"
+	"proficiency_perfect_spreadscale" 				"1.0"
+
+	"npc_min_range"   								"1500"
+	"npc_max_range"   								"4000"
+	"npc_min_burst"   								"1"
+	"npc_max_burst"   								"1"
+	"npc_rest_time_between_bursts_min"				"8"
+	"npc_rest_time_between_bursts_max"				"20"
+
+	"npc_charge_time_min"							"1"
+	"npc_charge_time_max"							"1"
+
+	// WeaponED Unhandled Key/Values and custom script Key/Values
+	"sound_dryfire"   								"titan_dryfire"
+	"npc_reload_enabled"  							"0"
+	"sprintcycle_time"								"0.55"
+	"arc_switch_activator"							"1"
+
+	Mods
+	{
+		pas_vanguard_rearm
+		{
+			"regen_ammo_refill_rate"						"20"
+			"regen_ammo_refill_start_delay"					"0.0"
+		}
+
+		rapid_rearm
+		{
+			"charge_time" 									"0.1"
+			"hud_icon"										"rui/titan_loadout/passive/vanguard_core2"
+		}
+	}
+
+	active_crosshair_count				"1"
+	rui_crosshair_index					"0"
+
+	RUI_CrosshairData
+	{
+		DefaultArgs
+		{
+			adjustedSpread				weapon_spread
+			adsFrac 					player_zoomFrac
+			isSprinting					player_is_sprinting
+			isReloading					weapon_is_reloading
+			readyFrac                   progress_ready_to_fire_frac
+			teamColor					crosshair_team_color
+			isAmped						weapon_is_amped
+			chargeFrac                  player_chargeFrac
+			crosshairMovementX          crosshair_movement_x
+			crosshairMovementY          crosshair_movement_y
+		}
+
+		Crosshair_1
+		{
+			"ui"						"ui/crosshair_rearm"
+			"base_spread"				"10.0"
+			Args
+			{
+				isFiring				weapon_is_firing
+			}
+		}
+	}
+}

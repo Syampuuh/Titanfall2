@@ -1,0 +1,6 @@
+"Downsample4x4"
+{
+	"$BASETEXTURE" "_rt_Temp128"
+	"$ignorez" 1
+	"%noToolTexture" 1
+}

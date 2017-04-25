@@ -1,0 +1,31 @@
+"SpriteCard"
+{
+	$basetexture "particle\beam\forked_lightning"
+
+//	$RAMPTEXTURE "particle/ramps/elec_ramp.vtf"
+//	$POWERFUNCTION "[0.8 2.5 5]"
+
+//	$texAlphafromColor 4
+	$texColorFromAlpha 1
+
+
+	$additive 	1
+
+	$translucent 	1
+	$nocull	1
+
+	$splinetype	1
+	$orientation 4
+
+	$overbrightfactor 3
+
+	$vertexFogAmount 1
+
+    $disableTSAA 0
+    $tsaaFullyResponsive 1
+    $tsaaMotionAlphaThreshold 0.01
+    $tsaaMotionAlphaRamp 10
+}
+
+
+

@@ -1,0 +1,57 @@
+// Read by code, which generates the enum for script.
+//
+//enum eStatusEffect
+//{
+/////////////////////////////
+
+	move_slow
+	turn_slow
+	dodge_speed_slow
+	dodge_regen_slow
+	frozencontrols
+	grapple_slow
+	pushback_dampen
+	speed_boost
+	stim_visual_effect
+	timeshift_visual_effect
+	gravity_grenade_visual
+
+	laser_mesh
+	destroyed_by_emp
+	titan_damage_amp
+
+    sonar_detected
+    maphack_detected
+    lockon_detected
+    doublexp
+
+    emp
+    thermite
+
+	smart_ammo_tracker_militia
+    smart_ammo_tracker_imc
+    smart_ammo_tracker_neutral
+    smart_ammo_tracker_all
+
+    placing_ap_turret
+    placing_at_turret
+
+    pass_through_amps_weapon
+
+    damage_reduction
+
+    simple_timer
+
+    minimap_jammed
+    tethered
+    battery_carried
+    cockpitColor
+    smartCore
+    damageAmpFXOnly
+
+    bleedoutDOF
+
+    lockon_detected_titan
+
+/////////////////////////////
+//}

@@ -1,0 +1,112 @@
+#base "pilot_base.set"
+"pilot_solo"
+{
+	"global"
+	{
+		armsmodel					"models/weapons/arms/pov_mlt_hero_jack.mdl"
+		bodymodel					"models/humans/heroes/mlt_hero_jack.mdl"
+
+		class						"pilot"
+		subclass					"wallrun"
+
+		health						100
+
+		//Light gravity
+
+		jumpheight					60
+		gravityscale				0.75
+		stepheight					18
+		ziplineSpeed				600
+		wallrun                     1
+		doubleJump                  1
+
+		superjumpMinHeight			60
+		superjumpMaxHeight			60
+		superjumpHorzSpeed			180
+
+        wallrun_timeLimit           1.75
+
+
+		wallrunJumpOutwardSpeed		205//170
+		wallrunJumpUpSpeed			230
+		wallrunJumpInputDirSpeed	75
+
+		//wallrunJumpOutwardSpeed		240 // use 240 for r1 parity, 188 for mp parity
+		//wallrunJumpUpSpeed			240
+		//wallrunJumpInputDirSpeed	40
+
+		wallrunMaxSpeedVertical		225
+		wallrunMaxSpeedHorizontal	340
+		wallrunAccelerateVertical 	360
+		wallrunAccelerateHorizontal 1400
+
+		wallrunAdsType				"ADS"
+
+        slideFOVScale               1.1 // scales fov by this amount while sliding
+        slideFOVLerpInTime          0.25 // lerp in over this time
+        slideFOVLerpOutTime         0.25 // lerp out over this time
+
+
+	//	airSpeed					70
+	//	airAcceleration				540
+	//	sprintStartDuration			0.4
+
+		pitchMaxUp		85
+		pitchMaxDown	89
+
+		deathcamDistanceMin			50
+		deathcamDistanceMax			70
+		deathcamDistanceGrowRate	5000
+		deathcamExtraHeight			30
+		deathcamMinHeight			30
+		deathcamRotateSpeed			0
+
+		sound_standToCrouch		"Pilot_CrouchDown_SP_1P"
+		sound_crouchToStand		"Pilot_CrouchStand_SP_1P"
+		sound_wallHangSlip		"Pilot_CrouchDown_SP_1P"
+
+
+		ClassMods
+		{
+			disable_doublejump
+			{
+				doublejump		"0"
+			}
+
+			disable_wallrun
+			{
+				wallrun			"0"
+			}
+
+			disable_sprint
+			{
+				sprint			"0"
+			}
+
+			boomtown_climb
+			{
+				pitchMaxUp		75
+				pitchMaxDown	80
+				mantlePitchLeveling 0
+			}
+
+			s2s_widowrun
+			{
+				wallrun_timeLimit	3
+			}
+		}
+	}
+
+	"crouch"
+	{
+		speed						80
+	}
+
+	"stand"
+	{
+		speed						162.5
+		sprintspeed					243
+	}
+}
+
+

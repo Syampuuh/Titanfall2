@@ -1,0 +1,626 @@
+resource/ui/menus/singleplayer_dev.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"Single Player"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		BtnDev1
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				0
+			xpos					134
+			ypos					193
+			navUp					BtnDev16
+			navDown					BtnDev2
+			navRight				BtnDev17
+			navLeft					BtnDev17
+			tabPosition				1
+		}
+		BtnDev2
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				1
+			pin_to_sibling			BtnDev1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev1
+			navDown					BtnDev3
+			navRight				BtnDev18
+			navLeft					BtnDev18
+		}
+		BtnDev3
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				2
+			pin_to_sibling			BtnDev2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev2
+			navDown					BtnDev4
+			navRight				BtnDev19
+			navLeft					BtnDev19
+		}
+		BtnDev4
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				3
+			pin_to_sibling			BtnDev3
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev3
+			navDown					BtnDev5
+			navRight				BtnDev20
+			navLeft					BtnDev20
+		}
+		BtnDev5
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				4
+			pin_to_sibling			BtnDev4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev4
+			navDown					BtnDev6
+			navRight				BtnDev21
+			navLeft					BtnDev21
+		}
+		BtnDev6
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				5
+			pin_to_sibling			BtnDev5
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev5
+			navDown					BtnDev7
+			navRight				BtnDev22
+			navLeft					BtnDev22
+		}
+		BtnDev7
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				6
+			pin_to_sibling			BtnDev6
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev6
+			navDown					BtnDev8
+			navRight				BtnDev23
+			navLeft					BtnDev23
+		}
+		BtnDev8
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				7
+			pin_to_sibling			BtnDev7
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev7
+			navDown					BtnDev9
+			navRight				BtnDev24
+			navLeft					BtnDev24
+		}
+		BtnDev9
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				8
+			pin_to_sibling			BtnDev8
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev8
+			navDown					BtnDev10
+			navRight				BtnDev25
+			navLeft					BtnDev25
+		}
+		BtnDev10
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				9
+			pin_to_sibling			BtnDev9
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev9
+			navDown					BtnDev11
+			navRight				BtnDev26
+			navLeft					BtnDev26
+		}
+		BtnDev11
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				10
+			pin_to_sibling			BtnDev10
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev10
+			navDown					BtnDev12
+			navRight				BtnDev27
+			navLeft					BtnDev27
+		}
+		BtnDev12
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				11
+			pin_to_sibling			BtnDev11
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev11
+			navDown					BtnDev13
+			navRight				BtnDev28
+			navLeft					BtnDev28
+		}
+		BtnDev13
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				12
+			pin_to_sibling			BtnDev12
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev12
+			navDown					BtnDev14
+			navRight				BtnDev29
+			navLeft					BtnDev29
+		}
+		BtnDev14
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				13
+			pin_to_sibling			BtnDev13
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev13
+			navDown					BtnDev15
+			navRight				BtnDev30
+			navLeft					BtnDev30
+		}
+		BtnDev15
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				14
+			pin_to_sibling			BtnDev14
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev14
+			navDown					BtnDev16
+			navRight				BtnDev31
+			navLeft					BtnDev31
+		}
+		BtnDev16
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				15
+			pin_to_sibling			BtnDev15
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev15
+			navDown					BtnDev1
+			navRight				BtnDev32
+			navLeft					BtnDev32
+		}
+
+//////////////////////////////////////
+
+		BtnDev17
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				16
+			pin_to_sibling			BtnDev1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+			navUp					BtnDev32
+			navDown					BtnDev18
+			navRight				BtnDev1
+			navLeft					BtnDev1
+		}
+		BtnDev18
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				17
+			pin_to_sibling			BtnDev17
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev17
+			navDown					BtnDev19
+			navRight				BtnDev2
+			navLeft					BtnDev2
+		}
+		BtnDev19
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				18
+			pin_to_sibling			BtnDev18
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev18
+			navDown					BtnDev20
+			navRight				BtnDev3
+			navLeft					BtnDev3
+		}
+		BtnDev20
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				19
+			pin_to_sibling			BtnDev19
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev19
+			navDown					BtnDev21
+			navRight				BtnDev4
+			navLeft					BtnDev4
+		}
+		BtnDev21
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				20
+			pin_to_sibling			BtnDev20
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev20
+			navDown					BtnDev22
+			navRight				BtnDev5
+			navLeft					BtnDev5
+		}
+		BtnDev22
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				21
+			pin_to_sibling			BtnDev21
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev21
+			navDown					BtnDev23
+			navRight				BtnDev6
+			navLeft					BtnDev6
+		}
+		BtnDev23
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				22
+			pin_to_sibling			BtnDev22
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev22
+			navDown					BtnDev24
+			navRight				BtnDev7
+			navLeft					BtnDev7
+		}
+		BtnDev24
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				23
+			pin_to_sibling			BtnDev23
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev23
+			navDown					BtnDev25
+			navRight				BtnDev8
+			navLeft					BtnDev8
+		}
+		BtnDev25
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				24
+			pin_to_sibling			BtnDev24
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev24
+			navDown					BtnDev26
+			navRight				BtnDev9
+			navLeft					BtnDev9
+		}
+		BtnDev26
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				25
+			pin_to_sibling			BtnDev25
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev25
+			navDown					BtnDev27
+			navRight				BtnDev10
+			navLeft					BtnDev10
+		}
+		BtnDev27
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				26
+			pin_to_sibling			BtnDev26
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev26
+			navDown					BtnDev28
+			navRight				BtnDev11
+			navLeft					BtnDev11
+		}
+		BtnDev28
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				27
+			pin_to_sibling			BtnDev27
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev27
+			navDown					BtnDev29
+			navRight				BtnDev12
+			navLeft					BtnDev12
+		}
+		BtnDev29
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				28
+			pin_to_sibling			BtnDev28
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev28
+			navDown					BtnDev30
+			navRight				BtnDev13
+			navLeft					BtnDev13
+		}
+		BtnDev30
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				29
+			pin_to_sibling			BtnDev29
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev29
+			navDown					BtnDev31
+			navRight				BtnDev14
+			navLeft					BtnDev14
+		}
+		BtnDev31
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				30
+			pin_to_sibling			BtnDev30
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev30
+			navDown					BtnDev32
+			navRight				BtnDev15
+			navLeft					BtnDev15
+		}
+		BtnDev32
+		{
+			allcaps 				0
+			ControlName				BaseModHybridButton
+			InheritProperties		SmallButton
+			classname				SinglePlayerButtonClass
+			scriptID				31
+			pin_to_sibling			BtnDev31
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnDev31
+			navDown					BtnDev17
+			navRight				BtnDev16
+			navLeft					BtnDev16
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		BlackBackground
+		{
+			ControlName				ImagePanel
+			xpos					1200
+			ypos					200
+			wide					600
+			tall					750
+			visible					1
+			scaleImage				1
+			image					"vgui/HUD/white"
+			drawColor				"0 0 0 150"
+		}
+
+		DescriptionHeader
+		{
+			ControlName				Label
+			xpos					0
+			ypos					0
+			wide 					600
+			tall 					50
+			visible					1
+			labelText				"Description"
+			font					Default_28
+			allcaps					0
+			fgcolor_override		"204 234 255 255"
+			bgcolor_override		"150 150 150 255"
+
+			pin_to_sibling			BlackBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		Description
+		{
+			ControlName				Label
+			xpos					0
+			ypos					0
+			wide 					600
+			tall 					700
+			visible					1
+			labelText				"[Description]"
+			font					Default_23
+			allcaps					0
+			textAlignment			"north-west"
+			wrap 					1
+			fgcolor_override		"245 245 245 255"
+			bgcolor_override		"150 150 150 255"
+
+			pin_to_sibling			DescriptionHeader
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		Owner
+		{
+			ControlName				Label
+			xpos					0
+			ypos					0
+			wide 					600
+			tall 					50
+			visible					1
+			labelText				"[Owner]"
+			font					Default_23
+			allcaps					0
+			textAlignment			"north-west"
+			wrap 					1
+			fgcolor_override		"245 245 245 255"
+			bgcolor_override		"150 150 150 255"
+
+			pin_to_sibling			BlackBackground
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		OwnerHeader
+		{
+			ControlName				Label
+			xpos					0
+			ypos					0
+			wide 					600
+			tall 					50
+			visible					1
+			labelText				"Owner"
+			font					Default_28
+			allcaps					0
+			fgcolor_override		"204 234 255 255"
+			bgcolor_override		"150 150 150 255"
+
+			pin_to_sibling			Owner
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					r119
+			wide					f0
+			tall					36
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+		}
+	}
+}

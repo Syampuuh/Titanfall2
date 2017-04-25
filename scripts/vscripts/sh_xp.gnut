@@ -1,0 +1,258 @@
+
+global function XP_Init
+global function PlayerXPDisplayGenAndLevel
+global function PlayerXPDisplayGenAndLevelForRawLevel
+global function GetMaxPlayerXP
+global function PlayerGetGenForXP
+global function PlayerGetMaxXPPerGen
+global function PlayerGetRawLevelForXP
+global function PlayerGetRawLevel
+global function GetRawLevelForLevelAndGen
+
+#if SERVER
+global function InitXP
+#else
+global const asset PLAYER_LEVELUP_FX = $"P_levelup_screen"
+global const asset WEAPON_LEVELUP_FX = $"P_levelup_screen"
+global const asset TITAN_LEVELUP_FX = $"P_levelup_screen"
+global const asset FACTION_LEVELUP_FX = $"P_levelup_screen"
+#endif
+
+global enum XP_TYPE
+{
+	// CANT ADD TO THIS ENUM WITHOUT UPDATING PERSISTENT DATA AND ALSO THE MENUS
+	NONE,
+	SCORE_MILESTONE,
+	MATCH_COMPLETED,
+	MATCH_VICTORY,
+	KILL,
+	WEAPON_LEVELED,
+	TITAN_FALL,
+	TITAN_CORE_EARNED,
+	FACTION,
+	HAPPY_HOUR,
+	TITAN_LEVELED,
+	FACTION_LEVELED,
+	EVAC,
+
+	_NUM_TYPES,
+}
+
+global function GetNextLevel
+global function GetXPForLevel
+global function CanGenUp
+global function GetMaxPlayerLevel
+global function GetXPPipsForLevel
+global function GetXPFilledPipsForXP
+
+const XP_PER_LEVEL = 20
+const XP_AVG_PER_MIN = 750
+
+const DEBUG_PRINT_XP_INFO = false
+const DEBUG_PRINT_UNLOCK_INFO = false
+const DEBUG_TIMES_FOR_GEN = 0
+
+global enum XP_TYPE_CATEGORY
+{
+	KILLS,
+	ASSISTS,
+	EPILOGUE,
+	GAMEMODE,
+	CHALLENGES,
+	SPECIAL,
+	BURNCARDS,
+
+	_NUM_CATEGORIES,
+}
+
+struct
+{
+	array<int> playerXPPipsPerLevel
+	array<int> playerXPForLevel
+
+	int maxLevelPerGen
+} file
+
+void function XP_Init()
+{
+	#if CLIENT
+	PrecacheParticleSystem( PLAYER_LEVELUP_FX )
+	PrecacheParticleSystem( WEAPON_LEVELUP_FX )
+	PrecacheParticleSystem( TITAN_LEVELUP_FX )
+	PrecacheParticleSystem( FACTION_LEVELUP_FX )
+	#endif
+
+	var dataTable = GetDataTable( $"datatable/xp_per_player_level.rpak" )
+	int numRows = GetDatatableRowCount( dataTable )
+
+	file.maxLevelPerGen = numRows
+
+	file.playerXPPipsPerLevel.resize( file.maxLevelPerGen + 1 )
+	file.playerXPForLevel.resize( file.maxLevelPerGen + 2 )
+
+	file.playerXPPipsPerLevel[ 0 ] = 0
+	file.playerXPForLevel[ 0 ] = 0
+	file.playerXPForLevel[ 1 ] = 0
+	SetXPForLevel( 1, 0 )
+	for ( int i = 0; i < numRows; i++ )
+	{
+		int xpPerLevel = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "xpPerLevel" ) )
+		file.playerXPPipsPerLevel[ i + 1 ] = xpPerLevel
+		file.playerXPForLevel[ i + 2 ] = file.playerXPForLevel[ i + 1 ] + xpPerLevel
+		if ( i == numRows - 1 ) // JFS; we need to lie to code about the max xp for the last level, because when you have "full" xp, your level is max level + 1 by their calculation
+			SetXPForLevel( i + 2, file.playerXPForLevel[ i + 2 ] + 1 )
+		else
+			SetXPForLevel( i + 2, file.playerXPForLevel[ i + 2 ] )
+	}
+}
+
+#if SERVER
+void function InitXP( entity player )
+{
+	Assert( !IsLobby(), "Don't call InitXP in mp_lobby!" )	// Should not call InitXP in mp_lobby because we want to view our old xp progress in the game summary menu until we play another match
+
+	// Clear how much XP we earned in the previous match
+	player.SetPersistentVar( "previousXP", player.GetXP() )
+	for ( int i = 0; i < XP_TYPE._NUM_TYPES; i++ )
+	{
+		player.SetPersistentVar( "xp_match[" + i + "]", 0 )
+	}
+
+	player.SetPersistentVar( "matchWin", false )
+	player.SetPersistentVar( "matchScoreEvent", false )
+	player.SetPersistentVar( "matchComplete", false )
+}
+#endif
+
+int function GetNextLevel( entity player )
+{
+	return minint( player.GetLevel() + 1, file.maxLevelPerGen + 1 )
+}
+
+int function GetXPForLevel( int level )
+{
+	return file.playerXPForLevel[ level ]
+}
+
+int function GetXPPipsForLevel( int level )
+{
+	return file.playerXPPipsPerLevel[ level ]
+}
+
+int function GetXPFilledPipsForXP( int xp )
+{
+	int startingLevel = GetLevelForXP( xp )
+	int baseXp = GetXPForLevel( startingLevel )
+	return xp - baseXp
+}
+
+int function GetMaxPlayerLevel()
+{
+	return file.maxLevelPerGen
+}
+
+int function GetMaxPlayerXP()
+{
+	int maxXP = GetXPForLevel( GetMaxPlayerLevel() ) + GetXPPipsForLevel( GetMaxPlayerLevel() )
+	return maxXP
+}
+
+bool function CanGenUp( entity player )
+{
+	Assert( IsUI() || IsValid( player ) )
+
+	int gen = player.GetGen()
+	int xp = player.GetPersistentVarAsInt( "xp" )
+
+	if ( gen >= MAX_GEN )
+		return false
+
+	return GetLevelForXP( xp ) >= file.maxLevelPerGen
+}
+
+string function PlayerXPDisplayGenAndLevel( int gen, int level, bool isCompact = false )
+{
+	if ( gen <= 1 )
+	{
+		if ( isCompact )
+			return string( minint( level, GetMaxPlayerLevel() ) )
+
+		#if SERVER
+			return string( minint( level, GetMaxPlayerLevel() ) )
+		#else
+			return Localize( "#HUD_LEVEL_N", minint( level, GetMaxPlayerLevel() ) )
+		#endif
+	}
+	else
+	{
+		string levelText
+		if ( level <= 10 )
+			levelText = "0" + string( level - 1 )
+		else
+			levelText = string( level - 1 )
+
+		if ( isCompact )
+			return string( gen ) + "." + levelText
+
+		#if SERVER
+			return string( gen ) + "." + levelText
+		#else
+			return Localize( "#HUD_GEN_LEVEL_N_N", gen, levelText )
+		#endif
+	}
+
+	unreachable
+}
+
+
+int function GetRawLevelForLevelAndGen( int level, int gen )
+{
+	int rawPlayerLevel = (gen - 1) * GetMaxPlayerLevel() + level
+
+	return rawPlayerLevel
+}
+
+int function PlayerGetRawLevel( entity player )
+{
+	return GetRawLevelForLevelAndGen( player.GetLevel(), player.GetGen() )
+}
+
+string function PlayerXPDisplayGenAndLevelForRawLevel( int rawLevel )
+{
+	int gen = ( ( rawLevel - 1 ) / file.maxLevelPerGen ) + 1
+	int level = ( rawLevel - 1 ) % file.maxLevelPerGen + 1
+
+	return PlayerXPDisplayGenAndLevel( gen, level )
+}
+
+
+int function PlayerGetRawLevelForXP( int xp )
+{
+	int maxXP = GetMaxPlayerXP()
+	if ( xp >= maxXP )
+		return file.maxLevelPerGen * MAX_GEN + 1
+
+	int genLevels = ( PlayerGetGenForXP( xp ) - 1 ) * file.maxLevelPerGen
+	int maxXPPerGen = PlayerGetMaxXPPerGen()
+	int xpIntoCurrentGen = xp % maxXPPerGen
+
+	foreach ( i, xpVal in file.playerXPForLevel )
+	{
+		if ( xpIntoCurrentGen < xpVal )
+			return genLevels + i - 1
+	}
+
+	unreachable
+}
+
+
+int function PlayerGetGenForXP(int xp )
+{
+	int maxXPPerGen = PlayerGetMaxXPPerGen()
+	return int( floor( float( xp ) / float( maxXPPerGen ) ) ) + 1
+}
+
+int function PlayerGetMaxXPPerGen()
+{
+	return file.playerXPForLevel[ file.maxLevelPerGen ] + file.playerXPPipsPerLevel[ file.maxLevelPerGen ]
+}

@@ -1,0 +1,397 @@
+
+global function SPMP_Shared_Init
+
+void function SPMP_Shared_Init()
+{
+	PrecacheModel( $"models/robots/spectre/imc_spectre.mdl" )
+	PrecacheModel( $"models/robots/stalker/robot_stalker.mdl" )
+	PrecacheModel( $"models/robots/super_spectre/super_spectre_v1.mdl" )
+	PrecacheModel( $"models/vehicle/widow/widow.mdl" )
+	PrecacheParticleSystem( $"P_harvester_beam_air" )
+
+	GameModes_Init()
+	Settings_Init()
+
+	if ( IsLobby() )
+		Shared_Lobby_Init()
+	else
+		Shared_MP_Init()
+
+#if DEVSCRIPTS
+	ShDpadComms_Init()
+#endif
+}
+
+void function Shared_Lobby_Init()
+{
+	XP_Init()
+	PassivesShared_Init()
+	RemoteFunctions_Init()
+	ChallengesShared_Init()
+	InitStatsTables()
+	InitItems()
+	ChallengesContent_Init()
+	CreateChallenges()
+	ShWeaponXP_Init()
+	ShTitanXP_Init()
+	ShFactionXP_Init()
+	ShBurnMeter_Init()
+	ShFactionDialogue_Init()
+	ShCallingCards_Init()
+
+	#if SERVER
+		Server_Lobby_Init()
+		ShCamoSkin_Init() //mainly for loadout validation for camos
+	#elseif CLIENT
+		Client_Lobby_Init()
+	#endif
+}
+
+#if SERVER
+void function Server_Lobby_Init()
+{
+	UIVars_Init()
+	Playlist_Init()
+	MenuCallbacks_Init()
+	Store_Init()
+
+	Lobby_Init()
+}
+#endif // SERVER
+
+#if CLIENT
+void function Client_Lobby_Init()
+{
+	CLUtilityMenu_Init()
+	ClientCodeCallbacks_Init()
+	ClPlayer_Init()
+	ClMusic_Init()
+	ClScreenfade_Init()
+	PerfInitLabels()
+}
+#endif // CLIENT
+
+void function Shared_MP_Init()
+{
+	Utility_Shared_Init()
+	CodeCallbacksShared_Init()
+	Flags_Init()
+	RemoteFunctions_Init()
+	MP_AutoPrecache()
+	Teams_Init()
+	DamageTypes_Init()
+	WeaponUtility_Init()
+	XP_Init()
+	PassivesShared_Init()
+	ShUtilityAll_Init()
+	Anim_Aliases_Init()
+	MinimapShared_Init()
+	NetworkMarkerShared_Init()
+	PlayerLeechingShared_Init()
+	InitWeaponScripts()
+	ScoreShared_Init()
+	Death_Package_Init()
+	TitanSoul_Init()
+	TitanShared_Init()
+	Highlight_Init()
+
+	FlightpathShared_Init()
+	FlagSet( "FlightPath_TitanDrop" )
+
+	StimShared_Init()
+	ChallengesShared_Init()
+	InitStatsTables()
+	InitItems()
+	ShWeaponXP_Init()
+	ShTitanXP_Init()
+	ShFactionXP_Init()
+	ChallengesContent_Init()
+	CreateChallenges()
+	DialogueShared_Init()
+	SonarShared_Init()
+	TitanEmbark_Init()
+	GameMode_RunSharedInits()
+	DamageHistoryInit()
+	IonEnergy_Init()
+	ShCommonModels_Init()
+	DeathHints_Init()
+
+	ShCallingCards_Init()
+	ShCamoSkin_Init()
+
+	Sh_EarnMeter_Init()
+	Sh_ItemInventory_Init()
+	ShBurnMeter_Init()
+	ShBattleChatter_Init()
+	ShTitanOSConversations_Init()
+	ShFactionDialogue_Init()
+	ShGruntChatter_MP_Init()
+	ShSpectreChatter_MP_Init()
+
+	GrappleWeaponInit()
+
+	#if SERVER
+	Server_MP_Init()
+	#elseif CLIENT
+	Client_MP_Init()
+	#endif
+}
+
+#if SERVER
+void function Server_MP_Init()
+{
+	CodeCallback_Init()
+	Utility_Init()
+	Utility_MP_Init()
+	#if DEV
+	AutoPrecache_Init()
+	#endif
+	Anim_Init()
+	Viewcone_Init()
+	UIVars_Init()
+	Stats_Init()
+	Playlist_Init()
+	MenuCallbacks_Init()
+	TitanTransfer_Init()
+	TitanNPC_Init()
+	TitanNpcBehavior_Init()
+	ToneController_Init()
+	DropPod_Init()
+	DropPodFireteam_Init()
+	Objective_Init()
+	PainDeathSounds_Init()
+	Store_Init()
+
+	Harvester_GlobalInit()
+	//FW_Harvester_GlobalInit()
+	Evac_Init()
+	InitChallenges()
+	Revive_Init()
+
+	Spotting_Init()
+	TeamEMP_Init()
+
+	BaseGametype_Init()
+	RiffSettings_Init()
+	AiUtility_Init()
+	InitSharedStartPoints()
+
+	FW_Border_GlobalInit()
+
+	GameState_Init()
+
+	Music_Init()
+
+	Score_Init()
+
+	TitanTether_Init()
+
+	ReplacementTitans_Init()
+	MpInitAILoadouts()
+	AiSoldiers_Init()
+	AiSpawn_Init()
+
+	AiPilots_Init()
+	AiDrone_Init()
+	AiSpectre_Init()
+	AiStalker_Init()
+	AiSuperspectre_Init()
+	AiGunship_Init()
+	SuicideSpectres_Init()
+	AiMarvins_Init()
+	AiGameModes_Init()
+	ClassicMp_Init()
+	ControlPanel_Init()
+	AiTurret_Init()
+	Hardpoints_Init()
+	SpectreRack_Init()
+	LoadoutCrate_Init()
+	TitanCommands_Init()
+	MortarTitans_Init()
+
+	ClassTitan_Init()
+	ClassWallrun_Init()
+
+	Spawn_Init()
+	SpawnDebug_Init()
+	SpawnWave_Init()
+	//SpawnOnFriendly_Init()
+	HealthRegen_Init()
+	EmpTitans_Init()
+
+	PlayerCloak_Init()
+	ParticleWall_Init()
+	Smokescreen_Init()
+	ScriptMovers_Init()
+	Orbitalstrike_Init()
+	PowerUps_Init()
+
+	DialogueChatter_Init()
+	TitanHotdrop_Init()
+
+	Zipline_Init()
+	Passives_Init()
+	Dogfighter_Init()
+
+	Leeching_Init()
+	PlayerLeeching_Init()
+
+	TitanHealth_Init()
+
+	ChargeBall_Precache()
+
+	MarvinJobs_Init()
+	MarvinFaces_Init()
+	TriggerFunctions_Init()
+	SpawnFunctions_Init()
+	GoblinDropship_Init()
+
+	RemoteTurrets_Init()
+	MobilityGhost_Init()
+
+	Melee_Init()
+	Rodeo_Init()
+
+	AiPersonalShield()
+	ATTurrets_Init()
+
+	if ( !IsLobby() && GetCurrentPlaylistVarInt( "riff_floorislava", eFloorIsLava.Default ) )
+		RiffFloorIsLava_Init()
+
+	GameMode_RunServerInits()
+
+	Sv_EarnMeter_Init()
+	Sv_EarnMeterMP_Init()
+	Sv_ItemInventory_Init()
+	BurnMeter_Init()
+
+	DeployableTurrentWeapon_Init()
+
+	BattleChatter_Init()
+	FactionDialogue_Init()
+	SpectreChatter_MP_Init()
+	GruntChatter_MP_Init()
+
+	PIN_Init()
+
+	AbilityChooser_Init()
+
+	// NOTE this should run after level scripts get a chance to override default behavior
+	if ( IsMultiplayerPlaylist() )
+		ClassicMP_TryDefaultIntroSetup()
+}
+#endif // SERVER
+
+#if CLIENT
+void function Client_MP_Init()
+{
+	CLPrecache_Init()
+	ClAutoPrecache_Init()
+	RemoteTurrets_Init()
+	MobilityGhost_Init()
+	ClMelee_Init()
+	CLUtilityMenu_Init()
+	CLAnnouncement_Init()
+	CLEventNotification_Init()
+	CLUtilitySplash_Init()
+	ClientCodeCallbacks_Init()
+	ClRodeo_Init()
+	RiffSettings_Init()
+	Cl_Sentry_Turrets_Init()
+	ClTitanCockpit_Init()
+	ClDataKnife_Init()
+	CLLoadoutCrate_Init()
+	SideNotifications_Init()
+	CLTeamEMP_Init()
+	SmartAmmoClient_Init()
+	CLGoblinDropship_Init()
+	ClIntroscreen_Init()
+	ClClassicMp_Init()
+	ClPlayerADSDofInit()
+	ClPlayer_Init()
+	ClWeaponFlyout_Init()
+	ClDroppedWeaponFlyout_Init()
+	ClTitanHud_Init()
+	ClTitanCommands_Init()
+	ClObjective_Init()
+	ClMainHud_Init()
+	CLHud_Init()
+	ClWeaponStatus_Init()
+	CLPowerUps_Init()
+	ClTripleHealthInit()
+	CinematicIntroScreen_Init()
+	ClMusic_Init()
+	GameMode_RunClientInits()
+	ClRespawnselect_MP_Init()
+	ClScreenfade_Init()
+	ClObituary_Init()
+	ClIndicatorsHud_Init()
+	ClHealthHud_Init()
+	ClGameState_Init()
+	ClKillReplayHud_Init()
+	ClScoreboardPrecache_Init()
+	ClScoreboard_Init()
+	ClScoreboardMp_Init()
+	ClChallenges_Init()
+	ClReplacementTitanHud_Init()
+	ClSpectatorHud_Init()
+	ClDialogue_Init()
+	ClEvac_Init()
+	SmokeSight_Init()
+	ClRevive_Init()
+	ClSuicideSpectres_Init()
+	ClTitanSoul_Init()
+	ClEntityCreationFunctions_Init()
+	ClMinimap_Init()
+
+	ClCrowDropship_Init()
+	ClCrowDropshipHero_Init()
+	ClGoblinDropship_Init()
+	ClGoblinDropshipHero_Init()
+	ClPhantomFighter_Init()
+	ClWidow_Init()
+	ClCrowDropshipXS_Init()
+
+	ClControlPanel_Init()
+	ClEmpTitans_Init()
+	ClSpectre_Init()
+	ClStalker_Init()
+	ClSuperSpectre_Init()
+	ClDrone_Init()
+	ClGunship_Init()
+	ClAiTurret_Init()
+	PerfInitLabels()
+
+	DeployableTurrentWeapon_Init()
+
+	ClSonarGrenade_Init()
+
+	ClBurnMeter_Init()
+	Cl_EarnMeter_Init()
+	Cl_ItemInventory_Init()
+	CL_ToneHUD_Init()
+	ClTitanCockpitSounds_Init()
+	ClGruntChatter_MP_Init()
+	ClSpectatorModeAudio_Init()
+	//ClPilotSpeedometer_Init()
+	#if DEVSCRIPTS
+	ClDpadComms_Init()
+	#endif
+
+	if ( !IsLobby() && GetCurrentPlaylistVarInt( "riff_floorislava", eFloorIsLava.Default ) )
+		ClRiffFloorIsLava_Init()
+
+	if ( IsTestMap() )
+	{
+		ClHornetFighter_Init()
+		ClPhantomFighter_Init()
+		ClRedeye_Init()
+		ClHologramProjector_Init()
+		ClImcCarrier_Init()
+		ClImcCarrier207_Init()
+		ClAnnapolis_Init()
+		ClBirmingham_Init()
+		ClBomber_Init()
+	}
+}
+#endif // CLIENT

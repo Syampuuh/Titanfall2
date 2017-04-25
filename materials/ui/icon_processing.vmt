@@ -1,0 +1,33 @@
+"Basic"
+{
+	"$basetexture" "ui/icon_processing"
+	"$translucent" "1"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$ignorez"     "1"
+	"$additive"		0
+	"$no_fullbright"	1
+
+	"$SHADERSRGBREAD360" 1
+
+    "$angle" 0.0
+
+    "Proxies"
+    {
+        "LinearRamp"
+        {
+            "rate" -240
+            "initialValue" 0.0
+            "resultVar" "$angle"
+        }
+
+        "TextureTransform"
+        {
+            "rotateVar" "$angle"
+            "resultVar" "$basetexturetransform"
+        }
+    }
+}
+
+
+

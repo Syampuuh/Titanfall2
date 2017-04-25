@@ -1,0 +1,355 @@
+untyped
+
+globalize_all_functions
+
+global struct DisplayTime
+{
+	string d
+	string h
+	string m
+	string s
+}
+
+function GetPlayerTimesPlayedMap( player, string mapName )
+{
+	Assert( IsUI() || IsValid( player ) )
+
+	int numModes = PersistenceGetEnumCount( "gameModes" )
+	if ( !MapIsValidForPersistence( mapName ) )
+		return 0
+
+	local statVarName = GetStatVar( "game_stats", "game_completed" )
+	local fixedSaveVar
+	local timesPlayed = 0
+	for ( int modeIndex = 0 ; modeIndex < numModes ; modeIndex++ )
+	{
+		fixedSaveVar = statVarName
+		fixedSaveVar = StringReplace( expect string( fixedSaveVar ), "%mapname%", mapName )
+		fixedSaveVar = StringReplace( expect string( fixedSaveVar ), "%gamemode%", string( modeIndex ) )
+		timesPlayed += player.GetPersistentVar( fixedSaveVar )
+	}
+
+	return timesPlayed
+}
+
+bool function MapIsValidForPersistence( string mapName )
+{
+	return PersistenceEnumValueIsValid( "maps", mapName )
+}
+
+AllModesAndMapsCompleteData function GetPlayerAllModesAndMapsCompleteData( entity player )
+{
+	Assert( IsUI() || IsValid( player ) )
+
+	// hard coded list of shipping maps and modes
+	array<string> modes = []
+	modes.append( "tdm" )
+	modes.append( "cp" )
+	modes.append( "at" )
+	modes.append( "ctf" )
+	modes.append( "lts" )
+
+	array<string> maps = []
+	maps.append( "mp_forwardbase_kodai" )
+	maps.append( "mp_grave" )
+	maps.append( "mp_homestead" )
+	maps.append( "mp_mendoko_canyon" )
+	maps.append( "mp_beacon" )
+	maps.append( "mp_thaw" )
+	maps.append( "mp_glitch" )
+	maps.append( "mp_black_water_canal" )
+	maps.append( "mp_complex" )
+	maps.append( "mp_crashsite2" )
+	maps.append( "mp_oasis_labs" )
+	maps.append( "mp_eden" )
+	maps.append( "mp_fortress2" )
+	maps.append( "mp_dunes" )
+
+
+	AllModesAndMapsCompleteData data
+	data.required = modes.len() * maps.len()
+	data.progress = 0
+
+	string currentMap
+	string currentMode
+
+	#if UI // HACK
+		Assert( IsLobby() )
+	#else
+		if ( !IsLobby() )
+		{
+			currentMap = GetMapName()
+			currentMode = GameRules_GetGameMode()
+		}
+	#endif
+
+	string statVarName = GetStatVar( "game_stats", "game_completed" )
+	string fixedSaveVar
+	foreach ( mode in modes )
+	{
+		foreach ( map in maps )
+		{
+			fixedSaveVar = statVarName
+			fixedSaveVar = StringReplace( fixedSaveVar, "%mapname%", map )
+			fixedSaveVar = StringReplace( fixedSaveVar, "%gamemode%", mode )
+
+			if ( map == currentMap && mode == currentMode )
+			{
+				data.progress++
+				continue
+			}
+
+			local timesPlayed = player.GetPersistentVar( fixedSaveVar )
+			if ( timesPlayed > 0 )
+				data.progress++
+		}
+	}
+
+	return data
+}
+
+float function _GetDaysSinceVar( entity player, string variable )
+{
+	// Assert( IsServer() )
+	Assert( IsValid( player ) )
+	Assert( player.IsPlayer() )
+
+	int storedTime = player.GetPersistentVarAsInt( variable )
+	int currentTime = Daily_GetCurrentTime()
+
+	if ( storedTime <= 0 || currentTime <= storedTime )
+		return 0
+
+	int secondsElapsed = currentTime - storedTime
+
+	return ( secondsElapsed / float( SECONDS_PER_DAY ) )
+}
+
+int function Daily_GetCurrentTime()
+{
+	// Returns the unix timestap offset to the timezone we want to use
+	return GetUnixTimestamp() + DAILY_RESET_TIME_ZONE_OFFSET * SECONDS_PER_HOUR
+}
+
+int function Daily_GetDayForCurrentTime()
+{
+	// Returns an integer for what day it is. Each day is +1 from previous day
+	return Daily_GetDayForTimestamp( Daily_GetCurrentTime() )
+}
+
+int function Daily_GetDayForTimestamp( int timeStamp )
+{
+	return timeStamp / SECONDS_PER_DAY
+}
+
+function Daily_SecondsTillDayEnd()
+{
+	// Returns the number of seconds left in the current day. This can be used in a timer to count down till the end of the day when dailies reset
+	local currentDayStart = Daily_GetDayForCurrentTime() * SECONDS_PER_DAY
+	return currentDayStart + SECONDS_PER_DAY - Daily_GetCurrentTime()
+}
+
+array<string> function GetPersistenceEnumAsArray( string persistenceEnumName )
+{
+	int enumSize = PersistenceGetEnumCount( persistenceEnumName )
+	array<string> returnArray
+	for ( int i = 0; i < enumSize; i++ )
+	{
+		returnArray.append( PersistenceGetEnumItemNameForIndex( persistenceEnumName, i ) )
+	}
+
+	return returnArray
+}
+
+string function SkillToString( val )
+{
+	// Don't show .0 for ints
+	if ( val % 1 == 0 )
+		return format( "%i", val )
+
+	return format( "%.1f", val )
+}
+
+int function SkillToPerformance( val )
+{
+	expect float( val )
+
+	return ( val * 100 ).tointeger()
+}
+
+DisplayTime function SecondsToDHMS( int seconds )
+{
+	DisplayTime times
+
+	// extract days
+	times.d = string( floor( seconds / SECONDS_PER_DAY ) )
+
+	// extract hours
+	int hourSeconds = seconds % SECONDS_PER_DAY
+	times.h = string( floor( hourSeconds / SECONDS_PER_HOUR ) )
+
+	// extract minutes
+	int minuteSeconds = hourSeconds % SECONDS_PER_HOUR
+	times.m = string( floor( minuteSeconds / SECONDS_PER_MINUTE ) )
+
+	// extract the remaining seconds
+	int remainingSeconds = minuteSeconds % SECONDS_PER_MINUTE
+	times.s = string( ceil( remainingSeconds ) )
+
+	return times
+}
+
+function __YearToDays( y )
+{
+	return (y)*365 + (y)/4 - (y)/100 + (y)/400
+}
+
+table function GetUnixTimeParts( unixtime = null )
+{
+	// Chad's function to convert unix time to month, day, year, hours, minutes, seconds. Used for ranked play seasons
+
+	table timeParts = {}
+	timeParts["year"] <- null
+	timeParts["month"] <- null
+	timeParts["day"] <- null
+	timeParts["hour"] <- null
+	timeParts["minute"] <- null
+	timeParts["second"] <- null
+
+	if ( unixtime == null )
+		unixtime = Daily_GetCurrentTime()
+
+	// Get hours / minutes / seconds
+
+	timeParts["second"] = unixtime % 60
+	unixtime /= 60
+
+	timeParts["minute"] = unixtime % 60
+	unixtime /= 60
+
+	timeParts["hour"] = unixtime % 24
+	unixtime /= 24
+
+	// unixtime is now days since 01/01/1970 UTC * Rebaseline to the Common Era
+
+	unixtime += 719499
+
+	// Roll forward looking for the year. Have to start at 1969 because the year we calculate here
+	// runs from March, so January and February 1970 will come out as 1969
+
+	for ( timeParts["year"] = 1969 ; unixtime > __YearToDays( timeParts["year"] + 1 ) + 30 ; timeParts["year"]++ )
+	{
+	}
+
+	// We have our "year", so subtract off the days accounted for by full years.
+	unixtime -= __YearToDays( timeParts["year"] )
+
+	// unixtime is now number of days we are into the year (remembering that March 1 is the first day of the "year" still)
+
+	// Roll forward looking for the month. 1 = March through to 12 = February
+	for ( timeParts["month"] = 1 ; timeParts["month"] < 12 && unixtime > 367 * ( timeParts["month"] + 1 ) / 12 ; timeParts["month"]++ )
+	{
+	}
+
+	// Subtract off the days accounted for by full months
+	unixtime -= 367 * timeParts["month"] / 12
+
+	// unixtime is now number of days we are into the month
+
+	// Adjust the month/year so that 1 = January, and years start where we usually expect them to
+	timeParts["month"] += 2
+	if ( timeParts["month"] > 12 )
+	{
+		timeParts["month"] -= 12
+		timeParts["year"]++
+	}
+
+	timeParts["day"] = unixtime
+
+	//printt( "Current Date and Time:" )
+	//printt( "    ", timeParts["month"] + "/" + timeParts["day"] + "/" + timeParts["year"], "-", timeParts["hour"] + ":" + timeParts["minute"] + ":" + timeParts["second"] )
+	return timeParts
+}
+
+int function GetAvailableCredits( entity player )
+{
+	return player.GetPersistentVarAsInt( "credits" )
+}
+
+#if SERVER
+	#if DEV
+	void function DEV_AddCredits( int additionalCredits, entity optionalPlayer = null )
+	{
+		array<entity> players
+		if ( optionalPlayer )
+			players.append( optionalPlayer )
+		else
+			players = GetPlayerArray()
+
+		foreach ( player in players )
+		{
+			int credits = GetAvailableCredits( player )
+			SetAvailableCredits( player, credits + additionalCredits )
+		}
+
+	}
+
+	void function DEV_AddCreditsByName( int additionalCredits, string playerName )
+	{
+		array<entity> players = GetPlayerArray()
+
+		foreach ( player in players )
+		{
+			if ( player.GetPlayerName().tolower() != playerName.tolower() )
+				continue
+
+			int credits = GetAvailableCredits( player )
+			SetAvailableCredits( player, credits + additionalCredits )
+		}
+	}
+	#endif
+
+void function SetAvailableCredits( entity player, int credits )
+{
+	int currentCredits = GetAvailableCredits( player )
+	if ( credits > currentCredits )
+	{
+		int additionalCredits = credits - currentCredits
+		int netWorth = player.GetPersistentVarAsInt( NETWORTH_VAR )
+		player.SetPersistentVar( NETWORTH_VAR, netWorth + additionalCredits )
+	}
+
+	player.SetPersistentVar( "credits", credits )
+}
+
+void function AddCreditsForXPGained()
+{
+	array<entity> players = GetPlayerArray()
+	foreach ( player in players )
+	{
+		int creditsGained = 0
+
+		int playerXPGained = 0
+		int weaponXPGained = 0
+		int titanXPGained = 0
+
+		playerXPGained += player.GetPersistentVarAsInt( "xp" ) - player.GetPersistentVarAsInt( "previousXP" )
+
+		int numPilotWeapons = PersistenceGetArrayCount( "pilotWeapons" )
+		for ( int i = 0; i < numPilotWeapons; i++ )
+		{
+			weaponXPGained += player.GetPersistentVarAsInt( "pilotWeapons[" + i + "].weaponXP" ) - player.GetPersistentVarAsInt( "pilotWeapons[" + i + "].previousWeaponXP" )
+		}
+
+		int numTitanClasses = PersistenceGetEnumCount( "titanClasses" )
+		for ( int i = 0; i < numTitanClasses; i++ )
+		{
+			titanXPGained += player.GetPersistentVarAsInt( "titanXP[" + i + "]" ) - player.GetPersistentVarAsInt( "previousTitanXP[" + i + "]" )
+		}
+
+		creditsGained = playerXPGained + weaponXPGained + titanXPGained
+
+		SetAvailableCredits( player, GetAvailableCredits( player ) + creditsGained )
+	}
+}
+#endif // SERVER

@@ -1,0 +1,6 @@
+"DoFBlurFilterCompute"
+{
+	$basetexture "_rt_SmallFB0"
+	$output "_rt_DoF_Small"
+	$filterDirection 0
+}

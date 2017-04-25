@@ -1,0 +1,18 @@
+"Basic"
+{
+	"$writeColor" 			"0"
+	"$writeAlpha" 			"1"
+	"$writeCloakToAlpha" 	"1"
+
+	"$translucent"			"1"
+
+	"Proxies"
+	{
+		//CHange the alpha base off of script input
+		"EntityScript"
+		{
+			"scriptFuncName" "VMTCallback_GetCloakFactor"
+			"resultVar"	"$cloakAlphaScale"
+		}
+	}
+}

@@ -1,0 +1,60 @@
+resource/ui/menus/dialog_pathchooser.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		tabPosition				0
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+		modal					1
+
+		DarkenBackground
+		{
+			ControlName				Label
+			xpos					0
+			ypos					0
+			wide					%100
+			tall					%100
+			labelText				""
+			bgcolor_override		"0 0 0 227"
+			visible					0
+			paintbackground			1
+		}
+
+		DialogFrame
+		{
+			ControlName				RuiPanel
+			wide					2000
+			tall					800
+			rui                     "ui/pathchooser_background.rpak"
+			visible					1
+
+			pin_to_sibling			DarkenBackground
+			pin_corner_to_sibling	CENTER
+			pin_to_sibling_corner	CENTER
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        FooterButtons
+        {
+        	ControlName				CNestedPanel
+        	InheritProperties       FooterButtons
+        	xpos					-638
+        	ypos                    -38
+        	pin_to_sibling			DarkenBackground
+        	pin_corner_to_sibling	BOTTOM_LEFT
+        	pin_to_sibling_corner	BOTTOM_LEFT
+        }
+	}
+}

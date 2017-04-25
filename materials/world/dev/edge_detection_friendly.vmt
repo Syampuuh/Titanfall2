@@ -1,0 +1,34 @@
+"UnlitTwoTexture"
+{
+	"$nocull" "1"
+	"$nodecal" "1"
+	//$allowoverbright 1
+
+	"$additive" "1"
+//	"$no_fullbright" 1
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+	"$model" "1"
+	"$translucent" 1
+	//"$nocull" "1"
+	"$color2" "[1 1 1]"
+
+	"$basetexture" "effects\black"
+	"$Texture2" "effects\black"
+
+
+	$edgeDetection "1"				//Enable Edge Detect
+	$edge.silhouette "0" 			//Generate silhouette edges (warning: enabling this will implies a more costly shader using two passes, and skinning is not supported)
+	$edge.depth "1" 				//Generate depth edges
+	$edge.outlineColor "[3.4 5.9 8.5]"	//Outline Color
+	$edge.outlineOpacity "0.1"		//Outline opacity
+	$edge.outlineWidth "40.0"		//Outline width in world units
+	$edge.outlineFalloffExp "20.0"	//Outline border fall-off exponent
+	$edge.fadeInStart "0.2"		//Fade-in start distance from the camera
+	$edge.fadeInEnd "0.3"			//Fade-in end distance from the camera
+	$edge.fadeOutStart "20.0"		//Fade-out start distance from the camera
+	$edge.fadeOutEnd "30.0"		//Fade-out end distance from the camera
+
+
+	"$multamount" 1.0
+}

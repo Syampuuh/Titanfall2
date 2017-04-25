@@ -1,0 +1,477 @@
+untyped
+
+global function ClTitanHud_Init
+
+global function TitanHud_AddPlayer
+global function TitanHud_HideThreatHud
+global function TitanHud_ShowThreatHud
+global function Create_VGUIMod
+global function rebuild
+global function Create_CenterVGUI
+global function Create_CenterLowerVGUI
+global function Create_BottomVGUI
+global function Create_BottomLeftVGUI
+global function Create_PilotVGUI
+global function Create_TitanMinimap
+
+global function TitanShouldNotifyLowHealth
+global function TitanCockpit_WarningAudio
+
+function ClTitanHud_Init()
+{
+	level.titanHudVisible <- false
+	level.hudVisibleEndSignal <- "hudVisibleEndSignal"
+
+	level.allTitanHudElems <- null
+	level.EMP_vguis <- []
+	level.lastHudEMPStateAlpha <- 255
+
+	level.hideThreatHud <- false
+
+	RegisterSignal( level.hudVisibleEndSignal )
+	RegisterSignal( "Doomed" )
+
+	if ( !IsMenuLevel() )
+		AddCreateCallback( "titan_cockpit", TitanCockpitHudInit )
+
+	AddPlayerFunc( TitanHud_AddPlayer )
+}
+
+
+function rebuild()
+{
+	entity player = GetLocalViewPlayer()
+	entity cockpit = player.GetCockpit()
+}
+
+
+void function TitanCockpitHudInit( entity cockpit )
+{
+	if ( IsWatchingThirdPersonKillReplay() )
+		return
+
+	entity player = GetLocalViewPlayer()
+
+	if ( !IsTitanCockpitModelName( cockpit.GetModelName() ) )
+	{
+		if ( cockpit.GetModelName() == $"models/weapons/arms/human_pov_cockpit.mdl" )
+		{
+			cockpit.SetCaptureScreenBeforeViewmodels( true )
+			return
+		}
+
+		cockpit.SetCaptureScreenBeforeViewmodels( false )
+		return
+	}
+
+	thread TitanCockpitHudInit_Internal( cockpit )
+}
+
+function TitanCockpitHudInit_Internal( entity cockpit )
+{
+	OnThreadEnd(
+		function () : ()
+		{
+			ClearCrosshairPriority( crosshairPriorityLevel.TITANHUD )
+		}
+	)
+	EndSignal( cockpit, "OnDestroy" )
+	entity player = GetLocalViewPlayer()
+
+	// for now, delay hud element creation to sync with cockpit monitors turning on.  Ideally these would fade in,
+	// but there is no good way to fade an entire vgui at once.
+	SetCrosshairPriorityState( crosshairPriorityLevel.TITANHUD, CROSSHAIR_STATE_HIT_INDICATORS_ONLY )
+	while ( IsValid( cockpit ) && TitanCockpit_IsBooting( cockpit ) )
+	{
+		WaitFrame()
+	}
+	if ( !player.IsTitan() )
+		return
+
+	ClearCrosshairPriority( crosshairPriorityLevel.TITANHUD )
+
+	if ( ShouldDrawRodeoVGUI( player ) )
+	{
+		TitanCockpitDialog_RodeoAnnounce( player )
+
+		thread DrawRodeoAlertIcons( player.GetTitanSoul() )
+	}
+
+	cockpit.s.threatHudVGUI <- null
+	//thread Create_TitanMinimap( cockpit, player )
+
+	thread TitanCockpitThink( cockpit )
+}
+
+
+void function TitanHud_AddPlayer( entity player ) // bad; overwrites level. variables
+{
+	player.s.numDashPips <- null
+	player.s.healthBarBaseScale <- 1.0
+
+	level.allTitanHudElems = HudElementGroup( "TitanHudElems" )
+}
+
+
+
+function TitanHud_Hide()
+{
+	if ( !level.titanHudVisible )
+		return
+
+	level.titanHudVisible = false
+
+	// Stop think functions
+	Signal( GetLocalViewPlayer(), level.hudVisibleEndSignal )
+
+	local elems = level.allTitanHudElems.GetElements()
+	foreach( elem in elems )
+		elem.Hide()
+}
+
+function TitanHud_HideThreatHud()
+{
+	level.hideThreatHud = true
+}
+
+function TitanHud_ShowThreatHud()
+{
+	level.hideThreatHud = false
+}
+
+function TitanHudElement( name, ownerHud = null )
+{
+	local elem = HudElement( name, ownerHud )
+
+	level.allTitanHudElems.AddElement( elem )
+
+	return elem
+}
+
+
+function TargetHealthEnabled()
+{
+	return GetCurrentPlaylistVarInt( "target_health_bar", 0 )
+}
+
+function Create_CenterVGUI( vguiName, cockpit, player, mod = null )
+{
+	expect entity( cockpit )
+
+	return Create_VGUI( vguiName, cockpit, "SCR_C_BL", "SCR_C_TR", mod )
+}
+
+function Create_CenterLowerVGUI( vguiName, cockpit, player, mod = null )
+{
+	expect entity( cockpit )
+
+	return Create_VGUI( vguiName, cockpit, "SCR_CL_BL", "SCR_CL_TR", mod )
+}
+
+function Create_BottomVGUI( vguiName, cockpit, player, mod = null )
+{
+	expect entity( cockpit )
+
+	return Create_VGUI( vguiName, cockpit, "SCR_B_BL", "SCR_B_TR", mod )
+}
+
+function Create_BottomLeftVGUI( vguiName, cockpit, player, mod = null )
+{
+	expect entity( cockpit )
+
+	return Create_VGUI( vguiName, cockpit, "SCR_BL_BL", "SCR_BL_TR", mod )
+}
+
+function Create_VGUIMod()
+{
+	local mod = {}
+	mod.forward <- null
+	mod.right <- null
+	mod.up <- null
+	mod.sizeX <- 1.0
+	mod.sizeY <- 1.0
+	return mod
+}
+
+function Create_VGUI( vguiName, entity cockpit, bottomLeft, topRight, mod = null )
+{
+	local forward, right, up
+	local sizeX = 1.0
+	local sizeY = 1.0
+	if ( mod )
+	{
+		forward = mod.forward
+		right = mod.right
+		up = mod.up
+		sizeX = mod.sizeX
+		sizeY = mod.sizeY
+	}
+
+	local bottomLeftID
+	local topRightID
+	local attachment
+	local size
+	bool isTitanCockpit = IsTitanCockpitModelName( cockpit.GetModelName() )
+
+	local origin
+	local angles
+
+	Assert( isTitanCockpit )
+
+	bottomLeftID = cockpit.LookupAttachment( bottomLeft )
+	topRightID = cockpit.LookupAttachment( topRight )
+	attachment = bottomLeft
+	size = ComputeSizeForAttachments( cockpit, bottomLeftID, topRightID, false )
+	size[0] *= sizeX
+	size[1] *= sizeY
+
+	origin = cockpit.GetAttachmentOrigin( bottomLeftID )
+	angles = cockpit.GetAttachmentAngles( bottomLeftID )
+
+	// push the origin "out" slightly, since the tags are coplanar with the cockpit screen geo
+	origin += AnglesToUp( angles ) * 0.01
+
+	if ( forward )
+		origin += AnglesToForward( angles ) * forward
+
+	if ( right )
+		origin += AnglesToRight( angles ) * right
+
+	if ( up )
+		origin += AnglesToUp( angles ) * up
+
+	local vgui = CreateClientsideVGuiScreen( vguiName, VGUI_SCREEN_PASS_HUD, origin, angles, size[0], size[1] )
+	local panel = vgui.GetPanel()
+	vgui.s.panel <- panel
+	vgui.SetParent( cockpit, attachment )
+	return vgui
+}
+
+function Create_PilotVGUI( vguiName, cockpit, player, sizex, sizey, xOffset = 0, yOffset = 0 )
+{
+	local bottomLeftID
+	local topRightID
+	local size
+	local attachment = "camera_base"
+	local attachID = cockpit.LookupAttachment( attachment )
+	size = [sizex, sizey]
+
+	local origin = cockpit.GetAttachmentOrigin( attachID )
+	local angles = cockpit.GetAttachmentAngles( attachID )
+
+
+	origin += AnglesToUp( angles ) * 0.01
+
+	origin += (AnglesToForward( angles ) * 150)
+	origin -= (AnglesToRight( angles ) * (size[0] * ( 0.5 - xOffset )))
+	origin -= (AnglesToUp( angles ) * (size[1] * ( 0.5 - yOffset )))
+//	local up = AnglesToUp( angles )
+//	origin += (up * (size[1] * -1.0) )
+//	origin += up * 50.0
+	if ( xOffset < 0 )
+		angles = AnglesCompose( angles, Vector( 0, -75, 90 ) )
+	else if ( xOffset > 0 )
+		angles = AnglesCompose( angles, Vector( 0, -105, 90 ) )
+	else
+		angles = AnglesCompose( angles, Vector( 0, -90, 90 ) )
+
+
+	local vgui = CreateClientsideVGuiScreen( vguiName, VGUI_SCREEN_PASS_HUD, origin, angles, size[0], size[1] );
+	local panel = vgui.GetPanel()
+	vgui.s.panel <- panel
+	vgui.SetParent( cockpit, attachment )
+	return vgui
+}
+
+
+function Create_TitanMinimap( cockpit, player )
+{
+	if ( !IsValid( cockpit ) )
+		return
+
+	Assert( player.IsTitan() )
+	local size
+	local linkScreen
+
+	size = [7.0, 7.0]
+
+	local attachment = "CAMERA_BASE"
+	local attachId = cockpit.LookupAttachment( attachment )
+	local origin = Vector( 0, 0, 0 )
+	local angles = Vector( 0, 0, 0 )
+
+	local bottomLeftID = cockpit.LookupAttachment( "SCR_TL_BL" );
+	local topRightID = cockpit.LookupAttachment( "SCR_TL_TR" );
+
+	attachment = "SCR_TL_BL"
+	attachId = cockpit.LookupAttachment( attachment )
+	size = ComputeSizeForAttachments( cockpit, bottomLeftID, topRightID, false )
+
+	// HACK; magic numbers suck and will break in other cockpits.
+	size[0] -= 0.5
+	size[1] -= 0.5
+
+	// MORE HACKs; magic numbers suck and will break in other cockpits.
+	origin.x += 0.25
+	origin.y += 0.1875
+
+	cockpit.s.threatHudVGUI <- CreateClientsideVGuiScreen( "vgui_titan_threat", VGUI_SCREEN_PASS_HUD, origin, angles, size[0], size[1] )
+	level.EMP_vguis.append( cockpit.s.threatHudVGUI )
+	cockpit.s.threatHudVGUI.s.panel <- cockpit.s.threatHudVGUI.GetPanel()
+
+	cockpit.s.threatHudVGUI.SetParent( cockpit, attachment )
+	cockpit.s.threatHudVGUI.SetAttachOffsetOrigin( origin )
+	cockpit.s.threatHudVGUI.SetAttachOffsetAngles( angles )
+}
+
+function TitanCockpitThink( entity cockpit )
+{
+	entity player = GetLocalViewPlayer()
+
+	Assert( player.IsTitan(), player + " is not a titan" )
+
+	waitthread TitanHudUpdate( cockpit, player )
+
+	if ( cockpit.s.threatHudVGUI )
+		cockpit.s.threatHudVGUI.Destroy()
+
+	foreach ( attacker, attackerInfo in clone player.s.trackedAttackers )
+	{
+		delete player.s.trackedAttackers[ attacker ]
+	}
+
+	if ( "vduVGUI" in cockpit.s )
+		cockpit.s.vduVGUI.Destroy()
+
+	// Clear these since next time we get into the titan they get recreated
+	level.EMP_vguis = []
+}
+
+
+function TitanHudUpdate( entity cockpit, entity player )
+{
+	if ( !IsAlive( player ) )
+		return
+
+	player.EndSignal( "OnDeath" )
+	cockpit.EndSignal( "OnDestroy" )
+
+	local e = {}
+	e.dashVisible <- false
+	e.healthFrac <- null
+	e.nextBeepTime <- 0
+	e.damageBeepDuration <- GetSoundDuration( "titan_damage_beep" ) + 0.25
+	e.reserveStartTime <- 0
+
+	thread TitanCockpit_WarningAudio( cockpit, player )
+
+	while ( true )
+	{
+		UpdateHudEMPState( player, cockpit )
+
+		WaitFrame()
+	}
+}
+
+function TitanCockpit_WarningAudio( entity cockpit, entity player )
+{
+	player.EndSignal( "TitanUnDoomed" )
+
+	local duration = 1.0
+	local healthFrac = GetHealthFrac( player )
+
+	local damageBeepDuration = GetSoundDuration( "titan_damage_beep" ) + 0.25
+
+	bool isDoomed = GetDoomedState( player )
+	bool wasDoomed = isDoomed
+
+	bool playOutOfShieldsBeep = GetPlayerSettingsFieldForClassName_HealthShield( player.GetPlayerSettings() ) > 0
+
+	while ( IsValid( cockpit ) )
+	{
+		duration = 1.0
+		healthFrac = GetHealthFrac( player )
+		isDoomed = GetDoomedState( player )
+
+		if ( !isDoomed )
+		{
+			if ( playOutOfShieldsBeep )
+			{
+				if ( TitanShouldNotifyLowHealth( player, cockpit ) )
+				{
+					duration = damageBeepDuration
+					EmitSoundOnEntity( player, "titan_damage_beep" )
+				}
+			}
+		}
+		else
+		{
+			if ( !wasDoomed )
+			{
+				if ( PlayerHasPassive( player, ePassives.PAS_AUTO_EJECT ) )
+					TitanCockpit_PlayDialog( player, "autoEjectNotice" )
+				else
+					TitanCockpit_PlayDialog( player, "doomState" )
+				wasDoomed = true
+			}
+
+			if ( healthFrac <= 0.5 )
+			{
+				TitanCockpit_PlayDialog( player, "halfDoomState" )
+				if ( PROTO_AlternateDoomedState() )
+					break // so it doesn't spam you
+			}
+		}
+
+		wait duration
+	}
+}
+
+
+function HideThreatHud( player, cockpit )
+{
+	cockpit.s.threatHudBackground.Hide()
+	cockpit.s.threatHudBackgroundShadow.Hide()
+}
+
+function UpdateHudEMPState( entity player, entity cockpit )
+{
+	// Get Alpha
+	local alpha = 255
+	if ( cockpit.s.empInfo.startTime != 0 )
+		alpha = ( 1.0 - TitanCockpit_EMPFadeScale( cockpit ) ) * 255
+
+	if ( alpha == level.lastHudEMPStateAlpha )
+		return
+
+	level.lastHudEMPStateAlpha = alpha
+
+	// Update Alpha
+	for ( int i = 0; i < level.EMP_vguis.len(); i++ )
+	{
+		local vgui = level.EMP_vguis[i]
+		if ( !IsValid( vgui ) )
+		{
+			level.EMP_vguis.remove( i )
+			i--
+		}
+		else
+		{
+			vgui.SetAlpha( alpha )
+		}
+	}
+}
+
+
+bool function TitanShouldNotifyLowHealth( entity player, entity cockpit )
+{
+	if ( DisplayTripleHealthBar() )
+		return expect bool( cockpit.s.forceFlash )
+
+	if ( TitanShieldDecayEnabled() )
+	{
+		return GetHealthFrac( player ) < 0.5
+	}
+
+	return GetShieldHealthFrac( player ) <= 0
+}

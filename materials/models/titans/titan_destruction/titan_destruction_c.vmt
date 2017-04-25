@@ -1,0 +1,83 @@
+"UnlitTwoTexture"
+{
+	"$nodecal" "1"
+	$allowoverbright 1
+
+	"$no_fullbright" 1
+	"$model" "1"
+
+	"$basetexture" "effects\electric_anim"
+	"$Texture2" "models\titans\titan_destruction\titan_destruction_c_col"
+//	"$Texture2" "effects\white"
+
+
+//	"$color2" "[3 2 1]" //fire
+//	"$color2" "[1 2 3]" //Electricity
+
+	"$sinemin" 0
+	"$sinemax" 0
+	"$tex2scroll" 0
+
+    $matchColor		"[0.1 0.25 1.0]"
+    $mismatchColor	"[1.0 0.25 0.1]"
+	$allowDiffuseModulation "0"
+
+	"Proxies"
+	{
+		EntitySonarColor
+		{
+			sameTeamColorVar	$matchColor
+			otherTeamColorVar	$mismatchColor
+
+			resultvar	$color2
+		}
+
+		//Play baseTexture frames
+		"AnimatedTexture"
+		{
+			"animatedtexturevar" "$basetexture"
+			"animatedtextureframenumvar" "$frame"
+			"animatedtextureframerate" "24"
+		}
+		//Scroll Base Texture
+		"TextureScroll"
+		{
+			"texturescrollvar" "$BASETEXTURETRANSFORM"
+			"texturescrollrate" 0.2
+			"texturescrollangle" -90
+		}
+		//Tex2 Minimum Scroll Speed
+		"GaussianNoise"
+		{
+			"mean" "-2"
+			"halfWidth" -4
+			"minval" -1
+			"maxval" -2
+			"resultVar" "$sinemin"
+		}
+		//Tex2 Maximum Scroll Speed
+		"GaussianNoise"
+		{
+			"mean" "2"
+			"halfWidth" 4
+			"minval" 1
+			"maxval" 2
+			"resultVar" "$sinemax"
+		}
+		"Sine"
+		{
+			"sineperiod" ".15"
+			"sinemin" "$sinemin"
+			"sinemax" "$sinemax"
+			"resultVar" "$tex2scroll"
+		}
+		//Scroll Texture2
+		"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" "$tex2scroll"
+			"texturescrollangle" "-90"
+		}
+
+	}
+}

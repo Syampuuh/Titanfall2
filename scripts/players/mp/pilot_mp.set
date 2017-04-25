@@ -1,0 +1,142 @@
+#base "pilot_base.set"
+"pilot_mp"
+{
+	"global"
+	{
+		class						"pilot"
+		subclass					"wallrun"
+
+		jumpheight					60
+		gravityscale				0.80
+		stepheight					18
+		ziplineSpeed				600
+		wallrun                     1
+		doubleJump                  1
+
+		superjumpMinHeight			60
+		superjumpMaxHeight			60
+		superjumpHorzSpeed			180
+
+        wallrun_timeLimit           1.75
+
+		wallrunJumpOutwardSpeed	    205
+		wallrunJumpUpSpeed			230
+		wallrunJumpInputDirSpeed	80
+
+		wallrunMaxSpeedVertical		225
+		wallrunMaxSpeedHorizontal	420
+		wallrunAccelerateVertical 	360
+		wallrunAccelerateHorizontal 1500
+
+		wallrunAdsType				"ADS"
+
+        slideFOVScale               1.1 // scales fov by this amount while sliding
+        slideFOVLerpInTime          0.25 // lerp in over this time
+        slideFOVLerpOutTime         0.25 // lerp out over this time
+
+		glideDuration							1.8
+		glideRechargeRate						5
+		glideRechargeDelay						0.35
+
+        grapple_detachSpeedLossMin              460
+
+		hoverEnabled							0
+		hoverTightnessVertical					0.02
+		hoverTightnessHorizontal				0.1
+		hoverMeterRate							1.0
+		hoverStrafeScale						3.0
+		hoverSafety								0.25
+
+		//healthRegenStartDelay					5.0
+
+		fx_jetwash_enabled						1
+		fx_jetwash_frequency					0.1
+		fx_jetwash_height						1000
+		fx_jetwash_impactTable					"pilot_boost_jetwash"
+
+		fx_hover_friendly						"P_team_jet_hover_HLD"
+		fx_hover_enemy							"P_enemy_jet_hover_HLD"
+
+		sound_hover_start_1p      				"Boost_Hover_Start_1P"
+		sound_hover_start_3p      				"Boost_Hover_Start_3P"
+		sound_hover_body_1p       				"Boost_Hover_Body_1P"
+		sound_hover_body_3p       				"Boost_Hover_Body_3P"
+		sound_hover_finish_1p     				"Boost_Hover_End_1P"
+		sound_hover_finish_3p     				"Boost_Hover_End_3P"
+
+		sound_jetwash_start_1p					"Boost_Hover_Start_1P"
+		sound_jetwash_start_3p					"Boost_Hover_Start_3P"
+		sound_jetwash_body_1p					"Boost_Hover_Body_1P"
+		sound_jetwash_body_3p					"Boost_Hover_Body_3P"
+		sound_jetwash_finish_1p					"Boost_Hover_End_1P"
+		sound_jetwash_finish_3p					"Boost_Hover_End_3P"
+
+		damageImpulseSpeedBoostLimit			1000
+
+		airSlowmoSpeed							"0.15"
+
+		ClassMods
+		{
+			pas_ads_hover
+			{
+				hoverEnabled				1
+			}
+			pas_power_cell
+			{
+				grapple_power_regen_rate	*1.35
+			}
+			pas_wallhang
+			{
+				wallrunAdsType				"wallhang"
+			}
+			pas_fast_health_regen
+			{
+				//healthRegenStartDelay		2.5
+			}
+			disable_doublejump
+			{
+				doublejump		"0"
+			}
+
+			disable_wallrun
+			{
+				wallrun			"0"
+			}
+
+			r2_80
+			{
+			}
+		}
+	}
+	"crouch"
+	{
+		viewheight 				"0 0 32"
+		firstpersonproxyoffset 	"0 0 -32"
+		speed						80
+		PoseMods
+		{
+			coliseum
+			{
+				speed               160
+			}
+		}
+
+	}
+
+	"stand"
+	{
+		speed						173.5
+		sprintspeed					260
+		PoseMods
+		{
+			coliseum
+			{
+				speed						250
+			sprintspeed					375
+			}
+		}
+	}
+}
+
+
+

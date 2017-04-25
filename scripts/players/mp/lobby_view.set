@@ -1,0 +1,81 @@
+"lobby_view"
+{
+	"global"
+	{
+		weaponClass			"human"
+		class				"pilot"
+		subclass			"wallrun"
+		wallrun			0
+		automantle		1
+		healthpacks		1
+		jump			1
+		doublejump		1
+		fov				70
+		viewmodelfov	54
+		jumpheight		80
+		health			200
+		stepheight		16
+		bodymodel		"models/humans/pilots/pilot_medium_reaper_f.mdl"
+		ArmorType		normal
+		context_action_can_melee	1
+		context_action_can_use		1
+
+		aimAngleBackwardEnd		-135
+		aimAngleForwardStart	-80
+		aimAngleForwardEnd		80
+		aimAngleBackwardStart	135
+
+		cockpitSwayTurnAngleFactor		0
+		cockpitSwayTurnAngleRollFactor	0
+		cockpitSwayTurnOriginFactor		0
+		cockpitSwayMoveAngleFactor		0
+		cockpitSwayMoveAngleRollFactor	0
+		cockpitSwayMoveOriginFactor		0
+		cockpitSwayGain					0
+	}
+	"crouch"
+	{
+		footstepPrefix "human.crouch."
+		footstepWalkSoundRadius	32
+		footstepRunSoundRadius	64
+		footstepMinSpeed	120
+		footstepInterval	450
+
+		viewheight "0 0 38"
+		firstpersonproxyoffset "0 0 -38"
+		hull_min "-16 -16 0"
+		hull_max "16 16 47"
+
+		crouchspeed		150
+	}
+
+	"dead"
+	{
+		viewheight "0 0 14"
+	}
+
+	"observe"
+	{
+		hull_min "-10 -10 -10"
+		hull_max "10 10 10"
+	}
+
+	"stand"
+	{
+		footstepPrefix "human.stand."
+		footstepWalkSoundRadius	32
+		footstepRunSoundRadius	256
+		footstepMinSpeed	60
+		footstepInterval	400
+		footstepIntervalSprint	250
+
+		viewheight "0 0 60"
+		firstpersonproxyoffset "0 0 -60"
+		hull_min "-16 -16 0"
+		hull_max "16 16 72"
+
+		speed			180
+		sprintspeed		300
+	}
+}
+

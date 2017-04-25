@@ -1,0 +1,65 @@
+#base "mp_ability_holopilot.txt"
+
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_HOLOPILOT_NOVA"
+	"shortprintname"   								"#WPN_HOLOPILOT_NOVA"
+	"description" 									"#WPN_HOLOPILOT_NOVA_DESC"
+	"longdesc"										"#WPN_HOLOPILOT_NOVA_LONGDESC"
+
+	"menu_icon"										"rui/menu/boosts/boost_icon_holopilot"
+    "hud_icon"				                        "rui/menu/boosts/boost_icon_holopilot"
+    "readymessage"                                  "#HUD_BURNMETER_READY_HOLO_NOVA"
+    "readyhint"                                     "#HUD_BURNMETER_READY_HOLO_NOVA_HINT"
+
+	"weaponClass" 									"human"
+	"fire_mode"   									"offhand_instant"
+	"offhand_default_inventory_slot"				"4"
+	//"offhand_interupts_weapon_anims"				"1"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_holopilot_nova"
+
+	// Models
+	//"viewmodel"   									"models/weapons/clacker_detonator/ptpov_clacker_detonator.mdl"
+	"playermodel"									"models/weapons/empty_handed/w_empty_handed_human.mdl"
+	//"projectilemodel" 								"models/dev/empty_model.mdl"
+
+	"fire_sound_1_player_3p"						""
+
+	MP_BASE
+	{
+		"ammo_clip_size"   								"1"
+		"ammo_default_total"							"1"
+		"ammo_display"									"bar"
+		"ammo_min_to_fire"								"1"
+		"ammo_per_shot"									"1"
+		"ammo_stockpile_max"							"1"
+		"fire_rate"   									"2"
+		"regen_ammo_refill_rate"						"6"
+
+		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+	}
+
+	SP_BASE
+	{
+		"ammo_clip_size"   								"1"
+		"ammo_default_total"							"1"
+		"ammo_display"									"bar"
+		"ammo_min_to_fire"								"1"
+		"ammo_per_shot"									"1"
+		"ammo_stockpile_max"							"1"
+		"fire_rate"   									"2"
+		"regen_ammo_refill_rate"						"5"
+
+		"enable_highlight_networking_on_creation"		"1"
+	}
+
+	Mods
+	{
+		burn_card_weapon_mod
+		{
+
+		}
+	}
+}

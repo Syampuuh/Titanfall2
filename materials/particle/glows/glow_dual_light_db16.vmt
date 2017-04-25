@@ -1,0 +1,11 @@
+"spritecard"
+{
+	"$basetexture" "particle\glows\glow_dual_light_1"
+	$additive 1
+	$muloutputbyalpha 1
+
+	$depthblend 1
+	$depthblendscale 16
+
+
+}

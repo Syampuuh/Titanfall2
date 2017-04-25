@@ -1,0 +1,1475 @@
+
+global function ChallengesShared_Init
+
+global function AddChallenge
+global function SetChallengeStat
+global function SetChallengeFlags
+global function SetChallengeTiers
+//global function SetChallengeTierBurnCards
+global function SetChallengeCategory
+
+global function InitPlayerChallenges
+global function UpdateChallengeRewardItems
+#if UI
+global function UI_GetAllChallengesProgress
+global function UI_GetSpecificChallengeProgress
+#endif
+#if !UI
+global function UpdateLocalChallengeProgress
+#endif
+global function GetLocalChallengeTable
+
+global function GetChallengeProgressData
+global function GetChallengeCategoryName
+global function GetChallengeCategoryDesc
+global function GetChallengeCategory
+global function GetChallengeID
+global function GetChallengeName
+global function GetChallengeNameForTier
+global function GetChallengeDescription
+global function GetChallengeIcon
+global function GetChallengeProgressIsDecimal
+global function GetItemRewardForChallengeTier
+global function GetCurrentChallengeTier
+global function GetGoalForChallengeTier
+global function GetCurrentChallengeGoal
+global function GetChallengeXPReward
+//global function GetChallengeBurnCardRewards
+global function GetCurrentChallengeProgress
+global function GetCurrentChallengeProgressFrac
+global function GetChallengeProgressFracForTier
+global function GetChallengeTierCount
+global function GetChallengeFlags
+global function GetChallengeRefFromID
+global function IsChallengeComplete
+global function IsChallengeTierComplete
+//global function GetRegenChallengesRemainingCount
+//global function IsRegenRequirement
+global function IsDailyChallenge
+global function IsCoopChallenge
+global function IsActiveDailyChallenge
+global function GetTodaysDailyChallenges
+global function GetPlayersStoredDailyChallenges
+global function GetDailyChallengeDayAssigned
+global function GetPlayerTrackedChallenges
+global function GetChallengesByCategory
+
+global function PutChallengeNameOnLabel
+/*#if UI
+global function PutChallengeRewardsOnPanel
+#endif*/
+//global function SetChallengeNameTextOnLabel
+
+global function GetMatchStartChallengeProgress
+global function GetChallengeTierForProgress
+global function GetChallengeEnumNameForRef
+global function GetChallengeStorageArrayNameForRef
+
+#if !UI
+global function DebugPrintAllChallenges
+#endif
+
+global const CHALLENGES_ENABLED = false
+global const DEBUG_CHALLENGES	= false
+global const DEBUG_DAILIES	= false
+
+global const MAX_CHALLENGE_TIERS = 10
+global const CHALLENGES_RESET_AT_EACH_STAGE = false
+
+global struct LinkedStat
+{
+	string category
+	string alias
+	string weapon
+}
+
+global struct ChallengeData
+{
+	int id
+	string title
+	string desc
+	asset icon
+	LinkedStat linkedStat
+	int flags
+	int totalNumToComple
+	array<float> tierGoals
+	int category
+	string weaponRef
+	string weaponRefName
+	bool progressDecimal
+	int addIndex
+	float totalNumToComplete
+}
+
+global struct ChallengeCategoryNames
+{
+	string title
+	string desc
+	array<int> linkedCategories
+}
+
+global struct ChallengeProgressData
+{
+	float progress
+	int tier
+	float tierGoal
+	float progressFrac
+}
+
+global struct ChallengeItemReward
+{
+	string parentRef
+	string childRef
+	int Type
+}
+
+struct
+{
+	table<int, int> challengeXPRewardsForTier
+	table<string, table<int, ChallengeItemReward> > itemRewardsForChallenge
+	table<string, array<string> > challengeRefsForWeapon
+	table<entity, table<string, var> > challengeProgress
+} file
+
+string lastAddedChallengeRef = ""
+int lastChallengeCategory = -1
+
+table dailyChallengeList = {}
+
+void function ChallengesShared_Init()
+{
+	file.challengeXPRewardsForTier[ 0 ] <- 500
+	file.challengeXPRewardsForTier[ 1 ] <- 1000
+	file.challengeXPRewardsForTier[ 2 ] <- 2500
+	file.challengeXPRewardsForTier[ 3 ] <- 5000
+	file.challengeXPRewardsForTier[ 4 ] <- 10000
+
+	file.challengeXPRewardsForTier[ 5 ] <- 10000
+	file.challengeXPRewardsForTier[ 6 ] <- 10000
+	file.challengeXPRewardsForTier[ 7 ] <- 10000
+	file.challengeXPRewardsForTier[ 8 ] <- 10000
+	file.challengeXPRewardsForTier[ 9 ] <- 10000
+}
+
+void function SetChallengeCategory( int category, string title, string desc = "", string itemRef = "", array<int> linkedCategories = [] )
+{
+	Assert( category >= 0, "Invalid challenge category specified" )
+	Assert( title != "", "Did not specify title for challenge category" )
+	Assert( !( category in shGlobalMP.challengeCategoryNames ) )
+	Assert( title == "" || title.find( "#" ) == 0 )
+	Assert( desc == "" || desc.find( "#" ) == 0 )
+
+	/*if ( itemRef != "" )
+	{
+		// should create a function that can check if a given ref is a valid ref (challenge, item, unlockRef, etc...)
+		//Assert( ItemDefined( itemRef ) )
+	}*/
+
+	if ( !( category in shGlobalMP.challengeDataByCategory ) )
+	{
+		table<string, ChallengeData> cdTable
+		shGlobalMP.challengeDataByCategory[ category ] <- cdTable
+	}
+
+	ChallengeCategoryNames ccn
+	ccn.title = title
+	ccn.desc = desc
+	ccn.linkedCategories = linkedCategories
+	shGlobalMP.challengeCategoryNames[ category ] <- ccn
+
+	shGlobalMP.challengeItemForCategory[ category ] <- itemRef
+
+	lastChallengeCategory = category
+}
+
+string function GetChallengeEnumNameForRef( string ref )
+{
+	if ( PersistenceEnumValueIsValid( "challenge", ref ) )
+		return "challenge"
+	if ( PersistenceEnumValueIsValid( "dailychallenge", ref ) )
+		return "dailychallenge"
+
+	unreachable
+}
+
+string function GetChallengeStorageArrayNameForRef( string ref )
+{
+	if ( PersistenceEnumValueIsValid( "challenge", ref ) )
+		return "challenges"
+	if ( PersistenceEnumValueIsValid( "dailychallenge", ref ) )
+		return "dailychallenges"
+
+	unreachable
+}
+
+void function AddChallenge( string ref, string title, string desc, asset icon, string weaponRef = "", bool progressDecimal = false )
+{
+	//HACK - Persistent data is stored as lower case, so when we use get functions for challengeRef they all return lower case.
+	ref = ref.tolower()
+
+	// Make sure a category was set
+	Assert( lastChallengeCategory != -1 )
+
+	// Make sure the previous challenge type had at least 1 challenge set for it
+	if ( lastAddedChallengeRef != "" )
+	{
+		Assert( shGlobalMP.challengeData[ lastAddedChallengeRef ].tierGoals.len() > 0, "Challenge added without any tiers set to the previous challenge" )
+		Assert( shGlobalMP.challengeData[ lastAddedChallengeRef ].category != -1, "Challenge added without a category set to the previous challenge" )
+		Assert( shGlobalMP.challengeData[ lastAddedChallengeRef ].linkedStat.category != "", "Challenge added without a stat link set to the previous challenge" )
+	}
+
+	// Make sure this challenge type wasn't already added
+	Assert( !( ref in shGlobalMP.challengeData ), "Challenge already exists, can't create it again" )
+
+	// Make sure the data is all valid and legit
+	Assert( title != "", "No challenge title specified for challenge" )
+	Assert( desc != "", "No challenge description specified for challenge" )
+
+	// Create the challenge type
+	ChallengeData cd
+	cd.title = title
+	cd.desc = desc
+	cd.icon = icon
+	cd.flags = ( CF_PRIORITY_NORMAL )
+	cd.totalNumToComplete = 0
+	cd.category = lastChallengeCategory
+	cd.weaponRef = weaponRef
+	cd.progressDecimal = progressDecimal
+	cd.addIndex = shGlobalMP.challengeData.len()
+
+	shGlobalMP.challengeData[ ref ] <- cd
+
+	#if !UI
+		int id = PersistenceGetEnumIndexForItemName( GetChallengeEnumNameForRef( ref ), ref )
+		if ( lastChallengeCategory == eChallengeCategory.DAILY )
+			id += PersistenceGetEnumCount("challenge")
+		shGlobalMP.challengeData[ ref ].id = id
+	#endif
+
+	// Add to the list of challenges by category
+	Assert( !( ref in shGlobalMP.challengeDataByCategory[ lastChallengeCategory ] ) )
+	shGlobalMP.challengeDataByCategory[ lastChallengeCategory ][ ref ] <- shGlobalMP.challengeData[ ref ]
+
+	// We make a new local table for dailies so IsDailyChallenge function can run faster since it's called during game, not just lobby
+	if ( lastChallengeCategory == eChallengeCategory.DAILY )
+		dailyChallengeList[ ref ] <- true
+
+	lastAddedChallengeRef = ref
+
+	if ( weaponRef != "" )
+	{
+		if ( !(weaponRef in file.challengeRefsForWeapon) )
+			file.challengeRefsForWeapon[weaponRef] <- []
+
+		file.challengeRefsForWeapon[weaponRef].append( ref )
+	}
+}
+
+void function SetChallengeStat( string category, string alias, string weapon = "" )
+{
+	// Links the challenge to a stat that we track
+
+	string challengeRef = lastAddedChallengeRef
+	Assert( challengeRef != "" )
+	Assert( challengeRef in shGlobalMP.challengeData )
+
+	#if !UI
+		Assert( IsValidStat( category, alias, weapon ), "Stat specified in AddChallenge is not a valid stat" )
+	#endif
+
+	shGlobalMP.challengeData[ challengeRef ].linkedStat.category = category
+	shGlobalMP.challengeData[ challengeRef ].linkedStat.alias = alias
+	shGlobalMP.challengeData[ challengeRef ].linkedStat.weapon = weapon
+}
+
+void function SetChallengeFlags( int flags )
+{
+	// Tells the challenge what types of popup notifications it should do for the player
+
+	string challengeRef = lastAddedChallengeRef
+	Assert( challengeRef != "" )
+	Assert( challengeRef in shGlobalMP.challengeData )
+
+	shGlobalMP.challengeData[ challengeRef ].flags = flags
+}
+
+void function SetChallengeTiers( array<float> valuesArray )
+{
+	// Adds a challenge to the last created challenge type. This is so we can have multiple challenges on the same type that are sequentially unlocked
+
+	string challengeRef = lastAddedChallengeRef
+	Assert( challengeRef != "" )
+	Assert( challengeRef in shGlobalMP.challengeData )
+	Assert( valuesArray.len() <= MAX_CHALLENGE_TIERS, "SetChallengeTiers tried to set more than max tiers (" + MAX_CHALLENGE_TIERS + ")" )
+
+	// Make sure the numbers go up in the array
+	float highestVal = 0.0
+	foreach ( num in valuesArray )
+	{
+		Assert( num > highestVal, "Challenge must have a higher requirement than the previous" )
+		highestVal = num
+	}
+
+	// Make sure daily challenges only have one tier
+	if ( GetChallengeCategory( challengeRef ) == eChallengeCategory.DAILY )
+		Assert( valuesArray.len() == 1, "Daily challenges can only have 1 tier!" )
+
+	shGlobalMP.challengeData[ challengeRef ].tierGoals = valuesArray
+	if ( CHALLENGES_RESET_AT_EACH_STAGE )
+	{
+		foreach ( num in valuesArray )
+			shGlobalMP.challengeData[ challengeRef ].totalNumToComplete += num
+	}
+	else
+	{
+		shGlobalMP.challengeData[ challengeRef ].totalNumToComplete = highestVal
+	}
+}
+
+/*function SetChallengeTierBurnCards( tier, cardSet )
+{
+	if ( IsUI() )
+	{
+		string challengeRef = lastAddedChallengeRef
+		Assert( challengeRef != "" )
+		Assert( challengeRef in shGlobalMP.challengeData )
+
+		// Make sure daily challenges only have one tier
+		if ( GetChallengeCategory( challengeRef ) == eChallengeCategory.DAILY )
+			Assert( tier == 0, "Can't set burn card rewards for daily challenge on non zero tier!" )
+
+		Assert( tier < shGlobalMP.challengeData[ challengeRef ].tierGoals.len() )
+
+		foreach ( cardRef in cardSet )
+		{
+			if ( cardRef.find( "random" ) == 0 )
+				continue
+
+			Assert( cardRef in level.burnCardsByName )
+		}
+
+		shGlobalMP.challengeData[ challengeRef ].burnCardRewards[tier] = cardSet
+	}
+}
+*/
+void function InitPlayerChallenges( entity player )
+{
+	if ( !CHALLENGES_ENABLED )
+		return
+
+	if ( DEBUG_CHALLENGES )
+	{
+		#if SERVER
+			printt( "#################### SERVER InitPlayerChallenges ####################" )
+		#elseif CLIENT
+			printt( "#################### CLIENT InitPlayerChallenges ####################" )
+		#else
+			printt( "#################### UI InitPlayerChallenges ####################" )
+			printt( "player:", player )
+		#endif
+	}
+
+	Assert( IsValid( player ) )
+#if !UI
+	Assert( player.IsPlayer() )
+#endif
+
+	if ( IsItemLocked( player, "challenges" ) )
+	{
+		if ( DEBUG_CHALLENGES )
+			printt( "CHALLENGES LOCKED FOR PLAYER", player )
+	}
+
+	//######################################################
+	// Daily Challenge Init
+	//######################################################
+	#if SERVER
+		if ( !player.IsBot() )
+		{
+			// First look to see if the player should start new dailies.
+			int dailyChallengeDayIndex = player.GetPersistentVarAsInt( "dailyChallengeDayIndex" )
+			int activeDailyIndex = Daily_GetDayForCurrentTime()
+
+			// This can happen in dev mode when we are faking the next day
+			if ( activeDailyIndex < dailyChallengeDayIndex )
+				player.SetPersistentVar( "dailyChallengeDayIndex", 0 )
+
+			int maxDailies = PersistenceGetArrayCount( "activeDailyChallenges" )
+
+			if ( DEBUG_DAILIES )
+			{
+				printt( "############################################################" )
+				printt( "    DAILY CHALLENGE UPDATE")
+				printt( "       LAST DAY UPDATED:", dailyChallengeDayIndex )
+				printt( "       CURRENT DAY:", activeDailyIndex )
+				printt( "Stored dailies from persistence:" )
+
+				for ( int i = 0; i < maxDailies; i++ )
+				{
+					printt( "  ", player.GetPersistentVar( "activeDailyChallenges[" + i + "].ref" ) )
+				}
+			}
+
+			// Correct for bugs by making sure tracked challenges are still valid.
+			// This can happen if a player abandons a challenge that was tracked and the server didn't finish untracking it before abandoning it
+			array<string> trackedChallengeRefs = GetPlayerTrackedChallenges( player )
+			foreach ( ref in trackedChallengeRefs )
+			{
+				if ( ref != "" && IsDailyChallenge( ref ) && !IsActiveDailyChallenge( ref, player ) )
+				{
+					printt( ref, "IS AN INVALID DAILY. UNTRACKING IT TO FIX BUG!" )
+					UntrackChallengeRef( player, ref )
+				}
+			}
+
+/*
+			// If the player is out of date then we reset the progress on the current daily
+			//   challenge refs to make sure they are starting them from scratch and don't have
+			//   left over values from last time this ref was used as a daily several days ago
+			if ( activeDailyIndex > dailyChallengeDayIndex )
+			{
+				if ( DEBUG_DAILIES )
+					printt( "Player's daily challenges are outdated (" + dailyChallengeDayIndex + "). Setting new ones. Today is a new day (" + activeDailyIndex + ")!" )
+
+				// Update their persistence to the current day index, so challenge data doesn't get wiped during subsequent games during the same day
+				// Also lets us know that we've done this logic already today
+				player.SetPersistentVar( "dailyChallengeDayIndex", activeDailyIndex )
+
+				// Get todays challenges
+				local dailyRefs = GetTodaysDailyChallenges()
+				if ( DEBUG_DAILIES )
+				{
+					printt( "Today's challenges:" )
+					PrintTable( dailyRefs )
+				}
+
+				// Get daily challenges player still has stored
+				local storedDailies = []
+				local storedRefs = GetPlayersStoredDailyChallenges( player )
+				foreach( ref in storedRefs )
+				{
+					// Only add incomplete challenges to the array. Completed challenges we untrack if they were tracked before
+					local currentDailyProgress = player.GetPersistentVar( "dailychallenges[" + ref + "].progress" )
+					local dailyGoal = shGlobalMP.challengeData[ ref ].totalNumToComplete
+					if ( currentDailyProgress >= dailyGoal )
+					{
+						// daily is stored but complete
+						UntrackChallengeRef( player, ref )
+					}
+					else
+					{
+						local Table = {}
+						Table.ref <- ref
+						Table.day <- GetDailyChallengeDayAssigned( ref, player )
+						storedDailies.append( Table )
+					}
+				}
+
+				if ( DEBUG_DAILIES )
+				{
+					printt( "Stored challenges:" )
+					PrintTable( storedDailies )
+				}
+
+				// See if player has room for any new dailies
+				local slotsAvailable = maxDailies - storedDailies.len()
+				if ( DEBUG_DAILIES )
+				{
+					printt( "Max dailies:", maxDailies )
+					printt( "Slots available:", slotsAvailable )
+				}
+
+				// Remove new dailies if we already have that stored
+				// "newDailies" will contain only today's new daily refs that aren't already being worked on from a previous day
+				local newDailies = []
+				foreach( ref in dailyRefs )
+				{
+					if ( !storedRefs.contains( ref ) )
+					{
+						local Table = {}
+						Table.ref <- ref
+						Table.day <- activeDailyIndex
+						newDailies.append( Table )
+					}
+					else if ( DEBUG_DAILIES )
+						printt( "  ", ref, "already in stored dailies. Not adding again" )
+				}
+
+				if ( DEBUG_DAILIES )
+				{
+					printt( "Dailies to add:" )
+					PrintTable( newDailies )
+				}
+
+				if ( slotsAvailable > 0 && newDailies.len() > 0)
+				{
+					// Try to add all the new dailies unless we run out of slots
+					local numToAdd = min( slotsAvailable, newDailies.len() )
+					Assert( numToAdd > 0 )
+					if ( DEBUG_DAILIES )
+						printt( "  adding", numToAdd, "new dailies" )
+
+					for ( int i = 0; i < numToAdd; i++ )
+					{
+						// Clear the challenge progress for the daily refs since they may have old values left behind from several days ago
+						if ( DEBUG_DAILIES )
+							printt( "Resetting progress on challenge:", newDailies[i].ref )
+						player.SetPersistentVar( "dailychallenges[" + newDailies[i].ref + "].progress", 0 )
+						player.SetPersistentVar( "dailychallenges[" + newDailies[i].ref + "].previousProgress", 0 )
+
+						// Add new daily to the array
+						storedDailies.append( newDailies[i] )
+
+						// Make daily challenge category as new
+						player.SetPersistentVar( "newDailyChallenges", true )
+					}
+
+					if ( DEBUG_DAILIES )
+					{
+						printt( "New stored dailies:" )
+						PrintTable( storedDailies )
+					}
+
+					printt( "Updating persistence..." )
+
+					// Save the new and old dailies back to persistence
+					for ( int i = 0; i < maxDailies; i++ )
+					{
+						if ( i < storedDailies.len() )
+						{
+							printt( "  writing:", storedDailies[i].ref, storedDailies[i].day )
+							player.SetPersistentVar( "activeDailyChallenges[" + i + "].ref", storedDailies[i].ref )
+							player.SetPersistentVar( "activeDailyChallenges[" + i + "].day", storedDailies[i].day )
+						}
+						else
+						{
+							printt( "  writing:", null, 0 )
+							player.SetPersistentVar( "activeDailyChallenges[" + i + "].ref", null )
+							player.SetPersistentVar( "activeDailyChallenges[" + i + "].day", 0 )
+						}
+					}
+				}
+				else
+				{
+					if ( DEBUG_DAILIES && newDailies.len() == 0 )
+						printt( "No new dailies to add. They are all already stored" )
+					if ( DEBUG_DAILIES && slotsAvailable <= 0 )
+						printt( "No slots available for new dailies" )
+				}
+
+
+
+				if ( DEBUG_DAILIES )
+				{
+					printt( "Stored dailies from persistence:" )
+					for ( int i = 0; i < maxDailies; i++ )
+					{
+						printt( "  ", player.GetPersistentVar( "activeDailyChallenges[" + i + "].ref" ), player.GetPersistentVar( "activeDailyChallenges[" + i + "].day" ) )
+					}
+				}
+			}
+			else
+			{
+				if ( DEBUG_DAILIES )
+					printt( "Not giving any new daily challenges. Player already logged in today (" + activeDailyIndex + ")" )
+			}
+			if ( DEBUG_DAILIES )
+				printt( "############################################################" )
+*/
+		}
+	#endif
+	//######################################################
+	//######################################################
+
+	file.challengeProgress[ player ] <- {}
+	//player.s.trackedChallengeProgress <- {}
+
+	foreach( challengeRef, data in shGlobalMP.challengeData )
+	{
+		Assert( !( challengeRef in file.challengeProgress[ player ] ) )
+		var persistenceValue = player.GetPersistentVar( GetChallengeStorageArrayNameForRef(challengeRef) + "[" + challengeRef + "].progress" )
+		if ( typeof( persistenceValue ) == "float" )
+			expect float( persistenceValue )
+		else
+			expect int( persistenceValue )
+
+		file.challengeProgress[ player ][ challengeRef ] <- persistenceValue
+
+		// Since this runs when a player connects, we store off their current challenge progress to new vars so EOG Summary can figure out what challenges were completed during the match
+		#if SERVER
+			if ( !IsLobby() )
+				player.SetPersistentVar( GetChallengeStorageArrayNameForRef(challengeRef) + "[" + challengeRef + "].previousProgress", persistenceValue )
+		#endif
+	}
+
+ 	//player.s.trackedChallengeProgress <- clone player.s.challengeProgress
+	#if CLIENT
+		clGlobal.clientChallengeProgress = clone file.challengeProgress[ player ]
+	#endif
+}
+
+void function UpdateChallengeRewardItems( string parentRef, string childRef, int Type, string challengeReq, int challengeTier )
+{
+	if ( challengeReq == "" )
+		return
+	Assert( challengeTier >= 0 )
+
+	if ( !( challengeReq in file.itemRewardsForChallenge ) )
+		file.itemRewardsForChallenge[ challengeReq ] <- {}
+	Assert ( !( challengeTier in file.itemRewardsForChallenge[ challengeReq ] ) )
+
+	ChallengeItemReward reward
+	reward.parentRef = parentRef
+	reward.childRef = childRef
+	reward.Type = Type
+
+	file.itemRewardsForChallenge[ challengeReq ][ challengeTier ] <- reward
+}
+
+// TODO: table< string, string >
+table<string, var> function GetLocalChallengeTable( entity player = null )
+{
+	#if UI
+		return uiGlobal.ui_ChallengeProgress
+	#endif
+
+	#if SERVER
+		Assert( IsValid( player ) )
+		Assert( player.IsPlayer() )
+		//Assert( "challengeProgress" in player.s )
+		//return player.s.challengeProgress
+		Assert( player in file.challengeProgress )
+		return file.challengeProgress[ player ]
+	#endif
+
+	#if CLIENT
+		return clGlobal.clientChallengeProgress
+	#endif
+
+	unreachable
+}
+
+#if UI
+void function UI_GetAllChallengesProgress()
+{
+	//##########################################################################
+	// 		Updates local table that stores persistent challenge progress
+	//##########################################################################
+
+	/*Assert( IsUI(), "Can't call UI_GetAllChallengesProgress outside of UI Script" )
+
+	entity player = GetUIPlayer()
+	if ( player == null )
+		return
+	// Get the players progress for all challenges
+	uiGlobal.ui_ChallengeProgress = {}
+	foreach ( challengeRef, data in shGlobalMP.challengeData )
+	{
+		uiGlobal.ui_ChallengeProgress[ challengeRef ] <- player.GetPersistentVar( GetChallengeStorageArrayNameForRef(challengeRef) + "[" + challengeRef + "].progress" )
+	}*/
+}
+
+void function UI_GetSpecificChallengeProgress( entity player, string challengeRef )
+{
+	uiGlobal.ui_ChallengeProgress[ challengeRef ] <- player.GetPersistentVar( GetChallengeStorageArrayNameForRef(challengeRef) + "[" + challengeRef + "].progress" )
+}
+#endif
+
+#if !UI
+void function UpdateLocalChallengeProgress( string challengeRef, entity player, float changeInValue, float totalValue = -1.0 )
+{
+	if ( !CHALLENGES_ENABLED )
+		return
+
+	if ( !IsValid( player ) || !player.IsPlayer() )
+		return
+
+	table<string, var> challengeTable = GetLocalChallengeTable( player )
+	Assert( challengeRef in challengeTable )
+
+	if ( changeInValue == -1.0 )
+	{
+		Assert( totalValue != -1.0 )
+		challengeTable[ challengeRef ] = totalValue
+	}
+	else
+		challengeTable[ challengeRef ] += changeInValue
+
+	if ( DEBUG_CHALLENGES )
+	{
+		printt( "#################################" )
+		printt( challengeRef, " = ", challengeTable[ challengeRef ] )
+		printt( "#################################" )
+	}
+}
+#endif
+
+float function _GetChallengeProgressTotal( string challengeRef, entity player )
+{
+	// Returns the total progress of a challenge type
+	table<string, var> challengeTable = GetLocalChallengeTable( player )
+	Assert( challengeRef in challengeTable, "Tried to get challenge progress with invalid challenge ref" )
+	return expect float( challengeTable[ challengeRef ] )
+}
+
+int function GetChallengeCategory( string challengeRef )
+{
+	Assert( challengeRef in shGlobalMP.challengeData, "Called GetChallengeCategory with invalid challenge ref" )
+	return shGlobalMP.challengeData[ challengeRef ].category
+}
+
+bool function IsDailyChallenge( string challengeRef )
+{
+	Assert( challengeRef in shGlobalMP.challengeData, "Called IsDailyChallenge with invalid challenge ref" )
+	return ( challengeRef in dailyChallengeList )	// faster to use simple local table instead of getting category on level table and doing several lookups
+	//return GetChallengeCategory( challengeRef ) == eChallengeCategory.DAILY
+}
+
+bool function IsCoopChallenge( string challengeRef )
+{
+	Assert( challengeRef in shGlobalMP.challengeData, "Called IsCoopChallenge with invalid challenge ref" )
+	return GetChallengeCategory( challengeRef ) == eChallengeCategory.COOP
+}
+
+bool function IsActiveDailyChallenge( string challengeRef, entity player )
+{
+	Assert( challengeRef in shGlobalMP.challengeData, "Called IsActiveDailyChallenge with invalid challenge ref" )
+	Assert( IsDailyChallenge( challengeRef ) )
+
+	return GetPlayersStoredDailyChallenges( player ).contains( challengeRef )
+}
+
+array<string> function GetPlayersStoredDailyChallenges( entity player )
+{
+	#if SERVER
+		Assert( IsValid( player ) && player.IsPlayer() )
+	#endif
+
+	int maxRefs = PersistenceGetArrayCount( "activeDailyChallenges" )
+	array<string> refs = []
+	for ( int i = 0; i < maxRefs; i++ )
+	{
+		var ref = player.GetPersistentVar( "activeDailyChallenges[" + i + "].ref" )
+
+		if ( ref == null )
+			continue
+
+		refs.append( expect string( ref ) )
+	}
+	return refs
+}
+
+int function GetDailyChallengeDayAssigned( string challengeRef, entity player )
+{
+	Assert( IsDailyChallenge( challengeRef ) )
+	Assert( IsActiveDailyChallenge( challengeRef, player ) )
+
+	#if SERVER
+		Assert( IsValid( player ) && player.IsPlayer() )
+	#endif
+
+	int maxRefs = PersistenceGetArrayCount( "activeDailyChallenges" )
+	for ( int i = 0; i < maxRefs; i++ )
+	{
+		var ref = player.GetPersistentVar( "activeDailyChallenges[" + i + "].ref" )
+
+		if ( ref != challengeRef )
+			continue
+
+		int day = player.GetPersistentVarAsInt( "activeDailyChallenges[" + i + "].day" )
+		return day
+	}
+
+	unreachable
+}
+
+array<string> function GetTodaysDailyChallenges()
+{
+	array<string> challengeRefs = []
+	foreach ( list in shGlobalMP.dailyChallenges )
+	{
+		int index = Daily_GetDayForCurrentTime() % list.len()
+		challengeRefs.append( list[index] )
+	}
+	Assert( challengeRefs.len() == shGlobalMP.dailyChallenges.len() )
+	return challengeRefs
+}
+
+string function GetChallengeCategoryName( int category )
+{
+	Assert( category in shGlobalMP.challengeCategoryNames, "Called GetChallengeCategoryName with invalid category" )
+	return shGlobalMP.challengeCategoryNames[ category ].title
+}
+
+string function GetChallengeCategoryDesc( int category )
+{
+	Assert( category in shGlobalMP.challengeCategoryNames, "Called GetChallengeCategoryDesc with invalid category" )
+	return shGlobalMP.challengeCategoryNames[ category ].desc
+}
+
+int function GetChallengeID( string challengeRef )
+{
+	//##########################################################################
+	// 			Returns the ID of the challenge for ref
+	//##########################################################################
+
+	Assert( !IsUI() )
+	Assert( challengeRef in shGlobalMP.challengeData, "Tried to call GetChallengeID with invalid challenge ref" )
+	return shGlobalMP.challengeData[ challengeRef ].id
+}
+
+array<string> function GetChallengeName( string challengeRef, entity player )
+{
+	//##########################################################################
+	// 			Returns the name of the challenge for challengeRef
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Tried to call GetChallengeName with invalid challenge ref " + challengeRef )
+
+	int currentTier = GetCurrentChallengeTier( challengeRef, player )
+	Assert( currentTier in shGlobalMP.challengeData[ challengeRef ].tierGoals, "Invalid challenge index" )
+
+	if ( IsDailyChallenge( challengeRef ) )
+		return GetDailyChallengeName( challengeRef )
+
+	return GetChallengeNameForTier( challengeRef, currentTier )
+}
+
+array<string> function GetDailyChallengeName( string challengeRef )
+{
+	Assert( challengeRef in shGlobalMP.challengeData, "Tried to call GetChallengeNameForTier with invalid challenge ref" )
+
+	string weaponName = ""
+
+	if ( shGlobalMP.challengeData[ challengeRef ].weaponRef != "" )
+	{
+		if ( shGlobalMP.challengeData[ challengeRef ].weaponRefName == "" )
+			shGlobalMP.challengeData[ challengeRef ].weaponRefName = expect string( GetWeaponInfoFileKeyField_Global( shGlobalMP.challengeData[ challengeRef ].weaponRef, "printname" ) )
+		weaponName = shGlobalMP.challengeData[ challengeRef ].weaponRefName
+	}
+
+	array<string> challengeNameParts = []
+
+	if ( weaponName == "" )
+	{
+		challengeNameParts.append( "#CHALLENGE_NAME_DAILY" )
+		challengeNameParts.append( shGlobalMP.challengeData[ challengeRef ].title )
+	}
+	else
+	{
+		challengeNameParts.append( "#CHALLENGE_NAME_DAILY_WEAPON" )
+		challengeNameParts.append( shGlobalMP.challengeData[ challengeRef ].title )
+		challengeNameParts.append( weaponName )
+	}
+
+	return challengeNameParts
+}
+
+array<string> function GetChallengeNameForTier( string challengeRef, int tier )
+{
+	//##########################################################################
+	// 		Returns the name of the challenge given the specified tier
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Tried to call GetChallengeNameForTier with invalid challenge ref" )
+	Assert( tier in shGlobalMP.challengeData[ challengeRef ].tierGoals, "Invalid challenge tier index" )
+
+	string weaponName = ""
+	if ( shGlobalMP.challengeData[ challengeRef ].weaponRef != "" )
+	{
+		if ( shGlobalMP.challengeData[ challengeRef ].weaponRefName == "" )
+			shGlobalMP.challengeData[ challengeRef ].weaponRefName = expect string( GetWeaponInfoFileKeyField_Global( shGlobalMP.challengeData[ challengeRef ].weaponRef, "printname" ) )
+		weaponName = shGlobalMP.challengeData[ challengeRef ].weaponRefName
+	}
+
+	array<string> challengeNameParts = []
+
+	if ( weaponName == "" )
+	{
+		challengeNameParts.append( "#CHALLENGE_NAME_PART_" + string( tier ) )
+		challengeNameParts.append( shGlobalMP.challengeData[ challengeRef ].title )
+	}
+	else
+	{
+		challengeNameParts.append( "#CHALLENGE_NAME_PART_" + string( tier ) + "_WEAPON" )
+		challengeNameParts.append( shGlobalMP.challengeData[ challengeRef ].title )
+		challengeNameParts.append( weaponName )
+	}
+
+	return challengeNameParts
+}
+
+array<string> function GetChallengeDescription( string challengeRef )
+{
+	//##########################################################################
+	// 			Returns the description of the challenge
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Tried to call GetChallengeProgressName with invalid challenge ref" )
+
+	array<string> descNameParts = []
+	descNameParts.append( shGlobalMP.challengeData[ challengeRef ].desc )
+	if ( shGlobalMP.challengeData[ challengeRef ].weaponRef != "" )
+	{
+		if ( shGlobalMP.challengeData[ challengeRef ].weaponRefName == "" )
+			shGlobalMP.challengeData[ challengeRef ].weaponRefName = expect string( GetWeaponInfoFileKeyField_Global( shGlobalMP.challengeData[ challengeRef ].weaponRef, "printname" ) )
+		descNameParts.append( shGlobalMP.challengeData[ challengeRef ].weaponRefName )
+	}
+
+	return descNameParts
+}
+
+asset function GetChallengeIcon( string challengeRef )
+{
+	//##########################################################################
+	// 			Returns the icon of the challenge
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Tried to call GetChallengeIcon with invalid challenge ref" )
+	return shGlobalMP.challengeData[ challengeRef ].icon
+}
+
+bool function GetChallengeProgressIsDecimal( string challengeRef )
+{
+	Assert( challengeRef in shGlobalMP.challengeData, "Tried to call GetChallengeProgressIsDecimal with invalid challenge ref" )
+	return shGlobalMP.challengeData[ challengeRef ].progressDecimal
+}
+
+ChallengeItemReward ornull function GetItemRewardForChallengeTier( string challengeRef, int tier )
+{
+	if ( !( challengeRef in file.itemRewardsForChallenge ) )
+		return null
+
+	if ( !( tier in file.itemRewardsForChallenge[ challengeRef ] ) )
+		return null
+
+	return file.itemRewardsForChallenge[ challengeRef ][ tier ]
+}
+
+int function GetCurrentChallengeTier( string challengeRef, entity player = null )
+{
+	// Returns what challenge index we are on based on total challenge progress
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called GetCurrentChallengeTier with invalid challengeRef" )
+	float playerChallengeProgress = _GetChallengeProgressTotal( challengeRef, player )
+
+	foreach ( index, tierGoal in shGlobalMP.challengeData[ challengeRef ].tierGoals )
+	{
+		if ( playerChallengeProgress < tierGoal )
+			return index
+		if ( CHALLENGES_RESET_AT_EACH_STAGE )
+			playerChallengeProgress -= tierGoal
+	}
+
+	// Player must be done with all challenges
+	return shGlobalMP.challengeData[ challengeRef ].tierGoals.len() - 1
+}
+
+float function GetGoalForChallengeTier( string challengeRef, int tier )
+{
+	//##########################################################################
+	// 			Returns goal number to reach specified tier
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called GetGoalForChallengeTier with invalid challenge ref" )
+	Assert( tier in shGlobalMP.challengeData[ challengeRef ].tierGoals, "Called GetGoalForChallengeTier with invalid tier" )
+
+	return shGlobalMP.challengeData[ challengeRef ].tierGoals[ tier ]
+}
+
+float function GetCurrentChallengeGoal( string challengeRef, entity player = null )
+{
+	//##########################################################################
+	// 			Returns goal number to reach for current challenge
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called GetCurrentChallengeGoal with invalid challenge ref" )
+	int currentTier = GetCurrentChallengeTier( challengeRef, player )
+
+	Assert( currentTier in shGlobalMP.challengeData[ challengeRef ].tierGoals, "Invalid challenge index in GetCurrentChallengeGoal" )
+	return shGlobalMP.challengeData[ challengeRef ].tierGoals[ currentTier ]
+}
+
+int function GetChallengeXPReward( string challengeRef, int tier, entity player = null )
+{
+	//##########################################################################
+	// 			Returns XP reward for the specified challenge tier
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called GetChallengeXPReward with invalid challenge ref" )
+	Assert( tier in file.challengeXPRewardsForTier )
+	return file.challengeXPRewardsForTier[ tier ]
+}
+
+/*function GetChallengeBurnCardRewards( challengeRef, tier, player = null )
+{
+	//##########################################################################
+	// 			Returns Burn Card rewards for the current challenge tier
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called GetChallengeBurnCardRewards with invalid challenge ref" )
+
+	local cards = []
+
+	if ( !shGlobalMP.challengeData[ challengeRef ].burnCardRewards[tier] )
+		return cards
+
+	return ( clone shGlobalMP.challengeData[ challengeRef ].burnCardRewards[ tier ] )
+}*/
+
+ChallengeProgressData function GetChallengeProgressData( string challengeRef, entity player )
+{
+	ChallengeProgressData data
+	data.progress = GetCurrentChallengeProgress( challengeRef, player )
+	data.tier = GetCurrentChallengeTier( challengeRef, player )
+	data.tierGoal = shGlobalMP.challengeData[ challengeRef ].tierGoals[ data.tier ]
+	data.progressFrac = clamp( data.progress.tofloat() / data.tierGoal, 0.0, 1.0 )
+
+	return data
+}
+
+
+float function GetCurrentChallengeProgress( string challengeRef, entity player = null )
+{
+	//##########################################################################
+	// 			Returns progress into current challenge
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called GetCurrentChallengeProgress with invalid challenge ref" )
+
+	float playerChallengeProgress = _GetChallengeProgressTotal( challengeRef, player )
+
+	if ( CHALLENGES_RESET_AT_EACH_STAGE )
+	{
+		foreach( index, tierGoal in shGlobalMP.challengeData[ challengeRef ].tierGoals )
+		{
+			if ( playerChallengeProgress <= tierGoal )
+				return playerChallengeProgress
+
+			playerChallengeProgress -= tierGoal
+		}
+		Assert( 0, "Error trying to get challenge progress" )
+	}
+	else
+		return clamp( playerChallengeProgress, 0, shGlobalMP.challengeData[ challengeRef ].totalNumToComplete )
+}
+
+float function GetCurrentChallengeProgressFrac( string challengeRef, entity player = null )
+{
+	//##########################################################################
+	// 			Returns progress into current challenge ( 0-1 )
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called GetCurrentChallengeProgressFrac with invalid challenge ref" )
+
+	float tierGoal =  GetCurrentChallengeGoal( challengeRef, player )
+	float progress = GetCurrentChallengeProgress( challengeRef, player )
+
+	return clamp( progress / tierGoal, 0.0, 1.0 )
+}
+
+float function GetChallengeProgressFracForTier( string challengeRef, int tier, entity player = null )
+{
+	//##########################################################################
+	// 		  Returns progress into challenge for specified tier ( 0-1 )
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called GetChallengeProgressFracForTier with invalid challenge ref" )
+
+	float tierGoal =  GetGoalForChallengeTier( challengeRef, tier )
+	float progress = GetCurrentChallengeProgress( challengeRef, player )
+
+	return clamp( progress / tierGoal, 0.0, 1.0 )
+}
+
+int function GetChallengeTierCount( string challengeRef )
+{
+	//##########################################################################
+	// 		  Returns the number of challenges in the challenge type
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called GetChallengeTierCount with invalid challenge ref" )
+	return shGlobalMP.challengeData[ challengeRef ].tierGoals.len()
+}
+
+int function GetChallengeFlags( string challengeRef )
+{
+	//##########################################################################
+	// 		  		Returns the flags set for this challenge
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called GetChallengeFlags with invalid challenge ref" )
+	return shGlobalMP.challengeData[ challengeRef ].flags
+}
+
+bool function IsChallengeComplete( string challengeRef, entity player = null )
+{
+	//##########################################################################
+	// 		  Returns true if all tiers of the challenge are complete
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called IsChallengeComplete with invalid challenge ref" )
+
+	float progressTotal = _GetChallengeProgressTotal( challengeRef, player )
+
+	return progressTotal >= shGlobalMP.challengeData[ challengeRef ].totalNumToComplete
+}
+
+bool function IsChallengeTierComplete( string challengeRef, int tier, entity player = null )
+{
+	// TEMP DISABLED
+	return true
+
+	//##########################################################################
+	// 	  Returns true if the specified tier of the challenge is complete
+	//##########################################################################
+
+	Assert( challengeRef in shGlobalMP.challengeData, "Called IsChallengeTierComplete with invalid challenge ref" )
+
+	float progressTotal = _GetChallengeProgressTotal( challengeRef, player )
+	float goal = GetGoalForChallengeTier( challengeRef, tier )
+
+	return progressTotal >= goal
+}
+
+var function GetMatchStartChallengeProgress( string challengeRef, entity player )
+{
+	Assert( challengeRef in shGlobalMP.challengeData )
+
+	//Assert( IsUI() || ( IsValid( player ) && player.IsPlayer() ) )
+	return player.GetPersistentVar( GetChallengeStorageArrayNameForRef(challengeRef) + "[" + challengeRef + "].previousProgress" )
+}
+
+int function GetChallengeTierForProgress( string challengeRef, float progress )
+{
+	Assert( challengeRef in shGlobalMP.challengeData, "Tried to call GetChallengeTierForProgress with invalid challenge ref" )
+
+	foreach( index, tierGoal in shGlobalMP.challengeData[ challengeRef ].tierGoals )
+	{
+		if ( progress < tierGoal )
+			return index
+		if ( CHALLENGES_RESET_AT_EACH_STAGE )
+			progress -= tierGoal
+	}
+
+	// Player must be done with all challenges
+	return shGlobalMP.challengeData[ challengeRef ].tierGoals.len() - 1
+}
+
+string function GetChallengeRefFromID( int id )
+{
+	//##########################################################################
+	// 	  	Returns the challenge ref string with the matching id
+	//##########################################################################
+	Assert( IsClient() )
+
+	foreach( challengeRef, data in shGlobalMP.challengeData )
+	{
+		if ( data.id == id )
+			return challengeRef
+	}
+	Assert( 0, "No challenge ref with ID" + id )
+
+	unreachable
+}
+
+void function PutChallengeNameOnLabel( string label, string challengeRef, int tier = -1, entity player = null )
+{
+	Assert( !IsServer() )
+	Assert( challengeRef in shGlobalMP.challengeData, "Tried to call PutChallengeNameOnLabel with invalid challenge ref" )
+
+	array<string> name
+	if ( tier == -1 || IsDailyChallenge( challengeRef ) )
+		name = GetChallengeName( challengeRef, player )
+	else
+		name = GetChallengeNameForTier( challengeRef, tier )
+
+	//SetChallengeNameTextOnLabel( label, name )
+}
+
+/*function SetChallengeNameTextOnLabel( label, name )
+{
+	Assert( name.len() )
+	if ( name.len() == 2 )
+		label.SetText( name[0], name[1] )
+	else if ( name.len() == 3 )
+		label.SetText( name[0], name[1], name[2] )
+	else
+		Assert( 0, "Unhandled challenge name format" )
+}*/
+
+array<string> function GetChallengesByCategory( int category )
+{
+	array<string> refs = []
+
+	if ( category in shGlobalMP.challengeDataByCategory )
+	{
+		foreach ( key, val in shGlobalMP.challengeDataByCategory[ category ] )
+			refs.append( key )
+	}
+
+	return refs
+}
+
+/*#if UI
+void function PutChallengeRewardsOnPanel( string challengeRef, int tier, string panel )
+{
+	entity player = GetUIPlayer()
+	if ( player == null )
+		return
+
+	var challengeXPRewardLabel = panel.GetChild( "ChallengeXPRewardLabel" )
+	var challengeXPRewardSmallLabel = panel.GetChild( "ChallengeXPRewardSmallLabel" )
+	var coinCountIcon = panel.GetChild( "CoinCountIcon" )
+	var coinAmountLabel = panel.GetChild( "CoinAmountLabel" )
+	var challengeDailyXPRewardSmallLabel = panel.GetChild( "ChallengeDailyXPRewardSmallLabel" )
+	var coinCountIconSmall = panel.GetChild( "CoinCountIconSmall" )
+	var coinAmountLabelSmall = panel.GetChild( "CoinAmountLabelSmall" )
+	var challengeItemRewardNameLabel = panel.GetChild( "ChallengeRewardNameLabel" )
+	var challengeItemRewardDescLabel = panel.GetChild( "ChallengeRewardDescLabel" )
+	var challengeItemRewardIcon = panel.GetChild( "ChallengeRewardIcon" )
+
+	array<var> bcPanels = []
+	bcPanels.append( panel.GetChild( "ChallengeBurnCardReward1" ) )
+	bcPanels.append( panel.GetChild( "ChallengeBurnCardReward2" ) )
+	bcPanels.append( panel.GetChild( "ChallengeBurnCardReward3" ) )
+	bcPanels.append( panel.GetChild( "ChallengeBurnCardReward4" ) )
+
+	local challengeBurnCardRewardPanels = []
+	challengeBurnCardRewardPanels.resize( bcPanels.len() )
+
+	foreach ( index, elem in bcPanels )
+	{
+		int scriptID = int( Hud_GetScriptID( elem ) )
+		challengeBurnCardRewardPanels[scriptID] = {}
+		CreateBurnCardPanel( challengeBurnCardRewardPanels[scriptID], elem )
+		HideBurnCard( challengeBurnCardRewardPanels[scriptID] )
+	}
+
+	challengeXPRewardLabel.Hide()
+	challengeXPRewardSmallLabel.Hide()
+	coinCountIcon.Hide()
+	coinAmountLabel.Hide()
+	challengeDailyXPRewardSmallLabel.Hide()
+	coinCountIconSmall.Hide()
+	coinAmountLabelSmall.Hide()
+
+	ChallengeItemReward ornull challengeRewardItemData = GetItemRewardForChallengeTier( challengeRef, tier )
+	if ( challengeRewardItemData != null )
+	{
+		local itemDesc = null
+		asset itemImage = $""
+		if ( challengeRewardItemData.childRef != null )
+		{
+			local subItemName = GetSubitemName( challengeRewardItemData.parentRef, challengeRewardItemData.childRef )
+			local itemName = GetItemName( challengeRewardItemData.parentRef )
+			local typeName = GetItemTypeName( challengeRewardItemData.Type )
+			challengeItemRewardNameLabel.SetText( "#CHALLENGE_REWARD_SUBITEM_NAME", itemName, typeName, subItemName )
+
+			itemDesc = GetSubitemDescription( challengeRewardItemData.parentRef, challengeRewardItemData.childRef )
+			itemImage = GetSubitemImage( challengeRewardItemData.parentRef, challengeRewardItemData.childRef )
+		}
+		else
+		{
+			local itemName = GetItemName( challengeRewardItemData.parentRef )
+			local typeName = GetItemTypeName( challengeRewardItemData.Type )
+			challengeItemRewardNameLabel.SetText( "#CHALLENGE_REWARD_ITEM_NAME", typeName, itemName )
+
+			itemDesc = GetItemDescription( challengeRewardItemData.parentRef )
+			itemImage = GetItemImage( challengeRewardItemData.parentRef )
+		}
+		Assert( itemDesc != null )
+		Assert( itemImage != $"" )
+
+		challengeItemRewardDescLabel.SetText( itemDesc )
+		challengeItemRewardIcon.SetImage( itemImage )
+
+		challengeItemRewardNameLabel.Show()
+		challengeItemRewardDescLabel.Show()
+		challengeItemRewardIcon.Show()
+		challengeXPRewardLabel.Hide()
+
+		foreach ( bcTable in challengeBurnCardRewardPanels )
+			HideBurnCard( bcTable )
+	}
+	else
+	{
+		int xpReward = GetChallengeXPReward( challengeRef, tier )
+		challengeXPRewardSmallLabel.SetText( "#CHALLENGE_REWARD_XP_VALUE", xpReward )
+		challengeXPRewardLabel.SetText( "#CHALLENGE_REWARD_XP_VALUE", xpReward )
+		challengeDailyXPRewardSmallLabel.SetText( "#CHALLENGE_REWARD_XP_VALUE", xpReward )
+		challengeItemRewardNameLabel.Hide()
+		challengeItemRewardDescLabel.Hide()
+		challengeItemRewardIcon.Hide()
+
+		coinAmountLabel.SetText( string( COIN_REWARD_DAILY_CHALLENGE ) )
+		coinAmountLabelSmall.SetText( string( COIN_REWARD_DAILY_CHALLENGE ) )
+
+		/*local cardRefs = GetChallengeBurnCardRewards( challengeRef, tier )
+
+		// hide the burn card rewards until burn cards are unlocked?
+		if ( IsItemLocked( player, "burn_card_slot_1" ) )
+			cardRefs = []
+
+		if ( !cardRefs.len() )
+		{
+			foreach ( bcTable in challengeBurnCardRewardPanels )
+				HideBurnCard( bcTable )
+
+			challengeXPRewardSmallLabel.Hide()
+			challengeXPRewardLabel.Show()
+
+			if ( IsDailyChallenge( challengeRef ) && IsBlackMarketUnlocked( player ) )
+			{
+				coinCountIcon.Show()
+				coinAmountLabel.Show()
+			}
+		}
+		else
+		{
+			if ( IsDailyChallenge( challengeRef ) )
+			{
+				challengeDailyXPRewardSmallLabel.Show()
+				if ( IsBlackMarketUnlocked( player ) )
+				{
+					coinCountIconSmall.Show()
+					coinAmountLabelSmall.Show()
+				}
+				else
+				{
+					coinCountIconSmall.Hide()
+					coinAmountLabelSmall.Hide()
+				}
+			}
+			else
+			{
+				challengeXPRewardSmallLabel.Show()
+				challengeXPRewardLabel.Hide()
+			}
+
+			foreach ( index, bcTable in challengeBurnCardRewardPanels )
+			{
+				if ( index < cardRefs.len() )
+				{
+					SetBurnCardToCard( bcTable, true, cardRefs[index] )
+					ShowBurnCard( bcTable )
+				}
+				else
+				{
+					HideBurnCard( bcTable )
+				}
+			}
+
+			local cardWidth = challengeBurnCardRewardPanels[0].panel.GetWidth()
+			if ( cardRefs.len() > 1 )
+			{
+				local otherCardXOffset = challengeBurnCardRewardPanels[1].panel.GetX()
+				cardWidth += otherCardXOffset
+			}
+
+			local xOffset = (cardWidth * 0.5) * ( 1 - cardRefs.len() )
+			challengeBurnCardRewardPanels[0].panel.SetX( xOffset )
+		}
+	//}
+}
+#endif // UI
+*/
+#if !UI
+void function DebugPrintAllChallenges()
+{
+	entity player = GetPlayerArray()[0]
+	int totalChallenges = 0
+
+	foreach( category, data in shGlobalMP.challengeDataByCategory )
+	{
+		if ( data.len() == 0 )
+			continue
+
+		print( "\n" )
+		print( "\n" )
+		print( GetChallengeCategoryName( category ) )
+		print( "\n" )
+		printt( "-------------------------------------")
+		foreach( challengeRef, challengeData in data )
+		{
+			string challengeName = GetChallengeName( challengeRef, player )[1]
+			array<string> challengeDesc = GetChallengeDescription( challengeRef )
+			int tierCount = GetChallengeTierCount( challengeRef )
+			array<float> tierGoals = []
+			for ( int i = 0; i < tierCount; i++ )
+				tierGoals.append( GetGoalForChallengeTier( challengeRef, i ) )
+
+			print( "    " )
+			print( challengeName )
+			print( "  -  ")
+			print( challengeDesc[0] )
+			print( "  (" )
+			foreach( index, goal in tierGoals )
+			{
+				if ( index != 0 )
+					print( "/" )
+				print( goal )
+			}
+			print( ")" )
+
+			print( "\n" )
+
+			totalChallenges++
+		}
+	}
+	printt( "Total Challenges:", totalChallenges )
+}
+#endif
+
+array<string> function GetPlayerTrackedChallenges( entity player )
+{
+	#if !UI
+		Assert( IsValid( player ) )
+	#endif
+
+	array<string> trackedChallenges = []
+	for ( int i = 0; i < MAX_TRACKED_CHALLENGES; i++ )
+	{
+		var ref = player.GetPersistentVar( "trackedChallengeRefs[" + i + "]" )
+		trackedChallenges.append( expect string( ref ) )
+	}
+	return trackedChallenges
+}
+
+#if SERVER
+void function UntrackChallengeRef( entity player, string ref )
+{
+	Assert( IsServer() )
+	Assert( ref != "" )
+
+	bool found = false
+	for ( int i = 0; i < MAX_TRACKED_CHALLENGES; i++ )
+	{
+		if ( player.GetPersistentVar( "trackedChallengeRefs[" + i + "]" ) == ref )
+		{
+			player.SetPersistentVar( "trackedChallengeRefs[" + i + "]", "" )
+			found = true
+		}
+		else if ( found )
+		{
+			player.SetPersistentVar( "trackedChallengeRefs[" + (i - 1) + "]", player.GetPersistentVar( "trackedChallengeRefs[" + i + "]" ) )
+			player.SetPersistentVar( "trackedChallengeRefs[" + i + "]", "" )
+		}
+	}
+
+	found = false
+	for ( int i = 0; i < MAX_TRACKED_CHALLENGES; i++ )
+	{
+		if ( player.GetPersistentVar( "EOGTrackedChallengeRefs[" + i + "]" ) == ref )
+		{
+			player.SetPersistentVar( "EOGTrackedChallengeRefs[" + i + "]", "" )
+			found = true
+		}
+		else if ( found )
+		{
+			player.SetPersistentVar( "EOGTrackedChallengeRefs[" + (i - 1) + "]", player.GetPersistentVar( "EOGTrackedChallengeRefs[" + i + "]" ) )
+			player.SetPersistentVar( "EOGTrackedChallengeRefs[" + i + "]", "" )
+		}
+	}
+}
+#endif

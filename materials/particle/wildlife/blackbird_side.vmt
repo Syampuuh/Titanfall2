@@ -1,0 +1,15 @@
+"SpriteCard"
+{
+	$basetexture "particle/wildlife/blackbird_side"
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+	//$maxsize .8
+	//$startfadesize .9
+	//$endfadesize 1.3
+	//$DEPTHBLEND 1
+	$overbrightfactor 2
+
+	$vertexFogAmount 1
+
+}

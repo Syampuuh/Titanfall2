@@ -1,0 +1,16 @@
+"SpriteCard"
+{
+	$basetexture "particle\explosions\exp_fireball_dark"
+	//$basetexture "particle\explosions\exp_burst_alpha_full"
+	$vertexcolor 1
+	$vertexalpha 1
+	$overbrightfactor 3
+	$translucent 	1
+	$nocull	1
+	//$splinetype	1
+	$depthblend 1
+	$depthblendscale 60
+
+	$vertexFogAmount 1
+
+}

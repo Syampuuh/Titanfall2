@@ -1,0 +1,276 @@
+global function GetCustomBindCommandForButtonIndexPilot
+global function GetCustomBindCommandForButtonIndexTitan
+global function GetCustomButtonIndexForCommandIndexPilot
+global function GetCustomButtonIndexForCommandIndexTitan
+
+global function SetStandardAbilityBindingsForPilot
+global function SetStandardAbilityBindingsForTitan
+global function ChangeCustomGamepadButtonIndexToCommandIndex_Pilot
+global function ChangeCustomGamepadButtonIndexToCommandIndex_Titan
+
+#if CLIENT
+global function RefreshCustomGamepadBinds
+#endif // CLIENT
+
+#if UI
+global function RefreshCustomGamepadBinds_UI
+#endif // UI
+
+
+global const array<string> CUSTOM_BIND_ALIASES_PILOT =
+[
+	"jump",
+	"toggle_duck",
+	"useandreload",
+	"weaponcycle",
+	"zoom",
+	"attack",
+	"offhand1",
+	"offhand0",
+	"speed",
+	"melee"
+]
+
+global const array<string> CUSTOM_BIND_ALIASES_TITAN =
+[
+	"dodge",
+	"toggle_duck",
+	"useandreload",
+	"offhand2",
+	"zoom",
+	"attack",
+	"offhand1",
+	"offhand0",
+	"speed",
+	"melee"
+]
+
+int function ClampForCmd( string str )
+{
+	int xx = int( str )
+	if ( xx < 0 )
+		return 0
+	if ( xx > 9 )
+		return 9
+	return xx
+}
+
+array<int> function BuildCommandForButtonArrayFromConVar( string convarName )
+{
+	string csvStr = GetConVarString( convarName )
+	array<string> arr = split( csvStr, "," )
+	if ( arr.len() != 10 )
+	{
+		printt( "Resetting convar '" + convarName + "' because it has invalid setting: '" + csvStr + "'" )
+		SetConVarToDefault( convarName )
+		string csvStr = GetConVarString( convarName )
+		arr = split( csvStr, "," )
+	}
+	Assert( arr.len() == 10 )
+
+	array<int> result = [
+		ClampForCmd( arr[0] ),
+		ClampForCmd( arr[1] ),
+		ClampForCmd( arr[2] ),
+		ClampForCmd( arr[3] ),
+		ClampForCmd( arr[4] ),
+		ClampForCmd( arr[5] ),
+		ClampForCmd( arr[6] ),
+		ClampForCmd( arr[7] ),
+		ClampForCmd( arr[8] ),
+		ClampForCmd( arr[9] )
+	]
+
+	return result
+}
+
+string function GetCustomBindCommandForButtonIndex_( int buttonIndex, string convarName, array<string> bindAliases )
+{
+	Assert( (buttonIndex >= 0) && (buttonIndex < 10) )
+
+	array<int> bindList = BuildCommandForButtonArrayFromConVar( convarName )
+	int bindIdx = bindList[buttonIndex]
+	if ( (bindIdx < 0) || (bindIdx >= 10) )
+		bindIdx = 0
+
+	string result = bindAliases[bindIdx]
+	return result
+}
+string function GetCustomBindCommandForButtonIndexPilot( int buttonIndex )
+{
+	return GetCustomBindCommandForButtonIndex_( buttonIndex, "gamepad_custom_pilot", CUSTOM_BIND_ALIASES_PILOT )
+}
+string function GetCustomBindCommandForButtonIndexTitan( int buttonIndex )
+{
+	return GetCustomBindCommandForButtonIndex_( buttonIndex, "gamepad_custom_titan", CUSTOM_BIND_ALIASES_TITAN )
+}
+
+//
+int function GetCustomButtonIndexForCommandIndex_( int commandIndex, string convarName )
+{
+	Assert( (commandIndex >= 0) && (commandIndex < 10) )
+	array<int> bindList = BuildCommandForButtonArrayFromConVar( convarName )
+	for ( int buttonIndex = 0; buttonIndex < 10; ++buttonIndex )
+	{
+		if ( bindList[buttonIndex] == commandIndex )
+			return buttonIndex
+	}
+
+	return -1
+}
+int function GetCustomButtonIndexForCommandIndexPilot( int commandIndex )
+{
+	return GetCustomButtonIndexForCommandIndex_( commandIndex, "gamepad_custom_pilot" )
+}
+int function GetCustomButtonIndexForCommandIndexTitan( int commandIndex )
+{
+	return GetCustomButtonIndexForCommandIndex_( commandIndex, "gamepad_custom_titan" )
+}
+
+
+string function IntArrayToCSS( array<int> srcArray )
+{
+	string result = ""
+	bool usedOne = false
+	int count = srcArray.len()
+	for ( int idx = 0; idx < count; ++idx )
+	{
+		string thisStr = string( srcArray[idx] )
+		if ( (thisStr.len() > 0) )
+		{
+			if ( !usedOne )
+				usedOne = true
+			else
+				result += ","
+			result += thisStr
+		}
+	}
+
+	return result
+}
+
+bool function ChangeCustomGamepadButtonIndexToCommandIndex_( int newButtonIndex, int newCommandIndex, string convarName )
+{
+	array<int> arr = BuildCommandForButtonArrayFromConVar( convarName )
+	Assert( arr.len() == 10 )
+
+	int oldButtonIndex = -1
+	for ( int idx = 0; idx < 10; ++idx )
+	{
+		if ( arr[idx] == newCommandIndex )
+		{
+			oldButtonIndex = idx
+			break
+		}
+	}
+
+	if ( (oldButtonIndex == -1) || (oldButtonIndex == newButtonIndex) )
+		return false
+
+	int oldCommandIndex = arr[newButtonIndex]
+	arr[newButtonIndex] = newCommandIndex
+	arr[oldButtonIndex] = oldCommandIndex
+
+	string newValue = IntArrayToCSS( arr )
+	SetConVarString( convarName, newValue )
+	return true
+}
+bool function ChangeCustomGamepadButtonIndexToCommandIndex_Pilot( int newButtonIndex, int newCommandIndex )
+{
+	return ChangeCustomGamepadButtonIndexToCommandIndex_( newButtonIndex, newCommandIndex, "gamepad_custom_pilot" )
+}
+bool function ChangeCustomGamepadButtonIndexToCommandIndex_Titan( int newButtonIndex, int newCommandIndex )
+{
+	return ChangeCustomGamepadButtonIndexToCommandIndex_( newButtonIndex, newCommandIndex, "gamepad_custom_titan" )
+}
+
+
+void function SetABBind( entity player, int index, string baseCmd )
+{
+	SetAbilityBinding( player, index, ("+" + baseCmd), ("-" + baseCmd) )
+}
+
+void function SetCustomGamepadBindsFor_( entity player, string convarName, array<string> bindAliases )
+{
+	array<int> arr = BuildCommandForButtonArrayFromConVar( convarName )
+	SetABBind( player, 10, bindAliases[arr[0]] )	// A
+	SetABBind( player, 11, bindAliases[arr[1]] )	// B
+	SetABBind( player, 12, bindAliases[arr[2]] )	// X
+	SetABBind( player, 13, bindAliases[arr[3]] )	// Y
+	SetABBind( player, 14, bindAliases[arr[4]] )	// LT
+	SetABBind( player, 15, bindAliases[arr[5]] )	// RT
+	SetABBind( player, 16, bindAliases[arr[6]] )	// LS
+	SetABBind( player, 17, bindAliases[arr[7]] )	// RS
+	SetABBind( player, 18, bindAliases[arr[8]] )	// AS1
+	SetABBind( player, 19, bindAliases[arr[9]] )	// AS2
+}
+
+void function SetCustomGamepadBindsForPilot( entity player )
+{
+	SetCustomGamepadBindsFor_( player, "gamepad_custom_pilot", CUSTOM_BIND_ALIASES_PILOT )
+}
+
+void function SetCustomGamepadBindsForTitan( entity player )
+{
+	SetCustomGamepadBindsFor_( player, "gamepad_custom_titan", CUSTOM_BIND_ALIASES_TITAN )
+}
+
+void function SetStandardAbilityBindingsForPilot( entity player )
+{
+	SetAbilityBinding( player, 1, "+scriptCommand2", "-scriptCommand2" )	// "+ability 1"
+	SetAbilityBinding( player, 2, "+exit", "-exit" )						// "+ability 2"
+	SetAbilityBinding( player, 3, "+jump", "-jump" )						// "+ability 3"
+	SetAbilityBinding( player, 4, "+jump", "-jump" )						// "+ability 4"
+	SetAbilityBinding( player, 5, "+offhand1", "-offhand1" )				// "+ability 5"
+	// (custom)																// "+ability 6"
+	SetAbilityBinding( player, 7, "+weaponcycle", "-weaponcycle" )			// "+ability 7"
+	SetAbilityBinding( player, 8, "+toggle_duck", "-toggle_duck" )			// "+ability 8"
+	SetAbilityBinding( player, 9, "+offhand0", "-offhand0" )				// "+ability 9"
+
+	SetCustomGamepadBindsForPilot( player )
+}
+
+void function SetStandardAbilityBindingsForTitan( entity player )
+{
+	SetAbilityBinding( player, 1, "+offhand3", "-offhand3" )				// "+ability 1"
+	SetAbilityBinding( player, 2, "+exit", "-exit" )						// "+ability 2"
+	SetAbilityBinding( player, 3, "+dodge", "-dodge" )						// "+ability 3"
+	SetAbilityBinding( player, 4, "+offhand1", "-offhand1" )				// "+ability 4"
+	SetAbilityBinding( player, 5, "+dodge", "-dodge" )						// "+ability 5"
+	// (custom)																// "+ability 6"
+	SetAbilityBinding( player, 7, "+offhand2", "-offhand2" )				// "+ability 7"
+	SetAbilityBinding( player, 8, "+offhand0", "-offhand0" )				// "+ability 8"
+	SetAbilityBinding( player, 9, "+toggle_duck", "-toggle_duck" )			// "+ability 9"
+
+	SetCustomGamepadBindsForTitan( player )
+}
+
+
+#if CLIENT
+void function RefreshCustomGamepadBinds()
+{
+	entity player = GetLocalClientPlayer()
+	if ( !IsValid( player ) )
+		return
+
+	if ( player.IsTitan() )
+		SetCustomGamepadBindsForTitan( player )
+	else
+		SetCustomGamepadBindsForPilot( player )
+}
+#endif // #if CLIENT
+
+
+////////////////////////////////////////
+#if UI
+void function RefreshCustomGamepadBinds_UI()
+{
+	if ( !IsFullyConnected() )
+	{
+		SetCustomGamepadBindsForPilot( GetLocalClientPlayer() )
+		return
+	}
+
+	RunClientScript( "RefreshCustomGamepadBinds" )
+}
+#endif // #if UI

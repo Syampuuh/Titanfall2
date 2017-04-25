@@ -1,0 +1,22 @@
+"SpriteCard"
+{
+	$basetexture "particle/electric_arc/electric_arc_trail"
+
+	$RAMPTEXTURE "particle/ramps/elec_blue_ramp.vtf"
+
+	$additive 1
+	$splinetype	1
+	$addself 2
+	$vertexFogAmount 1
+	$texColorFromAlpha 1
+
+
+	$translucent 	1
+	$nocull	1
+
+//	$overbrightfactor 3
+
+}
+
+
+

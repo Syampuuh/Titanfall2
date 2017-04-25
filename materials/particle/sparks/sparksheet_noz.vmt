@@ -1,0 +1,14 @@
+"spritecard"
+{
+	$basetexture "particle/sparks/sparksheet"
+
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+	$additive 1
+	$ignorez 1
+
+	$overbrightfactor 30
+	
+	$vertexFogAmount 1
+}

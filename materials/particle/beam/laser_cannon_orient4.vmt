@@ -1,0 +1,12 @@
+"SpriteCard"
+{
+	"$basetexture" "particle\beam\laser_cannon"
+	$translucent 1
+	$additive 1
+	//$addself 	2
+	//$overbrightfactor 6
+
+	//"$nocull"	1
+	$splinetype	1
+	$orientation 4
+}

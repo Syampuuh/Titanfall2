@@ -1,0 +1,20 @@
+"UnlitTwoTexture"
+{
+	"$basetexture" "models\weapons\attachments\ammo_counter_screen_bg_col"
+	"$Texture2" "effects/dev_scanline"
+	"$translucent" 0
+	"$selfillum" "1"
+
+	"Proxies"
+	{
+		//Horizontal movement speed 
+		"UniformNoise"
+		{
+			"minVal" 0
+			"maxVal" 0.35
+			"resultVar" "$alpha"
+		}
+	}
+}
+
+

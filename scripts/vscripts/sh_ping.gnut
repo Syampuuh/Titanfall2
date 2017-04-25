@@ -1,0 +1,62 @@
+
+global function Spotting_InitVars
+global function CanSpot
+global function SetPlayerSpottingVars
+global function TrySpottingGroupReset
+
+global const bool SPOTTING_ENABLED = false
+
+const float SPOT_DEBOUNCE_TIME = 0.2
+const float SPOT_GROUP_TIME = 6.0
+const int SPOTS_PER_GROUP = 3
+
+void function Spotting_InitVars( entity player )
+{
+	player.SetNumPingsAvailable( NUM_SPOTS_AVAILABLE )
+}
+
+bool function CanSpot( entity player )
+{
+	if ( IsSingleplayer() )
+		return false
+
+	if ( !IsAlive( player ) )
+		return false
+
+	if ( PlayerBlockedByTeamEMP( player ) )
+		return false
+
+	if ( player.IsPhaseShifted() )
+		return false
+
+	if ( player.GetNumPingsAvailable() == 0 )
+		return false
+
+	if ( player.GetLastPingTime() + SPOT_DEBOUNCE_TIME > Time() )
+		return false
+
+	if ( player.GetPingGroupAccumulator() >= SPOTS_PER_GROUP )
+		return false
+
+	return true
+}
+
+void function SetPlayerSpottingVars( entity player )
+{
+	player.SetLastPingTime( Time() )
+	player.SetNumPingsAvailable( player.GetNumPingsAvailable() - 1 )
+	player.SetNumPingsUsed( player.GetNumPingsUsed() + 1 )
+
+	player.SetPingGroupAccumulator( player.GetPingGroupAccumulator() + 1 )
+}
+
+void function TrySpottingGroupReset( entity player )
+{
+	float time = Time()
+
+	if ( player.GetPingGroupStartTime() + SPOT_GROUP_TIME < time )
+	{
+		player.SetPingGroupStartTime( time )
+		player.SetPingGroupAccumulator( 0 )
+	}
+}

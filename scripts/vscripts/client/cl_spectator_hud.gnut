@@ -1,0 +1,134 @@
+global function ClSpectatorHud_Init
+global function CreateSpectatorHud
+struct
+{
+	var spectatorHud = null
+	var callingCardRui = null
+}
+file
+
+void function ClSpectatorHud_Init()
+{
+	if ( !IsMenuLevel() )
+	{
+		AddFirstPersonSpectateStartedCallback( UpdateSpectatorHud )
+		AddThirdPersonSpectateStartedCallback( UpdateSpectatorHud)
+		AddOnSpectatorTargetChangedCallback( SpectatorTargetChanged_UpdateSpectatorHud )
+
+		CreateSpectatorHud( GetLocalClientPlayer() )
+
+		AddCallback_EntitiesDidLoad( EntitiesDidLoad )
+	}
+}
+
+void function EntitiesDidLoad()
+{
+	if ( !IsRoundWinningKillReplayEnabled() ) //Need to check in EntitiesDidLoad as opposed to main() since the .nv isn't set yet in main()
+		return
+
+	AddCallback_KillReplayStarted( RoundWinningKillReplayStart_HideSpectatorHud )
+	AddCallback_KillReplayEnded( RoundWinningKillReplayEnd_ShowSpectatorHud )
+}
+
+
+void function CreateSpectatorHud( entity clientPlayer ) //We never actually destroy the rui, we just depend on code rui variable sys.player.isSpectator to hide and show as appropriate
+{
+	if ( file.spectatorHud == null )
+	{
+		var rui = RuiCreate( $"ui/spectator_hud.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 0 )
+		float firstPersonSpectateEnabled =  GetCurrentPlaylistVarInt( "firstpersonspectate_enabled", 0 ) == 1  ? 1.0 : 0.0
+		RuiSetFloat( rui, "firstPersonSpectateEnabled", firstPersonSpectateEnabled )
+
+		file.spectatorHud = rui
+	}
+
+}
+
+void function UpdateSpectatorHud( entity player, entity currentTarget )
+{
+	Assert( file.spectatorHud != null )
+
+	CleanUpCallingCard()
+
+	if ( currentTarget == null || !currentTarget.IsPlayer() )
+	{
+		RuiSetFloat( file.spectatorHud, "shouldShowPlayerSpectatingText", 0.0  )
+		return
+	}
+
+	string playerName = currentTarget.GetPlayerName()
+
+	RuiSetFloat( file.spectatorHud, "shouldShowPlayerSpectatingText", 1.0  )
+
+	int observerMode = player.GetObserverMode()
+
+	if( observerMode == OBS_MODE_IN_EYE )
+	{
+		RuiSetString( file.spectatorHud, "switchViewString", "#HUD_SWITCH_TO_THIRD_PERSON_VIEW"  )
+	}
+	else
+	{
+
+		Assert( observerMode == OBS_MODE_CHASE )
+		RuiSetString( file.spectatorHud, "switchViewString", "#HUD_SWITCH_TO_FIRST_PERSON_VIEW"  )
+	}
+
+	CallingCard callingCard = PlayerCallingCard_GetActive( currentTarget )
+	CallsignIcon callsignIcon = PlayerCallsignIcon_GetActive( currentTarget )
+	var rui = RuiCreate( $"ui/callsign_spectator_bottom_right.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 0 )
+	RuiSetGameTime( rui, "startTime", Time() )
+	RuiSetGameTime( rui, "endTime", Time() + 99999 )
+	RuiSetString( rui, "playerName", playerName )
+	RuiSetString( rui, "playerLevel", PlayerXPDisplayGenAndLevel( currentTarget.GetGen(), currentTarget.GetLevel() ) )
+	RuiSetString( rui, "eventText", Localize( "#HUD_SPECTATE_WATCHING_PLAYER" ) )
+	RuiSetImage( rui, "cardImage", CallingCard_GetImage( callingCard ) )
+	RuiSetInt( rui, "layoutType", CallingCard_GetLayout( callingCard ) )
+	RuiSetImage( rui, "iconImage", CallsignIcon_GetImage( callsignIcon ) )
+	RuiSetBool( rui, "isFriendly", true )
+	RuiSetBool( rui, "showTeamGlow", true )
+
+	file.callingCardRui = rui
+}
+
+void function SpectatorTargetChanged_UpdateSpectatorHud( entity player, entity previousTarget, entity currentTarget )
+{
+	UpdateSpectatorHud( player, currentTarget )
+}
+
+void function CleanUpCallingCard()
+{
+	if ( file.callingCardRui != null )
+	{
+		//RuiSetGameTime( file.callingCardRui, "endTime", Time() + 0.1 )
+		RuiDestroy( file.callingCardRui )
+		file.callingCardRui = null
+	}
+}
+
+void function RoundWinningKillReplayStart_HideSpectatorHud() //TODO: JFS. Should fix rui's sys.player.isSpectator to return false when player is in RoundWinningKillReplay
+{
+	if ( IsRoundWinningKillReplayEnabled() == false )
+		return
+
+	if ( IsReplayRoundWinning() == false )
+		return
+
+	Assert( file.spectatorHud != null )
+
+	RuiSetFloat( file.spectatorHud, "roundWinningKillReplayAlpha", 0.0 )
+
+}
+
+void function RoundWinningKillReplayEnd_ShowSpectatorHud() //TODO: JFS. Should fix rui's sys.player.isSpectator to return false when player is in RoundWinningKillReplay
+{
+	Assert( file.spectatorHud != null )
+
+	if ( IsRoundWinningKillReplayEnabled() == false )
+		return
+
+	if ( IsReplayRoundWinning() == false )
+		return
+
+	RuiSetFloat( file.spectatorHud, "roundWinningKillReplayAlpha", 1.0 )
+}
+

@@ -1,0 +1,34 @@
+"refract"
+{
+//	"$envmap" "env_cubemap"
+	"$normalmap" "effects/mosaic_anim_nml"
+
+	"$bluramount" 0
+	"$refractamount" "0.05"
+	"$refracttint" "[1 1 1]"
+
+ 	"$model" 1
+	"$translucent" 1
+
+	"$bumpframe" "0"
+
+	"Proxies"
+	{
+		//Animate frames of the normalmap
+		"AnimatedTexture"
+		{
+			"animatedtexturevar" "$NORMALMAP" 
+			"animatedtextureframenumvar" "$bumpframe"
+			"animatedtextureframerate" 15
+		}
+		
+		//Animate the refract amount
+		"Sine"
+		{
+			"resultVar" "$refractamount"
+			"sinemin" 0
+			"sinemax" 0.05
+			"sineperiod" 5
+		}
+	}
+}

@@ -1,0 +1,288 @@
+resource/ui/menus/sptitanloadout.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	VerticleBar
+		{
+			ControlName				ImagePanel
+			xpos 					%30
+			ypos					%20
+			zpos					3
+			wide					4
+			tall					645
+			image					"vgui/HUD/white"
+			drawColor				"255 255 255 255"
+			visible					1
+			scaleImage				1
+			//pin_to_sibling			TitanLoadoutBackgroundSide
+			////pin_corner_to_sibling	TOP_LEFT
+			//pin_to_sibling_corner	TOP_LEFT
+		}
+
+
+		MenuTitle
+		{
+			ControlName				Label
+			//InheritProperties		MenuTitle
+			labelText				"#MENU_BT_LOADOUT_TUTORIAL_INTEL"
+			xpos					10
+			ypos					53
+			zpos					3 // Needed or clicking on the background can hide this
+			auto_wide_tocontents 	1
+			tall					53
+			font					DefaultBold_53
+			allcaps					0
+			fgcolor_override		"255 255 255 255"
+			visible					1
+			pin_to_sibling			VerticleBar
+			textAlignment			east
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		Background
+		{
+			ControlName				ImagePanel
+			xpos 					10
+			ypos					5
+			zpos					0
+			wide					900
+			tall					650
+			image					"vgui/HUD/white"
+			drawColor				"0 0 0 175"
+			visible					1
+			scaleImage				1
+			pin_to_sibling			VerticleBar
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+		TutorialTitle
+		{
+			ControlName				Label
+			//InheritProperties		MenuTitle
+			labelText				"#MENU_BT_LOADOUT_TUTORIAL_TITLE"
+			xpos					-25
+			ypos					-25
+			zpos					3 // Needed or clicking on the background can hide this
+			auto_wide_tocontents 	0
+			wide 					900
+			tall					44
+			font					Default_44
+			allcaps					0
+			fgcolor_override		"255 255 255 255"
+			visible					0
+			textAlignment			west
+
+			pin_to_sibling			Background
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+
+		TutorialDesc
+		{
+			ControlName				Label
+			InheritProperties		R2_ContentDescription
+			labelText				"#MENU_BT_LOADOUT_TUTORIAL_INFO_SWITCH"
+			xpos					0
+			ypos					325
+			zpos					3 // Needed or clicking on the background can hide this
+			auto_wide_tocontents 	0
+			wide 					850
+			tall					75
+			font					Default_31
+			wrap					1
+			allcaps					0
+			fgcolor_override		"200 200 200 255"
+			visible					0
+			textAlignment			west
+
+			pin_to_sibling			TutorialTitle
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+
+		LoadoutDesc
+		{
+			ControlName				Label
+			InheritProperties		R2_ContentDescription
+			labelText				"#MENU_BT_LOADOUT_TUTORIAL_INFO_LOADOUT"
+			xpos					0
+			ypos					0
+			zpos					3 // Needed or clicking on the background can hide this
+			auto_wide_tocontents 	0
+			wide 					850
+			tall					75
+			font					Default_31
+			wrap					1
+			allcaps					0
+			fgcolor_override		"200 200 200 255"
+			visible					0
+			textAlignment			west
+
+			pin_to_sibling			TutorialDesc
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+
+		CoreDesc
+		{
+			ControlName				Label
+			InheritProperties		R2_ContentDescription
+			labelText				"#MENU_BT_LOADOUT_TUTORIAL_INFO_CORE"
+			xpos					0
+			ypos					0
+			zpos					3 // Needed or clicking on the background can hide this
+			auto_wide_tocontents 	0
+			wide 					850
+			tall					75
+			font					Default_31
+			wrap					1
+			allcaps					0
+			fgcolor_override		"200 200 200 255"
+			visible					0
+			textAlignment			west
+
+			pin_to_sibling			LoadoutDesc
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+
+//////////////////////////////////////////////////////////////////
+
+		WeaponIcon
+		{
+			ControlName				ImagePanel
+			xpos 					-25
+			ypos					-95
+			wide					%15
+			tall					%15
+			visible					0
+			scaleImage				1
+			image 					"r2_ui/menus/loadout_icons/titan_weapon/titan_weapon_40mm"
+			pin_to_sibling			Background
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		OrdnanceIcon
+		{
+			ControlName				ImagePanel
+			xpos 					0
+			ypos					0
+			wide					100
+			tall					100
+			visible					0
+			scaleImage				1
+			image 					"rui/titan_loadout/ordnance/tracking_rockets"
+			pin_to_sibling			WeaponIcon
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		DefensiveIcon
+		{
+			ControlName				ImagePanel
+			xpos 					5
+			ypos					0
+			wide					100
+			tall					100
+			visible					0
+			scaleImage				1
+			image 					"rui/titan_loadout/defensive/titan_defensive_particle_wall"
+			pin_to_sibling			OrdnanceIcon
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
+		}
+
+		TacticalIcon
+		{
+			ControlName				ImagePanel
+			xpos 					5
+			ypos					0
+			wide					90
+			tall					90
+			visible					0
+			scaleImage				1
+			image 					"rui/titan_loadout/tactical/titan_tactical_radar_pulse"
+			pin_to_sibling			DefensiveIcon
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
+		}
+
+		CoreIcon
+		{
+			ControlName				ImagePanel
+			xpos 					0
+			ypos					0
+			wide					100
+			tall					100
+			visible					0
+			scaleImage				1
+			image 					"rui/titan_loadout/core/titan_core_salvo"
+			pin_to_sibling			TacticalIcon
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
+		}
+
+		CoreIconLarge
+		{
+			ControlName				ImagePanel
+			xpos 					-150
+			ypos					-450
+			//wide					75
+			//tall					75
+			visible					0
+			//scaleImage			1
+			image 					"rui/titan_loadout/core/titan_core_salvo"
+			pin_to_sibling			Background
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+
+//////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			xpos					85
+			ypos					25
+			wide					250
+			tall					36
+			visible					1
+
+			pin_to_sibling			Background
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+
+			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+		}
+	}
+}

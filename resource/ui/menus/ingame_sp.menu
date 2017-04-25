@@ -1,0 +1,259 @@
+#base "combo_buttons.res"
+resource/ui/menus/ingame_sp.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#MENU_PAUSE_TITLE"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ButtonRowAnchor
+		{
+			ControlName				Label
+			labelText				""
+
+			xpos                    96
+			ypos                    160
+		}
+
+		BtnChangeDifficulty
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			visible 				0
+			ypos                    150
+			pin_to_sibling			ButtonRowAnchor
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnQuit
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			visible 				0
+			ypos                    0
+			pin_to_sibling			BtnChangeDifficulty
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnDev
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			visible 				0
+			ypos                    0
+			pin_to_sibling			BtnQuit
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		VerticleBar
+		{
+			ControlName				ImagePanel
+			xpos 					%40
+			ypos					187
+			zpos					0
+			wide					4
+			tall					737
+			image					"vgui/HUD/white"
+			drawColor				"255 255 255 255"
+			visible					1
+			scaleImage				1
+			pin_to_sibling			Anchor
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		ObjectivesTitle
+		{
+			ControlName				Label
+			labelText				"#MENU_SP_OBJECTIVES_TITLE"
+			xpos					%41
+			ypos					175
+			zpos					3 // Needed or clicking on the background can hide this
+			auto_wide_tocontents 	1
+			tall					60
+			font					Default_49
+			fgcolor_override		"255 255 255 255"
+			visible					1
+			allcaps					1
+			pin_to_sibling			Anchor
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		ObjectivesBackground
+		{
+			ControlName				ImagePanel
+			xpos 					%41
+			ypos					230
+			zpos					0
+			wide					1000
+			tall					625
+			image					"vgui/HUD/white"
+			drawColor				"0 0 0 175"
+			visible					1
+			scaleImage				1
+			pin_to_sibling			Anchor
+			pin_corner_to_sibling	CENTER
+			pin_to_sibling_corner	LEFT
+		}
+
+		MissionLogDesc
+		{
+			ControlName				Label
+			InheritProperties		R2_ContentDescription
+			labelText				"#MENU_PAUSE_TITLE"
+			xpos					-20
+			ypos					-20
+			zpos					3 // Needed or clicking on the background can hide this
+			wide					950
+			//tall					88
+			wrap					1
+			auto_tall_tocontents 	1
+			textalign				north-west
+			font					Default_28
+			fgcolor_override		"200 200 200 255"
+
+			pin_to_sibling			ObjectivesBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		CollectiblesTitle
+		{
+			ControlName				Label
+			labelText				"#MENU_SP_COLLECTIBLE_TITLE"
+			xpos					-20
+			ypos					-50
+			zpos					3 // Needed or clicking on the background can hide this
+			wide					250
+			tall					44
+			wrap					1
+			auto_tall_tocontents 	1
+			fgcolor_override		"255 255 255 255"
+			textAlignment			center
+			textalign				center
+			font					DefaultBold_44
+
+			pin_to_sibling			ObjectivesBackground
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		CollectiblesIcon
+		{
+			ControlName				ImagePanel
+			//xpos					-100
+			//ypos					-200
+			wide					75
+			tall					75
+			visible					1
+			scaleImage				1
+			image 					"rui/menu/level_select/lion_badge"
+			pin_to_sibling			CollectiblesTitle
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+		CollectiblesFoundDesc
+		{
+			ControlName				Label
+			labelText				"x / y"
+			xpos					25
+			ypos					0
+			zpos					3 // Needed or clicking on the background can hide this
+			wide					200
+			tall					50
+			wrap					1
+			auto_tall_tocontents 	1
+			font					Default_44
+			fgcolor_override		"200 200 200 255"
+
+			pin_to_sibling			CollectiblesIcon
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ObjectiveHintBackground
+		{
+			ControlName				ImagePanel
+			xpos 					0
+			ypos					4
+			zpos					0
+			wide					1000
+			tall					65
+			image					"vgui/HUD/white"
+			drawColor				"0 0 0 175"
+			visible					1
+			scaleImage				1
+			pin_to_sibling			ObjectivesBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		ObjectiveHintDesc
+		{
+			ControlName				RuiPanel
+			xpos                    -20
+			ypos                    -17
+			zpos					3 // Needed or clicking on the background can hide this
+			wide					925
+			tall					28
+			visible					1
+            rui						"ui/objective_hint.rpak"
+
+			pin_to_sibling			ObjectiveHintBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

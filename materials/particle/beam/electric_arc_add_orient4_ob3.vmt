@@ -1,0 +1,19 @@
+"SpriteCard"
+{
+	$basetexture "particle\beam\arc_white_64x256"
+	$additive 	1
+
+	$translucent 	1
+	$nocull	1
+
+	$splinetype	1
+	$orientation 4
+
+
+	$overbrightfactor 3
+
+	$vertexFogAmount 1
+}
+
+
+

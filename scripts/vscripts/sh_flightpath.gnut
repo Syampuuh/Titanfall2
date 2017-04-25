@@ -1,0 +1,1793 @@
+untyped
+
+global function FlightpathShared_Init
+global function GetAttachPoints
+global function CheckTime
+global function FlightMark
+global function GetPreviewPoint
+global function GetAnalysisOffset
+global function MaskTester
+global function DogFightAnimsFromIndex
+global function GetAnalysisForModel
+global function HasAnalysisForModel
+global function CopyAttachPoint
+global function IsActiveNodeAnalysis
+
+global const CLASSIC_MP_SKYSHOW_DOGFIGHTS_DELAY	= 75.0 //Time it takes after EntitiesDidLoad before we start a skyshow of straton/hornet dogfights
+global const DROP_MIN_X = 0.0
+global const ANALYSIS_STEPS = 8 // the number of different yaw slices to create flightPath on
+global const ANALYSIS_YAW_STEP = 360.0 / ANALYSIS_STEPS
+global const FIRST_ONLY = false
+global const SPAWNPOINT_USE_TIME = 10.0 // stub for real usage
+global const MAX_ANALYSIS_COUNT = 64 // in-engine limit to amount of info stored into nodes that script can use
+global const DESCRIPTION_MULTIPLIER = 0.0006 // 1666 units per area
+
+global const DROPSHIP_VERTICAL = "dropship_flyer_attack_vertical_successful"
+global const DROPSHIP_STRAFE = "gd_goblin_zipline_strafe"
+global const DROPSHIP_FLYER_ATTACK_ANIM = "dropship_flyer_attack"
+global const DROPSHIP_FLYER_ATTACK_ANIM_VERTICAL = "dropship_flyer_attack_vertical"
+global const DROPSHIP_DROP_ANIM = "gd_goblin_zipline_strafe"
+global const DROPSHIP_MODEL = $"models/vehicle/goblin_dropship/goblin_dropship.mdl"
+
+global const STRATON_FLIGHT_ANIM = "st_gunship_dogfight_C"
+global const STRATON_DOGFIGHT_ANIM1 = "st_Dogfight_Target_1"
+global const STRATON_DOGFIGHT_ANIM2 = "st_Dogfight_Target_2"
+global const STRATON_DOGFIGHT_ANIM3 = "st_Dogfight_Target_3"
+global const STRATON_DOGFIGHT_ANIM1_PERSUER = "st_Dogfight_Persuer_1"
+global const STRATON_DOGFIGHT_ANIM2_PERSUER = "st_Dogfight_Persuer_2"
+global const STRATON_DOGFIGHT_ANIM3_PERSUER = "st_Dogfight_Persuer_3"
+global const STRATON_ATTACK_FULL = "st_AngelCity_IMC_Win_Full"
+global const FX_HORNET_DEATH =  $"P_veh_exp_hornet_HS"
+
+global const HOTDROP_TURBO_ANIM = "at_hotdrop_drop_2knee_turbo"
+global const TURBO_WARP_FX = $"P_warp_in_atlas"
+global const TURBO_WARP_COMPANY = $"hotdrop_hld_warp"
+
+global const FX_GUNSHIP_CRASH_EXPLOSION = $"droppod_impact_black"
+global const FX_GUNSHIP_CRASH_EXPLOSION_ENTRANCE = $"veh_gunship_warp_FULL"
+global const FX_GUNSHIP_CRASH_EXPLOSION_EXIT = $"veh_gunship_warp_OUT_FULL"
+
+// #if HAS_CAPITAL_SHIP_SKYSHOW
+// global const TRINITY_SKYBOX = $"models/vehicles_r2/spacecraft/trinity/Trinity_1000x.mdl"
+// global const DRACONIS_SKYBOX = $"models/vehicles_r2/spacecraft/draconis/draconis_flying_1000x.mdl"
+// #endif
+
+global struct NodeFP
+{
+	vector origin
+	vector angles
+	string name
+	int uniqueID
+	vector attachOrigin
+	vector attachAngles
+	vector vec
+	float dot
+
+	float fraction
+	string attachName
+	float rating
+}
+
+global struct DropTable
+{
+	table<string,table<string,NodeFP> > nodes
+	bool valid
+}
+
+global struct CallinData
+{
+	vector		origin
+	float		yaw
+	bool 		yawSet
+
+	int			team
+	entity		owner
+	vector 		ownerEyePos
+	bool 		ownerEyePosSet
+
+	float		dist
+	string		squadname
+	int			style
+	bool 		styleSet
+	int			dropshipHealth
+	bool		success
+	array<entity functionref( int, vector, vector )> npcSpawnFuncs
+
+	DropTable 	dropTable
+	entity		dropship
+
+	// for dropships specifically
+	string 		side = "both"
+	string 		anim
+	string 		customSnd
+	bool  		forcedPosition = false
+}
+
+global struct SpawnPointFP
+{
+	bool 	valid
+	vector 	origin
+	vector 	angles
+	int 	node
+}
+
+global struct AttachPoint
+{
+	vector origin
+	vector angles
+	string name
+	int node
+}
+
+global NodeFP NullNodeFP
+global typedef nodeFPOrNull var
+
+global struct FlightPath
+{
+	vector mins
+	vector maxs
+	int traceMask = TRACE_MASK_NPCWORLDSTATIC
+	string idleAnim
+	bool hasIdleAnim = false
+	table<string,array<AttachPoint> > deployAttach
+	array<int> nodes
+	asset model
+	string anim
+	int iterator
+	int hull
+	array<AttachPoint> points
+	AttachPoint preview
+}
+
+
+#if SERVER
+	global function ShowAllTitanFallSpots
+	global function CodeCallback_AINFileBuilt
+	global function CreateSimpleFlightAnalysis
+	global function DebugDropship
+	global function AnaylsisFuncLegalFlightPath
+	global function TryAnalysisAtOrigin
+	global function GetRandomDropshipDropoffAnims
+
+	global function AddDropshipDropTable
+	global function GetDropshipDropTable
+	global function HasDropshipDropTable
+	#if DEV
+	global function AutoPrecache_InitFlightpathShared
+	#endif
+
+	global function SkyboxCapitalShips
+	global function StratonHornetDogfights
+	global function SpawnRandomDogFight
+	global function StratonHornetDogfightsIntense
+	global function GetFlightPathModel
+	global function HasFlightPathModel
+
+	global function GetAnalysisDataIndex
+	global function GetTitanfallNodesInRadius
+	global function DisableTitanfallForLifetimeOfEntityNearOrigin
+	global function DisableTitanfallForNodes
+	global function TemporarilyDisableTitanfallAroundRadius
+	global function NearDisallowedTitanfall
+
+	global function TestNodeForTitanDrop
+	global function AddTitanfallBlocker
+	global function InitializeFlightAnalysis
+	global function PassedAnalysisFunc
+	global function AnalysisHasPrepSpawnpointFunc
+	global function RunAnalysisPrepFunc
+
+
+	struct
+	{
+
+//		table<FlightPath, table<string,array<AttachPoint> > functionref( FlightPath, vector, float ) > flightAnalysisFuncs
+		table<FlightPath, bool functionref( FlightPath, vector, float ) > flightAnalysisFuncs
+		table<FlightPath, var functionref( FlightPath, vector, float ) > analysisPrepSpawnpointFunc
+
+		table<asset, table<string, int> > ainAnalysisIndices
+
+		table<entity, DropTable> dropshipDropOffDropTable
+		table<string,asset> flightPathModel
+		table<asset,string> flightPathAttachOffset
+
+		var dataTable
+		int nameColumn
+		int modelColumn
+		string skyboxCamName
+
+	} file
+#endif // SERVER
+
+struct
+{
+	table<asset, table<string, FlightPath> > flightAnalysis
+	array<string> dropshipDropoffAnims
+	bool activeNodeAnalysis = false
+} shFile
+
+
+function FlightpathShared_Init()
+{
+	FlagInit( "DisableDropships", IsSingleplayer() )
+	FlagInit( "DisableTitanfall" )
+	FlagInit( "DogFights" )
+	FlagInit( "FlyerPickupAnalysis" )
+	FlagInit( "StratonFullAttack" )
+	FlagInit( "FlightPath_TitanDrop" )
+
+	// #if HAS_CAPITAL_SHIP_SKYSHOW
+	// PrecacheModel( TRINITY_SKYBOX )
+	// PrecacheModel( DRACONIS_SKYBOX )
+	// #endif
+
+	#if SERVER
+	file.dataTable = GetDataTable( $"datatable/flightpath_assets.rpak" )
+	file.nameColumn = GetDataTableColumnByName( file.dataTable, "name" )
+
+	#if MP
+	file.modelColumn = GetDataTableColumnByName( file.dataTable, "mp_model" )
+	#else
+	file.modelColumn = GetDataTableColumnByName( file.dataTable, "sp_model" )
+	#endif
+	#endif // server
+
+	level.drawAnalysisPreview <- false
+
+	level.testHardPoints <- []
+	level.testFlagSpawnPoints <- []
+	level.titanfallBlockers <- []
+
+	level.superCallinOffset <- {}
+	level.superCallinOffset[ DROPSHIP_MODEL ] <- 700.0
+
+	shFile.dropshipDropoffAnims.append( DROPSHIP_STRAFE )
+	// angel is using all 8 ain slots so we can't add the extra zipline anim to it.
+	shFile.dropshipDropoffAnims.append( DROPSHIP_VERTICAL )
+
+	// the purpose of this script is to cache animation movement, to be able to check via traces whether or not it can be used
+
+	FlagInit( "FlightAnalysisReady" )
+	FlagInit( "StratonFlybys" )
+
+	RegisterSignal( "StratonHornetDogfights" )
+	RegisterSignal( "ClearDisableTitanfall" )
+
+	level.spawnPointsInUse <- {}
+	level.disallowedTitanfalls <- {}
+
+	AddCallback_EntitiesDidLoad( EntitiesDidLoad )
+}
+
+void function EntitiesDidLoad()
+{
+	if ( IsMenuLevel() )
+		return
+
+	#if SERVER
+	if ( IsMultiplayer() )
+	{
+		InitFlightPathAsset( "fp_crow_model" )
+		InitFlightPathAsset( "fp_crow_hero_model" )
+		InitFlightPathAsset( "fp_dropship_model" )
+		InitFlightPathAsset( "fp_dropship_hero_model" )
+	}
+
+	if ( !IsMenuLevel() )
+	{
+		if ( !Flag( "DisableDropships" ) || IsMultiplayer() )
+		{
+			for ( int i = 0; i < shFile.dropshipDropoffAnims.len(); i++ )
+			{
+				AddAinAnalysisIndex( DROPSHIP_MODEL, shFile.dropshipDropoffAnims[i] )
+			}
+		}
+
+		if ( Flag( "FlightPath_TitanDrop" ) )
+		{
+			asset titanModel = InitFlightPathAsset( "fp_titan_model" )
+			file.flightPathAttachOffset[ titanModel ] <- "OFFSET"
+			AddAinAnalysisIndex( titanModel, HOTDROP_TURBO_ANIM )
+		}
+	}
+
+	if ( Flag( "StratonFlybys" ) )
+	{
+		asset model = InitFlightPathAsset( "fp_straton_model" )
+		InitFlightPathAsset( "fp_hornet_model" ) // generally needed when straton is precached
+		AddAinAnalysisIndex( model, STRATON_FLIGHT_ANIM )
+	}
+
+	if ( Flag( "DogFights" ) || IsMultiplayer() )
+	{
+		asset model = InitFlightPathAsset( "fp_straton_model" )
+		InitFlightPathAsset( "fp_hornet_model" ) // generally needed when straton is precached
+		AddAinAnalysisIndex( model, STRATON_DOGFIGHT_ANIM1 )
+		AddAinAnalysisIndex( model, STRATON_DOGFIGHT_ANIM2 )
+	}
+
+	if ( Flag( "StratonFullAttack" ) )
+	{
+		asset model = InitFlightPathAsset( "fp_straton_model" )
+		InitFlightPathAsset( "fp_hornet_model" ) // generally needed when straton is precached
+		// straton attacks a spot
+		AddAinAnalysisIndex( model, STRATON_ATTACK_FULL )
+	}
+
+	CreateSimpleFlightAnalysis( TEAM_IMC_GRUNT_MODEL, ZIPLINE_IDLE_ANIM )
+
+	asset dropshipModel = InitFlightPathAsset( "fp_dropship_model" )
+
+	FlightPath flightPath
+	string event
+	if ( !Flag( "DisableDropships" ) || IsMultiplayer() )
+	{
+		event = "dropship_deploy"
+		flightPath = CreateFlightAnalysis( dropshipModel, DROPSHIP_STRAFE, GetDropshipRopeAttachments(), event )
+		AddBoundingMins( flightPath, Vector( -325, -325, -96 ) )
+		AddBoundingMaxs( flightPath, Vector( 325, 325, 185 ) )
+		AddAnalysisFunc( flightPath, AnaylsisFuncDropshipFindDropNodes, HULL_HUMAN )
+		AddAnalysisIterator( flightPath, 2 ) // iterate every other node
+
+		#if DEV
+		bool foundDropoffSpawnpoint = FlightPathHasNodeAndMatchesAINData( flightPath );
+		#endif
+
+		flightPath = CreateFlightAnalysis( dropshipModel, DROPSHIP_VERTICAL, GetDropshipRopeAttachments(), event )
+		AddBoundingMins( flightPath, Vector( -325, -325, -96 ) )
+		AddBoundingMaxs( flightPath, Vector( 325, 325, 185 ) )
+		AddAnalysisFunc( flightPath, AnaylsisFuncDropshipFindDropNodes, HULL_HUMAN )
+		AddAnalysisIterator( flightPath, 2 ) // iterate every other node
+
+		#if DEV
+		if ( !foundDropoffSpawnpoint )
+		{
+			if ( !FlightPathHasNodeAndMatchesAINData( flightPath ) && !Flag( "DisableDropships" ) )
+				CodeWarning( "There are no dropship dropoff nodes. Rebuild AIN or set flag DisableDropships." )
+		}
+		#endif
+	}
+
+	if ( Flag( "StratonFlybys" ) )
+	{
+		asset model = InitFlightPathAsset( "fp_straton_model" )
+		InitFlightPathAsset( "fp_hornet_model" ) // generally needed when straton is precached
+		flightPath = CreateFlightAnalysis( model, STRATON_FLIGHT_ANIM, {} )
+		AddFighterBounds( flightPath )
+		AddAnalysisFunc( flightPath, AnaylsisFuncLegalFlightPath, HULL_HUMAN )
+		AddAnalysisIterator( flightPath, 1 )
+	}
+
+	if ( Flag( "DogFights" ) || IsMultiplayer() )
+	{
+		asset model = InitFlightPathAsset( "fp_straton_model" )
+		InitFlightPathAsset( "fp_hornet_model" ) // generally needed when straton is precached
+		flightPath = CreateFlightAnalysis( model, STRATON_DOGFIGHT_ANIM1, {} )
+		AddFighterBounds( flightPath )
+		AddAnalysisFunc( flightPath, AnaylsisFuncLegalFlightPath, HULL_HUMAN )
+		AddAnalysisIterator( flightPath, 1 )
+
+		flightPath = CreateFlightAnalysis( model, STRATON_DOGFIGHT_ANIM2, {} )
+		AddFighterBounds( flightPath )
+		AddAnalysisFunc( flightPath, AnaylsisFuncLegalFlightPath, HULL_HUMAN )
+		AddAnalysisIterator( flightPath, 1 )
+
+		flightPath = CreateFlightAnalysis( model, STRATON_DOGFIGHT_ANIM3, {} )
+		AddFighterBounds( flightPath )
+		AddAnalysisFunc( flightPath, AnaylsisFuncLegalFlightPath, HULL_HUMAN )
+		AddAnalysisIterator( flightPath, 1 )
+	}
+
+	if ( Flag( "StratonFullAttack" ) )
+	{
+		asset model = InitFlightPathAsset( "fp_straton_model" )
+		InitFlightPathAsset( "fp_hornet_model" ) // generally needed when straton is precached
+		flightPath = CreateFlightAnalysis( model, STRATON_ATTACK_FULL, {} )
+		AddFighterBounds( flightPath )
+		AddAnalysisFunc( flightPath, AnaylsisFuncLegalFlightPath, HULL_HUMAN )
+		AddAnalysisIterator( flightPath, 1 )
+	}
+
+	asset modeldropshipModel = InitFlightPathAsset( "fp_dropship_model" )
+	flightPath = CreateFlightAnalysis( modeldropshipModel, "gd_flyin_A_left_localnodes", GetDropshipRopeAttachments(), event )
+	AddBoundingMins( flightPath, Vector( -325, -325, -96 ) )
+	AddBoundingMaxs( flightPath, Vector( 325, 325, 185 ) )
+	AddAnalysisFunc( flightPath, AnaylsisFuncDropshipFindDropNodes, HULL_HUMAN )
+	AddAnalysisIterator( flightPath, 2 ) // iterate every other node
+
+
+	// buffer the height to account for ground plane abnormality
+	//	AddAnalysisPoint( flightPath, Vector( 13.915, 8.58578, 50 ), Vector( 0.00356261, 0.0105928, 0.00143976 ) )
+	//	AddAnalysisPoint( flightPath, Vector( 15.4668, 8.58606, 50 ), Vector( 0.00356261, 0.0105928, 0.00143976 ) )
+
+	if ( Flag( "FlightPath_TitanDrop" ) )
+	{
+		asset model = InitFlightPathAsset( "fp_titan_model" )
+
+		flightPath = CreateFlightAnalysis( model, HOTDROP_TURBO_ANIM, {} )
+		AddBoundingMins( flightPath, Vector( -65, -65, 0 ) )
+		AddBoundingMaxs( flightPath, Vector( 65, 65, 240 ) )
+		AddAnalysisTraceMask( flightPath, CONTENTS_SOLID | CONTENTS_WINDOW | CONTENTS_GRATE | CONTENTS_MOVEABLE | CONTENTS_TITANCLIP )
+
+		AddIdleAnimation( flightPath, "at_idle_2" )
+		AddAnalysisFunc( flightPath, TitanFindDropNodes, HULL_TITAN )
+		//AddPrepSpawnpointFunc( flightPath, TitanHulldropSpawnpoint )
+		AddAnalysisIterator( flightPath, 1 ) // iterate each node
+	}
+
+/*
+	if ( Flag( "FlyerPickupAnalysis" ) )
+	{
+		foreach ( animation in GetFlyerPickupAnimations() )
+		{
+			if ( !animation.hasAnalysis )
+				continue
+
+			AddAinAnalysisIndex( FLYER_MODEL, animation.flyer )
+
+			InitializeFlightAnalysis( animation.flightPath, FLYER_MODEL, animation.flyer, {} )
+			flightPath = animation.flightPath
+			AddBoundingMins( flightPath, Vector( -200, -200, 20 ) )
+			AddBoundingMaxs( flightPath, Vector( 200, 200, 100 ) )
+			AddAnalysisTraceMask( flightPath, TRACE_MASK_SHOT_HULL )
+			AddAnalysisFunc( flightPath, AnaylsisFuncLegalFlightPath, HULL_HUMAN )
+			AddAnalysisIterator( flightPath, 1 )
+		}
+	}
+*/
+	FlagSet( "FlightAnalysisReady" )
+	#endif
+}
+
+#if SERVER
+
+#if DEV
+void function AutoPrecache_InitFlightpathShared( AutoPrecacheList autoPrecacheList )
+{
+	if ( !Flag( "DogFights" ) && !Flag( "StratonFullAttack" ) && !Flag( "StratonFlybys" ) )
+		return
+
+	var dataTable = file.dataTable
+	int nameColumn = file.nameColumn
+	int modelColumn = file.modelColumn
+	int row
+	row = GetDataTableRowMatchingStringValue( dataTable, nameColumn, "fp_straton_model" )
+	autoPrecacheList.models.append( GetDataTableAsset( dataTable, row, modelColumn ) )
+	row = GetDataTableRowMatchingStringValue( dataTable, nameColumn, "fp_hornet_model" )
+	autoPrecacheList.models.append( GetDataTableAsset( dataTable, row, modelColumn ) )
+}
+#endif
+
+asset function InitFlightPathAsset( string name )
+{
+	int row = GetDataTableRowMatchingStringValue( file.dataTable, file.nameColumn, name )
+	Assert( row > -1, "Didn't find " + name )
+	asset model = GetDataTableAsset( file.dataTable, row, file.modelColumn )
+	PrecacheModel( model )
+	file.flightPathModel[ name ] <- model
+	return model
+}
+
+asset function GetFlightPathModel( string name )
+{
+	Assert( name in file.flightPathModel, "Model " + name + " has not been loaded" )
+	return file.flightPathModel[ name ]
+}
+
+bool function HasFlightPathModel( string name )
+{
+	return name in file.flightPathModel
+}
+
+int function GetAnalysisDataIndex( FlightPath flightPath )
+{
+	return file.ainAnalysisIndices[ flightPath.model ][ flightPath.anim ] * ANALYSIS_STEPS
+}
+
+array<string> function GetRandomDropshipDropoffAnims()
+{
+	array<string> anims = clone shFile.dropshipDropoffAnims
+	anims.randomize()
+	return anims
+}
+
+#endif
+
+function DrawAnalysis( FlightPath flightPath )
+{
+	array<AttachPoint> points = flightPath.points
+	for ( int i = 1; i < points.len(); i++ )
+	{
+		AttachPoint point1 = points[i-1]
+		AttachPoint point2 = points[i]
+		DebugDrawLine( point1.origin, point2.origin, 255, 0, 0, true, 15.0 )
+	}
+}
+
+bool function HasAnalysisForModel( asset model, string animation )
+{
+	if ( !( model in shFile.flightAnalysis ) )
+		return false
+	return animation in shFile.flightAnalysis[ model ]
+}
+
+FlightPath function GetAnalysisForModel( asset model, string animation )
+{
+	Assert( model in shFile.flightAnalysis )
+	Assert( animation in shFile.flightAnalysis[ model ] )
+
+	return shFile.flightAnalysis[ model ][ animation ]
+}
+
+void function InitFlightAnalysis( FlightPath flightPath )
+{
+	flightPath.deployAttach[ "left" ] <- []
+	flightPath.deployAttach[ "right" ] <- []
+}
+
+FlightPath function CreateFlightAnalysis( asset model, string anim, table<string, array<string> > attachments, string event = "" )
+{
+	FlightPath Table
+	InitializeFlightAnalysis( Table, model, anim, attachments, event )
+	return Table
+}
+
+FlightPath function InitializeFlightAnalysis( FlightPath Table, asset model, string anim, table<string, array<string> > attachments, string event = "" )
+{
+	InitFlightAnalysis( Table )
+	if ( !( model in shFile.flightAnalysis ) )
+	{
+		shFile.flightAnalysis[ model ] <- {}
+	}
+
+	Assert( !( anim in shFile.flightAnalysis[ model ] ), "Already added " + anim + " to flight flightPath for " + model )
+
+
+	Table.model = model
+	Table.anim = anim
+
+	entity dropship = CreatePropDynamic( model, Vector(0,0,0), Vector(0,0,0) )
+
+	Table.points = FillFlightAnalysisPoints( dropship, anim )
+	if ( Table.points.len() )
+		CopyAttachPoint( Table.points.top(), Table.preview )
+
+	if ( event != "" )
+	{
+		FillDeployForAnalysisForEvent( dropship, anim, event, Table, attachments )
+	}
+
+	/*
+	local points = Table.points
+	for ( int i = 0; i + 1 < points.len(); i++ )
+	{
+		DebugDrawLine( points[i].origin, points[i+1].origin, 255, 0, 0, true, 20.0 )
+	}
+	*/
+
+	dropship.Kill_Deprecated_UseDestroyInstead()
+
+	//Table.model <- model
+	shFile.flightAnalysis[ model ][ anim ] <- Table
+	return Table
+}
+
+void function CopyAttachPoint( AttachPoint source, AttachPoint destination )
+{
+	destination.origin = source.origin
+	destination.angles = source.angles
+	destination.name = source.name
+}
+
+function DrawAnalysisArray( Array )
+{
+	local colors = []
+	colors.append( { r = 255, g = 155, b = 10 } )
+	colors.append( { r = 55, g = 55, b = 250 } )
+
+	local index = 0
+	local color
+	for ( int i = 0; i + 1 < Array.len(); i++ )
+	{
+		index++
+		index %= colors.len()
+		color = colors[ index ]
+		DebugDrawLine( Array[i].origin, Array[i+1].origin, color.r, color.g, color.b, true, 15.0 )
+	}
+}
+
+array<AttachPoint> function FillFlightAnalysisPoints( entity dropship, string anim )
+{
+	dropship.Hide()
+
+// try to precompute the various flight paths. Disabled because angle info is coming in wrong.
+	string attachName = "ORIGIN"
+	int attachIndex = dropship.LookupAttachment( attachName )
+	if ( attachIndex == 0 )
+	{
+		attachName = "OFFSET"
+		attachIndex = dropship.LookupAttachment( attachName )
+		if ( attachIndex == 0 )
+			return []
+	}
+
+	float duration = dropship.GetSequenceDuration( anim )
+	int steps = int( duration * 1.5 )
+	float time, ratio
+	array<AttachPoint> Array
+
+	if ( !steps )
+	{
+		Attachment result = dropship.Anim_GetAttachmentAtTime( anim, attachName, 0.0 )
+
+		AttachPoint point
+		vector pos = result.position
+		if ( pos.z < DROP_MIN_X )
+			pos.z = DROP_MIN_X
+
+		point.origin = pos
+		point.angles = result.angle
+
+		Array.append( point )
+		return Array
+	}
+
+	for ( int i = 0; i <= steps; i++ )
+	{
+		ratio = i.tofloat() / steps.tofloat()
+		time = duration * ratio
+		Attachment result = dropship.Anim_GetAttachmentAtTime( anim, attachName, time )
+
+		AttachPoint point
+		vector pos = result.position
+		if ( pos.z < DROP_MIN_X )
+			pos.z = DROP_MIN_X
+
+		point.origin = pos
+		point.angles = result.angle
+
+		Array.append( point )
+	}
+
+	local removed = {}
+	for ( int i = 1; i + 1 < Array.len(); i++ )
+	{
+		local pR = Array[ i - 1 ].origin
+		local p = Array[ i ].origin
+		local pF = Array[ i + 1 ].origin
+
+		local vec1 = pR - pF
+		local vec2 = pR - p
+
+		vec1.Norm()
+		vec2.Norm()
+
+		local dot = DotProduct( vec1, vec2 )
+
+		if ( dot > 0.998 )
+			removed[ Array[i] ] <- true
+	}
+
+	for ( int i = 0; i < Array.len(); i++ )
+	{
+		if ( Array[i] in removed )
+		{
+			Array.remove( i )
+			i--
+		}
+	}
+
+	return Array
+}
+
+
+function AddIdleAnimation( FlightPath flightPath, string anim )
+{
+	flightPath.idleAnim = anim
+	flightPath.hasIdleAnim = true
+}
+
+function AddAnalysisTraceMask( FlightPath flightPath, int mask )
+{
+	flightPath.traceMask = mask
+}
+
+function AddBoundingMaxs( FlightPath flightPath, vector maxs )
+{
+	flightPath.maxs = maxs
+}
+
+function AddBoundingMins( FlightPath flightPath, vector mins )
+{
+	flightPath.mins = mins
+}
+
+function AddAnalysisIterator( FlightPath flightPath, int iterator )
+{
+	flightPath.iterator = iterator
+}
+
+
+array<AttachPoint> function GetAttachPoints( FlightPath flightPath, string side )
+{
+	return flightPath.deployAttach[ side ]
+}
+
+function AddAnalysisPoint( Table, org, ang )
+{
+	local point = {}
+	if ( org.z < DROP_MIN_X )
+		org.z = DROP_MIN_X
+	point.origin <- org
+
+	// bounding boxes currently ignore pitch and roll
+//	ang.x = 0
+//	ang.z = 0
+	point.angles <- ang
+	Table.points.append( point )
+}
+
+void function AddPreviewPoint( FlightPath Table, vector org, vector ang )
+{
+//	if ( org.z < DROP_MIN_X )
+//		org.z = DROP_MIN_X
+	AttachPoint point = Table.preview
+	point.origin = org
+	point.angles = ang
+
+}
+
+Point function GetPreviewPoint( FlightPath flightPath )
+{
+	Point point
+	point.origin = flightPath.preview.origin
+	point.angles = flightPath.preview.angles
+	return point
+}
+
+
+function CheckTime()
+{
+	local time = Time() - level.startTime
+	time *= 30
+	time = time.tointeger()
+	printt( "TIMR " + time )
+}
+
+function FlightMark( dropship, Table )
+{
+	Table.points.append( GetPointFromPosition( dropship ) )
+}
+
+
+
+function FillDeployForAnalysisForEvent( entity dropship, string anim, string event, FlightPath Table, table<string, array<string> > attachments )
+{
+	float frac = dropship.GetScriptedAnimEventCycleFrac( anim, event )
+	Assert( frac != -1, " event " + event + " does not exist in animation " + anim )
+	if ( !frac )
+		return
+
+	float duration = dropship.GetSequenceDuration( anim )
+	float time = duration * frac
+	Attachment result = dropship.Anim_GetAttachmentAtTime( anim, "ORIGIN", time )
+
+	AttachPoint point = Table.preview
+	point.origin = result.position
+	point.angles = result.angle
+
+	if ( attachments.len() )
+	{
+		Table.deployAttach = {}
+
+		foreach ( side, attachArray in attachments )
+		{
+			Table.deployAttach[ side ] <- []
+			for ( int i = 0; i < attachArray.len(); i++ )
+			{
+				string attach = attachArray[i]
+				Attachment result = dropship.Anim_GetAttachmentAtTime( anim, attach, time )
+
+				AttachPoint pos
+				pos.origin = result.position
+				pos.angles = result.angle
+				pos.name = attach
+
+				Table.deployAttach[ side ].append( pos )
+			}
+		}
+	}
+}
+
+#if SERVER
+function AddAnalysisFunc( FlightPath flightPath, bool functionref( FlightPath, vector, float ) func, int hull )
+{
+	file.flightAnalysisFuncs[ flightPath ] <- func
+	flightPath.hull = hull
+}
+
+bool function PassedAnalysisFunc( FlightPath flightPath, vector vec1, float float1 )
+{
+	bool functionref( FlightPath, vector, float ) func = file.flightAnalysisFuncs[ flightPath ]
+
+	return func( flightPath, vec1, float1 )
+}
+
+void function AddPrepSpawnpointFunc( FlightPath flightPath, var functionref( FlightPath, vector, float ) func )
+{
+	file.analysisPrepSpawnpointFunc[ flightPath ] <- func
+}
+
+bool function AnalysisHasPrepSpawnpointFunc( FlightPath flightPath )
+{
+	return flightPath in file.analysisPrepSpawnpointFunc
+}
+
+var function RunAnalysisPrepFunc( FlightPath flightPath, vector vec1, float float1 )
+{
+	return file.analysisPrepSpawnpointFunc[ flightPath ]( flightPath, vec1, float1 )
+}
+
+
+function DropshipFlightDeploy( dropship, Table )
+{
+	// Stores off the attachment positional info on the drop-frame.
+	Table.deploy <- GetPointFromPosition( dropship )
+	Table.deployAttach <- {}
+
+//	Table.deployVelocity <- dropship.GetVelocity()
+	printt( "dropship origin " + dropship.GetOrigin() )
+
+	foreach ( side, attachArray in GetDropshipRopeAttachments() )
+	{
+		Table.deployAttach[ side ] <- {}
+		foreach ( attach in attachArray )
+		{
+			local pos = {}
+			local attach_id = dropship.LookupAttachment( attach )
+			pos.origin <- dropship.GetAttachmentOrigin( attach_id )
+			pos.angles <- dropship.GetAttachmentAngles( attach_id )
+			//printt( "origin " + pos.origin )
+
+			Table.deployAttach[ side ][ attach ] <- pos
+			//DrawArrow( pos.origin, pos.angles, 5.0, 150 )
+		}
+	}
+}
+#endif
+
+function FlightDeploy( dropship, Table )
+{
+	Table.deploy <- GetPointFromPosition( dropship )
+	//DebugDrawLine( Vector(0,0,0), dropship.GetOrigin(), 0, 255, 0, true, 20 )
+
+}
+
+/*
+function LegalFlightPath( flightPath, origin, angles )
+{
+
+}
+*/
+
+vector function GetAnalysisOffset( FlightPath flightPath )
+{
+	if ( flightPath.model in level.superCallinOffset )
+		return Vector( 0,0,level.superCallinOffset[ flightPath.model ] )
+
+	return Vector( 0, 0, 0 )
+}
+
+
+function MaskTester( mask )
+{
+	printt( "called from " + DumpPreviousFunction() )
+	local Array = {}
+	Array[" CONTENTS_EMPTY				"] <- CONTENTS_EMPTY
+	Array[" CONTENTS_SOLID				"] <- CONTENTS_SOLID
+	Array[" CONTENTS_WINDOW				"] <- CONTENTS_WINDOW
+	Array[" CONTENTS_AUX				"] <- CONTENTS_AUX
+	Array[" CONTENTS_GRATE				"] <- CONTENTS_GRATE
+	Array[" CONTENTS_SLIME				"] <- CONTENTS_SLIME
+	Array[" CONTENTS_WATER				"] <- CONTENTS_WATER
+	Array[" CONTENTS_WINDOW_NOCOLLIDE	"] <- CONTENTS_WINDOW_NOCOLLIDE
+	Array[" CONTENTS_OPAQUE				"] <- CONTENTS_OPAQUE
+	Array[" CONTENTS_TESTFOGVOLUME		"] <- CONTENTS_TESTFOGVOLUME
+	Array[" CONTENTS_PHYSICSCLIP		"] <- CONTENTS_PHYSICSCLIP
+	Array[" CONTENTS_BLOCKLIGHT			"] <- CONTENTS_BLOCKLIGHT
+	Array[" CONTENTS_NOGRAPPLE			"] <- CONTENTS_NOGRAPPLE
+	Array[" CONTENTS_UNUSED_03			"] <- CONTENTS_UNUSED_03
+	Array[" CONTENTS_IGNORE_NODRAW_OPAQUE	"] <- CONTENTS_IGNORE_NODRAW_OPAQUE
+	Array[" CONTENTS_MOVEABLE				"] <- CONTENTS_MOVEABLE
+	Array[" CONTENTS_PLAYERCLIP			"] <- CONTENTS_PLAYERCLIP
+	Array[" CONTENTS_MONSTERCLIP			"] <- CONTENTS_MONSTERCLIP
+	Array[" CONTENTS_BLOCKLOS				"] <- CONTENTS_BLOCKLOS
+	Array[" CONTENTS_NOCLIMB				"] <- CONTENTS_NOCLIMB
+	Array[" CONTENTS_TITANCLIP			"] <- CONTENTS_TITANCLIP
+	Array[" CONTENTS_BULLETCLIP			"] <- CONTENTS_BULLETCLIP
+	Array[" CONTENTS_MONSTER				"] <- CONTENTS_MONSTER
+	Array[" CONTENTS_DEBRIS				"] <- CONTENTS_DEBRIS
+	Array[" CONTENTS_DETAIL				"] <- CONTENTS_DETAIL
+	Array[" CONTENTS_TRANSLUCENT			"] <- CONTENTS_TRANSLUCENT
+	Array[" CONTENTS_HITBOX				"] <- CONTENTS_HITBOX
+
+	foreach ( key, val in Array )
+	{
+		if ( val & mask )
+			printt( "found " + key )
+	}
+}
+
+
+#if SERVER
+int function AddNewAnalysis( asset model, string anim, var nodeIndex = null )
+{
+	printt( "Writing Analysis for " + model + " " + anim )
+
+	int nodeCount = GetNodeCount()
+	FlightPath flightPath = GetAnalysisForModel( model, anim )
+
+	vector offset = GetAnalysisOffset( flightPath )
+
+	int iterator = flightPath.iterator
+	Assert( iterator, "Iterator not set!" )
+
+	int functionref( FlightPath, int, vector ) func
+
+	if ( shFile.activeNodeAnalysis )
+		func = NodeAnalysis
+	else
+		func = NodeAnalysisPreview
+
+	int total = 0
+	int dataIndex = GetAnalysisDataIndex( flightPath )
+	printt( "dataIndex: " + dataIndex )
+
+	if ( nodeIndex != null )
+	{
+		expect int( nodeIndex )
+		total += func( flightPath, nodeIndex, offset )
+	}
+	else
+	{
+		for ( int index = 0; index < nodeCount; index += iterator )
+		{
+			//printt( "Node " + index + " / " + nodeCount )
+			total += func( flightPath, index, offset )
+		}
+	}
+
+	return total
+}
+#endif // SERVER
+
+
+function FillFlightAnalysisPoints2( entity dropship, string anim )
+{
+	dropship.Hide()
+
+// try to precompute the various flight paths. Disabled because angle info is coming in wrong.
+	local attachIndex = dropship.LookupAttachment( "ORIGIN" )
+	if ( attachIndex == 0 )
+		return []
+
+	float duration = dropship.GetSequenceDuration( anim )
+	int steps = int( duration * 15 )
+	float time, ratio
+	local Array = []
+
+	local stepper = ( steps * 0.98 ).tointeger()
+	printt ("stepper " + stepper )
+
+	for ( int i = 0; i <= steps; i++ )
+	{
+		ratio = i / float( steps )
+		time = duration * ratio
+		Attachment result = dropship.Anim_GetAttachmentAtTime( anim, "ORIGIN", time )
+
+		local point = {}
+		vector pos = result.position
+		if ( pos.z < DROP_MIN_X )
+			pos.z = DROP_MIN_X
+
+		//result.angle.z = 0
+		point.origin <- pos
+		point.angles <- result.angle
+		point.skip <- stepper > 0 && i % stepper == 0
+
+		Array.append( point )
+	}
+
+	for ( ;; )
+	{
+		bool smoothed = false
+		for ( int i = 1; i + 1 < Array.len(); i++ )
+		{
+			if ( Array[i].skip )
+				continue
+			local pR = Array[ i - 1 ].origin
+			local p = Array[ i ].origin
+			local pF = Array[ i + 1 ].origin
+
+			local vec1 = p - pR
+			local vec2 = p - pF
+			local length = Length( vec1 ) + Length( vec2 )
+
+			vec1.Norm()
+			vec2.Norm()
+
+			local dot = DotProduct( vec1, vec2 )
+
+	//		if ( dot < 0.99999
+			if ( length < 100 )
+			{
+				if ( dot < -0.8 )
+				{
+//					printt( "dot " + dot )
+					Array.remove( i )
+					i--
+					smoothed = true
+					continue
+				}
+			}
+			else
+			if ( length < 1000 )
+			{
+				if ( dot < -0.99 )
+				{
+//					printt( "dot " + dot )
+					Array.remove( i )
+					i--
+					smoothed = true
+					continue
+				}
+			}
+			else
+			if ( length < 4000 )
+			{
+				if ( dot < -0.995 )
+				{
+//					printt( "dot " + dot )
+					Array.remove( i )
+					i--
+					smoothed = true
+					continue
+				}
+			}
+			else
+			{
+				if ( dot < -0.999 )
+				{
+//					printt( "dot " + dot )
+					Array.remove( i )
+					i--
+					smoothed = true
+					continue
+				}
+			}
+		}
+
+		if ( !smoothed )
+			break
+	}
+
+	return Array
+}
+
+#if SERVER
+
+void function CodeCallback_AINFileBuilt()
+{
+	SetAINScriptVersion( AIN_REV )
+
+	if ( GetNodeCount() <= 0 )
+		return
+
+	if ( Flag( "FlightPath_TitanDrop" ) )
+	{
+		array<string> allTitanSettings = GetAllowedPlayerTitanSettings()
+		string titanSettings
+		foreach ( settings in allTitanSettings )
+		{
+			asset model = GetPlayerSettingsAssetForClassName( settings, "bodymodel" )
+			if ( !ModelIsPrecached( model ) )
+				continue
+
+			titanSettings = settings
+			break
+		}
+
+	 	Assert( titanSettings != "", "Trying to use Flag FlightPath_TitanDrop, but there are no titans precached for this level" )
+
+		level.ainTestTitan <- CreateNPCTitanFromSettings( titanSettings, TEAM_IMC, Vector(0,0,0), Vector(0,0,0) )
+	}
+
+	level.testHardPoints = GetEntArrayByClass_Expensive( "info_hardpoint" )
+	level.testFlagSpawnPoints = GetEntArrayByClass_Expensive( "info_spawnpoint_flag" )
+
+	printt( "Building AIN file" )
+	shFile.activeNodeAnalysis = true
+	local totals = []
+
+	foreach ( model, Table in file.ainAnalysisIndices )
+	{
+		foreach ( anim, offset in Table )
+		{
+			printt( "Prebuilding node info for " + model + " / " + anim + "." )
+			int count = AddNewAnalysis( model, anim )
+			local Table = {}
+			Table.count <- count
+			Table.anim <- anim
+			Table.model <- model
+			totals.append( Table )
+		}
+	}
+
+	if ( Flag( "FlightPath_TitanDrop" ) )
+		level.ainTestTitan.Destroy()
+
+	if ( MapRequiresFullFlightpathSupport() )
+	{
+		bool foundZero = false
+		local modelWithZeroPaths = null
+		local animWithZeroPaths = null
+
+		foreach ( total in totals )
+		{
+			printt( "Found " + total.count + " cases of " + total.model + " " + total.anim )
+			if ( total.count == 0 )
+			{
+				foundZero = true
+				modelWithZeroPaths = total.model
+				animWithZeroPaths = total.anim
+			}
+		}
+
+		if ( !level.isTestmap )
+		{
+			Assert( !foundZero, "Found zero of expected anim path " + animWithZeroPaths + " for model " + modelWithZeroPaths + ". Make sure spectre nodes didn't leak, or there are enough path nodes in level!" )
+		}
+	}
+
+	if ( GetCurrentPlaylistName() != "buildain" )
+		return
+
+	int modeIdx = 0
+	if ( GetCurrentPlaylistGamemodeByIndex( modeIdx ) != "tdm" )
+		return
+
+	string currentMapName = GetMapName()
+	int numMaps = GetCurrentPlaylistGamemodeByIndexMapsCount( modeIdx )
+	int nextMapIdx = 0
+	for ( int mapIdx = 0; mapIdx < numMaps; ++mapIdx )
+	{
+		string mapName = GetCurrentPlaylistGamemodeByIndexMapByIndex( modeIdx, mapIdx )
+		if ( mapName == currentMapName )
+		{
+			nextMapIdx = mapIdx + 1
+			break
+		}
+	}
+
+	if ( nextMapIdx >= numMaps )
+		return
+
+	string mapName = GetCurrentPlaylistGamemodeByIndexMapByIndex( modeIdx, nextMapIdx )
+	GameRules_ChangeMap( mapName, "tdm" )
+}
+
+void function AddAinAnalysisIndex( asset model, string anim )
+{
+	int count = 0
+	foreach ( key, value in file.ainAnalysisIndices )
+	{
+		foreach ( item in value )
+		{
+			count++
+		}
+	}
+
+	if ( !( model in file.ainAnalysisIndices ) )
+	{
+		file.ainAnalysisIndices[ model ] <- {}
+	}
+
+	file.ainAnalysisIndices[ model ][ anim ] <- count
+	Assert( count + ANALYSIS_STEPS <= MAX_ANALYSIS_COUNT )
+}
+
+function NodeHasCallInForDataIndex( nodeIndex, dataIndex )
+{
+	for ( local i = dataIndex; i < dataIndex + ANALYSIS_STEPS; i++ )
+	{
+		if ( GetNodeScriptData_Boolean( nodeIndex, i ) )
+			return true
+	}
+
+	return false
+}
+
+void function CreateSimpleFlightAnalysis( asset model, string anim )
+{
+	local attachName
+	if ( model in file.flightPathAttachOffset )
+		attachName = file.flightPathAttachOffset[ model ]
+	else
+		attachName = "ORIGIN"
+	expect string( attachName )
+	// need this to find the difference between ref and origin for the zipline slide
+	entity pete = CreatePropDynamic( model )
+	Attachment result = pete.Anim_GetAttachmentAtTime( anim, attachName, 0.0 )
+
+	FlightPath flightPath = CreateFlightAnalysis( model, anim, {} )
+	AddPreviewPoint( flightPath, result.position, result.angle )
+	pete.Kill_Deprecated_UseDestroyInstead()
+}
+
+/*
+function CompareDropshipModels( mdl1, mdl2, attachments )
+{
+	wait 3
+
+	entity model2 = CreatePropDynamic( mdl2, Vector(0,0,0), Vector(0,0,0) )
+
+	local attachment = "RopeAttachRightC"
+	local attachid2 = model2.LookupAttachment( attachment )
+	local origin2 = model1.GetAttachmentOrigin( attachid2 )
+	local angles2 = model1.GetAttachmentAngles( attachid2 )
+
+	DrawArrow( origin2, angles2, 30.0, 100 )
+	DebugDrawText( origin2 + Vector(0,0,20), mdl2, true, 30.0 )
+
+	/ *
+	return
+	entity model1 = CreatePropDynamic( mdl1, Vector(0,0,0), Vector(0,0,0) )
+	entity model2 = CreatePropDynamic( mdl2, Vector(0,0,0), Vector(0,0,0) )
+
+//	attachments.origin <- [ "origin" ]
+	local Orgattachid1 = model1.LookupAttachment( "origin" )
+	local Orgattachid2 = model2.LookupAttachment( "origin" )
+	local Orgorigin1 = model1.GetAttachmentOrigin( Orgattachid1 )
+	local Orgorigin2 = model1.GetAttachmentOrigin( Orgattachid2 )
+
+	foreach ( Array in attachments )
+	{
+		foreach ( attachment in Array )
+		{
+			entity ent1 = CreateOwnedScriptMover( model1 )
+			entity ent2 = CreateOwnedScriptMover( model2 )
+			ent1.SetParent( model1, attachment )
+			ent2.SetParent( model2, attachment )
+			printt( ent1.GetOrigin() )
+			printt( ent2.GetOrigin() )
+			printt( Distance( ent1.GetOrigin() )
+//			local attachid1 = model1.LookupAttachment( attachment )
+//			local attachid2 = model2.LookupAttachment( attachment )
+//			local origin1 = model1.GetAttachmentOrigin( attachid1 )
+//			local origin2 = model1.GetAttachmentOrigin( attachid2 )
+//			local angles1 = model2.GetAttachmentAngles( attachid1 )
+//			local angles2 = model2.GetAttachmentAngles( attachid2 )
+
+//			DrawArrow( origin1, angles1, 30, 100 )
+//			DrawArrow( origin2, angles2, 30, 100 )
+//			DebugDrawText( origin1 + Vector(0,0,20), mdl1, true, 30 )
+//			DebugDrawText( origin2 + Vector(0,0,20), mdl2, true, 30 )
+//
+//			DebugDrawText( origin1, attachment, true, 30 )
+//			DebugDrawText( origin2, attachment, true, 30 )
+//			printt( "Attach " + attachment )
+//			printt( "Origin dist " + Distance( origin1, origin2 ) )
+//			printt( "dist from origin1 " + Distance( Orgorigin1, origin1 ) )
+//			printt( "dist from origin2 " + Distance( Orgorigin2, origin2 ) )
+//			printt( "angles1 " + angles1 )
+//			printt( "angles2 " + angles2 )
+//			printt( " " )
+		}
+	}
+	* /
+}
+*/
+
+#if SERVER
+function DebugDropship()
+{
+	thread DebugDropshipThread()
+}
+
+void function DebugDropshipThread()
+{
+	string event = "dropship_deploy"
+	table<string, array<string> > attaches = GetDropshipRopeAttachments()
+	foreach ( anim in shFile.dropshipDropoffAnims )
+	{
+		printt( "testing anim " + anim )
+		FlightPath flightPath = GetAnalysisForModel( DROPSHIP_MODEL, anim )
+		waitthread TestDropshipAnalysis( flightPath )
+	}
+}
+#endif
+
+void function TestDropshipAnalysis( FlightPath flightPath )
+{
+	//int nodeCount = GetNodeCount()
+	vector offset = GetAnalysisOffset( flightPath )
+	local iterator = flightPath.iterator
+	Assert( iterator, "Iterator not set!" )
+
+	local dataIndex = GetAnalysisDataIndex( flightPath )
+	printt( "dataIndex: " + dataIndex )
+
+	//for ( int index = 0; index < nodeCount; index += iterator )
+	int index = 24
+	{
+		//printt( "Node " + index + " / " + nodeCount )
+		TestDropshipAnalysisFunc( flightPath, index, offset )
+	}
+}
+
+
+function TestDropshipSquad( guys, nodeIndex, yawIndex )
+{
+	printt( "Guys dropped: " + guys.len() )
+	//Assert( guys.len() == 6 )
+
+	wait 8
+
+	foreach ( entity guy in guys )
+	{
+		if ( IsAlive( guy ) )
+		{
+			vector ornull clampedPos = NavMesh_ClampPointForAI( guy.GetOrigin(), guy );
+
+			if ( clampedPos == null )
+			{
+				CodeWarning( "No node for guy from dropship node: " + nodeIndex + " with yaw index " + yawIndex )
+				DrawArrow( guy.GetOrigin(), Vector(0,0,0), 10.0, 150 )
+				continue
+			}
+			guy.Die()
+		}
+	}
+}
+
+void function TestDropshipAnalysisFunc( FlightPath flightPath, int index, vector offset )
+{
+	vector origin = GetNodePos( index )
+	origin = origin + offset
+
+	local dataIndex = GetAnalysisDataIndex( flightPath )
+
+//	for ( int p = 0; p < ANALYSIS_STEPS; p++ )
+	int p = 0
+	{
+		if ( GetNodeScriptData_Boolean( index, p + dataIndex ) )
+		{
+
+	//		if ( !array[ p ] )
+	//		{
+	////			printt( ( p + dataIndex ) + ": False" )
+	//			continue
+	//		}
+	//
+	////		printt( ( p + dataIndex ) + ": True" )
+
+			float yaw = p * ANALYSIS_YAW_STEP
+			vector angles = Vector( 0, yaw, 0 )
+			vector forward = AnglesToForward( angles )
+			DebugDrawLine( origin, origin + forward * 80, 255, 100, 0, true, 5.0 )
+
+			CallinData drop
+			InitCallinData( drop )
+			drop.origin 	= origin
+			drop.yaw 		= yaw
+			drop.anim		= flightPath.anim
+			drop.team 		= TEAM_MILITIA
+			SetCallinStyle( drop, eDropStyle.FORCED )
+
+			thread RunDropshipDropoff( drop )
+			WaitSignal( drop, "WarpedIn" )
+
+			local result = WaitSignal( drop, "OnDropoff" )
+			thread TestDropshipSquad( result.guys, index, p )
+
+			drop.dropship.WaitSignal( "OnDeath" )
+		}
+	}
+}
+
+
+function ShowAllTitanFallSpots()
+{
+	wait 0.5
+	FlightPath flightPath = GetAnalysisForModel( GetFlightPathModel( "fp_titan_model" ), HOTDROP_TURBO_ANIM )
+
+	int nodeCount = GetNodeCount()
+	local offset = GetAnalysisOffset( flightPath )
+	local iterator = flightPath.iterator
+	local dataIndex = GetAnalysisDataIndex( flightPath )
+
+	/*vector up = Vector(0,0,10)
+	vector down = Vector(0,0,-10)
+	vector right = Vector(0,10,0)
+	vector left = Vector(0,-10,0)
+	vector forward = Vector(10,0,0)
+	vector back = Vector(-10,0,0)*/
+
+	local origin
+	bool drawThrough = false
+	float time = 120.0
+
+	local yawVecs = []
+	for ( int i = 0; i < ANALYSIS_STEPS; i++ )
+	{
+		float yaw = i * ANALYSIS_YAW_STEP
+		local forward = AnglesToForward( Vector( 0, yaw, 0 ) )
+		yawVecs.append( forward * 20.0 )
+	}
+
+	printt( "checking dataIndex " + dataIndex )
+
+	int hits = 0
+	for ( int i = 0; i < nodeCount; i++ )
+	{
+//		i = 2414
+		origin = GetNodePos( i )
+		for ( int p = 0; p < ANALYSIS_STEPS; p++ )
+		{
+			if ( GetNodeScriptData_Boolean( i, p + dataIndex ) )
+			{
+				DebugDrawLine( origin, origin + yawVecs[p], 0, 255, 0, drawThrough, time )
+				hits++
+			}
+			else
+			{
+				DebugDrawLine( origin, origin + yawVecs[p], 255, 0, 0, drawThrough, time )
+			}
+		}
+		//return
+
+/*
+		if ( NodeHasFlightPath( dataIndex, i ) )
+		{
+			DebugDrawLine( origin + down, origin + up, 0, 255, 0, drawThrough, time )
+			DebugDrawLine( origin + right, origin + left, 0, 255, 0, drawThrough, time )
+			DebugDrawLine( origin + forward, origin + back, 0, 255, 0, drawThrough, time )
+		}
+		else
+		{
+			DebugDrawLine( origin + down, origin + up, 255, 0, 0, drawThrough, time )
+			DebugDrawLine( origin + right, origin + left, 255, 0, 0, drawThrough, time )
+			DebugDrawLine( origin + forward, origin + back, 255, 0, 0, drawThrough, time )
+		}
+*/
+	}
+
+	printt( "Found " + hits + " uses of this sequence." )
+}
+
+bool function AnaylsisFuncLegalFlightPath( FlightPath flightPath, vector origin, float yaw )
+{
+	// find nodes that are legal for a simple flight path
+	vector angles = Vector( 0, yaw, 0 )
+	vector forward = AnglesToForward( angles )
+	vector right = AnglesToRight( angles )
+	bool legal = IsLegalFlightPath( flightPath, origin, forward, right, !shFile.activeNodeAnalysis && FLIGHT_PATH_DEBUG )
+
+	return legal
+}
+
+
+function AddFighterBounds( FlightPath flightPath )
+{
+	//AddBoundingMins( flightPath, Vector( -378, -160, 0 ) )
+	//AddBoundingMaxs( flightPath, Vector( 256, 160, 208 ) )
+
+	// tracehull requires square x/y for now..
+	AddBoundingMins( flightPath, Vector( -325, -325, 0 ) )
+	AddBoundingMaxs( flightPath, Vector( 325, 325, 208 ) )
+}
+#endif // SERVER
+
+
+table<string,string> function DogFightAnimsFromIndex( animIndex )
+{
+	string anim1
+	string anim2
+
+	switch ( animIndex )
+	{
+		case 0:
+			anim1 = STRATON_DOGFIGHT_ANIM1
+			anim2 = STRATON_DOGFIGHT_ANIM1_PERSUER
+			break
+		case 1:
+			anim1 = STRATON_DOGFIGHT_ANIM2
+			anim2 = STRATON_DOGFIGHT_ANIM2_PERSUER
+			break
+		case 2:
+			anim1 = STRATON_DOGFIGHT_ANIM3
+			anim2 = STRATON_DOGFIGHT_ANIM3_PERSUER
+			break
+	}
+
+	return { anim1 = anim1, anim2 = anim2 }
+}
+
+bool function IsActiveNodeAnalysis()
+{
+	return shFile.activeNodeAnalysis
+}
+
+#if SERVER
+function StratonHornetDogfights()
+{
+	//PrintFunc()
+	svGlobal.levelEnt.Signal( "StratonHornetDogfights" )
+	svGlobal.levelEnt.EndSignal( "StratonHornetDogfights" )
+
+	for ( ;; )
+	{
+		for ( int i = 0; i < 20; i++ )
+		{
+			float yaw = RandomFloat( 360.0 )
+			thread SpawnRandomDogFight( yaw )
+
+			wait RandomFloatRange( 4, 6 )
+		}
+
+		wait 20
+
+		for ( int i = 0; i < 20; i++ )
+		{
+			float yaw = RandomFloat( 360.0 )
+			thread SpawnRandomDogFight( yaw )
+
+			wait RandomFloatRange( 8, 20 )
+		}
+
+		wait 40
+	}
+}
+
+function StratonHornetDogfightsIntense()
+{
+	if ( IsMultiplayer() )
+	{
+		if ( GetCurrentPlaylistVarInt( "skyshow_enabled", 0 ) == 0 )
+			return
+	}
+
+	//PrintFunc()
+	svGlobal.levelEnt.Signal( "StratonHornetDogfights" )
+	svGlobal.levelEnt.EndSignal( "StratonHornetDogfights" )
+
+	for ( ;; )
+	{
+		float yaw = RandomFloat( 360.0 )
+		thread SpawnRandomDogFight( yaw )
+		wait RandomFloatRange( 1, 3 )
+	}
+}
+
+void function SkyboxCapitalShips( string name = "skybox_cam_level" )
+{
+	file.skyboxCamName = name
+	AddCallback_OnClientConnected( OnClientConnected )
+}
+
+void function OnClientConnected( entity player )
+{
+	if ( IsMultiplayer() )
+	{
+		if ( GetCurrentPlaylistVarInt( "skyshow_enabled", 0 ) == 0 )
+			return
+	}
+
+	entity skycam = GetEnt( file.skyboxCamName )
+	vector org = skycam.GetOrigin()
+	Remote_CallFunction_NonReplay( player, "ServerCallback_CaptialShips", org.x, org.y, org.z )
+}
+
+function SpawnRandomDogFight( float yaw )
+{
+	//PrintFunc()
+	// int animIndex = RandomInt( 3 )
+	int animIndex = RandomInt( 2 ) //reduced to 2 since we ran out of indeces
+
+	table<string,string> anims = DogFightAnimsFromIndex( animIndex )
+	string anim1 = anims.anim1
+
+	asset model = GetFlightPathModel( "fp_straton_model" )
+	FlightPath flightPath = GetAnalysisForModel( model, anim1 )
+
+	CallinData drop
+	InitCallinData( drop )
+	SetCallinStyle( drop, eDropStyle.RANDOM_FROM_YAW )
+	SetCallinYaw( drop, yaw )
+ 	SpawnPointFP spawnPoint = GetSpawnPointForStyle( flightPath, drop )
+ 	if ( !spawnPoint.valid )
+ 		return
+
+	int x = int( spawnPoint.origin.x )
+	int y = int( spawnPoint.origin.y )
+	int z = int( spawnPoint.origin.z )
+	float yaw = spawnPoint.angles.y
+
+	array<entity> players = GetPlayerArray()
+	foreach ( player in players )
+	{
+		Remote_CallFunction_NonReplay( player, "ServerCallback_DogFight", x, y, z, yaw, animIndex )
+	}
+}
+
+
+function GetTitanfallNodesInRadius( nodeTable, titanfallOrigin, radius ) //TODO: Make this function return the node table, not have it be passed in
+{
+	int nodeCount = GetNodeCount()
+	local radiusSqr = (radius * radius)
+
+	for ( int nodeIdx = 0; nodeIdx < nodeCount; nodeIdx++ )
+	{
+		if ( DistanceSqr( titanfallOrigin, GetNodePos( nodeIdx ) ) < radiusSqr )
+			nodeTable[nodeIdx] <- []
+	}
+}
+
+function DisableTitanfallForLifetimeOfEntityNearOrigin( ownerEntity, origin, radius = TITANHOTDROP_DISABLE_ENEMY_TITANFALL_RADIUS  )
+{
+	Assert( Flag( "FlightPath_TitanDrop" ) )
+
+	local nodeTable = {}
+	GetTitanfallNodesInRadius( nodeTable, origin, radius )
+	thread DisableTitanfallForNodes( nodeTable, ownerEntity, origin, radius )
+}
+
+function TemporarilyDisableTitanfallAroundRadius( origin, radius, float timeDelay = 5.0 ) //WARNNING: This doesn't actually work since it doesn't mark the nodes (e.g. SetNodeScriptData_Boolean( node, dataIndex + p, false )). Also has problems similiar to SetInvulnerable() etc where you want to avoid having the last function called win, i.e. might need a counter or an enum
+{
+	string titanfallID = UniqueString()
+	level.disallowedTitanfalls[ titanfallID ] <- { origin = origin, radius = radius }
+
+	wait timeDelay
+	delete level.disallowedTitanfalls[ titanfallID ]
+}
+
+function DisableTitanfallForNodes( nodeTable, ownerEntity, origin, radius )
+{
+	EndSignal( ownerEntity, "OnDestroy" )
+	EndSignal( ownerEntity, "ClearDisableTitanfall" )
+
+	FlightPath flightPath = GetAnalysisForModel( GetFlightPathModel( "fp_titan_model" ), HOTDROP_TURBO_ANIM )
+	local dataIndex = GetAnalysisDataIndex( flightPath )
+
+	string titanfallID = UniqueString()
+
+	level.disallowedTitanfalls[ titanfallID ] <- { origin = origin, radius = radius }
+
+	foreach ( node, nodeData in nodeTable )
+	{
+		Assert( nodeData.len() == 0 )
+		nodeData.resize( ANALYSIS_STEPS )
+		for ( int p = 0; p < ANALYSIS_STEPS; p++ )
+		{
+			nodeData[p] = GetNodeScriptData_Boolean( node, dataIndex + p )
+			if ( nodeData[p] == true )
+				SetNodeScriptData_Boolean( node, dataIndex + p, false )
+		}
+	}
+
+	OnThreadEnd(
+		function() : ( nodeTable, dataIndex, titanfallID )
+		{
+			delete level.disallowedTitanfalls[ titanfallID ]
+
+			foreach ( node, nodeData in nodeTable )
+			{
+				Assert( nodeData.len() == ANALYSIS_STEPS )
+				nodeData.resize( ANALYSIS_STEPS )
+				for ( int p = 0; p < ANALYSIS_STEPS; p++ )
+				{
+					if ( nodeData[p] == true )
+						SetNodeScriptData_Boolean( node, dataIndex + p, nodeData[p] )
+				}
+			}
+		}
+	)
+
+	WaitSignal( ownerEntity, "OnDeath" )
+}
+
+
+function NearDisallowedTitanfall( origin )
+{
+	foreach ( titanfallData in level.disallowedTitanfalls )
+	{
+		if ( Distance( origin, titanfallData.origin ) > titanfallData.radius )
+			continue
+
+		return true
+	}
+
+	return false
+}
+
+bool function TestNodeForTitanDrop( int node = 2414, float yaw = 0 )
+{
+	asset model = GetFlightPathModel( "fp_titan_model" )
+	string animation = HOTDROP_TURBO_ANIM
+	FlightPath flightPath = GetAnalysisForModel( model, animation )
+
+	vector origin = GetNodePos( node )
+	vector angles = Vector( 0, yaw, 0 )
+	//entity titan = CreatePropDynamic( model, origin, Vector(0,0,0) )
+	entity titan = CreateNPCTitanFromSettings( "titan_atlas", TEAM_IMC, origin, angles )
+	float impactTime = GetHotDropImpactTime( titan, animation )
+
+	Attachment result = titan.Anim_GetAttachmentAtTime( animation, "OFFSET", impactTime )
+	vector resultPos = result.position
+
+	vector maxs = titan.GetBoundingMaxs()
+	vector mins = titan.GetBoundingMins()
+	TraceResults trace = TraceHull( resultPos + Vector(0,0,20), resultPos + Vector(0,0,-20), mins, maxs, null, titan.GetPhysicsSolidMask(), TRACE_COLLISION_GROUP_NONE )
+	float zDif = trace.endPos.z - result.position.z
+	origin.z += zDif
+	origin.z += 3.0
+
+	titan.SetOrigin( origin )
+	bool canStand = TitanCanStand( titan )
+	titan.Kill_Deprecated_UseDestroyInstead()
+	//DebugDrawLine( origin, origin + Vector(0,0,16), 255, 0, 0, true, 5.0 )
+	return canStand
+}
+
+function AddTitanfallBlocker( origin, radius, height )
+{
+	local maxHeight = origin.z + height
+
+	local Table = { origin = origin, radius = radius, maxHeight = maxHeight }
+	level.titanfallBlockers.append( Table )
+}
+
+void function TryAnalysisAtOrigin( FlightPath flightPath, array<bool> Array, vector origin )
+{
+	bool prep = flightPath in file.analysisPrepSpawnpointFunc
+	for ( int i = 0; i < Array.len(); i++ )
+	{
+		float yaw = i * ANALYSIS_YAW_STEP
+		vector org = origin
+		if ( prep )
+		{
+			var newOrg = file.analysisPrepSpawnpointFunc[ flightPath]( flightPath, origin, yaw )
+			if ( newOrg != null )
+			{
+				org = expect vector( newOrg )
+			}
+		}
+
+		if ( !PassedAnalysisFunc( flightPath, org, yaw ) )
+			continue
+
+		Array[ i ] = true
+	}
+}
+
+void function AddDropshipDropTable( entity dropship, DropTable dropTable )
+{
+	file.dropshipDropOffDropTable[ dropship ] <- dropTable
+}
+
+DropTable function GetDropshipDropTable( entity dropship )
+{
+	Assert( dropship in file.dropshipDropOffDropTable )
+	return file.dropshipDropOffDropTable[ dropship ]
+}
+
+bool function HasDropshipDropTable( entity dropship )
+{
+	if ( !( dropship in file.dropshipDropOffDropTable ) )
+		return false
+
+	return file.dropshipDropOffDropTable[ dropship ].valid
+}
+
+
+#endif // SERVER

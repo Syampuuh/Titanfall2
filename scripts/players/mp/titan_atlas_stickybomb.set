@@ -1,0 +1,63 @@
+#base "titan_atlas.set"
+"titan_atlas_stickybomb"
+{
+	enable_sticky_icon	1
+	aiSettingsFile			"npc_titan_auto_atlas_stickybomb" //mp_only
+	sp_aiSettingsFile		"npc_titan_atlas_stickybomb" //sp only
+	at_aiSettingsFile		"npc_titan_atlas_stickybomb_bounty" //at only
+
+	titanCharacterName "ion"
+
+    hud_follow_icon     "rui/hud/earn_meter/ajax_follow"
+    hud_guard_icon      "rui/hud/earn_meter/ajax_guard"
+
+    core_building_icon  "rui/titan_loadout/core/titan_core_laser"
+    core_ready_icon     "rui/titan_loadout/core/titan_core_laser"
+
+	startup_sound		"ion_power_up"
+	execution_anim		"titan_atlas_stickybomb"
+
+    readymessage        "#HUD_ION_READY"
+    readyhint           "#HUD_ION_READY_HINT"
+
+	"global"
+	{
+		printname			"#NPC_TITAN_AUTO_ATLAS_LASER"
+
+
+		bodymodel			"models/titans/medium/titan_medium_ajax.mdl" [$mp]
+		bodymodel			"models/titans/medium/sp_titan_medium_ajax.mdl" [$sp]
+
+		armsmodel			"models/weapons/arms/pov_titan_medium_ajax.mdl"
+
+		dodge  1
+		dodgePowerDrain		100
+		powerregenrate 16.66
+
+		sharedEnergyTotal 1000
+		sharedEnergyRegenDelay 0.2
+		sharedEnergyRegenRate						100.0 	[$sp]
+		sharedEnergyRegenRate						80.0 	[$mp]
+
+		sharedEnergyNotUsableSound "LSTAR_LowAmmo_Shot15"
+		sharedEnergyRegenSound ""
+
+		footstep_type		"ion"
+
+		ClassMods
+		{
+			pas_mobility_dash_capacity
+			{
+				dodge  1
+				powerregenrate		8.33
+			    dodgePowerDrain		50
+			}
+			pas_titan_hardcore_settings
+			{
+				health			5000
+				healthDoomed	1250
+			}
+		}
+	}
+}
+

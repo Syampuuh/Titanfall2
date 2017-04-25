@@ -1,0 +1,47 @@
+"UnlitTwoTexture"
+{
+	"$nocull" "1"
+	"$nodecal" "1"
+	$allowoverbright 1
+	"$vertcoloristint" "1"
+	
+
+	"$additive" "1"
+//	"$no_fullbright" 1
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+	//"$model" "1"
+	"$translucent" 1
+	//"$nocull" "1"
+	"$color2" "[2 2 2]"
+
+
+	"$basetexture" "effects\caustic_water_01_alpha"
+	"$Texture2" "effects\electric_anim"
+
+
+	//"$color" "[1 1 1]"
+	//"$color2" "[10 0 0]"
+
+	"Proxies"
+	{
+//		{
+//		"$t1scale" .2
+//		"$t2scale" .2
+//		}
+			"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" .1
+			"texturescrollangle" 10
+			"texturescale"	2
+		}
+				"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" 1
+			"texturescrollangle" 45
+			"texturescale"	.8
+		}
+	}
+}

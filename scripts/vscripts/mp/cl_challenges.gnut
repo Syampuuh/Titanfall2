@@ -1,0 +1,295 @@
+
+global function ClChallenges_Init
+
+global function InitChallengePopup
+global function ServerCallback_UpdateClientChallengeProgress
+//global function GetClosestWeaponChallengeRef
+global function ChallengePopup_AddPlayer
+
+
+const CHALLENGE_POPUP_IN_TIME 			= 0.15
+const CHALLENGE_POPUP_OUT_TIME 			= 0.3
+const CHALLENGE_POPUP_DURATION 			= 3.5
+const CHALLENGE_POPUP_TIMEOUT_ENABLED 	= true
+const CHALLENGE_POPUP_TIMEOUT 			= 10.0	// Any challenge waiting in queue for this amount of time is forgotten about. Exception is challenge completion, they always show up
+
+enum ePopupType
+{
+	NEW,
+	PROGRESS,
+	COMPLETED,
+}
+
+struct PopupInfo
+{
+	string ref
+	int popupType
+	array<string> challengeName
+	array<string> challengeDesc
+	float challengeProgress
+	float challengeGoal
+	int tier
+	int flags
+	float createTime
+}
+
+struct
+{
+	array<PopupInfo> challengePopupQueue
+	table signalDummy
+} file
+
+void function ClChallenges_Init()
+{
+	RegisterSignal( "ChallengePopup" )
+	RegisterSignal( "ChallengeQueueUpdated" )
+
+	AddPlayerFunc( ChallengePopup_AddPlayer )
+}
+
+/*function GetClosestWeaponChallengeRef( weaponRef, entity player )
+{
+	if ( !(weaponRef in level.challengeRefsForWeapon ) )
+		return
+
+	if ( IsItemLocked( player, "challenges" ) )
+		return
+
+	if ( player.GetLevel() < GetUnlockLevelReq( weaponRef, 999 ) + 3 )
+		return
+
+	local bestRef = null
+	local bestFrac = 0
+	foreach ( challengeRef in level.challengeRefsForWeapon[weaponRef] )
+	{
+		local challengeProgressFrac = GetCurrentChallengeProgressFrac( challengeRef, player )
+
+		if ( challengeProgressFrac > bestFrac )
+		{
+			bestFrac = challengeProgressFrac
+			bestRef = challengeRef
+		}
+	}
+
+	printt( bestRef, bestFrac )
+
+	if ( bestFrac < 0.5 )
+		return
+
+	return bestRef
+}*/
+
+void function InitChallengePopup()
+{
+	entity player = GetLocalClientPlayer()
+	InitPlayerChallenges( player )
+}
+
+void function ServerCallback_UpdateClientChallengeProgress( int challengeID, float progress, bool showPopup )
+{
+	entity player = GetLocalClientPlayer()
+	if ( !IsValid( player ) )
+		return
+
+	// Get information about the challenge before we update it
+	string ref 				= GetChallengeRefFromID( challengeID )
+	array<string> challengeName 	= GetChallengeName( ref, player )
+	array<string> challengeDesc 	= GetChallengeDescription( ref )
+	float challengeProgress = GetCurrentChallengeProgress( ref, player )
+	float challengeGoal 	= GetCurrentChallengeGoal( ref, player )
+	float oldProgress 		= GetCurrentChallengeProgress( ref, player )
+	int oldTier 			= GetCurrentChallengeTier( ref, player )
+	int flags				= GetChallengeFlags( ref )
+
+	// Update local table of challenge progress
+	UpdateLocalChallengeProgress( ref, player, -1.0, progress )
+
+	if ( !showPopup )
+		return
+
+	// Determine what type of popup it is based on old progress and new progress
+	challengeProgress 	= GetCurrentChallengeProgress( ref, player )
+	int newTier 		= GetCurrentChallengeTier( ref, player )
+	int popupType 		= -1
+
+	if ( newTier > oldTier || ( challengeProgress > oldProgress && challengeProgress == challengeGoal ) )
+	{
+		// We just completed a challenge
+		popupType = ePopupType.COMPLETED
+
+		// Clamp challenge progress to that tiers progress
+		challengeProgress = GetGoalForChallengeTier( ref, oldTier )
+	}
+	else
+	{
+		challengeName 		= GetChallengeName( ref, player )
+		challengeDesc 		= GetChallengeDescription( ref )
+		challengeGoal 		= GetCurrentChallengeGoal( ref, player )
+
+		// Did we just start the challenge or is this an update
+		if ( oldProgress == 0 && progress > 0 )
+			popupType 		= ePopupType.NEW
+		else
+			popupType 		= ePopupType.PROGRESS
+	}
+	Assert( popupType != -1 )
+
+	// Add the popup to the popup queue
+	AddChallengePopupToQueue( ref, popupType, challengeName, challengeDesc, challengeProgress, challengeGoal, newTier, flags )
+}
+
+void function AddChallengePopupToQueue( string ref, int popupType, array<string> challengeName, array<string> challengeDesc, float challengeProgress, float challengeGoal, int tier, int flags )
+{
+	PopupInfo popupInfo
+	popupInfo.ref 					= ref
+	popupInfo.popupType 			= popupType
+	popupInfo.challengeName 		= challengeName
+	popupInfo.challengeDesc 		= challengeDesc
+	popupInfo.challengeProgress 	= challengeProgress
+	popupInfo.challengeGoal 		= challengeGoal
+	popupInfo.tier 					= tier
+	popupInfo.flags 				= flags
+	popupInfo.createTime			= Time()
+
+	// Remove any earlier popup messages in the que that are for the same challenge because they are now old info
+	bool removed = false
+	while ( true )
+	{
+		removed = false
+		foreach( index, Table in file.challengePopupQueue )
+		{
+			if ( Table.ref == ref )
+			{
+				file.challengePopupQueue.remove( index )
+				removed = true
+				break
+			}
+		}
+		if ( !removed )
+			break
+	}
+
+	// Add this to the queue and tell queue system an item was added
+	file.challengePopupQueue.append( popupInfo )
+	Signal( file.challengePopupQueue, "ChallengeQueueUpdated" )
+}
+
+void function ChallengePopup_AddPlayer( entity player )
+{
+	if ( IsMenuLevel() )
+		return
+
+	if ( player != GetLocalClientPlayer() )
+		return
+
+	thread ChallengePopupQueueThink( player )
+}
+
+void function ChallengePopupQueueThink( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+
+	while ( IsValid( player ) )
+	{
+		if ( file.challengePopupQueue.len() == 0 )
+			WaitSignal( file.challengePopupQueue, "ChallengeQueueUpdated" )
+
+		// Remove popups that have been in the queue longer than the timeout duration
+		RemoveTimedOutPopups()
+		if ( file.challengePopupQueue.len() == 0 )
+			continue
+
+		Assert( file.challengePopupQueue.len() > 0 )
+
+		// Sort the queue file.challengePopupQueue
+		file.challengePopupQueue.sort( ChallengePopupSortFunc )
+
+		PopupInfo popupInfo = file.challengePopupQueue[0]
+		file.challengePopupQueue.remove( 0 )
+		thread ShowChallengePopup( popupInfo )
+		wait CHALLENGE_POPUP_IN_TIME + CHALLENGE_POPUP_DURATION
+	}
+}
+
+void function RemoveTimedOutPopups()
+{
+	if ( !CHALLENGE_POPUP_TIMEOUT_ENABLED )
+		return
+
+	float currentTime = Time()
+	array<PopupInfo> newArray = []
+
+	foreach( popupInfo in file.challengePopupQueue )
+	{
+		if ( popupInfo.popupType == ePopupType.COMPLETED || ( currentTime - popupInfo.createTime <= CHALLENGE_POPUP_TIMEOUT ) )
+			newArray.append( popupInfo )
+	}
+
+	file.challengePopupQueue = newArray
+}
+
+int function ChallengePopupSortFunc( PopupInfo a, PopupInfo b )
+{
+	// Challenge completion popups take priority, then new, then progress
+	table priorityOrder = {}
+	priorityOrder[ ePopupType.PROGRESS ] <- 0
+	priorityOrder[ ePopupType.NEW ] <- 1
+	priorityOrder[ ePopupType.COMPLETED ] <- 2
+	if ( priorityOrder[ a.popupType ] > priorityOrder[ b.popupType ] )
+		return -1
+	else if ( priorityOrder[ b.popupType ] > priorityOrder[ a.popupType ] )
+		return 1
+
+	// Challenge popup types are the same, take other factors into account
+	Assert( a.popupType == b.popupType )
+
+	// Challenges of higher priority are more important
+	if ( ( a.flags & CF_PRIORITY_HIGH ) && !( b.flags & CF_PRIORITY_HIGH ) )
+		return -1
+	else if ( ( b.flags & CF_PRIORITY_HIGH ) && !( a.flags & CF_PRIORITY_HIGH ) )
+		return 1
+
+	if ( ( a.flags & CF_PRIORITY_LOW ) && !( b.flags & CF_PRIORITY_LOW ) )
+		return 1
+	else if ( ( b.flags & CF_PRIORITY_LOW ) && !( a.flags & CF_PRIORITY_LOW ) )
+		return -1
+
+	// Challenges have the same priority
+
+	// Challenges of higher tiers are more important
+	if ( a.tier > b.tier )
+		return -1
+	else if ( b.tier > a.tier )
+		return 1
+
+	// Challenges are of the same tier
+	Assert( a.tier == b.tier )
+
+	return 0
+}
+
+void function ShowChallengePopup( PopupInfo popupInfo )
+{
+	if ( GetGameState() >= eGameState.Postmatch )
+		return
+
+	if ( popupInfo.popupType != ePopupType.COMPLETED )
+		return
+
+	Signal( file.signalDummy, "ChallengePopup" )
+	EndSignal( file.signalDummy, "ChallengePopup" )
+
+	//printt( "ShowChallengePopup " + popupInfo.challengeName[ 0 ] )
+
+	//string challengeLocString = expect string( popupInfo.challengeName[0] )
+	//popupInfo.challengeName.remove(0)
+	//for ( local i = popupInfo.challengeName.len() ; i < 5 ; i++ )
+	//	popupInfo.challengeName.append( null )
+	//Assert( popupInfo.challengeName.len() == 5 )
+	//AnnouncementMessage( GetLocalClientPlayer(), "#CHALLENGE_POPUP_HEADER_COMPLETED", challengeLocString, <255, 215, 35>, ["", "", "", "", ""], popupInfo.challengeName, "UI_InGame_ChallengeCompleted" )
+
+	//if ( popupInfo.challengeDesc.len() == 1 )
+	//	file.challengePopupDesc.SetText( popupInfo.challengeDesc[0], popupInfo.challengeGoal )
+	//else
+	//	file.challengePopupDesc.SetText( popupInfo.challengeDesc[0], popupInfo.challengeGoal, popupInfo.challengeDesc[1] )
+}

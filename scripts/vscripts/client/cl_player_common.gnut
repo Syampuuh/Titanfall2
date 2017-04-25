@@ -1,0 +1,86 @@
+global function PlayHeadshotConfirmSound
+global function PlayKillshotConfirmSound
+
+
+bool function PlayHeadshotConfirmSound( entity attacker, entity victim, bool isKillShot )
+{
+	if ( victim.IsTitan() )
+		return false
+
+	bool isAndroid = IsAndroidNPC( victim ) || victim.IsMechanical()
+
+	string aliasName;
+	if ( isKillShot )
+	{
+		if ( isAndroid )
+			aliasName = "Player.Hitbeep_headshot.Kill.Android_1P_vs_3P"
+		else
+			aliasName = "Player.Hitbeep_headshot.Kill.Human_1P_vs_3P"
+	}
+	else
+	{
+		if ( isAndroid )
+			aliasName = "Player.Hitbeep_headshot.Android_1P_vs_3P"
+		else
+			aliasName = "Player.Hitbeep_headshot.Human_1P_vs_3P"
+	}
+
+	EmitSoundOnEntity( attacker, aliasName )
+	return true;
+}
+
+bool function PlayKillshotConfirmSound( entity attacker, entity victim, int damageType )
+{
+	if ( victim.IsTitan() )
+		return false
+
+	//if ( !( "playedKillShotSoundTime" in victim.s ) )
+	//	victim.s.playedKillShotSoundTime <- -100
+	// played a kill shot on this guy recently?
+	//if ( Time() - victim.s.playedKillShotSoundTime < 5 )
+	//	return
+
+	string soundAlias = ""
+	if ( damageType & DF_GIB )
+	{
+		// no confirm here, per Audio
+	}
+	else if ( damageType & DF_SHOTGUN )
+	{
+		if ( victim.IsMechanical() )
+			soundAlias = "Android.Shotgun.BulletImpact_KillShot_1P_vs_3P"
+		else
+			soundAlias = "Flesh.Shotgun.BulletImpact_KillShot_1P_vs_3P"
+	}
+	else if ( (damageType & damageTypes.bullet) || (damageType & DF_BULLET) )
+	{
+		if ( victim.IsMechanical() )
+			soundAlias = "Android.BulletImpact_KillShot_1P_vs_3P"            // light ballistic vs. Spectre or Marvin
+		else
+			soundAlias = "Flesh.BulletImpact_KillShot_1P_vs_3P"            // light ballistic vs. pilot or grunt
+	}
+	else if ( damageType & damageTypes.largeCaliber )
+	{
+		if ( victim.IsMechanical() )
+			soundAlias = "Android.Heavy.BulletImpact_KillShot_1P_vs_3P"    // heavy ballistic vs. Spectre or Marvin
+		else
+			soundAlias = "Flesh.Heavy.BulletImpact_Killshot_1P_vs_3P"    // heavy ballistic vs. pilot or grunt
+	}
+
+	// Special case for spectre headshot head explosions
+	if ( IsFragDrone( victim ) )
+		soundAlias = "SuicideSpectre.BulletImpact_KillShot_1P_vs_3P"
+
+	//Special case for turret. Not sure if this differentiates between mega turret and small light turrets, we can further break them apart if needed
+	if ( IsTurret( victim ) )
+	{
+		//soundAlias = "MegaTurret.BulletImpact_KillShot_1P_vs_3P"
+	}
+
+	if ( soundAlias == "" )
+		return false
+
+	//victim.s.playedKillShotSoundTime = Time()
+	EmitSoundOnEntity( attacker, soundAlias )
+	return true
+}

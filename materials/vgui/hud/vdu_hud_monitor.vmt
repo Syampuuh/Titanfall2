@@ -1,0 +1,17 @@
+// proper aspect ratio -mo
+"UnlitTwoTexture"
+{
+	"$basetexture" "vgui\hud\VDU_hud_monitor"
+
+	"$Texture2" "_rt_Camera"
+
+	"$translucent" "1"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$ignorez"     "1"
+
+
+	"Proxies"
+	{
+	}
+}

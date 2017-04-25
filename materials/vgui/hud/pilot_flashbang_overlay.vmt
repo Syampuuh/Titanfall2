@@ -1,0 +1,29 @@
+"Refract"
+{
+	"$translucent" 1
+
+	"$bluramount" 1
+	"$refractamount" ".25"
+	"$refracttint" "[.8 .8 .8]"
+
+	"$vertexcolormodulate" "1"
+	"$vertexalpha"	"1"
+
+	"$normalmap" "vgui\HUD\digital_distortion"
+	"$opacitymap" "vgui\HUD\digital_distortion_opa"
+
+	"$normalmap2" "vgui\HUD\digital_distortion"
+
+	"Proxies"
+	{
+		//Move the 2nd texture using horiz and vert speed
+		"TextureScroll"
+		{
+			"texturescrollvar" "$bumptransform2"
+			"texturescrollrate" 10
+			"texturescrollangle" 45
+			"texturescale" 2
+		}
+
+	}
+}

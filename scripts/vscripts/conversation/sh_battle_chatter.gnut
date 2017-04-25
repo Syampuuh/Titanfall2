@@ -1,0 +1,131 @@
+
+global function ShBattleChatter_Init
+global function SelectRandomMaleBattleChatterVoice
+global function SelectRandomFemaleBattleChatterVoice
+global function SelectRandomAndroidMaleBattleChatterVoice
+global function SelectRandomAndroidFemaleBattleChatterVoice
+global function ShouldPlayBattleChatter
+
+global const BATTLE_CHATTER_RANGE = 800
+global const BATTLE_CHATTER_RANGE_SQUARED = BATTLE_CHATTER_RANGE * BATTLE_CHATTER_RANGE
+
+global struct BattleChatterStruct
+{
+	array<int> MALE_BATTLE_CHATTER_VOICES
+	array<int> FEMALE_BATTLE_CHATTER_VOICES
+	array<int> ANDROID_MALE_BATTLE_CHATTER_VOICES
+	array<int> ANDROID_FEMALE_BATTLE_CHATTER_VOICES
+
+	table< int, string > battleChatterIndexToStringMap
+}
+
+global BattleChatterStruct battleChatterData
+
+void function ShBattleChatter_Init()
+{
+	var voicesDataTable = GetDataTable( $"datatable/battle_chatter_voices.rpak" )
+	int numVoices = GetDatatableRowCount( voicesDataTable )
+	for ( int i = 0; i < numVoices; ++i )
+	{
+		bool isMale = GetDataTableBool( voicesDataTable, i, GetDataTableColumnByName( voicesDataTable, "isMale" ) )
+		bool isAndroid = GetDataTableBool( voicesDataTable, i, GetDataTableColumnByName( voicesDataTable, "isAndroid" ) )
+		string ref = GetDataTableString( voicesDataTable, i, GetDataTableColumnByName( voicesDataTable, "ref" ) )
+
+		battleChatterData.battleChatterIndexToStringMap[ i ] <- ref
+
+		if ( isAndroid )
+		{
+			if ( isMale )
+				battleChatterData.ANDROID_MALE_BATTLE_CHATTER_VOICES.append( i )
+			else
+				battleChatterData.ANDROID_FEMALE_BATTLE_CHATTER_VOICES.append( i )
+
+		}
+		else if ( isMale )
+		{
+			battleChatterData.MALE_BATTLE_CHATTER_VOICES.append( i )
+
+		}
+		else
+		{
+			battleChatterData.FEMALE_BATTLE_CHATTER_VOICES.append( i )
+		}
+	}
+
+	var dataTable = GetDataTable( $"datatable/battle_chatter.rpak" )
+	int numRows = GetDatatableRowCount( dataTable )
+	for ( int i = 0; i < numRows; i++ )
+	{
+		string conversationName = GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, BATTLE_CHATTER_CONVERSATION_NAME_COLUMN_NAME ) )
+		int priority = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, BATTLE_CHATTER_PRIORITY_COLUMN_NAME ) )
+		float debounce = GetDataTableFloat( dataTable, i, GetDataTableColumnByName( dataTable, BATTLE_CHATTER_DEBOUNCE_COLUMN_NAME ) )
+
+		RegisterConversation( conversationName, priority, debounce )
+	}
+}
+
+int function SelectRandomMaleBattleChatterVoice()
+{
+	int numElements = battleChatterData.MALE_BATTLE_CHATTER_VOICES.len()
+	 return battleChatterData.MALE_BATTLE_CHATTER_VOICES.getrandom()
+}
+
+int function SelectRandomFemaleBattleChatterVoice()
+{
+	int numElements = battleChatterData.FEMALE_BATTLE_CHATTER_VOICES.len()
+	return battleChatterData.FEMALE_BATTLE_CHATTER_VOICES.getrandom()
+}
+
+int function SelectRandomAndroidMaleBattleChatterVoice()
+{
+	int numElements = battleChatterData.ANDROID_MALE_BATTLE_CHATTER_VOICES.len()
+	return battleChatterData.ANDROID_MALE_BATTLE_CHATTER_VOICES.getrandom() //Can't do .getrandom() on static arrays
+}
+
+int function SelectRandomAndroidFemaleBattleChatterVoice()
+{
+	int numElements = battleChatterData.ANDROID_FEMALE_BATTLE_CHATTER_VOICES.len()
+	return battleChatterData.ANDROID_FEMALE_BATTLE_CHATTER_VOICES.getrandom() //Can't do .getrandom() on static arrays
+}
+
+bool function ShouldPlayBattleChatter( string conversationType, entity listeningPlayer, entity speakingPlayer ) //Could possibly only run this on the client, but that means server always sends call to play battle chatter. Not sure if it's a big deal either way
+{
+	if ( !IsAlive( listeningPlayer ) )
+		return false
+
+	if ( !IsAlive( speakingPlayer ) )
+		return false
+
+	if ( speakingPlayer.IsTitan() ) //Not super necessary, but all the dialogue given so far seems like it's pilot only. Also weird to hear a Titan go "Reloading!"
+		return false
+
+	if ( listeningPlayer.IsTitan() ) //Made the decision to do this after a pilot saying his "grappling!" line forced the TitanOS to not play the "Friendly Pilot on board" line. See Bug 150174
+		return false
+
+	if ( IsForcedDialogueOnly( listeningPlayer ) )
+	{
+		//printt( "ForcedDialogueOnly, not playing Battle Chatter:"  + conversationType )
+		return false
+	}
+
+	#if CLIENT
+		//Only check debounces on client since we don't currently store that info on the server. Don't think it's a huge deal either way
+		float debounceTime = GetConversationDebounce( conversationType )
+		float lastPlayedTime = GetConversationLastPlayedTime( conversationType )
+		if ( lastPlayedTime > 0 && lastPlayedTime + debounceTime > Time() )
+		{
+			//printt( "lastPlayedTime: " + lastPlayedTime + " debounce time: " + debounceTime + ", not playing Battle Chatter:"  + conversationType )
+			return false
+		}
+	#endif
+
+	float distSqr = DistanceSqr( speakingPlayer.GetOrigin(), listeningPlayer.GetOrigin() )
+
+	if  ( distSqr > BATTLE_CHATTER_RANGE_SQUARED )
+	{
+		//printt( "DistanceSqr: " + distSqr + " larger than BATTLE_CHATTER_RANGE_SQUARED: " + BATTLE_CHATTER_RANGE_SQUARED + ", not playing Battle Chatter:"  + conversationType )
+		return false
+	}
+
+	return true
+}

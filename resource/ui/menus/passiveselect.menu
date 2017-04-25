@@ -1,0 +1,281 @@
+resource/ui/menus/passiveselect.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+		Screen
+		{
+			ControlName				ImagePanel
+			wide					%100
+			tall					%100
+			visible					1
+			scaleImage				1
+			fillColor				"0 0 0 0"
+			drawColor				"0 0 0 0"
+		}
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			classname				MenuTitle
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+	    CreditsAvailable
+	    {
+	        ControlName             RuiPanel
+	        InheritProperties       CreditsAvailableProperties
+	    }
+
+// BUTTON ROW 1 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Button0
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				PassiveSelectClass
+			scriptID				0
+	        xpos					96
+    	    ypos                    160
+
+			navUp					Button8
+			navDown					Button2
+			navLeft					Button1
+			navRight				Button1
+			tabPosition				1
+		}
+		Button1
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				PassiveSelectClass
+			scriptID				1
+			xpos					6
+
+			navUp					Button9
+			navDown					Button3
+			navLeft					Button0
+			navRight				Button0
+
+			pin_to_sibling			Button0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+// BUTTON ROW 2 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Button2
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				PassiveSelectClass
+			scriptID				2
+			ypos					6
+
+			navUp					Button0
+			navDown					Button4
+			navLeft					Button3
+			navRight				Button3
+
+			pin_to_sibling			Button0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		Button3
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				PassiveSelectClass
+			scriptID				3
+			xpos					6
+
+			navUp					Button1
+			navDown					Button5
+			navLeft					Button2
+			navRight				Button2
+
+			pin_to_sibling			Button2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+// BUTTON ROW 3 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Button4
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				PassiveSelectClass
+			scriptID				4
+			ypos					6
+
+			navUp					Button2
+			navDown					Button6
+			navLeft					Button5
+			navRight				Button5
+
+			pin_to_sibling			Button2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		Button5
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				PassiveSelectClass
+			scriptID				5
+			xpos					6
+
+			navUp					Button3
+			navDown					Button7
+			navLeft					Button4
+			navRight				Button4
+
+			pin_to_sibling			Button4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+// BUTTON ROW 4 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Button6
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				PassiveSelectClass
+			scriptID				6
+			ypos					6
+
+			navUp					Button4
+			navDown					Button8
+			navLeft					Button7
+			navRight				Button7
+
+			pin_to_sibling			Button4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		Button7
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				PassiveSelectClass
+			scriptID				7
+			xpos					6
+
+			navUp					Button5
+			navDown					Button9
+			navLeft					Button6
+			navRight				Button6
+
+			pin_to_sibling			Button6
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+// BUTTON ROW 5 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Button8
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				PassiveSelectClass
+			scriptID				8
+			ypos                    6
+
+			navUp					Button6
+			navDown					Button0
+			navLeft					Button9
+			navRight				Button9
+
+			pin_to_sibling			Button6
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		Button9
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				PassiveSelectClass
+			scriptID				9
+			xpos					6
+
+			navUp					Button7
+			navDown					Button1
+			navLeft					Button8
+			navRight				Button8
+
+			pin_to_sibling			Button8
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ItemDetails
+        {
+            ControlName				RuiPanel
+            InheritProperties		ItemDetails
+	        xpos					440
+    	    ypos                    170
+		    zpos					10
+		    wide 					400
+		    rui						"ui/item_details_narrow.rpak"
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ModelRotateMouseCapture
+        {
+            ControlName				CMouseMovementCapturePanel
+            xpos                    660
+            zpos					12
+            wide                    1260
+            tall                    %100
+        }
+
+// FOOTER //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

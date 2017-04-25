@@ -1,0 +1,21 @@
+UnlitTwoTexture
+{
+	$basetexture		"ui/menu/common/menu_hover_left_default"
+	$texture2			"ui/menu_selected_scroll"
+
+	$translucent 		1
+	$vertexcolor 		1
+	$vertexalpha 		1
+	$ignorez    		1
+	$no_fullbright		1
+
+    Proxies
+    {
+		TextureScroll
+		{
+			texturescrollvar	$texture2Transform
+			texturescrollrate	0.5
+			texturescrollangle	270
+		}
+    }
+}

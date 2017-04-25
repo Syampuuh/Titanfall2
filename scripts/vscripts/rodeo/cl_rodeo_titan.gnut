@@ -1,0 +1,784 @@
+untyped
+
+global function ClRodeoTitan_Init
+global function ClRodeoTitan_RegisterNetworkFunctions
+
+global function Pressed_OfferRodeoBattery
+global function Pressed_RequestRodeoBattery
+global function TryOfferRodeoBatteryHint
+
+global function PlayBatteryScreenFX
+
+global function ShowBatteryHint
+
+const BATTERY_FX_SCREEN = $"P_battery_screen"
+const int NUMBER_OF_BATTERY_ICONS = 3
+const int NO_BATTERY_HUD_ELEM_AVAILABLE = -1
+const RODEO_BATTERY_SHOW_HINT_TIME = 10.0
+const NUM_RODEO_DRAIN_BARS = 3
+
+const float BATTERY_TRACKER_MAX_ACQUIRE_DIST_SQ = 3000 * 3000
+const float BATTERY_TRACKER_MAX_DIST_SQ = 1000 * 1000
+const float BATTERY_TRACKER_MAX_DIST_SQ_BACKUP = 4000 * 4000
+
+const string TITAN_PICKS_UP_BATTERY_HEALTH_RESTORED_SOUND = "UI_TitanBattery_Titan_PickUp"
+
+struct
+{
+	string batteryHintText
+	var batteryHintRui
+	var batteryOverheadIndicatorRUI
+	array<entity> batteries
+	var batteryTrackerRui
+	float lastObitTime
+} file
+
+void function ClRodeoTitan_Init()
+{
+	Rodeo_BatteryRemoval_EventNotificationInit()
+	PrecacheParticleSystem( BATTERY_FX_SCREEN )
+
+	AddCreateCallback( "item_titan_battery", OnBatteryCreated )
+
+	RegisterSignal( "OfferRodeoBattery" )
+	RegisterSignal( "ShowFriendlyTitanWantsBattery" )
+	RegisterSignal( "HideStolenBatteryIcons" )
+
+	RegisterSignal( "StartRodeoDrain" )
+
+	file.batteryHintRui = CreateCockpitRui( $"ui/battery_hud.rpak" )
+
+	#if SP
+	file.batteryTrackerRui = RuiCreate( $"ui/battery_flyout.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 0 )
+	AddCreateCallback( "item_titan_battery", AddBatteryHUD )
+	AddCreateCallback( "prop_script", AddBatteryHUD )
+	AddCreateCallback( "prop_dynamic", AddBatteryHUD )
+	AddCreateTitanCockpitCallback( BatteryTracker_CockpitInit )
+	AddEventNotificationCallback( eEventNotifications.BATT_HealthFull, DisplayHealthFull )
+	AddEventNotificationCallback( eEventNotifications.BATT_Full, DisplayBattFull )
+	AddCinematicEventFlagChangedCallback( CE_FLAG_HIDE_MAIN_HUD, BatteryTracker_UpdateVisibility )
+	#endif
+}
+
+void function ClRodeoTitan_RegisterNetworkFunctions()
+{
+	RegisterNetworkedVariableChangeCallback_int( "rodeoBatteryCount", UpdateRodeoBatteryCount )
+	RegisterNetworkedVariableChangeCallback_ent( "batteryOnBack", BatteryOnBackChanged )
+}
+
+void function UpdateRodeoBatteryCount( entity soul, int oldCount, int count, bool actuallyChanged )
+{
+	if ( soul == null )
+		return
+
+	if ( !soul.HasValidTitan() )
+		return
+
+	entity titan = soul.GetTitan()
+	entity player = soul.GetBossPlayer()
+
+	if ( count > oldCount ) // titan heal
+	{
+		if ( !soul.IsDoomed() )
+		{
+			if ( !ModelHasFXGroup( titan.GetModelName() ) )
+				return
+
+			ModelFX_DisableGroup( titan, "titanHealth" )
+			ModelFX_EnableGroup( titan, "titanHealth" )
+			ModelFX_DisableGroup( titan, "titanDamage" )
+			ModelFX_EnableGroup( titan, "titanDamage" )
+		}
+	}
+}
+
+void function Rodeo_BatteryRemoval_EventNotificationInit()
+{
+	AddEventNotificationCallback( eEventNotifications.Rodeo_BatteryRemoved, Rodeo_BatteryRemovedEventNotification )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_YouStoleBattery, Rodeo_YouStoleBattery )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_TitanPickedUpBattery, Rodeo_TitanPickedUpBattery )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_PilotPickedUpBattery, Rodeo_PilotPickedUpBattery )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_YouEmbarkedWithABattery, Rodeo_YouEmbarkedWithABattery )
+
+	AddEventNotificationCallback( eEventNotifications.Rodeo_YouAppliedBatteryToTitan, Rodeo_YouAppliedBatteryToTitan )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_PilotAppliedBatteryToYou, Rodeo_PilotAppliedBatteryToYou )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_PilotAppliedBatteryToYourPetTitan, Rodeo_PilotAppliedBatteryToYourPetTitan )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_YouAppliedBatteryToPetTitan, Rodeo_YouAppliedBatteryToPetTitan )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_YouDroppedABattery, Rodeo_YouDroppedABattery )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_DisembarkToPickUpBattery, Rodeo_DisembarkToPickUpBattery )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_FriendlyPickedUpBattery, Rodeo_FriendlyPickedUpBattery )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_RequestBattery, Rodeo_RequestBattery )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_ShowBatteryHint, Rodeo_ShowBatteryHint )
+	AddEventNotificationCallback( eEventNotifications.Rodeo_HideBatteryHint, Rodeo_HideBatteryHint )
+}
+
+void function Rodeo_BatteryRemovedEventNotification( entity rodeoPilot, var eventVal )
+{
+	entity player = GetLocalClientPlayer()
+	AnnouncementData announcement = Announcement_Create( "#RODEO_BATTERY_REMOVAL_ANNOUNCEMENT" )
+	Announcement_SetSubText( announcement,  "#RODEO_BATTERY_REMOVAL_ANNOUNCEMENT_SUBTEXT" )
+	Announcement_SetOptionalSubTextArgsArray( announcement, [rodeoPilot.GetPlayerName()] )
+	Announcement_SetPurge( announcement, true )
+	Announcement_SetPriority( announcement, 200 )
+	Announcement_SetHideOnDeath( announcement, true )
+	Announcement_SetDuration( announcement, 3.0 )
+	AnnouncementFromClass( player, announcement )
+}
+
+void function Rodeo_YouStoleBattery( entity player, var eventVal )
+{
+	entity localClientPlayer = GetLocalClientPlayer()
+	AnnouncementData announcement = Announcement_Create( "#RODEO_STOLE_BATTERY_ANNOUNCEMENT" )
+	Announcement_SetIcon( announcement, $"vgui/HUD/battery/battery_capture_friendly" )
+	Announcement_SetSubText( announcement,  "#RODEO_STOLE_BATTERY_ANNOUNCEMENT_SUBTEXT" )
+	Announcement_SetPurge( announcement, true )
+	Announcement_SetPriority( announcement, 200 )
+	Announcement_SetHideOnDeath( announcement, true )
+	Announcement_SetDuration( announcement, 3.0 )
+	AnnouncementFromClass( localClientPlayer, announcement )
+}
+
+void function Rodeo_TitanPickedUpBattery( entity ent, var eventVal )
+{
+	PlayBatteryScreenFX( GetLocalClientPlayer() )
+}
+
+void function Rodeo_YouEmbarkedWithABattery( entity ent, var eventVal )
+{
+	thread PlayBatteryScreenFXWithDelay( GetLocalClientPlayer() )
+}
+
+void function PlayBatteryScreenFX( entity player )
+{
+	FlashCockpitHealthGreen()
+	EmitSoundOnEntity( player, TITAN_PICKS_UP_BATTERY_HEALTH_RESTORED_SOUND  )
+	entity cockpit = player.GetCockpit()
+	if ( IsValid( cockpit ) )
+		StartParticleEffectOnEntity( cockpit, GetParticleSystemIndex( BATTERY_FX_SCREEN ), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
+	Rumble_Play( "rumble_titan_battery_pickup", { position = player.GetOrigin() } )
+}
+
+void function PlayBatteryScreenFXWithDelay( entity player )
+{
+	player.EndSignal( "OnDeath" )
+
+	wait 0.75
+
+	PlayBatteryScreenFX( player )
+}
+
+void function Rodeo_TitanPickedUpBatteryGaveShields( entity ent, var eventVal )
+{
+	PlayBatteryScreenFX( GetLocalClientPlayer() )
+}
+
+void function Rodeo_TitanPickedUpBatteryGaveCore( entity ent, var eventVal )
+{
+	PlayBatteryScreenFX( GetLocalClientPlayer() )
+}
+
+void function Rodeo_PilotPickedUpBattery( entity ent, var eventVal )
+{
+	entity localClientPlayer = GetLocalClientPlayer()
+	AnnouncementData announcement = Announcement_Create( "#RODEO_PILOT_PICKED_UP_BATTERY_ANNOUNCEMENT" )
+	string subText
+	if ( IsSingleplayer() )
+		subText = "#RODEO_PILOT_PICKED_UP_SP_BATTERY_ANNOUNCEMENT_SUBTEXT"
+	else
+		subText  = "#RODEO_PILOT_PICKED_UP_BATTERY_ANNOUNCEMENT_SUBTEXT"
+
+	Announcement_SetSubText( announcement, subText  )
+	Announcement_SetIcon( announcement, $"vgui/HUD/battery/battery_capture_friendly" )
+	Announcement_SetPurge( announcement, true )
+	Announcement_SetPriority( announcement, 200 )
+	Announcement_SetHideOnDeath( announcement, true )
+	Announcement_SetDuration( announcement, 3.0 )
+	AnnouncementFromClass( localClientPlayer, announcement )
+}
+
+void function Rodeo_YouAppliedBatteryToTitan( entity friendlyTitan, var eventVal )
+{
+	if ( !IsValid( friendlyTitan ) )
+		return
+
+	RodeoAlert_YouGaveBattery()
+}
+
+void function Rodeo_YouAppliedBatteryToPetTitan( entity friendlyTitan, var eventVal )
+{
+	if ( !IsValid( friendlyTitan ) )
+		return
+
+	RodeoAlert_YouGaveBattery()
+}
+
+void function Rodeo_PilotAppliedBatteryToYou( entity friendlyPilot, var eventVal )
+{
+	if ( !IsValid( friendlyPilot ) )
+		return
+
+	entity localClientPlayer = GetLocalClientPlayer()
+	PlayBatteryScreenFX( localClientPlayer )
+	RodeoAlert_FriendlyGaveBattery()
+}
+
+void function Rodeo_PilotAppliedBatteryToYourPetTitan( entity friendlyPilot, var eventVal )
+{
+	if ( !IsValid( friendlyPilot ) )
+		return
+
+	entity localClientPlayer = GetLocalClientPlayer()
+	entity petTitan = localClientPlayer.GetPetTitan()
+	if( !IsValid( petTitan ) )
+		return
+
+	SetTimedEventNotification( 3.0, "#RODEO_PILOT_APPLIED_BATTERY_TO_YOUR_PET_TITAN_ANNOUNCEMENT_SUBTEXT", friendlyPilot.GetPlayerName() )
+}
+
+void function Rodeo_YouDroppedABattery( entity ent, var eventVal )
+{
+	SetTimedEventNotification( 3.0, "#RODEO_YOU_DROPPED_A_BATTERY_EVENT_NOTIFICATION" )
+}
+
+void function Rodeo_DisembarkToPickUpBattery( entity ent, var eventVal )
+{
+	SetTimedEventNotification( 2.0, "#RODEO_DISEMBARK_TO_PICKUP_BATTERY_EVENT_NOTIFICATION" )
+}
+
+void function Rodeo_FriendlyPickedUpBattery( entity friendlyPilot, var batteryEHandle )
+{
+	if ( !IsValid( friendlyPilot ) )
+		return
+
+	entity battery = GetEntityFromEncodedEHandle( batteryEHandle )
+
+	if ( !IsValid( battery ) )
+		return
+
+	SetTimedEventNotification( 3.0, "#RODEO_FRIENDLY_HAS_BATTERY_EVENT_NOTIFICATION", friendlyPilot.GetPlayerName() )
+
+	#if BATTLECHATTER_ENABLED
+		string soundAlias = GenerateBattleChatterAlias( friendlyPilot, "bc_pBatteryOffer"  )
+		EmitSoundOnEntity( GetLocalViewPlayer(), soundAlias ) //Don't use battle chatter system because Titans get battle chatter events, and the range is likely to be out of the threshold
+	#endif
+
+	thread ShowFriendlyPlayerHasBattery( friendlyPilot, battery )
+}
+
+void function Rodeo_RequestBattery( entity friendlyTitan, var eventVal )
+{
+	if ( !IsValid( friendlyTitan ) )
+		return
+
+	if ( !IsValid( friendlyTitan.GetTitanSoul() ) )
+		return
+
+	SetTimedEventNotification( 3.0, "#RODEO_FRIENDLY_REQUESTS_BATTERY_EVENT_NOTIFICATION", friendlyTitan.GetPlayerName() )
+
+	EmitSoundOnEntity( friendlyTitan, "diag_neut_friendlySpawnOnPlayer" )
+
+	thread ShowFriendlyTitanWantsBattery( friendlyTitan )
+}
+
+void function Rodeo_ShowBatteryHint( entity ent, var eventVal )
+{
+	expect int ( eventVal )
+	string hintText = GetStringFromID( eventVal )
+	ShowBatteryHint( hintText )
+}
+
+void function Rodeo_HideBatteryHint( entity ent, var eventVal )
+{
+	HideRodeoBatteryHint()
+}
+
+void function OnBatteryCreated( entity battery )
+{
+	//Turn off icon for now
+	entity viewPlayer = GetLocalViewPlayer()
+	if ( viewPlayer != battery.GetBossPlayer() )
+		return
+
+	//printt( "Battery belongs to this view player: " + viewPlayer.GetPlayerName() )
+
+	thread PingStolenBatteryIcon( viewPlayer, battery )
+}
+
+void function PingStolenBatteryIcon( entity player, entity battery )
+{
+	battery.EndSignal( "OnDestroy" )
+	battery.EndSignal( "HideStolenBatteryIcons" )
+
+	entity titanSoul = null
+	if ( player.IsTitan() )
+	{
+		titanSoul = player.GetTitanSoul()
+	}
+	else
+	{
+		entity petTitan = player.GetPetTitan()
+		if ( IsValid( petTitan ) )
+			titanSoul = petTitan.GetTitanSoul()
+	}
+
+	if ( !IsValid (titanSoul ) )
+		return
+
+	titanSoul.EndSignal( "OnDestroy" )
+	titanSoul.EndSignal( "OnTitanDeath" )
+
+	var rui = CreateCockpitRui( $"ui/battery_overhead_indicator_hud.rpak" )
+
+	OnThreadEnd(
+	function() : ( rui )
+		{
+			//Note: When titan dies (from eject etc) on the client, the soul isn't destroyed until like 3s or so after
+			//printt( "OnThreadEnd, hiding all hud elems" )
+			RuiDestroy( rui )
+		}
+	)
+
+	RuiSetImage( rui, "imageName", $"rui/hud/battery/battery_capture_enemy" )
+	RuiSetBool( rui, "shouldFadeOut", true )
+	RuiSetGameTime( rui, "startTime", Time() )
+	RuiTrackFloat3( rui, "pos", battery, RUI_TRACK_OVERHEAD_FOLLOW )
+
+	float timeToEndIcon = Time() + RODEO_BATTERY_THIEF_ICON_DURATION
+
+	while( Time() < timeToEndIcon  )
+	{
+		if ( battery.GetBossPlayer() != player  )
+			break
+		WaitFrame()
+	}
+}
+
+void function ShowFriendlyPlayerHasBattery( entity friendlyPlayer, entity battery ) //Very similar to PingStolenBatteryIcon
+{
+	entity viewPlayer = GetLocalViewPlayer()
+
+	battery.EndSignal( "OnDestroy" )
+	friendlyPlayer.EndSignal( "OnDeath" )
+
+	entity titanSoul = null
+	if ( viewPlayer.IsTitan() )
+	{
+		titanSoul = viewPlayer.GetTitanSoul()
+	}
+	else
+	{
+		entity petTitan = viewPlayer.GetPetTitan()
+		if ( IsValid( petTitan ) )
+			titanSoul = petTitan.GetTitanSoul()
+	}
+
+	if ( !IsValid (titanSoul ) )
+		return
+
+	titanSoul.EndSignal( "OnDestroy" )
+	titanSoul.EndSignal( "OnTitanDeath" )
+
+	var rui =  CreateCockpitRui( $"ui/battery_overhead_indicator_hud.rpak" )
+
+	OnThreadEnd(
+	function() : ( rui )
+		{
+			//Note: When titan dies (from eject etc) on the client, the soul isn't destroyed until like 3s or so after
+			//printt( "OnThreadEnd, hiding all hud elems" )
+			RuiDestroy( rui )
+		}
+	)
+
+	RuiSetImage( rui, "imageName", $"rui/hud/battery/battery_capture_friendly" )
+	RuiSetBool( rui, "shouldFadeOut", false )
+	RuiTrackFloat3( rui, "pos", battery, RUI_TRACK_OVERHEAD_FOLLOW )
+
+	WaitForever()
+}
+
+void function ShowFriendlyTitanWantsBattery( entity friendlyTitan )
+{
+	entity viewPlayer = GetLocalViewPlayer()
+	friendlyTitan.EndSignal( "OnDeath" )
+	friendlyTitan.Signal( "ShowFriendlyTitanWantsBattery" )
+	friendlyTitan.EndSignal( "ShowFriendlyTitanWantsBattery" )
+
+	entity titanSoul = friendlyTitan.GetTitanSoul()
+	titanSoul.EndSignal( "OnSoulTransfer" )
+
+	var rui =  CreateCockpitRui( $"ui/battery_overhead_indicator_hud.rpak" )
+
+	OnThreadEnd(
+	function() : ( rui )
+		{
+			RuiDestroyIfAlive( rui ) //Note that the rui can destroy itself if the titan ever got to above 0.9 health, so need to do RUI destroy if alive check
+		}
+	)
+
+	RuiSetImage( rui, "imageName", $"rui/hud/battery/battery_capture_friendly" )
+	RuiSetBool( rui, "shouldFadeOut", false )
+	RuiTrackFloat3( rui, "pos", friendlyTitan, RUI_TRACK_OVERHEAD_FOLLOW )
+	RuiTrackFloat( rui, "titanHealth", friendlyTitan, RUI_TRACK_HEALTH )
+	RuiSetFloat( rui, "titanHealthThreshold", REQUEST_RODEO_BATTERY_HEALTH_PERCENTAGE_THRESHOLD )
+
+	wait REQUEST_RODEO_BATTERY_SHOW_ICON_TIME
+}
+
+void function BatteryOnBackChanged( entity player, entity oldValue, entity newValue, bool actuallyChanged )
+{
+	Assert( IsValid( player ) )
+
+	if ( player != GetLocalClientPlayer() )
+		return
+
+	if ( newValue == null )
+		HideRodeoBatteryHint()
+
+	if ( IsSingleplayer() )
+	{
+		if ( newValue == null )
+			HideRodeoBatteryCarryingStatusIcon( player )
+		else
+			ShowRodeoBatteryCarryingStatusIcon( player )
+	}
+	else
+	{
+		if ( IsValid( newValue ) && newValue.GetBossPlayer() == player )
+			newValue.Signal( "HideStolenBatteryIcons" )
+		RuiTrackInt( file.batteryHintRui, "batteryCount", player, RUI_TRACK_SCRIPT_NETWORK_VAR_INT, GetNetworkedVariableIndex( "batteryCount" ) )
+	}
+
+}
+
+void function ShowRodeoThrowOutBatteryHint()
+{
+	entity player = GetLocalClientPlayer()
+
+	if ( player.IsTitan() )
+		return
+
+	entity cockpit = player.GetCockpit()
+
+	if ( !IsValid( cockpit ) )
+		return
+
+	if ( ShouldShowThrowOutBatteryHint( player ) )
+		ShowBatteryHint( "#RODEO_THROW_OUT_BATTERY_HINT" )
+}
+
+void function ShowBatteryHint( string hintText, string optionalParameter = "" )
+{
+	entity player = GetLocalClientPlayer()
+
+	entity cockpit = player.GetCockpit()
+
+	if ( !IsValid( cockpit ) )
+		return
+
+	if ( optionalParameter != "" )
+		AddPlayerHint( 4.0, 0.25, $"", hintText, optionalParameter )
+	else
+		AddPlayerHint( 4.0, 0.25, $"", hintText )
+
+	file.batteryHintText = hintText
+}
+
+void function HideRodeoBatteryHint()
+{
+	entity player = GetLocalClientPlayer()
+
+	if ( !IsValid( player ) )
+		return
+
+	if ( player.IsTitan() )
+		return
+
+	entity cockpit = player.GetCockpit()
+
+	if ( !IsValid( cockpit ) )
+		return
+
+	HidePlayerHint( file.batteryHintText )
+}
+
+bool function ShouldShowThrowOutBatteryHint( entity player )
+{
+	if ( !IsAlive( player ) )
+		return false
+
+	if ( IsWatchingReplay() )
+		return false
+
+	if ( player.ContextAction_IsActive() )
+		return false
+
+	if ( !PlayerHasBattery( player ) )
+		return false
+
+	return true
+}
+
+void function TryOfferRodeoBatteryHint( entity viewTarget )
+{
+	entity player = GetLocalClientPlayer()
+	if ( player.IsTitan() )
+		return
+
+	if ( IsValid( player.GetTitanSoulBeingRodeoed() ) ) //Already rodeoing, no need for the hint
+		return
+
+	if ( viewTarget.IsNPC() || viewTarget.IsPlayer() )
+	{
+		thread TryOfferRodeoBatteryHint_threaded( player, viewTarget  )
+	}
+
+}
+
+void function TryOfferRodeoBatteryHint_threaded( entity localClientPlayer, entity viewTarget )
+{
+	//printt( "TryOfferRodeoBatteryHint_threaded, this is viewTarget: " + viewTarget )
+	localClientPlayer.Signal( "OfferRodeoBattery" )
+	localClientPlayer.EndSignal( "OfferRodeoBattery" )
+	viewTarget.EndSignal( "OnDeath" )
+
+	localClientPlayer.p.rodeoBatteryCrosshairEntity = viewTarget
+
+	entity cockpit = localClientPlayer.GetCockpit()
+
+	if ( !IsValid( cockpit ) )
+		return
+
+	if ( ShouldShowOfferRodeoBatteryHint( localClientPlayer, viewTarget ) )
+	{
+		Assert( viewTarget.IsPlayer() )
+		Assert( viewTarget.IsTitan() )
+
+		entity titanSoul = viewTarget.GetTitanSoul()
+
+		if ( !IsValid( titanSoul ) )
+		{
+			HideRodeoBatteryHint()
+			return
+		}
+
+		titanSoul.EndSignal( "OnTitanDeath" )
+		ShowBatteryHint( "#RODEO_TELL_FRIENDLY_YOU_HAVE_BATTERY_HINT", viewTarget.GetPlayerName() )
+	}
+	else
+	{
+		HideRodeoBatteryHint()
+		return
+	}
+
+	OnThreadEnd(
+	function() : ( localClientPlayer )
+		{
+			localClientPlayer.p.rodeoBatteryCrosshairEntity = null
+			HideRodeoBatteryHint()
+		}
+	)
+
+	wait 5.0
+
+}
+
+void function Pressed_OfferRodeoBattery( entity player )
+{
+	entity crosshairEntity = player.p.rodeoBatteryCrosshairEntity
+	if ( !ShouldShowOfferRodeoBatteryHint( player, crosshairEntity ) )
+		return
+
+	float currentTime = Time()
+
+	if ( currentTime - player.GetPlayerNetTime( "offerRodeoBatteryLastUsedTime" ) <  OFFER_RODEO_BATTERY_COOLDOWN  )
+		return
+
+	HideRodeoBatteryHint()
+
+	#if BATTLECHATTER_ENABLED
+		PlayBattleChatterOnClientPlayer( "bc_pBatteryOffer", player )
+	#endif
+
+	player.ClientCommand( "OfferRodeoBattery " + crosshairEntity.GetEntIndex() )
+}
+
+void function Pressed_RequestRodeoBattery( entity player )
+{
+	if ( !ShouldLetPlayerRequestBattery( player ) )
+		return
+
+	HideRodeoBatteryHint()
+
+	AnnouncementData announcement = Announcement_Create( "#RODEO_REQUEST_BATTERY_TEMP_ANNOUNCEMENT" )
+	Announcement_SetDuration( announcement, 3.0 )
+	AnnouncementFromClass( player, announcement )
+
+	player.ClientCommand( "RequestRodeoBattery" )
+}
+
+void function ShowRodeoBatteryCarryingStatusIcon( entity player )
+{
+	RuiSetInt( file.batteryHintRui, "batteryCount", 1 )
+}
+
+void function HideRodeoBatteryCarryingStatusIcon( entity player )
+{
+	RuiSetInt( file.batteryHintRui, "batteryCount", 0 )
+}
+
+void function AddBatteryHUD( entity battery )
+{
+	if ( battery.GetModelName() == MODEL_GENERATOR || battery.GetModelName() == RODEO_BATTERY_MODEL )
+		thread AddBatteryHUDInternal( battery )
+}
+
+void function AddBatteryHUDInternal( entity battery )
+{
+	file.batteries.append( battery )
+
+	EndSignal( battery, "OnDestroy" )
+
+	OnThreadEnd(
+	function() : ( battery )
+		{
+			file.batteries.fastremovebyvalue( battery )
+		}
+	)
+
+	WaitForever()
+}
+
+void function BatteryTracker_CockpitInit( entity cockpit, entity player )
+{
+	thread BatteryTracker_CockpitInit_Internal( cockpit, player )
+}
+
+void function BatteryTracker_CockpitInit_Internal( entity cockpit, entity player )
+{
+	cockpit.EndSignal( "OnDestroy" )
+	player.EndSignal( "OnDeath" )
+
+	OnThreadEnd(
+	function() : (  )
+		{
+			RuiSetBool( file.batteryTrackerRui, "isVisible", false )
+		}
+	)
+
+	entity lastTrackedBattery = null
+
+	while ( IsAlive( player ) && player.IsTitan() )
+	{
+		WaitFrame()
+
+		bool foundBattery = false
+		bool lastTrackedBatteryValid = false
+
+		if ( ShouldDisplayBatteryTracker( player ) && file.batteries.len() > 0 )
+		{
+			// keep the last seen battery if it's close enough
+			if ( IsValid( lastTrackedBattery ) )
+			{
+				float d = DistanceSqr( lastTrackedBattery.GetOrigin(), player.GetOrigin() )
+
+				if ( d < BATTERY_TRACKER_MAX_DIST_SQ )
+				{
+					foundBattery = true
+					continue
+				}
+				else if ( d < BATTERY_TRACKER_MAX_DIST_SQ_BACKUP )
+				{
+					lastTrackedBatteryValid = true
+				}
+			}
+
+			array<ArrayDistanceEntry> allResults = ArrayDistanceResults( file.batteries, player.GetOrigin() )
+			allResults.sort( DistanceCompareClosest )
+
+			// look for a new battery
+			for ( int i=0; i<allResults.len(); i++ )
+			{
+				if ( allResults[i].distanceSqr < BATTERY_TRACKER_MAX_ACQUIRE_DIST_SQ )
+				{
+					entity batt = allResults[i].ent
+
+					// if this is the last battery, then we don't need a sight trace
+					if ( lastTrackedBattery != batt )
+					{
+						// new battery
+						if ( TraceLineSimple( player.CameraPosition(), batt.GetOrigin(), batt ) < 0.9 )
+						{
+							break
+						}
+					}
+
+					RuiTrackFloat3( file.batteryTrackerRui, "pos", batt, RUI_TRACK_ABSORIGIN_FOLLOW )
+					RuiSetBool( file.batteryTrackerRui, "isVisible", true )
+					RuiSetBool( file.batteryTrackerRui, "isGenerator", false ) //batt.GetModelName() == MODEL_GENERATOR )
+					if ( lastTrackedBattery != batt )
+						RuiSetGameTime( file.batteryTrackerRui, "startTime", Time() )
+					lastTrackedBattery = batt
+					foundBattery = true
+					break
+				}
+			}
+		}
+
+		if ( !foundBattery )
+		{
+			if ( !lastTrackedBatteryValid )
+			{
+				RuiSetBool( file.batteryTrackerRui, "isVisible", false )
+				lastTrackedBattery = null
+			}
+		}
+	}
+}
+
+bool function ShouldDisplayBatteryTracker( entity player )
+{
+	float healthFrac = GetHealthFrac( player )
+	return ( healthFrac < 0.6 || GetDoomedState( player ) )
+}
+
+void function BatteryTracker_UpdateVisibility( entity player )
+{
+	if ( file.batteryTrackerRui == null )
+		return
+
+	int ceFlags = player.GetCinematicEventFlags()
+	bool hideHud = ( ceFlags & CE_FLAG_HIDE_MAIN_HUD ) > 0
+	RuiSetBool( file.batteryTrackerRui, "inCinematic", hideHud )
+}
+
+#if SP
+void function DisplayHealthFull( entity ent, var info )
+{
+	if ( Time() - file.lastObitTime < 5 )
+		return
+
+	if ( !GetLocalViewPlayer().IsTitan() )
+		return
+
+	if ( !IsValid( ent ) )
+		return
+
+	UpdateAmmoFullFlyout( "#HUD_TITAN_BATTERY", "#HUD_HEALTH_FULL", ent )
+	file.lastObitTime = Time()
+}
+
+void function DisplayBattFull( entity ent, var info )
+{
+	if ( Time() - file.lastObitTime < 5 )
+		return
+
+	if ( GetLocalViewPlayer().IsTitan() )
+		return
+
+	if ( !IsValid( ent ) )
+		return
+
+	UpdateAmmoFullFlyout( "#HUD_TITAN_BATTERY", "#HUD_BATT_FULL", ent )
+	file.lastObitTime = Time()
+}
+#endif

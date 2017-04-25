@@ -1,0 +1,13 @@
+#base "titan_stryder.set"
+"titan_light_raptor"
+{
+	"global"
+	{
+		bodymodel			"models/titans/light/titan_light_raptor.mdl"
+		armsmodel			"models/weapons/arms/pov_titan_light_raptor.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_light_cockpit.mdl"
+
+		footstep_type		"northstar"
+
+	}
+}

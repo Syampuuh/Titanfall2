@@ -1,0 +1,102 @@
+global function BleedoutShared_Init
+global function Bleedout_GetBleedoutTime
+global function Bleedout_GetFirstAidTime
+global function Bleedout_GetFirstAidTimeSelf
+global function Bleedout_GetFirstAidHealPercent
+global function Bleedout_GetForceWeaponHolster
+global function Bleedout_GetDeathOnTeamBleedout
+global function Bleedout_ShouldAIMissPlayer
+global function Bleedout_GetAIMissChance
+global function Bleedout_GetSelfResEnabled
+global function Bleedout_IsBleedoutLogicActive
+
+const float DEFAULT_BLEEDOUT_TIME = 30.0
+const float DEFAULT_FIRSTAID_TIME = 3.0
+const float DEFAULT_FIRSTAID_TIME_SELF = -1.0
+const float DEFAULT_FIRSTAID_HEAL_PERCENT = 1.0
+const float DEFAULT_AI_BLEEDING_PLAYER_MISS_CHANCE = 0.0
+const bool DEFAULT_FORCE_WEAPON_HOLSTER = false
+const bool DEFAULT_DEATH_ON_TEAM_BLEEDOUT = false
+const bool DEFAULT_ENABLE_SELF_RES = false
+
+struct
+{
+	bool bleedoutLogicActive = false
+	float bleedoutTime
+	float firstAidTime
+	float firstAidTimeSelf
+	float firstAidHealPercent
+	float aiBleedingPlayerMissChance
+	bool forceHolster
+	bool forceDeathOnTeamBleedout
+	bool enableSelfRes
+} file
+
+void function BleedoutShared_Init( float bleedoutTime = DEFAULT_BLEEDOUT_TIME, float firstAidTime = DEFAULT_FIRSTAID_TIME,
+	float firstAidTimeSelf = DEFAULT_FIRSTAID_TIME_SELF, float firstAidHealPercent = DEFAULT_FIRSTAID_HEAL_PERCENT,
+	float aiBleedingPlayerMissChance = DEFAULT_AI_BLEEDING_PLAYER_MISS_CHANCE, bool forceHolster = DEFAULT_FORCE_WEAPON_HOLSTER,
+	bool forceDeathOnTeamBleedout = DEFAULT_DEATH_ON_TEAM_BLEEDOUT )
+{
+	file.bleedoutTime = bleedoutTime
+	file.firstAidTime = firstAidTime
+	file.firstAidTimeSelf = firstAidTimeSelf
+	file.firstAidHealPercent = firstAidHealPercent
+	file.aiBleedingPlayerMissChance = aiBleedingPlayerMissChance
+	file.forceHolster = forceHolster
+	file.forceDeathOnTeamBleedout = forceDeathOnTeamBleedout
+	file.enableSelfRes = ( firstAidTimeSelf >= 0 )
+
+	file.bleedoutLogicActive = true
+}
+
+float function Bleedout_GetBleedoutTime()
+{
+	//If this is set to -1 the player never dies from a bleedout
+	return file.bleedoutTime
+}
+
+float function Bleedout_GetFirstAidTime()
+{
+	return file.firstAidTime
+}
+
+float function Bleedout_GetFirstAidTimeSelf()
+{
+	return file.firstAidTimeSelf
+}
+
+float function Bleedout_GetFirstAidHealPercent()
+{
+	return file.firstAidHealPercent
+}
+
+bool function Bleedout_GetForceWeaponHolster()
+{
+	return file.forceHolster
+}
+
+bool function Bleedout_GetDeathOnTeamBleedout()
+{
+	return file.forceDeathOnTeamBleedout
+}
+
+bool function Bleedout_ShouldAIMissPlayer()
+{
+	return file.aiBleedingPlayerMissChance > 0
+}
+
+float function Bleedout_GetAIMissChance()
+{
+	return file.aiBleedingPlayerMissChance
+}
+
+bool function Bleedout_GetSelfResEnabled()
+{
+	return file.enableSelfRes
+}
+
+//Returns whether or not the game is currently using bleedout logic.
+bool function Bleedout_IsBleedoutLogicActive()
+{
+	return file.bleedoutLogicActive
+}

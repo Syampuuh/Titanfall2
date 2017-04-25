@@ -1,0 +1,63 @@
+"spectator"
+{
+	"global"
+	{
+		weaponClass				"human"
+		class					"spectator"
+		subclass				"spectator"
+		wallrun					0
+		automantle				0
+		healthpacks				0
+		jump					0
+		doublejump				0
+		fov						70
+		viewmodelfov			70
+		jumpheight				0
+		health					25
+		stepheight				0
+		bodymodel				"models/humans/pilots/pilot_medium_reaper_f.mdl"
+
+		ArmorType				normal
+		context_action_can_melee 0
+		context_action_can_use	0
+		aimAngleBackwardEnd		-120
+		aimAngleForwardStart	-90
+		aimAngleForwardEnd		90
+		aimAngleBackwardStart	120
+
+		physicsMass				0
+		default 1
+	}
+	"crouch"
+	{
+		footstepPrefix 			"human.crouch."
+		viewheight 				"0 0 0"
+		firstpersonproxyoffset 	"0 0 0"
+		hull_min 				"-16 -16 0"
+		hull_max 				"16 16 32"
+		crouchspeed				0
+		speed					0
+	}
+
+	"dead"
+	{
+		viewheight 				"0 0 0"
+	}
+
+	"observe"
+	{
+		hull_min 				"-16 -16 0"
+		hull_max 				"16 16 32"
+	}
+
+	"stand"
+	{
+		footstepPrefix 			"human.stand."
+		viewheight 				"0 0 0"
+		firstpersonproxyoffset 	"0 0 0"
+		hull_min 				"-16 -16 0"
+		hull_max 				"16 16 32"
+		speed					0
+		sprintspeed				0
+	}
+}

@@ -1,0 +1,467 @@
+untyped
+
+global function VMTCallback_ArcCannonCrosshair
+global function VMTCallback_DefenderCrosshair
+global function VMTCallback_TitanShotgunCrosshair
+global function VMTCallback_ArcCannonChargeAmount
+global function VMTCallback_TitanSniperCrosshair
+global function VMTCallback_HoldBeamCrosshair
+global function VMTCallback_MPEntitySonarFrac
+global function VMTCallback_HoloSightOffset_Common
+global function VMTCallback_HoloSightOffset_RSPN101_Front
+global function VMTCallback_HoloSightOffset_RSPN101_Rear
+global function VMTCallback_VduStaticAlpha
+global function VMTCallback_GetCloakFactor
+global function VMTCallback_TeamColor
+global function VMTCallback_MPEntityARAlpha
+global function VMTCallback_MPEntityARColor
+global function ShouldShowWeakpoints
+global function VMTCallback_DamageFlash
+global function VMTCallback_CompassTickerOffset
+global function VMTCallback_CompassTickerScale
+global function VMTCallback_DamageArrowAlpha
+global function VMTCallback_DamageArrowDepthAlpha
+global function VMTCallback_DamageArrowFlash
+global function VMTCallback_HeatMeterCrosshair
+global function VMTCallback_VduGrenadePulse
+
+var function VMTCallback_ArcCannonCrosshair( entity player )
+{
+	entity weapon = player.GetActiveWeapon()
+	if ( IsValid( weapon ) )
+	{
+		local charge = clamp( weapon.GetWeaponChargeFraction() * ( 1 / GetArcCannonChargeFraction( weapon ) ), 0.0, 1.0 )
+		local numOfFrames = 30 // 0 - N notation
+		local frame = (numOfFrames * charge).tointeger()
+
+		return frame
+	}
+
+	return 0
+}
+
+var function VMTCallback_DefenderCrosshair( entity player )
+{
+	entity weapon = player.GetActiveWeapon()
+	local charge = weapon.GetWeaponChargeFraction()
+	local numOfFrames = 30 // 0 - N notation
+	local frame = (numOfFrames * charge).tointeger()
+
+	return frame
+}
+
+var function VMTCallback_TitanShotgunCrosshair( entity player )
+{
+	int currentAmmo = player.GetActiveWeaponPrimaryAmmoLoaded()
+	int frame
+
+	Assert( currentAmmo <= 9 )
+
+	if ( currentAmmo > 9 )
+		return 1
+
+	if ( currentAmmo == 0 )
+		frame = 0
+	else
+		frame = ( 10 - currentAmmo )
+
+	return frame
+}
+
+var function VMTCallback_ArcCannonChargeAmount( entity player )
+{
+	entity weapon = player.GetActiveWeapon()
+	local charge = 0
+	if ( IsValid( weapon ) && weapon.GetWeaponClassName() == "mp_titanweapon_arc_cannon" )
+	{
+		charge = clamp( weapon.GetWeaponChargeFraction() * ( 1 / GetArcCannonChargeFraction( weapon ) ), 0.0, 1.0 )
+	}
+
+	return charge
+}
+
+var function VMTCallback_HeatMeterCrosshair( entity player )
+{
+	entity weapon = player.GetActiveWeapon()
+	if ( !IsValid( weapon ) )
+		return 0
+
+	return PROTO_GetHeatMeterCharge( weapon )
+}
+
+var function VMTCallback_VduGrenadePulse( entity player )
+{
+	float alpha = ( Time() - player.p.grenadePulloutTime ) % 0.65
+
+	alpha = GraphCapped( alpha, 0.15, 0.9, 1.0, 0.0 )
+
+	return alpha
+}
+
+var function VMTCallback_TitanSniperCrosshair( entity player )
+{
+	entity weapon = player.GetActiveWeapon()
+	if ( !IsValid( weapon ) )
+		return 0
+
+	if ( weapon.IsWeaponOffhand() && weapon.IsChargeWeapon )
+	{
+		float chargeTime = weapon.GetWeaponChargeTime()
+		float fracRaw = (chargeTime / ChargeBall_GetChargeTime())
+		float frac = clamp( fracRaw, 0.0, 1.0 )
+		int result = int( frac * 8.0 )
+		return result
+	}
+
+	return GetTitanSniperChargeLevel( weapon )
+}
+
+var function VMTCallback_HoldBeamCrosshair( entity player )
+{
+	entity weapon = player.GetActiveWeapon()
+	if ( !IsValid( weapon ) )
+		return 0
+
+	local baseChargeLevel = GetHoldBeamChargeLevel( weapon )
+	local chargeLevel = ( baseChargeLevel - baseChargeLevel % 2 ) / 2
+	return chargeLevel
+}
+
+
+const XRAY_PULSE_DURATION = 2.0
+
+var function VMTCallback_MPEntitySonarFrac( entity ent )
+{
+	if ( !( "createTime" in ent.s ) )
+		return 0.0
+
+	return GraphCapped( Time() - ent.s.createTime, 0, ent.s.pulseDuration, ent.s.maxFrac, 0.0 )
+}
+
+function VMTCallback_HoloSightOffset_Common( entity ent, attachment = "HOLO_REAR", hOffsetMultiplier = 3.65, vOffsetMultiplier = 3.65 )
+{
+	local holoRearOrg = ent.GetAttachmentOrigin( ent.LookupAttachment( attachment ) )
+	local holoRearAng = ent.GetAttachmentAngles( ent.LookupAttachment( attachment ) )
+	local camOrg = GetLocalViewPlayer().CameraPosition()
+	//local camAng = GetLocalViewPlayer().CameraAngles()
+
+	local gunVec = AnglesToForward( holoRearAng )
+	local upVec = AnglesToUp( holoRearAng )
+	local rightVec = AnglesToRight( holoRearAng )
+
+	local camVec = (holoRearOrg - camOrg)
+
+	local hOffset = DotProduct( camVec, rightVec ) * hOffsetMultiplier
+	local vOffset = DotProduct( camVec, upVec ) * vOffsetMultiplier
+
+	return Vector( hOffset, vOffset, 0.0 )
+}
+
+var function VMTCallback_HoloSightOffset_RSPN101_Front( entity ent )
+{
+	/*
+	local tagOrg = ent.GetAttachmentOrigin( ent.LookupAttachment( "HOLO_FRONT" ) )
+	printt( "Front", tagOrg )
+
+	local tagOrg = ent.GetAttachmentOrigin( ent.LookupAttachment( "HOLO_REAR" ) )
+	printt( "Rear", tagOrg )
+
+	local tagOrg = ent.GetAttachmentOrigin( ent.LookupAttachment( "CAMERA_BASE" ) )
+	printt( "Cam", tagOrg )
+
+	local camOrg = GetLocalViewPlayer().CameraPosition()
+	printt( "Real Cam", camOrg )
+	*/
+
+	local attachment 			= "HOLO_REAR"
+	local hOffsetMultiplier 	= 0.6
+	local vOffsetMultiplier		= -0.75
+
+	local ret = VMTCallback_HoloSightOffset_Common( ent, attachment, hOffsetMultiplier, vOffsetMultiplier )
+	return ret
+}
+
+var function VMTCallback_HoloSightOffset_RSPN101_Rear( entity ent )
+{
+	local attachment 			= "HOLO_REAR"
+	local hOffsetMultiplier 	= 0.5
+	local vOffsetMultiplier		= -0.65
+
+	local ret = VMTCallback_HoloSightOffset_Common( ent, attachment, hOffsetMultiplier, vOffsetMultiplier )
+	return ret
+}
+
+var function VMTCallback_VduStaticAlpha( entity ent )
+{
+	if ( level.vduCustomStatic != null )
+	{
+		switch ( level.vduCustomStatic )
+		{
+			case STATIC_RANDOM:
+				local rnd = RandomFloat( 4.64 )
+				rnd = ( ( rnd * rnd * rnd ) / 20 ).tointeger()
+				return level.vduStatic + GraphCapped( rnd, 0, 4, 0, 0.06 )
+
+			case STATIC_LIGHT:
+				local val1 = sin( Time() * 1.5 )
+				local val2 = sin( Time() * 4.5 )
+				local val = val1 * val2
+
+				val *= 0.04
+				local base = RandomFloatRange( 0.01, 0.04 )
+				if ( val > 0 )
+					return base + val
+				else
+					return base
+
+			case STATIC_HEAVY:
+				local val1 = sin( Time() * 4.5 )
+				local val2 = sin( Time() * 7.5 )
+				local val = val1 * val2
+
+				val *= 0.15
+				local base = RandomFloatRange( 0.03, 0.1 )
+				if ( val > 0 )
+					return base + val
+				else
+					return base
+
+			case STATIC_VERY_HEAVY:
+				local val1 = sin( Time() * 4.5 )
+				local val2 = sin( Time() * 7.5 )
+				local val = ( val1 * val2 ) / 2.0
+
+				val *= 0.3
+
+				local base = RandomFloatRange( 0.2, 0.3 )
+				return base + val
+		}
+	}
+
+	return level.vduStatic
+}
+
+var function VMTCallback_GetCloakFactor( entity ent )
+{
+	local cloakiness = ent.GetCloakFadeFactor()
+
+	// Adjust cloakiness based on movement?
+	// ...
+
+	// Output:  Remap fade amount into our base->overpower range.
+	local base = 0.2
+	local cloakAmount = cloakiness * ( 1.0 - base ) + base
+	return cloakAmount
+}
+
+var function VMTCallback_TeamColor( entity ent )
+{
+	if ( ent.GetTeam() == GetLocalViewPlayer().GetTeam() )
+		return Vector( 0, 0, 1 )
+	else
+		return Vector( 1, 0, 0 )
+}
+
+var function VMTCallback_MPEntityARAlpha( entity ent )
+{
+	if ( !ShouldShowWeakpoints( ent ) )
+		return 0.0
+
+	//return 0.75 + flashVal
+	return 1.0
+}
+
+var function VMTCallback_MPEntityARColor( entity ent )
+{
+	if ( !ShouldShowWeakpoints( ent ) )
+		return Vector( 0.0, 0.0, 0.0 )
+
+	return Vector( 1.0, 1.0, 1.0 )
+}
+
+
+bool function ShouldShowWeakpoints( entity ent )
+{
+	entity player = GetLocalViewPlayer()
+
+	if ( !IsAlive( ent ) )
+		return false
+
+	if ( !IsValid( player ) )
+		return false
+
+	if ( !ent.IsNPC() && !ent.IsPlayer() )
+	{
+		if ( ent.GetSignifierName() == "prop_dynamic" )
+			return true
+
+		if ( ("showWeakpoints" in ent.s) && ent.s.showWeakpoints  )
+			return true
+		else
+			return false
+	}
+
+	if ( ent.GetTeam() == player.GetTeam() )
+		return false
+
+	entity soul = ent.GetTitanSoul()
+	if ( IsValid( soul ) )
+	{
+		if ( soul.GetShieldHealth() )
+			return false
+
+		if ( soul.GetInvalidHealthBarEnt() )
+			return false
+	}
+	else if ( ent.GetShieldHealthMax() )
+	{
+		if ( soul.GetShieldHealth() )
+			return false
+	}
+
+	//Turn off AR if you are rodeoing
+	if ( ent == GetTitanBeingRodeoed( player ) )
+		return false
+
+	//if ( ent.IsTitan() && GetDoomedState( ent ) )
+	//	return false
+
+	if ( player.IsWeaponDisabled() )
+		return false
+
+	if ( !WeaponCanCrit( player.GetActiveWeapon() ) )
+		return false
+
+	//
+	{
+		local eyePos = player.EyePosition()
+		eyePos.z = 0
+
+		local entPos = ent.GetWorldSpaceCenter()
+		entPos.z = 0
+
+		local eyeVec = player.GetViewVector()
+		eyeVec.z = 0
+		eyeVec = Normalize( eyeVec )
+
+		local dirToEnt = (entPos - eyePos)
+		dirToEnt = Normalize( dirToEnt )
+
+		if ( DotProduct( dirToEnt, eyeVec ) < 0.996 )
+			return false
+	}
+
+	#if DEV
+	if ( Dev_CommandLineHasParm( "-noweakpoints" ) )
+		return false
+	#endif
+
+	return true
+}
+
+// g_frac <- 0.0
+
+// 2.5 = lots
+// 0.8 = none
+
+var function VMTCallback_DamageFlash( entity player )
+{
+	//local damageTimeDelta = Time() - GetLastDamageTime( player )
+
+	//local frac = 0
+
+	local frac = GetHealthFrac( player )
+
+	//const DAMAGE_OUT_TIME = 0.5
+	frac = GraphCapped( frac, 0.0, 0.75, 2.5, 0.8 )
+	return Vector( frac, frac, 0.0 )
+}
+
+var function VMTCallback_CompassTickerOffset( entity player )
+{
+	local playerYaw = player.CameraAngles().y
+
+	playerYaw /= 360
+
+	return Vector( -playerYaw, 0.0, 0.0 )
+}
+
+var function VMTCallback_CompassTickerScale( entity player )
+{
+	return Vector( 0.225, 0.95, 1.0 )
+}
+
+const DAMAGEHUD_ARROW_FADE_TIME = 0.25
+
+float function GetAlphaForFacing( entity arrowEnt )
+{
+	const LIMIT_MIN_VAL = 0.97
+	const LIMIT_MAX_VAL = 1.0
+	const LIMIT_RANGE = (LIMIT_MAX_VAL - LIMIT_MIN_VAL)
+
+	float dotVal = GetLocalViewPlayer().GetViewVector().Dot( arrowEnt.s.arrowData.damageDirection )
+
+	if ( dotVal <= LIMIT_MIN_VAL )
+		return 1.0
+
+	if ( dotVal >= LIMIT_MAX_VAL )
+		return 0.0
+
+	float result = 1.0 - ((dotVal - LIMIT_MIN_VAL) / LIMIT_RANGE)
+	return result
+}
+
+var function VMTCallback_DamageArrowAlpha( entity ent )
+{
+	if ( ent.s.arrowData.grenade != null )
+	{
+		if ( !IsValid( ent.s.arrowData.grenade ) )
+			return 0.0
+
+		if ( Distance( GetLocalViewPlayer().GetOrigin() , ent.s.arrowData.grenade.GetOrigin() ) > ent.s.arrowData.grenadeRadius )
+		{
+			return 0.0
+		}
+		else
+		{
+			const ALPHA_BASE = 0.8
+			//float graphed = GraphCapped( ent.s.arrowData.endTime - Time(), 0.0, DAMAGEHUD_ARROW_FADE_TIME, 0.0, 1.0 )
+			float graphed = GraphCapped( Time() - ent.s.arrowData.startTime, 0.0, DAMAGEHUD_ARROW_FADE_TIME, 0.0, 1.0 )
+			//float facing = GetAlphaForFacing( ent )
+			//float result = (ALPHA_BASE * graphed * facing)
+			//return result
+			return graphed * ALPHA_BASE
+		}
+	}
+
+	const ALPHA_BASE = 0.8
+	float graphed = GraphCapped( ent.s.arrowData.endTime - Time(), 0.0, DAMAGEHUD_ARROW_FADE_TIME, 0.0, 1.0 )
+	float facing = 1.0//GetAlphaForFacing( ent )
+	float result = (ALPHA_BASE * graphed * facing)
+	return result
+}
+
+
+var function VMTCallback_DamageArrowDepthAlpha( entity ent )
+{
+	return (ent.s.arrowData.endTime - Time()) > DAMAGEHUD_ARROW_FADE_TIME ? 1.0 : 0.0
+}
+
+
+var function VMTCallback_DamageArrowFlash( entity ent )
+{
+	// hack until we get a new model/shader for the whizby indicator - Roger
+	if ( ent.s.arrowData.whizby == true )
+		return < 1.0, 1.0, 1.0 >
+	// end hack
+	if ( ent.s.arrowData.grenade != null)
+		return < 1.0, 1.0, 0.0 >
+
+	local flashVal
+	if ( Time() - ent.s.arrowData.startTime < 0.15 )
+		flashVal = 1.0
+	else
+		flashVal = GraphCapped( Time() - ent.s.arrowData.startTime, 0.05, 0.4, 0.5, 0.0 )
+
+	return < 1.0, flashVal, flashVal >
+}

@@ -1,0 +1,800 @@
+
+global function InitRandomUnlocks
+global function IsItemInRandomUnlocks
+global function AppendRandomUnlock
+global function PlayerRandomUnlock_GetTotal
+
+global function PlayerLevelHasRandomUnlock
+global function TitanLevelHasRandomUnlock
+global function WeaponLevelHasRandomUnlock
+global function FactionLevelHasRandomUnlock
+
+#if SERVER
+global function AwardRandomItemsForPlayerLevels
+global function AwardRandomItemsForTitanLevels
+global function AwardRandomItemsForWeaponLevels
+global function AwardRandomItemsForFactionLevels
+global function AwardRandomItem
+#endif
+
+global struct RandomUnlockCategory
+{
+	string parentRef
+	int unlockType
+}
+
+global struct RandomUnlockItem
+{
+	string ref
+	string parentRef
+	float weight
+	int itemType
+}
+
+global struct RandomUnlock
+{
+	int unlockLevel = 1
+	string parentRef
+}
+
+struct
+{
+	table<int, array<RandomUnlock> > randomUnlocks
+	table<int, array<RandomUnlockItem> > randomUnlockItems
+	table<string, bool> randomUnlockItemCache
+
+	int unlocksPlayerLevelRowCount = 0
+	int unlocksTitanLevelRowCount = 0
+	int unlocksFactionLevelRowCount = 0
+	int unlocksWeaponLevelRowCount = 0
+} file
+
+void function InitRandomUnlocks()
+{
+#if SERVER
+	AddClientCommandCallback( "UnlockRandomLoot", ClientCommand_UnlockRandomLoot )
+#endif
+
+	var dataTable = GetDataTable( $"datatable/unlocks_player_level.rpak" )
+	file.unlocksPlayerLevelRowCount = GetDatatableRowCount( dataTable )
+	dataTable = GetDataTable( $"datatable/unlocks_titan_level.rpak" )
+	file.unlocksTitanLevelRowCount = GetDatatableRowCount( dataTable )
+	dataTable = GetDataTable( $"datatable/unlocks_faction_level.rpak" )
+	file.unlocksFactionLevelRowCount = GetDatatableRowCount( dataTable )
+	dataTable = GetDataTable( $"datatable/unlocks_weapon_level_pilot.rpak" )
+	file.unlocksWeaponLevelRowCount = GetDatatableRowCount( dataTable )
+
+	foreach ( unlockType in eUnlockType )
+	{
+		file.randomUnlocks[ unlockType ] <- []
+	}
+
+	file.randomUnlockItems.clear()
+
+	dataTable = GetDataTable( $"datatable/unlocks_random.rpak" )
+	int numRows = GetDatatableRowCount( dataTable )
+	for ( int row = 0; row < numRows; row++ )
+	{
+		string ref = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "ref" ) )
+		string parentRef
+		float weight = GetDataTableFloat( dataTable, row, GetDataTableColumnByName( dataTable, "weight" ) )
+		Assert( weight > 0, "weight needs to be greater than 0 for " + parentRef + " " + ref + " in unlocks_random.csv" )
+		var periodPos = ref.find( "." )
+		if ( periodPos != null )
+		{
+			expect int( periodPos )
+			parentRef = ref.slice( 0, periodPos )
+			ref = ref.slice( periodPos + 1 )
+		}
+
+		if ( IsDisabledRef( ref ) || IsDisabledRef( parentRef ) )
+			continue
+
+#if DEV
+		int itemType = GetItemType( ref )
+		if ( IsSubItemType( itemType ) && parentRef == "" )
+		{
+			switch ( itemType )
+			{
+				case eItemTypes.CAMO_SKIN:
+					array<ItemDisplayData> weapons = GetVisibleItemsOfType( eItemTypes.PILOT_PRIMARY, "", false )
+					weapons.extend( GetVisibleItemsOfType( eItemTypes.PILOT_SECONDARY, "", false ) )
+					weapons.extend( GetVisibleItemsOfType( eItemTypes.TITAN_PRIMARY, "", false ) )
+					foreach ( ItemDisplayData weapon in weapons )
+					{
+						if ( weapon.itemType == eItemTypes.TITAN_PRIMARY )
+						{
+							if ( IsUnlockValid( ref, GetTitanForWeapon( weapon.ref ) ) )
+								CodeWarning( "Item in unlocks_random already in another unlock table: " + GetTitanForWeapon( weapon.ref ) + " for child " + ref )
+						}
+						else
+						{
+							if ( IsUnlockValid( ref, weapon.ref ) )
+								CodeWarning( "Item in unlocks_random already in another unlock table: " + weapon.ref + " for child " + ref )
+						}
+					}
+					break
+
+				case eItemTypes.CAMO_SKIN_TITAN:
+					array<ItemData> titanClasses = GetAllItemsOfType( eItemTypes.TITAN )
+					foreach ( ItemData titanData in titanClasses )
+					{
+						if ( IsUnlockValid( ref, titanData.ref ) )
+							CodeWarning( "Item in unlocks_random already in another unlock table: " + titanData.ref + " for child " + ref )
+					}
+					break
+
+				default:
+					Assert( false, "Unhandled sub item type " + itemType + " " + ref )
+			}
+		}
+#endif //  DEV
+
+		InitRandomUnlockItem( ref, parentRef, weight )
+	}
+}
+
+void function InitRandomUnlockItem( string ref, string parentRef, float weight )
+{
+	RandomUnlockItem ruItem
+	ruItem.ref = ref
+	ruItem.parentRef = parentRef
+	ruItem.weight = weight
+
+	if ( IsSubItemType( GetItemType( ref ) ) && parentRef == "" )
+	{
+		switch ( GetItemType( ref ) )
+		{
+			case eItemTypes.CAMO_SKIN:
+				array<ItemDisplayData> weapons = GetVisibleItemsOfType( eItemTypes.PILOT_PRIMARY, "", false )
+				weapons.extend( GetVisibleItemsOfType( eItemTypes.PILOT_SECONDARY, "", false ) )
+				weapons.extend( GetVisibleItemsOfType( eItemTypes.TITAN_PRIMARY, "", false ) )
+				foreach ( ItemDisplayData weapon in weapons )
+				{
+					if ( weapon.itemType == eItemTypes.TITAN_PRIMARY )
+						InitRandomUnlockItem( ref, GetTitanForWeapon( weapon.ref ), weight )
+					else
+						InitRandomUnlockItem( ref, weapon.ref, weight )
+				}
+				return
+
+			case eItemTypes.CAMO_SKIN_TITAN:
+				array<ItemData> titanClasses = GetAllItemsOfType( eItemTypes.TITAN )
+				foreach ( ItemData titanData in titanClasses )
+				{
+					InitRandomUnlockItem( ref, titanData.ref, weight )
+				}
+				return
+
+			default:
+				Assert( false, "Unhandled sub item type " + GetItemType( ref ) + " " + ref )
+		}
+	}
+
+	int itemType
+	if ( parentRef == "" )
+		itemType = GetItemType( ref )
+	else
+		itemType = GetSubitemType( parentRef, ref )
+
+	if ( !( itemType in file.randomUnlockItems ) )
+		file.randomUnlockItems[ itemType ] <- []
+
+	ruItem.itemType = itemType
+
+	file.randomUnlockItemCache[ ref + parentRef ] <- true
+
+	file.randomUnlockItems[ itemType ].append( ruItem )
+}
+
+bool function IsItemInRandomUnlocks( string ref, string parentRef = "" )
+{
+	int itemType
+
+	if ( parentRef == "" )
+	{
+		if ( !ItemDefined( ref ) )
+			return false
+
+		itemType = GetItemType( ref )
+	}
+	else
+	{
+		if ( !SubitemDefined( parentRef, ref ) )
+			return false
+
+		itemType = GetSubitemType( parentRef, ref )
+	}
+
+	if ( !( itemType in file.randomUnlockItems ) )
+		return false
+
+	string fullRef = ref + parentRef
+	if ( fullRef in file.randomUnlockItemCache )
+		return true
+
+	//foreach ( ruItem in file.randomUnlockItems[ itemType ] )
+	//{
+	//	if ( ref == ruItem.ref && parentRef == ruItem.parentRef )
+	//		return true
+	//}
+
+	return false
+}
+
+void function AppendRandomUnlock( int unlockType, int unlockLevel, string parentRef = "" )
+{
+	RandomUnlock ru
+	ru.unlockLevel = unlockLevel
+	ru.parentRef = parentRef
+
+	file.randomUnlocks[ unlockType ].append( ru )
+}
+
+#if SERVER
+void function AwardRandomItemsForPlayerLevels( entity player, int startLevel, int endLevel )
+{
+	for ( int currentLevel = startLevel; currentLevel <= endLevel; currentLevel++ )
+	{
+		AwardRandomItemsForLevel( player, eUnlockType.PLAYER_LEVEL, currentLevel, file.unlocksPlayerLevelRowCount, 10 )
+	}
+}
+
+void function AwardRandomItemsForTitanLevels( entity player, string titanClass, int startLevel, int endLevel )
+{
+	for ( int currentLevel = startLevel; currentLevel <= endLevel; currentLevel++ )
+	{
+		AwardRandomItemsForLevel( player, eUnlockType.TITAN_LEVEL, currentLevel, file.unlocksTitanLevelRowCount, 2, titanClass )
+	}
+}
+
+void function AwardRandomItemsForWeaponLevels( entity player, string weaponClassName, int startLevel, int endLevel )
+{
+	for ( int currentLevel = startLevel; currentLevel <= endLevel; currentLevel++ )
+	{
+		AwardRandomItemsForLevel( player, eUnlockType.WEAPON_LEVEL, currentLevel, file.unlocksWeaponLevelRowCount, 2, weaponClassName )
+	}
+}
+
+void function AwardRandomItemsForFactionLevels( entity player, string faction, int startLevel, int endLevel )
+{
+	for ( int currentLevel = startLevel; currentLevel <= endLevel; currentLevel++ )
+	{
+		AwardRandomItemsForLevel( player, eUnlockType.FACTION_LEVEL, currentLevel, file.unlocksFactionLevelRowCount, 2, faction )
+	}
+}
+
+void function AwardRandomItemsForLevel( entity player, int unlockType, int newLevel, int unlockRowCount, int randomEveryX, string parentRef = "" )
+{
+	if ( newLevel > unlockRowCount )
+	{
+		if ( newLevel % randomEveryX == 0 )
+		{
+			if ( GetMapName() == "mp_coliseum" )
+				AddToColiseumAwardCount( player )
+
+			AwardRandomItem( player, unlockType, parentRef )
+		}
+
+		return
+	}
+
+	foreach ( ru in file.randomUnlocks[ unlockType ] )
+	{
+		if ( ru.unlockLevel == newLevel && ru.parentRef == parentRef )
+		{
+			if ( GetMapName() == "mp_coliseum" )
+				AddToColiseumAwardCount( player )
+
+			AwardRandomItem( player, unlockType, parentRef )
+		}
+	}
+}
+
+void function AwardRandomItem( entity player, int unlockType, string parentRef = "" )
+{
+	string pVar = _GetRandomUnlockItemPersistentVar( unlockType, parentRef )
+
+	int currentVal = player.GetPersistentVarAsInt( pVar )
+	player.SetPersistentVar( pVar, currentVal + 1 )
+
+	PIN_GiveItem( player, false, "gift_" + GetUnlockTypeName( unlockType ) + "_" + parentRef, 1 )
+}
+#endif // SERVER
+
+string function _GetRandomUnlockItemPersistentVar( int unlockType, string parentRef = "" )
+{
+	string pVar
+	switch ( unlockType )
+	{
+		case eUnlockType.PLAYER_LEVEL:
+			pVar = "randomPlayerLevelUnlocks"
+			break
+
+		case eUnlockType.TITAN_LEVEL:
+			Assert( parentRef != "" )
+			pVar = "randomTitanLevelUnlocks[" + parentRef + "]"
+			break
+
+		case eUnlockType.WEAPON_LEVEL:
+			Assert( parentRef != "" )
+			pVar = "randomWeaponLevelUnlocks[" + parentRef + "]"
+			break
+
+		case eUnlockType.FACTION_LEVEL:
+			pVar = "randomFactionLevelUnlocks[" + parentRef + "]"
+			break
+	}
+
+	return pVar
+}
+
+string function GetUnlockTypeName( int unlockType )
+{
+	string pVar
+	switch ( unlockType )
+	{
+		case eUnlockType.PLAYER_LEVEL:
+			return "playerlevel"
+
+		case eUnlockType.TITAN_LEVEL:
+			return "titanlevel"
+
+		case eUnlockType.WEAPON_LEVEL:
+			return "weaponlevel"
+
+		case eUnlockType.FACTION_LEVEL:
+			return "factionlevel"
+	}
+
+	return pVar
+}
+
+int function PlayerRandomUnlock_GetTotal( entity player )
+{
+	int totalRandomUnlocks = 0
+	totalRandomUnlocks += PlayerRandomUnlock_GetPlayerLevelCount( player )
+
+	int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+	for ( int index = 0; index < enumCount; index++ )
+	{
+		string titanRef = PersistenceGetEnumItemNameForIndex( "titanClasses", index )
+		if ( titanRef == "" )
+			continue
+
+		totalRandomUnlocks += PlayerRandomUnlock_GetTitanLevelCount( player, titanRef )
+	}
+
+	array<ItemDisplayData> weapons = GetVisibleItemsOfType( eItemTypes.PILOT_PRIMARY )
+	weapons.extend( GetVisibleItemsOfType( eItemTypes.PILOT_SECONDARY ) )
+
+	foreach ( weapon in weapons )
+	{
+		totalRandomUnlocks += PlayerRandomUnlock_GetWeaponLevelCount( player, weapon.ref )
+	}
+
+	enumCount =	PersistenceGetEnumCount( "faction" )
+	for ( int index = 0; index < enumCount; index++ )
+	{
+		string factionRef = PersistenceGetEnumItemNameForIndex( "faction", index )
+		if ( factionRef == "" )
+			continue
+
+		totalRandomUnlocks += PlayerRandomUnlock_GetFactionLevelCount( player, factionRef )
+	}
+
+	return totalRandomUnlocks
+}
+
+int function PlayerRandomUnlock_GetPlayerLevelCount( entity player )
+{
+	string pVar = _GetRandomUnlockItemPersistentVar( eUnlockType.PLAYER_LEVEL )
+	return player.GetPersistentVarAsInt( pVar )
+}
+
+int function PlayerRandomUnlock_GetTitanLevelCount( entity player, string titanRef )
+{
+	string pVar = _GetRandomUnlockItemPersistentVar( eUnlockType.TITAN_LEVEL, titanRef )
+	return player.GetPersistentVarAsInt( pVar )
+}
+
+int function PlayerRandomUnlock_GetWeaponLevelCount( entity player, string weaponRef )
+{
+	string pVar = _GetRandomUnlockItemPersistentVar( eUnlockType.WEAPON_LEVEL, weaponRef )
+	return player.GetPersistentVarAsInt( pVar )
+}
+
+int function PlayerRandomUnlock_GetFactionLevelCount( entity player, string factionRef )
+{
+	string pVar = _GetRandomUnlockItemPersistentVar( eUnlockType.FACTION_LEVEL, factionRef)
+	return player.GetPersistentVarAsInt( pVar )
+}
+
+#if SERVER
+bool function ClientCommand_UnlockRandomLoot( entity player, array<string> args )
+{
+	if ( !IsValid( player ) )
+		return true
+
+	Player_UnlockRandomItem( player )
+
+	return true
+}
+
+void function Player_UnlockRandomItem( entity player )
+{
+	array<RandomUnlockCategory> availableUnlockTypes
+
+	for ( int index = 0; index < PlayerRandomUnlock_GetPlayerLevelCount( player ); index++ )
+	{
+		RandomUnlockCategory ruc
+		ruc.unlockType = eUnlockType.PLAYER_LEVEL
+		availableUnlockTypes.append( ruc )
+	}
+
+	int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+	for ( int index = 0; index < enumCount; index++ )
+	{
+		string titanRef = PersistenceGetEnumItemNameForIndex( "titanClasses", index )
+		if ( titanRef == "" )
+			continue
+
+		for ( int index = 0; index < PlayerRandomUnlock_GetTitanLevelCount( player, titanRef ); index++ )
+		{
+			RandomUnlockCategory ruc
+			ruc.parentRef = titanRef
+			ruc.unlockType = eUnlockType.TITAN_LEVEL
+			availableUnlockTypes.append( ruc )
+		}
+	}
+
+	array<ItemDisplayData> weapons = GetVisibleItemsOfType( eItemTypes.PILOT_PRIMARY )
+	weapons.extend( GetVisibleItemsOfType( eItemTypes.PILOT_SECONDARY ) )
+	weapons.extend( GetVisibleItemsOfType( eItemTypes.TITAN_PRIMARY ) )
+
+	foreach ( ItemDisplayData item in weapons )
+	{
+		for ( int index = 0; index < PlayerRandomUnlock_GetWeaponLevelCount( player, item.ref ); index++ )
+		{
+			RandomUnlockCategory ruc
+			if ( item.itemType == eItemTypes.TITAN_PRIMARY )
+				ruc.parentRef = GetTitanForWeapon( item.ref )
+			else
+				ruc.parentRef = item.ref
+
+			ruc.unlockType = eUnlockType.WEAPON_LEVEL
+			availableUnlockTypes.append( ruc )
+		}
+	}
+
+	enumCount =	PersistenceGetEnumCount( "faction" )
+	for ( int index = 0; index < enumCount; index++ )
+	{
+		string factionRef = PersistenceGetEnumItemNameForIndex( "faction", index )
+		if ( factionRef == "" )
+			continue
+
+		for ( int index = 0; index < PlayerRandomUnlock_GetFactionLevelCount( player, factionRef ); index++ )
+		{
+			RandomUnlockCategory ruc
+			ruc.parentRef = factionRef
+			ruc.unlockType = eUnlockType.FACTION_LEVEL
+			availableUnlockTypes.append( ruc )
+		}
+	}
+
+	if ( availableUnlockTypes.len() == 0 )
+		return
+
+	int randomIndex = RandomInt( availableUnlockTypes.len() )
+	RandomUnlockCategory randomUnlockInfo = availableUnlockTypes[ randomIndex ]
+
+	bool didGiveItem = PlayerRandomUnlock_GiveItemOfUnlockType( player, randomUnlockInfo.unlockType, randomUnlockInfo.parentRef )
+
+	if ( !didGiveItem )
+	{
+		RemoveRandomUnlockItem( player, randomUnlockInfo.unlockType, randomUnlockInfo.parentRef )
+		int credits = RandomInt( 10 ) + 10
+		Player_GiveCredits( player, credits )
+		ItemDisplayData displayData = GetItemDisplayData( "credit_award" )
+		Player_AddRecentUnlock( player, displayData, credits )
+	}
+}
+
+bool function PlayerRandomUnlock_GiveItemOfUnlockType( entity player, int unlockType, string parentRef = "" )
+{
+	array<RandomUnlockItem> preferredUnlocks
+	array<RandomUnlockItem> fallbackUnlocks
+
+	switch ( unlockType )
+	{
+		case eUnlockType.PLAYER_LEVEL:
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_PILOT ] )
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_TITAN ] )
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLING_CARD ] )
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLSIGN_ICON ] )
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.PILOT_EXECUTION ] )
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.FEATURE ] )
+
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN ] )
+			break
+
+		case eUnlockType.FACTION_LEVEL:
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLING_CARD ] )
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.FEATURE ] )
+
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_PILOT ] )
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_TITAN ] )
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN ] )
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLSIGN_ICON ] )
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.PILOT_EXECUTION ] )
+
+			break
+
+		case eUnlockType.WEAPON_LEVEL:
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN ] )
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.FEATURE ] )
+
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_PILOT ] )
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_TITAN ] )
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLING_CARD ] )
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLSIGN_ICON ] )
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.PILOT_EXECUTION ] )
+			break
+
+		case eUnlockType.TITAN_LEVEL:
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_TITAN ] )
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN ] )
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.FEATURE ] )
+
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_PILOT ] )
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLING_CARD ] )
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLSIGN_ICON ] )
+			fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.PILOT_EXECUTION ] )
+			break
+	}
+
+	if ( GetColiseumAwardCount( player ) > 0 )
+	{
+		for ( int i = preferredUnlocks.len() - 1; i >= 0; i-- )
+		{
+			if ( preferredUnlocks[ i ].ref == "coliseum_ticket" )
+			{
+				preferredUnlocks.remove( i )
+				RemoveFromColiseumAwardCount( player )
+				break
+			}
+		}
+
+		for ( int i = fallbackUnlocks.len() - 1; i >= 0; i-- )
+		{
+			if ( fallbackUnlocks[ i ].ref == "coliseum_ticket" )
+			{
+				fallbackUnlocks.remove( i )
+				RemoveFromColiseumAwardCount( player )
+				break
+			}
+		}
+	}
+
+	RandomUnlockItem ornull randomUnlockItem = GetRandomUnlockItem( player, preferredUnlocks, fallbackUnlocks, parentRef )
+	if ( randomUnlockItem == null )
+		return false
+	expect RandomUnlockItem( randomUnlockItem )
+
+	RemoveRandomUnlockItem( player, unlockType, parentRef )
+
+	ItemDisplayData itemData = GetItemDisplayData( randomUnlockItem.ref, randomUnlockItem.parentRef )
+
+	int count = 1
+	if ( randomUnlockItem.ref == "credit_award" )
+	{
+		count = RandomInt( 10 ) + 10
+		Player_GiveCredits( player, count )
+	}
+	else if ( randomUnlockItem.ref == "coliseum_ticket" )
+	{
+		Player_GiveColiseumTickets( player, 1 )
+		PIN_GiveItem( player, true, "coliseum_ticket", 1 )
+	}
+	else
+	{
+		SetItemOwned( player, itemData.ref, itemData.parentRef, true )
+		PIN_GiveItem( player, false, itemData.ref, 1 )
+	}
+
+	Player_AddRecentUnlock( player, itemData, count )
+
+	printt( "Random Unlock:", player, itemData.ref, itemData.parentRef )
+
+	return true
+}
+
+int function GetColiseumAwardCount( entity player )
+{
+	string pVar = "randomColiseumUnlocks"
+
+	return player.GetPersistentVarAsInt( pVar )
+}
+
+void function AddToColiseumAwardCount( entity player )
+{
+	string pVar = "randomColiseumUnlocks"
+
+	int currentVal = player.GetPersistentVarAsInt( pVar )
+	player.SetPersistentVar( pVar, currentVal + 1 )
+}
+
+void function RemoveFromColiseumAwardCount( entity player )
+{
+	string pVar = "randomColiseumUnlocks"
+
+	int currentCount = player.GetPersistentVarAsInt( pVar )
+	player.SetPersistentVar( pVar, max( currentCount - 1, 0 ) )
+}
+
+bool function RandomUnlockIsReplenishable( RandomUnlockItem ruItem )
+{
+	if ( ruItem.itemType == eItemTypes.FEATURE )
+	{
+		if ( ruItem.ref == "credit_award" ||
+			 ruItem.ref == "coliseum_ticket" )
+			return true
+	}
+
+	return false
+}
+
+bool function RandomUnlocksAreAllReplenishable( array<RandomUnlockItem> ruItems )
+{
+	foreach ( item in ruItems )
+	{
+		if ( !RandomUnlockIsReplenishable( item ) )
+			return false
+	}
+
+	return true
+}
+
+RandomUnlockItem ornull function GetRandomUnlockItem( entity player, array<RandomUnlockItem> possibleUnlocks, array<RandomUnlockItem> fallbackUnlocks, string parentRef = "" )
+{
+	array<RandomUnlockItem> validUnlocks
+
+	foreach ( ruItem in possibleUnlocks )
+	{
+		if ( ruItem.parentRef == "" )
+		{
+			if ( IsItemLocked( player, ruItem.ref ) || RandomUnlockIsReplenishable( ruItem ) )
+				validUnlocks.append( ruItem )
+		}
+		else
+		{
+			if ( ruItem.parentRef != parentRef )
+				continue
+
+			if ( !IsItemLocked( player, parentRef ) && IsSubItemLocked( player, ruItem.ref, ruItem.parentRef ) )
+				validUnlocks.append( ruItem )
+		}
+	}
+
+	printt( "valid unlocks: ", validUnlocks.len() )
+
+	if ( validUnlocks.len() == 0 || RandomUnlocksAreAllReplenishable( validUnlocks ) )
+	{
+		foreach ( ruItem in fallbackUnlocks )
+		{
+			if ( ruItem.parentRef == "" )
+			{
+				if ( IsItemLocked( player, ruItem.ref ) || RandomUnlockIsReplenishable( ruItem ) )
+					validUnlocks.append( ruItem )
+			}
+			else
+			{
+				if ( ruItem.parentRef != parentRef )
+					continue
+
+				if ( !IsItemLocked( player, parentRef ) && IsSubItemLocked( player, ruItem.ref, ruItem.parentRef ) )
+					validUnlocks.append( ruItem )
+			}
+		}
+
+		printt( "valid unlocks after fallback: ", validUnlocks.len() )
+	}
+
+	if ( validUnlocks.len() == 0 )
+		return null
+
+	float totalWeight
+	foreach ( ruItem in validUnlocks )
+	{
+		totalWeight += ruItem.weight
+	}
+
+	float rand = RandomFloat( totalWeight )
+	float accumWeight = 0.0
+
+	foreach ( ruItem in validUnlocks )
+	{
+		accumWeight += ruItem.weight
+		if ( accumWeight > rand )
+		{
+			return ruItem
+		}
+	}
+
+	unreachable
+}
+
+void function RemoveRandomUnlockItem( entity player, int unlockType, string parentRef = "" )
+{
+	string pVar = _GetRandomUnlockItemPersistentVar( unlockType, parentRef )
+	int currentCount = player.GetPersistentVarAsInt( pVar )
+	Assert( currentCount > 0 )
+	player.SetPersistentVar( pVar, max( currentCount - 1, 0 ) )
+}
+#endif // SERVER
+
+bool function PlayerLevelHasRandomUnlock( int rawLevel )
+{
+	if ( rawLevel > file.unlocksPlayerLevelRowCount )
+	{
+		return rawLevel % 10 == 0
+	}
+
+	foreach ( ru in file.randomUnlocks[ eUnlockType.PLAYER_LEVEL ] )
+	{
+		if ( ru.unlockLevel == rawLevel && ru.parentRef == "" )
+			return true
+	}
+
+	return false
+}
+
+bool function TitanLevelHasRandomUnlock( int rawLevel, string parentRef )
+{
+	if ( rawLevel > file.unlocksTitanLevelRowCount )
+	{
+		return rawLevel % 2 == 0
+	}
+
+	foreach ( ru in file.randomUnlocks[ eUnlockType.TITAN_LEVEL ] )
+	{
+		if ( ru.unlockLevel == rawLevel && ru.parentRef == parentRef )
+			return true
+	}
+
+	return false
+}
+
+bool function WeaponLevelHasRandomUnlock( int rawLevel, string parentRef )
+{
+	if ( rawLevel > file.unlocksWeaponLevelRowCount )
+	{
+		return rawLevel % 2 == 0
+	}
+
+	foreach ( ru in file.randomUnlocks[ eUnlockType.WEAPON_LEVEL ] )
+	{
+		if ( ru.unlockLevel == rawLevel && ru.parentRef == parentRef )
+			return true
+	}
+
+	return false
+}
+
+
+bool function FactionLevelHasRandomUnlock( int rawLevel, string parentRef )
+{
+	if ( rawLevel > file.unlocksFactionLevelRowCount )
+	{
+		return rawLevel % 2 == 0
+	}
+
+	foreach ( ru in file.randomUnlocks[ eUnlockType.FACTION_LEVEL ] )
+	{
+		if ( ru.unlockLevel == rawLevel && ru.parentRef == parentRef )
+			return true
+	}
+
+	return false
+}

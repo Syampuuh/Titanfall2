@@ -1,0 +1,10 @@
+#base "titan_stryder.set"
+"titan_light_locust"
+{
+	"global"
+	{
+		bodymodel			"models/titans/light/titan_light_locust.mdl"
+		armsmodel			"models/weapons/arms/pov_titan_light_locust.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_light_cockpit.mdl"
+	}
+}

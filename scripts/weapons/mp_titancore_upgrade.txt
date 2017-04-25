@@ -1,0 +1,74 @@
+WeaponData
+{
+	"printname"										"#WPN_TITAN_UPGRADE_CORE"
+	"shortprintname"								"#WPN_TITAN_UPGRADE_CORE_SHORT"
+	"description"									"#WPN_TITAN_UPGRADE_CORE_DESC"
+	"longdesc"										"#WPN_TITAN_UPGRADE_CORE_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/core/titan_core_vanguard"
+	"hud_icon"										"rui/titan_loadout/core/titan_core_vanguard"
+
+	// General
+	"weaponClass" 									"titan"
+	"weaponType"									"titan_core"
+	"fire_mode"   									"offhand_instant"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_UpgradeCore"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_UpgradeCore"
+
+	// Ammo
+	"ammo_stockpile_max"							"200"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+	"ammo_no_remove_from_clip"						"1"
+
+	// Behavior
+	"core_build_time"								"100"
+	"chargeup_time"									"0.0"
+	"core_duration"									"0.5"
+	"passive"										"PAS_FUSION_CORE"
+
+	"fire_rate"										"30"
+	"deploy_time"									"0.0"
+	"raise_time"									"0.0"
+	"holster_time"									"0.0"
+	"lower_time"  									"0.0"
+
+	"charge_time"									"0.0"
+	"charge_cooldown_time"							"1.0"
+	"charge_cooldown_delay"   						"1.0"
+	"charge_end_forces_fire"  						"1"
+	"charge_require_input"							"0"
+	"charge_allow_melee"							"0"
+
+	"npc_rest_time_between_bursts_min"				"30"
+	"npc_rest_time_between_bursts_max"				"30"
+
+	"readymessage"									"#HUD_CORE_ONLINE_UPGRADE"
+	"readyhint"										"#HUD_CORE_ONLINE_UPGRADE_HINT"
+
+	"dialog_core_online"							"UpgradecoreOnline"
+	//"dialog_core_activated"						"UpgradecoreActivated" controlled in script
+
+	"colorCorrectionWeight"							"0.5"
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Menu Stats
+	"stat_damage" 									"65"
+	"stat_range"  									"75"
+	"stat_accuracy"   								"80"
+	"stat_rof"				        				"75"
+
+	"aimassist_disable_hipfire"						"1"
+	"aimassist_disable_ads"							"1"
+
+	Mods
+	{
+		pas_vanguard_upgrade
+		{
+
+		}
+	}
+}
+

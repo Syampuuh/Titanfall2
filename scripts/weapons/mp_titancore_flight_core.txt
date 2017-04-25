@@ -1,0 +1,44 @@
+WeaponData
+{
+	"printname"										"#TITANCORE_FLIGHT"
+	"shortprintname"								"#TITANCORE_FLIGHT_SHORT"
+	"description"									"#TITANCORE_FLIGHT_DESC"
+	"longdesc"										"#TITANCORE_FLIGHT_DESC"
+
+	"menu_icon"										"rui/titan_loadout/core/titan_core_flight"
+	"hud_icon"										"rui/titan_loadout/core/titan_core_flight"
+
+	// General
+	"weaponClass" 									"titan"
+	"weaponType"									"titan_core"
+	"fire_mode"   									"offhand_instant"
+
+	"OnWeaponSustainedDischargeBegin"				"OnAbilityStart_FlightCore"
+	"OnWeaponSustainedDischargeEnd"					"OnAbilityEnd_FlightCore"
+
+	"damage_type" 									"none"
+
+	// Ammo
+	"ammo_stockpile_max"							"200"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+
+	"sustained_discharge_duration"					"6.0" // core duration
+	"sustained_discharge_pulse_frequency"			"0.5"
+	"sustained_discharge_require_input"				"0"
+
+	"npc_rest_time_between_bursts_min"				"30"
+	"npc_rest_time_between_bursts_max"				"30"
+
+	// Behavior
+	"core_build_time"								"150"
+	"chargeup_time"									"0.0"
+	"core_duration"									"6.0"
+	"passive"										"PAS_FUSION_CORE"
+
+	"readymessage"									"#HUD_CORE_ONLINE_ATLAS_FLIGHT"
+	"readyhint"										"#HUD_CORE_ONLINE_ATLAS_FLIGHT_HINT"
+
+	"dialog_core_online"							"flightCoreOnline"
+	"dialog_core_activated"							"flightCoreActivated"
+}

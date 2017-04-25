@@ -1,0 +1,14 @@
+"SpriteCard"
+{
+	"$basetexture" "particle\glows\flare_hex"
+
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+	$additive 1
+	$overbrightfactor 1
+
+	$splinetype 1
+	
+	$vertexFogAmount 1
+}

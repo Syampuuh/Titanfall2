@@ -1,0 +1,416 @@
+untyped
+
+global function PassivesShared_Init
+
+global function GetNumPassives
+global function PassiveBitfieldFromEnum
+global function PlayerRevealsNPCs
+global function PassiveEnumFromBitfield
+global function GetSetFileModsForSettingType
+
+#if SERVER
+	global function TakeAllTitanPassives
+#endif
+
+#if CLIENT
+	global function ClientCodeCallback_OnPassiveChanged
+#endif
+
+#if SERVER || CLIENT
+	global function PlayerHasPassive
+#endif
+
+global enum ePassives
+{
+	PAS_MINIMAP_ALL,
+	PAS_SHIELD_REGEN,
+	PAS_MINIMAP_PLAYERS,
+	PAS_MINIMAP_AI,
+	PAS_ENHANCED_TITAN_AI,
+	PAS_LONGER_BUBBLE,
+	PAS_DASH_RECHARGE,
+	PAS_AUTO_EJECT,
+	PAS_DOOMED_TIME,
+	PAS_NUCLEAR_CORE,
+	PAS_TITAN_PUNCH,
+	PAS_CONSCRIPT,
+	PAS_DETECT_RESPAWN,
+	PAS_FUSION_CORE,
+	PAS_STEALTH_MOVEMENT,
+	PAS_ORDNANCE_PACK,
+	PAS_POWER_CELL,
+	PAS_WALLHANG,
+	PAS_FAST_HEALTH_REGEN,
+	PAS_DEFENSIVE_CORE,
+	PAS_RUN_AND_GUN,
+	PAS_WIFI_SPECTRE,
+	PAS_FAST_HACK,
+	PAS_DEAD_MANS_TRIGGER,
+	PAS_SHIELD_BOOST,
+	PAS_WALL_RUNNER,
+	PAS_FAST_RELOAD,
+	PAS_AUTO_SONAR,
+	PAS_ASSAULT_REACTOR,
+	PAS_HYPER_CORE,
+	PAS_MARATHON_CORE,
+	PAS_BUILD_UP_NUCLEAR_CORE,
+	PAS_CLOAKED_WALLRUN,
+	PAS_CLOAKED_WALLHANG,
+	PAS_SMOKE_SIGHT,
+	PAS_BERSERKER,
+	PAS_SHIFT_CORE,
+	PAS_SMART_CORE,
+	PAS_FAST_EMBARK,
+	PAS_ENEMY_DEATH_ICONS,
+	PAS_FAST_ADS,
+	PAS_FAST_SWAP,
+	PAS_SALVO_CORE,
+
+	PAS_CDR_ON_KILL,
+	PAS_AT_HUNTER,
+	PAS_PHASE_EJECT,
+	PAS_ADS_HOVER,
+	PAS_MOBILITY_DASH_CAPACITY,
+	PAS_OFF_THE_GRID,
+	PAS_GUARDIAN_CHIP,
+	PAS_DOOMED_SPEED,
+	PAS_SHIELDED_CORE,
+	PAS_WARPFALL,
+	PAS_BUBBLESHIELD,
+	PAS_RONIN_WEAPON,
+	PAS_NORTHSTAR_WEAPON,
+	PAS_ION_WEAPON,
+	PAS_TONE_WEAPON,
+	PAS_SCORCH_WEAPON,
+	PAS_LEGION_WEAPON,
+	PAS_ION_TRIPWIRE,
+	PAS_ION_VORTEX,
+	PAS_ION_LASERCANNON,
+	PAS_ION_WEAPON_ADS,
+	PAS_TONE_ROCKETS,
+	PAS_TONE_SONAR,
+	PAS_TONE_WALL,
+	PAS_TONE_BURST,
+	PAS_RONIN_ARCWAVE,
+	PAS_RONIN_PHASE,
+	PAS_RONIN_SWORDCORE,
+	PAS_RONIN_AUTOSHIFT,
+	PAS_NORTHSTAR_CLUSTER,
+	PAS_NORTHSTAR_TRAP,
+	PAS_NORTHSTAR_FLIGHTCORE,
+	PAS_NORTHSTAR_OPTICS,
+	PAS_SCORCH_FIREWALL,
+	PAS_SCORCH_SHIELD,
+	PAS_SCORCH_SELFDMG,
+	PAS_SCORCH_FLAMECORE,
+	PAS_LEGION_SPINUP,
+	PAS_LEGION_GUNSHIELD,
+	PAS_LEGION_SMARTCORE,
+	PAS_LEGION_SIEGE,
+	PAS_LEGION_CHARGESHOT,
+	PAS_PILOT_HARDCORE_SETTINGS,
+	PAS_TITAN_HARDCORE_SETTINGS,
+	PAS_ANTI_RODEO,
+	PAS_VANGUARD_COREMETER,
+	PAS_VANGUARD_SHIELD,
+	PAS_VANGUARD_REARM,
+	PAS_VANGUARD_DOOM,
+	PAS_VANGUARD_UPGRADE,
+	PAS_VANGUARD_CORE1,
+	PAS_VANGUARD_CORE2,
+	PAS_VANGUARD_CORE3,
+	PAS_VANGUARD_CORE4,
+	PAS_VANGUARD_CORE5,
+	PAS_VANGUARD_CORE6,
+	PAS_VANGUARD_CORE7,
+	PAS_VANGUARD_CORE8,
+	PAS_VANGUARD_CORE9,
+	PAS_NUMBER,
+}
+
+global const _PassiveFromEnum = {
+	[ "pas_shield_regen" ]					= ePassives.PAS_SHIELD_REGEN,
+	[ "pas_wall_runner" ]					= ePassives.PAS_WALL_RUNNER,
+	[ "pas_minimap_all" ]					= ePassives.PAS_MINIMAP_ALL,
+	[ "pas_minimap_players" ]				= ePassives.PAS_MINIMAP_PLAYERS,
+	[ "pas_minimap_ai" ]					= ePassives.PAS_MINIMAP_AI,
+	[ "pas_enhanced_titan_ai" ]				= ePassives.PAS_ENHANCED_TITAN_AI,
+	[ "pas_longer_bubble" ]					= ePassives.PAS_LONGER_BUBBLE,
+	[ "pas_dash_recharge" ]					= ePassives.PAS_DASH_RECHARGE,
+	[ "pas_auto_eject" ]					= ePassives.PAS_AUTO_EJECT,
+	[ "pas_doomed_time" ]					= ePassives.PAS_DOOMED_TIME,
+	[ "pas_conscript" ]						= ePassives.PAS_CONSCRIPT,
+	[ "pas_detect_respawn" ]				= ePassives.PAS_DETECT_RESPAWN,
+	[ "pas_fusion_core" ]					= ePassives.PAS_FUSION_CORE,
+	[ "pas_stealth_movement" ]				= ePassives.PAS_STEALTH_MOVEMENT,
+	[ "pas_fast_hack" ]						= ePassives.PAS_FAST_HACK,
+	[ "pas_ordnance_pack" ]					= ePassives.PAS_ORDNANCE_PACK,
+	[ "pas_power_cell" ]					= ePassives.PAS_POWER_CELL,
+	[ "pas_wallhang" ]						= ePassives.PAS_WALLHANG,
+	[ "pas_fast_health_regen" ]				= ePassives.PAS_FAST_HEALTH_REGEN,
+	[ "pas_defensive_core" ]				= ePassives.PAS_DEFENSIVE_CORE,
+	[ "pas_run_and_gun" ]					= ePassives.PAS_RUN_AND_GUN,
+	[ "pas_dead_mans_trigger" ]				= ePassives.PAS_DEAD_MANS_TRIGGER,
+	[ "pas_fast_reload" ]					= ePassives.PAS_FAST_RELOAD,
+	[ "pas_auto_sonar" ]					= ePassives.PAS_AUTO_SONAR,
+	[ "pas_assault_reactor" ]				= ePassives.PAS_ASSAULT_REACTOR,
+	[ "pas_hyper_core" ]					= ePassives.PAS_HYPER_CORE,
+	[ "pas_marathon_core" ]					= ePassives.PAS_MARATHON_CORE,
+	[ "pas_build_up_nuclear_core" ]			= ePassives.PAS_BUILD_UP_NUCLEAR_CORE,
+	[ "pas_cloaked_wallrun" ]				= ePassives.PAS_CLOAKED_WALLRUN,
+	[ "pas_cloaked_wallhang" ]				= ePassives.PAS_CLOAKED_WALLHANG,
+	[ "pas_smoke_sight" ]					= ePassives.PAS_SMOKE_SIGHT,
+	[ "pas_fast_embark" ]					= ePassives.PAS_FAST_EMBARK,
+	[ "pas_enemy_death_icons" ]				= ePassives.PAS_ENEMY_DEATH_ICONS,
+	[ "pas_cdr_on_kill" ]					= ePassives.PAS_CDR_ON_KILL,
+	[ "pas_at_hunter" ]						= ePassives.PAS_AT_HUNTER,
+	[ "pas_phase_eject" ]					= ePassives.PAS_PHASE_EJECT,
+	[ "pas_ads_hover" ]						= ePassives.PAS_ADS_HOVER,
+	[ "pas_mobility_dash_capacity"]			= ePassives.PAS_MOBILITY_DASH_CAPACITY,
+	[ "pas_off_the_grid" ]					= ePassives.PAS_OFF_THE_GRID,
+	[ "pas_guardian_chip" ]					= ePassives.PAS_GUARDIAN_CHIP,
+	[ "pas_doomed_speed" ]					= ePassives.PAS_DOOMED_SPEED,
+	[ "pas_shielded_core" ]					= ePassives.PAS_SHIELDED_CORE,
+	[ "pas_fast_ads" ]						= ePassives.PAS_FAST_ADS,
+	[ "pas_fast_swap" ]						= ePassives.PAS_FAST_SWAP,
+	[ "pas_warpfall" ]						= ePassives.PAS_WARPFALL,
+	[ "pas_bubbleshield" ]					= ePassives.PAS_BUBBLESHIELD,
+
+	[ "pas_ronin_weapon" ]					= ePassives.PAS_RONIN_WEAPON,
+	[ "pas_northstar_weapon" ]				= ePassives.PAS_NORTHSTAR_WEAPON,
+	[ "pas_ion_weapon" ]					= ePassives.PAS_ION_WEAPON,
+	[ "pas_tone_weapon" ]					= ePassives.PAS_TONE_WEAPON,
+	[ "pas_scorch_weapon" ]					= ePassives.PAS_SCORCH_WEAPON,
+	[ "pas_legion_weapon" ]					= ePassives.PAS_LEGION_WEAPON,
+
+	[ "pas_ion_tripwire" ]					= ePassives.PAS_ION_TRIPWIRE,
+	[ "pas_ion_vortex" ]					= ePassives.PAS_ION_VORTEX,
+	[ "pas_ion_lasercannon" ]				= ePassives.PAS_ION_LASERCANNON,
+	[ "pas_ion_weapon_ads" ]				= ePassives.PAS_ION_WEAPON_ADS,
+
+	[ "pas_tone_rockets" ]					= ePassives.PAS_TONE_ROCKETS,
+	[ "pas_tone_sonar" ]					= ePassives.PAS_TONE_SONAR,
+	[ "pas_tone_wall" ]						= ePassives.PAS_TONE_WALL,
+	[ "pas_tone_burst" ]					= ePassives.PAS_TONE_BURST,
+
+	[ "pas_ronin_arcwave" ]					= ePassives.PAS_RONIN_ARCWAVE,
+	[ "pas_ronin_phase" ]					= ePassives.PAS_RONIN_PHASE,
+	[ "pas_ronin_swordcore" ]				= ePassives.PAS_RONIN_SWORDCORE,
+	[ "pas_ronin_autoshift" ]				= ePassives.PAS_RONIN_AUTOSHIFT,
+
+	[ "pas_northstar_cluster" ]				= ePassives.PAS_NORTHSTAR_CLUSTER,
+	[ "pas_northstar_trap" ]				= ePassives.PAS_NORTHSTAR_TRAP,
+	[ "pas_northstar_flightcore" ]			= ePassives.PAS_NORTHSTAR_FLIGHTCORE,
+	[ "pas_northstar_optics" ]				= ePassives.PAS_NORTHSTAR_OPTICS,
+
+	[ "pas_scorch_firewall" ]				= ePassives.PAS_SCORCH_FIREWALL,
+	[ "pas_scorch_shield" ]					= ePassives.PAS_SCORCH_SHIELD,
+	[ "pas_scorch_selfdmg" ]				= ePassives.PAS_SCORCH_SELFDMG,
+	[ "pas_scorch_flamecore" ]				= ePassives.PAS_SCORCH_FLAMECORE,
+
+	[ "pas_legion_spinup" ]					= ePassives.PAS_LEGION_SPINUP,
+	[ "pas_legion_gunshield" ]				= ePassives.PAS_LEGION_GUNSHIELD,
+	[ "pas_legion_smartcore" ]				= ePassives.PAS_LEGION_SMARTCORE,
+	[ "pas_legion_siege" ]					= ePassives.PAS_LEGION_SIEGE,
+	[ "pas_legion_chargeshot" ]				= ePassives.PAS_LEGION_CHARGESHOT,
+
+	[ "pas_vanguard_coremeter" ]			= ePassives.PAS_VANGUARD_COREMETER,
+	[ "pas_vanguard_shield" ]				= ePassives.PAS_VANGUARD_SHIELD,
+	[ "pas_vanguard_rearm" ]				= ePassives.PAS_VANGUARD_REARM,
+	[ "pas_vanguard_doom" ]					= ePassives.PAS_VANGUARD_DOOM,
+	[ "pas_vanguard_upgrade" ]				= ePassives.PAS_VANGUARD_UPGRADE,
+	[ "pas_vanguard_core1" ]				= ePassives.PAS_VANGUARD_CORE1,
+	[ "pas_vanguard_core2" ]				= ePassives.PAS_VANGUARD_CORE2,
+	[ "pas_vanguard_core3" ]				= ePassives.PAS_VANGUARD_CORE3,
+	[ "pas_vanguard_core4" ]				= ePassives.PAS_VANGUARD_CORE4,
+	[ "pas_vanguard_core5" ]				= ePassives.PAS_VANGUARD_CORE5,
+	[ "pas_vanguard_core6" ]				= ePassives.PAS_VANGUARD_CORE6,
+	[ "pas_vanguard_core7" ]				= ePassives.PAS_VANGUARD_CORE7,
+	[ "pas_vanguard_core8" ]				= ePassives.PAS_VANGUARD_CORE8,
+	[ "pas_vanguard_core9" ]				= ePassives.PAS_VANGUARD_CORE9,
+
+	[ "pas_pilot_hardcore_settings" ]		= ePassives.PAS_PILOT_HARDCORE_SETTINGS,
+	[ "pas_titan_hardcore_settings" ]		= ePassives.PAS_TITAN_HARDCORE_SETTINGS,
+	[ "pas_anti_rodeo" ]					= ePassives.PAS_ANTI_RODEO,
+}
+
+function PassivesShared_Init()
+{
+	// these passives are put on the titan soul, and then given to players when they get in the titan
+	// and taken away from players when they get out of a titan.
+	level.titanPassives <- {}
+	level.titanPassives[ ePassives.PAS_DEFENSIVE_CORE ] <- true
+	level.titanPassives[ ePassives.PAS_SHIELD_REGEN ] <- true
+	level.titanPassives[ ePassives.PAS_DOOMED_TIME ] <- true
+	level.titanPassives[ ePassives.PAS_AUTO_EJECT ] <- true
+	level.titanPassives[ ePassives.PAS_DASH_RECHARGE ] <- true
+	level.titanPassives[ ePassives.PAS_FUSION_CORE ] <- true
+	level.titanPassives[ ePassives.PAS_ENHANCED_TITAN_AI ] <- true
+	level.titanPassives[ ePassives.PAS_SHIELD_BOOST ] <- true
+	level.titanPassives[ ePassives.PAS_ASSAULT_REACTOR ] <- true
+	level.titanPassives[ ePassives.PAS_HYPER_CORE ] <- true
+	level.titanPassives[ ePassives.PAS_MARATHON_CORE ] <- true
+	level.titanPassives[ ePassives.PAS_BUILD_UP_NUCLEAR_CORE ] <- true
+	level.titanPassives[ ePassives.PAS_BERSERKER ] <- true
+	level.titanPassives[ ePassives.PAS_SHIFT_CORE ] <- true
+	level.titanPassives[ ePassives.PAS_SMART_CORE ] <- true
+	level.titanPassives[ ePassives.PAS_SALVO_CORE ] <- true
+	level.titanPassives[ ePassives.PAS_MOBILITY_DASH_CAPACITY ] <- true
+	level.titanPassives[ ePassives.PAS_GUARDIAN_CHIP ] <- true
+	level.titanPassives[ ePassives.PAS_DOOMED_SPEED ] <- true
+	level.titanPassives[ ePassives.PAS_SHIELDED_CORE ] <- true
+	level.titanPassives[ ePassives.PAS_WARPFALL ] <- true
+	level.titanPassives[ ePassives.PAS_BUBBLESHIELD ] <- true
+	level.titanPassives[ ePassives.PAS_TITAN_HARDCORE_SETTINGS ] <- true
+	level.titanPassives[ ePassives.PAS_RONIN_WEAPON ] <- true
+	level.titanPassives[ ePassives.PAS_NORTHSTAR_WEAPON ] <- true
+	level.titanPassives[ ePassives.PAS_ION_WEAPON ] <- true
+	level.titanPassives[ ePassives.PAS_TONE_WEAPON ] <- true
+	level.titanPassives[ ePassives.PAS_SCORCH_WEAPON ] <- true
+	level.titanPassives[ ePassives.PAS_LEGION_WEAPON ] <- true
+	level.titanPassives[ ePassives.PAS_ION_TRIPWIRE ] <- true
+	level.titanPassives[ ePassives.PAS_ION_VORTEX ] <- true
+	level.titanPassives[ ePassives.PAS_ION_LASERCANNON ] <- true
+	level.titanPassives[ ePassives.PAS_ION_WEAPON_ADS ] <- true
+	level.titanPassives[ ePassives.PAS_TONE_ROCKETS ] <- true
+	level.titanPassives[ ePassives.PAS_TONE_SONAR ] <- true
+	level.titanPassives[ ePassives.PAS_TONE_WALL ] <- true
+	level.titanPassives[ ePassives.PAS_TONE_BURST ] <- true
+	level.titanPassives[ ePassives.PAS_RONIN_ARCWAVE ] <- true
+	level.titanPassives[ ePassives.PAS_RONIN_PHASE ] <- true
+	level.titanPassives[ ePassives.PAS_RONIN_SWORDCORE ] <- true
+	level.titanPassives[ ePassives.PAS_RONIN_AUTOSHIFT ] <- true
+	level.titanPassives[ ePassives.PAS_NORTHSTAR_CLUSTER ] <- true
+	level.titanPassives[ ePassives.PAS_NORTHSTAR_TRAP ] <- true
+	level.titanPassives[ ePassives.PAS_NORTHSTAR_FLIGHTCORE ] <- true
+	level.titanPassives[ ePassives.PAS_NORTHSTAR_OPTICS ] <- true
+	level.titanPassives[ ePassives.PAS_SCORCH_FIREWALL ] <- true
+	level.titanPassives[ ePassives.PAS_SCORCH_SHIELD ] <- true
+	level.titanPassives[ ePassives.PAS_SCORCH_SELFDMG ] <- true
+	level.titanPassives[ ePassives.PAS_SCORCH_FLAMECORE ] <- true
+	level.titanPassives[ ePassives.PAS_LEGION_SPINUP ] <- true
+	level.titanPassives[ ePassives.PAS_LEGION_GUNSHIELD ] <- true
+	level.titanPassives[ ePassives.PAS_LEGION_SMARTCORE ] <- true
+	level.titanPassives[ ePassives.PAS_LEGION_SIEGE ] <- true
+	level.titanPassives[ ePassives.PAS_LEGION_CHARGESHOT ] <- true
+	level.titanPassives[ ePassives.PAS_ANTI_RODEO ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_COREMETER ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_SHIELD ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_REARM ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_DOOM ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_UPGRADE ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_CORE1 ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_CORE2 ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_CORE3 ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_CORE4 ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_CORE5 ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_CORE6 ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_CORE7 ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_CORE8 ] <- true
+	level.titanPassives[ ePassives.PAS_VANGUARD_CORE9 ] <- true
+	level.playerSettingsPassiveEnums <- {}
+
+	if ( !( "pilotClass" in level ) )
+		level.pilotClass <- "pilot"
+
+	// these are player settings mods
+	level.playerSettingsPassiveEnums[ level.pilotClass ] <- [
+		"pas_stealth_movement",
+		"pas_wall_runner",
+		"pas_ads_hover",
+		"pas_power_cell",
+		"pas_wallhang",
+		"pas_fast_health_regen",
+		"pas_pilot_hardcore_settings"
+	]
+
+	// these are player settings mods
+	level.playerSettingsPassiveEnums[ "titan" ] <- [
+		"pas_dash_recharge",
+		"pas_mobility_dash_capacity",
+		"pas_titan_hardcore_settings"
+		"pas_vanguard_shield"
+	]
+
+	level.passiveEnumFromPassive <- {}
+	foreach ( name, passive in _PassiveFromEnum )
+	{
+		level.passiveEnumFromPassive[ passive ] <- name
+	}
+
+#if CLIENT
+	PrecacheParticleSystem( $"P_core_DMG_boost_screen" )
+#endif
+}
+
+int function GetNumPassives()
+{
+	return ePassives.PAS_NUMBER
+}
+
+#if SERVER
+function TakeAllTitanPassives( entity player )
+{
+	foreach ( passive, _ in level.titanPassives )
+	{
+		TakePassive( player, expect int( passive ) )
+	}
+}
+#endif
+
+#if CLIENT
+void function ClientCodeCallback_OnPassiveChanged( entity player, int passive )
+{
+	if ( !IsValid( player ) )
+		return
+
+	if ( passive == ePassives.PAS_SHIELD_BOOST
+		|| passive == ePassives.PAS_FUSION_CORE
+		|| passive == ePassives.PAS_BERSERKER
+		|| passive == ePassives.PAS_SMART_CORE
+		|| passive == ePassives.PAS_SALVO_CORE
+		)
+	{
+		UpdateCoreFX( player )
+	}
+
+	if ( passive == ePassives.PAS_SHIFT_CORE && player == GetLocalViewPlayer() )
+	{
+		SetUnlimitedDash( PlayerHasPassive( player, passive ) )
+	}
+}
+#endif
+
+#if SERVER || CLIENT
+bool function PlayerHasPassive( entity player, int passive )
+{
+	return player.HasPassive( passive )
+}
+#endif
+
+int function PassiveBitfieldFromEnum( string passive )
+{
+	return _PassiveFromEnum[ passive ]
+}
+
+string function PassiveEnumFromBitfield( int passiveEnum )
+{
+	return expect string( level.passiveEnumFromPassive[ passiveEnum ] )
+}
+
+function PlayerRevealsNPCs( entity player )
+{
+	return player.HasPassive( ePassives.PAS_MINIMAP_AI ) || player.HasPassive( ePassives.PAS_MINIMAP_ALL )
+}
+
+array<string> function GetSetFileModsForSettingType( string settingType, array<string> mods )
+{
+	array<string> setFileMods = []
+	var passives = level.playerSettingsPassiveEnums[ settingType ]
+	foreach ( mod in mods )
+	{
+		if ( passives.contains( mod ) )
+			setFileMods.append( mod )
+	}
+	return setFileMods
+}

@@ -1,0 +1,215 @@
+WeaponData
+{
+	"printname"   									"#WPN_TITAN_ARC_WAVE"
+	"shortprintname"   								"#WPN_TITAN_ARC_WAVE_SHORT"
+	"description" 									"#WPN_TITAN_ARC_WAVE_DESC"
+	"longdesc"										"#WPN_TITAN_ARC_WAVE_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/ordnance/arc_wave_menu"
+	"hud_icon"										"rui/titan_loadout/ordnance/arc_wave"
+
+	"weaponClass" 									"titan"
+	"weaponType"									"shoulder"
+	"fire_mode"   									"offhand"
+	"minimap_reveal_distance"						"32000"
+
+	// Models
+	"viewmodel"   									"models/weapons/titan_sword/atpov_titan_sword_emp_wave.mdl"
+	"playermodel" 									"models/weapons/titan_sword/w_titan_sword.mdl"
+	"projectilemodel" 								"models/dev/empty_model.mdl"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titanweapon_arc_wave"
+	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_titanweapon_arc_wave"
+	"OnProjectileCollision"							"OnProjectileCollision_weapon_tether"
+	"OnWeaponAttemptOffhandSwitch"					"OnWeaponAttemptOffhandSwitch_titanweapon_arc_wave"
+	"sound_weapon_ready"							"HUD_TitanOffenseAbility_replenished_1P"
+
+	"aimassist_disable_hipfire_humansonly"			"1"
+	"aimassist_disable_ads_humansonly"				"1"
+
+	"projectile_ignores_vortex"						"mirror"
+	"show_grenade_indicator" 						"0"
+
+	"projectile_drift_windiness"					"1"
+	"projectile_drift_intensity"					"0.06"
+	"projectile_straight_time_min"					"0.7"
+	"projectile_straight_time_max"					"1.0"
+	"projectile_straight_radius_min"				"0"
+	"projectile_straight_radius_max"				"1"
+
+	"special_3p_attack_anim"						"1"
+	"special_3p_attack_anim_after_charge"			"1"		// play ACT_SPECIAL_ATTACK but after charging is done
+	"play_offhand_charging_anim"  					"0"
+	"offhand_holster_primary"						"1"
+	"hide_holstered_sidearm_when_active"			"1"
+	// "offhand_transition_has_attach_detach_anim_events" "1"
+
+	// TEMP: SCRIPT WAVE SETTINGS
+	"wave_max_count"								"15"
+	"wave_step_dist"								"112.0"
+	"charge_wave_max_count"							"15"
+	"charge_wave_step_dist"							"112.0"
+	"charge_sound_1p"								"Weapon_ShoulderLaser_StutterBuild_02"
+	"charge_sound_3p"								"ronin_sword_draw_02_3p"
+	"critical_hit"									"0"
+
+	// Ammo
+	"ammo_display"									"bar"
+	"ammo_stockpile_max"							"100"
+	"ammo_clip_size"   								"100"
+	"ammo_default_total"							"100"
+	"ammo_per_shot"									"100"
+	"ammo_min_to_fire"								"100"
+
+	"reload_enabled"								"0"
+
+	"fire_sound_1_player_1p"						"arcwave_fire_1p"
+	"fire_sound_1_player_3p"						"arcwave_fire_3p"
+
+	"charge_time" 									"30.0"
+	"charge_cooldown_time"							"0.0"
+	"charge_cooldown_delay"   						"0.0"
+	"charge_end_forces_fire"  						"0"
+	"charge_require_input"							"1"
+
+	// Regen Ammo
+	"regen_ammo_refill_rate"						"10.0"
+	"regen_ammo_refill_start_delay"					"1.0"
+
+	"projectile_chasecamOffsetUp"					"100"
+	"projectile_chasecamOffsetRight"				"50"
+	"projectile_chasecamOffsetForward"				"-600"
+
+	// Rumble
+	"fire_rumble"									"rumble_titan_arcwave"
+
+	MP_BASE
+	{
+		"damage_near_value"   							"75"
+		"damage_far_value"								"75"
+		"damage_near_value_titanarmor"					"1000"
+		"damage_far_value_titanarmor"					"1000"
+
+		// Damage - When Used by NPCs
+		"npc_damage_near_value"   						"50"
+		"npc_damage_far_value"							"50"
+		"npc_damage_near_value_titanarmor"				"1000"
+		"npc_damage_far_value_titanarmor" 				"1000"
+
+		 "enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
+	}
+
+	SP_BASE
+	{
+		"damage_near_value"   							"250"
+		"damage_far_value"								"250"
+		"damage_near_value_titanarmor"					"1500"
+		"damage_far_value_titanarmor"					"1500"
+
+		// Damage - When Used by NPCs
+		"npc_damage_near_value"   						"150"
+		"npc_damage_far_value"							"150"
+		"npc_damage_near_value_titanarmor"				"1250"
+		"npc_damage_far_value_titanarmor" 				"1250"
+
+		 "enable_highlight_networking_on_creation"		"1"
+	}
+
+	"vortex_refire_behavior"  						"absorb"
+	"vortex_drain"									"0.0"
+
+	"fx_muzzle_flash_view"							"P_wpn_muzzleflash_smr_FP"
+	"fx_muzzle_flash_world"							"P_wpn_muzzleflash_smr"
+	"fx_muzzle_flash_attach"						"muzzle_flash"
+
+	"fire_rate"   									"1.5"
+	"holster_time"									"0.5"
+	"deploy_time" 									"0.2"
+	"lower_time"  									"0.5"
+	"raise_time"  									"0.2"
+
+	// Bob
+	"bob_cycle_time"  								"0.5"
+	"bob_vert_dist"   								"0.2"
+	"bob_horz_dist"   								"0.6"
+	"bob_max_speed"   								"150"
+	//"bob_pitch"   									"0.75"
+	//"bob_yaw" 										"1"
+	//"bob_roll"										"-0.75"
+
+	// Sway
+	"sway_rotate_attach"  							"SWAY_ROTATE"
+	"sway_min_x"  									"-0.3"
+	"sway_min_y"  									"-0.5"
+	"sway_min_z"  									"-0.5"
+	"sway_max_x"  									"0.3"
+	"sway_max_y"  									"0.5"
+	"sway_max_z"  									"0.1"
+	"sway_min_pitch"  								"-3"
+	"sway_min_yaw"									"-3.5"
+	"sway_min_roll"   								"-2"
+	"sway_max_pitch"  								"3"
+	"sway_max_yaw"									"3.5"
+	"sway_max_roll"   								"3"
+	"sway_translate_gain" 							"4"
+	"sway_rotate_gain"								"7"
+	"sway_move_forward_translate_x"   				"0"
+	"sway_move_forward_translate_z"   				"-0.5"
+	"sway_move_back_translate_x"  					"-2"
+	"sway_move_back_translate_z"  					"-1"
+	"sway_move_left_translate_y"  					"-1"
+	"sway_move_left_translate_z"  					"-0.5"
+	//"sway_move_left_rotate_roll"  					"-2"
+	"sway_move_right_translate_y" 					"1"
+	"sway_move_right_translate_z" 					"-0.5"
+	//"sway_move_right_rotate_roll" 					"4"
+	"sway_move_up_translate_z"						"-1"
+	"sway_move_down_translate_z"  					"1"
+	"sway_turn_left_rotate_yaw"   					"-1"
+	"sway_turn_right_rotate_yaw"  					"1"
+	"sway_turn_up_rotate_pitch"   					"1"
+	"sway_turn_down_rotate_pitch" 					"-1"
+
+	"npc_min_burst"									"1"
+	"npc_max_burst"									"1"
+
+	"npc_charge_time_min"							"0"
+	"npc_charge_time_max"							"1.0"
+
+	"npc_rest_time_between_bursts_min"				"8.0"
+	"npc_rest_time_between_bursts_max"				"12.0"
+	"npc_pre_fire_delay"							"1.5"
+	"npc_pre_fire_delay_interval"					"3"
+
+	"npc_use_check_type"							"ground_clear"
+
+	"proficiency_poor_additional_rest"				"20"
+	"proficiency_average_additional_rest"			"8"
+	"proficiency_good_additional_rest"				"4"
+	"proficiency_very_good_additional_rest"			"1"
+
+	"cooldown_type"									"ammo_instant"
+
+	Mods
+	{
+		dev_mod_low_recharge
+		{
+			"regen_ammo_refill_rate"   						"*5.0"
+			"regen_ammo_refill_start_delay"					"0.0"
+		}
+
+		burn_mod_titan_arc_wave
+		{
+			"damage_near_value_titanarmor"					"*1.15"
+			"damage_far_value_titanarmor" 					"*1.15"
+
+			"is_burn_mod"		"1"
+		}
+		pas_ronin_arcwave
+		{
+			"ammo_per_shot"									"50"
+			"ammo_min_to_fire"								"50"
+			"regen_ammo_refill_rate"						"*0.5"
+		}
+	}
+}

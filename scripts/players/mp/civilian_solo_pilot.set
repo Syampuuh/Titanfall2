@@ -1,0 +1,44 @@
+#base "pilot_solo.set"
+"civilian_solo_pilot"
+{
+	"global"
+	{
+		class						"pilot"
+		subclass					"wallrun"
+
+		stepheight					18
+		jumpHeight					25
+		ziplineSpeed				600
+
+		airSpeed					70
+		airAcceleration				540
+
+		wallrun						0
+		doublejump					0
+
+		slide						1
+		slideRequiredStartSpeed		150 //200
+		slidevelocitydecay			0.6 //0.7
+		slideSpeedBoost				100 // 150
+
+		sprintStartDuration			0.4
+
+		sound_freefall_start_1p			""
+		sound_freefall_start_3p			""
+		sound_freefall_body_1p			""
+		sound_freefall_body_3p			""
+		sound_freefall_finish_1p		""
+		sound_freefall_finish_3p		""
+	}
+
+	"crouch"
+	{
+		speed						60
+	}
+
+	"stand"
+	{
+		speed						120
+		sprintspeed					200
+	}
+}

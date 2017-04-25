@@ -1,0 +1,13 @@
+"Basic"
+{
+	"$basetexture" "particle/glows/glare_spike"
+
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+	$additive 1
+	//$ignorez 1
+
+//	$splinetype 2
+	"$basetexturetransform" "center .5 .5 scale 1 1 rotate 180 translate 0 0"
+}

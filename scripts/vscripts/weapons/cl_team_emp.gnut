@@ -1,0 +1,95 @@
+untyped
+global function CLTeamEMP_Init
+
+const SOUND_EMP_ABILITIES_ONLINE = "titan_energyshield_up"
+
+void function CLTeamEMP_Init()
+{
+	AddCreatePilotCockpitCallback( EMP_CockpitCreatedCallback )
+	AddCreateTitanCockpitCallback( EMP_CockpitCreatedCallback )
+
+	RegisterEntityVarChangeCallback( "player", "empEndTime", UpdateEMPLabel )
+}
+
+void function EMP_CockpitCreatedCallback( entity cockpit, entity player )
+{
+	entity mainVGUI = cockpit.e.mainVGUI
+	var panel = mainVGUI.GetPanel()
+
+	if ( PlayerBlockedByTeamEMP( player ) )
+	{
+		thread SetEMPTimer( player )
+	}
+}
+
+function UpdateEMPLabel( player, newValue, oldValue )
+{
+	expect entity( player )
+
+	if ( player != GetLocalViewPlayer() )
+		return
+
+	if ( !IsAlive( player ) )
+		return
+
+	thread SetEMPTimer( player )
+}
+
+void function SetEMPTimer( entity player )
+{
+	AnnouncementData announcement = Announcement_Create( "#BURNMETER_REWARD_ENEMY_EMP" )
+	string subText = "#BURNMETER_REWARD_ENEMY_EMP_HINT"
+	Announcement_SetSubText( announcement, subText )
+	Announcement_SetPurge( announcement, true )
+	Announcement_SetSoundAlias( announcement,  "UI_LH_1P_Enemy_CappingLhp" )
+	Announcement_SetDuration( announcement, 3.0 )
+	AnnouncementFromClass( player, announcement )
+
+	if ( player.IsTitan() )
+	{
+		float empTime = GetEMPTime( player )
+		ServerCallback_TitanEMP( 0.03, empTime, 0.5, false, true )
+	}
+	else
+	{
+		float empTime = GetEMPTime( player )
+		//StatusEffect_AddTimed( player, eStatusEffect.emp, 0.5, 0.5, 0.5 ) MOVE TO SERVER IF THIS COMES BACK
+	}
+
+	entity cockpit = player.GetCockpit()
+
+	if ( cockpit == null )
+		return
+
+	cockpit.e.rebootTimer.Show()
+	cockpit.e.rebootTimer.SetAutoText( "#TITAN_REBOOT_TIMER", HATT_GAME_COUNTDOWN_SECONDS_MILLISECONDS, player.nv.empEndTime )
+	cockpit.e.rebootTimer.EnableAutoText()
+
+	player.Signal( "UpdateWeapons" )
+	UpdateTitanModeHUD( player )
+
+	thread ClearEMPTimer( player )
+}
+
+void function ClearEMPTimer( entity player )
+{
+	entity cockpit = player.GetCockpit()
+
+	cockpit.EndSignal( "OnDestroy" )
+	player.EndSignal( "OnDeath" )
+
+	float delay = GetEMPTime( player )
+	wait delay + 0.1
+	if ( !PlayerBlockedByTeamEMP( player ) )
+	{
+		EmitSoundOnEntity( player, SOUND_EMP_ABILITIES_ONLINE )
+		cockpit.e.rebootTimer.Hide()
+		cockpit.Destroy()
+	}
+}
+
+float function GetEMPTime( entity player )
+{
+	float delay = expect float( player.nv.empEndTime ) - Time()
+	return delay
+}

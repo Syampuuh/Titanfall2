@@ -1,0 +1,13 @@
+"SpriteCard"
+{
+	$basetexture "world\decal\blood_splat_01_col"
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 	1
+	$nocull	1
+
+//	$alphaerosion 1
+
+	$ignorez 1
+
+}

@@ -1,0 +1,29 @@
+UnlitTwoTexture
+{
+	$basetexture		"ui/menu/rank_icons/promo"
+	$texture2			"ui/menu/rank_icons/promo_proxy"
+
+	$translucent 		1
+	$vertexcolor 		1
+	$vertexalpha 		1
+	$ignorez    		1
+	$no_fullbright		1
+
+	$angle 0.0
+
+    Proxies
+    {
+        LinearRamp
+        {
+            rate -65
+            initialValue 0.0
+            resultVar $angle
+        }
+
+        TextureTransform
+        {
+            rotateVar $angle
+            resultVar $texture2Transform
+        }
+    }
+}

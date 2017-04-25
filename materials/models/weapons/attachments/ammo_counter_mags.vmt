@@ -1,0 +1,72 @@
+"Basic"
+{
+
+	"$surfaceprop" "default"
+	"$basetexture" "models\weapons\attachments\ammo_counter_mags_col"
+	"$translucent" "1"
+	"$selfillum" "1"
+	"$selfillummask" "models\weapons\attachments\ammo_counter_mags_ilm"
+
+	"$remainingClipCount" "0"
+	"$maxCarryAmmo" "0"
+	"$maxClipAmmo" "0"
+	"$rowCount" "1"
+	"$rowLength" "0"
+	"$atlasFrames" "[10 1]"
+	"$atlasFrameStart" "[0 0]"
+	"$atlasFrameCount" "[1 1]"
+
+	"Proxies"
+	{
+		"RemainingClipCount"
+		{
+			"resultVar" "$remainingClipCount"
+		}
+
+		"MaxCarryAmmo"
+		{
+			"resultVar" "$maxCarryAmmo"
+		}
+		
+		"MaxClipAmmo"
+		{
+			"resultVar" "$maxClipAmmo"
+		}
+
+		"Divide"
+		{
+			"srcVar1" "$maxCarryAmmo"
+			"srcVar2" "$maxClipAmmo"
+			"resultVar" "$rowLength"
+		}
+
+		"TickCounterAtlasFrames"
+		{
+			"tickCount"					"$remainingClipCount"
+			"rowLength"					"$rowLength"
+			"rowIndex"					"0"
+			"atlasFrameSize"			"$atlasFrames[0]"
+			
+			"resultAtlasFrameStartVar"	"$atlasFrameStart[0]"
+			"resultAtlasFrameCountVar"	"$atlasFrameCount[0]"
+		}
+	
+		"TextureAtlas"
+		{
+			"frameSize"		"$atlasFrames"
+			"frameStart"	"$atlasFrameStart"
+			"frameCount"	"$atlasFrameCount"
+			"resultVar"		"$basetexturetransform"
+		}
+
+		"RemainingAmmoColor"
+		{
+			"resultVar"			"$color"
+		}
+
+		"HoloSight"
+		{
+			resultVar $alpha
+		}
+	}
+}

@@ -1,0 +1,566 @@
+resource/ui/menus/video.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		visible					1
+		enabled					1
+		pinCorner				0
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#VIDEO"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		LblMenuItemDescription
+		{
+			ControlName				Label
+			InheritProperties		OptionMenuTooltip
+			classname 				MenuItemDescriptionClass
+			xpos					960
+			ypos					168
+			tall					290
+		}
+
+		LblTextureStreamWarning
+		{
+			ControlName				Label
+			font					Default_27_ShadowGlow
+			pin_to_sibling			LblMenuItemDescription
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			auto_tall_tocontents	1
+			wide					740
+			wrap					1
+			labelText				"#TEXTURE_STREAM_BUDGET_EXCEEDED_WARNING"
+			textAlignment			"west"
+			fgcolor_override		"255 45 45 255"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		BtnAdvancedHud
+		{
+			ControlName				RuiButton
+			InheritProperties		WideButton
+			xpos					120
+			ypos					160
+			navUp					SwchRagdolls
+			navDown					SwchDisplayMode
+			tabPosition				1
+		}
+		SwchDisplayMode // mat_setvideomode 1280 720 1 0
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			BtnAdvancedHud
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnAdvancedHud
+			navDown					SwchAspectRatio
+			// list is populated by code
+		}
+		SwchAspectRatio // mat_setvideomode 1280 720 1 0
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchDisplayMode
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchDisplayMode
+			navDown					SwchResolution
+			// list is populated by code
+		}
+		SwchResolution // mat_setvideomode 1280 720 1 0
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchAspectRatio
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchAspectRatio
+			navDown					SldBrightness
+			// list is populated by code
+		}
+		SldBrightness // On PC // This option is not currently stored or applied by code
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			classname 				"AdvancedVideoButtonClass"
+			pin_to_sibling			SwchResolution
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchResolution
+			navDown					SldFOV
+			minValue				0
+			maxValue				1
+			stepSize				0.05
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				classname 				"AdvancedVideoButtonClass"
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		SldFOV
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			classname 				"AdvancedVideoButtonClass"
+			pin_to_sibling			SldBrightness
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldBrightness
+			navDown					SldFilmGrain
+			conCommandDefault		"cl_fovScale"
+			minValue				1.0
+			maxValue				1.55
+			stepSize				0.0275
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				classname 				"AdvancedVideoButtonClass"
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		TextEntrySldFOV
+		{
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100 // This works around input weirdness when the control is constructed by code instead of VGUI blackbox.
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				3
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+
+			pin_to_sibling			SldFOV
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
+		}
+
+		SldFilmGrain
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			classname 				"AdvancedVideoButtonClass"
+			pin_to_sibling			SldFOV
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldFOV
+			navDown					SwchColorBlindMode
+			conCommand				"noise_filter_scale"
+			minValue				0.0
+			maxValue				0.006
+			stepSize				0.001
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				classname 				"AdvancedVideoButtonClass"
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SwchColorBlindMode
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SldFilmGrain
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldFilmGrain
+			navDown					SwchSprintCameraSmoothing
+			// list is populated by code
+		}
+
+		SwchSprintCameraSmoothing
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchColorBlindMode
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchColorBlindMode
+			navDown					SwchVSync
+			// list is populated by code
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ImgAdvVideoSubheaderBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackgroundWide
+			xpos					96
+			ypos					576
+			wide 					%90
+		}
+		LblAdvVideoSubheaderText
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			ImgAdvVideoSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"#MENU_ADVANCED"
+		}
+
+		SwchVSync // mat_vsync, mat_triplebuffered
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			ImgAdvVideoSubheaderBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					-22
+			navUp					SwchSprintCameraSmoothing
+			navDown					SldAdaptiveRes
+			// list is populated by code
+		}
+		SldAdaptiveRes
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			classname				"AdvancedVideoButtonClass"
+			pin_to_sibling			SwchVSync
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			minValue				0
+			stepSize				1
+			navUp					SwchVSync
+			navDown					SwchAdaptiveSupersample
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				classname 				"AdvancedVideoButtonClass"
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		TextEntryAdaptiveRes
+		{
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100 // This works around input weirdness when the control is constructed by code instead of VGUI blackbox.
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				3
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+
+			pin_to_sibling			SldAdaptiveRes
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
+		}
+		SwchAdaptiveSupersample
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SldAdaptiveRes
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldAdaptiveRes
+			navDown					SwchAntialiasing
+		}
+		SwchAntialiasing
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchAdaptiveSupersample
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchAdaptiveSupersample
+			navDown					SwchTextureDetail
+			// list is populated by code
+		}
+		SwchTextureDetail
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchAntialiasing
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			//ypos					45
+			navUp					SwchAntialiasing
+			navDown					SwchFilteringMode
+			// list is populated by code
+		}
+		SwchFilteringMode
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchTextureDetail
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchTextureDetail
+			navDown					SwchAmbientOcclusion
+			// list is populated by code
+		}
+		SwchAmbientOcclusion
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchFilteringMode
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchFilteringMode
+			navDown					SwchSunShadowDetail
+			// list is populated by code
+		}
+		SwchSunShadowDetail
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchVSync
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+			navUp					SwchAmbientOcclusion
+			navDown					SwchSpotShadowDetail
+			xpos					90
+			ypos					0
+			// list is populated by code
+		}
+		SwchSpotShadowDetail
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchSunShadowDetail
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchSunShadowDetail
+			navDown					SwchDynamicSpotShadows
+			// list is populated by code
+		}
+		SwchDynamicSpotShadows
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchSpotShadowDetail
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchSpotShadowDetail
+			navDown					SwchModelDetail
+			// list is populated by code
+		}
+		SwchModelDetail
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchDynamicSpotShadows
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchDynamicSpotShadows
+			navDown					SwchModelFadeDist
+			// list is populated by code
+		}
+		SwchModelFadeDist
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchModelDetail
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchModelDetail
+			navDown					SwchEffectsDetail
+			// list is populated by code
+		}
+		SwchEffectsDetail // This option is not currently stored or applied by code
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchModelFadeDist
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchModelFadeDist
+			navDown					SwchImpactMarks
+			// list is populated by code
+		}
+		SwchImpactMarks
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchEffectsDetail
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchEffectsDetail
+			navDown					SwchRagdolls
+			// list is populated by code
+		}
+		SwchRagdolls
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			classname				"AdvancedVideoButtonClass"
+			style					DialogListButton
+			pin_to_sibling			SwchImpactMarks
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchImpactMarks
+			navDown					BtnAdvancedHud
+			// list is populated by code
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		LblFPSWarning
+		{
+			ControlName				Label
+			font					Default_27_ShadowGlow
+			allCaps					0
+			pin_to_sibling			ImgAdvVideoSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			wide					1200
+			tall					58
+			xpos					-220
+			ypos					0
+			wrap					1
+			labelText				"#FPS_WARNING"
+			textAlignment			"west"
+			fgcolor_override		"192 192 192 255"
+			zpos					0
+		}
+
+		LblVideoResHint
+		{
+			ControlName				Label
+			font					Default_27_ShadowGlow
+			allCaps					0
+			pin_to_sibling			LblMenuItemDescription
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			wide					700
+			auto_tall_tocontents	1
+			xpos					0
+			ypos					80
+			wrap					1
+			labelText				"#VIDEO_RES_HINT"
+			textAlignment			"west"
+			fgcolor_override		"192 192 192 255"
+			zpos					0
+		}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

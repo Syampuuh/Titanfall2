@@ -1,0 +1,27 @@
+"UnlitTwoTexture"
+{
+	"$translucent"	1
+	"$additive" "1"
+	"$no_fullbright" 1
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+
+	"$decal" "1"
+	"$decalscale" 0.3
+	"$decalfadeduration" 1
+	"$decalfadetime" 0
+	"$decalsecondpass" 1
+
+	"$basetexture" "particle/glows/pfx_glow_05"
+//	"$basetexture" "particle/glows/light_glow02"
+
+	"$Texture2" "effects/white"
+
+
+	$layercolor1 "[3 3 3]"
+	$layeralpha1 "1"
+
+	$layercolor2 "[1 0.23 0.23]"
+	$layeralpha2 "1"
+
+}

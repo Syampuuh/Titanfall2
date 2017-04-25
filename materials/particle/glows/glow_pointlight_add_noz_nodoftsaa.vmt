@@ -1,0 +1,12 @@
+"spritecard"
+{
+	"$basetexture" "particle\glows\glow_pointlight"
+	$additive 1
+
+	$ignorez 1
+	$depthblend 0
+
+	$vertexFogAmount 1
+	$disabledof 1
+	$disabletsaa 1
+}

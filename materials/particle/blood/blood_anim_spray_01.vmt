@@ -1,0 +1,12 @@
+"SpriteCard"
+{
+	"$basetexture" "particle/blood/blood_anim_spray"
+	$vertexcolor 1
+	$vertexalpha 1
+	$DEPTHBLEND 1
+	$depthblendscale 20
+	$vertexFogAmount 1
+}
+
+
+

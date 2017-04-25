@@ -1,0 +1,22 @@
+"SpriteCard"
+{
+	$basetexture "particle/electric_arc/electric_arc_ramp"
+
+	$RAMPTEXTURE "particle/ramps/elec_blue_ramp.vtf"
+
+	$texColorFromAlpha 1
+	$additive 1
+	$addself 2
+	$ignorez 1
+	$vertexFogAmount 1
+
+	//Replacement Ramp texture above for old arc texture below----------------------//
+
+
+	//"$basetexture" "particle/electric_arc/electric_arc"
+	//"$additive" 1
+	//$overbrightfactor 1
+	//$ignorez 1
+	
+	//$vertexFogAmount 1
+}

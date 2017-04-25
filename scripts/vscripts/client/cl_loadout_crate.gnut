@@ -1,0 +1,89 @@
+untyped
+
+global function CLLoadoutCrate_Init
+global function HighlightLoadoutCrateIcons
+global function ResetLoadoutCrateIcons
+
+struct {
+	array<var> loadoutCrateIcons
+} file
+
+function CLLoadoutCrate_Init()
+{
+	for ( int i = 0; i < MAX_LOADOUT_CRATE_COUNT; i++ )
+		AddMarkerChangeCallback( "LoadoutCrateMarker" + i, MarkerCallback_LoadoutCrate )
+
+	AddCreateMainHudCallback( LoadoutCrateHudSetup )
+}
+
+void function LoadoutCrateHudSetup( var mainVGUI, entity player )
+{
+	for ( int index = 0; index < MAX_LOADOUT_CRATE_COUNT; index++ )
+	{
+	}
+}
+
+void function DefaultLoadoutCrateIconSettings( var icon )
+{
+	// figure out a way to have different values for different gamemodes
+	switch( GAMETYPE )
+	{
+		case "solo":
+			icon.SetWorldSpaceScale( 1.75, 0.75, 0, 384 )
+			icon.SetDistanceFade( 256, 384, 0.5, 0 )
+			icon.SetADSFade( deg_cos( 10 ), deg_cos( 5 ), 0, 1.0 )
+			icon.SetFOVFade( deg_cos( 45 ), deg_cos( 35 ), 0, 1.0 )
+			break
+		default:
+			icon.SetWorldSpaceScale( 1.75, 0.75, 0, 900 )
+			icon.SetDistanceFade( 1000, 2000, 0.5, 0 )
+			icon.SetADSFade( deg_cos( 10 ), deg_cos( 5 ), 0, 1.0 )
+			icon.SetFOVFade( deg_cos( 45 ), deg_cos( 35 ), 0, 1.0 )
+			break
+	}
+	icon.SetColor( 255, 255, 255, 255 )
+	icon.SetClampToScreen( CLAMP_NONE )
+}
+
+void function HighlightLoadoutCrateIcons()
+{
+	foreach ( icon in file.loadoutCrateIcons )
+	{
+		icon.SetWorldSpaceScale( 2.75, 0.75, 0, 2000 )
+		icon.SetDistanceFade( 1000, 3000, 0.5, 0 )
+		icon.SetFOVFade( deg_cos( 45 ), deg_cos( 35 ), 1.0, 1.0 )
+		icon.SetADSFade( deg_cos( 10 ), deg_cos( 5 ), 1.0, 1.0 )
+		icon.SetColor( 255, 255, 0, 255 )
+		icon.SetClampToScreen( CLAMP_RECT )
+		//If we can highlight the box MRI style instead of use an icon, should set offscreen arrow to true.
+		//icon.SetOffscreenArrow( true )
+	}
+}
+
+void function ResetLoadoutCrateIcons()
+{
+	foreach ( icon in file.loadoutCrateIcons )
+		DefaultLoadoutCrateIconSettings( icon )
+}
+
+function MarkerCallback_LoadoutCrate( markedEntity, marker )
+{
+	local icon
+	for ( int index = 0; index < MAX_LOADOUT_CRATE_COUNT; index++ )
+	{
+		local name = "LoadoutCrateMarker" + string( index )
+		if ( marker != name )
+			continue
+
+		icon = file.loadoutCrateIcons[ index ]
+		break
+	}
+
+	if ( IsValid( markedEntity ) )
+	{
+		icon.SetEntity( markedEntity, Vector( 0, 0, 48 ), 0.5, 0.5 )
+		icon.Show()
+	}
+	else
+		icon.Hide()
+}

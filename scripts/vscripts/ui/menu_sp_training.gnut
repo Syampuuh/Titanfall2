@@ -1,0 +1,312 @@
+global function ScriptCallback_OpenInvertLookDialog
+global function ScriptCallback_OpenAutosprintDialogForGauntlet
+global function ScriptCallback_Training_SelectSPDifficulty
+global function ScriptCallback_Training_FreeTrialMessage
+global function OpenInvertLookDialog
+
+void function ScriptCallback_OpenInvertLookDialog()
+{
+	OpenInvertLookDialog()
+}
+
+void function OpenInvertLookDialog()
+{
+	bool gamepadActive = GetMenuVarBool( "isGamepadActive" )
+
+	string invertConvar = GetInvertConvar_ForCurrentInputType()
+	bool isInverted = GetConVarBool( invertConvar )
+
+	string header = "#TRAINING_INVERT_ASK"
+	string choice1Text = "#TRAINING_INVERT_ASK_KEEP_YES"
+	string choice2Text = "#TRAINING_INVERT_ASK_NO"
+	void functionref() choice1Func = SetControlsInverted_False
+	void functionref() choice2Func = SetControlsInverted_True
+
+	if ( isInverted )
+	{
+		header = "#TRAINING_INVERT_ASK"
+		choice1Text ="#TRAINING_INVERT_ASK_KEEP_YES"
+		choice2Text ="#TRAINING_INVERT_ASK_KEEP_NO"
+
+		choice1Func = SetControlsInverted_True
+		choice2Func = SetControlsInverted_False
+	}
+
+	string message = ""
+	if ( gamepadActive )
+	{
+		if ( isInverted )
+		{
+			#if PS4_PROG
+				message = "#TRAINING_INVERT_ASK_KEEP_LONG_PS4"
+			#else
+				message = "#TRAINING_INVERT_ASK_KEEP_LONG"
+			#endif
+		}
+		else
+		{
+			#if PS4_PROG
+				message = "#TRAINING_INVERT_ASK_LONG_PS4"
+			#else
+				message = "#TRAINING_INVERT_ASK_LONG"
+			#endif
+		}
+	}
+	else
+	{
+		if ( isInverted )
+			message ="#TRAINING_INVERT_ASK_KEEP_LONG_MOUSE"
+		else
+			message ="#TRAINING_INVERT_ASK_LONG_MOUSE"
+	}
+
+	DialogData dialogData
+	dialogData.header = header
+	dialogData.message = message
+	dialogData.forceChoice = true
+
+	AddDialogButton( dialogData, choice1Text, choice1Func )
+	AddDialogButton( dialogData, choice2Text, choice2Func )
+
+	AddDialogFooter( dialogData, "#A_BUTTON_ACCEPT" )
+
+	OpenDialog( dialogData )
+}
+
+void function SetControlsInverted_True()
+{
+	SetControlsInverted( true )
+}
+
+void function SetControlsInverted_False()
+{
+	SetControlsInverted( false )
+}
+
+void function SetControlsInverted( bool setInverted )
+{
+	string invertConvar = GetInvertConvar_ForCurrentInputType()
+	bool isInverted = GetConVarBool( invertConvar )
+
+	if ( setInverted != isInverted )
+		SetConVarBool( invertConvar, setInverted )
+
+	UICodeCallback_TryCloseDialog()
+}
+
+string function GetInvertConvar_ForCurrentInputType()
+{
+	return GetMenuVarBool( "isGamepadActive" ) ? INVERT_CONVAR_GAMEPAD : INVERT_CONVAR_MOUSE
+}
+
+
+void function ScriptCallback_OpenAutosprintDialogForGauntlet()
+{
+	Autosprint_ChooseToEnable()
+}
+
+void function Autosprint_ChooseToEnable()
+{
+	EnablePlayerAutosprintSetting()
+	DialogGotIt( "#TRAINING_AUTOSPRINT_DIALOG_CHANGED_HEADER", "#TRAINING_AUTOSPRINT_DIALOG_CONFIRMAUTO_MESSAGE", null )
+}
+
+void function EnablePlayerAutosprintSetting()
+{
+	int oldSetting = GetConVarInt( AUTOSPRINT_CONVAR_NAME )
+	bool autoSprintEnabled = oldSetting > 0 && oldSetting < 3  // 0 = none, 3 = titans only
+	if ( autoSprintEnabled )
+		return
+
+	SetConVarInt( AUTOSPRINT_CONVAR_NAME, 2 )  // Autosprint type: Pilot Only
+	SavePlayerSettings()
+}
+
+void function DialogGotIt( string header, string message, void functionref() gotItFunc )
+{
+	DialogData dialogData
+	dialogData.header = header
+	dialogData.message = message
+	dialogData.forceChoice = true
+	AddDialogButton( dialogData, "#TRAINING_AUTOSPRINT_SELECT_GOT_IT", gotItFunc )
+	AddDialogFooter( dialogData, "#A_BUTTON_ACCEPT" )
+	OpenDialog( dialogData )
+}
+
+
+void function ScriptCallback_Training_SelectSPDifficulty()
+{
+	thread Training_SelectSPDifficulty()
+}
+
+void function Training_SelectSPDifficulty()
+{
+	// training level sets this before opening the menu
+	int recDifficulty = GetConVarInt( "sp_difficulty" )
+
+	bool button1Focused = false
+	bool button2Focused = false
+	bool button3Focused = false
+	bool button4Focused = false
+
+	string header = "#SP_DIFFICULTY_MISSION_SELECT_TITLE"
+	string button1Text = "#SP_DIFFICULTY_EASY_TITLE"
+	string button2Text = "#SP_DIFFICULTY_NORMAL_TITLE"
+	string button3Text = "#SP_DIFFICULTY_HARD_TITLE"
+	string button4Text = "#SP_DIFFICULTY_MASTER_TITLE"
+
+	switch ( recDifficulty )
+	{
+		case 0:
+			header = "#SP_DIFFICULTY_REC_TITLE_EASY"
+			button1Text = "#SP_DIFFICULTY_EASY_BUTTON_REC"
+			button1Focused = true
+			break
+		case 1:
+			header = "#SP_DIFFICULTY_REC_TITLE_NORMAL"
+			button2Text = "#SP_DIFFICULTY_NORMAL_BUTTON_REC"
+			button2Focused = true
+			break
+		case 2:
+			header = "#SP_DIFFICULTY_REC_TITLE_HARD"
+			button3Text = "#SP_DIFFICULTY_HARD_BUTTON_REC"
+			button3Focused = true
+			break
+		case 3:
+			header = "#SP_DIFFICULTY_REC_TITLE_MASTER"
+			button4Text = "#SP_DIFFICULTY_MASTER_BUTTON_REC"
+			button4Focused = true
+			break
+	}
+
+	DialogData dialogData
+	dialogData.header = header
+	dialogData.message = "#SP_DIFFICULTY_SELECT_TITLE"
+	dialogData.coloredButton[ recDifficulty ] <- true
+	dialogData.forceChoice = true
+	//dialogData.image = $"ui/menu/common/announcement_image_1"
+
+	// buttons call back to show the confirmation dialog
+	AddDialogButton( dialogData, button1Text, SelectSPDifficulty_Easy, "#SP_DIFFICULTY_EASY_SELECT_MSG", button1Focused )
+	AddDialogButton( dialogData, button2Text, SelectSPDifficulty_Normal, "#SP_DIFFICULTY_NORMAL_SELECT_MSG", button2Focused )
+	AddDialogButton( dialogData, button3Text, SelectSPDifficulty_Hard, "#SP_DIFFICULTY_HARD_SELECT_MSG", button3Focused )
+	AddDialogButton( dialogData, button4Text, SelectSPDifficulty_Master, "#SP_DIFFICULTY_MASTER_SELECT_MSG", button4Focused )
+
+	AddDialogFooter( dialogData, "#A_BUTTON_ACCEPT" )
+
+	OpenDialog( dialogData )
+}
+
+void function ShowSPDifficultyConfirmation()
+{
+	int difficulty = GetConVarInt( "sp_difficulty" )
+
+	string message = "#SP_DIFFICULTY_EASY_CONFIRM_MSG"
+	if ( difficulty == 1 )
+		message = "#SP_DIFFICULTY_NORMAL_CONFIRM_MSG"
+	else if ( difficulty == 2 )
+		message = "#SP_DIFFICULTY_HARD_CONFIRM_MSG"
+	else if ( difficulty == 3 )
+		message = "#SP_DIFFICULTY_MASTER_CONFIRM_MSG"
+
+	DialogData dialogData
+	dialogData.header = "#SP_DIFFICULTY_CONFIRM_TITLE"
+	dialogData.message = message
+	dialogData.forceChoice = true
+	//dialogData.image = $"ui/menu/common/announcement_image_1"
+
+	AddDialogButton( dialogData, "#SP_DIFFICULTY_CONFIRM_BUTTON" )
+	AddDialogFooter( dialogData, "#A_BUTTON_ACCEPT" )
+
+	OpenDialog( dialogData )
+}
+
+void function SelectSPDifficulty_Easy()
+{
+	SelectSPDifficulty( 0 )
+}
+
+void function SelectSPDifficulty_Normal()
+{
+	SelectSPDifficulty( 1 )
+}
+
+void function SelectSPDifficulty_Hard()
+{
+	SelectSPDifficulty( 2 )
+}
+
+void function SelectSPDifficulty_Master()
+{
+	SelectSPDifficulty( 3 )
+}
+
+void function SelectSPDifficulty( int difficulty )
+{
+	SetConVarInt( "sp_difficulty", difficulty )
+	ShowSPDifficultyConfirmation()
+}
+
+void function ScriptCallback_Training_FreeTrialMessage()
+{
+	thread Training_FreeTrialMessage()
+}
+
+void function Training_FreeTrialMessage()
+{
+	DialogData dialogData
+	dialogData.header = "#SP_TRIAL_TRAINING_COMPLETE_HEADER"
+	dialogData.message = "#SP_TRIAL_TRAINING_COMPLETE_MSG"
+	dialogData.forceChoice = true
+
+	AddDialogButton( dialogData, "#SP_TRIAL_START_MISSION" )
+	AddDialogButton( dialogData, "#MENU_GET_THE_FULL_GAME", LaunchGamePurchase )
+	AddDialogButton( dialogData, "#CANCEL_AND_QUIT_TO_MAIN_MENU", Disconnect )
+
+	AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
+
+	OpenDialog( dialogData )
+}
+
+/* DEPRECATED
+void function ScriptCallback_OpenAutosprintDialogForHallway()
+{
+	Autosprint_DialogBegin()
+}
+
+void function Autosprint_DialogBegin()
+{
+	DialogData dialogData
+	dialogData.forceChoice = true
+	dialogData.header = "#TRAINING_AUTOSPRINT_DIALOG_BEGIN_HEADER"
+	dialogData.message = "#TRAINING_AUTOSPRINT_DIALOG_BEGIN_MESSAGE"
+	AddDialogButton( dialogData, "#TRAINING_AUTOSPRINT_SELECT_CONFIRM_AUTO", Autosprint_ChooseToEnable )
+	AddDialogButton( dialogData, "#TRAINING_AUTOSPRINT_SELECT_NO", Autosprint_ChooseToDecline )
+	AddDialogButton( dialogData, "#TRAINING_AUTOSPRINT_SELECT_MORE_INFO", Autosprint_ChooseAbout )
+	AddDialogFooter( dialogData, "#A_BUTTON_ACCEPT" )
+
+	OpenDialog( dialogData )
+}
+
+void function Autosprint_ChooseToDecline()
+{
+	DialogData dialogData
+	dialogData.header = ""
+	dialogData.message = "#TRAINING_AUTOSPRINT_DIALOG_ASKMANUAL_MESSAGE"
+	dialogData.forceChoice = true
+	AddDialogButton( dialogData, "#TRAINING_AUTOSPRINT_SELECT_ACTUALLY", Autosprint_DialogBegin )
+	AddDialogButton( dialogData, "#TRAINING_AUTOSPRINT_SELECT_CONFIRM_MANUAL", Autosprint_ChooseToDeclineConfirmed )
+	AddDialogFooter( dialogData, "#A_BUTTON_ACCEPT" )
+	OpenDialog( dialogData )
+}
+
+void function Autosprint_ChooseToDeclineConfirmed()
+{
+	DialogGotIt( "", "#TRAINING_AUTOSPRINT_DIALOG_CONFIRMMANUAL_MESSAGE", null )
+}
+
+void function Autosprint_ChooseAbout()
+{
+	DialogGotIt( "#TRAINING_AUTOSPRINT_DIALOG_ABOUT_HEADER", "#TRAINING_AUTOSPRINT_DIALOG_ABOUT_MESSAGE", Autosprint_DialogBegin )
+}
+*/

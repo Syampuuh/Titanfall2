@@ -1,0 +1,225 @@
+untyped
+
+global function MpTitanweaponTripleThreat_Init
+global function FireTripleThreat
+global function FireTripleThreatGrenade
+
+const FX_TRIPLE_IGNITION = $"wpn_grenade_TT_activate"
+const FX_TRIPLE_IGNITION_BURN = $"wpn_grenade_TT_activate"
+const BURN_MAGNETIC_FORCE = 2400
+const MIN_FUSE_TIME = 2.3
+const MAX_FUSE_TIME = 2.7
+const MIN_ROLLING_ROUNDS_FUSE_TIME = 3.2
+const MAX_ROLLING_ROUNDS_FUSE_TIME = 3.7
+const SPREAD_HORIZONTAL	= 5
+const SPREAD_VERTICAL = 4
+const ANGLE_ADJUSTMENT = 2.5
+
+global const TRIPLETHREAT_LAUNCH_VELOCITY = 1100.0
+global const TRIPLETHREAT_MIN_MINE_FUSE_TIME = 8.2
+global const TRIPLETHREAT_MAX_MINE_FUSE_TIME = 8.8
+global const TRIPLETHREAT_MINE_FIELD_ACTIVATION_TIME = 1.15 //After landing
+global const TRIPLETHREAT_MINE_FIELD_TITAN_ONLY = false
+global const TRIPLETHREAT_MINE_FIELD_MAX_MINES = 9
+global const TRIPLETHREAT_MINE_FIELD_LAUNCH_VELOCITY = 1100
+global const TRIPLETHREAT_NUM_SHOTS = 3
+global const PROX_MINE_RANGE = 200
+
+function MpTitanweaponTripleThreat_Init()
+{
+	RegisterSignal( "ProxMineTrigger" )
+
+	PrecacheParticleSystem( FX_TRIPLE_IGNITION )
+	PrecacheParticleSystem( FX_TRIPLE_IGNITION_BURN )
+}
+
+function FireTripleThreat( entity weapon, WeaponPrimaryAttackParams attackParams, predicted )
+{
+	entity weaponOwner = weapon.GetWeaponOwner()
+	entity bossPlayer = weaponOwner
+	bool hasRollingRoundsMod = weapon.HasMod( "rolling_rounds" )
+
+	if ( weaponOwner.IsNPC() )
+		bossPlayer = weaponOwner.GetTitanSoul().GetBossPlayer()
+
+	weapon.EmitWeaponNpcSound( LOUD_WEAPON_AI_SOUND_RADIUS_MP, 0.2 )
+
+	int numShots = minint( weapon.GetWeaponPrimaryClipCount(), TRIPLETHREAT_NUM_SHOTS )
+	float angleAdjustment = ANGLE_ADJUSTMENT
+	float velocity = TRIPLETHREAT_LAUNCH_VELOCITY * 1.2
+
+	array<float> attackVelocities
+	attackVelocities.append( velocity )
+	attackVelocities.append( velocity )
+	attackVelocities.append( velocity )
+
+	array<vector> attackOffsets
+	if ( weapon.IsWeaponAdsButtonPressed() )
+	{
+		attackOffsets.append( Vector( -4, RandomFloatRange( -0.15, 0.15 ), 0 ) )
+		attackOffsets.append( Vector( -4, RandomFloatRange( -0.15, 0.15 ), 0 ) )
+		attackOffsets.append( Vector( -4, RandomFloatRange( -0.15, 0.15 ), 0 ) )
+
+		numShots = minint( weapon.GetWeaponPrimaryClipCount(), TRIPLETHREAT_NUM_SHOTS )
+	}
+	else
+	{
+		attackOffsets.append( Vector( -4, RandomFloatRange( -0.15, 0.15 ), 0 ) )
+		attackOffsets.append( Vector( -4, RandomFloatRange( -0.15, 0.15 ), 0 ) )
+		attackOffsets.append( Vector( -4, RandomFloatRange( -0.15, 0.15 ), 0 ) )
+
+		numShots = 1
+	}
+	Assert( numShots <= attackOffsets.len() )
+
+	weapon.SetWeaponBurstFireCount( numShots )
+
+	if ( IsServer() || weapon.ShouldPredictProjectiles() )
+	{
+		for ( int i = 0; i < 1; i++ )
+		{
+			vector attackAngles = VectorToAngles( attackParams.dir )
+			if ( 1 || !weapon.IsWeaponAdsButtonPressed() )
+			{
+				attackAngles.x -= 5
+				if ( weapon.HasMod( "spread_increase_ttt" ) )
+					angleAdjustment *= 1.5
+				else if ( weapon.HasMod( "spread_decrease_ttt" ) )
+					angleAdjustment *= 0.5
+
+				if ( i % 2 != 0 )
+				{
+					attackAngles.y = attackAngles.y + angleAdjustment
+				}
+				else if ( i > 0 && i % 2 == 0 )
+				{
+					attackAngles.y = attackAngles.y - angleAdjustment
+					angleAdjustment *= 2
+				}
+			}
+
+			float fuseTime
+			if( hasRollingRoundsMod )
+				fuseTime = RandomFloatRange( MIN_ROLLING_ROUNDS_FUSE_TIME, MAX_ROLLING_ROUNDS_FUSE_TIME )
+			else
+				fuseTime = RandomFloatRange( MIN_FUSE_TIME, MAX_FUSE_TIME )
+
+			vector attackVec
+			if ( weapon.HasMod( "hydraulic_launcher" ) )
+				attackVec = AnglesToForward( (attackAngles + attackOffsets[i]) ) * ( attackVelocities[i] + weapon.GetWeaponChargeFraction() * attackVelocities[i] )
+			else
+				attackVec = AnglesToForward( (attackAngles + attackOffsets[i]) ) * attackVelocities[i]
+
+			int damageType = damageTypes.explosive
+			if ( weapon.HasMod( "arc_triple_threat" ) )
+				damageType = damageType | damageTypes.electric
+
+			vector angularVelocity = Vector( RandomFloatRange( -velocity, velocity ), 100, 0 )
+
+			FireTripleThreatGrenade( weapon, attackParams.pos, attackVec, angularVelocity, predicted, fuseTime, damageType )
+		}
+	}
+
+	return 1
+}
+
+function FireTripleThreatGrenade( entity weapon, origin, fwd, velocity, predicted, float fuseTime, damageType = null )
+{
+	entity weaponOwner = weapon.GetWeaponOwner()
+	bool hasRollingRoundsMod = weapon.HasMod( "rolling_rounds" )
+	bool hasBurnMod = weapon.HasMod( "burn_mod_titan_triple_threat" )
+
+	if ( damageType == null )
+		damageType = damageTypes.explosive
+
+	entity nade = weapon.FireWeaponGrenade( origin, fwd, velocity, fuseTime, damageType, damageType, predicted, true, true )
+	if ( nade )
+	{
+	//nade.InitMagnetic( 1000.0, "Explo_MGL_MagneticAttract" )
+
+		nade.kv.CollideWithOwner = false
+
+		Grenade_Init( nade, weapon )
+		#if SERVER
+			nade.SetOwner( weaponOwner )
+			thread EnableCollision( nade )
+			thread AirPop( nade, fuseTime )
+			thread TrapExplodeOnDamage( nade, 50, 0.0, 0.1 )
+
+			if( hasRollingRoundsMod )
+				nade.s.rollingRound <- true
+
+			if( weapon.HasMod( "impact_fuse" ) )
+				nade.s.impactFuse <- true
+
+			if( hasBurnMod )
+			{
+				nade.s.hasBurnMod <- true
+				EmitSoundOnEntity( nade, "Weapon_R1_MGL_Grenade_Emitter" )
+			}
+		#else
+			SetTeam( nade, weaponOwner.GetTeam() )
+		#endif
+
+		if( hasBurnMod )
+			nade.InitMagnetic( TT_MAGNETIC_FORCE, "Explo_TripleThreat_MagneticAttract" )
+
+		return nade
+	}
+}
+
+function EnableCollision( entity grenade )
+{
+	grenade.EndSignal("OnDestroy")
+
+	wait 1.0
+	grenade.kv.CollideWithOwner = true
+}
+
+#if SERVER
+function AirPop( entity grenade, float fuseTime )
+{
+	grenade.EndSignal( "OnDestroy" )
+
+	float popDelay = RandomFloatRange( 0.2, 0.3 )
+
+	WaitSignalTimeout( grenade, (fuseTime - (popDelay + 0.2)), "ProxMineTrigger" )
+
+	asset effect = FX_TRIPLE_IGNITION
+	if( "hasBurnMod" in grenade.s && grenade.s.hasBurnMod )
+		effect = FX_TRIPLE_IGNITION_BURN
+
+	int fxId = GetParticleSystemIndex( effect )
+	StartParticleEffectOnEntity( grenade, fxId, FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
+
+	EmitSoundOnEntity( grenade, "Triple_Threat_Grenade_Charge" )
+
+	float popSpeed = RandomFloatRange( 40.0, 64.0 )
+	vector popVelocity = Vector ( 0, 0, popSpeed )
+	vector normal = Vector( 0, 0, 1 )
+	if( "becomeProxMine" in grenade.s && grenade.s.becomeProxMine == true )
+	{
+		//grenade.ClearParent()
+		if( "collisionNormal" in grenade.s )
+		{
+			normal = expect vector( grenade.s.collisionNormal )
+			popVelocity = expect vector( grenade.s.collisionNormal ) * popSpeed
+		}
+	}
+
+	vector newPosition = grenade.GetOrigin() + popVelocity
+	grenade.SetVelocity( GetVelocityForDestOverTime( grenade.GetOrigin(), newPosition, popDelay ) )
+
+	wait popDelay
+	TripleThreat_Explode( grenade )
+}
+
+function TripleThreat_Explode( entity grenade )
+{
+	vector normal = Vector( 0, 0, 1 )
+	if( "collisionNormal" in grenade.s )
+		normal = expect vector( grenade.s.collisionNormal )
+
+	grenade.GrenadeExplode( normal )
+}
+#endif // SERVER

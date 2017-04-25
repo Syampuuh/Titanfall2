@@ -1,0 +1,13 @@
+"mp_box"
+{
+	assets
+	{
+		material		vgui/minimaps/mp_box
+		material_alt	vgui/minimaps/fullscreen/mp_box
+	}
+	
+	pos_x		-2699
+	pos_y		1299
+	scale		5.399
+	displayDist	2048
+}

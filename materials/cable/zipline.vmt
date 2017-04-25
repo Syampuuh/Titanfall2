@@ -1,0 +1,5 @@
+"SplineRope"
+{
+	"$basetexture" "cable\cable_col"
+	"$catmullRomSpline" "0"
+}

@@ -1,0 +1,46 @@
+#base "titan_ogre.set"
+"titan_ogre_minigun"
+{
+	aiSettingsFile			"npc_titan_auto_ogre_minigun" //mp only
+	sp_aiSettingsFile		"npc_titan_ogre_minigun" //sp only
+	at_aiSettingsFile		"npc_titan_ogre_minigun_bounty" //at only
+
+	titanCharacterName "legion"
+
+    hud_follow_icon     "rui/hud/earn_meter/ogre_follow"
+    hud_guard_icon      "rui/hud/earn_meter/ogre_guard"
+
+    core_building_icon  "rui/titan_loadout/core/titan_core_smart"
+    core_ready_icon     "rui/titan_loadout/core/titan_core_smart"
+
+    startup_sound		"legion_power_up"
+	execution_anim		"titan_ogre_minigun"
+
+    readymessage        "#HUD_LEGION_READY"
+    readyhint           "#HUD_LEGION_READY_HINT"
+
+	"global"
+	{
+		printname			"#NPC_TITAN_AUTO_OGRE_MINIGUN"
+
+		bodymodel			"models/titans/heavy/titan_heavy_deadbolt.mdl" [$mp]
+		bodymodel			"models/titans/heavy/sp_titan_heavy_deadbolt.mdl" [$sp]
+
+		armsmodel			"models/weapons/arms/pov_titan_heavy_deadbolt.mdl"
+
+		dodge 0
+		dodgePowerDrain 101
+
+		    footstep_type			"legion"
+
+		ClassMods
+		{
+			pas_mobility_dash_capacity
+			{
+				dodge  1
+				dodgePowerDrain		100
+				powerregenrate 		16.66
+			}
+		}
+	}
+}

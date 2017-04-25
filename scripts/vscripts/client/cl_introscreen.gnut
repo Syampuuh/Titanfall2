@@ -1,0 +1,232 @@
+untyped
+
+global function ClIntroscreen_Init
+
+global function CinematicIntroScreen_Init
+global function CinematicIntroScreen_SetText
+global function CinematicIntroScreen_SetTextFadeTimes
+global function CinematicIntroScreen_SetTextSpacingTimes
+global function CinematicIntroScreen_SetTeamLogoFadeTimes
+global function CinematicIntroScreen_SetQuickIntro
+global function CinematicIntroScreen_SetClassicMPIntro
+global function CinematicIntroScreen_SetUseLoadingIcon
+global function CinematicIntroScreen
+
+const TEAM_ICON_HAMMOND = $"vgui/HUD/hammond_icon"
+
+function ClIntroscreen_Init()
+{
+	PrecacheHUDMaterial( TEAM_ICON_HAMMOND )
+
+	RegisterSignal( "StartingIntroscreen" )
+}
+
+function CinematicIntroScreen_Init()
+{
+	level.introScreen <- {}
+	level.introScreen[ TEAM_IMC ] <- {}
+	level.introScreen[ TEAM_MILITIA ] <- {}
+	level.introScreen_doLoadingIcon <- true
+
+	foreach( team, Table in level.introScreen )
+	{
+		level.introScreen[ team ].textDisplayDuration <- 3.5
+		level.introScreen[ team ].textFadeInTime <- 1.5
+		level.introScreen[ team ].textFadeOutTime <- 1.5
+		level.introScreen[ team ].textFadeInSpacingTime <- [ 0.0, 1.0, 0.0, 0.0, 0.0 ]
+		level.introScreen[ team ].teamLogoFadeInDelay <- 0.5
+		level.introScreen[ team ].teamLogoFadeInTime <- 2.0
+		level.introScreen[ team ].teamLogoDisplayDuration <- 2.0
+		level.introScreen[ team ].teamLogoFadeOutTime <- 2.0
+		level.introScreen[ team ].blackscreenDisplayDuration <- 8.0
+		level.introScreen[ team ].blackscreenFadeOutTime <- 2.0
+		level.introScreen[ team ].text <- []
+	}
+}
+
+function CinematicIntroScreen_SetText( team, textArray )
+{
+	level.introScreen[ team ].text = textArray
+}
+
+function CinematicIntroScreen_SetTextFadeTimes( team, fadein = null, displaytime = null, fadeout = null )
+{
+	if ( fadein != null )
+		level.introScreen[ team ].textFadeInTime = fadein
+	if ( displaytime != null )
+		level.introScreen[ team ].textDisplayDuration = displaytime
+	if ( fadeout != null )
+		level.introScreen[ team ].textFadeOutTime = fadeout
+}
+
+function CinematicIntroScreen_SetTextSpacingTimes( team, line1 = null, line2 = null, line3 = null, line4 = null, line5 = null )
+{
+	if ( line1 != null )
+		level.introScreen[ team ].textFadeInSpacingTime[ 0 ] = line1
+	if ( line2 != null )
+		level.introScreen[ team ].textFadeInSpacingTime[ 1 ] = line2
+	if ( line3 != null )
+		level.introScreen[ team ].textFadeInSpacingTime[ 2 ] = line3
+	if ( line4 != null )
+		level.introScreen[ team ].textFadeInSpacingTime[ 3 ] = line4
+	if ( line5 != null )
+		level.introScreen[ team ].textFadeInSpacingTime[ 4 ] = line5
+}
+
+function CinematicIntroScreen_SetTeamLogoFadeTimes( team, fadeinDelay = null, fadein = null, displaytime = null, fadeout = null )
+{
+	if ( fadeinDelay != null )
+		level.introScreen[ team ].teamLogoFadeInDelay = fadeinDelay
+	if ( fadein != null )
+		level.introScreen[ team ].teamLogoFadeInTime = fadein
+	if ( displaytime != null )
+		level.introScreen[ team ].teamLogoDisplayDuration = displaytime
+	if ( fadeout != null )
+		level.introScreen[ team ].teamLogoFadeOutTime = fadeout
+}
+
+function CinematicIntroScreen_SetQuickIntro( team )
+{
+	//CinematicIntroScreen_SetTextFadeTimes( team, 1.25, 2.5, 1.25 )
+	CinematicIntroScreen_SetTextSpacingTimes( team, 0, 0.5, 0, 0, 0 )
+}
+
+function CinematicIntroScreen_SetClassicMPIntro( team )
+{
+	CinematicIntroScreen_SetTeamLogoFadeTimes( team, 0.0, 0.5, 1.5, 2.0 )
+}
+
+function CinematicIntroScreen_SetUseLoadingIcon( bool doUseIcon )
+{
+	level.introScreen_doLoadingIcon = doUseIcon
+}
+
+function CinematicIntroScreen( forced = null )
+{
+	clGlobal.levelEnt.Signal( "StartingIntroscreen" )
+	clGlobal.levelEnt.EndSignal( "StartingIntroscreen" )
+
+	entity player = GetLocalViewPlayer()
+	int team = player.GetTeam()
+	player.EndSignal( "OnDestroy" )
+	Assert( IsValid( player ) )
+
+	while ( GetGameState() < eGameState.Prematch )
+	{
+		WaitFrame()
+	}
+
+	if ( !forced )
+	{
+		//wait here instead of later - give time for flags to be set
+		wait 0.4
+	}
+
+	// Cinematics must be turned on for this player
+	if ( !forced && !( player.GetCinematicEventFlags() & CE_FLAG_INTRO ) )
+	{
+		//printt( "Returning from GetCinematicEventFlags" )
+		return
+	}
+
+	local textLines = level.introScreen[ team ].text
+	Assert( textLines.len() <= 5 )
+
+	// Make sure intro screen isn't over with
+	local roughTotalTimeRequired = level.introScreen[ team ].textDisplayDuration + level.introScreen[ team ].textFadeInTime + level.introScreen[ team ].textFadeOutTime + level.introScreen[ team ].teamLogoFadeInDelay + level.introScreen[ team ].teamLogoFadeInTime + level.introScreen[ team ].teamLogoDisplayDuration + level.introScreen[ team ].teamLogoFadeOutTime
+	local introScreenEndTime = Time() + roughTotalTimeRequired
+
+	//printt( "CinematicIntroScreen" + "forced:" + forced + "Time()" + Time() + "time check greater than: " + (level.nv.gameStateChangeTime + roughTotalTimeRequired) )
+
+
+	if ( !forced && ( Time() >= level.nv.gameStateChangeTime + roughTotalTimeRequired ) )
+		return
+
+	//##################
+	// Do Intro Screen!
+	//##################
+
+	local allElems = HudElementGroup( "IntroScreen" )
+
+	if ( textLines.len() > 0 )
+	{
+		local textLineElems = []
+		local fadeInDelay = 0
+		for ( int i = 0; i < textLines.len(); i++ )
+		{
+			if ( i > 0 )
+				break
+
+			local line = allElems.CreateElement( "IntroScreenTextLine" + i )
+			line.SetText( textLines[i] )
+			line.SetColor( 255, 255, 255, 0 )
+			line.SetAlpha( 0 )
+			line.Show()
+			fadeInDelay += level.introScreen[ team ].textFadeInSpacingTime[ i ]
+			line.FadeOverTimeDelayed( 255, level.introScreen[ team ].textFadeInTime, fadeInDelay )
+			textLineElems.append( line )
+		}
+
+		// Once all text is displayed, we show it for the specified duration
+		wait fadeInDelay + level.introScreen[ team ].textDisplayDuration
+
+		// Fade out the text
+		foreach( textLine in textLineElems )
+			textLine.ColorOverTime( 0, 0, 0, 0, level.introScreen[ team ].textFadeOutTime, INTERPOLATOR_LINEAR )
+		//	textLine.FadeOverTime( 0, level.introScreen[ team ].textFadeOutTime )
+	}
+
+	if ( level.introScreen[ team ].teamLogoFadeInDelay > 0 )
+		wait level.introScreen[ team ].teamLogoFadeInDelay
+
+	//if ( !level.introScreen_doLoadingIcon )
+	//{
+	//	local factionLogo = allElems.CreateElement( "IntroScreenFactionLogo" )
+	//	factionLogo.Hide()
+	//}
+	//else
+	//{
+	//	local factionLogo = allElems.CreateElement( "IntroScreenFactionLogo" )
+	//
+	//	if ( player.GetTeam() == TEAM_IMC )
+	//	{
+	//		factionLogo.SetImage( $"ui/scoreboard_imc_logo" )
+	//	}
+	//	else
+	//	{
+	//		factionLogo.SetImage( $"ui/scoreboard_mcorp_logo" )
+	//	}
+	//	local factionLogoFlare = allElems.CreateElement( "IntroScreenFactionLogoFlare" )
+	//
+	//	// Fade in the faction logo
+	//	factionLogo.SetAlpha( 0 )
+	//	factionLogoFlare.SetColor( 0, 0, 0, 0 )
+	//	factionLogo.Show()
+	//	factionLogoFlare.Show()
+	//	factionLogo.ColorOverTime( 255, 255, 255, 255, level.introScreen[ team ].teamLogoFadeInTime, INTERPOLATOR_ACCEL )
+	//
+	//	// Bling the logo with the flare material
+	//	factionLogoFlare.ColorOverTime( 100, 100, 100, 50, level.introScreen[ team ].teamLogoFadeInTime, INTERPOLATOR_ACCEL )
+	//	wait level.introScreen[ team ].teamLogoFadeInTime
+	//
+	//	// Fade out bling
+	//	factionLogoFlare.ColorOverTime( 0, 0, 0, 0, level.introScreen[ team ].teamLogoFadeInTime, INTERPOLATOR_LINEAR )
+	//
+	//	// Show the logo for specified amount of time
+	//	wait level.introScreen[ team ].teamLogoDisplayDuration
+	//
+	//	// Fade out logo
+	//	factionLogo.ColorOverTime( 0, 0, 0, 0, level.introScreen[ team ].teamLogoFadeOutTime, INTERPOLATOR_LINEAR )
+	//
+	//	// Wait till faded out completely
+	//	wait level.introScreen[ team ].teamLogoFadeOutTime
+	//}
+
+	wait 5
+
+	// Nothing visible anymore ( all alphas at 0 ), hide all elems
+	allElems.Hide()
+
+	// Flicker Logo
+	//factionLogo.RunAnimationCommand( "FgColor", 0, 2.5, 0.5, INTERPOLATOR_FLICKER, 0.15 )
+}

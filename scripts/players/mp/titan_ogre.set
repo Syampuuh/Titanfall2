@@ -1,0 +1,114 @@
+#base "titan_base.set"
+"titan_ogre"
+{
+	pushbackScale 0.75
+
+	titan_healthbar_scale 1.25
+
+	aiSettingsFile 				"npc_titan_auto_ogre"
+
+
+    autoprecache_script	ogre
+    hatchmodel			"models/titans/heavy/titan_heavy_rodeo_battery.mdl"
+
+	precache_gibModel0	"models/gibs/titan_gibs/og_gib_hatch_d.mdl"
+	precache_gibModel1	"models/gibs/titan_gibs/og_gib_r_forarm_d.mdl"
+
+	"global"
+	{
+		printname				"#CHASSIS_OGRE_NAME"
+		description				"#CHASSIS_OGRE_DESCRIPTION"
+
+		subclass			"ogre"
+		viewPunchSpring		punch_titan_ogre
+
+		friction		2
+		speedScaleSide	1.0
+		speedScaleBack	1.0
+
+		dodgeDuration		0.2
+        dodgeAnimDuration	0.5
+        dodgeInterval		0.2
+        dodgeSpeed			600
+        dodgeStopSpeed		350
+        dodgeHeight			5 //25
+        dodgeHeightMax		5
+        dodgePowerDrain		100
+		powerregenrate		30
+        dodgePowerDelay		0.3
+        dodgeKeepSpeedFrac 	0.0
+
+
+		healthPerSegment 1500 	[$sp]
+		health			10500	[$sp]
+		healthDoomed	4000	[$sp]
+
+		healthPerSegment 2500 	[$mp]
+		health			12500	[$mp]
+		healthDoomed	2500	[$mp]
+
+		healthShield	2500	[$mp]
+		healthShield	2500	[$sp]
+
+		bodymodel			"models/titans/heavy/titan_heavy_ogre.mdl"
+		armsmodel			"models/weapons/arms/ogrepov.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_heavy_cockpit.mdl"
+
+		cockpit_stepJolt_origin		"0.0  0.0  -4.0"
+		cockpit_stepJolt_angles		"0.0  0.0  0.0"
+
+		sound_superJump			""
+		sound_superJumpFail		""
+		sound_dodge_1p			"ogre_dash_1p"
+		sound_dodge_3p			"ogre_dash_3p"
+		sound_dodgeFail			"Player.DodgeFail"
+		sound_groundImpact		"Titan.GroundImpact"
+		sound_wallrunImpact		""
+		sound_standToCrouch		"scorch_crouchdown_1p"
+		sound_crouchToStand		"scorch_crouchstand_1p"
+
+		sprinttiltMaxRoll		2
+		sprint 					1
+		footstep_type           "ogre"
+
+		quadMoveAnims				0
+
+		ClassMods
+		{
+			pas_dash_recharge
+			{
+		        powerregenrate	2.5++
+			}
+			sflag_bc_dash_capacity
+			{
+				dodgePowerDrain		50
+				powerregenrate		11
+			}
+			pas_titan_hardcore_settings
+			{
+				health			6250
+				healthDoomed	1250
+			}
+		}
+	}
+	"crouch"
+	{
+		speed			112
+		acceleration	150
+		deceleration	375
+	}
+
+	"stand"
+	{
+		speed				210//265
+		acceleration		380
+		deceleration		1200
+
+		sprintspeed			310
+		sprintAcceleration	180
+		sprintDeceleration	600
+
+		lowSpeed			160
+		lowAcceleration		1400
+	}
+}

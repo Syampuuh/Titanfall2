@@ -1,0 +1,13 @@
+"SpriteCard"
+{
+	"$basetexture" "vgui/hud/hit_confirm_anyDamage"
+	"$translucent" "1"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$ignorez"     "1"
+	"$additive" "1"
+	
+	$minsize .0085
+	$maxsize .0085
+
+}

@@ -1,0 +1,16 @@
+"SpriteCard"
+{
+	$basetexture "particle/dirt/dirt_grit"
+	//$vertexalpha 1
+	//$vertexcolor 1
+	//$translucent 1
+	//"$alphatest" 1
+	$overbrightfactor 1.5
+	$addself 2
+	$maxsize .85
+	$startfadesize .675
+	$endfadesize .75
+	$depthblendscale 4
+
+
+}

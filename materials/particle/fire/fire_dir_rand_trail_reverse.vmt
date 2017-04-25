@@ -1,0 +1,12 @@
+"Basic"
+{
+	"$basetexture" "particle\fire\fire_dir_rand"
+
+	"$vertexcolor" 1
+	"$translucent" "1"
+	"$additive" 1
+
+//	$splinetype 2
+	"$basetexturetransform" "center .5 .5 scale 1 1 rotate 180 translate 0 0"
+}
+

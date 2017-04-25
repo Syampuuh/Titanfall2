@@ -1,0 +1,30 @@
+resource/ui/menus/notifications.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					c-216
+		ypos					0
+		zpos					10
+		wide					432
+		tall					181
+		autoResize				0
+		pinCorner				0
+		visible					0
+		enabled					0
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+		NotificationPanel
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					432
+			tall					181
+			visible					1
+			controlSettingsFile			"resource/ui/menus/panels/community_notification.res"
+		}
+	}
+}

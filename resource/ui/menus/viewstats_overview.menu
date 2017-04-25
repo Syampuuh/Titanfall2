@@ -1,0 +1,2167 @@
+resource/ui/menus/viewstats_overview.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#STATS_OVERVIEW"
+		}
+
+		MenuCommon
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/menu_common.res"
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+		OverviewBackground
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			xpos						c-836
+			ypos						c-355
+			zpos						100
+			wide						1675
+			tall						767
+			visible						1
+			scaleImage					1
+		}
+
+		WeaponBackground0
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			xpos						-32
+			ypos						-200
+			zpos						103
+			wide						362
+			tall						220
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				OverviewBackground
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		WeaponBackground1
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			xpos						8
+			ypos						0
+			zpos						103
+			wide						362
+			tall						220
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				WeaponBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+
+		WeaponBackground2
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			xpos						8
+			ypos						0
+			zpos						103
+			wide						362
+			tall						220
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				WeaponBackground1
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Stat0
+		{
+			ControlName					RuiPanel
+			rui							"ui/stat_box_a.rpak"
+			xpos						-110
+			ypos						-22
+			zpos						225
+			wide						236
+			tall						128
+			visible						1
+
+			pin_to_sibling				OverviewBackground
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		Stat1
+		{
+			ControlName					RuiPanel
+			rui							"ui/stat_box_a.rpak"
+			xpos						8
+			zpos						225
+			wide						236
+			tall						128
+			visible						1
+
+			pin_to_sibling				Stat0
+			pin_corner_to_sibling		BOTTOM_LEFT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+
+		Stat2
+		{
+			ControlName					RuiPanel
+			rui							"ui/stat_box_a.rpak"
+			xpos						8
+			zpos						225
+			wide						236
+			tall						128
+			visible						1
+
+			pin_to_sibling				Stat1
+			pin_corner_to_sibling		BOTTOM_LEFT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+
+		Stat3
+		{
+			ControlName					RuiPanel
+			rui							"ui/stat_box_a.rpak"
+			xpos						8
+			zpos						225
+			wide						236
+			tall						128
+			visible						1
+
+			pin_to_sibling				Stat2
+			pin_corner_to_sibling		BOTTOM_LEFT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+
+		Stat4
+		{
+			ControlName					RuiPanel
+			rui							"ui/stat_box_a.rpak"
+			xpos						8
+			zpos						225
+			wide						236
+			tall						128
+			visible						1
+
+			pin_to_sibling				Stat3
+			pin_corner_to_sibling		BOTTOM_LEFT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+
+		Stat5
+		{
+			ControlName					RuiPanel
+			rui							"ui/stat_box_a.rpak"
+			xpos						8
+			zpos						225
+			wide						236
+			tall						128
+			visible						1
+
+			pin_to_sibling				Stat4
+			pin_corner_to_sibling		BOTTOM_LEFT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		WeaponHeader0
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						-2
+			zpos						200
+			wide						348
+			tall						45
+			visible						1
+			font						Default_31
+			labelText					"#STATS_HEADER_MOST_KILLS"
+			allcaps						1
+			wrap						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		WeaponName0
+		{
+			ControlName					Label
+			classname					"WeaponName0"
+			xpos						0
+			ypos						-9
+			zpos						200
+			wide						348
+			tall						22
+			visible						1
+			font						Default_23
+			labelText					"Weapon Name 0"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponHeader0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		WeaponDesc0
+		{
+			ControlName					Label
+			classname					"WeaponDesc0"
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						348
+			tall						22
+			visible						1
+			font						Default_23
+			labelText					"Weapon Stat 0"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"194 173 76 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponName0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		WeaponImage0
+		{
+		    ControlName				    RuiPanel
+			ypos						-82
+			zpos						225
+			wide					    256
+			tall				    	128
+			visible					    1
+            rui					    	"ui/loadout_image_large.rpak"
+
+			pin_to_sibling				WeaponBackground0
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		TOP
+		}
+
+		WeaponImageTextOverlay0
+		{
+			ControlName					Label
+			classname					"WeaponImageTextOverlay0"
+			xpos						0
+			ypos						0
+			zpos						226
+			wide						315
+			tall						22
+			visible						1
+			font						Default_21
+			labelText					"#STATS_DATA_EMPTY"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponImage0
+			pin_corner_to_sibling		CENTER
+			pin_to_sibling_corner		CENTER
+		}
+
+		WeaponHeader1
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						-2
+			zpos						200
+			wide						348
+			tall						45
+			visible						1
+			font						Default_31
+			labelText					"#STATS_HEADER_MOST_USED"
+			allcaps						1
+			wrap						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponBackground1
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		WeaponName1
+		{
+			ControlName					Label
+			classname					"WeaponName1"
+			xpos						0
+			ypos						-9
+			zpos						200
+			wide						348
+			tall						22
+			visible						1
+			font						Default_23
+			labelText					"Weapon Name 1"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponHeader1
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		WeaponDesc1
+		{
+			ControlName					Label
+			classname					"WeaponDesc1"
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						348
+			tall						22
+			visible						1
+			font						Default_23
+			labelText					"Weapon Stat 1"
+			allcaps						0
+			textAlignment				west
+			fgcolor_override 			"194 173 76 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponName1
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		WeaponImage1
+		{
+		    ControlName				    RuiPanel
+			ypos						-82
+			zpos						225
+			wide					    256
+			tall				    	128
+			visible					    1
+            rui					    	"ui/loadout_image_large.rpak"
+
+			pin_to_sibling				WeaponBackground1
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		TOP
+		}
+
+		WeaponImageTextOverlay1
+		{
+			ControlName					Label
+			classname					"WeaponImageTextOverlay1"
+			xpos						0
+			ypos						0
+			zpos						226
+			wide						315
+			tall						22
+			visible						1
+			font						Default_21
+			labelText					"#STATS_DATA_EMPTY"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponImage1
+			pin_corner_to_sibling		CENTER
+			pin_to_sibling_corner		CENTER
+		}
+
+		WeaponHeader2
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						-2
+			zpos						200
+			wide						348
+			tall						45
+			visible						1
+			font						Default_31
+			labelText					"#STATS_HEADER_MOST_EFFICIENT"
+			allcaps						1
+			wrap						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponBackground2
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		WeaponName2
+		{
+			ControlName					Label
+			classname					"WeaponName2"
+			xpos						0
+			ypos						-9
+			zpos						200
+			wide						348
+			tall						22
+			visible						1
+			font						Default_23
+			labelText					"Weapon Name 2"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponHeader2
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		WeaponDesc2
+		{
+			ControlName					Label
+			classname					"WeaponDesc2"
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						348
+			tall						22
+			visible						1
+			font						Default_23
+			labelText					"Weapon Stat 2"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"194 173 76 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponName2
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		WeaponImage2
+		{
+		    ControlName				    RuiPanel
+			ypos						-82
+			zpos						225
+			wide					    256
+			tall				    	128
+			visible					    1
+            rui					    	"ui/loadout_image_large.rpak"
+
+			pin_to_sibling				WeaponBackground2
+			pin_corner_to_sibling		TOP
+			pin_to_sibling_corner		TOP
+		}
+
+		WeaponImageTextOverlay2
+		{
+			ControlName					Label
+			classname					"WeaponImageTextOverlay2"
+			xpos						0
+			ypos						0
+			zpos						226
+			wide						315
+			tall						22
+			visible						1
+			font						Default_21
+			labelText					"#STATS_DATA_EMPTY"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponImage2
+			pin_corner_to_sibling		CENTER
+			pin_to_sibling_corner		CENTER
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		KDBackground0
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			xpos						8
+			ypos						0
+			zpos						101
+			wide						500
+			tall						530
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				WeaponBackground2
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+
+		ColumnHeader2LabelLeft
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						-6
+			zpos						102
+			wide						400
+			tall						36
+			visible						1
+			font						Default_31
+			labelText					"#STATS_HEADER_KDRATIO"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KDBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		ColumnHeader2LabelRight
+		{
+			ControlName					Label
+			xpos						-4
+			ypos						-6
+			zpos						102
+			wide						460
+			tall						36
+			visible						1
+			font						Default_31
+			labelText					"#STATS_HEADER_KD"
+			allcaps						1
+			textAlignment				east
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KDBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		LifetimeAverageLabel
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						-40
+			zpos						102
+			wide						400
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"#STATS_HEADER_KD_LIFETIME_AVERAGE"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"194 173 76 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KDBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		LifetimeAverageValue
+		{
+			ControlName					Label
+			xpos						0
+			ypos						-40
+			zpos						102
+			wide						464
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				east
+			fgcolor_override 			"194 173 76 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KDBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		Last10GamesLabel
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						400
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"#STATS_HEADER_KD_LAST10_AVERAGE"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"146 149 151 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				LifetimeAverageLabel
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		Last10GamesValue
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						446
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				east
+			fgcolor_override 			"146 149 151 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				LifetimeAverageLabel
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KDRatioLast10Graph0
+		{
+			ControlName					ImagePanel
+			xpos						-4
+			ypos						9
+			zpos						102
+			wide						456
+			tall						167
+			visible						1
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/ps_kill_records_data_graph"
+
+			pin_to_sibling				Last10GamesLabel
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KDRatioLast10Graph0DottedLine0
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						103
+			wide						456
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dotted_line"
+			drawColor					"194 173 76 255"
+		}
+
+		KDRatioLast10Graph0DottedLine1
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						103
+			wide						456
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dotted_line"
+			drawColor					"46 49 51 100"
+		}
+
+		LifetimePVPAverageLabel
+		{
+			ControlName					Label
+			xpos						4
+			ypos						9
+			zpos						102
+			wide						400
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"#STATS_HEADER_KD_PVP_LIFETIME_AVERAGE"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"194 173 76 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KDRatioLast10Graph0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		LifetimePVPAverageValue
+		{
+			ControlName					Label
+			xpos						4
+			ypos						9
+			zpos						102
+			wide						446
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				east
+			fgcolor_override 			"194 173 76 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KDRatioLast10Graph0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		Last10GamesPVPLabel
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						460
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"#STATS_HEADER_KD_PVP_LAST10_AVERAGE"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"146 149 151 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				LifetimePVPAverageLabel
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		Last10GamesPVPValue
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						446
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				east
+			fgcolor_override 			"146 149 151 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				LifetimePVPAverageLabel
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KDRatioLast10Graph1
+		{
+			ControlName					ImagePanel
+			xpos						-4
+			ypos						9
+			zpos						102
+			wide						456
+			tall						167
+			visible						1
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/ps_kill_records_data_graph"
+
+			pin_to_sibling				Last10GamesPVPLabel
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KDRatioLast10Graph1DottedLine0
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						103
+			wide						456
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dotted_line"
+			drawColor					"194 173 76 255"
+		}
+
+		KDRatioLast10Graph1DottedLine1
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						103
+			wide						456
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dotted_line"
+			drawColor					"46 49 51 100"
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+		Graph0ValueMin
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						103
+			wide						67
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"0"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"46 49 51 100"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KDRatioLast10Graph0
+			pin_corner_to_sibling		BOTTOM_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		Graph0ValueMax
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						103
+			wide						67
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"1.0"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"46 49 51 100"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KDRatioLast10Graph0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		Graph1ValueMin
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						103
+			wide						67
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"0"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"46 49 51 100"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KDRatioLast10Graph1
+			pin_corner_to_sibling		BOTTOM_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		Graph1ValueMax
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						103
+			wide						67
+			tall						27
+			visible						1
+			font						Default_23
+			labelText					"1.0"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"46 49 51 100"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KDRatioLast10Graph1
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+
+
+		// Graph0 Dots and Lines
+		Graph0Dot0
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Dot1
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Dot2
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Dot3
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Dot4
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Dot5
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Dot6
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Dot7
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Dot8
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Dot9
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Line1
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Line2
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Line3
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Line4
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Line5
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Line6
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Line7
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Line8
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph0Line9
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+		// Graph1 Dots and Lines
+		Graph1Dot0
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Dot1
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Dot2
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Dot3
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Dot4
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Dot5
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Dot6
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Dot7
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Dot8
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Dot9
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						201
+			wide						9
+			tall						9
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_dot"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Line1
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Line2
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Line3
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Line4
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Line5
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Line6
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Line7
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Line8
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+		Graph1Line9
+		{
+			ControlName					ImagePanel
+			xpos						0
+			ypos						0
+			zpos						200
+			wide						22
+			tall						4
+			visible						0
+			scaleImage					1
+			Image 						"ui/menu/personal_stats/kdratio_graph_line"
+			drawColor					"46 49 51 255"
+		}
+
+/////////////////////////////////
+
+		KillsAsPilotHeader
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			xpos						0
+			ypos						32
+			zpos						101
+			wide						500
+			tall						228
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				WeaponBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsAsPilotHeaderLabel
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						-6
+			zpos						102
+			wide						400
+			tall						36
+			visible						1
+			font						Default_31
+			labelText					"#STATS_HEADER_KILLS_AS_PILOT"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsPilotHeader
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		KillsAsPilotLineBackground0
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						-48
+			zpos						101
+			wide						500
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				KillsAsPilotHeader
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		KillsAsPilotLabel0
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_PILOTS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsPilotLineBackground0
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsAsPilotValue0
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsAsPilotLineBackground0
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsAsPilotLineBackground1
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						0
+			scaleImage					1
+
+			pin_to_sibling				KillsAsPilotLineBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsAsPilotLabel1
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_TITANS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsPilotLineBackground1
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsAsPilotValue1
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsAsPilotLineBackground1
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsAsPilotLineBackground2
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				KillsAsPilotLineBackground1
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsAsPilotLabel2
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_AI"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsPilotLineBackground2
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsAsPilotValue2
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsAsPilotLineBackground2
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsAsPilotLineBackground3
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						0
+			scaleImage					1
+
+			pin_to_sibling				KillsAsPilotLineBackground2
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsAsPilotLabel3
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_PILOT_MELEE"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsPilotLineBackground3
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsAsPilotValue3
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsAsPilotLineBackground3
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsAsPilotLineBackground4
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background_bottom.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				KillsAsPilotLineBackground3
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsAsPilotLabel4
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_PILOT_EXECUTIONS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsPilotLineBackground4
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsAsPilotValue4
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsAsPilotLineBackground4
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+////////////////////
+
+		KillsAsTitanHeader
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			xpos						52
+			ypos						0
+			zpos						101
+			wide						500
+			tall						228
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				KillsAsPilotHeader
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+
+		KillsAsTitanHeaderLabel
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						-6
+			zpos						102
+			wide						400
+			tall						36
+			visible						1
+			font						Default_31
+			labelText					"#STATS_HEADER_KILLS_AS_TITAN"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsTitanHeader
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		KillsAsTitanLineBackground0
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						-48
+			zpos						101
+			wide						500
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				KillsAsTitanHeader
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		KillsAsTitanLabel0
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_PILOTS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsTitanLineBackground0
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsAsTitanValue0
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsAsTitanLineBackground0
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsAsTitanLineBackground1
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						0
+			scaleImage					1
+
+			pin_to_sibling				KillsAsTitanLineBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsAsTitanLabel1
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_TITANS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsTitanLineBackground1
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsAsTitanValue1
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsAsTitanLineBackground1
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsAsTitanLineBackground2
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				KillsAsTitanLineBackground1
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsAsTitanLabel2
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_TITAN_EXECUTIONS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsTitanLineBackground2
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsAsTitanValue2
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsAsTitanLineBackground2
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsAsTitanLineBackground3
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						0
+			scaleImage					1
+
+			pin_to_sibling				KillsAsTitanLineBackground2
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsAsTitanLabel3
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_TITAN_MELEE_PILOT"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsTitanLineBackground3
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsAsTitanValue3
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsAsTitanLineBackground3
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsAsTitanLineBackground4
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background_bottom.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				KillsAsTitanLineBackground3
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsAsTitanLabel4
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_PILOT_ROADKILLS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsAsTitanLineBackground4
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsAsTitanValue4
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsAsTitanLineBackground4
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					r119
+			wide					f0
+			tall					36
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+		}
+	}
+}

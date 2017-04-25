@@ -1,0 +1,140 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_TITAN_HOVER"
+	"shortprintname"   								"#WPN_TITAN_HOVER_SHORT"
+	"description" 									"#WPN_TITAN_HOVER_DESC"
+	"longdesc"										"#WPN_TITAN_HOVER_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/tactical/titan_tactical_hover_menu"
+	"hud_icon"										"rui/titan_loadout/tactical/titan_tactical_hover"
+
+	"weaponClass" 									"titan"
+	"fire_mode"   									"offhand_instant"
+
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_TitanHover"
+	"OnWeaponNpcPrimaryAttack"						"NPC_OnWeaponPrimaryAttack_TitanHover"
+
+	// Menu Stats
+	"stat_damage" 									"90"
+	"stat_range"  									"100"
+	"stat_accuracy"   								"50"
+	"stat_rof"		        						"40"
+
+	// Effects
+	"impact_effect_table" 							"exp_rocket_dumbfire"
+	"projectile_trail_effect_0" 					"Rocket_Smoke_SMALL_Titan_2"
+	"projectile_trail_attachment" 					"exhaust"
+	"vortex_absorb_effect"							"wpn_vortex_projectile_rocket_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_rocket"
+	"vortex_absorb_sound"							"Vortex_Shield_AbsorbRocket"
+	"vortex_absorb_sound_1p_vs_3p"					"Vortex_Shield_AbsorbRocket_1P_VS_3P"
+	"sound_weapon_ready"							"HUD_TitanUtilityAbility_replenished_1P"
+	"projectile_adjust_to_gun_barrel"				"0"
+
+	// Ammo
+	"cooldown_type"                                 "ammo_instant"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+	"ammo_min_to_fire"								"200"
+	"ammo_per_shot"									"200"
+	"ammo_stockpile_max"							"200"
+	"ammo_drains_to_empty_on_fire"					"1"
+	"ammo_no_remove_from_clip"						"1"
+
+	//Regen Ammo
+	"regen_ammo_refill_rate"						"20"
+	"regen_ammo_refill_start_delay"					"0.0"
+
+	// Behavior
+	"fire_rate"   									"1000.0"
+	"fire_duration"   								"2.75"
+	"zoom_time_in"									"0.01"
+	"zoom_time_out"   								"0.01"
+	"zoom_fov"										"50"
+	"reload_time" 									"0"
+	"holster_time"									"0.01"
+	"deploy_time" 									"0.01"
+	"lower_time"  									"0.01"
+	"raise_time"  									"0.01"
+	"vortex_refire_behavior"  						"rocket"
+	"allow_empty_fire"								"0"
+	"reload_enabled"  								"0"
+	"allow_empty_click"   							"1"
+	"empty_reload_only"   							"0"
+	"trigger_snipercam"   							"1"
+	"allow_headshots" 								"0"
+
+	// Spread
+	"spread_stand_hip"  								"0"
+	"spread_stand_ads"   							"0"
+
+	"ammo_suck_behavior"							"offhand_weapons"
+
+	// View Kick
+	"viewkick_spring" 								"pistol"
+
+	"viewkick_pitch_base" 							"-2.5"
+	"viewkick_pitch_random"   						"0.5"
+	"viewkick_pitch_softScale"						"0.5"
+	"viewkick_pitch_hardScale"						"0.5"
+
+	"viewkick_yaw_base"   							"0"
+	"viewkick_yaw_random" 							"0.5"
+	"viewkick_yaw_softScale"  						"1.5"
+	"viewkick_yaw_hardScale"  						"0.25"
+
+	"viewkick_roll_base"  							"0.0"
+	"viewkick_roll_randomMin" 						"0.6"
+	"viewkick_roll_randomMax" 						"0.8"
+	"viewkick_roll_softScale" 						"0.2"
+	"viewkick_roll_hardScale" 						"1.0"
+
+	"viewkick_hipfire_weaponFraction" 				"0.4"
+	"viewkick_hipfire_weaponFraction_vmScale" 		"0.5"
+	"viewkick_ads_weaponFraction" 					"0.0"
+	"viewkick_ads_weaponFraction_vmScale" 			"0.0"
+
+
+	// Rumble
+	"fire_rumble"									"rumble_titan_hover_activate"
+
+	// Sway
+
+	// NPC
+	"npc_min_range"   								"0"
+	"npc_max_range"   								"8000"
+	"npc_min_burst"   								"1"
+	"npc_max_burst"   								"1"
+
+	// WeaponED Unhandled Key/Values and custom script Key/Values
+	"sway_turn_angle_factor"  						".8"
+	"sway_turn_origin_factor" 						"0.2"
+	"sway_turn_angle_factor_zoomed"   				"1.5"
+	"sway_turn_origin_factor_zoomed"  				"0.2"
+	"sway_move_angle_factor"  						"-2"
+	"sway_move_origin_factor" 						"-.2"
+	"sway_move_angle_factor_zoomed"   				"0"
+	"sway_move_origin_factor_zoomed"  				"0.03"
+	"sway_gain"   									"15.0"
+
+	Mods
+	{
+		pas_defensive_core
+		{
+			"fire_rate"		"*1.25"
+		}
+
+		dev_mod_low_recharge
+		{
+			"fire_rate"		"*20"
+		}
+
+		burn_mod_titan_smoke
+		{
+			"fire_rate"   		"*1.25"
+
+			"is_burn_mod"		"1"
+		}
+	}
+}

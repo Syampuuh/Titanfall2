@@ -1,0 +1,220 @@
+WeaponData
+{
+	// General
+	"printname"   									"#WPN_TITAN_TRIPWIRE"
+	"shortprintname"                              	"#WPN_TITAN_TRIPWIRE_SHORT"
+	"description" 									"#WPN_TITAN_TRIPWIRE_DESC"
+	"longdesc"										"#WPN_TITAN_TRIPWIRE_LONGDESC"
+
+	"menu_icon"										"rui/titan_loadout/tactical/titan_tactical_laser_tripwire_menu"
+	"hud_icon"										"rui/titan_loadout/tactical/titan_tactical_laser_tripwire"
+
+	"weaponClass" 									"titan"
+	"weaponType"									"tactical"
+	//"npc_use_check_type"							"while_evasive"
+	"npc_use_check_type"							"shared_energy"
+	"npc_target_armor_type"							"heavy"
+	"fire_mode"   									"offhand_instant"
+	"minimap_reveal_distance"						"32000"
+
+	"OnWeaponOwnerChanged"							"OnWeaponOwnerChanged_titanweapon_laser_trip"
+	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titanweapon_laser_trip"
+	"OnWeaponNPCPrimaryAttack"						"OnWeaponNPCPrimaryAttack_titanweapon_laser_trip"
+	"OnProjectileCollision"							"OnProjectileCollision_weapon_deployable"
+	"OnWeaponAttemptOffhandSwitch" 					"OnWeaponAttemptOffhandSwitch_titanweapon_laser_trip"
+
+	"projectile_ignores_vortex"						"fall_vortex"
+
+	// Models
+	"projectilemodel" 								"models/weapons/titan_trip_wire/titan_trip_wire_projectile.mdl"
+
+	// Effects
+	"bounce_effect_table"							"pilot_landing"
+	"impact_effect_table" 							"triplethreat_frag"
+	"projectile_trail_effect_0" 					"P_wpn_laserTrip_trail"
+	"projectile_trail_attachment" 					"FX_GLOW"
+	"vortex_absorb_effect"							"wpn_vortex_projectile_trip_FP"
+	"vortex_absorb_effect_third_person"				"wpn_vortex_projectile_trip"
+	"vortex_absorb_sound"							"Vortex_Shield_AbsorbRocket"
+	"vortex_absorb_sound_1p_vs_3p"					"Vortex_Shield_AbsorbRocket_1P_VS_3P"
+	"sound_weapon_ready"							"HUD_TitanUtilityAbility_replenished_1P"
+	"vortex_drain"									"0.0"
+	"projectile_adjust_to_gun_barrel"				"0"
+
+	"projectile_inherit_owner_velocity_scale"		"1"
+
+	"damage_type" 									"burn"
+
+	"critical_hit"									"0"
+	"grenade_show_indicator_to_owner"				"0"
+
+	MP_BASE
+	{
+		// Damage - When Used by Players
+		"damage_near_distance"							"800"
+		"damage_far_distance" 							"1200"
+		"damage_near_value"   							"0"
+		"damage_far_value"								"0"
+		"damage_near_value_titanarmor"					"0"
+		"damage_far_value_titanarmor" 					"0"
+		"explosion_damage"								"0"
+		"explosion_damage_heavy_armor"					"0"
+
+		"shared_energy_cost"							"350"
+		"projectile_gravity_scale"						"2"
+	}
+
+	SP_BASE
+	{
+		// Damage - When Used by Players
+		"damage_near_distance"							"800"
+		"damage_far_distance" 							"1200"
+		"damage_near_value"   							"0"
+		"damage_far_value"								"0"
+		"damage_near_value_titanarmor"					"0"
+		"damage_far_value_titanarmor" 					"0"
+		"explosion_damage"								"0"
+		"explosion_damage_heavy_armor"					"0"
+
+		"shared_energy_cost"							"350"
+		"projectile_gravity_scale"						"1.2"
+	}
+
+	// Sound
+	"fire_sound_1_player_1p"						"Wpn_LaserTripMine_Deploy_1P"
+	"fire_sound_1_player_3p"						"Wpn_LaserTripMine_Deploy_3P"
+	"sound_dryfire"									"titan_dryfire"
+
+	"explosionradius" 								"320"
+	"explosion_inner_radius"						"140"
+	"impulse_force"   								"15000"
+
+	// Ammo
+	"ammo_display"									"bar"
+	"ammo_stockpile_max"							"200"
+	"ammo_clip_size"   								"200"
+	"ammo_default_total"							"200"
+	"ammo_per_shot"									"200"
+	"ammo_min_to_fire"								"200"
+	"cooldown_type"                                 "ammo_instant"
+
+	//Regen Ammo
+	"regen_ammo_refill_rate"						"20"
+	"regen_ammo_refill_start_delay"					"0.0"
+
+	// Behavior
+	"fire_rate"   									"1.0"
+	"burst_fire_delay"								"0.0"
+	"zoom_time_in"									"0.01"
+	"zoom_time_out"   								"0.01"
+	"zoom_fov"										"50"
+	"reload_time" 									"0"
+	"holster_time"									"0.01"
+	"deploy_time" 									"0.01"
+	"lower_time"  									"0.01"
+	"raise_time"  									"0.01"
+	"vortex_refire_behavior"  						"grenade"
+	"allow_empty_fire"								"0"
+	"reload_enabled"  								"0"
+	"allow_empty_click"   							"1"
+	"empty_reload_only"   							"0"
+	"trigger_snipercam"   							"1"
+	"allow_headshots" 								"0"
+
+	// Spread
+	"spread_stand_hip"  								"0"
+	"spread_stand_ads"   							"0"
+
+	"ammo_suck_behavior"							"offhand_weapons"
+
+	// View Kick
+	"viewkick_spring" 								"pistol"
+
+	"viewkick_pitch_base" 							"0"
+	"viewkick_pitch_random"   						"0.5"
+	"viewkick_pitch_softScale"						"0.0"
+	"viewkick_pitch_hardScale"						"0.0"
+
+	"viewkick_yaw_base"   							"0"
+	"viewkick_yaw_random" 							"0.5"
+	"viewkick_yaw_softScale"  						"0.0"
+	"viewkick_yaw_hardScale"  						"0.0"
+
+	"viewkick_roll_base"  							"0.0"
+	"viewkick_roll_randomMin" 						"0.6"
+	"viewkick_roll_randomMax" 						"0.8"
+	"viewkick_roll_softScale" 						"0.2"
+	"viewkick_roll_hardScale" 						"0.0"
+
+	"viewkick_hipfire_weaponFraction" 				"0.4"
+	"viewkick_hipfire_weaponFraction_vmScale" 		"0.5"
+	"viewkick_ads_weaponFraction" 					"0.0"
+	"viewkick_ads_weaponFraction_vmScale" 			"0.0"
+
+	"viewpunch_multiplier"							"2.3"
+
+	// Rumble
+	"fire_rumble"									"rumble_titan_ordnanceeject"
+
+	// Sway
+
+	// NPC
+	"npc_min_range"   								"0"
+	"npc_max_range"   								"2400"
+	"npc_min_burst"   								"1"
+	"npc_max_burst"   								"1"
+
+	"npc_rest_time_between_bursts_min"				"4"
+	"npc_rest_time_between_bursts_max"				"8"
+
+	// WeaponED Unhandled Key/Values and custom script Key/Values
+	"sway_turn_angle_factor"  						".8"
+	"sway_turn_origin_factor" 						"0.2"
+	"sway_turn_angle_factor_zoomed"   				"1.5"
+	"sway_turn_origin_factor_zoomed"  				"0.2"
+	"sway_move_angle_factor"  						"-2"
+	"sway_move_origin_factor" 						"-.2"
+	"sway_move_angle_factor_zoomed"   				"0"
+	"sway_move_origin_factor_zoomed"  				"0.03"
+	"sway_gain"   									"15.0"
+
+	// Crosshair
+
+	Mods
+	{
+		mod_spider
+		{
+
+		}
+
+		clustermissile_fast_recharge
+		{
+			"fire_rate"   									"*2.2"
+		}
+
+		mod_ordnance_core
+		{
+			"fire_rate"   									"*1.25"
+		}
+
+		dev_mod_low_recharge
+		{
+			"fire_rate"   									"*20"
+		}
+		burn_mod_titan_dumbfire_rockets
+		{
+			"projectile_drift_windiness"					"*0.2"
+			"projectile_drift_intensity"					"*0.2"
+			"projectile_straight_time_min"					"*0.2"
+			"projectile_straight_time_max"					"*0.2"
+			"projectile_straight_radius_min"				"*0.2"
+			"projectile_straight_radius_max"				"*0.2"
+			"fire_rate"   									"*1.25"
+			"is_burn_mod"		"1"
+		}
+		pas_ion_tripwire
+		{
+			"shared_energy_cost"							"0"
+		}
+	}
+}

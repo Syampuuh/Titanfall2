@@ -1,0 +1,8 @@
+"Basic"
+{
+	"$basetexture" "particle/smoke/burst_02"
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+//	$splinetype 2
+}

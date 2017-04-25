@@ -1,0 +1,8 @@
+untyped
+
+global function IsLockedVDU
+
+function IsLockedVDU()
+{
+	return false
+}

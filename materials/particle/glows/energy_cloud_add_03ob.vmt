@@ -1,0 +1,12 @@
+"spritecard"
+{
+	"$basetexture" "particle\glows\energy_cloud"
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+	$additive 1
+	$overbrightfactor 3
+	$depthblend 0
+		
+	$vertexFogAmount 1
+}

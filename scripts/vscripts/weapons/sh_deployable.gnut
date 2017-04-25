@@ -1,0 +1,102 @@
+untyped
+
+global const DEPLOYABLE_THROW_POWER = 500.0
+
+global function ThrowDeployable
+global function OnProjectileCollision_weapon_deployable
+
+entity function ThrowDeployable( entity weapon, WeaponPrimaryAttackParams attackParams, float throwPower, void functionref(entity) deployFunc, vector ornull angularVelocity = null )
+{
+	#if CLIENT
+		if ( !weapon.ShouldPredictProjectiles() )
+			return
+	#endif
+
+	entity player = weapon.GetWeaponOwner()
+
+	vector attackPos
+	if ( IsValid( player ) )
+		attackPos = GetDeployableThrowStartPos( player, attackParams.pos )
+	else
+		attackPos = attackParams.pos
+
+	vector angles = VectorToAngles( attackParams.dir )
+	vector velocity = GetDeployableThrowVelocity( player, angles, throwPower )
+	if ( angularVelocity == null )
+		angularVelocity = Vector( 600, RandomFloatRange( -300, 300 ), 0 )
+	expect vector( angularVelocity )
+
+	float fuseTime = 0.0	// infinite
+
+	bool isPredicted = PROJECTILE_PREDICTED
+	if ( player.IsNPC() )
+		isPredicted = PROJECTILE_NOT_PREDICTED
+
+	entity deployable = weapon.FireWeaponGrenade( attackPos, velocity, angularVelocity, fuseTime, damageTypes.explosive, damageTypes.explosive, isPredicted, true, true )
+
+	#if SERVER
+		if ( deployable )
+		{
+			deployable.proj.savedAngles = Vector( 0, angles.y, 0 )
+			Grenade_Init( deployable, weapon )
+			thread OnProjectilePlanted( deployable, deployFunc )
+		}
+	#endif
+
+	return deployable
+}
+
+vector function GetDeployableThrowStartPos( entity player, vector baseStartPos )
+{
+	if ( player.IsTitan() )
+	{
+		int attachID = player.LookupAttachment( "TITAN_GRENADE" )
+		vector attackPos = player.GetAttachmentOrigin( attachID )
+		vector attackDir = player.GetAttachmentForward( attachID )
+		return attackPos + ( attackDir * 50 )
+	}
+
+	vector attackPos = player.OffsetPositionFromView( baseStartPos, Vector( 15.0, 0.0, 0.0 ) )	// forward, right, up
+	return attackPos
+}
+
+vector function GetDeployableThrowVelocity( entity player, vector baseAngles, float throwPower )
+{
+	baseAngles += Vector( -8, 0, 0 )
+	vector forward = AnglesToForward( baseAngles )
+
+	if ( baseAngles.x < 80 )
+		throwPower = GraphCapped( baseAngles.x, 0, 80, throwPower, throwPower * 3 )
+
+	vector velocity = forward * throwPower
+
+	return velocity
+}
+
+void function OnProjectileCollision_weapon_deployable( entity projectile, vector pos, vector normal, entity hitEnt, int hitbox, bool isCritical )
+{
+	#if SERVER
+	if ( projectile.proj.projectileBounceCount > 5 )
+		projectile.Destroy()
+	projectile.proj.projectileBounceCount++
+	#endif
+	table collisionParams =
+	{
+		pos = pos,
+		normal = normal,
+		hitEnt = hitEnt,
+		hitbox = hitbox
+	}
+
+	local result = PlantStickyEntityOnWorldThatBouncesOffWalls( projectile, collisionParams, 0.7 )
+}
+
+#if SERVER
+function OnProjectilePlanted( entity projectile, void functionref(entity) deployFunc )
+{
+	projectile.EndSignal( "OnDestroy" )
+	projectile.WaitSignal( "Planted" )
+
+	deployFunc( projectile )
+}
+#endif

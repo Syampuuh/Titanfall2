@@ -1,0 +1,127 @@
+resource/ui/menus/viewstats.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#STATS_BUTTON_TEXT"
+		}
+
+		MenuCommon
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/menu_common.res"
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+		// Category buttons
+		BtnOverview
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			xpos					100
+			ypos					193
+			navUp					BtnMisc
+			navDown					BtnTime
+			tabPosition				1
+		}
+		BtnTime
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			classname				BtnTime
+			pin_to_sibling			BtnOverview
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos                    8
+			navUp					BtnOverview
+			navDown					BtnPilotWeapons
+		}
+		BtnPilotWeapons
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			classname				BtnPilotWeapons
+			pin_to_sibling			BtnTime
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos                    8
+			navUp					BtnTime
+			navDown					BtnTitans
+		}
+		BtnTitans
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			classname				BtnTitans
+			pin_to_sibling			BtnPilotWeapons
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos                    8
+			navUp					BtnPilotWeapons
+			navDown					BtnMisc
+		}
+		BtnMisc
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			classname				BtnMisc
+			pin_to_sibling			BtnTitans
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos                    8
+			navUp					BtnTitans
+			navDown					BtnOverview
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					r119
+			wide					f0
+			tall					36
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+		}
+	}
+}

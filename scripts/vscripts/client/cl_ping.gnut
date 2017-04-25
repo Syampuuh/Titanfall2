@@ -1,0 +1,62 @@
+
+global function CodeCallback_Ping
+global function ServerCallback_SpottingHighlight
+global function ServerCallback_SpottingDeny
+
+const string SPOTTING_SELF = "UI_MapPing_Victim_1P"
+
+void function CodeCallback_Ping( entity player )
+{
+	if ( !SPOTTING_ENABLED )
+		return
+
+	TrySpottingGroupReset( player )
+
+	if ( !CanSpot( player ) )
+		return
+
+	SetPlayerSpottingVars( player )
+}
+
+void function ServerCallback_SpottingHighlight()
+{
+	entity ent = GetLocalViewPlayer()
+
+	if ( !IsValid( ent ) )
+		return
+
+	if ( StatusEffect_Get( ent, eStatusEffect.sonar_detected ) <= 0 )
+	{
+		entity viewModelEntity = ent.GetViewModelEntity()
+		entity firstPersonProxy = ent.GetPredictedFirstPersonProxy()
+
+		if ( IsValid( viewModelEntity ) )
+			SpotViewModelHighlight( viewModelEntity )
+
+		if ( IsValid( firstPersonProxy ) )
+			SpotViewModelHighlight( firstPersonProxy )
+	}
+
+	EmitSoundOnEntity( ent, SPOTTING_SELF )
+}
+
+
+void function ServerCallback_SpottingDeny( int eHandle )
+{
+	entity ent = GetEntityFromEncodedEHandle( eHandle )
+
+	if ( !IsValid( ent ) )
+		return
+
+	var rui = RuiCreate( $"ui/spotting.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, int( -Distance( GetLocalViewPlayer().EyePosition(), ent.GetOrigin() ) ) )
+	RuiSetGameTime( rui, "startTime", Time() )
+	RuiSetImage( rui, "spottingImage", $"rui/hud/spotting/spotting_deny" )
+	RuiTrackFloat3( rui, "pos", ent, RUI_TRACK_ABSORIGIN_FOLLOW )
+
+	if ( ent.IsTitan() )
+	{
+		RuiSetFloat( rui, "sizeMin", 48.0 )
+		RuiSetFloat( rui, "sizeMax", 300.0 )
+		RuiSetFloat3( rui, "offset", <0, 0, 140> )
+	}
+}

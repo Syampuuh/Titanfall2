@@ -1,0 +1,89 @@
+WeaponData
+{
+	// General
+	// General
+	"printname"   									"CHOOSER_DEBUG"
+	"shortprintname"   								"CHOOSER_DEBUG"
+	"description" 									"CHOOSER_DEBUG"
+	"longdesc"										"CHOOSER_DEBUG"
+
+	"menu_icon"										"rui/hud/earn_meter/burncard_icon"
+	"hud_icon"										"rui/hud/earn_meter/burncard_icon"
+	"readymessage"              					"CHOOSER_DEBUG"
+	"readyhint"                					 	"CHOOSER_DEBUG"
+
+	"weaponClass" 									"human"
+	"fire_mode"   									"offhand"
+	"offhand_default_inventory_slot"				"1"
+	//"offhand_interupts_weapon_anims"				"1"
+
+	"instant_swap_to"								"1"
+
+	"OnWeaponPrimaryAttackAnimEvent"				"OnWeaponPrimaryAttackAnimEvent_chooser"
+	"OnWeaponActivate"								"OnWeaponActivate_chooser"
+	"OnWeaponOwnerChanged"							"OnWeaponOwnerChanged_chooser"
+
+	// Models
+	"viewmodel"   									"models/weapons/burn_card/ptpov_burn_card.mdl"
+	//"viewmodel"   								"models/weapons/empty_handed/ptpov_phaseshift_device.mdl"
+	"playermodel"									"models/weapons/empty_handed/w_empty_handed_human.mdl"
+	"leveled_pickup"								"1"
+	"dev_menu_type"									"offhand" // fire_mode isn't readable from script
+	"offhand_keep_primary_in_hand"					"1"
+
+	"zoom_effects"									"0"
+
+	"ammo_suck_behavior"							"offhand_weapons"
+
+	// Damage
+	"damage_type" 									"none"
+	"explosion_damage_heavy_armor"					"0"
+	"damage_near_distance"							"0"
+	"damage_far_distance" 							"0"
+	"damage_near_value"   							"0"
+	"damage_far_value"								"0"
+
+	// Rumble
+	"rumble"  										"-1"
+
+	// Behavior
+	"fire_rate"   									"1000.0"
+	"fire_anim_rate"								"0.65"
+	"holster_time"									"0.15"
+	"deploy_time" 									"0.25"
+	"lower_time"  									"0.25"
+	"raise_time"  									"0.5"
+	"allow_empty_fire"								"0"
+	"reload_enabled"								"0"
+	"empty_reload_only"   							"0"
+	"allow_empty_click"   							"0"
+	"trigger_snipercam"   							"0"
+	"breaks_cloak"									"0"
+	"primary_fire_does_not_block_sprint"			"1"
+	"aimassist_disable_hipfire"						"1"
+	"aimassist_disable_ads"							"1"
+	"cooldown_type"									"ammo_alert"
+
+	"ammo_no_remove_from_clip"						"1"
+	"ammo_clip_size"   								"1"
+	"ammo_default_total"							"1"
+	"ammo_display"									"bar"
+	"ammo_min_to_fire"								"1"
+	"ammo_per_shot"									"1"
+	"ammo_stockpile_max"							"1"
+	"fire_duration"									"0.9"
+	"regen_ammo_refill_rate"						"0"
+
+	Mods
+	{
+	}
+
+	RUI_CrosshairData
+	{
+		DefaultArgs
+		{
+			crosshairMovementX          crosshair_movement_x
+		    crosshairMovementY          crosshair_movement_y
+		}
+	}
+}

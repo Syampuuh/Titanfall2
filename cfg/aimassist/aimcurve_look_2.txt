@@ -1,0 +1,7 @@
+// Fine Aim
+
+LINEAR 	0.1		0.4
+LINEAR 	0.98	0.6
+LINEAR 	0.981	1.0
+LINEAR	1.0		1.0
+TRANSFORM: cubed

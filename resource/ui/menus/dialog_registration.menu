@@ -1,0 +1,243 @@
+resource/ui/menus/dialog_registration.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		tabPosition				0
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+		modal					1
+
+		DarkenBackground
+		{
+			ControlName				Label
+			xpos					0
+			ypos					0
+			wide					%100
+			tall					%100
+			labelText				""
+			bgcolor_override		"0 0 0 227"
+			visible					0
+			paintbackground			1
+		}
+
+		DialogFrame
+		{
+			ControlName				RuiPanel
+			wide					%100
+			tall					664
+			rui                     "ui/basic_image.rpak"
+			visible					1
+
+			pin_to_sibling			DarkenBackground
+			pin_corner_to_sibling	CENTER
+			pin_to_sibling_corner	CENTER
+		}
+
+		DialogHeader
+		{
+			ControlName				Label
+			xpos					0
+			ypos                    -40
+			auto_wide_tocontents	1
+			tall					41
+			visible					1
+			labelText				"HEADER"
+			font					DefaultBold_53
+			allcaps					1
+			fgcolor_override		"255 255 255 255"
+
+			pin_to_sibling			DialogFrame
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	TOP
+		}
+
+		DialogHeaderHint
+		{
+			ControlName				Label
+			xpos					-550
+			ypos                    50
+			auto_wide_tocontents	1
+			auto_tall_tocontents	1
+			visible					1
+			labelText				"#EA_REGISTRATION_HEADER_HINT"
+			font					Default_28
+			allcaps					0
+			fgcolor_override		"255 255 255 255"
+
+			pin_to_sibling			DialogHeader
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM
+		}
+
+		CountryAndAgeLabel
+		{
+			ControlName				Label
+			xpos					0
+			ypos                    70
+			auto_wide_tocontents	1
+			tall					21
+			visible					1
+			labelText				"#EA_REGISTRATION_COUNTRY_AND_AGE_LABEL"
+			font					Default_28
+			allcaps					1
+			fgcolor_override		"255 255 255 255"
+
+			pin_to_sibling			DialogHeaderHint
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		CountryAndAge
+		{
+			ControlName				Label
+			xpos					28
+			ypos                    0
+			auto_wide_tocontents	1
+			tall					21
+			visible					1
+			labelText				""
+			font					Default_28
+			allcaps					1
+			fgcolor_override		"255 255 255 255"
+
+			pin_to_sibling			CountryAndAgeLabel
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+		}
+
+		EmailLabel
+		{
+			ControlName				Label
+			xpos					0
+			ypos                    20
+			auto_wide_tocontents	1
+			tall					21
+			visible					1
+			labelText				"#EA_REGISTRATION_EMAIL_LABEL"
+			font					Default_28
+			allcaps					1
+			fgcolor_override		"255 255 255 255"
+
+			pin_to_sibling			CountryAndAgeLabel
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		EmailTextEntry
+		{
+			ControlName				TextEntry
+			xpos					28
+			ypos					12
+			wide					555
+			tall					40
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				250
+			NumericInputOnly		0
+			textAlignment			"east"
+			font 					Default_28
+			keyboardTitle			"#ENTER_YOUR_EMAIL"
+			keyboardDescription		"#ENTER_YOUR_EMAIL_DESC"
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+
+			navUp					Button0
+			navDown					ContactPreferenceCheckBox
+
+			pin_to_sibling			EmailLabel
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	TOP_RIGHT
+		}
+
+		ContactPreferenceCheckBox
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiCheckBox
+			ypos					50
+			labelText				"#A_BUTTON_SELECT"
+
+            navUp                   EmailTextEntry
+            navDown					Button0
+
+			pin_to_sibling			EmailLabel
+            pin_corner_to_sibling	TOP_LEFT
+            pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		ContactPreferenceText
+		{
+			ControlName				RuiPanel
+			xpos					20
+			wide					1100
+			tall                    224
+			visible					1
+			rui                     "ui/contact_preference_text.rpak"
+
+			pin_to_sibling			ContactPreferenceCheckBox
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+		Button0
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			classname				DialogButtonClass
+			scriptID				0
+			ypos					120
+			navUp					ContactPreferenceCheckBox
+			navDown					Button1
+
+			pin_to_sibling			ContactPreferenceCheckBox
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		Button1
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiSmallButton
+			classname				DialogButtonClass
+			scriptID				1
+			navUp					Button0
+			navDown					EmailTextEntry
+
+			tabPosition				1
+
+			pin_to_sibling			Button0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			xpos					-306
+			ypos					-20
+			wide					f0
+			tall					36
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+
+			pin_to_sibling			DialogFrame
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+	}
+}

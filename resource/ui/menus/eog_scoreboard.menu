@@ -1,0 +1,842 @@
+resource/ui/menus/eog_scoreboard.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+		EOGCommon
+		{
+			ControlName				CNestedPanel
+			classname				"eog_common_panel"
+			xpos					0
+			ypos					0
+			zpos					3 // Needed or clicking on the background can hide this
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/UI/menus/eog_common.res"
+		}
+
+
+
+		Background
+		{
+			ControlName				Label
+			xpos					c-364
+			ypos					c-238
+			zpos					4
+			wide					1129
+			tall					647
+			visible					1
+			labelText 				""
+			bgcolor_override 		"0 0 0 100"
+		}
+
+
+
+
+		// Gametype and map
+		GametypeAndMap
+		{
+			ControlName				Label
+			xpos 					c-342
+			ypos					306
+			zpos					1012
+			auto_wide_tocontents	1
+			auto_tall_tocontents	1
+			visible					1
+			font					DefaultBold_43
+			labelText				"[GAMETYPE NAME - MAP NAME]"
+			allcaps					1
+			fgcolor_override	 	"204 234 255 255"
+			//bgcolor_override 		"255 0 0 127"
+		}
+		ScoreboardLossProtection
+		{
+			ControlName				Label
+			pin_to_sibling			GametypeAndMap
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+			zpos					1012
+			wide 					450
+			tall					40
+			font					Default_17
+			visible					0
+			xpos					0
+			ypos					0
+			allcaps					1
+			labelText				"#LATE_JOIN_NO_LOSS_EOG_SCOREBOARD"
+			textAlignment			"west"
+			fgcolor_override	 	"211 171 8 255"
+		}
+		// Data column labels
+		ScoreboardColumnLabels6
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnHeader
+			xpos 					0//c+643
+			ypos 					0//306
+			labelText				"[Column 6]"
+			//bgcolor_override 		"255 255 0 127"
+
+			pin_to_sibling			WinningPlayer0
+			pin_corner_to_sibling	BOTTOM_RIGHT
+			pin_to_sibling_corner	TOP_RIGHT
+
+		}
+		ScoreboardColumnLabels5
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnHeader
+			pin_to_sibling			ScoreboardColumnLabels6
+			pin_corner_to_sibling	BOTTOM_RIGHT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					2
+			labelText				"[Column 5]"
+			//bgcolor_override 		"255 255 0 127"
+		}
+		ScoreboardColumnLabels4
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnHeader
+			pin_to_sibling			ScoreboardColumnLabels5
+			pin_corner_to_sibling	BOTTOM_RIGHT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					2
+			labelText				"[Column 4]"
+			//bgcolor_override 		"255 255 0 127"
+		}
+		ScoreboardColumnLabels3
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnHeader
+			pin_to_sibling			ScoreboardColumnLabels4
+			pin_corner_to_sibling	BOTTOM_RIGHT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					2
+			labelText				"[Column 3]"
+			//bgcolor_override 		"255 0 255 127"
+		}
+		ScoreboardColumnLabels2
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnHeader
+			pin_to_sibling			ScoreboardColumnLabels3
+			pin_corner_to_sibling	BOTTOM_RIGHT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					2
+			labelText				"[Column 2]"
+			//bgcolor_override	 	"130 255 0 127"
+		}
+		ScoreboardColumnLabels1
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnHeader
+			pin_to_sibling			ScoreboardColumnLabels2
+			pin_corner_to_sibling	BOTTOM_RIGHT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					2
+			labelText				"[Column 1]"
+			//bgcolor_override 		"0 255 120 127"
+		}
+		ScoreboardColumnLabels0
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnHeader
+			pin_to_sibling			ScoreboardColumnLabels1
+			pin_corner_to_sibling	BOTTOM_RIGHT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					2
+			labelText				"[Column 0]"
+			//bgcolor_override 		"0 123 0 127"
+		}
+
+		// Column icon backgrounds
+		ScoreboardColumnIconBackground6
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnIconBackground
+			pin_to_sibling			ScoreboardColumnLabels6
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIconBackground5
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnIconBackground
+			pin_to_sibling			ScoreboardColumnLabels5
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIconBackground4
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnIconBackground
+			pin_to_sibling			ScoreboardColumnLabels4
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIconBackground3
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnIconBackground
+			pin_to_sibling			ScoreboardColumnLabels3
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIconBackground2
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnIconBackground
+			pin_to_sibling			ScoreboardColumnLabels2
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIconBackground1
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnIconBackground
+			pin_to_sibling			ScoreboardColumnLabels1
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIconBackground0
+		{
+			ControlName				Label
+			InheritProperties 		EOGScoreboardColumnIconBackground
+			pin_to_sibling			ScoreboardColumnLabels0
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+
+		// Column icons
+		ScoreboardColumnIcon6
+		{
+			ControlName				ImagePanel
+			InheritProperties 		EOGScoreboardColumnIcon
+			pin_to_sibling			ScoreboardColumnLabels6
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIcon5
+		{
+			ControlName				ImagePanel
+			InheritProperties 		EOGScoreboardColumnIcon
+			pin_to_sibling			ScoreboardColumnLabels5
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIcon4
+		{
+			ControlName				ImagePanel
+			InheritProperties 		EOGScoreboardColumnIcon
+			pin_to_sibling			ScoreboardColumnLabels4
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIcon3
+		{
+			ControlName				ImagePanel
+			InheritProperties 		EOGScoreboardColumnIcon
+			pin_to_sibling			ScoreboardColumnLabels3
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIcon2
+		{
+			ControlName				ImagePanel
+			InheritProperties 		EOGScoreboardColumnIcon
+			pin_to_sibling			ScoreboardColumnLabels2
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIcon1
+		{
+			ControlName				ImagePanel
+			InheritProperties 		EOGScoreboardColumnIcon
+			pin_to_sibling			ScoreboardColumnLabels1
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+		ScoreboardColumnIcon0
+		{
+			ControlName				ImagePanel
+			InheritProperties 		EOGScoreboardColumnIcon
+			pin_to_sibling			ScoreboardColumnLabels0
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+
+
+		// My team info
+		ScoreboardWinningTeamScore
+		{
+			ControlName				Label
+			xpos 					c-319
+			ypos					369
+			zpos					1012
+			wide					227
+			tall					81
+			visible					1
+			font					Default_43
+			textAlignment			center
+			textinsety				11
+			labelText				"0"
+			fgcolor_override 		"230 230 230 255"
+		}
+		ScoreboardWinningTeamLogo
+		{
+			ControlName				ImagePanel
+			zpos					1012
+			wide					162
+			tall					162
+			visible					1
+			scaleImage				1
+			image 					"ui/scoreboard_imc_logo"
+
+			pin_to_sibling			ScoreboardWinningTeamScore
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	BOTTOM
+		}
+
+		// Enemy team info
+		ScoreboardLosingTeamScore
+		{
+			ControlName				Label
+			ypos 					45
+			zpos					1012
+			wide					227
+			tall					81
+			visible					1
+			font					Default_43
+			textAlignment			center
+			textinsety				11
+			labelText				"0"
+			fgcolor_override 		"230 230 230 255"
+
+			pin_to_sibling			ScoreboardWinningTeamLogo
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	BOTTOM
+		}
+		ScoreboardLosingTeamLogo
+		{
+			ControlName				ImagePanel
+			zpos					1012
+			wide					162
+			tall					162
+			visible					1
+			scaleImage				1
+			image 					"ui/scoreboard_mcorp_logo"
+
+			pin_to_sibling			ScoreboardLosingTeamScore
+			pin_corner_to_sibling	TOP
+			pin_to_sibling_corner	BOTTOM
+		}
+
+
+
+
+
+
+
+		// Player info
+		WinningPlayer7
+		{
+			ControlName					CNestedPanel
+			classname					"WinningPlayer7"
+			xpos						0
+			ypos						36
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				Background
+			pin_corner_to_sibling		BOTTOM_RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+		WinningPlayer6
+		{
+			ControlName					CNestedPanel
+			classname					"WinningPlayer6"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				WinningPlayer7
+			pin_corner_to_sibling		BOTTOM_RIGHT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+		WinningPlayer5
+		{
+			ControlName					CNestedPanel
+			classname					"WinningPlayer5"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				WinningPlayer6
+			pin_corner_to_sibling		BOTTOM_RIGHT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+		WinningPlayer4
+		{
+			ControlName					CNestedPanel
+			classname					"WinningPlayer4"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				WinningPlayer5
+			pin_corner_to_sibling		BOTTOM_RIGHT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+		WinningPlayer3
+		{
+			ControlName					CNestedPanel
+			classname					"WinningPlayer3"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				WinningPlayer4
+			pin_corner_to_sibling		BOTTOM_RIGHT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+		WinningPlayer2
+		{
+			ControlName					CNestedPanel
+			classname					"WinningPlayer2"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				WinningPlayer3
+			pin_corner_to_sibling		BOTTOM_RIGHT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+		WinningPlayer1
+		{
+			ControlName					CNestedPanel
+			classname					"WinningPlayer1"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				WinningPlayer2
+			pin_corner_to_sibling		BOTTOM_RIGHT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+		WinningPlayer0
+		{
+			ControlName					CNestedPanel
+			classname					"WinningPlayer0"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				WinningPlayer1
+			pin_corner_to_sibling		BOTTOM_RIGHT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+
+		LosingPlayer0
+		{
+			ControlName					CNestedPanel
+			classname					"LosingPlayer0"
+			xpos						0
+			ypos						4
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				WinningPlayer7
+			pin_corner_to_sibling		TOP_RIGHT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+		LosingPlayer1
+		{
+			ControlName					CNestedPanel
+			classname					"LosingPlayer1"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				LosingPlayer0
+			pin_corner_to_sibling		TOP_RIGHT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+		LosingPlayer2
+		{
+			ControlName					CNestedPanel
+			classname					"LosingPlayer2"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				LosingPlayer1
+			pin_corner_to_sibling		TOP_RIGHT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+		LosingPlayer3
+		{
+			ControlName					CNestedPanel
+			classname					"LosingPlayer3"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				LosingPlayer2
+			pin_corner_to_sibling		TOP_RIGHT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+		LosingPlayer4
+		{
+			ControlName					CNestedPanel
+			classname					"LosingPlayer4"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				LosingPlayer3
+			pin_corner_to_sibling		TOP_RIGHT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+		LosingPlayer5
+		{
+			ControlName					CNestedPanel
+			classname					"LosingPlayer5"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				LosingPlayer4
+			pin_corner_to_sibling		TOP_RIGHT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+		LosingPlayer6
+		{
+			ControlName					CNestedPanel
+			classname					"LosingPlayer6"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				LosingPlayer5
+			pin_corner_to_sibling		TOP_RIGHT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+		LosingPlayer7
+		{
+			ControlName					CNestedPanel
+			classname					"LosingPlayer7"
+			xpos						0
+			ypos						0
+			zpos						1010
+			wide						843
+			tall						36
+			visible						1
+			controlSettingsFile			"resource/UI/menus/eog_scoreboard_bar.res"
+
+			pin_to_sibling				LosingPlayer6
+			pin_corner_to_sibling		TOP_RIGHT
+			pin_to_sibling_corner		BOTTOM_RIGHT
+		}
+
+		// Player buttons
+
+		BtnWinningPlayer0
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnWinningPlayer0"
+			scriptID				0
+			labelText				""
+			navUp					BtnLosingPlayer7
+			navDown					BtnWinningPlayer1
+			tabPosition				0
+
+			pin_to_sibling			WinningPlayer0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnWinningPlayer1
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnWinningPlayer1"
+			scriptID				1
+			labelText				""
+			navUp					BtnWinningPlayer0
+			navDown					BtnWinningPlayer2
+
+			pin_to_sibling			WinningPlayer1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnWinningPlayer2
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnWinningPlayer2"
+			scriptID				2
+			labelText				""
+			navUp					BtnWinningPlayer1
+			navDown					BtnWinningPlayer3
+
+			pin_to_sibling			WinningPlayer2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnWinningPlayer3
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnWinningPlayer3"
+			scriptID				3
+			labelText				""
+			navUp					BtnWinningPlayer2
+			navDown					BtnWinningPlayer4
+
+			pin_to_sibling			WinningPlayer3
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnWinningPlayer4
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnWinningPlayer4"
+			scriptID				4
+			labelText				""
+			navUp					BtnWinningPlayer3
+			navDown					BtnWinningPlayer5
+
+			pin_to_sibling			WinningPlayer4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnWinningPlayer5
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnWinningPlayer5"
+			scriptID				5
+			labelText				""
+			navUp					BtnWinningPlayer4
+			navDown					BtnWinningPlayer6
+
+			pin_to_sibling			WinningPlayer5
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnWinningPlayer6
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnWinningPlayer6"
+			scriptID				6
+			labelText				""
+			navUp					BtnWinningPlayer5
+			navDown					BtnWinningPlayer7
+
+			pin_to_sibling			WinningPlayer6
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnWinningPlayer7
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnWinningPlayer7"
+			scriptID				7
+			labelText				""
+			navUp					BtnWinningPlayer6
+			navDown					BtnLosingPlayer0
+
+			pin_to_sibling			WinningPlayer7
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		BtnLosingPlayer0
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnLosingPlayer0"
+			scriptID				0
+			labelText				""
+			navUp					BtnWinningPlayer7
+			navDown					BtnLosingPlayer1
+
+			pin_to_sibling			LosingPlayer0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnLosingPlayer1
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnLosingPlayer1"
+			scriptID				1
+			labelText				""
+			navUp					BtnLosingPlayer0
+			navDown					BtnLosingPlayer2
+
+			pin_to_sibling			LosingPlayer1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnLosingPlayer2
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnLosingPlayer2"
+			scriptID				2
+			labelText				""
+			navUp					BtnLosingPlayer1
+			navDown					BtnLosingPlayer3
+
+			pin_to_sibling			LosingPlayer2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnLosingPlayer3
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnLosingPlayer3"
+			scriptID				3
+			labelText				""
+			navUp					BtnLosingPlayer2
+			navDown					BtnLosingPlayer4
+
+			pin_to_sibling			LosingPlayer3
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnLosingPlayer4
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnLosingPlayer4"
+			scriptID				4
+			labelText				""
+			navUp					BtnLosingPlayer3
+			navDown					BtnLosingPlayer5
+
+			pin_to_sibling			LosingPlayer4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnLosingPlayer5
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnLosingPlayer5"
+			scriptID				5
+			labelText				""
+			navUp					BtnLosingPlayer4
+			navDown					BtnLosingPlayer6
+
+			pin_to_sibling			LosingPlayer5
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnLosingPlayer6
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnLosingPlayer6"
+			scriptID				6
+			labelText				""
+			navUp					BtnLosingPlayer5
+			navDown					BtnLosingPlayer7
+
+			pin_to_sibling			LosingPlayer6
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+		BtnLosingPlayer7
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGScoreboardPlayerButton
+			classname				"BtnEOGScoreboardPlayer BtnLosingPlayer7"
+			scriptID				7
+			labelText				""
+			navUp					BtnLosingPlayer6
+			navDown					BtnWinningPlayer0
+
+			pin_to_sibling			LosingPlayer7
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+	}
+}

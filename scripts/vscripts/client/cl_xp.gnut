@@ -1,0 +1,81 @@
+
+global function ServerCallback_PlayerLeveledUp
+global function ServerCallback_PlayerChallengeCompleted
+global function Display_PlayerLeveledUp
+
+void function ServerCallback_PlayerLeveledUp( int gen, int level, int unlockId1 = -1, int unlockId2 = -1, int unlockId3 = -1 )
+{
+	LevelUpData levelUpData
+	levelUpData.gen = gen
+	levelUpData.level = level
+
+	// Update saved profile var so SP can see what MP level the player is without connecting to persistence
+	int saveLevel = gen == 0 ? level : GetMaxPlayerLevel()
+	SetConVarInt( "mp_player_level", saveLevel )
+	ServerCallback_UpdateHeroStats()
+
+	if ( GetConVarInt( "hud_setting_showLevelUp" ) == 0 )
+	{
+		EmitSoundOnEntity( GetLocalClientPlayer(), "HUD_level_up_pilot_1P" )
+		return
+	}
+
+	// bounce this message though the announcement system so that it displays without overlapping, etc...
+	LevelUpMessage( ANNOUNCEMENT_STYLE_PLAYER_LEVEL, levelUpData, 4.0 )
+}
+
+var function Display_PlayerLeveledUp( int gen, int level )
+{
+	thread PlayerLevelUpFx()
+
+	EmitSoundOnEntity( GetLocalClientPlayer(), "HUD_level_up_pilot_1P" )
+
+	var rui = CreatePermanentCockpitRui( $"ui/level_up.rpak", MINIMAP_Z_BASE + 200 )
+
+	RuiSetGameTime( rui, "startTime", Time() )
+	RuiSetString( rui, "messageText", Localize( PlayerXPDisplayGenAndLevel( gen, level ) ) )
+	RuiSetFloat( rui, "duration", 4.0 )
+	RuiSetFloat3( rui, "eventColor", <1, 1, 1> )
+
+	return rui
+}
+
+
+
+void function ServerCallback_PlayerChallengeCompleted( int refGuid, int parentRefGuid )
+{
+	if ( GetConVarInt( "hud_setting_showLevelUp" ) == 0 )
+	{
+		EmitSoundOnEntity( GetLocalClientPlayer(), "HUD_level_up_pilot_1P" )
+		return
+	}
+
+	ItemDisplayData itemDisplayData = GetItemDisplayDataFromGuid( refGuid, parentRefGuid )
+	AnnouncementMessageSweep( GetLocalClientPlayer(), Localize( "#CHALLENGE_COMPLETED_PLAYER" ), GetStatUnlockReq( itemDisplayData.ref, itemDisplayData.parentRef ), TEAM_COLOR_PARTY / 255.0, $"", "HUD_level_up_pilot_1P" )
+}
+
+
+void function PlayerLevelUpFx()
+{
+	entity player = GetLocalClientPlayer()
+	entity cockpit = player.GetCockpit()
+	if ( !IsValid( cockpit ) )
+		return
+
+	int fxHandle = StartParticleEffectOnEntity( cockpit, GetParticleSystemIndex( PLAYER_LEVELUP_FX), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
+
+	player.EndSignal( "OnDeath" )
+	cockpit.EndSignal( "OnDestroy" )
+
+	OnThreadEnd(
+		function() : ( fxHandle )
+		{
+			if ( !EffectDoesExist( fxHandle ) )
+				return
+
+			EffectStop( fxHandle, false, true )
+		}
+	)
+
+	wait 2.5
+}

@@ -1,0 +1,99 @@
+untyped
+
+global function ClScoreboard_Init
+
+global function IsInScoreboard
+global function ClientCodeCallback_ScoreboardInput
+global function ClientCodeCallback_ToggleScoreboard
+global function AddScoreboardShowCallback
+global function AddScoreboardHideCallback
+global function HideScoreboard
+global function ShowScoreboard
+
+struct
+{
+	array<void functionref()> scoreboardShowCallbacks
+	array<void functionref()> scoreboardHideCallbacks
+} file
+
+function ClScoreboard_Init()
+{
+	level.initScoreboardFunc <- null
+	level.showScoreboardFunc <- null
+	level.hideScoreboardFunc <- null
+	level.scoreboardInputFunc <- null
+
+	RegisterConCommandTriggeredCallback( "+showscores", ScoreboardButtonPressed )
+	RegisterMenuButtonPressedCallback( BUTTON_BACK, ScoreboardButtonPressed )
+
+	RegisterSignal( "OnHideScoreboard" )
+
+	level.showingScoreboard <- false
+}
+
+function AddScoreboardShowCallback( void functionref() func )
+{
+	file.scoreboardShowCallbacks.append( func )
+}
+
+void function AddScoreboardHideCallback( void functionref() func )
+{
+	file.scoreboardHideCallbacks.append( func )
+}
+
+function ShowScoreboard()
+{
+	if ( level.showingScoreboard )
+		return
+
+	level.showingScoreboard = true
+
+	foreach ( func in file.scoreboardShowCallbacks )
+	{
+		func()
+	}
+
+	level.showScoreboardFunc()
+}
+
+function HideScoreboard()
+{
+	if ( !level.showingScoreboard )
+		return
+
+	level.hideScoreboardFunc()
+
+	level.showingScoreboard = false
+
+	foreach ( func in file.scoreboardHideCallbacks )
+	{
+		func()
+	}
+}
+
+void function ClientCodeCallback_ToggleScoreboard()
+{
+	ScoreboardButtonPressed( null )
+}
+
+function IsInScoreboard( player )
+{
+	return level.showingScoreboard
+}
+
+function ScoreboardButtonPressed( localPlayer )
+{
+	if ( GetGameState() == eGameState.Postmatch )
+		return
+
+	if ( level.showingScoreboard )
+		thread HideScoreboard()
+	else
+		thread ShowScoreboard()
+}
+
+void function ClientCodeCallback_ScoreboardInput( int input )
+{
+	if ( level.scoreboardInputFunc )
+		level.scoreboardInputFunc( input )
+}

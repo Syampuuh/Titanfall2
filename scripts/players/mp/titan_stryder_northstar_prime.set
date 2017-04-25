@@ -1,0 +1,21 @@
+#base "titan_stryder_sniper.set"
+"titan_stryder_northstar_prime"
+{
+	isPrime				1
+
+	 execution_anim		"titan_stryder_northstar_prime"
+
+	 aiSettingsFile			"npc_titan_auto_stryder_northstar_prime" //mp only
+	 at_aiSettingsFile		"npc_titan_stryder_northstar_bounty" //at only
+
+	"global"
+	{
+		printname			"#NPC_TITAN_AUTO_STRYDER_SNIPER"
+
+		bodymodel			"models/titans/light/titan_light_northstar_prime.mdl" [$mp]
+		bodymodel			"models/titans/light/sp_titan_light_raptor.mdl" [$sp]
+
+		armsmodel			"models/weapons/arms/pov_titan_light_northstar_prime.mdl" [$mp]
+		armsmodel			"models/weapons/arms/pov_titan_light_raptor.mdl" [$sp]
+	}
+}

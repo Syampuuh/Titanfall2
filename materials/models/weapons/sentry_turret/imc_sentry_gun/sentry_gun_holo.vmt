@@ -1,0 +1,45 @@
+"UnlitTwoTexture"
+{
+	"$surfaceprop" "metal"
+	$basetexture "dev\noise_post"
+
+	"$texture2" "models\weapons\sentry_turret\imc_sentry_gun\imc_sentry_gun_col"
+//	"$texture2" "models\weapons\sentry_turret\mcor_sentry_gun\mcor_sentry_gun_col"
+
+	$translucent 1
+	$allowditherfade 0
+
+	$screenspacecoordssquare1 1
+
+	$layercolor2 "[1 2 5]"
+	$layeralpha1 "0.5"
+	$layeralpha2 "1"
+
+	Proxies
+	{
+		//Animate the noise texture
+		"AnimatedTexture"
+		{
+			"animatedtexturevar" "$basetexture"
+			"animatedtextureframenumvar" "$frame"
+			"animatedtextureframerate" 30
+		}
+
+		//Scale the noise texture
+		"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" .25
+			"texturescrollangle" -90
+			"texturescale"	8
+		}
+
+		//Flicker
+		"UniformNoise"
+		{
+			"minVal" 1
+			"maxVal" .8
+			"resultVar" "$color"
+		}
+	}
+}

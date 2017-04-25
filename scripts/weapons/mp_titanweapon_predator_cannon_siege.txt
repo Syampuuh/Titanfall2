@@ -1,0 +1,23 @@
+#base "mp_titanweapon_predator_cannon.txt"
+WeaponData
+{
+	// General
+    "shortprintname"                              	"Siege Mode"
+
+	"menu_icon"										"r2_ui/menus/loadout_icons/titan_weapon/titan_weapon_40mm"
+	"hud_icon"										"r2_ui/menus/loadout_icons/titan_weapon/titan_weapon_40mm"
+
+	// Models
+	"viewmodel"   									"models/weapons/titan_predator/atpov_titan_predator_siege.mdl"
+	"playermodel" 									"models/weapons/titan_predator/w_titan_predator.mdl"
+
+	"attack_button_presses_ads"						"0"
+	"regen_ammo_refill_rate"						"60.0"
+	"regen_ammo_refill_start_delay"					"0.0"
+	"reload_enabled"  								"0"
+
+	"fire_rate"										"10"
+
+	//"deploy_time"									"2.5"
+	"raise_time"									"2.5"
+}

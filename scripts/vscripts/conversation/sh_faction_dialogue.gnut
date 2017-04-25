@@ -1,0 +1,129 @@
+
+global function ShFactionDialogue_Init
+global function ShouldPlayFactionDialogue
+global function GetFactionChoice
+global function GetEnemyFaction
+#if SERVER
+global function AssignEnemyFaction
+#endif // SERVER
+
+global struct FactionLeaderDataStruct
+{
+	string dialoguePrefix //Only thing needed for dialogue.
+
+	//Needed for making faction leader spawn in classic_mp dropship
+	asset modelName
+	array<string> dropshipAnimList
+	asset propModelName
+	string propAttachment
+}
+
+global table<string, FactionLeaderDataStruct > factionLeaderData
+
+void function ShFactionDialogue_Init()
+{
+	//Can't precache from reading the model from the datatable, hence hard coding it here.
+	PrecacheModel( $"models/Humans/heroes/imc_hero_blisk.mdl" )
+	PrecacheModel( $"models/Humans/heroes/mlt_hero_jill.mdl" )
+	PrecacheModel( $"models/Humans/heroes/imc_hero_ash.mdl" )
+	PrecacheModel( $"models/Humans/heroes/mlt_hero_sarah.mdl" )
+	PrecacheModel( $"models/Humans/heroes/mlt_hero_barker.mdl" )
+	PrecacheModel( $"models/Humans/heroes/imc_hero_marder.mdl" )
+
+	PrecacheModel( $"models/props/flask/prop_flask_animated.mdl" ) //Barker's prop
+
+	var factionLeaderDataTable = GetDataTable( $"datatable/faction_leaders.rpak" )
+	int numOfRows = GetDatatableRowCount( factionLeaderDataTable )
+	for ( int i = 0; i < numOfRows; i++ )
+	{
+		string persistenceRef = GetDataTableString( factionLeaderDataTable, i, GetDataTableColumnByName( factionLeaderDataTable, FACTION_LEADERS_PERSISTENCE_REF_COLUMN_NAME ) )
+		FactionLeaderDataStruct factionLeaderInfo
+
+		factionLeaderInfo.dialoguePrefix = GetDataTableString( factionLeaderDataTable, i, GetDataTableColumnByName( factionLeaderDataTable, FACTION_LEADERS_FACTION_DIALOGUE_PREFIX_COLUMN_NAME ) )
+		factionLeaderInfo.modelName = GetDataTableAsset( factionLeaderDataTable, i, GetDataTableColumnByName( factionLeaderDataTable, FACTION_LEADERS_MODEL_NAME_COLUMN_NAME ) )
+		PrecacheModel( factionLeaderInfo.modelName )
+
+		factionLeaderInfo.propModelName = GetDataTableAsset( factionLeaderDataTable, i, GetDataTableColumnByName( factionLeaderDataTable, FACTION_LEADERS_PROP_MODEL_NAME_COLUMN_NAME ) )
+		if ( factionLeaderInfo.propModelName != $"" )
+			PrecacheModel( factionLeaderInfo.propModelName )
+		factionLeaderInfo.propAttachment = GetDataTableString( factionLeaderDataTable, i, GetDataTableColumnByName( factionLeaderDataTable, FACTION_LEADERS_PROP_ATTACHMENT_COLUMN_NAME ) )
+
+		factionLeaderData[ persistenceRef ] <- factionLeaderInfo
+	}
+
+	var factionLeaderDropshipAnimsTable = GetDataTable( $"datatable/faction_leaders_dropship_anims.rpak" ) //Only lists the various dropship anims. Consider moving prop name/prop attachment etc to this table too. (Menu uses those props too, which is why we haven't moved it yet)
+	int dropshipTableNumRows = GetDatatableRowCount( factionLeaderDropshipAnimsTable )
+	for ( int i = 0; i < dropshipTableNumRows; i++ )
+	{
+		string persistenceRef = GetDataTableString( factionLeaderDropshipAnimsTable, i, GetDataTableColumnByName( factionLeaderDropshipAnimsTable, FACTION_LEADERS_PERSISTENCE_REF_COLUMN_NAME ) )
+		Assert( persistenceRef in  factionLeaderData )
+		string animName = GetDataTableString( factionLeaderDropshipAnimsTable, i, GetDataTableColumnByName( factionLeaderDropshipAnimsTable, FACTION_LEADERS_DROPSHIP_ANIM_NAME_COLUMN_NAME ) )
+		factionLeaderData[ persistenceRef ].dropshipAnimList.append( animName )
+	}
+
+	if ( IsLobby() ) //Don't need to register conversations in lobby
+		return
+
+	var dataTable = GetDataTable( $"datatable/faction_dialogue.rpak" )
+	int numRows = GetDatatableRowCount( dataTable )
+	for ( int i = 0; i < numRows; i++ )
+	{
+		string conversationName = GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, FACTION_DIALOGUE_CONVERSATION_NAME_COLUMN_NAME ) )
+		int priority = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, FACTION_DIALOGUE_PRIORITY_COLUMN_NAME ) )
+		float debounce = GetDataTableFloat( dataTable, i, GetDataTableColumnByName( dataTable, FACTION_DIALOGUE_DEBOUNCE_COLUMN_NAME ) )
+
+		Assert( !(conversationName in level.Conversations ), "Already tried to register conversation: " + conversationName )
+		RegisterConversation( conversationName, priority, debounce )
+	}
+}
+
+string function GetFactionChoice( entity player )
+{
+	return expect string ( player.GetPersistentVar( "factionChoice" ) )
+}
+
+string function GetEnemyFaction( entity player )
+{
+	return expect string ( player.GetPersistentVar( "enemyFaction" ) )
+}
+
+bool function ShouldPlayFactionDialogue( string conversationType, entity listeningPlayer ) //Might be able to run this only on the client?
+{
+	if ( !IsAlive( listeningPlayer ) )
+		return false
+
+	if ( IsForcedDialogueOnly( listeningPlayer ) )
+	{
+		//printt( "ForcedDialogueOnly, not playing Faction Dialogue:"  + conversationType )
+		return false
+	}
+
+	#if CLIENT
+		float debounceTime = GetConversationDebounce( conversationType )
+		float lastPlayedTime = GetConversationLastPlayedTime( conversationType )
+		if ( lastPlayedTime > 0 && lastPlayedTime + debounceTime > Time() )
+		{
+			//printt( "lastPlayedTime: " + lastPlayedTime + " debounce time: " + debounceTime + ", not playing Battle Chatter:"  + conversationType )
+			return false
+		}
+	#endif
+
+	return true
+}
+
+#if SERVER
+void function AssignEnemyFaction( entity player, string friendlyFaction )
+{
+	int factionCount = PersistenceGetEnumCount( "faction" )
+	array<string> allFactions
+
+	for ( int i = 0; i < factionCount; i++ )
+	{
+		string faction = PersistenceGetEnumItemNameForIndex( "faction", i )
+		if ( faction != friendlyFaction )
+			allFactions.append( faction )
+	}
+
+	player.SetPersistentVar( "enemyFaction", allFactions[ RandomInt( allFactions.len() ) ] )
+}
+#endif // SERVER

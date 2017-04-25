@@ -1,0 +1,36 @@
+
+"UnlitTwoTexture"
+{
+	"$vertexcolor" "1"
+	"$vertcoloristint" "1"
+	//"$vertexalpha" "1"
+	"$additive" "1"
+	"$color2" "[1 1 1]"
+	"%compilePassBullets" "1"
+	"$godray" "1"
+	"$godrayMinFadeDist" "100"
+	"$godrayMaxFadeDist" "200"
+	
+	"$basetexture" "effects\caustic_water_01_alpha"
+	"$Texture2" "effects\caustic_water_01_alpha"
+
+	"Proxies"
+	{
+			"TextureScroll"
+		{
+			"texturescrollvar" "$basetexturetransform"
+			"texturescrollrate" 1
+			"texturescrollangle" 90
+		}
+				"TextureScroll"
+		{
+			"texturescrollvar" "$texture2transform"
+			"texturescrollrate" .4
+			"texturescrollangle" -90
+
+	"$surfaceprop" "asphalt"
+	"$basetexture" "effects\caustic_water_01"
+	"$translucent" "1"
+		}
+	}
+}

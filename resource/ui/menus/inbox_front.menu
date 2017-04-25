@@ -1,0 +1,228 @@
+#base "combo_buttons.res"
+resource/ui/menus/inbox_front.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					1
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#MENU_TITLE_INBOX"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+	    CreditsAvailable
+	    {
+	        ControlName             RuiPanel
+	        InheritProperties       CreditsAvailableProperties
+	    }
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+		ButtonRowAnchor
+		{
+			ControlName				Label
+			labelText				""
+
+			wide					525
+			tall					175
+
+			xpos                    96
+			ypos                    160
+		}
+
+		MessagesCountLabel
+		{
+			ControlName				RuiPanel
+            rui                     "ui/menu_inbox_label.rpak"
+			wide					540
+			tall					40
+			visible					1
+
+			pin_to_sibling			ButtonRowAnchor
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		MessagesButton
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiInboxButton
+			navUp					LootButton
+			navDown					LootButton
+			visible					1
+			tabposition             1
+
+			pin_to_sibling			MessagesCountLabel
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		LootCountLabel
+		{
+			ControlName				RuiPanel
+            rui                     "ui/menu_inbox_label.rpak"
+            ypos                    20
+			wide					540
+			tall					40
+			visible					1
+
+			pin_to_sibling			MessagesButton
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		LootButton
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiInboxButton
+			navUp					MessagesButton
+			navDown					MessagesButton
+			visible					1
+
+			pin_to_sibling			LootCountLabel
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		LootDisplay
+		{
+			ControlName				RuiPanel
+            rui                     "ui/menu_inbox_loot.rpak"
+            ypos                    128
+			wide					540
+			tall					384
+			visible					1
+
+			pin_to_sibling			LootButton
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		RecentUnlocksLabel
+		{
+		    ControlName             Label
+		    labelText               "#INBOX_RECENT_LOOT"
+			wide					384
+		    tall                    40
+		    allCaps                 1
+		    textAlignment           center
+
+            font					Default_33
+            fgcolor_override		"192 192 192 255"
+
+			pin_to_sibling			RecentUnlock0
+			pin_corner_to_sibling	BOTTOM
+			pin_to_sibling_corner	TOP
+		}
+
+		RecentUnlock0
+		{
+			ControlName				RuiPanel
+            rui                     "ui/menu_inbox_recent_unlock.rpak"
+			wide					384
+			tall					128
+			visible					1
+
+			pin_to_sibling			CreditsAvailable
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	BOTTOM_RIGHT
+		}
+
+		RecentUnlock1
+		{
+			ControlName				RuiPanel
+            rui                     "ui/menu_inbox_recent_unlock.rpak"
+            ypos                    16
+			wide					384
+			tall					128
+			visible					1
+
+			pin_to_sibling			RecentUnlock0
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	BOTTOM_RIGHT
+		}
+
+		RecentUnlock2
+		{
+			ControlName				RuiPanel
+            rui                     "ui/menu_inbox_recent_unlock.rpak"
+            ypos                    16
+			wide					384
+			tall					128
+			visible					1
+
+			pin_to_sibling			RecentUnlock1
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	BOTTOM_RIGHT
+		}
+
+		RecentUnlock3
+		{
+			ControlName				RuiPanel
+            rui                     "ui/menu_inbox_recent_unlock.rpak"
+            ypos                    16
+			wide					384
+			tall					128
+			visible					1
+
+			pin_to_sibling			RecentUnlock2
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	BOTTOM_RIGHT
+		}
+
+		RecentUnlock4
+		{
+			ControlName				RuiPanel
+            rui                     "ui/menu_inbox_recent_unlock.rpak"
+            ypos                    16
+			wide					384
+			tall					128
+			visible					1
+
+			pin_to_sibling			RecentUnlock3
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	BOTTOM_RIGHT
+		}
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

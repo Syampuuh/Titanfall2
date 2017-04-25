@@ -1,0 +1,17 @@
+"SpriteCard"
+{
+	"$basetexture" "particle\muzzleflash\flash_core"
+	$RAMPTEXTURE "particle/ramps/flash_cloud_fire_blue.vtf"
+	$texColorFromAlpha 1
+
+	"$vertexcolor" 1
+	"$translucent" "1"
+	"$additive" 1
+
+	$depthblend 1
+	$depthblendscale 8
+
+	$splinetype 2
+
+	$vertexFogAmount 1
+}

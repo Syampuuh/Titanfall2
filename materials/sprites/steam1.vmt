@@ -1,0 +1,8 @@
+//Old HL2 Material called from code, should be removed.
+
+"Sprite"
+{
+	"$spriteorientation" "vp_parallel_oriented"
+	"$spriteorigin" "[ 0.50 0.50 ]"
+	"$basetexture" "debug/particleerror"
+}

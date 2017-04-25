@@ -1,0 +1,23 @@
+Basic
+{
+	$basetexture 	models\hud\damage_arrow
+
+	$ignorez		1
+	$allowditherfade 0
+	$translucent 1
+
+	Proxies
+	{
+		EntityScript
+		{
+			scriptFuncName	"VMTCallback_DamageArrowAlpha"
+			resultVar $alpha
+		}
+
+		EntityScript
+		{
+			scriptFuncName	"VMTCallback_DamageArrowFlash"
+			resultVar $color
+		}
+	}
+}

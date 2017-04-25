@@ -1,0 +1,10 @@
+"SpriteCard"
+{
+	"$basetexture" "particle/sparks/sparks"
+	"$additive" 1
+
+	$depthblend 0
+	$overbrightfactor 3
+
+	$vertexFogAmount 1
+}

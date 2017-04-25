@@ -1,0 +1,230 @@
+global function Sh_EarnMeter_Init
+global function PlayerEarnMeter_GetEarnedFrac
+global function PlayerEarnMeter_GetOwnedFrac
+global function PlayerEarnMeter_GetRewardFrac
+global function PlayerEarnMeter_GetMode
+
+global function EarnMeter_DecayHold
+
+global function PlayerEarnMeter_IsGoalAvailable
+global function PlayerEarnMeter_IsGoalEnabled
+global function PlayerEarnMeter_GetGoal
+
+global function PlayerEarnMeter_IsRewardAvailable
+global function PlayerEarnMeter_IsRewardEnabled
+global function PlayerEarnMeter_GetReward
+
+global function EarnObject_GetByRef
+
+global function EarnMeterMP_IsTitanEarnGametype
+
+global const string EARN_REF_COLUMN_NAME = "itemRef"
+global const string EARN_TYPE_COLUMN_NAME = "earnType"
+global const string EARN_BUILDING_IMAGE_COLUMN_NAME = "buildingImage"
+global const string EARN_READY_IMAGE_COLUMN_NAME = "readyImage"
+global const string EARN_NAME_COLUMN_NAME = "nameText"
+
+global const float EARNMETER_HOLDTIME = 10.0
+
+global const float CORE_SMOKE_FRAC = 0.25
+global const string CORE_SMOKE_WEAPON = "mp_titanability_electric_smoke"
+
+global enum eEarnMeterMode
+{
+	DISABLED
+	DEFAULT
+	CORE
+	CORE_ACTIVE
+	PET
+}
+
+// must match defines in earn_meter.rui
+global enum eRewardState
+{
+	DISABLED
+	UNAVAILABLE
+	AVAILABLE
+	USED
+}
+
+global struct EarnObject
+{
+	int id = -1
+	string ref = ""
+	string earnType
+	asset buildingImage = $"white"
+	asset readyImage = $"white"
+	string localizedName = ""
+}
+
+global struct EarnStruct
+{
+	table< string, EarnObject > earnObjects
+}
+
+global EarnStruct earn
+
+void function Sh_EarnMeter_Init()
+{
+	if ( EARN_METER_DATATABLE == $"" )
+		return
+
+	#if ANTI_RODEO_SMOKE_ENABLED
+	PrecacheWeapon( CORE_SMOKE_WEAPON ) // need to precache weapons on server and client
+	#endif
+
+	var dataTable = GetDataTable( EARN_METER_DATATABLE )
+
+	for ( int row = 0; row < GetDatatableRowCount( dataTable ); row++ )
+	{
+		EarnObject earnObject
+
+		earnObject.id = row
+		earnObject.ref = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, EARN_REF_COLUMN_NAME ) )
+		earnObject.earnType = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, EARN_TYPE_COLUMN_NAME ) )
+		earnObject.buildingImage = GetDataTableAsset( dataTable, row, GetDataTableColumnByName( dataTable, EARN_BUILDING_IMAGE_COLUMN_NAME ) )
+		earnObject.readyImage = GetDataTableAsset( dataTable, row, GetDataTableColumnByName( dataTable, EARN_READY_IMAGE_COLUMN_NAME ) )
+		earnObject.localizedName = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, EARN_NAME_COLUMN_NAME ) )
+
+		earn.earnObjects[earnObject.ref] <- earnObject
+	}
+}
+
+
+float function PlayerEarnMeter_GetEarnedFrac( entity player )
+{
+	#if SERVER
+		return player.p.earnMeterOverdriveFrac
+	#endif
+	return player.GetPlayerNetFloat( EARNMETER_EARNEDFRAC )
+}
+
+
+float function PlayerEarnMeter_GetOwnedFrac( entity player )
+{
+	#if SERVER
+		return player.p.earnMeterOwnedFrac
+	#endif
+	return player.GetPlayerNetFloat( EARNMETER_OWNEDFRAC )
+}
+
+
+float function PlayerEarnMeter_GetRewardFrac( entity player )
+{
+	#if SERVER
+		return player.p.earnMeterRewardFrac
+	#endif
+	return player.GetPlayerNetFloat( EARNMETER_REWARDFRAC )
+}
+
+
+int function PlayerEarnMeter_GetMode( entity player )
+{
+	return player.GetPlayerNetInt( EARNMETER_MODE )
+}
+
+
+float function EarnMeter_DecayHold()
+{
+	return 1.0
+	//return GetCurrentPlaylistVarFloat( "em_decay_hold", EARNMETER_HOLDTIME )
+}
+
+
+bool function PlayerEarnMeter_IsGoalAvailable( entity player )
+{
+	return player.GetPlayerNetInt( "goalState" ) == eRewardState.AVAILABLE
+}
+
+
+bool function PlayerEarnMeter_IsGoalEnabled( entity player )
+{
+	return player.GetPlayerNetInt( "goalState" ) != eRewardState.DISABLED
+}
+
+
+bool function PlayerEarnMeter_IsRewardAvailable( entity player )
+{
+	return player.GetPlayerNetInt( "rewardState" ) == eRewardState.AVAILABLE
+}
+
+
+bool function PlayerEarnMeter_IsRewardEnabled( entity player )
+{
+	return player.GetPlayerNetInt( "rewardState" ) != eRewardState.DISABLED
+}
+
+
+EarnObject function PlayerEarnMeter_GetReward( entity player )
+{
+	int id = player.GetPlayerNetInt( EARNMETER_REWARDID )
+
+	return EarnObject_GetById( id )
+}
+
+
+EarnObject function PlayerEarnMeter_GetGoal( entity player )
+{
+	int id = player.GetPlayerNetInt( EARNMETER_GOALID )
+
+	return EarnObject_GetById( id )
+}
+
+
+EarnObject function EarnObject_GetById( int id )
+{
+	foreach ( EarnObject earnObject in earn.earnObjects )
+	{
+		if ( earnObject.id == id )
+			return earnObject
+	}
+
+	Assert( false, "Invalid earn object id " + id )
+	EarnObject earnObject
+	return earnObject
+}
+
+
+EarnObject function EarnObject_GetByRef( string ref )
+{
+	Assert( ref in earn.earnObjects )
+
+	return earn.earnObjects[ref]
+}
+
+
+bool function EarnMeterMP_IsTitanEarnGametype()
+{
+
+	#if MP
+	if ( !GetTitanfallEnabled() )
+ 		return false
+ 	#endif
+
+	if ( GAMETYPE == PILOT_SKIRMISH )
+		return false
+
+	if ( GAMETYPE == HUNTED )
+		return false
+
+	if ( GAMETYPE == DON )
+		return false
+
+	if ( GAMETYPE == SPEEDBALL )
+		return false
+
+	if ( GAMETYPE == COLISEUM )
+		return false
+
+	if ( GAMETYPE == FREE_AGENCY )
+		return false
+
+	if ( GAMETYPE == LAST_TITAN_STANDING )
+		return false
+
+	if ( GAMETYPE == LTS_BOMB )
+		return false
+
+	return true
+}
+

@@ -1,0 +1,15 @@
+"SpriteCard"
+{
+	"$basetexture" "particle/dirt/dirt_burst_full.tga"
+	//"$additive" 	"1"
+	$overbrightfactor 2
+	$translucent 	1
+	//"$nocull"	1
+	//$splinetype	1
+
+	$depthblend 1
+	$depthblendscale 50
+
+	$vertexFogAmount 1
+
+}

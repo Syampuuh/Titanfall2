@@ -1,0 +1,1121 @@
+global function CLHud_Init
+global function DamageFlyout
+
+global function ServerCallback_ScoreEvent
+global function ServerCallback_CallingCardEvent
+
+global function DisableCallingCardEvents
+global function EnableCallingCardEvents
+
+global function CallsignEvent
+global function KilledByCallsignEvent
+
+global function CallsignEvents_SetEnabled
+global function ScoreEvents_SetEnabled
+
+global function AddGenericQueueMessage
+
+#if DEV
+global function Repro
+global function RUI
+global function AddScoreCallingCardEvent
+global function AddYouCallsignEvent
+global function AddEnemyCallsignEvent
+#endif
+
+const int HIT_NORMAL = 0
+const int HIT_CRIT = 1
+const int HIT_INEFFECTIVE = 2
+const int HIT_MID_RANGE = 3
+
+const bool RUI_ENABLED = true
+
+/*
+		https://docs.google.com/document/d/1ci44pK9DaJpcfJoDbH4vdwG3fB-JQhkbyWk1Q6HQJYE/
+
+        ==== SCRIPT ====
+        ) Client script can now create and destroy Respawn UIs. To create one, do:
+           rui = RuiCreate( $"ui/assetname.rpak", topology, drawGroup, sortKey )
+
+        You can then manipulate it using the following:
+		   RuiSetDrawGroup( rui, drawGroup )
+           RuiSetString( rui, argName, value )
+           RuiSetBool( rui, argName, value )
+           RuiSetInt( rui, argName, value )
+           RuiSetFloat( rui, argName, value )
+           RuiSetFloat2( rui, argName, value )  // value is a vector; only x and y are used
+           RuiSetFloat3( rui, argName, value )
+           RuiSetColorAlpha( rui, argName, color, alpha )  // color is a vector
+
+        To destroy it, just do:
+           RuiDestroy( rui )
+*/
+
+struct MessageData
+{
+	int		scoreEventId = -1
+	int		scoreEventValue = 0
+
+	float	messageScale = 1.0
+	string	messageText = ""
+	float	duration = 2.5
+
+	float	startTime
+	asset	icon
+
+	var		rui
+}
+
+global enum eCallSignEvents
+{
+	YOU,
+	FRIENDLY,
+	ENEMY,
+	YOU_SPECTATING,
+	NUM_OF_ELEMENTS
+}
+
+const float CALLSIGN_EVENT_DURATION = 3.0
+const float CALLSIGN_OUT_DURATION = 0.25
+
+const asset[ eCallSignEvents.NUM_OF_ELEMENTS ] CALLSIGN_EVENT_ASSETS = [ $"ui/callsign_bottom_center.rpak", $"ui/callsign_left.rpak" ,$"ui/callsign_right.rpak", $"ui/callsign_spectator_bottom_right.rpak" ]
+
+struct CallsignEventData
+{
+	int eventType = -1
+
+	float defaultDuration = CALLSIGN_EVENT_DURATION
+
+	float endTime
+
+	string eventText
+	string playerText
+	string playerLevel
+
+	bool isFriendly
+	bool showTeamGlow
+	bool purge
+
+	CallingCard &callingCard
+	CallsignIcon &callsignIcon
+
+	var rui
+}
+
+struct
+{
+	array<CallsignEventData>[3] pendingCallsignEvents
+	array<CallsignEventData>[3] activeCallsignEvents
+	bool[3] callsignEventActive
+
+	//array<CallsignEventData> pendingFriendlyEvents = []
+	//array<CallsignEventData> activeFriendlyEvents = []
+	//bool friendlyEventsActive = false
+	//
+	//array<CallsignEventData> pendingEnemyEvents = []
+	//array<CallsignEventData> activeEnemyEvents = []
+	//bool enemyEventsActive = false
+	//
+	//array<CallsignEventData> pendingYouEvents = []
+	//array<CallsignEventData> activeYouEvents = []
+	//bool youEventsActive = false
+
+	var tempRui
+	entity tempVgui
+
+	int medalOffset = 0
+
+	var crosshairMedal
+	bool lastCrosshairMedalIsChallenge = false
+	float lastCrosshairMedalTime
+	array<var> medalQueue = []
+
+	array<MessageData> pendingMedalQueue = []
+	array<MessageData> activeMedalQueue = []
+	bool medalQueueActive = false
+
+	array<MessageData> activeEventQueue = []
+
+	bool eventQueueActive = false
+	array<MessageData> pendingEventQueue = []
+
+	array<MessageData> earnMeterQueue = []
+
+	var weaponInfo
+	int lastSortKey = 0
+	int lastOffset = 0
+
+	bool damageFlyoutEnabled = true
+
+	var hitIndicatorRui
+	float lastHitTime = 0.0
+
+	bool callsignEventsEnabled = true
+	bool scoreEventsEnabled = true
+
+	int lastDisplayedMeter
+	float lastDisplayedMeterTime
+
+	float lastReadyMessageTime
+	var	readyInfoRui
+
+} file
+
+global struct Earnings
+{
+	float baseTime
+	float lastEarnTime
+	float earnedFrac
+	float ownedFrac
+}
+
+global Earnings earnings
+
+
+const int NUM_OFFSETS = 4
+const int[NUM_OFFSETS] DAMAGE_OFFSETS = [0, 1, 0, -1]
+
+void function CLHud_Init()
+{
+	float[2] screenSize = GetScreenSize()
+	file.hitIndicatorRui = RuiCreate( $"ui/hit_indicator.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 0 )
+	RuiSetResolution( file.hitIndicatorRui, screenSize[0], screenSize[1] )
+
+	file.readyInfoRui = CreateCockpitRui( $"ui/ready_info.rpak" )
+
+}
+
+const float EARN_PER_SECOND = 0.005
+
+const float HOLD_DURATION = 4.0
+const float DECAY_RATE = 0.01
+
+const float METER_ANIM_DURATION = 0.65
+
+#if DEV
+
+void function AddYouCallsignEvent()
+{
+	int eventType = eCallSignEvents.FRIENDLY
+
+	CallsignEvent( eventType, gp()[0], Localize( "#CALLSIGN_EVENT_YOU_KILLED" ) )
+}
+void function AddEnemyCallsignEvent()
+{
+	int eventType = eCallSignEvents.ENEMY
+
+	CallsignEvent( eventType, gp()[0], Localize( "#CALLSIGN_EVENT_YOU_KILLED" ) )
+}
+
+
+var function TEMP_CreateRUITopology( vector org, vector ang, float width, float height )
+{
+	// adjust so the RUI is drawn with the org as its center point
+	org += ( (AnglesToRight( ang )*-1) * (width*0.5) )
+	org += ( AnglesToUp( ang ) * (height*0.5) )
+
+	// right and down vectors that get added to base org to create the display size
+	vector right = ( AnglesToRight( ang ) * width )
+	vector down = ( (AnglesToUp( ang )*-1) * height )
+
+	//DebugDrawAngles( org, ang, 10000 )
+	//DebugDrawAngles( org + right, ang, 10000 )
+	//DebugDrawAngles( org + down, ang, 10000 )
+
+	var topo = RuiTopology_CreatePlane( org, right, down, true )
+	return topo
+}
+
+void function Repro()
+{
+	OnThreadEnd(
+		function() : (  )
+		{
+			printt( GetGlobalNetBool( "titanOSDialogueEnabled" ) )
+		}
+	)
+
+	wait 1000
+}
+
+void function RUI()
+{
+	if ( file.tempRui != null )
+	{
+		RuiDestroyIfAlive( file.tempRui )
+		file.tempRui = null
+	}
+
+	if ( file.tempVgui != null )
+	{
+		file.tempVgui.Destroy()
+		file.tempVgui = null
+	}
+
+	entity player = gp()[0]
+
+	//var topo = TEMP_CreateRUITopology( GetMenuPilotBody().GetOrigin() + <55, 0, 70>, <0, 70, 3>, 32, 17 )
+	//var rui = RuiCreate( $"ui/callsign_basic.rpak", topo, RUI_DRAW_WORLD, 0 )
+
+	var topo = RuiTopology_CreateSphere( COCKPIT_RUI_OFFSET_1610_TEMP, <0, -1, 0>, <0, 0, -1>, COCKPIT_RUI_RADIUS, COCKPIT_RUI_WIDTH, COCKPIT_RUI_HEIGHT, COCKPIT_RUI_SUBDIV )
+	var rui = CreateCockpitRui( $"ui/callsign_basic.rpak" )//RuiCreate( $"ui/callsign_basic.rpak", topo, RUI_DRAW_WORLD, 0 )
+
+	file.tempRui = rui
+}
+#endif
+
+void function CallsignEvent( int eventType, entity ownerPlayer, string eventText )
+{
+	CallsignEventData callsignEventData
+	callsignEventData.eventText = eventText
+	callsignEventData.playerText = ownerPlayer.GetPlayerName()
+	callsignEventData.playerLevel = PlayerXPDisplayGenAndLevel( ownerPlayer.GetGen(), ownerPlayer.GetLevel() )
+	callsignEventData.isFriendly = ownerPlayer.GetTeam() == GetLocalClientPlayer().GetTeam()
+	callsignEventData.showTeamGlow = false
+	callsignEventData.eventType = eventType
+	callsignEventData.callingCard = PlayerCallingCard_GetActive( ownerPlayer )
+	callsignEventData.callsignIcon = PlayerCallsignIcon_GetActive( ownerPlayer )
+
+	AddCallsignEvent( callsignEventData )
+}
+
+
+void function KilledByCallsignEvent( entity attacker )
+{
+	if ( !attacker.IsPlayer() )
+		return
+
+	if ( attacker == GetLocalClientPlayer() )
+		return
+
+	CallsignEventData callsignEventData
+	callsignEventData.eventText = Localize( "#CALLSIGN_EVENT_KILLED_BY" )
+	callsignEventData.playerText = attacker.GetPlayerName()
+	callsignEventData.playerLevel = PlayerXPDisplayGenAndLevel( attacker.GetGen(), attacker.GetLevel() )
+	callsignEventData.isFriendly = false
+	callsignEventData.showTeamGlow = true
+	callsignEventData.defaultDuration = 3.5
+	callsignEventData.purge = true
+	callsignEventData.eventType = eCallSignEvents.YOU
+	callsignEventData.callingCard = PlayerCallingCard_GetActive( attacker )
+	callsignEventData.callsignIcon = PlayerCallsignIcon_GetActive( attacker )
+
+	AddCallsignEvent( callsignEventData )
+}
+
+
+void function AddCallsignEvent( CallsignEventData callsignEventData )
+{
+	if ( !file.callsignEventsEnabled )
+		return
+
+	int eventType = callsignEventData.eventType
+
+	if ( GetConVarInt( "hud_setting_showCallsigns" ) == 0 && (eventType != eCallSignEvents.YOU || eventType != eCallSignEvents.YOU_SPECTATING) )
+		return
+
+	file.pendingCallsignEvents[eventType].append( callsignEventData )
+
+	if ( file.callsignEventActive[eventType] )
+		return
+
+	//if ( eventType == eCallSignEvents.YOU )
+	//	thread CallsignEventStackThink( eventType )
+	//else
+		thread CallsignEventQueueThink( eventType )
+}
+
+
+
+void function CallsignEventQueueThink( int eventType )
+{
+	file.callsignEventActive[eventType] = true
+	int displayCount = 0
+	while( file.pendingCallsignEvents[eventType].len() )
+	{
+		CallsignEventData eventData = file.pendingCallsignEvents[eventType][0]
+		file.pendingCallsignEvents[eventType].remove( 0 )
+
+		eventData.endTime = Time() + eventData.defaultDuration
+
+		var rui = CreateCockpitRui( CALLSIGN_EVENT_ASSETS[eventType] )
+		RuiSetGameTime( rui, "startTime", Time() )
+		RuiSetGameTime( rui, "endTime", eventData.endTime )
+		RuiSetString( rui, "playerName", eventData.playerText )
+		RuiSetString( rui, "playerLevel", eventData.playerLevel )
+		RuiSetString( rui, "eventText", eventData.eventText )
+		RuiSetImage( rui, "cardImage", CallingCard_GetImage( eventData.callingCard ) )
+		RuiSetInt( rui, "layoutType", CallingCard_GetLayout( eventData.callingCard ) )
+		RuiSetImage( rui, "iconImage", CallsignIcon_GetImage( eventData.callsignIcon ) )
+		RuiSetBool( rui, "isFriendly", eventData.isFriendly )
+		RuiSetBool( rui, "showTeamGlow", eventData.showTeamGlow )
+		eventData.rui = rui
+
+		displayCount++
+		wait eventData.defaultDuration - CALLSIGN_OUT_DURATION
+		RuiDestroy( rui )
+	}
+	ActiveCallsignEventUpdate( eventType )
+
+	file.callsignEventActive[eventType] = false
+}
+
+
+
+
+void function CallsignEventStackThink( int eventType )
+{
+	file.callsignEventActive[eventType] = true
+	while( file.pendingCallsignEvents[eventType].len() )
+	{
+		CallsignEventData eventData = file.pendingCallsignEvents[eventType][0]
+		file.pendingCallsignEvents[eventType].remove( 0 )
+
+		eventData.endTime = Time() + eventData.defaultDuration
+
+		var rui = CreateCockpitRui( CALLSIGN_EVENT_ASSETS[eventType] )
+		//var rui = RuiCreate( CALLSIGN_EVENT_ASSETS[eventType], clGlobal.topoFullScreen, RUI_DRAW_HUD, 0 )
+		RuiSetGameTime( rui, "startTime", Time() )
+		RuiSetGameTime( rui, "endTime", eventData.endTime )
+		RuiSetString( rui, "playerName", eventData.playerText )
+		RuiSetString( rui, "playerLevel", eventData.playerLevel )
+		RuiSetString( rui, "eventText", eventData.eventText )
+		RuiSetImage( rui, "cardImage", CallingCard_GetImage( eventData.callingCard ) )
+		RuiSetInt( rui, "layoutType", CallingCard_GetLayout( eventData.callingCard ) )
+		RuiSetImage( rui, "iconImage", CallsignIcon_GetImage( eventData.callsignIcon ) )
+		RuiSetBool( rui, "isFriendly", eventData.isFriendly )
+		RuiSetBool( rui, "showTeamGlow", eventData.showTeamGlow )
+		eventData.rui = rui
+
+		ActiveCallsignEventUpdate( eventType )
+		if ( file.activeCallsignEvents[eventType].len() && !eventData.purge )
+		{
+			RuiSetString( rui, "eventText", "" )
+		}
+
+		file.activeCallsignEvents[eventType].insert( 0, eventData )
+		const float EVENT_STACK_ADDTIONAL_TIME = 0.1
+		for ( int index = 1; index < file.activeCallsignEvents[eventType].len(); index++ )
+		{
+			var eventRui = file.activeCallsignEvents[eventType][index].rui
+			if ( eventData.purge )
+				file.activeCallsignEvents[eventType][index].endTime = Time() + (EVENT_STACK_ADDTIONAL_TIME * index)
+			else
+				file.activeCallsignEvents[eventType][index].endTime = eventData.endTime + (EVENT_STACK_ADDTIONAL_TIME * index)
+
+			RuiSetGameTime( eventRui, "endTime", file.activeCallsignEvents[eventType][index].endTime )
+		}
+
+		wait 0.1
+	}
+	file.callsignEventActive[eventType] = false
+}
+
+
+void function ActiveCallsignEventUpdate( int eventType )
+{
+	for ( int index = file.activeCallsignEvents[eventType].len() - 1; index >= 0 ; index-- )
+	{
+		if ( Time() < file.activeCallsignEvents[eventType][index].endTime )
+			continue
+
+		RuiDestroy( file.activeCallsignEvents[eventType][index].rui )
+		file.activeCallsignEvents[eventType].remove( index )
+	}
+}
+//
+//WaitEndFrame()
+//
+//file.pendingEventQueue.sort( SortPendingEvents )
+
+
+
+void function AddMedalQueueMessage( MessageData messageData )
+{
+	file.pendingMedalQueue.append( messageData )
+
+	if ( file.medalQueueActive )
+		return
+
+	thread MedalQueueMessageThink()
+}
+
+
+
+void function MedalQueueMessageThink()
+{
+	// allow multiple queue messages to come in this frame
+	file.medalQueueActive = true
+
+	WaitEndFrame()
+
+	file.pendingMedalQueue.sort( SortPendingMedals )
+
+	while ( file.pendingMedalQueue.len() )
+	{
+		MessageData messageData = file.pendingMedalQueue[0]
+		file.pendingMedalQueue.remove( 0 )
+
+		messageData.startTime = Time()
+		messageData.duration = 3.0
+
+		var rui = CreateCockpitRui( $"ui/medal_award.rpak" )
+		RuiSetGameTime( rui, "startTime", Time() )
+		RuiSetString( rui, "medalText", messageData.messageText )
+		RuiSetString( rui, "scoreText", "+" + messageData.scoreEventValue )
+		RuiSetImage( rui, "medalImage", messageData.icon )
+		RuiSetInt( rui, "medalCount", 8 )
+
+		messageData.rui = rui
+		thread MedalThink( messageData )
+
+		if ( file.pendingEventQueue.len() > 1 )
+			RuiSetGameTime( rui, "moveUpStartTime", Time() )
+
+		file.activeMedalQueue.insert( 0, messageData )
+
+		for ( int index = 1; index < file.activeMedalQueue.len(); index++ )
+		{
+			var messageRui = file.activeMedalQueue[index].rui
+			RuiSetInt( messageRui, "medalOffset", index )
+			RuiSetGameTime( messageRui, "moveUpStartTime", Time() )
+		}
+
+		wait 0.1
+	}
+
+	file.medalQueueActive = false
+}
+
+void function MedalThink( MessageData messageData )
+{
+	wait messageData.duration
+
+	file.activeMedalQueue.removebyvalue( messageData )
+	RuiDestroy( messageData.rui )
+}
+
+
+void function AddMedal( ScoreEvent scoreEvent, int pointValue, float earnedValue, float ownedValue, bool isChallenge, bool showCrosshairMedal = false )
+{
+	if ( GetConVarInt( "hud_setting_showMedals" ) == 0 )
+		return
+
+	pointValue = int( (earnedValue + ownedValue) * 100 )
+	asset medalIcon = ScoreEvent_GetMedalIcon( scoreEvent )
+
+	if ( showCrosshairMedal )
+	{
+		if ( file.crosshairMedal != null )
+		{
+			if ( file.lastCrosshairMedalIsChallenge && file.lastCrosshairMedalTime + 3.0 > Time() )
+				return
+
+			file.lastCrosshairMedalIsChallenge = isChallenge
+
+			RuiDestroyIfAlive( file.crosshairMedal )
+		}
+
+		//string medalText = ScoreEvent_GetMedalText( scoreEvent )
+		string medalText = GetFormattedMedalText( scoreEvent, 0 )
+
+		file.lastCrosshairMedalTime = Time()
+
+		var ruiCrosshair = CreateCockpitRui( $"ui/medal_award_crosshair.rpak" )
+		RuiSetGameTime( ruiCrosshair, "startTime", Time() )
+		RuiSetString( ruiCrosshair, "medalText", medalText )
+		RuiSetString( ruiCrosshair, "scoreText", "+" + pointValue )
+		RuiSetImage( ruiCrosshair, "medalImage", medalIcon )
+
+		file.crosshairMedal = ruiCrosshair
+	}
+	else
+	{
+		string medalText = GetFormattedMedalText( scoreEvent, pointValue )//ScoreEvent_GetMedalText( scoreEvent )
+
+		MessageData messageData
+		messageData.messageText = medalText
+		messageData.scoreEventValue = pointValue
+		messageData.icon = medalIcon
+
+		if ( scoreEvent.xpValueWeapon || scoreEvent.xpValue || scoreEvent.xpValueFaction || scoreEvent.xpValueTitan )
+		{
+			printt( medalText )
+			messageData.messageScale = 2.0
+		}
+		else
+			messageData.messageScale = 1.0
+
+		AddMedalQueueMessage( messageData )
+	}
+
+	/*
+	float duration = 3.0
+	int medalCount = 8
+
+	var rui = CreateCockpitRui( $"ui/medal_award.rpak" )
+	RuiSetGameTime( rui, "startTime", Time() )
+	RuiSetString( rui, "medalText", medalText )
+	RuiSetString( rui, "scoreText", "+" + pointValue )
+	RuiSetImage( rui, "medalImage", medalIcon )
+	RuiSetInt( rui, "medalCount", medalCount )
+
+	file.medalQueue.insert( 0, rui )
+
+	for ( int index = 1; index < file.medalQueue.len(); index++ )
+	{
+		var medalRui = file.medalQueue[index]
+
+		if ( index >= medalCount )
+		{
+			file.medalQueue.removebyvalue( medalRui )
+			RuiDestroy( medalRui )
+			continue
+		}
+
+		RuiSetInt( medalRui, "medalOffset", index )
+		RuiSetGameTime( medalRui, "slottedTime", Time() )
+		RuiSetGameTime( medalRui, "moveUpStartTime", Time() )
+	}
+*/
+}
+
+bool function AppendToExistingScoreEvent( ScoreEvent scoreEvent, int pointValue, float earnedValue, float ownedValue )
+{
+	// try to update message that is already displayed
+	foreach ( index, messageData in file.activeEventQueue )
+	{
+		if ( messageData.scoreEventId != ScoreEvent_GetEventId( scoreEvent ) )
+			continue
+
+		messageData.scoreEventValue += ScoreEvent_GetPointValue( scoreEvent )
+		messageData.messageText = GetFormattedEventText( scoreEvent, messageData.scoreEventValue, null, earnedValue, ownedValue )
+		messageData.startTime = Time()
+		RuiSetString( messageData.rui, "messageText", Localize( messageData.messageText ) )
+		RuiSetGameTime( messageData.rui, "startTime", messageData.startTime )
+		return true
+	}
+
+	// try to update message that will be displayed
+	foreach ( index, messageData in file.pendingEventQueue )
+	{
+		if ( messageData.scoreEventId != ScoreEvent_GetEventId( scoreEvent ) )
+			continue
+
+		messageData.scoreEventValue += ScoreEvent_GetPointValue( scoreEvent )
+		messageData.messageText = GetFormattedEventText( scoreEvent, messageData.scoreEventValue, null, earnedValue, ownedValue )
+		return true
+	}
+
+	return false
+}
+
+
+const float READY_INFO_DURATION = 2.5
+
+
+void function AddScoreEventMessage( ScoreEvent scoreEvent, entity associatedEntity, int displayType, int pointValue, float earnedValue, float ownedValue )
+{
+	string eventText = ScoreEvent_GetSplashText( scoreEvent )
+
+	entity player = GetLocalClientPlayer()
+	//if ( (player.IsTitan() || player.GetPetTitan()) && !(displayType & eEventDisplayType.BIG) )
+	//{
+	//	//return
+	//	pointValue = 0
+	//}
+	//else if ( (player.IsTitan() || player.GetPetTitan()) )
+	//{
+	//	pointValue = 0
+	//}
+
+	if ( (player.IsTitan() || player.GetPetTitan()) )
+	{
+		pointValue = int( ownedValue * 100 )
+	}
+
+	//if ( !(displayType & eEventDisplayType.BIG) && AppendToExistingScoreEvent( scoreEvent, pointValue, earnedValue, ownedValue ) )
+	//	return
+
+	eventText = GetFormattedEventText( scoreEvent, pointValue, associatedEntity, earnedValue, ownedValue )
+
+	MessageData messageData
+	messageData.scoreEventId = ScoreEvent_GetEventId( scoreEvent )
+	messageData.scoreEventValue = pointValue
+	messageData.messageScale = (displayType & eEventDisplayType.BIG) ? 1.5 : 1.0
+	messageData.messageText = eventText
+
+	const bool SHOW_EARNED_DELTA = true
+
+	bool shouldShowReadyMessage = false
+	string readyMessage
+	asset readyIcon
+	if ( (player.IsTitan() || player.GetPetTitan()) )
+	{
+		entity soul = player.IsTitan() ? player.GetTitanSoul() : player.GetPetTitan().GetTitanSoul()
+		if ( IsCoreChargeAvailable( player, soul ) )
+		{
+			if ( Time() - file.lastReadyMessageTime > 15.0 && player.IsTitan() )
+			{
+				shouldShowReadyMessage = true
+				readyMessage = Localize( "#CORE_READY" )// + "%$rui/hud/titan_core%"
+				file.lastReadyMessageTime = Time()
+				readyIcon = $"rui/hud/titan_core_ready"
+			}
+		}
+		else if ( player.IsTitan() && soul != null )
+		{
+			if ( SHOW_EARNED_DELTA )
+			{
+				if ( pointValue > 0 )
+				{
+					int meterDisplayValue
+					if ( Time() - file.lastDisplayedMeterTime < READY_INFO_DURATION )
+						meterDisplayValue = file.lastDisplayedMeter + pointValue
+					else
+						meterDisplayValue = pointValue
+
+					readyMessage = Localize( "#CORE_EARNED_DELTA_COMPACT", meterDisplayValue )// + "`1%$rui/hud/titan_core%"
+					readyIcon = $"rui/hud/titan_core"
+					shouldShowReadyMessage = true
+
+					file.lastDisplayedMeter = meterDisplayValue
+					file.lastDisplayedMeterTime = Time()
+				}
+			}
+			else
+			{
+				float coreAvailableFrac = soul.GetTitanSoulNetFloat( "coreAvailableFrac" ) + 0.001
+				if ( int( (coreAvailableFrac * 100) ) > 0 )
+				{
+					readyMessage = Localize( "#CORE_EARNED_AMOUNT_COMPACT", int( (coreAvailableFrac * 100) ) )// + "`1%$rui/hud/titan_core%"
+					readyIcon = $"rui/hud/titan_core"
+					shouldShowReadyMessage = true
+
+				}
+			}
+		}
+	}
+	else
+	{
+		if ( IsTitanAvailable( GetLocalClientPlayer() ) )
+		{
+			if (  Time() - file.lastReadyMessageTime > 15.0 )
+			{
+				shouldShowReadyMessage = true
+				readyMessage = Localize( "#TITAN_READY" )// + "`1%$rui/hud/titanfall_marker_arrow_ready%"
+				file.lastReadyMessageTime = Time()
+				readyIcon = $"rui/hud/titanfall_marker_arrow_ready"
+			}
+		}
+		else
+		{
+			if ( SHOW_EARNED_DELTA )
+			{
+				if ( pointValue > 0 )
+				{
+					int meterDisplayValue
+					if ( Time() - file.lastDisplayedMeterTime < READY_INFO_DURATION )
+						meterDisplayValue = file.lastDisplayedMeter + pointValue
+					else
+						meterDisplayValue = pointValue
+
+					if ( !GameModeWantsToSkipBoostsAndTitanEarning() )
+					{
+						if ( EarnMeterMP_IsTitanEarnGametype() )
+							readyMessage = Localize( "#TITAN_EARNED_DELTA_COMPACT", meterDisplayValue )// + "`1%$rui/hud/titanfall_marker_arrow%"
+						else
+							readyMessage = Localize( "#BOOST_EARNED_DELTA_COMPACT", meterDisplayValue )// + "`1%$rui/hud/titanfall_marker_arrow%"
+						readyIcon = $"rui/hud/titanfall_marker_arrow_progress"
+						shouldShowReadyMessage = true
+
+						file.lastDisplayedMeter = meterDisplayValue
+						file.lastDisplayedMeterTime = Time()
+					}
+
+				}
+			}
+			else
+			{
+				float meterFrac = max( PlayerEarnMeter_GetEarnedFrac( player ), PlayerEarnMeter_GetOwnedFrac( player ) ) + 0.001
+				if ( int( (meterFrac * 100) ) > 0 )
+				{
+					if ( !GameModeWantsToSkipBoostsAndTitanEarning() )
+					{
+						if ( EarnMeterMP_IsTitanEarnGametype() )
+							readyMessage = Localize( "#TITAN_EARNED_AMOUNT_COMPACT", int( (meterFrac * 100) ) )// + "`1%$rui/hud/titanfall_marker_arrow%"
+						else
+							readyMessage = Localize( "#BOOST_EARNED_AMOUNT_COMPACT", int( (meterFrac * 100) ) )// + "`1%$rui/hud/titanfall_marker_arrow%"
+
+						readyIcon = $"rui/hud/titanfall_marker_arrow_progress"
+						shouldShowReadyMessage = true
+					}
+				}
+			}
+		}
+	}
+
+	if ( shouldShowReadyMessage && GetConVarInt( "hud_setting_showMeter" ) != 0 )
+	{
+		var readyRui = file.readyInfoRui
+		RuiSetGameTime( readyRui, "startTime", Time() )
+		RuiSetFloat( readyRui, "duration", READY_INFO_DURATION )
+		RuiSetString( readyRui, "messageText", Localize( readyMessage ) )
+		//RuiSetImage( readyRui, "readyIcon", readyIcon )
+		RuiSetImage( readyRui, "readyIcon", $"" )
+	}
+
+	//if ( !ScoreEvent_HasDisplayType( scoreEvent, eEventDisplayType.BIG ) )
+	//{
+	//	EarnMeterPrint( messageData )
+	//	return
+	//}
+
+	if ( !(displayType & eEventDisplayType.BIG) )
+		return
+
+	file.pendingEventQueue.append( messageData )
+
+	if ( file.eventQueueActive )
+		return
+
+	thread QueueMessageThink()
+}
+
+
+void function AddGenericQueueMessage( string messageText, bool isBigText = false, float duration = 2.5 )
+{
+	MessageData messageData
+	messageData.messageScale = isBigText ? 1.5 : 1.0
+	messageData.messageText = Localize( messageText )
+	messageData.duration = duration
+
+	file.pendingEventQueue.append( messageData )
+
+	if ( file.eventQueueActive )
+		return
+
+	thread QueueMessageThink()
+}
+
+int function SortPendingEvents( MessageData eventA, MessageData eventB )
+{
+	if ( eventA.messageScale > eventB.messageScale )
+		return 1
+	else if ( eventA.messageScale < eventB.messageScale )
+		return -1
+
+	return 0
+}
+
+int function SortPendingMedals( MessageData eventA, MessageData eventB )
+{
+	if ( eventA.messageScale > eventB.messageScale )
+		return 1
+	else if ( eventA.messageScale < eventB.messageScale )
+		return -1
+
+	return 0
+}
+
+void function QueueMessageThink()
+{
+	// allow multiple queue messages to come in this frame
+	file.eventQueueActive = true
+	WaitEndFrame()
+
+	file.pendingEventQueue.sort( SortPendingEvents )
+
+	while ( file.pendingEventQueue.len() )
+	{
+		MessageData messageData = file.pendingEventQueue[0]
+		file.pendingEventQueue.remove( 0 )
+
+		messageData.startTime = Time()
+
+		var rui = CreateCockpitRui( $"ui/killdeath_info.rpak" )
+		RuiSetGameTime( rui, "startTime", messageData.startTime )
+		RuiSetFloat( rui, "duration", messageData.duration )
+		RuiSetString( rui, "messageText", Localize( messageData.messageText ) )
+		RuiSetBool( rui, "isBigText", messageData.messageScale > 1.0 )
+
+		messageData.rui = rui
+		thread MessageThink( messageData )
+
+		file.activeEventQueue.insert( 0, messageData )
+
+		float totalMessageScale = 0.0
+		for ( int index = 0; index < file.activeEventQueue.len(); index++ )
+		{
+			var messageRui = file.activeEventQueue[index].rui
+			RuiSetFloat( messageRui, "messageOffsetScale", totalMessageScale )
+			RuiSetGameTime( messageRui, "updateTime", Time() )
+
+			totalMessageScale += file.activeEventQueue[index].messageScale
+		}
+
+		wait 0.1
+	}
+
+	file.eventQueueActive = false
+}
+
+
+void function MessageThink( MessageData messageData )
+{
+	float endTime = messageData.startTime + messageData.duration
+
+	while ( Time() < endTime )
+	{
+		wait endTime - Time()
+		endTime = messageData.startTime + messageData.duration
+	}
+
+	file.activeEventQueue.removebyvalue( messageData )
+	RuiDestroy( messageData.rui )
+
+	float totalMessageScale = 0.0
+	for ( int index = 0; index < file.activeEventQueue.len(); index++ )
+	{
+		var messageRui = file.activeEventQueue[index].rui
+		RuiSetFloat( messageRui, "messageOffsetScale", totalMessageScale )
+		totalMessageScale += file.activeEventQueue[index].messageScale
+	}
+}
+
+
+void function DamageFlyout( float damage, vector damagePosition, entity victim, bool isCrit, bool isIneffective )
+{
+	if ( !file.damageFlyoutEnabled )
+		return
+
+	int hitType = HIT_NORMAL
+	if ( isCrit )
+		hitType = HIT_CRIT
+	////else if ( isIneffective )
+	////	hitType = HIT_INEFFECTIVE
+
+	entity player = GetLocalClientPlayer()
+
+	float dist = Distance( player.CameraPosition(), damagePosition )
+
+	damagePosition += DAMAGE_OFFSETS[file.lastOffset] * <0, 0, dist * 0.04>
+
+	file.lastOffset = (file.lastOffset + 1) % NUM_OFFSETS
+
+	float duration = 1.0
+	float startTime = Time()
+
+	int sortKey = (file.lastSortKey++) % 30
+	if ( hitType == HIT_CRIT )
+		sortKey += 10
+
+	float[2] screenSize = GetScreenSize()
+
+	if ( Time() - file.lastHitTime > 0.1 )
+	{
+		var rui = RuiCreate( $"ui/hit_indicator.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 0 )
+		RuiSetResolution( rui, screenSize[0], screenSize[1] )
+
+		RuiSetGameTime( rui, "startTime", startTime )
+		RuiSetInt( rui, "hitType", hitType )
+		file.lastHitTime = Time()
+	}
+}
+
+void function ServerCallback_ScoreEvent( int scoreEventId, int pointValue, int displayType, int associatedEntityHandle = 0, float earnedValue = 0, float ownedValue = 0 )
+{
+	if ( !file.scoreEventsEnabled )
+		return
+
+	ScoreEvent scoreEvent = ScoreEvent_FromId( scoreEventId )
+
+	if ( ScoreEvent_GetPointValue( scoreEvent ) != pointValue )
+	{
+		scoreEvent = clone scoreEvent // clone event so we can temporarily modify the point value
+		ScoreEvent_SetPointValue( scoreEvent, pointValue )
+	}
+
+	entity associatedEntity = null
+	if ( associatedEntityHandle != 0 )
+		associatedEntity = GetEntityFromEncodedEHandle( associatedEntityHandle )
+
+	if ( displayType & eEventDisplayType.MEDAL )
+	{
+		bool showCrosshairMedal = (displayType & eEventDisplayType.GAMEMODE) != 0
+		bool isChallenge = (displayType & eEventDisplayType.CHALLENGE) != 0
+
+		AddMedal( scoreEvent, pointValue, earnedValue, ownedValue, isChallenge, showCrosshairMedal )
+	}
+
+	if ( displayType & eEventDisplayType.CENTER )
+		AddScoreEventMessage( scoreEvent, associatedEntity, displayType, pointValue, earnedValue, ownedValue )
+
+	if ( displayType & eEventDisplayType.CALLINGCARD && IsValid( associatedEntity ) )
+		AddScoreCallingCardEvent( scoreEvent, associatedEntity )
+
+	if ( scoreEventId in clGlobal.onScoreEventCallback )
+		clGlobal.onScoreEventCallback[ scoreEventId ]( pointValue, associatedEntity )
+}
+
+void function ServerCallback_CallingCardEvent( int scoreEventId, int associatedEntityHandle = 0 )
+{
+	entity associatedEntity = null
+	if ( associatedEntityHandle != 0 )
+		associatedEntity = GetEntityFromEncodedEHandle( associatedEntityHandle )
+
+	if ( !IsValid( associatedEntity ) )
+		return
+
+	ScoreEvent scoreEvent = ScoreEvent_FromId( scoreEventId )
+
+	AddScoreCallingCardEvent( scoreEvent, associatedEntity )
+}
+
+void function AddScoreCallingCardEvent( ScoreEvent scoreEvent, entity ownerPlayer )
+{
+	if ( !clGlobal.callingCardsEnabled )
+		return
+
+	float[2] screenSize = GetScreenSize()
+
+	int eventType = GetLocalClientPlayer().GetTeam() == ownerPlayer.GetTeam() ? eCallSignEvents.FRIENDLY : eCallSignEvents.ENEMY
+	CallsignEvent( eventType, ownerPlayer, Localize( ScoreEvent_GetSplashText( scoreEvent ) ) )
+}
+
+void function DisableCallingCardEvents()
+{
+	foreach ( team in [ TEAM_IMC, TEAM_MILITIA ] )
+	{
+		if ( clGlobal.callingCardRuis[ team ] != null )
+			RuiDestroyIfAlive( clGlobal.callingCardRuis[ team ] )
+	}
+
+	clGlobal.callingCardsEnabled = false
+}
+
+void function EnableCallingCardEvents()
+{
+	clGlobal.callingCardsEnabled = true
+}
+
+string function GetFormattedEventText( ScoreEvent scoreEvent, int pointValue, entity targetEntity, float earnedValue, float ownedValue )
+{
+	string eventText = ScoreEvent_GetSplashText( scoreEvent )
+
+	if ( IsValid( targetEntity ) && Localize( eventText ).find( "%s" ) != null )
+	{
+		string targetEntityText = targetEntity.IsPlayer() ? targetEntity.GetPlayerName() : targetEntity.GetBossPlayerName()
+		eventText = Localize( eventText, targetEntityText )
+	}
+
+	bool earningsEnabled = false
+
+	entity player = GetLocalClientPlayer()
+	if ( player.IsTitan() || player.GetPetTitan() )
+	{
+		if ( player.IsTitan() )
+		{
+			entity soul = player.GetTitanSoul()
+			if ( IsCoreChargeAvailable( player, soul ) || !earningsEnabled )
+				eventText = eventText
+			else
+				eventText = eventText + " `2+" + pointValue + "`3%%"// + "`3%$rui/hud/titan_core%"
+		}
+	}
+	else
+	{
+		string icon
+		if ( earnedValue && !ownedValue )
+			icon = "%$rui/hud/titanfall_marker_arrow_earned%"
+		else if ( !earnedValue && ownedValue )
+			icon = "%$rui/hud/titanfall_marker_arrow_owned%"
+		else
+			icon = "%$rui/hud/titanfall_marker_arrow_owned_earned%"
+
+		if ( IsTitanAvailable( GetLocalClientPlayer() ) || !earningsEnabled )
+			eventText = eventText
+		else if ( pointValue > 0 )
+			eventText = eventText + " `2+" + pointValue + "`3%%"//"`3" + icon
+	}
+
+	return eventText
+}
+
+string function GetFormattedMedalText( ScoreEvent scoreEvent, int pointValue )
+{
+	string eventText = Localize( ScoreEvent_GetMedalText( scoreEvent ) )
+
+	entity player = GetLocalClientPlayer()
+	if ( player.IsTitan() || player.GetPetTitan() )
+	{
+		if ( player.IsTitan() )
+		{
+			entity soul = player.GetTitanSoul()
+			if ( IsCoreChargeAvailable( player, soul ) || pointValue == 0 )
+				eventText = eventText
+			else
+				eventText = eventText + " `2+" + pointValue + "`3%%"// + "`3%$rui/hud/titan_core%"
+		}
+	}
+	else
+	{
+		if ( IsTitanAvailable( GetLocalClientPlayer() ) || pointValue == 0 )
+			eventText = eventText
+		else if ( pointValue > 0 )
+			eventText = eventText + " `2+" + pointValue + "`3%%"
+	}
+
+	return eventText
+}
+
+void function CallsignEvents_SetEnabled( bool state )
+{
+	file.callsignEventsEnabled = state
+}
+
+
+void function ScoreEvents_SetEnabled( bool state )
+{
+	file.scoreEventsEnabled = state
+}
+
+
+void function EarnMeterPrint( MessageData messageData )
+{
+	var rui = CreateCockpitRui( $"ui/obituary_crawl_earnmeter.rpak" )
+	RuiSetGameTime( rui, "startTime", Time() )
+	RuiSetGameTime( rui, "updateTime", Time() )
+	RuiSetFloat( rui, "duration", OBITUARY_DURATION )
+
+	RuiSetString( rui, "localizedString", messageData.messageText )
+	RuiSetString( rui, "entityName", "asdf" )
+	RuiSetFloat3( rui, "string1Color", <1, 1, 1> )
+	RuiSetFloat3( rui, "string2Color", <1, 1, 1> )
+	messageData.startTime = Time()
+
+	messageData.rui = rui
+
+	file.earnMeterQueue.insert( 0, messageData )
+
+	UpdateEarnMeterQueue()
+}
+
+void function UpdateEarnMeterQueue()
+{
+	for ( int index = file.earnMeterQueue.len() - 1; index >= 0; index-- )
+	{
+		MessageData messageData = file.earnMeterQueue[index]
+
+		if ( Time() - messageData.startTime >= OBITUARY_DURATION || index > 6 )
+		{
+			RuiDestroy( messageData.rui )
+			file.earnMeterQueue.remove( index )
+			continue
+		}
+
+		RuiSetInt( messageData.rui, "offset", index )
+		RuiSetGameTime( messageData.rui, "updateTime", Time() )
+	}
+
+}

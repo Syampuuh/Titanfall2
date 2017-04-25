@@ -1,0 +1,30 @@
+untyped
+
+global function ClScoreboardSp_Init
+
+struct
+{
+	float nextObjectiveDisplayTime = 0
+} file
+
+function ClScoreboardSp_Init()
+{
+	level.initScoreboardFunc = InitScoreboardSP
+	level.showScoreboardFunc = ShowScoreboardSP
+	level.hideScoreboardFunc = HideScoreboardSP
+}
+
+function InitScoreboardSP()
+{
+
+}
+
+function ShowScoreboardSP()
+{
+	GetLocalClientPlayer().ClientCommand( "ToggleObjective" )
+}
+
+function HideScoreboardSP()
+{
+	GetLocalClientPlayer().ClientCommand( "ToggleObjective" )
+}

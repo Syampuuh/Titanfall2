@@ -1,0 +1,246 @@
+
+global function ShTitanXP_Init
+global function TitanGetMaxXP
+global function TitanGetMaxXPPerGen
+global function TitanGetNumPipsForXP
+global function TitanGetFilledPipsForXP
+global function TitanGetXPForLevel
+global function TitanGetRawLevelForXP
+global function TitanGetLevelForXP
+global function TitanGetGenForXP
+global function TitanGetRawLevel
+global function TitanGetLevel
+global function TitanGetGen
+global function TitanGetPreviousLevel
+global function TitanGetXP
+global function TitanGetPreviousXP
+global function TitanGetDisplayGenAndLevelForXP
+global function TitanGetDisplayGenAndLevel
+global function TitanGetDisplayGenAndLevelForRawLevel
+global function TitanGetMaxLevel
+global function TitanGetMaxRawLevel
+
+global function GetAllTitanXPItemRefs
+
+global struct ShTitanXP
+{
+	array<string> titanClasses
+}
+
+global ShTitanXP shTitanXP
+
+const MAX_TITAN_GEN = 99
+
+struct
+{
+	array<int> titanXPPipsPerLevel
+	array<int> titanXPForLevel
+	bool initialized = false
+	int maxLevelPerGen
+} file
+
+void function ShTitanXP_Init()
+{
+	if ( file.initialized )
+		return
+
+	file.initialized = true
+
+	var dataTable = GetDataTable( $"datatable/xp_per_titan_level.rpak" )
+	int numRows = GetDatatableRowCount( dataTable )
+
+	file.maxLevelPerGen = numRows
+
+	file.titanXPPipsPerLevel.resize( file.maxLevelPerGen + 1 )
+	file.titanXPForLevel.resize( file.maxLevelPerGen + 2 )
+
+	file.titanXPPipsPerLevel[ 0 ] = 0
+	file.titanXPForLevel[ 0 ] = 0
+	file.titanXPForLevel[ 1 ] = 0
+	for ( int i = 0; i < numRows; i++ )
+	{
+		int xpPerLevel = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "xpPerLevel" ) )
+		file.titanXPPipsPerLevel[ i + 1 ] = xpPerLevel
+		file.titanXPForLevel[ i + 2 ] = file.titanXPForLevel[ i + 1 ] + xpPerLevel
+	}
+
+	int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+
+	for ( int i = 0; i < enumCount; i++ )
+	{
+		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
+		if ( enumName != "" )
+			shTitanXP.titanClasses.append( enumName )
+	}
+}
+
+array<string> function GetAllTitanXPItemRefs()
+{
+	return shTitanXP.titanClasses
+}
+
+int function TitanGetMaxXP( string titanRef )
+{
+	return TitanGetMaxXPPerGen( titanRef ) * MAX_TITAN_GEN
+}
+
+int function TitanGetMaxXPPerGen( string titanRef )
+{
+	return file.titanXPForLevel[ file.maxLevelPerGen ] + file.titanXPPipsPerLevel[ file.maxLevelPerGen ]
+}
+
+int function TitanGetNumPipsForXP( string titanRef, int titanXP )
+{
+	int maxXP = TitanGetMaxXP( titanRef )
+	if ( titanXP >= maxXP )
+		return 10
+
+	int titanLevel = TitanGetLevelForXP( titanRef, titanXP )
+
+	return file.titanXPPipsPerLevel[ titanLevel ]
+}
+
+int function TitanGetFilledPipsForXP( string titanRef, int titanXP )
+{
+	int maxXP = TitanGetMaxXP( titanRef )
+	if ( titanXP >= maxXP )
+		return 10
+
+	int startingLevel = TitanGetLevelForXP( titanRef, titanXP )
+	int baseXp = TitanGetXPForLevel( titanRef, startingLevel )
+
+	int maxXPPerGen = TitanGetMaxXPPerGen( titanRef )
+	return ( titanXP % maxXPPerGen ) - baseXp
+}
+
+
+int function TitanGetXPForLevel( string titanRef, int titanLevel )
+{
+	Assert( titanLevel > 0 && titanLevel <= file.maxLevelPerGen )
+
+	return file.titanXPForLevel[ titanLevel ]
+}
+
+int function TitanGetRawLevelForXP( string titanRef, int titanXP )
+{
+	int maxXP = TitanGetMaxXP( titanRef )
+	if ( titanXP >= maxXP )
+		return file.maxLevelPerGen * MAX_TITAN_GEN + 1
+
+	int genLevels = ( TitanGetGenForXP( titanRef, titanXP ) - 1 ) * file.maxLevelPerGen
+	int maxXPPerGen = TitanGetMaxXPPerGen( titanRef )
+	int xpIntoCurrentGen = titanXP % maxXPPerGen
+
+	foreach ( i, xpVal in file.titanXPForLevel )
+	{
+		if ( xpIntoCurrentGen < xpVal )
+			return genLevels + i - 1
+	}
+
+	unreachable
+}
+
+int function TitanGetLevelForXP( string titanRef, int titanXP )
+{
+	int maxXP = TitanGetMaxXP( titanRef )
+	if ( titanXP >= maxXP )
+		return 1
+
+	int maxXPPerGen = TitanGetMaxXPPerGen( titanRef )
+	int xpIntoCurrentGen = titanXP % maxXPPerGen
+
+	foreach ( i, xpVal in file.titanXPForLevel )
+	{
+		if ( xpIntoCurrentGen < xpVal )
+			return i - 1
+	}
+
+	unreachable
+}
+
+int function TitanGetGenForXP( string titanRef, int titanXP )
+{
+	int maxXPPerGen = TitanGetMaxXPPerGen( titanRef )
+	return int( floor( float( titanXP ) / float( maxXPPerGen ) ) ) + 1
+}
+
+int function TitanGetRawLevel( entity player, string titanClass )
+{
+	return TitanGetRawLevelForXP( titanClass, player.GetPersistentVarAsInt( "titanXP[" + titanClass + "]" ) )
+}
+
+int function TitanGetLevel( entity player, string titanClass )
+{
+	return TitanGetLevelForXP( titanClass, player.GetPersistentVarAsInt( "titanXP[" + titanClass + "]" ) )
+}
+
+int function TitanGetGen( entity player, string titanClass )
+{
+	return TitanGetGenForXP( titanClass, player.GetPersistentVarAsInt( "titanXP[" + titanClass + "]" ) )
+}
+
+int function TitanGetPreviousLevel( entity player, string titanClass )
+{
+	return TitanGetLevelForXP( titanClass, player.GetPersistentVarAsInt( "previousTitanXP[" + titanClass + "]" ) )
+}
+
+int function TitanGetXP( entity player, string titanClass )
+{
+	return player.GetPersistentVarAsInt( "titanXP[" + titanClass + "]" )
+}
+
+int function TitanGetPreviousXP( entity player, string titanClass )
+{
+	string persistenceVar = "previousTitanXP[" + titanClass + "]"
+	return player.GetPersistentVarAsInt( persistenceVar )
+}
+
+string function TitanGetDisplayGenAndLevelForXP( string titanRef, int titanXP )
+{
+	int gen = TitanGetGenForXP( titanRef, titanXP )
+	int level = TitanGetLevelForXP( titanRef, titanXP )
+
+	return TitanGetDisplayGenAndLevel( gen, level )
+}
+
+string function TitanGetDisplayGenAndLevel( int gen, int level )
+{
+	if ( gen == 1 )
+	{
+		#if SERVER
+			return string( level )
+		#else
+			return Localize( "#HUD_LEVEL_N", level )
+		#endif
+	}
+	else
+	{
+		string levelText = string( level - 1 )
+
+		#if SERVER
+			return string( gen ) + "." + levelText
+		#else
+			return Localize( "#HUD_GEN_LEVEL_N_N", gen, levelText )
+		#endif
+	}
+
+	unreachable
+}
+
+string function TitanGetDisplayGenAndLevelForRawLevel( int rawLevel )
+{
+	int gen = ( ( rawLevel - 1 ) / file.maxLevelPerGen ) + 1
+	int level = ( rawLevel - 1 ) % file.maxLevelPerGen + 1
+
+	return TitanGetDisplayGenAndLevel( gen, level )
+}
+
+int function TitanGetMaxLevel( string titanRef )
+{
+	return file.maxLevelPerGen
+}
+
+int function TitanGetMaxRawLevel( string titanRef )
+{
+	return TitanGetRawLevelForXP( titanRef, TitanGetMaxXP( titanRef ) )
+}

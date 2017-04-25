@@ -1,0 +1,330 @@
+untyped
+
+global function RegisterCapturePointInfo
+global function RegisterLockableCapturePointInfo
+global function RegisterLinkedCapturePointInfo
+global function GetHardpointStringID
+global function GetCapPower
+global function GetCapPowerFromTables
+global function GetEnemyCount
+global function GetFriendlyCount
+global function GetEnemyPlayerCount
+global function GetFriendlyPlayerCount
+//global function DEV_CP_GetCapOccupants
+
+global function IsCapturePointLockedForTeam
+
+global enum eCapturePointType
+{
+	BASE,
+	ATTACK_DEFEND,
+	LOCKABLE,
+	LINKED
+}
+
+global struct ShCapturePointGlobalStruct
+{
+	int capPointAIScoring = eCapPointAIScoring.PLAYERS_CAP_AI
+
+	float capPowerPlayer = 1.0
+	float capPowerAdditionalPlayer = 0.5
+	float capPowerMax = 3.0
+}
+global ShCapturePointGlobalStruct shCapturePointGlobals
+
+struct
+{
+	int nextHardpointStringIdx = 0
+} file
+
+//!!!! Important !!!!
+//The order in which we call this function multiple times is important, since we need file.nextHardpointStringIdx in here to match up with the HardpointID that will be given to the hardpoint entity.
+function RegisterCapturePointInfo( stringID, stringName, neutralIcon, friendlyIcon, enemyIcon )
+{
+	expect string( stringID )
+
+	#if CLIENT
+		table hardpointDataTable = { stringName = stringName, capturePointType = eCapturePointType.BASE,
+								neutralIcon = neutralIcon, friendlyIcon = friendlyIcon, enemyIcon = enemyIcon
+							   }
+		clGlobal.hardpointData[ file.nextHardpointStringIdx ] <- hardpointDataTable
+
+		clGlobal.hardpointStringIDs[ file.nextHardpointStringIdx ] <- stringID
+	#elseif SERVER
+		svGlobal.hardpointStringIDs[ file.nextHardpointStringIdx ] <- stringID
+	#endif
+
+	file.nextHardpointStringIdx++
+}
+
+function RegisterLockableCapturePointInfo( stringID, stringName, neutralIcon, friendlyIcon, enemyIcon,
+															     neutralIconLocked, friendlyIconLocked, enemyIconLocked )
+{
+	expect string( stringID )
+
+	#if CLIENT
+		table hardpointDataTable = { stringName = stringName, capturePointType = eCapturePointType.LOCKABLE,
+										neutralIcon = neutralIcon, friendlyIcon = friendlyIcon, enemyIcon = enemyIcon,
+										neutralIconLocked = neutralIconLocked, friendlyIconLocked = friendlyIconLocked, enemyIconLocked = enemyIconLocked
+							   }
+		clGlobal.hardpointData[ file.nextHardpointStringIdx ] <- hardpointDataTable
+
+		clGlobal.hardpointStringIDs[ file.nextHardpointStringIdx ] <- stringID
+	#elseif SERVER
+		svGlobal.hardpointStringIDs[ file.nextHardpointStringIdx ] <- stringID
+	#endif
+
+	file.nextHardpointStringIdx++
+}
+
+function RegisterLinkedCapturePointInfo( stringID, stringName, neutralIconAttack, friendlyIconAttack, enemyIconAttack,
+														       neutralIconDefend, friendlyIconDefend, enemyIconDefend,
+															   neutralIconLocked, friendlyIconLocked, enemyIconLocked )
+{
+	expect string( stringID )
+
+	#if CLIENT
+		table hardpointDataTable = { stringName = stringName, capturePointType = eCapturePointType.LINKED,
+									 neutralIconAttack = neutralIconAttack, friendlyIconAttack = friendlyIconAttack, enemyIconAttack = enemyIconAttack,
+									 neutralIconDefend = neutralIconDefend, friendlyIconDefend = friendlyIconDefend, enemyIconDefend = enemyIconDefend,
+									 neutralIconLocked = neutralIconLocked, friendlyIconLocked = friendlyIconLocked, enemyIconLocked = enemyIconLocked
+								   }
+		clGlobal.hardpointData[ file.nextHardpointStringIdx ] <- hardpointDataTable
+
+		clGlobal.hardpointStringIDs[ file.nextHardpointStringIdx ] <- stringID
+	#elseif SERVER
+		svGlobal.hardpointStringIDs[ file.nextHardpointStringIdx ] <- stringID
+	#endif
+
+	file.nextHardpointStringIdx++
+}
+
+string function GetHardpointStringID( id )
+{
+	expect int( id )
+
+	#if CLIENT
+		return clGlobal.hardpointStringIDs[ id ]
+	#elseif SERVER
+		return svGlobal.hardpointStringIDs[ id ]
+	#endif
+}
+
+function GetEnemyCount( hardpointEnt, player )
+{
+	local enemyCount
+	if ( player.GetTeam() == TEAM_IMC )
+		enemyCount = hardpointEnt.GetHardpointAICount( TEAM_MILITIA ) + hardpointEnt.GetHardpointPlayerCount( TEAM_MILITIA )
+	else if ( player.GetTeam() == TEAM_MILITIA )
+		enemyCount = hardpointEnt.GetHardpointAICount( TEAM_IMC ) + hardpointEnt.GetHardpointPlayerCount( TEAM_IMC )
+	return enemyCount
+}
+
+function GetFriendlyCount( hardpointEnt, player )
+{
+	local friendlyCount
+	if ( player.GetTeam() == TEAM_IMC )
+		friendlyCount = hardpointEnt.GetHardpointAICount( TEAM_IMC ) + hardpointEnt.GetHardpointPlayerCount( TEAM_IMC )
+	else if ( player.GetTeam() == TEAM_MILITIA )
+		friendlyCount = hardpointEnt.GetHardpointAICount( TEAM_MILITIA ) + hardpointEnt.GetHardpointPlayerCount( TEAM_MILITIA )
+	return friendlyCount
+}
+
+function GetEnemyPlayerCount( hardpointEnt, player )
+{
+	local enemyCount
+	if ( player.GetTeam() == TEAM_IMC )
+		enemyCount = hardpointEnt.GetHardpointPlayerCount( TEAM_MILITIA )
+	else if ( player.GetTeam() == TEAM_MILITIA )
+		enemyCount = hardpointEnt.GetHardpointPlayerCount( TEAM_IMC )
+	return enemyCount
+}
+
+function GetFriendlyPlayerCount( hardpointEnt, player )
+{
+	local friendlyCount
+	if ( player.GetTeam() == TEAM_IMC )
+		friendlyCount = hardpointEnt.GetHardpointPlayerCount( TEAM_IMC )
+	else if ( player.GetTeam() == TEAM_MILITIA )
+		friendlyCount = hardpointEnt.GetHardpointPlayerCount( TEAM_MILITIA )
+	return friendlyCount
+}
+
+
+table function GetCapPower( hardpointEnt )
+{
+	expect entity( hardpointEnt )
+	table teamPilots = {}
+	teamPilots[ TEAM_IMC ] <- hardpointEnt.GetHardpointPlayerCount( TEAM_IMC )
+	teamPilots[ TEAM_MILITIA ] <- hardpointEnt.GetHardpointPlayerCount( TEAM_MILITIA )
+
+	table teamTitans = {}
+	teamTitans[ TEAM_IMC ] <- hardpointEnt.GetHardpointPlayerTitanCount( TEAM_IMC )
+	teamTitans[ TEAM_MILITIA ] <- hardpointEnt.GetHardpointPlayerTitanCount( TEAM_MILITIA )
+
+	table teamAI = {}
+	teamAI[ TEAM_IMC ] <- hardpointEnt.GetHardpointAICount( TEAM_IMC )
+	teamAI[ TEAM_MILITIA ] <- hardpointEnt.GetHardpointAICount( TEAM_MILITIA )
+
+	return GetCapPowerFromTables( hardpointEnt, teamPilots, teamTitans, teamAI )
+}
+
+
+table function GetCapPowerFromTables( hardpointEnt, teamPilots, teamTitans, teamAI )
+{
+	array<int> teams = [ TEAM_IMC, TEAM_MILITIA ]
+
+	if ( !CAPTURE_POINT_TITANS_BREAK_CONTEST )
+	{
+		teamTitans[ TEAM_IMC ] = 0
+		teamTitans[ TEAM_MILITIA ] = 0
+	}
+
+	table teamPower = {}
+	foreach ( team in teams )
+	{
+		teamPower[ team ] <- 0
+	}
+
+	foreach ( team in teams )
+	{
+		teamPower[ team ] += GetTeamPowerFromPilots( team, teamPilots )
+	}
+
+	// do these in order because ai power can care about pilot power
+	foreach ( team in teams )
+	{
+		teamPower[ team ] += GetTeamPowerFromAI( team, teamAI, teamPower )
+	}
+
+
+	table powerTable = {}
+
+	powerTable.contested <- false
+
+	if ( CAPTURE_POINT_TITANS_BREAK_CONTEST )
+	{
+		if ( teamTitans[ TEAM_IMC ] && !teamTitans[ TEAM_MILITIA ] )
+		{
+			powerTable.contested = false
+			teamPower[ TEAM_MILITIA ] = 0
+		}
+		else if ( teamTitans[ TEAM_MILITIA ] && !teamTitans[ TEAM_IMC ] )
+		{
+			powerTable.contested = false
+			teamPower[ TEAM_IMC ] = 0
+		}
+		else if ( teamPower[ TEAM_IMC ] && teamPower[ TEAM_MILITIA ] )
+		{
+			powerTable.contested = true
+		}
+	}
+	else if ( teamPower[ TEAM_IMC ] && teamPower[ TEAM_MILITIA ] )
+	{
+		powerTable.contested = true
+	}
+
+	powerTable.strongerTeam <- TEAM_UNASSIGNED
+	if ( !powerTable.contested )
+	{
+		// there is no stronger team when both teams are present
+		if ( teamPower[ TEAM_IMC ] > teamPower[ TEAM_MILITIA ] )
+			powerTable.strongerTeam = TEAM_IMC
+		else if ( teamPower[ TEAM_MILITIA ] > teamPower[ TEAM_IMC ])
+			powerTable.strongerTeam = TEAM_MILITIA
+	}
+
+	float powerDif = fabs( teamPower[ TEAM_IMC ] - teamPower[ TEAM_MILITIA ] )
+	powerTable.power <- min( powerDif, shCapturePointGlobals.capPowerMax )
+
+	return powerTable
+}
+
+
+function GetTeamPowerFromPilots( team, teamPilots )
+{
+	local pilots = teamPilots[ team ]
+	local power = 0.0
+
+	if ( pilots > 0 )
+	{
+		power = shCapturePointGlobals.capPowerPlayer
+
+		// give an additional shCapturePointGlobals.capPowerAdditionalPlayer for each player you have in the hard point, past the first one
+		power += ( pilots - 1 ) * shCapturePointGlobals.capPowerAdditionalPlayer
+	}
+
+	return power
+}
+
+float function GetTeamPowerFromAI( int team, teamAI, teamPower )
+{
+	switch ( shCapturePointGlobals.capPointAIScoring )
+	{
+		case eCapPointAIScoring.CONTEST_ALWAYS:
+			float power = expect float( teamAI[ team ] ) * CAPTURE_POINT_AI_CAP_POWER
+			return power
+
+		case eCapPointAIScoring.PLAYERS_CAP_AI:
+		default:
+
+			float power = expect int( teamAI[ team ] ) * CAPTURE_POINT_AI_CAP_POWER
+			float otherTeamPower = expect float( teamPower[ GetOtherTeam( team ) ] )
+
+			if ( otherTeamPower )
+			{
+				// AI can't cap on their own when an enemy player is around.
+				power = min( otherTeamPower, power )
+			}
+			return power
+	}
+	unreachable
+}
+
+/*
+void function DEV_CP_GetCapOccupants( hardpointEnt )
+{
+	expect entity( hardpointEnt )
+	table teamPilots = {}
+	teamPilots[ TEAM_IMC ] <- hardpointEnt.GetHardpointPlayerCount( TEAM_IMC )
+	teamPilots[ TEAM_MILITIA ] <- hardpointEnt.GetHardpointPlayerCount( TEAM_MILITIA )
+
+	var pilotCount = ( teamPilots[ TEAM_IMC ] + teamPilots[ TEAM_MILITIA ] )
+
+	printt( "Pilots: " + pilotCount )
+
+	table teamTitans = {}
+	teamTitans[ TEAM_IMC ] <- hardpointEnt.GetHardpointPlayerTitanCount( TEAM_IMC )
+	teamTitans[ TEAM_MILITIA ] <- hardpointEnt.GetHardpointPlayerTitanCount( TEAM_MILITIA )
+
+	var titanCount = ( teamTitans[ TEAM_IMC ] + teamTitans[ TEAM_MILITIA ] )
+
+	printt( "Titans: " + titanCount )
+
+	table teamAI = {}
+	teamAI[ TEAM_IMC ] <- hardpointEnt.GetHardpointAICount( TEAM_IMC )
+	teamAI[ TEAM_MILITIA ] <- hardpointEnt.GetHardpointAICount( TEAM_MILITIA )
+
+	var aiCount = ( teamAI[ TEAM_IMC ] + teamAI[ TEAM_MILITIA ] )
+
+	printt( "AI: " + aiCount )
+
+
+	#if DEV
+	#if SERVER
+		array<entity> players = GetPlayerArray()
+		foreach ( entity player in players )
+		{
+			Remote_CallFunction_NonReplay( player, "ServerCallback_CP_PrintHardpointOccupants", pilotCount, titanCount, aiCount )
+		}
+	#endif
+	#endif
+
+
+}
+*/
+
+bool function IsCapturePointLockedForTeam( capturePoint, team ) //Should probably be in code
+{
+	return ( team in capturePoint.s.lockedOutForTeamsTable )
+}

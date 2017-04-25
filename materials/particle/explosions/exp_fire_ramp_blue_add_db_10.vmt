@@ -1,0 +1,32 @@
+"SpriteCard"
+{
+//	$basetexture "particle/ramps/test_colorramp"
+	//$basetexture "particle/smoke/smoke_charge_02/smoke_charge02_LP"
+	$basetexture "particle\explosions\exp_fire_ball"
+
+// RAMPTEXTURE and POWERFUNCTION are mutually exclusive:
+//	$RAMPTEXTURE "particle/ramps/rainbow_ramp.vtf"
+//	$RAMPTEXTURE "particle/ramps/smoke_charge02_LP_grey.vtf"
+//	$RAMPTEXTURE "particle/ramps/fire_ramp.vtf"
+//	$RAMPTEXTURE "particle/ramps/fire_ring.vtf"
+	$RAMPTEXTURE "particle/ramps/blue_ramp.vtf"
+//	$RAMPTEXTURE "particle/ramps/elec_ring.vtf"
+
+//	$POWERFUNCTION "[0.8 2.5 5]"
+
+//	$texAlphafromColor 4
+	$texColorFromAlpha 1
+
+	$additive 1
+
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+
+	$depthblend 1
+	$depthblendscale 10
+
+	$addself 1
+
+	//$vertexFogAmount 1
+}

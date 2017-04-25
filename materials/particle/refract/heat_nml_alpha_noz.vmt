@@ -1,0 +1,20 @@
+"Refract"
+{
+ 	"$normalmap" "particle\refract\heat_nml"
+	"$opacitymap" "particle\refract\heat_opa"
+
+// 	"$dudvmap" "particle/warp_ripple_dudv"
+ 	"$refractamount" ".1"
+	"$vertexalpha" "1"
+	"$vertexcolor" "1"
+	"$translucent" "1"
+	"$forcerefract" 1
+ 	"$bluramount" "0"
+	"$nofog" "1"
+	"$vertexcolormodulate" "1"
+	"$NoCull" 1
+	"$nowritez" "1"
+
+	$ignorez 1
+
+}

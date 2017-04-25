@@ -1,0 +1,22 @@
+"SpriteCard"
+{
+
+	$basetexture "particle\explosions\exp_fire_ball"
+
+	$RAMPTEXTURE "particle/ramps/blue_ramp.vtf"
+
+	$texColorFromAlpha 1
+
+	//$additive 1
+
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+
+	$depthblend 1
+	$depthblendscale 15
+
+	$addself 1
+
+	//$vertexFogAmount 1
+}

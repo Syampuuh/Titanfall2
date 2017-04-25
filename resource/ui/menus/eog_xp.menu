@@ -1,0 +1,709 @@
+resource/ui/menus/eog_xp.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+		EOGCommon
+		{
+			ControlName				CNestedPanel
+			classname				"eog_common_panel"
+			xpos					0
+			ypos					0
+			zpos					3 // Needed or clicking on the background can hide this
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/UI/menus/eog_common.res"
+		}
+
+		XPBackground
+		{
+			ControlName				ImagePanel
+			xpos 					c-376
+			ypos					c-225
+			zpos					100
+			wide 					1151
+			tall 					427
+			image 					"ui/menu/eog/xp_score_back"
+			visible					1
+			scaleImage				1
+		}
+
+		BtnXPEarned0
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGXPBreakdownButton
+			classname				BtnXPEarned0
+			xpos 					-83
+			ypos					-9
+			scriptID				0
+			labelText				""
+			navUp					BtnXPEarned8
+			navDown					BtnXPEarned1
+			tabPosition				0
+
+			pin_to_sibling			XPBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		BtnXPEarned1
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGXPBreakdownButton
+			classname				BtnXPEarned1
+			xpos 					0
+			ypos					-4
+			scriptID				1
+			labelText				""
+			navUp					BtnXPEarned0
+			navDown					BtnXPEarned2
+
+			pin_to_sibling			BtnXPEarned0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnXPEarned2
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGXPBreakdownButton
+			classname				BtnXPEarned2
+			xpos 					0
+			ypos					-4
+			scriptID				2
+			labelText				""
+			navUp					BtnXPEarned1
+			navDown					BtnXPEarned3
+
+			pin_to_sibling			BtnXPEarned1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnXPEarned3
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGXPBreakdownButton
+			classname				BtnXPEarned3
+			xpos 					0
+			ypos					-4
+			scriptID				2
+			labelText				""
+			navUp					BtnXPEarned2
+			navDown					BtnXPEarned4
+
+			pin_to_sibling			BtnXPEarned2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnXPEarned4
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGXPBreakdownButton
+			classname				BtnXPEarned4
+			xpos 					0
+			ypos					-4
+			scriptID				2
+			labelText				""
+			navUp					BtnXPEarned3
+			navDown					BtnXPEarned5
+
+			pin_to_sibling			BtnXPEarned3
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnXPEarned5
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGXPBreakdownButton
+			classname				BtnXPEarned5
+			xpos 					0
+			ypos					-4
+			scriptID				2
+			labelText				""
+			navUp					BtnXPEarned4
+			navDown					BtnXPEarned6
+
+			pin_to_sibling			BtnXPEarned4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnXPEarned6
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGXPBreakdownButton
+			classname				BtnXPEarned6
+			xpos 					0
+			ypos					-4
+			scriptID				2
+			labelText				""
+			navUp					BtnXPEarned5
+			navDown					BtnXPEarned7
+
+			pin_to_sibling			BtnXPEarned5
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnXPEarned7
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGXPBreakdownButton
+			classname				BtnXPEarned7
+			xpos 					0
+			ypos					-4
+			scriptID				2
+			labelText				""
+			navUp					BtnXPEarned6
+			navDown					BtnXPEarned8
+
+			pin_to_sibling			BtnXPEarned6
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		BtnXPEarned8
+		{
+			ControlName				BaseModHybridButton
+			InheritProperties		EOGXPBreakdownButton
+			classname				BtnXPEarned8
+			xpos 					0
+			ypos					-4
+			scriptID				2
+			labelText				""
+			navUp					BtnXPEarned7
+			navDown					BtnXPEarned0
+
+			pin_to_sibling			BtnXPEarned7
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		XPEarned_TotalDesc
+		{
+			ControlName				Label
+			classname				"XPEarned_TotalDesc"
+			xpos 					-94
+			ypos 					-34
+			zpos					102
+			wide					870
+			tall					45
+			textAlignment			west
+			labelText				"#EOG_XP_TOTAL"
+			visible					1
+			font					Default_38
+			allcaps					1
+			fgcolor_override		"215 121 48 100"
+
+			pin_to_sibling			XPBackground
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		XPEarned_TotalValue
+		{
+			ControlName				Label
+			classname				"XPEarned_TotalValue"
+			xpos 					-94
+			ypos 					-34
+			zpos					102
+			wide					870
+			tall					45
+			textAlignment			east
+			labelText				"[0000 XP]"
+			wide					598
+			tall					45
+			visible					1
+			font					Default_38
+			allcaps					1
+			fgcolor_override		"215 121 48 100"
+
+			pin_to_sibling			XPBackground
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc0
+		{
+			classname				SubCatDesc0
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					-58
+			ypos 					-45
+
+			pin_to_sibling			XPBackground
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+		SubCatValue0
+		{
+			classname				SubCatValue0
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					-58
+			ypos 					-45
+
+			pin_to_sibling			XPBackground
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+		SubCatDesc1
+		{
+			classname				SubCatDesc1
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue1
+		{
+			classname				SubCatValue1
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc2
+		{
+			classname				SubCatDesc2
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue2
+		{
+			classname				SubCatValue2
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc3
+		{
+			classname				SubCatDesc3
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue3
+		{
+			classname				SubCatValue3
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc4
+		{
+			classname				SubCatDesc4
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc3
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue4
+		{
+			classname				SubCatValue4
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc3
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc5
+		{
+			classname				SubCatDesc5
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue5
+		{
+			classname				SubCatValue5
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc6
+		{
+			classname				SubCatDesc6
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc5
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue6
+		{
+			classname				SubCatValue6
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc5
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc7
+		{
+			classname				SubCatDesc7
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc6
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue7
+		{
+			classname				SubCatValue7
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc6
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc8
+		{
+			classname				SubCatDesc8
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc7
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue8
+		{
+			classname				SubCatValue8
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc7
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc9
+		{
+			classname				SubCatDesc9
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc8
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue9
+		{
+			classname				SubCatValue9
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc8
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc10
+		{
+			classname				SubCatDesc10
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc9
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue10
+		{
+			classname				SubCatValue10
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc9
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc11
+		{
+			classname				SubCatDesc11
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc10
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue11
+		{
+			classname				SubCatValue11
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc10
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc12
+		{
+			classname				SubCatDesc12
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc11
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue12
+		{
+			classname				SubCatValue12
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc11
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatDesc13
+		{
+			classname				SubCatDesc13
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineDesc
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc12
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SubCatValue13
+		{
+			classname				SubCatValue13
+			ControlName				Label
+			InheritProperties		EOGXPEarnedSubCatLineValue
+			xpos 					0
+			ypos 					-4
+
+			pin_to_sibling			SubCatDesc12
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		XPBarPanel0
+		{
+			ControlName				CNestedPanel
+			classname				"XPBarPanel0"
+			xpos 					c-376
+			ypos					753
+			zpos					105 // Needed or clicking on the background can hide this
+			wide 					1151
+			tall 					160
+			visible					1
+			controlSettingsFile		"resource/UI/menus/eog_xpbar.res"
+		}
+
+		XPBarPanel1
+		{
+			ControlName				CNestedPanel
+			classname				"XPBarPanel1"
+			xpos 					c-376
+			ypos					753
+			zpos					105 // Needed or clicking on the background can hide this
+			wide 					1151
+			tall 					160
+			visible					1
+			controlSettingsFile		"resource/UI/menus/eog_xpbar.res"
+		}
+
+		LevelUpText
+		{
+			ControlName				Label
+			classname				"LevelUpText"
+			xpos					c-337
+			ypos					c+202
+			wide					450
+			tall					67
+			visible					0
+			font					Titanfall_67
+			allCaps 				0 	[!$RUSSIAN]
+			allCaps 				1 	[$RUSSIAN]
+			labelText				"LEVEL XX"
+			textAlignment			center
+			//auto_wide_tocontents	1
+			allcaps					1
+			fgcolor_override 		"255 255 255 255"
+
+			zpos					201
+		}
+
+		LevelUpTextScan
+		{
+			ControlName				ImagePanel
+			classname				"LevelUpTextScan"
+			xpos					0
+			ypos					0
+			wide					899
+			tall					67
+			image					"vgui/HUD/flare_announcement"
+			visible					0
+			scaleImage				1
+
+			zpos					200
+
+			pin_to_sibling				LevelUpText
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		CoinsEarnedText
+		{
+			ControlName				Label
+			classname				"CoinEarnText"
+			xpos					1349
+			ypos					135
+			zpos					201
+			wide					450
+			tall					67
+			visible					0
+			font					EOGCoinsEarnedFont
+			allCaps 				0 	[!$RUSSIAN]
+			allCaps 				1 	[$RUSSIAN]
+			labelText				""
+			textAlignment			west
+			//auto_wide_tocontents	1
+			allcaps					1
+			fgcolor_override 		"255 255 255 255"
+		}
+	}
+}

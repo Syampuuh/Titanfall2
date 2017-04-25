@@ -1,0 +1,42 @@
+global function ServerCallback_PlayBattleChatter
+global function PlayBattleChatterOnClientPlayer
+global function GenerateBattleChatterAlias
+
+
+string function GenerateBattleChatterAlias( entity player, string battleChatterSuffix  )
+{
+	int voiceIndex = player.GetPlayerNetInt( "battleChatterVoiceIndex" )
+	string voiceIndexString = battleChatterData.battleChatterIndexToStringMap[ voiceIndex ]
+	string result = "diag_mp_player" + voiceIndexString + "_" + battleChatterSuffix
+	return result
+
+}
+
+void function ServerCallback_PlayBattleChatter( int conversationIndex, int playerEHandle  )
+{
+	entity speakingPlayer = GetEntityFromEncodedEHandle( playerEHandle )
+	string conversationName = GetConversationName( conversationIndex )
+
+	PlayBattleChatterOnClientPlayer( conversationName, speakingPlayer )
+}
+
+
+void function PlayBattleChatterOnClientPlayer( string conversationName, entity speakingPlayer )
+{
+	bool printDebug = GetDialogueDebugLevel() > 0
+
+	if ( printDebug )
+		printt( "PlayBattleChatterOnClientPlayer: " + conversationName )
+
+	entity listeningPlayer = GetLocalClientPlayer()
+
+	if ( !ShouldPlayBattleChatter( conversationName, listeningPlayer, speakingPlayer ) ) //Doesn't check for priority etc, that's next step
+		return
+
+	//Generate alias from playerEHandle and number of altAliases we have
+	string soundAlias = GenerateBattleChatterAlias( speakingPlayer, conversationName  )
+	int priority = expect int(  GetConversationPriority( conversationName )  )
+
+	PlayOneLinerConversationOnEntWithPriority( conversationName, soundAlias, speakingPlayer, priority )
+
+}

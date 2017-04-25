@@ -1,0 +1,66 @@
+UnlitTwoTexture
+{
+	$surfaceprop 	metal
+	$basetexture 	models\hud\damage_arrow
+	$texture2 		dev\noise_post
+	//$texture2 		effects\dev_scanline_small
+
+	$dofEnable 0
+
+	$alpha 1
+	$nocull 0
+
+	$translucent 1
+	$screenblend 1
+
+	$screenspacecoordssquare2	1
+
+	$layercolor1 	"[0.1 0.05 0.05]"
+	$layeralpha1 	"1"
+	$layercolor2 	"[0.05 0 0]"
+	$layeralpha2 	"1"
+	//$addlayers 		1
+
+	$fresnel 0
+
+	$fresnelSharpness1 0.0
+	$fresnelOuterStrength1 0.5
+	$fresnelInnerStrength1 1.0
+
+	$fresnelSharpness2 0.0
+	$fresnelOuterStrength2 0.5
+	$fresnelInnerStrength2 1.0
+
+	$t2scroll		"[0 1]"
+	$t2scale		"[5 5]"
+
+	Proxies
+	{
+		EntityScript
+		{
+			scriptFuncName	"VMTCallback_DamageArrowAlpha"
+			resultVar $alpha
+		}
+
+		EntityScript
+		{
+			scriptFuncName	"VMTCallback_DamageArrowFlash"
+			resultVar $layercolor1
+		}
+
+		"TextureScroll"
+		{
+			"textureScrollVar" "$t2scroll"
+			"textureScrollRate" 0.5
+			"textureScrollAngle" 90
+		}
+
+		TextureTransform
+		{
+			translateVar	$t2scroll
+			scaleVar		$t2scale
+			resultVar 		$texture2transform
+		}
+
+	}
+}

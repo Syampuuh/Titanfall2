@@ -1,0 +1,8 @@
+"FrameColorCompute"
+{
+	$basetexture 				"_rt_SmallFB0"
+	$clear 						0
+	$spotmeteringscreenratio 	1.0
+	$averagecolorscale 			1.0
+	$averagecolorbias 			0.0
+}

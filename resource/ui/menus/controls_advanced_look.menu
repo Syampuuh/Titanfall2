@@ -1,0 +1,606 @@
+resource/ui/menus/controls_advanced_look.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		visible					1
+		enabled					1
+		pinCorner				0
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#CONTROLS_ADVANCED_LOOK"
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		LblMenuItemDescription
+		{
+			ControlName				Label
+			InheritProperties		OptionMenuTooltip
+			classname 				MenuItemDescriptionClass
+			xpos					975
+			ypos					213
+		}
+
+		CurveGraph
+		{
+			ControlName				GamepadCurvePanel
+			pin_to_sibling			LblMenuItemDescription
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+			xpos					20
+			ypos					-150
+			wide					400
+			tall					200
+			visible					1
+		}
+
+		DeadzonesGraph
+		{
+			ControlName				GamepadDeadzonesPanel
+			pin_to_sibling			CurveGraph
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+			xpos					50
+			wide					200
+			tall					200
+			visible					1
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		// General subheader
+		//ImgGeneralSubheaderBackground1
+		//{
+		//	ControlName				ImagePanel
+		//	InheritProperties		SubheaderBackground
+		//	xpos					96
+		//	ypos					140
+		//}
+
+		SwchGamepadCustomEnabled
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			//pin_to_sibling			ImgGeneralSubheaderBackground1
+			//pin_corner_to_sibling	TOP_LEFT
+			//pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					74
+			ypos					162
+			navUp					SldGamepadCustomADSTurnDelay
+			navDown					BtnGamepadCustomResetToDefaults
+			tabPosition				1
+			ConVar					"gamepad_custom_enabled"
+			list
+			{
+				"#SETTING_OFF"		0
+				"#SETTING_ON"		1
+			}
+		}
+		BtnGamepadCustomResetToDefaults
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			pin_to_sibling			SwchGamepadCustomEnabled
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchGamepadCustomEnabled
+			navDown					SldGamepadCustomDeadzoneIn
+		}
+
+		ImgGeneralSubheaderBackground2
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			xpos					22
+			ypos					-16
+			pin_to_sibling			BtnGamepadCustomResetToDefaults
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SldGamepadCustomDeadzoneIn
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			ImgGeneralSubheaderBackground2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					-22
+			navUp					BtnGamepadCustomResetToDefaults
+			navDown					SldGamepadCustomDeadzoneOut
+			minValue				0.0
+			maxValue				0.5
+			stepSize				0.025
+			conCommand				"gamepad_custom_deadzone_in"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomDeadzoneOut
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomDeadzoneIn
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomDeadzoneIn
+			navDown					SldGamepadCustomCurve
+			minValue				0.01
+			maxValue				0.3
+			stepSize				0.01
+			conCommand				"gamepad_custom_deadzone_out"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomCurve
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomDeadzoneOut
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomDeadzoneOut
+			navDown					SwchGamepadCustomAssist
+			minValue				0.0
+			maxValue				30.0
+			stepSize				1.0
+			conCommand				"gamepad_custom_curve"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SwchGamepadCustomAssist
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			pin_to_sibling			SldGamepadCustomCurve
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomCurve
+			navDown					SldGamepadCustomHipYaw
+			tabPosition				1
+			ConVar					"gamepad_custom_assist_on"
+			list
+			{
+				"#SETTING_OFF"		0
+				"#SETTING_ON"		1
+			}
+		}
+
+
+		///////////////////////////
+		// Hipfire
+		///////////////////////////
+
+		ImgGeneralSubheaderBackground3
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			xpos					22
+			ypos					-16
+			pin_to_sibling			SwchGamepadCustomAssist
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		SldGamepadCustomHipYaw
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			ImgGeneralSubheaderBackground3
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					-22
+			navUp					SwchGamepadCustomAssist
+			navDown					SldGamepadCustomHipPitch
+			minValue				0.0
+			maxValue				500.0
+			stepSize				10.0
+			conCommand				"gamepad_custom_hip_yaw"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomHipPitch
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomHipYaw
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomHipYaw
+			navDown					SldGamepadCustomHipTurnYaw
+			minValue				0.0
+			maxValue				500.0
+			stepSize				10.0
+			conCommand				"gamepad_custom_hip_pitch"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomHipTurnYaw
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomHipPitch
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomHipPitch
+			navDown					SldGamepadCustomHipTurnPitch
+			minValue				0.0
+			maxValue				250.0
+			stepSize				10.0
+			conCommand				"gamepad_custom_hip_turn_yaw"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomHipTurnPitch
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomHipTurnYaw
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomHipTurnYaw
+			navDown					SldGamepadCustomHipTurnTime
+			minValue				0.0
+			maxValue				250.0
+			stepSize				10.0
+			conCommand				"gamepad_custom_hip_turn_pitch"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomHipTurnTime
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomHipTurnPitch
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomHipTurnPitch
+			navDown					SldGamepadCustomHipTurnDelay
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.05
+			conCommand				"gamepad_custom_hip_turn_time"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomHipTurnDelay
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomHipTurnTime
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomHipTurnTime
+			navDown					SldGamepadCustomADSYaw
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.05
+			conCommand				"gamepad_custom_hip_turn_delay"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+
+		///////////////////////////
+		// ADS
+		///////////////////////////
+
+		ImgGeneralSubheaderBackground4
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			xpos					22
+			ypos					-16
+			pin_to_sibling			SldGamepadCustomHipTurnDelay
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SldGamepadCustomADSYaw
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			ImgGeneralSubheaderBackground4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					-22
+			navUp					SldGamepadCustomHipTurnDelay
+			navDown					SldGamepadCustomADSPitch
+			minValue				0.0
+			maxValue				500.0
+			stepSize				10.0
+			conCommand				"gamepad_custom_ads_yaw"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomADSPitch
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomADSYaw
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomADSYaw
+			navDown					SldGamepadCustomADSTurnYaw
+			minValue				0.0
+			maxValue				500.0
+			stepSize				10.0
+			conCommand				"gamepad_custom_ads_pitch"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomADSTurnYaw
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomADSPitch
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomADSPitch
+			navDown					SldGamepadCustomADSTurnPitch
+			minValue				0.0
+			maxValue				250.0
+			stepSize				10.0
+			conCommand				"gamepad_custom_ads_turn_yaw"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomADSTurnPitch
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomADSTurnYaw
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomADSTurnYaw
+			navDown					SldGamepadCustomADSTurnTime
+			minValue				0.0
+			maxValue				250.0
+			stepSize				10.0
+			conCommand				"gamepad_custom_ads_turn_pitch"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomADSTurnTime
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomADSTurnPitch
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomADSTurnPitch
+			navDown					SldGamepadCustomADSTurnDelay
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.05
+			conCommand				"gamepad_custom_ads_turn_time"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+		SldGamepadCustomADSTurnDelay
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldGamepadCustomADSTurnTime
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldGamepadCustomADSTurnTime
+			navDown					SwchGamepadCustomEnabled
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.05
+			conCommand				"gamepad_custom_ads_turn_delay"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

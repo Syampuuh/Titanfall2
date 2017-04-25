@@ -1,0 +1,34 @@
+untyped
+
+global function ClTitanCommands_Init
+
+
+function ClTitanCommands_Init()
+{
+	if ( GetCurrentPlaylistVarInt( "titan_move_command_enabled", 0 ) == 0 )
+		return
+
+	RegisterButtonPressedCallback( BUTTON_DPAD_RIGHT, ButtonCallback_OrderPetTitan )
+}
+
+function ButtonCallback_OrderPetTitan( player )
+{
+	expect entity( player )
+
+	entity titan = player.GetPetTitan()
+	if ( !IsAlive( titan ) )
+		return
+
+	local eyePos = player.EyePosition()
+	//local eyeAngles = player.EyeAngles() //getviewvector
+	local fwd = player.GetViewVector() //AnglesToForward( eyeAngles )
+
+	TraceResults trace = TraceLine( eyePos, eyePos + ( fwd * 9999 ), player )
+	local tracePos = trace.endPos
+
+	SetAutoTitanModeHudIndicator( player, eNPCTitanMode.STAY )
+	player.ClientCommand( "PrototypeOrderTitanMove " + tracePos.x + " " + tracePos.y + " " + tracePos.z )
+	local titanAlias = GenerateTitanOSAlias( player, AUTO_TITAN_GUARD_MODE_DIAG_SUFFIX )
+	EmitSoundOnEntity( player, titanAlias )
+	EmitSoundOnEntity( player, AUTO_TITAN_FOLLOW_MODE_SOUND )
+}

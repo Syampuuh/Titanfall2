@@ -1,0 +1,49 @@
+UnlitTwoTexture
+{
+	"$nocull" "1"	
+	"$nodecal" "1"
+	"$additive" "1"
+	"$no_fullbright" 1
+	"$model" "1"
+	"$nofog" "1"
+	"$allowoverbright" "1"
+	"$translucent" "1"
+	
+
+  "$basetexture" "models\weapons\attachments\hcog_reticle_field_emitter_col"
+	"$Texture2" "dev\noise_post"
+	"$color" "[1 1 1]"
+	"$color2" "[2.5 1 0]"
+	
+	"$t2offset" 0
+	"$t2scale" 3
+	"$t2rot" 0
+	"$scroll" "[0 2]"
+	
+	$holoOffset "[0 0]"
+	
+	"Proxies"
+	{
+		//Move the 2nd texture using horiz and vert speed
+		"TextureTransform"
+		{
+			"translateVar" "$scroll"
+			"scaleVar" "$t2scale"
+			"rotateVar" "$t2rot"
+			"resultvar" "$texture2transform"
+		}
+		
+		// flicker
+		"UniformNoise"
+		{
+			"minVal" 0.8
+			"maxVal" 1.00
+			"resultVar" "$color"
+		}
+		
+		"HoloSight"
+		{
+			resultVar $alpha
+		}
+	}
+}

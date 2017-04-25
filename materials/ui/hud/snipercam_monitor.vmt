@@ -1,0 +1,16 @@
+"UnlitTwoTexture"
+{
+	"$basetexture" 		"_rt_Camera"
+	"$texture2" 		"ui/hud/snipercam_ring_alpha"
+	
+	"%tooltexture" 		"world/dev/dev_monitor"
+	"$mappingwidth" 	"256"
+	"$mappingheight" 	"256"
+
+	"$translucent" 		"1"
+	"$vertexcolor" 		"1"
+	"$vertexalpha" 		"1"
+	"$ignorez"     		"1"
+	"$ignore_alpha0"    "1"
+}
+

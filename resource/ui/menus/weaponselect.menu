@@ -1,0 +1,238 @@
+resource/ui/menus/weaponselect.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				""
+		}
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+	    CreditsAvailable
+	    {
+	        ControlName             RuiPanel
+	        InheritProperties       CreditsAvailableProperties
+	    }
+
+// BUTTON ROW 1 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Button0
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonLarge
+			classname				WeaponSelectClass
+			scriptID				0
+	        xpos					96
+    	    ypos                    160
+			navUp					Button7
+			navDown					Button1
+			tabPosition				1
+		}
+		Button1
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonLarge
+			classname				WeaponSelectClass
+			scriptID				1
+			ypos					6
+			pin_to_sibling			Button0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button0
+			navDown					Button2
+		}
+		Button2
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonLarge
+			classname				WeaponSelectClass
+			scriptID				2
+			ypos					6
+			pin_to_sibling			Button1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button1
+			navDown					Button3
+		}
+		Button3
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonLarge
+			classname				WeaponSelectClass
+			scriptID				3
+			ypos					6
+			pin_to_sibling			Button2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button2
+			navDown					Button4
+		}
+		Button4
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonLarge
+			classname				WeaponSelectClass
+			scriptID				4
+			ypos					6
+			pin_to_sibling			Button3
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button3
+			navDown					Button5
+		}
+		Button5
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonLarge
+			classname				WeaponSelectClass
+			scriptID				5
+			ypos					6
+			pin_to_sibling			Button4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button4
+			navDown					Button6
+		}
+		Button6
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonLarge
+			classname				WeaponSelectClass
+			scriptID				6
+			ypos					6
+			pin_to_sibling			Button5
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button5
+			navDown					Button7
+		}
+		Button7
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonLarge
+			classname				WeaponSelectClass
+			scriptID				7
+			ypos					6
+			pin_to_sibling			Button6
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button6
+			navDown					Button0
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ItemDetails
+        {
+            ControlName				RuiPanel
+            InheritProperties		ItemDetails
+	        xpos					392
+    	    ypos                    170
+		    zpos					10
+        }
+
+	    ItemStats
+	    {
+		    ControlName				CNestedPanel
+	        xpos					392
+    	    ypos                    192
+		    zpos					10
+			wide					1048
+			tall					1080
+		    visible					1
+		    clip					0
+		    controlSettingsFile		"resource/ui/menus/panels/item_stats.res"
+	    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ModelRotateMouseCapture
+        {
+            ControlName				CMouseMovementCapturePanel
+            xpos                    330
+            zpos					12
+            wide                    1590
+            tall                    %100
+        }
+
+// CHALLENGE INFO //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		//ChallengePanel
+		//{
+		//	ControlName				CNestedPanel
+		//	classname 				"ItemLockedClass ChallengeLockInfo ChallengeLockPanel"
+		//	xpos					0
+		//	ypos					-22
+		//	zpos					6
+		//	wide					719
+		//	tall					169
+		//	visible					1
+		//	controlSettingsFile		"resource/UI/menus/eog_challenge_box.res"
+		//	pin_to_sibling			MenuPanel
+		//	pin_corner_to_sibling	BOTTOM
+		//	pin_to_sibling_corner	BOTTOM
+		//}
+		//ChallengePanelHover
+		//{
+		//	ControlName				ImagePanel
+		//	classname 				"ItemLockedClass ChallengeLockInfo"
+		//	xpos					0
+		//	ypos					-9
+		//	zpos					5
+		//	wide					719
+		//	tall					169
+		//	image 					"ui/menu/challenges/challenge_box_hover_loadout"
+		//	visible					1
+		//	scaleImage				1
+		//	pin_to_sibling			MenuPanel
+		//	pin_corner_to_sibling	BOTTOM
+		//	pin_to_sibling_corner	BOTTOM
+		//}
+
+// FOOTER //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

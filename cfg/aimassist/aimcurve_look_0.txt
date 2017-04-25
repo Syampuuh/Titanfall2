@@ -1,0 +1,4 @@
+// Classic  (R1)
+
+LINEAR	1.0		1.0
+TRANSFORM: squared

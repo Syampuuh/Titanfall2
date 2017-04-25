@@ -1,0 +1,5 @@
+#base "npc_titan_atlas_tracker.txt"
+npc_titan_atlas_tracker_mortar
+{
+	minGoalRadius			32
+}

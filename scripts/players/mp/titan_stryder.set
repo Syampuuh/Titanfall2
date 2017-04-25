@@ -1,0 +1,122 @@
+#base "titan_base.set"
+"titan_stryder"
+{
+	titan_healthbar_scale 0.8
+
+	aiSettingsFile 				"npc_titan_auto_stryder"
+
+
+	//STRYDER GIBS
+	precache_gibModel0	"models/gibs/titan_gibs/stry_gib1.mdl"
+	precache_gibModel1	"models/gibs/titan_gibs/stry_gib_hatch_d.mdl"
+	precache_gibModel2	"models/gibs/titan_gibs/stry_gib7_r_shin.mdl"
+	precache_gibModel3	"models/gibs/titan_gibs/stry_gib8_l_thigh1.mdl"
+	precache_gibModel4	"models/gibs/titan_gibs/stry_gib8_l_thigh2.mdl"
+	precache_gibModel5	"models/gibs/titan_gibs/stry_gib9_l_bicep1.mdl"
+	precache_gibModel6	"models/gibs/titan_gibs/stry_gib_l_arm1_d.mdl"
+	precache_gibModel7	"models/gibs/titan_gibs/stry_gib_l_arm2_d.mdl"
+	precache_gibModel8	"models/gibs/titan_gibs/stry_gib_r_arm1_d.mdl"
+	precache_gibModel9	"models/gibs/titan_gibs/stry_gib_r_arm2_d.mdl"
+
+    autoprecache_script	stryder
+    hatchmodel 			"models/titans/light/titan_light_rodeo_battery.mdl"
+
+
+
+	"global"
+	{
+		printname				"#CHASSIS_STRYDER_NAME"
+		description				"#CHASSIS_STRYDER_DESCRIPTION"
+
+		subclass			"stryder"
+		viewPunchSpring		punch_titan_stryder
+
+		friction		2
+		speedScaleSide	1.0
+		speedScaleBack	1.0
+
+		dodgeDuration		0.1
+        dodgeAnimDuration	0.5
+        dodgeInterval		0.35
+        dodgeSpeed			800
+        dodgeStopSpeed		450
+        dodgeHeight			5
+        dodgeHeightMax		5
+        dodgePowerDrain		33
+        powerregenrate 		10
+        dodgePowerDelay		0.2
+        dodgeKeepSpeedFrac 	0.0
+
+		healthPerSegment 1500	[$sp]
+		health			7500	[$sp]
+		healthDoomed	4000	[$sp]
+
+		healthPerSegment 2500	[$mp]
+		health			7500	[$mp]
+		healthDoomed	2500	[$mp]
+
+		healthShield	2500	[$mp]
+		healthShield	2500	[$sp]
+
+		bodymodel			"models/titans/light/titan_light_locust.mdl"
+		armsmodel			"models/weapons/arms/stryderpov.mdl"
+		cockpitmodel		"models/weapons/arms/pov_titan_light_cockpit.mdl"
+
+		cockpit_stepJolt_origin		"0.0  0.0  -6.0"
+		cockpit_stepJolt_angles		"0.0  0.0  0.0"
+
+		sound_superJump			""
+		sound_superJumpFail		""
+		sound_dodge_1p			"stryder_dash_1p"
+		sound_dodge_3p			"stryder_dash_3p"
+		sound_dodgeFail			"Player.DodgeFail"
+		sound_groundImpact		"Titan.GroundImpact"
+		sound_wallrunImpact		""
+		sound_standToCrouch		"Titan_CrouchDown_1P"
+		sound_crouchToStand		"Titan_CrouchStand_1P"
+
+		sprinttiltMaxRoll		4
+
+		footstep_type           "northstar"
+
+		quadMoveAnims				0
+
+		ClassMods
+		{
+			pas_dash_recharge
+			{
+		        powerregenrate	2.5++
+			}
+			sflag_bc_dash_capacity
+			{
+				dodgePowerDrain		25
+				powerregenrate 		7.5
+			}
+			pas_titan_hardcore_settings
+			{
+				health			3750
+				healthDoomed	1250
+			}
+		}
+	}
+	"crouch"
+	{
+		speed			187
+		acceleration	250
+		deceleration	625
+	}
+
+	"stand"
+	{
+		speed				270
+		acceleration		1000
+		deceleration		1800
+
+		sprintspeed			400
+		sprintAcceleration	150
+		sprintDeceleration	600
+
+		lowSpeed			230
+		lowAcceleration		1600
+	}
+}

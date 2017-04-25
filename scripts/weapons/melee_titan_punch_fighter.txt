@@ -1,0 +1,14 @@
+#base "melee_titan_punch.txt"
+
+WeaponData
+{
+	// Models
+	"viewmodel"   									"models/weapons/empty_handed/atpov_electric_fist.mdl"
+	"playermodel" 									"models/weapons/empty_handed/w_empty_handed_titan.mdl"
+
+	"melee_lunge_time"								"0.2"			////
+	"melee_lunge_target_range"						"200"			// Titan melee script doesn't lunge.
+	"melee_lunge_target_angle"						"45"			////
+
+	"pushback_scale"								"0.3"
+}

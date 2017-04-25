@@ -1,0 +1,19 @@
+// v1.01
+//This file is auto-generated from reVaMpT. Edit at your own risk.
+"Basic"
+{
+	"$surfaceprop" "plastic"
+
+	"$basetexture" "models\weapons\attachments\ammo_counter_screen_bg_col"
+
+	//Start of freehand input from reVaMpT//
+	//"$selfillum" "1"
+	
+	"Proxies"
+	{
+		"BackgroundAmmoColor"
+		{
+			"resultVar"			"$color"
+		}
+	}
+}

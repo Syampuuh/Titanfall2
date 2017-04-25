@@ -1,0 +1,719 @@
+globalize_all_functions
+
+array<string> function GetWeaponsFromPilotLoadout( PilotLoadoutDef loadout )
+{
+	array<string> weapons
+
+	if ( loadout.primary != "" )
+		weapons.append( loadout.primary )
+
+	if ( loadout.secondary != "" )
+		weapons.append( loadout.secondary )
+
+	if ( loadout.ordnance != "" )
+		weapons.append( loadout.ordnance )
+
+	if ( loadout.special != "" )
+		weapons.append( loadout.special )
+
+	if ( loadout.melee != "" )
+		weapons.append( loadout.melee )
+
+	return weapons
+}
+
+array<asset> function GetModelsFromSetFile_3rdPerson( string settings )
+{
+	array<asset> models
+	models.append( GetPlayerSettingsAssetForClassName( settings, "bodymodel" ) )
+
+	for ( int i = 0; i < 5; i++ )
+	{
+		asset gibModel = GetPlayerSettingsAssetForClassName( settings, "GibModel" + i )
+		if ( gibModel != $"" )
+			models.append( gibModel )
+	}
+
+	for ( int i = 0;; i++ )
+	{
+		asset gibModel = Dev_GetPlayerSettingAssetByKeyField_Global( settings, "precache_gibModel" + i )
+		if ( gibModel == $"" )
+			break
+		models.append( gibModel )
+	}
+
+	asset hatchmodel = Dev_GetPlayerSettingAssetByKeyField_Global( settings, "hatchmodel" )
+	if ( hatchmodel != $"" )
+	{
+		models.append( hatchmodel )
+	}
+	return models
+}
+
+array<asset> function GetModelsFromSetFile( string settings )
+{
+	array<asset> models
+	models.append( GetPlayerSettingsAssetForClassName( settings, "armsmodel" ) )
+	models.append( GetPlayerSettingsAssetForClassName( settings, "cockpitmodel" ) )
+
+	models.extend( GetModelsFromSetFile_3rdPerson( settings ) )
+	return models
+}
+
+bool function LegalWeaponString( string name )
+{
+	if ( name == "" )
+		return false
+	return name != "none"
+}
+
+
+TitanLoadoutDef function GetTitanLoadoutForRow( var dataTable, int row )
+{
+	TitanLoadoutDef loadout
+	loadout.setFile			= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "setFile" ) )
+	loadout.titanClass		= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "titanRef" ) )
+	loadout.primeTitanRef	= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "primeTitanRef" ) )
+	loadout.primary			= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "primary" ) )
+	loadout.special			= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "special" ) )
+	loadout.antirodeo		= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "antirodeo" ) )
+	loadout.melee			= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "melee" ) )
+	loadout.ordnance		= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "ordnance" ) )
+	loadout.coreAbility		= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "coreAbility" ) )
+	loadout.setFileMods 	= GetSetFileModsForSettingType( "titan", [ loadout.passive1, loadout.passive2, loadout.passive3,loadout.passive4,loadout.passive5,loadout.passive6 ] )
+
+	return loadout
+}
+
+TitanLoadoutDef ornull function GetTitanLoadoutForPrimary( string findPrimary )
+{
+	return GetTitanLoadoutForColumn( "primary", findPrimary )
+}
+
+array<string> function GetAllowedTitanSetFiles()
+{
+	array<TitanLoadoutDef> legalLoadouts = GetAllowedTitanLoadouts()
+	array<string> setFiles
+	foreach ( loadout in legalLoadouts )
+	{
+		setFiles.append( loadout.setFile )
+	}
+	return setFiles
+}
+
+array<TitanLoadoutDef> function GetAllowedTitanLoadouts()
+{
+	array<TitanLoadoutDef> loadouts
+
+	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
+
+	int numRows = GetDatatableRowCount( dataTable )
+
+	string searchString = GetAllowedTitanAISettingsSearchString()
+	int column = GetDataTableColumnByName( dataTable, searchString )
+
+	for ( int r = 0; r < numRows; r++ )
+	{
+		if ( !GetDataTableBool( dataTable, r, column ) )
+			continue
+
+		loadouts.append( GetTitanLoadoutForRow( dataTable, r ) )
+	}
+
+	return loadouts
+}
+
+// This is mostly used to spawn AI in SP
+void function OverwriteLoadoutWithDefaultsForSetFile( TitanLoadoutDef loadout )
+{
+	OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( loadout )
+
+	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
+	string nonPrimeSetFile
+	#if SP //JFS SP NPC titans don't set loadout.titanClass
+		nonPrimeSetFile = loadout.setFile //SP NPC titans don't set loadout.titanClass
+	#else
+		string titanClass = loadout.titanClass
+		if ( titanClass == "" )
+			nonPrimeSetFile = loadout.setFile //JFS: Bounty Hunt/Dev AI command spawning also doesn't set loadout.titanClass
+		else
+			nonPrimeSetFile = GetSetFileForTitanClassAndPrimeStatus( loadout.titanClass, false )
+	#endif
+
+	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "setFile" ), nonPrimeSetFile )
+
+	loadout.special		= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "special" ) )
+	loadout.antirodeo	= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "antirodeo" ) )
+}
+
+TitanLoadoutDef ornull function GetTitanLoadoutForColumn( string findCol, string findStr )
+{
+	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
+	int column = GetDataTableColumnByName( dataTable, findCol )
+	int row = GetDataTableRowMatchingStringValue( dataTable, column, findStr )
+	if ( row == -1 )
+		return null
+
+	return GetTitanLoadoutForRow( dataTable, row )
+}
+
+
+void function OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( TitanLoadoutDef loadout )
+{
+	loadout.primaryMods	= [ loadout.primaryMod ]
+
+	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
+
+	string nonPrimeSetFile
+	#if SP //JFS
+		nonPrimeSetFile = loadout.setFile //SP NPC titans don't set loadout.titanClass
+	#else
+		string titanClass = loadout.titanClass
+		if ( titanClass == "" )
+			nonPrimeSetFile = loadout.setFile //JFS: Bounty Hunt/Dev AI command spawning also doesn't set loadout.titanClass
+		else
+			nonPrimeSetFile = GetSetFileForTitanClassAndPrimeStatus( loadout.titanClass, false )
+	#endif
+	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "setFile" ), nonPrimeSetFile )
+
+	loadout.primary		= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "primary" ) )
+	loadout.melee		= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "melee" ) )
+	loadout.ordnance	= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "ordnance" ) )
+	loadout.coreAbility	= GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "coreAbility" ) )
+	loadout.setFileMods = GetSetFileModsForSettingType( "titan", [ loadout.passive1, loadout.passive2, loadout.passive3, loadout.passive4, loadout.passive5, loadout.passive6 ] )
+	loadout.difficulty	= GetDataTableInt( dataTable, row, GetDataTableColumnByName( dataTable, "difficulty" ) )
+
+	#if SERVER
+	foreach ( callbackFunc in svGlobal.onUpdateDerivedTitanLoadoutCallbacks )
+	{
+		callbackFunc( loadout )
+	}
+	#endif
+}
+
+
+array<string> function GetBossCharacters()
+{
+	array<string> names
+
+	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
+	int numRows = GetDatatableRowCount( dataTable )
+
+	for ( int i = 0; i < numRows; i++ )
+	{
+		string name = GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "bossCharacter" ) )
+		if ( name == "" )
+			continue
+		names.append( name )
+	}
+
+	return names
+}
+
+string function GetMercCharacterForWeapon( string weaponName )
+{
+	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
+	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "primary" ), weaponName )
+	Assert( row != -1, "No loadout for weapon " + weaponName )
+
+	string bossCharacter = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "bossCharacter" ) )
+	Assert( bossCharacter != "", "No bosscharacter for weapon " + weaponName )
+	return bossCharacter
+}
+
+string function GetMercCharacterForSetFile( string setFile )
+{
+	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
+	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "setFile" ), setFile )
+	Assert( row != -1, "No loadout for setfile " + setFile )
+
+	string bossCharacter = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "bossCharacter" ) )
+	Assert( bossCharacter != "", "No bosscharacter for weapon " + setFile )
+	return bossCharacter
+}
+
+
+TitanLoadoutDef ornull function GetTitanLoadoutForBossCharacter( string findCharacter )
+{
+	return GetTitanLoadoutForColumn( "bossCharacter", findCharacter )
+}
+
+
+array<string> function GetWeaponsFromTitanLoadout( TitanLoadoutDef titanLoadout )
+{
+	array<string> weapons
+	if ( titanLoadout.special != "" )
+		weapons.append( titanLoadout.special )
+
+	if ( titanLoadout.antirodeo != "" )
+		weapons.append( titanLoadout.antirodeo )
+
+	if ( titanLoadout.melee != "" )
+		weapons.append( titanLoadout.melee )
+
+	if ( titanLoadout.coreAbility != "" )
+		weapons.append( titanLoadout.coreAbility )
+
+	if ( titanLoadout.primary != "" )
+		weapons.append( titanLoadout.primary )
+
+	if ( titanLoadout.ordnance != "" )
+		weapons.append( titanLoadout.ordnance )
+	return weapons
+}
+
+
+TitanLoadoutDef function GetTitanLoadoutFromPlayerSetFile( string playerSetfile )
+{
+	TitanLoadoutDef ornull loadout = GetTitanLoadoutForColumn( "setFile", playerSetfile )
+	Assert( loadout != null, "Couldn't find loadout with set file " + playerSetfile )
+	expect TitanLoadoutDef( loadout )
+
+	return loadout
+}
+
+int function GetTitanCamoIndexFromLoadoutAndPrimeStatus( TitanLoadoutDef titanLoadout )
+{
+	#if SP
+		return titanLoadout.camoIndex
+	#else
+		if ( IsTitanLoadoutPrime( titanLoadout ) )
+			return titanLoadout.primeCamoIndex
+		else
+			return titanLoadout.camoIndex
+
+		unreachable //Compiler really should be able to determine this is unnecessary from returns on both branches of an if statement
+	#endif
+}
+
+int function GetTitanSkinIndexFromLoadoutAndPrimeStatus( TitanLoadoutDef titanLoadout )
+{
+	#if SP
+		return titanLoadout.skinIndex
+	#else
+		if ( IsTitanLoadoutPrime( titanLoadout ) )
+			return titanLoadout.primeSkinIndex
+		else
+			return titanLoadout.skinIndex
+
+		unreachable //Compiler really should be able to determine this is unnecessary from returns on both branches of an if statement
+	#endif
+}
+
+int function GetTitanDecalIndexFromLoadoutAndPrimeStatus( TitanLoadoutDef titanLoadout )
+{
+	#if SP
+		return titanLoadout.decalIndex
+	#else
+		if ( IsTitanLoadoutPrime( titanLoadout ) )
+			return titanLoadout.primeDecalIndex
+		else
+			return titanLoadout.decalIndex
+
+		unreachable //Compiler really should be able to determine this is unnecessary from returns on both branches of an if statement
+	#endif
+}
+
+
+#if SERVER
+void function GiveTitanLoadout( entity titan, TitanLoadoutDef loadout )
+{
+	Assert( IsAlive( titan ) )
+	Assert( titan.IsTitan() )
+
+	//PrintTitanLoadout( loadout )
+
+	entity soul = titan.GetTitanSoul()
+
+	array<string> primaryMods = loadout.primaryMods
+	primaryMods.removebyvalue( "" )
+
+	if ( loadout.primary != "" )
+	{
+		entity weapon = titan.GiveWeapon( loadout.primary, primaryMods )
+
+		if ( loadout.primaryCamoIndex > 0 )
+		{
+			weapon.SetWeaponSkin( WEAPON_SKIN_INDEX_CAMO )
+			weapon.SetSkin( WEAPON_SKIN_INDEX_CAMO )
+			weapon.SetWeaponCamo( loadout.primaryCamoIndex )
+			weapon.SetCamo( loadout.primaryCamoIndex )
+		}
+		else
+		{
+			weapon.SetWeaponSkin( 0 )
+			weapon.SetSkin( 0 )
+			weapon.SetWeaponCamo( -1 )
+			weapon.SetCamo( -1 )
+		}
+	}
+
+	if ( loadout.ordnance != "" )
+		titan.GiveOffhandWeapon( loadout.ordnance, OFFHAND_ORDNANCE, loadout.ordnanceMods )
+
+	if ( loadout.special != "" )
+		titan.GiveOffhandWeapon( loadout.special, OFFHAND_SPECIAL, loadout.specialMods )
+
+	if ( loadout.antirodeo != "" )
+		titan.GiveOffhandWeapon( loadout.antirodeo, OFFHAND_ANTIRODEO, loadout.antirodeoMods )
+
+	if ( loadout.melee != "" )
+		titan.GiveOffhandWeapon( loadout.melee, OFFHAND_MELEE )
+
+	if ( IsValid( soul ) )
+	{
+		if ( loadout.passive1 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive1 ) )
+
+		if ( loadout.passive2 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive2 ) )
+
+		if ( loadout.passive3 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive3 ) )
+
+		if ( loadout.passive4 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive4 ) )
+
+		if ( loadout.passive5 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive5 ) )
+
+		if ( loadout.passive6 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive6 ) )
+
+
+		if ( loadout.coreAbility != "" )
+		{
+			titan.GiveOffhandWeapon( loadout.coreAbility, OFFHAND_EQUIPMENT )
+
+			if ( TitanDamageRewardsTitanCoreTime() )
+			{
+				SoulTitanCore_SetNextAvailableTime( soul, 0.0 )
+				if ( SoulHasPassive( soul, ePassives.PAS_HYPER_CORE ) )
+				{
+					SoulTitanCore_SetNextAvailableTime( soul, 0.3 )
+					GiveOffhandElectricSmoke( titan )
+				}
+			}
+			else
+			{
+				float buildTime = GetCoreBuildTime( titan )
+				SoulTitanCore_SetNextAvailableTime( soul, Time() + buildTime )
+			}
+		}
+	}
+
+	foreach ( callbackFunc in svGlobal.onTitanGetsNewLoadoutCallbacks )
+	{
+	    callbackFunc( titan, loadout )
+	}
+}
+
+string function GetNPCSettingsFileForTitanPlayerSetFile( string titanType )
+{
+	string settingsString = GetAISettingsStringForMode()
+	return expect string( Dev_GetPlayerSettingByKeyField_Global( titanType, settingsString ) )
+}
+
+
+void function ReplaceTitanLoadoutWhereDifferent( entity titan, TitanLoadoutDef loadout )
+{
+	Assert( IsAlive( titan ) )
+	Assert( titan.IsTitan() )
+
+	//PrintTitanLoadout( loadout )
+
+	entity soul = titan.GetTitanSoul()
+
+	array<string> primaryMods = loadout.primaryMods
+	primaryMods.removebyvalue( "" )
+
+	bool shouldSwapOrdnance = !HasOrdnance( titan, loadout.ordnance, loadout.ordnanceMods ) && !IsOffhandSlotLocked( titan, OFFHAND_ORDNANCE )
+	bool shouldSwapDefense = !HasSpecial( titan, loadout.special, loadout.specialMods ) && !IsOffhandSlotLocked( titan, OFFHAND_SPECIAL )
+	bool shoulSwapTactical = !HasAntiRodeo( titan, loadout.antirodeo, loadout.antirodeoMods ) && !IsOffhandSlotLocked( titan, OFFHAND_ANTIRODEO )
+	bool shouldSwapMelee = !HasMelee( titan, loadout.melee )
+	bool shouldSwapCore = !HasCoreAbility( titan, loadout.coreAbility ) && !IsOffhandSlotLocked( titan, OFFHAND_EQUIPMENT )
+
+	if ( shouldSwapOrdnance )
+		titan.TakeOffhandWeapon( OFFHAND_ORDNANCE )
+	if ( shouldSwapDefense )
+		titan.TakeOffhandWeapon( OFFHAND_SPECIAL )
+	if ( shoulSwapTactical )
+		titan.TakeOffhandWeapon( OFFHAND_ANTIRODEO )
+	if ( shouldSwapMelee )
+		titan.TakeOffhandWeapon( OFFHAND_MELEE )
+	if ( shouldSwapCore )
+		titan.TakeOffhandWeapon( OFFHAND_EQUIPMENT )
+
+	if ( loadout.primary != "" )
+	{
+		if ( !HasWeapon( titan, loadout.primary ) )
+		{
+			TakeWeaponsForArray( titan, titan.GetMainWeapons() )
+			titan.GiveWeapon( loadout.primary, primaryMods )
+		}
+	}
+
+	if ( loadout.ordnance != "" )
+	{
+		if ( shouldSwapOrdnance )
+		{
+			titan.GiveOffhandWeapon( loadout.ordnance, OFFHAND_ORDNANCE, loadout.ordnanceMods )
+		}
+	}
+
+	if ( loadout.special != "" )
+	{
+		if ( shouldSwapDefense )
+		{
+			titan.GiveOffhandWeapon( loadout.special, OFFHAND_SPECIAL, loadout.specialMods )
+		}
+	}
+
+	if ( loadout.antirodeo != "" )
+	{
+		if ( shoulSwapTactical )
+		{
+			titan.GiveOffhandWeapon( loadout.antirodeo, OFFHAND_ANTIRODEO, loadout.antirodeoMods )
+		}
+	}
+
+	if ( loadout.melee != "" )
+	{
+		if ( shouldSwapMelee )
+		{
+			titan.GiveOffhandWeapon( loadout.melee, OFFHAND_MELEE )
+		}
+	}
+
+	if ( IsValid( soul ) )
+	{
+		if ( loadout.passive1 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive1 ) )
+
+		if ( loadout.passive2 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive2 ) )
+
+		if ( loadout.passive3 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive3 ) )
+
+		if ( loadout.passive4 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive4 ) )
+
+		if ( loadout.passive5 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive5 ) )
+
+		if ( loadout.passive6 != "" )
+			GivePassive( soul, PassiveBitfieldFromEnum( loadout.passive6 ) )
+
+		if ( loadout.coreAbility != "" )
+		{
+			if ( shouldSwapCore )
+			{
+				titan.GiveOffhandWeapon( loadout.coreAbility, OFFHAND_EQUIPMENT )
+			}
+
+			if ( TitanDamageRewardsTitanCoreTime() )
+			{
+				SoulTitanCore_SetNextAvailableTime( soul, 0.0 )
+				if ( SoulHasPassive( soul, ePassives.PAS_HYPER_CORE ) )
+				{
+					SoulTitanCore_SetNextAvailableTime( soul, 0.3 )
+					GiveOffhandElectricSmoke( titan )
+				}
+			}
+			else
+			{
+				float buildTime = GetCoreBuildTime( titan )
+				SoulTitanCore_SetNextAvailableTime( soul, Time() + buildTime )
+			}
+		}
+	}
+}
+
+
+bool function IsOffhandSlotLocked( entity player, int slot )
+{
+	if ( !player.IsPlayer() )
+		return false
+
+	return player.p.offhandSlotLocked[ slot ]
+}
+
+void function Loadout_RemoveDupes( PilotLoadoutDef pilotLoadout )
+{
+	array<string> weapons = []
+
+	pilotLoadout.primary = weapons.contains(pilotLoadout.primary) ?  "" : pilotLoadout.primary
+	weapons.append(pilotLoadout.primary)
+
+	pilotLoadout.secondary = weapons.contains(pilotLoadout.secondary) ? "" : pilotLoadout.secondary
+	weapons.append(pilotLoadout.secondary)
+
+	pilotLoadout.ordnance = weapons.contains(pilotLoadout.ordnance) ? "" : pilotLoadout.ordnance
+	weapons.append(pilotLoadout.ordnance)
+
+	pilotLoadout.special = weapons.contains(pilotLoadout.special) ? "" : pilotLoadout.special
+	weapons.append(pilotLoadout.special)
+}
+
+void function GivePilotLoadout( entity player, PilotLoadoutDef loadout )
+{
+	//PrintPilotLoadout( loadout )
+	bool dupesAllowed = GetConVarBool( "weapon_pickup_allow_dupes" )
+	if ( !dupesAllowed )
+		Loadout_RemoveDupes( loadout )
+
+	TakeAllWeapons( player )
+	TakeAllPassives( player )
+
+	// This must be done before giving weapons, or some passives don't work... (ePassives.PAS_ORDNANCE_PACK)
+	if ( loadout.passive1 != "" )
+		GivePassiveLifeLong( player, PassiveBitfieldFromEnum( loadout.passive1 ) )
+
+	if ( loadout.passive2 != "" )
+		GivePassiveLifeLong( player, PassiveBitfieldFromEnum( loadout.passive2 ) )
+
+
+	// build an old school array to pass back to code...
+	array<string> primaryMods = loadout.primaryAttachments
+	primaryMods.extend( loadout.primaryMods )
+	primaryMods.removebyvalue( "" )
+	primaryMods.removebyvalue( "null" )
+
+	if ( loadout.primary != "" )
+	{
+		entity weapon = player.GiveWeapon( loadout.primary, primaryMods )
+		player.SetActiveWeaponByName( loadout.primary )
+		#if MP
+		weapon.SetProScreenOwner( player )
+		if ( weapon.HasMod( "pro_screen" ) )
+			UpdateProScreen( player, weapon )
+		#endif
+
+		if ( loadout.primaryModsBitfield != null )
+		{
+			int mods = expect int( loadout.primaryModsBitfield )
+			weapon.SetModBitField( mods )
+		}
+
+		if ( loadout.primaryCamoIndex > 0 )
+		{
+			weapon.SetWeaponSkin( WEAPON_SKIN_INDEX_CAMO )
+			weapon.SetSkin( WEAPON_SKIN_INDEX_CAMO )
+			weapon.SetWeaponCamo( loadout.primaryCamoIndex )
+			weapon.SetCamo( loadout.primaryCamoIndex )
+			//printt( "pilot primary skin/camo", WEAPON_SKIN_INDEX_CAMO, loadout.primaryCamoIndex )
+		}
+		else
+		{
+			weapon.SetWeaponSkin( 0 )
+			weapon.SetSkin( 0 )
+			weapon.SetWeaponCamo( -1 )
+			weapon.SetCamo( -1 )
+			//printt( "pilot primary skin/camo", loadout.primarySkinIndex, -1 )
+		}
+	}
+
+	array<string> secondaryMods = loadout.secondaryMods
+	secondaryMods.removebyvalue( "" )
+	secondaryMods.removebyvalue( "null" )
+
+	if ( loadout.secondary != "" )
+	{
+		entity weapon = player.GiveWeapon( loadout.secondary, secondaryMods )
+		#if MP
+		weapon.SetProScreenOwner( player )
+		if ( weapon.HasMod( "pro_screen" ) )
+			UpdateProScreen( player, weapon )
+		#endif
+
+		if ( loadout.secondaryModsBitfield != null )
+		{
+			int mods = expect int( loadout.secondaryModsBitfield )
+			weapon.SetModBitField( mods )
+		}
+
+		if ( loadout.secondaryCamoIndex > 0 )
+		{
+			weapon.SetWeaponSkin( WEAPON_SKIN_INDEX_CAMO )
+			weapon.SetSkin( WEAPON_SKIN_INDEX_CAMO )
+			weapon.SetWeaponCamo( loadout.secondaryCamoIndex )
+			weapon.SetCamo( loadout.secondaryCamoIndex )
+			//printt( "pilot secondary skin/camo", WEAPON_SKIN_INDEX_CAMO, loadout.secondaryCamoIndex )
+		}
+		else
+		{
+			weapon.SetWeaponSkin( 0 )
+			weapon.SetSkin( 0 )
+			weapon.SetWeaponCamo( -1 )
+			weapon.SetCamo( -1 )
+			//printt( "pilot secondary skin/camo", loadout.secondarySkinIndex, -1 )
+		}
+	}
+
+	if ( loadout.ordnance != "" )
+	{
+		player.GiveOffhandWeapon( loadout.ordnance, OFFHAND_ORDNANCE, loadout.ordnanceMods )
+
+		if ( IsSingleplayer() )
+		{
+			if ( loadout.ordnanceAmmo >= 0 )
+			{
+				entity ordnanceWeapon = player.GetOffhandWeapon( OFFHAND_ORDNANCE )
+				ordnanceWeapon.SetWeaponPrimaryClipCount( loadout.ordnanceAmmo )
+			}
+		}
+	}
+
+	if ( loadout.special != "" )
+	{
+		player.GiveOffhandWeapon( loadout.special, OFFHAND_SPECIAL, loadout.specialMods )
+	}
+
+	if ( loadout.melee != "" )
+	{
+		player.GiveOffhandWeapon( loadout.melee, OFFHAND_MELEE, loadout.meleeMods )
+	}
+
+	player.SetPlayerSettingsWithMods( loadout.setFile, loadout.setFileMods )
+	if ( loadout.camoIndex != 0 )
+	{
+		player.SetSkin( PILOT_SKIN_INDEX_CAMO )
+		player.SetCamo( loadout.camoIndex )
+		//printt( "pilot skin/camo", PILOT_SKIN_INDEX_CAMO, loadout.camoIndex )
+	}
+	else
+	{
+		player.SetSkin( loadout.skinIndex )
+		player.SetCamo( -1 )
+		//printt( "pilot skin/camo", loadout.skinIndex, -1 )
+	}
+
+	player.p.hasSniperWeapon = PilotHasSniperWeapon( player )
+
+	RandomizeHead( player )
+
+	foreach ( callbackFunc in svGlobal.onPlayerGetsNewPilotLoadoutCallbacks )
+	{
+		callbackFunc( player, loadout )
+	}
+}
+
+void function LockOffhandSlot( entity player, int slot )
+{
+	Assert( player.IsPlayer() )
+
+	player.p.offhandSlotLocked[ slot ] = true
+}
+
+void function UnlockOffhandSlot( entity player, int slot )
+{
+	Assert( player.IsPlayer() )
+
+	player.p.offhandSlotLocked[ slot ] = false
+}
+
+
+
+#endif // SERVER
+

@@ -1,0 +1,12 @@
+// Sound tags. These are expected in miles metadata.
+// These will be defined as SOUNDTAG_<whatever> in the script environment.
+
+"unused_tag0"
+"unused_tag1"
+"unused_tag2"
+"unused_tag3"
+"unused_tag4"
+"unused_tag5"
+"foobar"
+// ...
+"unused_tag31"

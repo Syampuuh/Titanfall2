@@ -1,0 +1,275 @@
+untyped
+
+global function DialogueShared_Init
+
+global function RegisterConversation
+
+global function IsForcedDialogueOnly
+global function GetConversationName
+global function GetConversationDebounce
+global function GetConversationLastPlayedTime
+global function SetConversationLastPlayedTime
+
+global function Dispatch
+
+global function Voices
+
+global function ShouldPlaySquadConversation
+
+global function ShTitanOSConversations_Init
+
+int convIndex
+
+global const int GENERIC_PILOT	=	0
+global const int BLISK_ID		=	1
+global const int SPYGLASS_ID	=	2
+global const int GRAVES_ID		=	3
+
+struct
+{
+	table<int, string> vduIdToString
+} file
+
+function DialogueShared_Init()
+{
+	level.Conversations <- {}
+
+	level.ConvToIndex <- {}
+	level.IndexToConv <- {}
+
+	level.scenes <- {}
+
+	DialogueScheduleShared_Init()
+
+	file.vduIdToString[ GENERIC_PILOT	] <-	"generic"
+
+	#if CLIENT
+		DialogueScheduleClient_Init()
+	#else
+		DialogueScheduleServer_Init()
+	#endif
+
+	#if HAS_GAMEMODES
+	GameStateDialog_Init()
+	#endif
+
+	RegisterAutoTitanConversations()
+
+	Weapon_Dialogue_Init()
+}
+
+void function RegisterConversation( string conversation, int priority, float debounceTime = DEFAULT_CONVERSATION_DEBOUNCE_TIME )
+{
+	convIndex++
+	#if SERVER
+		level.ConvToIndex[ conversation ] <- convIndex
+	#else
+		local convTable = { conv = conversation, prio = priority }
+		level.IndexToConv[ convIndex ] <- convTable
+	#endif
+
+	level.Conversations[conversation] <- {}
+	level.Conversations[conversation]["neutral"] <- []
+	level.Conversations[conversation][TEAM_MILITIA] <- []
+	level.Conversations[conversation][TEAM_IMC] <- []
+	level.Conversations[conversation][TEAM_BOTH] <- []
+	level.Conversations[conversation].scene <- {}
+	level.Conversations[conversation].scene["neutral"] <- null
+	level.Conversations[conversation].scene[TEAM_MILITIA] <- null
+	level.Conversations[conversation].scene[TEAM_IMC] <- null
+	level.Conversations[conversation].priority <- priority
+	level.Conversations[conversation].debounceTime <- debounceTime
+	level.Conversations[conversation].lastPlayedTime <- 0.0
+}
+
+string function GetConversationName( index )
+{
+	Assert( index in level.IndexToConv )
+	return expect string( level.IndexToConv[ index ].conv )
+}
+
+float function GetConversationLastPlayedTime( string conversationType )
+{
+	return expect float( level.Conversations[ conversationType ].lastPlayedTime )
+}
+
+void function SetConversationLastPlayedTime( string conversationType, float time )
+{
+	level.Conversations[ conversationType ].lastPlayedTime = time
+}
+
+float function GetConversationDebounce( string conversationType )
+{
+	return expect float( level.Conversations[ conversationType ].debounceTime )
+}
+
+function Dispatch( team, alias )
+{
+	switch ( team )
+	{
+		case TEAM_IMC:
+		case TEAM_BOTH:
+			return "diag_imc_dispatch_" + alias
+
+		case TEAM_MILITIA:
+			return "diag_mcor_dispatch_" + alias
+	}
+
+	Assert( 0, "Unknown team " + team )
+}
+
+function Voices( team, baseAlias, array<int> voiceAvailability )
+{
+	switch ( team )
+	{
+		case TEAM_IMC:
+		case TEAM_BOTH:
+			return AI_Dialogue_AliasAllVoices( "diag_imc_grunt", "_" + baseAlias, voiceAvailability, true )
+
+		case TEAM_MILITIA:
+			return AI_Dialogue_AliasAllVoices( "diag_mcor_grunt", "_" + baseAlias, voiceAvailability, true )
+	}
+
+	Assert( 0, "Unknown team " + team )
+}
+
+function AI_Dialogue_AliasAllVoices( aliasPreVoice, aliasPostVoice, array<int> voiceAvailability, hasDry = true )
+{
+	Assert( !Flag( "EntitiesDidLoad" ) ) // you must set up your aliases at map init so they can be precached
+
+	// voiceAvailability is an array, hopefully [true,true,true], that specifies which voices exist for this sound.
+	// this lets us hack around missing voices that were not recorded.
+
+	Assert( voiceAvailability.len() == VOICE_COUNT )
+
+	int firstAvailableVoiceIndex = -1
+	foreach( voiceIndex, available in voiceAvailability )
+	{
+		if ( available )
+		{
+			firstAvailableVoiceIndex = voiceIndex
+			break
+		}
+	}
+	Assert( firstAvailableVoiceIndex >= 0 )
+
+	local res = []
+	for ( int voiceIndex = 0; voiceIndex < VOICE_COUNT; voiceIndex++ )
+	{
+		int useIndex = voiceIndex
+		if ( !voiceAvailability[ useIndex ] )
+			useIndex = firstAvailableVoiceIndex
+
+		local radioAlias = aliasPreVoice + (useIndex + 1) + aliasPostVoice
+
+		res.append( radioAlias )
+	}
+	return res
+}
+
+bool function IsForcedDialogueOnly( entity player )
+{
+	if ( level.nv.forcedDialogueOnly )
+		return true
+
+	return player.GetForcedDialogueOnly()
+}
+
+bool function ShouldPlaySquadConversation( entity player, conversationType, allowedTime, org, rangeSqr )
+{
+	if ( !IsValid( player ) )
+		return false
+
+	if ( IsForcedDialogueOnly( player ) )
+	{
+		//printt( "ForcedDialogueOnly, not playing AI Conversation:"  + conversationType )
+		return false
+	}
+
+	if ( !GetGlobalNetBool( "squadConversationEnabled" ) )
+	{
+		//printt( "SquadConversationEnabled is false, not playing AI Conversation:"  + conversationType )
+		return false
+	}
+
+	if ( conversationType in player.s.lastAIConversationTime )
+	{
+		if ( player.s.lastAIConversationTime[ conversationType ] > allowedTime )
+			return false
+	}
+
+	return DistanceSqr( player.GetOrigin(), org ) <= rangeSqr
+}
+
+function RegisterAutoTitanConversations()
+{
+
+	foreach(  modifiedAliasSuffix in  TITAN_OS_VOICE_PACK )
+	{
+		if ( modifiedAliasSuffix != "Bt" )
+			RegisterConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngagePilot", VO_PRIORITY_PLAYERSTATE )
+		RegisterConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngageGrunt", VO_PRIORITY_PLAYERSTATE )
+		RegisterConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngageTitan", VO_PRIORITY_PLAYERSTATE )
+		RegisterConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngageTitans", VO_PRIORITY_PLAYERSTATE )
+
+		#if CLIENT
+
+		local lines = [	{ dialogType = "radio",
+			choices = [
+				"diag_gs_titan" + modifiedAliasSuffix + "_autoEngageTitans"
+			]}	]
+
+		AddConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngageTitans", TEAM_MILITIA, lines )
+		AddConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngageTitans", TEAM_IMC, lines )
+
+		lines = [	{ dialogType = "radio",
+			choices = [
+				"diag_gs_titan" + modifiedAliasSuffix + "_autoEngageTitan"
+			]}	]
+
+		AddConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngageTitan", TEAM_MILITIA, lines )
+		AddConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngageTitan", TEAM_IMC, lines )
+
+		lines = [	{ dialogType = "radio",
+			choices = [
+				"diag_gs_titan" + modifiedAliasSuffix + "_autoEngageGrunt"
+			]}	]
+
+		AddConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngageGrunt", TEAM_MILITIA, lines )
+		AddConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngageGrunt", TEAM_IMC, lines )
+
+		if ( modifiedAliasSuffix != "Bt" )
+		{
+			lines = [	{ dialogType = "radio",
+				choices = [
+					"diag_gs_titan" + modifiedAliasSuffix + "_autoEngagePilot"
+				]}	]
+
+			AddConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngagePilot", TEAM_MILITIA, lines )
+			AddConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngagePilot", TEAM_IMC, lines )
+		}
+
+		#endif
+    }
+}
+
+void function ShTitanOSConversations_Init()
+{
+	var dataTable = GetDataTable( $"datatable/titan_os_conversations.rpak" )
+	int numRows = GetDatatableRowCount( dataTable )
+	for ( int i = 0; i < numRows; i++ )
+	{
+		string conversationName = GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "conversationname" ) )
+		int priority = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "priority" ) )
+		float debounce = GetDataTableFloat( dataTable, i, GetDataTableColumnByName( dataTable, "debounce" ) )
+
+		//foreach( _, titanOSVoice in  TITAN_OS_VOICE_PACK )
+		//{
+		//	string soundAlias = "diag_gs_titan" + titanOSVoice + "_" + conversationName
+		//	if( !DoesAliasExist( soundAlias ) )
+		//			CodeWarning( "Alias "  + soundAlias + " does not exist!" )
+		//}
+
+		RegisterConversation( conversationName, priority, debounce )
+	}
+}

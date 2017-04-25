@@ -1,0 +1,468 @@
+untyped
+
+global function ClReplacementTitanHud_Init
+
+global function ReplacementTitanHUD_AddPlayer
+global function ServerCallback_ReplacementTitanSpawnpoint
+global function SetAutoTitanModeHudIndicator
+global function UpdateTitanModeHUD
+global function PetTitanChanged
+global function HotDropImpactTimeChanged
+global function CinematicEventFlagsChanged
+global function ClientCodeCallback_OnTitanBubbleShieldTimeChanged
+global function ReplacementTitanHUD_AddClient
+global function ServerCallback_UpdateTitanModeHUD
+
+global function UpdatePetTitanIcon
+
+global function DoCoreHint
+
+const HUD_TITAN_TIMEEARNED_ICON_MATERIAL = $"vgui/HUD/titan_build_icon"
+
+const HUD_STRYDER_CORE_BUILDING_ICON_MATERIAL = $"vgui/HUD/dpad_titan_core_dash"
+const HUD_OGRE_CORE_BUILDING_ICON_MATERIAL = $"vgui/HUD/dpad_titan_core_shield"
+const HUD_ATLAS_CORE_BUILDING_ICON_MATERIAL = $"vgui/HUD/dpad_titan_core_emp"
+
+const HUD_STRYDER_CORE_ICON_MATERIAL = $"vgui/HUD/dpad_titan_core_dash"
+const HUD_OGRE_CORE_ICON_MATERIAL = $"vgui/HUD/dpad_titan_core_shield"
+const HUD_ATLAS_CORE_ICON_MATERIAL = $"vgui/HUD/dpad_titan_core_emp"
+
+struct
+{
+	var petTitanIconRui
+} file
+
+function ClReplacementTitanHud_Init()
+{
+	PrecacheHUDMaterial( HUD_TITAN_TIMEEARNED_ICON_MATERIAL )
+
+	PrecacheHUDMaterial( HUD_STRYDER_CORE_BUILDING_ICON_MATERIAL )
+	PrecacheHUDMaterial( HUD_OGRE_CORE_BUILDING_ICON_MATERIAL )
+	PrecacheHUDMaterial( HUD_ATLAS_CORE_BUILDING_ICON_MATERIAL )
+
+	PrecacheHUDMaterial( HUD_STRYDER_CORE_ICON_MATERIAL )
+	PrecacheHUDMaterial( HUD_OGRE_CORE_ICON_MATERIAL )
+	PrecacheHUDMaterial( HUD_ATLAS_CORE_ICON_MATERIAL )
+	PrecacheHUDMaterial( $"vgui/HUD/empty" )
+
+	FlagInit( "EnableIncomingTitanDropEffects", true )
+
+	RegisterSignal( "ReplacementTitanKillParticle" )
+	RegisterSignal( "TitanHealthDropKillParticle" )
+
+	RegisterSignal( "titanCoreUpdate" )
+	RegisterSignal( "titanImpactUpdate" )
+	RegisterSignal( "titanRespawnUpdate" )
+	RegisterSignal( "UpdateTitanModeHUD" )
+
+	AddCallback_KillReplayEnded( RTH_KillReplayEnded )
+	AddCallback_LocalViewPlayerSpawned( OnLocalViewPlayerSpawned )
+
+	AddPlayerFunc( ReplacementTitanHUD_AddPlayer )
+
+	PrecacheParticleSystem( $"P_ar_titan_droppoint" )
+
+	file.petTitanIconRui = CreateCockpitRui( $"ui/overhead_icon_pet_titan.rpak", MINIMAP_Z_BASE + 20 )
+}
+
+void function ReplacementTitanHUD_AddPlayer( entity player )
+{
+	if ( IsMenuLevel() )
+		return
+
+	player.s.lastReadyMessageTime <- -9999
+	player.s.lastCoreReadyMessageTime <- -9999
+	player.s.coreActiveState <- false
+
+	TitanModeHUD_AddPlayer( player )
+}
+
+function ReplacementTitanHUD_AddClient( entity player )
+{
+}
+
+
+enum eTitanModeHudStates
+{
+	HotDrop,
+	Follow,
+	Guard,
+	Drop,
+	Building,
+	InTitan,
+	NoTitan,
+	Embark,
+}
+
+enum eTitanHealthHudStates
+{
+	Drop,
+	Building,
+	Dropped,
+}
+
+const DROP_HINT_DELAY = 10.0
+const CORE_HINT_DELAY = 10.0
+function TitanModeHUD_AddPlayer( entity player )
+{
+	if ( player != GetLocalViewPlayer() )
+		return
+
+	player.s.titanModeHudNextDropHintTime <- 0.0
+	player.s.titanModeHudNextCoreHintTime <- 0.0
+
+//	if ( GetCurrentPlaylistVarInt( "titan_mode_change_allowed", 0 ) )
+	thread TitanModeHUD_Think( player )
+
+	thread TitanModeHUD_DropTitanHintThink( player )
+}
+
+
+function TitanModeHUD_Think( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+
+	while ( true )
+	{
+		player.WaitSignal( "SettingsChanged" )
+
+		UpdateTitanModeHUD( player )
+	}
+}
+
+void function RTH_KillReplayEnded()
+{
+	UpdatePetTitanIcon( GetLocalClientPlayer() )
+}
+
+function ServerCallback_ReplacementTitanSpawnpoint( float x, float y, float z, float impactTime )
+{
+	impactTime += TimeAdjustmentForRemoteReplayCall()
+	thread ReplacementTitanSpawnpointThread( < x, y, z >, impactTime )
+}
+
+
+void function ReplacementTitanSpawnpointThread( vector origin, float impactTime )
+{
+	if ( !Flag( "EnableIncomingTitanDropEffects" ) )
+		return
+
+	entity player = GetLocalViewPlayer()
+	player.EndSignal( "ReplacementTitanKillParticle" )
+	player.EndSignal( "OnDeath" )
+
+	vector surfaceNormal = < 0, 0, 1 >
+
+	int index = GetParticleSystemIndex( $"P_ar_titan_droppoint" )
+	int targetEffect = StartParticleEffectInWorldWithHandle( index, origin, surfaceNormal )
+	EffectSetControlPointVector( targetEffect, 1, < 128, 188, 255 > )
+
+	var rui = RuiCreate( $"ui/titanfall_timer.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 0 )
+	RuiTrackFloat3( rui, "playerPos", player, RUI_TRACK_ABSORIGIN_FOLLOW )
+	RuiSetFloat3( rui, "pos", origin + <0, 0, 48> )
+	RuiSetGameTime( rui, "impactTime", impactTime )
+
+	//float width = 64
+	//float height = 72
+
+	//var worldTopo = RuiTopology_CreatePlane( origin + <0, width * 0.5, height>, < 0, -width, 0>, <0, 0, -height>, false )
+	//var worldRui = RuiCreate( $"ui/titanfall_timer_world.rpak", worldTopo, RUI_DRAW_WORLD, 0 )
+	//RuiSetGameTime( worldRui, "impactTime", impactTime )
+
+	OnThreadEnd(
+		function() : ( player, targetEffect, rui/*, worldRui*/ )
+		{
+			if ( !IsValid( player ))
+				return
+
+			if ( EffectDoesExist( targetEffect ) )
+				EffectStop( targetEffect, true, false )
+
+			RuiDestroy( rui )
+			//RuiDestroy( worldRui )
+		}
+	)
+
+	//var deferredTrace = DeferredTraceLine( player.CameraPosition(), origin + <0, 0, 64>, player, TRACE_MASK_SOLID | TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
+
+	//impactTime += 1000
+	//
+	while ( Time() < impactTime )
+	{
+		//vector right = player.GetViewRight()
+		//RuiTopology_UpdatePos( worldTopo, origin - right * (width * 0.5) + <0, 0, height>, right * width, <0, 0, -height> )
+		//
+		//if ( IsDeferredTraceFinished( deferredTrace ) )
+		//{
+		//	TraceResults result = GetDeferredTraceResult( deferredTrace )
+		//	//RuiSetBool( rui, "isVisible", result.fraction < 1.0 )
+		//	//RuiSetBool( worldRui, "isVisible", result.fraction == 1.0 )
+		//	RuiSetBool( rui, "isVisible", true )
+		//	RuiSetBool( worldRui, "isVisible", false )
+		//
+		//	deferredTrace = DeferredTraceLine( player.CameraPosition(), origin + <0, 0, 64>, player, TRACE_MASK_SOLID | TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
+		//}
+		//
+		WaitFrame()
+	}
+}
+
+
+void function UpdatePetTitanIcon( entity player )
+{
+	if ( ShouldPetTitanIconBeVisible( player ) )
+	{
+		entity petTitan = player.GetPetTitan()
+		Assert( IsAlive( petTitan ) )
+
+		//player.cv.PlayerPetTitanIcon.SetEntityOverhead( petTitan, Vector( 0, 0, 0 ), 0.5, 1.0 )
+		//player.cv.PlayerPetTitanIcon.Show()
+		//player.cv.PlayerPetTitanIcon.SetFOVFade( deg_cos( 55 ), deg_cos( 35 ), 1, 0 )
+		//player.cv.PlayerPetTitanIcon.SetDistanceFade( 2000, 6000, 1, 0 )
+
+		//player.cv.PlayerPetTitanArrow.SetEntityOverhead( petTitan, Vector( 0, 0, 0 ), 0.5, 1.0 )
+		//player.cv.PlayerPetTitanArrow.Show()
+		//player.cv.PlayerPetTitanArrow.SetFOVFade( deg_cos( 55 ), deg_cos( 35 ), 1, 0 )
+		//player.cv.PlayerPetTitanArrow.SetDistanceFade( 2000, 6000, 1, 0 )
+
+		//player.cv.PlayerPetTitanLabel.SetEntityOverhead( petTitan, Vector( 0, 0, 0 ), 0.5, 1.0 )
+		//player.cv.PlayerPetTitanLabel.Show()
+		//player.cv.PlayerPetTitanLabel.SetAutoTextEntity( "#HUD_DISTANCE_METERS", HATT_DISTANCE_METERS, player.GetPetTitan() )
+		//player.cv.PlayerPetTitanLabel.SetFOVFade( deg_cos( 55 ), deg_cos( 35 ), 1, 0 )
+		//player.cv.PlayerPetTitanLabel.SetDistanceFade( 2000, 6000, 1, 0 )
+	}
+	else
+	{
+		//player.cv.PlayerPetTitanIcon.Hide()
+		//player.cv.PlayerPetTitanArrow.Hide()
+		//player.cv.PlayerPetTitanLabel.Hide()
+	}
+}
+
+bool function ShouldPetTitanIconBeVisible( entity player )
+{
+	if ( player != GetLocalViewPlayer() )
+		return false
+
+	if ( player != GetLocalClientPlayer() )
+		return false
+
+	if ( IsWatchingReplay() )
+		return false
+
+	local ceFlags = player.GetCinematicEventFlags()
+
+	if ( (ceFlags & CE_FLAG_EMBARK) || (ceFlags & CE_FLAG_DISEMBARK) )
+		return false
+
+	entity petTitan = player.GetPetTitan()
+
+	if ( !IsAlive( petTitan ) )
+		return false
+
+	if ( player.GetHotDropImpactTime() )
+		return false
+
+	if ( player.GetParent() && IsDropship( player.GetParent() ) )
+		return false
+
+	return true
+}
+
+
+void function CinematicEventFlagsChanged( entity player )
+{
+	local ceFlags = player.GetCinematicEventFlags()
+
+	UpdatePetTitanIcon( player )
+}
+
+
+void function ClientCodeCallback_OnTitanBubbleShieldTimeChanged( entity player )
+{
+	if ( !IsValid( player ) )
+		return
+
+	UpdateTitanModeHUD( player )
+}
+
+
+function HotDropImpactTimeChanged( entity player )
+{
+	UpdateTitanModeHUD( player )
+	UpdatePetTitanIcon( player )
+}
+
+
+function PetTitanChanged( entity player )
+{
+	if ( player != GetLocalViewPlayer() )
+		return
+
+	#if MP
+	if ( IsAlive( player.GetPetTitan() ) )
+	{
+		RuiSetBool( file.petTitanIconRui, "isVisible", true )
+		RuiTrackFloat3( file.petTitanIconRui, "pos", player.GetPetTitan(), RUI_TRACK_ABSORIGIN_FOLLOW ) //RUI_TRACK_OVERHEAD_FOLLOW
+	}
+	else
+	{
+		RuiSetBool( file.petTitanIconRui, "isVisible", false )
+	}
+	#endif
+
+	player.Signal( "UpdateTitanBuildBar" )
+	//UpdateTitanModeHUD( player )
+}
+
+
+function PetTitan_HealthUpdateThink( entity player, entity titan )
+{
+	titan.EndSignal( "OnDeath" )
+	titan.EndSignal( "OnDestroy" )
+
+	titan.EnableHealthChangedCallback()
+
+	while ( true )
+	{
+		UpdateTitanModeHUD( player )
+		WaitSignal( titan, "Doomed", "HealthChanged" )
+	}
+}
+
+function ServerCallback_UpdateTitanModeHUD()
+{
+	UpdateTitanCockpitVisibility()
+
+	entity player = GetLocalViewPlayer()
+	if ( IsValid( player ) )
+		UpdateTitanModeHUD( player )
+}
+
+void function OnLocalViewPlayerSpawned( entity player )
+{
+	UpdateTitanModeHUD( player )
+}
+
+function UpdateTitanModeHUD( entity player, mode = null )
+{
+	thread UpdateTitanModeHUD_Internal( player, mode )
+}
+
+function UpdateTitanModeHUD_Internal( entity player, mode = null )
+{
+	player.Signal( "UpdateTitanModeHUD" )
+	player.EndSignal( "UpdateTitanModeHUD" )
+
+	WaitEndFrame()
+
+	if ( player != GetLocalViewPlayer() )
+		return
+
+	PetTitanChanged( player )
+
+	player.Signal( "UpdateTitanBuildBar" )
+}
+
+function DelayUpdateTitanModeHUD( delay, entity player, endSignal )
+{
+	clGlobal.levelEnt.Signal( endSignal )
+	clGlobal.levelEnt.EndSignal( endSignal )
+
+	wait delay
+
+	thread UpdateTitanModeHUD( player )
+}
+
+bool function EnoughTimeHasPassedForCoreHint( entity player )
+{
+	float currentTime = Time()
+	if ( currentTime >= player.s.titanModeHudNextCoreHintTime )
+		return true
+
+	return false
+}
+
+void function DoCoreHint( entity player, bool firstTime )
+{
+	float currentTime = Time()
+
+	player.s.titanModeHudNextCoreHintTime = (currentTime + CORE_HINT_DELAY) - 0.15
+
+	if ( Time() - player.s.lastCoreReadyMessageTime > 30.0 && player.p.allowCoreMessages && SP_CoreReadyChecks( player ) )
+	{
+		player.s.lastCoreReadyMessageTime = Time()
+		CoreReadyMessage( player, !firstTime )
+		string ornull conversationName = GetCoreOSConversationName( player, "core_online" )
+		if ( conversationName == null )
+			return
+
+		expect string( conversationName )
+		TitanCockpit_PlayDialog( player, conversationName )
+	}
+}
+
+bool function SP_CoreReadyChecks( entity player )
+{
+	#if SP
+	if ( !IsSingleplayer() )
+		return true
+
+	if ( Tracker_GetNumTitans( player ) <= 0 )
+		return false
+
+	// don't show core hint during conversation, since it's unbound
+	if ( IsConversationPlaying() )
+		return false
+	#endif
+
+	return true
+}
+
+enum eTitanBuildDisplayStyle
+{
+	TIMER,
+	PERCENTAGE,
+	BLANK
+}
+
+
+function TitanModeHUD_DropTitanHintThink( entity player )
+{
+	player.EndSignal( "OnDestroy" )
+
+	while ( true )
+	{
+		UpdateTitanModeHUD( player )
+
+		wait DROP_HINT_DELAY
+	}
+}
+
+
+function TitanModeHUD_ShouldShow( entity player )
+{
+	if ( !IsAlive( player ) )
+		return false
+
+	if ( !IsAlive( player.GetPetTitan() ) && !player.IsTitan() )
+	{
+		local time = player.GetNextTitanRespawnAvailable() - Time()
+		if ( time > 630 )
+			return false
+	}
+
+	return true
+}
+
+
+function SetAutoTitanModeHudIndicator( entity player, mode )
+{
+	Assert( IsValid( player ) )
+	Assert( mode == eNPCTitanMode.FOLLOW || mode == eNPCTitanMode.STAY )
+
+	if ( !IsAlive( player.GetPetTitan() ) )
+		return
+
+	UpdateTitanModeHUD( player, mode )
+}

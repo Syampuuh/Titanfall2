@@ -1,0 +1,7 @@
+"SplineRope"
+{
+	"$basetexture" "world\dev\dev_white_512.vmt"
+	//"$basetexture" "cable\cable_col.vmt"
+	"$selfillum" "1"
+	"$selfillumtint" "[2.0 2.0 2.0]"
+}

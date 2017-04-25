@@ -1,0 +1,116 @@
+global function ClBurnMeter_Init
+global function ClBurnMeter_RegisterNetworkFunctions
+global function ServerCallback_RewardUsed
+
+struct
+{
+	var boostTimeEffectRui = null
+	int cockpitEffectHandle
+
+}file
+
+global int BOOST_TIMED_EFFECT_FX
+
+void function ClBurnMeter_Init()
+{
+	if ( !BurnMeterEnabled() )
+		return
+
+	AddEventNotificationCallback( eEventNotifications.BurnMeter_CantSummonReaper, ClBurnMeter_CantSummonReaper )
+	AddEventNotificationCallback( eEventNotifications.BurnMeter_RadarJammerUsed, ClBurnMeter_RadarJammerUsed )
+
+	RegisterSignal( "StopBoostMusic" )
+
+	BOOST_TIMED_EFFECT_FX = PrecacheParticleSystem( $"P_core_DMG_boost_screen" )
+
+}
+
+void function ClBurnMeter_RegisterNetworkFunctions()
+{
+	RegisterNetworkedVariableChangeCallback_time( "boostTimedEffectLastsTill", ClBurnMeter_boostTimedEffectLastsTillChanged )
+}
+
+
+void function ClBurnMeter_CantSummonReaper( entity player, var eventVal )
+{
+	SetTimedEventNotification( 3.0, "#BURNMETER_REAPER_CANT_SUMMON_EVENT_NOTIFICATION" )
+}
+
+void function ClBurnMeter_RadarJammerUsed( entity activatingPlayer, var eventVal )
+{
+	entity localViewPlayer = GetLocalViewPlayer()
+	if ( activatingPlayer == localViewPlayer )
+		SetTimedEventNotification( 3.0, "#BURNMETER_RADAR_JAMMER_USED_EVENT_NOTIFICATION", activatingPlayer.GetPlayerName() )
+	else if ( activatingPlayer.GetTeam() ==  localViewPlayer.GetTeam() )
+		SetTimedEventNotification( 3.0, "#BURNMETER_FRIENDLY_RADAR_JAMMER_USED_EVENT_NOTIFICATION", activatingPlayer.GetPlayerName() )
+	else
+		SetTimedEventNotification( 3.0, "#BURNMETER_ENEMY_RADAR_JAMMER_USED_EVENT_NOTIFICATION" )
+}
+
+void function ClBurnMeter_boostTimedEffectLastsTillChanged( entity player, float oldVal, float newVal, bool actuallyChanged )
+{
+	if ( !actuallyChanged )
+		return
+
+	if ( newVal == 0.0 )
+	{
+		ClBurnMeter_EndBoostTimedEffectSequence( player )
+		return
+	}
+	else
+	{
+		ClBurnMeter_StartBoostTimedEffectSequence( player, newVal )
+	}
+
+}
+
+void function ClBurnMeter_StartBoostTimedEffectSequence( entity player, float endTime )
+{
+	var boostRui = CreateCockpitRui( $"ui/boost_timed_effect_hud.rpak" )
+	RuiSetGameTime( boostRui, "endTime", endTime )
+	file.boostTimeEffectRui = boostRui
+
+	file.cockpitEffectHandle = StartParticleEffectOnEntity( player.GetCockpit(), BOOST_TIMED_EFFECT_FX, FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
+	thread PlayBoostMusic( player ) //WILL PROBABLY NOT WORK WELL WITH OTHER GAME MODE MUSIC
+
+}
+
+void function ClBurnMeter_EndBoostTimedEffectSequence( entity player )
+{
+	if ( file.boostTimeEffectRui == null )
+		return
+
+	RuiDestroy( file.boostTimeEffectRui )
+	file.boostTimeEffectRui = null
+
+	EffectStop( file.cockpitEffectHandle, false, true )
+
+	player.Signal( "StopBoostMusic" )
+}
+
+void function PlayBoostMusic( entity player ) //Copy Paste of PlayMarkedForDeathMusic. API this up if we are actually shipping this
+{
+	player.EndSignal( "OnDeath" )
+	player.EndSignal( "OnDestroy" )
+	player.EndSignal( "StopBoostMusic" )
+
+	if ( GetMusicReducedSetting() )
+		return
+
+	OnThreadEnd(
+		function() : (  )
+		{
+			StopLoopMusic()
+			PlayActionMusic()
+		}
+	)
+
+	waitthread ForceLoopMusic( eMusicPieceID.BOOST_TIMED_EFFECT ) //Is looping music, so doesn't return from this until the end signals kick in
+}
+
+void function ServerCallback_RewardUsed( int rewardId )
+{
+	BurnReward burnReward = BurnReward_GetById( rewardId )
+
+	AnnouncementMessageSweep( GetLocalClientPlayer(), burnReward.localizedName, burnReward.activationText, <0.92, 0.23, 0.02> )
+}

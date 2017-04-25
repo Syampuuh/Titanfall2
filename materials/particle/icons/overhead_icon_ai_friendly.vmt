@@ -1,0 +1,17 @@
+"Spritecard"
+{
+	"$basetexture" "vgui\HUD\overhead_icon_teammate_effect"
+
+	"$vertexcolor" 1
+//	"$translucent" "1"
+
+	//$additive 1
+
+	//$depthblend 1
+	//$depthblendscale 8
+
+	$ignorez 1
+
+	$minsize 0.008
+	$maxsize 0.014
+}

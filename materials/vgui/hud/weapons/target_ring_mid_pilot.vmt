@@ -1,0 +1,33 @@
+"Basic"
+{
+	"$basetexture" "vgui/hud/weapons/target_ring_mid_pilot"
+	"$translucent" "1"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$ignorez"     "1"
+	
+	"$basetexturerot" "0"
+	"$time" "0.0"
+	"$rate" "60.0"
+	
+	"Proxies"
+	{
+		"CurrentTime"
+		{
+			"resultVar" "$time"
+		}
+	
+		"Multiply"
+		{
+			"srcvar1" "$time"
+			"srcvar2" "$rate" 
+			"resultvar" "$basetexturerot" 
+		}
+	
+		"TextureTransform"
+		{
+			"rotateVar" "$basetexturerot"
+			"resultvar" "$basetexturetransform"
+		}
+	} 
+}

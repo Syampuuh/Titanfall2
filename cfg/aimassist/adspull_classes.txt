@@ -1,0 +1,10 @@
+//	Name				InnerScaleMP	OuterScaleMP	InnerScaleSP	OuterScaleSP
+//
+	"none"				0.0				0.0				0.0				0.0
+
+	"precise"			1.0				4.0				0.73			10.0
+	"broad"				1.5				3.0				1.5				10.0
+
+	"precise_sp"		1.0				4.0				0.73			10.0
+	"broad_sp"			1.5				3.0				1.5				10.0
+

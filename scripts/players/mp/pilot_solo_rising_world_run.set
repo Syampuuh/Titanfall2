@@ -1,0 +1,100 @@
+#base "pilot_base.set"
+"pilot_solo_rising_world_run"
+{
+	"global"
+	{
+		armsmodel					"models/weapons/arms/pov_mlt_hero_jack.mdl"
+		bodymodel					"models/humans/heroes/mlt_hero_jack.mdl"
+
+		class						"pilot"
+		subclass					"wallrun"
+
+		health						100
+
+		stepheight					18
+		//jumpHeight					80
+		ziplineSpeed				600
+
+		airSpeed					70
+		airAcceleration				540
+
+		wallrun						1
+		doublejump					1
+
+		sprintStartDuration			0.4
+
+        wallrun_timeLimit           3.5
+
+		//Light gravity
+		jumpheight					60
+		gravityscale				0.75
+		wallrunJumpOutwardSpeed		240 // use 240 for r1 parity, 188 for mp parity
+		wallrunJumpUpSpeed			240
+		wallrunJumpInputDirSpeed	40
+
+		superjumpMinHeight			60
+		superjumpMaxHeight			60
+		superjumpHorzSpeed			180
+
+		wallrunMaxSpeedVertical		225
+		wallrunMaxSpeedHorizontal	340
+		wallrunAccelerateVertical 	360 // 80%
+		wallrunAccelerateHorizontal 1400 // 80%
+		wallrun_timeLimit			5
+
+		wallrunAdsType				"ADS"
+
+		pitchMaxUp		85
+		pitchMaxDown	89
+
+		deathcamDistanceMin			50
+		deathcamDistanceMax			70
+		deathcamDistanceGrowRate	5000
+		deathcamExtraHeight			30
+		deathcamMinHeight			30
+		deathcamRotateSpeed			0
+
+        slideFOVScale               1.1 // scales fov by this amount while sliding
+        slideFOVLerpInTime          0.25 // lerp in over this time
+        slideFOVLerpOutTime         0.25 // lerp out over this time
+
+
+		ClassMods
+		{
+			disable_doublejump
+			{
+				doublejump		"0"
+			}
+
+			disable_wallrun
+			{
+				wallrun			"0"
+			}
+
+			boomtown_climb
+			{
+				pitchMaxUp		75
+				pitchMaxDown	80
+				mantlePitchLeveling 1
+			}
+
+			s2s_widowrun
+			{
+				wallrun_timeLimit	3
+			}
+		}
+	}
+
+	"crouch"
+	{
+		speed						80
+	}
+
+	"stand"
+	{
+		speed						162.5
+		sprintspeed					243
+	}
+}
+
+

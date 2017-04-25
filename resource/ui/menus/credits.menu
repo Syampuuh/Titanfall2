@@ -1,0 +1,1150 @@
+resource/ui/menus/credits.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+		BackgroundImage
+		{
+			ControlName				ImagePanel
+			Image 					"ui/menu/common/menu_background_neutral"
+			wide					f0
+			tall					f0
+			visible					0
+			scaleImage				1
+			zpos 					-10
+		}
+
+		Credits_logo_respawn
+		{
+			ControlName				ImagePanel
+			ypos 					112
+			xpos					c-393
+			wide					787
+			tall					198
+			image					"vgui/HUD/logo_respawn"
+			visible					0
+			scaleImage				1
+		}
+
+		Credits_Dept_0
+		{
+			ControlName				Label
+			InheritProperties		CreditsDepartment
+		}
+		Credits_Dept_1
+		{
+			ControlName				Label
+			InheritProperties		CreditsDepartment
+		}
+		Credits_Dept_2
+		{
+			ControlName				Label
+			InheritProperties		CreditsDepartment
+		}
+		Credits_Dept_3
+		{
+			ControlName				Label
+			InheritProperties		CreditsDepartment
+		}
+		Credits_Dept_4
+		{
+			ControlName				Label
+			InheritProperties		CreditsDepartment
+		}
+		Credits_Dept_5
+		{
+			ControlName				Label
+			InheritProperties		CreditsDepartment
+		}
+		Credits_Dept_6
+		{
+			ControlName				Label
+			InheritProperties		CreditsDepartment
+		}
+		Credits_Dept_7
+		{
+			ControlName				Label
+			InheritProperties		CreditsDepartment
+		}
+		Credits_Dept_8
+		{
+			ControlName				Label
+			InheritProperties		CreditsDepartment
+		}
+		Credits_Dept_9
+		{
+			ControlName				Label
+			InheritProperties		CreditsDepartment
+		}
+
+
+
+		Credits_Dept_Scan_0
+		{
+			ControlName				ImagePanel
+			InheritProperties		CreditsDepartmentScan
+			pin_to_sibling			Credits_Dept_0
+		}
+
+		Credits_Dept_Scan_1
+		{
+			ControlName				ImagePanel
+			InheritProperties		CreditsDepartmentScan
+			pin_to_sibling			Credits_Dept_1
+		}
+
+		Credits_Dept_Scan_2
+		{
+			ControlName				ImagePanel
+			InheritProperties		CreditsDepartmentScan
+			pin_to_sibling			Credits_Dept_2
+		}
+
+		Credits_Dept_Scan_3
+		{
+			ControlName				ImagePanel
+			InheritProperties		CreditsDepartmentScan
+			pin_to_sibling			Credits_Dept_3
+		}
+
+		Credits_Dept_Scan_4
+		{
+			ControlName				ImagePanel
+			InheritProperties		CreditsDepartmentScan
+			pin_to_sibling			Credits_Dept_4
+		}
+
+		Credits_Dept_Scan_5
+		{
+			ControlName				ImagePanel
+			InheritProperties		CreditsDepartmentScan
+			pin_to_sibling			Credits_Dept_5
+		}
+
+		Credits_Dept_Scan_6
+		{
+			ControlName				ImagePanel
+			InheritProperties		CreditsDepartmentScan
+			pin_to_sibling			Credits_Dept_6
+		}
+
+		Credits_Dept_Scan_7
+		{
+			ControlName				ImagePanel
+			InheritProperties		CreditsDepartmentScan
+			pin_to_sibling			Credits_Dept_7
+		}
+
+		Credits_Dept_Scan_8
+		{
+			ControlName				ImagePanel
+			InheritProperties		CreditsDepartmentScan
+			pin_to_sibling			Credits_Dept_8
+		}
+
+		Credits_Dept_Scan_9
+		{
+			ControlName				ImagePanel
+			InheritProperties		CreditsDepartmentScan
+			pin_to_sibling			Credits_Dept_9
+		}
+
+
+
+
+		Credits_JobTitle_0
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					67
+		}
+
+		Credits_Name_0
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_0
+		}
+
+		Credits_JobTitle_1
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					112
+		}
+
+		Credits_Name_1
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_1
+		}
+
+		Credits_JobTitle_2
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					157
+		}
+
+		Credits_Name_2
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_2
+		}
+
+		Credits_JobTitle_3
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					202
+		}
+
+		Credits_Name_3
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_3
+		}
+
+		Credits_JobTitle_4
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					247
+		}
+
+		Credits_Name_4
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_4
+		}
+
+		Credits_JobTitle_5
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					292
+		}
+
+		Credits_Name_5
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_5
+		}
+
+		Credits_JobTitle_6
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					337
+		}
+
+		Credits_Name_6
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_6
+		}
+
+		Credits_JobTitle_7
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					382
+		}
+
+		Credits_Name_7
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_7
+		}
+
+		Credits_JobTitle_8
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					427
+		}
+
+		Credits_Name_8
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_8
+		}
+
+		Credits_JobTitle_9
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					472
+		}
+
+		Credits_Name_9
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_9
+		}
+
+		Credits_JobTitle_10
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					517
+		}
+
+		Credits_Name_10
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_10
+		}
+
+		Credits_JobTitle_11
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					562
+		}
+
+		Credits_Name_11
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_11
+		}
+
+		Credits_JobTitle_12
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					607
+		}
+
+		Credits_Name_12
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_12
+		}
+
+		Credits_JobTitle_13
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					652
+		}
+
+		Credits_Name_13
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_13
+		}
+
+		Credits_JobTitle_14
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					697
+		}
+
+		Credits_Name_14
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_14
+		}
+
+		Credits_JobTitle_15
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					742
+		}
+
+		Credits_Name_15
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_15
+		}
+
+		Credits_JobTitle_16
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					787
+		}
+
+		Credits_Name_16
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_16
+		}
+
+		Credits_JobTitle_17
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					832
+		}
+
+		Credits_Name_17
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_17
+		}
+
+		Credits_JobTitle_18
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					877
+		}
+
+		Credits_Name_18
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_18
+		}
+
+		Credits_JobTitle_19
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					922
+		}
+
+		Credits_Name_19
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_19
+		}
+
+		Credits_JobTitle_20
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					67
+		}
+
+		Credits_Name_20
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_20
+		}
+
+		Credits_JobTitle_21
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					112
+		}
+
+		Credits_Name_21
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_21
+		}
+
+		Credits_JobTitle_22
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					157
+		}
+
+		Credits_Name_22
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_22
+		}
+
+		Credits_JobTitle_23
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					202
+		}
+
+		Credits_Name_23
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_23
+		}
+
+		Credits_JobTitle_24
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					247
+		}
+
+		Credits_Name_24
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_24
+		}
+
+		Credits_JobTitle_25
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					292
+		}
+
+		Credits_Name_25
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_25
+		}
+
+		Credits_JobTitle_26
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					337
+		}
+
+		Credits_Name_26
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_26
+		}
+
+		Credits_JobTitle_27
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					382
+		}
+
+		Credits_Name_27
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_27
+		}
+
+		Credits_JobTitle_28
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					427
+		}
+
+		Credits_Name_28
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_28
+		}
+
+		Credits_JobTitle_29
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					472
+		}
+
+		Credits_Name_29
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_29
+		}
+
+		Credits_JobTitle_30
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					517
+		}
+
+		Credits_Name_30
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_30
+		}
+
+		Credits_JobTitle_31
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					562
+		}
+
+		Credits_Name_31
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_31
+		}
+
+		Credits_JobTitle_32
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					607
+		}
+
+		Credits_Name_32
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_32
+		}
+
+		Credits_JobTitle_33
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					652
+		}
+
+		Credits_Name_33
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_33
+		}
+
+		Credits_JobTitle_34
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					697
+		}
+
+		Credits_Name_34
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_34
+		}
+
+		Credits_JobTitle_35
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					742
+		}
+
+		Credits_Name_35
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_35
+		}
+
+		Credits_JobTitle_36
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					787
+		}
+
+		Credits_Name_36
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_36
+		}
+
+		Credits_JobTitle_37
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					832
+		}
+
+		Credits_Name_37
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_37
+		}
+
+		Credits_JobTitle_38
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					877
+		}
+
+		Credits_Name_38
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_38
+		}
+
+		Credits_JobTitle_39
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					922
+		}
+
+		Credits_Name_39
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_39
+		}
+				Credits_JobTitle_40
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					67
+		}
+
+		Credits_Name_40
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_40
+		}
+
+		Credits_JobTitle_41
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					112
+		}
+
+		Credits_Name_41
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_41
+		}
+
+		Credits_JobTitle_42
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					157
+		}
+
+		Credits_Name_42
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_42
+		}
+
+		Credits_JobTitle_43
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					202
+		}
+
+		Credits_Name_43
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_43
+		}
+
+		Credits_JobTitle_44
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					247
+		}
+
+		Credits_Name_44
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_44
+		}
+
+		Credits_JobTitle_45
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					292
+		}
+
+		Credits_Name_45
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_45
+		}
+
+		Credits_JobTitle_46
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					337
+		}
+
+		Credits_Name_46
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_46
+		}
+
+		Credits_JobTitle_47
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					382
+		}
+
+		Credits_Name_47
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_47
+		}
+
+		Credits_JobTitle_48
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					427
+		}
+
+		Credits_Name_48
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_48
+		}
+
+		Credits_JobTitle_49
+		{
+			ControlName				Label
+			InheritProperties		CreditsJobTitle
+			ypos					922
+		}
+
+		Credits_Name_49
+		{
+			ControlName				Label
+			InheritProperties		CreditsName
+			pin_to_sibling			Credits_JobTitle_49
+		}
+
+
+
+
+		Credits_Centered_0
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					56
+		}
+
+		Credits_Centered_1
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					112
+		}
+
+		Credits_Centered_2
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					157
+		}
+
+		Credits_Centered_3
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					202
+		}
+
+		Credits_Centered_4
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					247
+		}
+
+		Credits_Centered_5
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					292
+		}
+
+		Credits_Centered_6
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					337
+		}
+
+		Credits_Centered_7
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					382
+		}
+
+		Credits_Centered_8
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					427
+		}
+
+		Credits_Centered_9
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					472
+		}
+
+		Credits_Centered_10
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					517
+		}
+
+		Credits_Centered_11
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					562
+		}
+
+		Credits_Centered_12
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					607
+		}
+
+		Credits_Centered_13
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					652
+		}
+
+		Credits_Centered_14
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					697
+		}
+
+		Credits_Centered_15
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					742
+		}
+
+		Credits_Centered_16
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					787
+		}
+
+		Credits_Centered_17
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					832
+		}
+
+		Credits_Centered_18
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					877
+		}
+
+		Credits_Centered_19
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					956
+		}
+
+		Credits_Centered_20
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					67
+		}
+
+		Credits_Centered_21
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					112
+		}
+
+		Credits_Centered_22
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					157
+		}
+
+		Credits_Centered_23
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					202
+		}
+
+		Credits_Centered_24
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					247
+		}
+
+		Credits_Centered_25
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					292
+		}
+
+		Credits_Centered_26
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					337
+		}
+
+		Credits_Centered_27
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					382
+		}
+
+		Credits_Centered_28
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					427
+		}
+
+		Credits_Centered_29
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					472
+		}
+
+		Credits_Centered_30
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					517
+		}
+
+		Credits_Centered_31
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					562
+		}
+
+		Credits_Centered_32
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					607
+		}
+
+		Credits_Centered_33
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					652
+		}
+
+		Credits_Centered_34
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					697
+		}
+
+		Credits_Centered_35
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					742
+		}
+
+		Credits_Centered_36
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					787
+		}
+
+		Credits_Centered_37
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					832
+		}
+
+		Credits_Centered_38
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					877
+		}
+
+		Credits_Centered_39
+		{
+			ControlName				Label
+			InheritProperties		CreditsCentered
+			ypos					922
+		}
+	}
+}

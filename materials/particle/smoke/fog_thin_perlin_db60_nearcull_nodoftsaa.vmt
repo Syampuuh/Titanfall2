@@ -1,0 +1,20 @@
+"SpriteCard"
+{
+	$basetexture "particle/smoke/fog_thin_perlin"
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+
+	$depthblend 1
+	$depthblendscale 60
+
+	$startfadesize .35
+	$endfadesize .55
+
+	$vertexFogAmount 1
+
+	$disabledof 1
+	$disabletsaa 1
+
+
+}

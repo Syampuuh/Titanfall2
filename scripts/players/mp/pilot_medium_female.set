@@ -1,0 +1,13 @@
+#base "pilot_medium.set"
+"pilot_medium_female"
+{
+	raceOrSex					"race_human_female" //TODO: Get code work for this
+	"global"
+	{
+		bodymodel			"models/humans/pilots/pilot_medium_reaper_f.mdl"
+		armsmodel			"models/weapons/arms/pov_pilot_medium_reaper_f.mdl"
+		cockpitmodel		"models/weapons/arms/human_pov_cockpit.mdl"
+
+		quadMoveAnims		0
+	}
+}

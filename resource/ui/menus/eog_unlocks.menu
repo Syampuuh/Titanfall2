@@ -1,0 +1,235 @@
+resource/ui/menus/eog_unlocks.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+		EOGCommon
+		{
+			ControlName				CNestedPanel
+			classname				"eog_common_panel"
+			xpos					0
+			ypos					0
+			zpos					3 // Needed or clicking on the background can hide this
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/UI/menus/eog_common.res"
+		}
+
+
+
+		UnlockItem_One
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_One"
+			xpos					c-247
+			ypos					382
+			zpos					101
+			wide					495
+			tall					495
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box.res"
+		}
+
+		UnlockItem_Two_0
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Two_0"
+			xpos					c-517
+			ypos					360
+			zpos					101
+			wide					495
+			tall					495
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box.res"
+		}
+
+		UnlockItem_Two_1
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Two_1"
+			xpos					c+22
+			ypos					360
+			zpos					101
+			wide					495
+			tall					495
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box.res"
+		}
+
+		UnlockItem_Three_0
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Three_0"
+			xpos					c-618
+			ypos					405
+			zpos					101
+			wide					405
+			tall					405
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box_med.res"
+		}
+
+		UnlockItem_Three_1
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Three_1"
+			xpos					c-202
+			ypos					405
+			zpos					101
+			wide					405
+			tall					405
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box_med.res"
+		}
+
+		UnlockItem_Three_2
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Three_2"
+			xpos					c+214
+			ypos					405
+			zpos					101
+			wide					405
+			tall					405
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box_med.res"
+		}
+
+		UnlockItem_Eight_0
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Eight_0"
+			xpos					c-663
+			ypos					310
+			zpos					100
+			wide					315
+			tall					315
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box_small.res"
+		}
+
+		UnlockItem_Eight_1
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Eight_1"
+			xpos					c-326
+			ypos					310
+			zpos					101
+			wide					315
+			tall					315
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box_small.res"
+		}
+
+		UnlockItem_Eight_2
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Eight_2"
+			xpos					c+11
+			ypos					310
+			zpos					102
+			wide					315
+			tall					315
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box_small.res"
+		}
+
+		UnlockItem_Eight_3
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Eight_3"
+			xpos					c+348
+			ypos					310
+			zpos					103
+			wide					315
+			tall					315
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box_small.res"
+		}
+
+		UnlockItem_Eight_4
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Eight_4"
+			xpos					c-663
+			ypos					630
+			zpos					104
+			wide					315
+			tall					315
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box_small.res"
+		}
+
+		UnlockItem_Eight_5
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Eight_5"
+			xpos					c-326
+			ypos					630
+			zpos					105
+			wide					315
+			tall					315
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box_small.res"
+		}
+
+		UnlockItem_Eight_6
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Eight_6"
+			xpos					c+11
+			ypos					630
+			zpos					106
+			wide					315
+			tall					315
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box_small.res"
+		}
+
+		UnlockItem_Eight_7
+		{
+			ControlName				CNestedPanel
+			classname				"UnlockItem_Eight_7"
+			xpos					c+348
+			ypos					630
+			zpos					107
+			wide					315
+			tall					315
+			visible					0
+			controlSettingsFile		"resource/UI/menus/eog_unlockitem_box_small.res"
+		}
+
+		NoUnlocksLabel
+		{
+			ControlName					Label
+			classname					"NoUnlocksLabel"
+			xpos						c-562
+			ypos						c
+			zpos						111
+			wide						1124
+			tall						90
+			visible						0
+			font						Default_31
+			labelText					"#EOG_NOTHING_UNLOCKED"
+			allcaps						1
+			wrap						0
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			bgcolor_override 			"0 0 0 200"
+		}
+	}
+}

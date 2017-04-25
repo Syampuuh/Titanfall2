@@ -1,0 +1,10 @@
+"Spritecard"
+{
+	"$basetexture" "particle\energy\energy_burn_loop"
+
+	"$vertexcolor" 1
+	"$translucent" "1"
+
+	$ADDSELF 1
+
+}
