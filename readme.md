@@ -142,7 +142,6 @@
   * Some new unique assets now, rather than recycling Tone's animations.
 * More support for minimap resizing and zooming added. Implementation to live when!?
 * Some stuff discussing a "Boost Store". Burn Cards for Frontier Defense or something, maybe?
-*
 
 ---
 
