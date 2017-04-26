@@ -1,20 +1,20 @@
 ## Table of Contents
 
- * [A Glitch in the Frontier] (#25-april-2017---a-glitch-in-the-frontier)
-    * [Content and Feature Additions] (#content-and-feature-additions)
-    * [Rebalancing] (#rebalancing)
-    * [Fixes and Other Changes] (#fixes-and-other-changes)
-    * [Future Content] (#future-content)
- * [Colony Reborn] (#30-march-2017---colony-reborn)
-    * [Content and Feature Additions] (#content-and-feature-additions-1)
-    * [Rebalancing] (#rebalancing-1)
-    * [Fixes and Other Changes] (#fixes-and-other-changes-1)
-    * [Future Content] (#future-content-1)
- * [Live Fire] (#23-february-2017---the-live-fire-patch)
-    * [Content and Feature Additions] (#content-and-feature-additions-2)
-    * [Rebalancing] (#rebalancing-2)
-    * [Fixes and Other Changes] (#fixes-and-other-changes-2)
-    * [Future Content] (#future-content-2)
+ * [A Glitch in the Frontier](#25-april-2017---a-glitch-in-the-frontier)
+    * [Content and Feature Additions](#content-and-feature-additions)
+    * [Rebalancing](#rebalancing)
+    * [Fixes and Other Changes](#fixes-and-other-changes)
+    * [Future Content](#future-content)
+ * [Colony Reborn](#30-march-2017---colony-reborn)
+    * [Content and Feature Additions](#content-and-feature-additions-1)
+    * [Rebalancing](#rebalancing-1)
+    * [Fixes and Other Changes](#fixes-and-other-changes-1)
+    * [Future Content](#future-content-1)
+ * [Live Fire](#23-february-2017---the-live-fire-patch)
+    * [Content and Feature Additions](#content-and-feature-additions-2)
+    * [Rebalancing](#rebalancing-2)
+    * [Fixes and Other Changes](#fixes-and-other-changes-2)
+    * [Future Content](#future-content-2)
 
 # Latest Client Changes
 
@@ -36,7 +36,7 @@
   * Pulse Blade execution. Unlock it by getting 10 kills with a Pulse Blade direct hit. May be unlocked retroactively if you already meet the requirement.
 * New Featured Gamemodes:
   * **Titan Brawl**
-    * "Think of this as Team Deathmatch with just Titans. 5v5 mode with Titans only [no ejecting] and respawning. Each kill counts for 1 point and first team to 30 points wins."
+    * "Think of this as Team Deathmatch with just Titans. 5v5 mode with Titans only (no ejecting or disembarking) and respawning in Titans. Each kill counts for 1 point and first team to 30 points wins."
   * **Iron Last Titan Standing**
     * "It's the Last Titan Standing you know and love with a few new rules. 5v5 with no ejecting and no batteries."
   * **Marked for Death**
@@ -50,7 +50,7 @@
   * All maps support the Live Fire gamemode.
   * Live Fire designated maps (Stacks, Meadows, and Deck) support the Live Fire, Amped Hardpoint, Pilot vs Pilot, and Capture the Flag gamemodes.
 * If you own them, you can now swap between Prime and Standard Titan executions for each of your Titans, or have it set to Random.
-  * [There's also some nice hints about the Ronin and Tone Prime executions in there...] (#future-content)
+  * [There's also some nice hints about the Ronin and Tone Prime executions in there...](#future-content)
 * When matchmaking is has found and is connecting you a to a match, it will helpfully make a sound to let you know so. If you're a PC player, make sure you've enabled *Audio* > *Sound In Background* so you can hear it when Alt+Tab'd.
 * There is now a 1 in 100 chance of an "Easter Egg" dropship animation.
 
@@ -67,7 +67,7 @@
 #### Ion
 
 * Laser Shot effective cone decreased from 1.5 degrees to 1 degree, and the crosshair has been scaled down to reflect this.
-  * If you don't know what I'm talking about, [refer here for an explanation on how Laser Shot works.] (https://www.reddit.com/r/titanfall/comments/5p7gs7/i_have_figured_out_why_exactly_ions_laser_shot_is/)
+  * If you don't know what I'm talking about, [refer here for an explanation on how Laser Shot works.](https://www.reddit.com/r/titanfall/comments/5p7gs7/i_have_figured_out_why_exactly_ions_laser_shot_is/)
 
 #### Arc Grenades
 
@@ -88,7 +88,7 @@
 
 * Crosshair redesigned to more accurately represent pellet spread.
 * First stage of bolt growth time/distance sped up from 0.075 seconds/4.3 meters to 0.025 seconds/1.4 meters.
-  * If you don't know what bolt growth is: In a nutshell some projectile weapons' projectiles get bigger over time as they fly. Basically, the Mastiff's shots will become bigger faster. For more information about weapon bolt stats, [consult the table.] (https://docs.google.com/spreadsheets/d/1nxDADMLQfHCO6Z-hO0Dv5FJ1HSv7JsPEdcfQpoELRkg/edit#gid=1601279539)
+  * If you don't know what bolt growth is: In a nutshell some projectile weapons' projectiles get bigger over time as they fly. Basically, the Mastiff's shots will become bigger faster. For more information about weapon bolt stats, [consult the table.](https://docs.google.com/spreadsheets/d/1nxDADMLQfHCO6Z-hO0Dv5FJ1HSv7JsPEdcfQpoELRkg/edit#gid=1601279539)
 
 #### Charge Rifle
 
@@ -135,7 +135,7 @@
   * Cloak Drones have been lying around for a while as a cut piece of equipment for Engineer Pilots, but have now had some movement stats tossed into them, so they'll likely be back for FD.
   * Specialists have had their model set to be the Shield Captains, confirming they will be some variant of them.
   * Pilot and Titan Sentries have had separate playertypes added for FD, with (effectively) no time limit but significantly less HP, 150 and 300 respectively.
-  * It seems there will be a separate system of currency for PVE. Can't tell if it'll be persistent between matches or MOBA-styled currency that is only for the match, only that there'll be a starting amount of 500. [A few reward values for kills have already been set.] (https://a.pomf.cat/jmkzxh.png)
+  * It seems there will be a separate system of currency for PVE. Can't tell if it'll be persistent between matches or MOBA-styled currency that is only for the match, only that there'll be a starting amount of 500. [A few reward values for kills have already been set.](https://a.pomf.cat/jmkzxh.png)
   * Models for Droz and Davis are being loaded with "FD" prefixes, so I wonder who the player faction will be???
 * Monarch development rolls along, with some varied additions and changes to existing files.
   * Only real new number: Superior Chassis will raise her HP from 10000 to 15000.
