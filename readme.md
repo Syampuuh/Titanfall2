@@ -1,4 +1,152 @@
+## Table of Contents
+
+ * [A Glitch in the Frontier] (#25-april-2017---a-glitch-in-the-frontier)
+    * [Content and Feature Additions] (#content-and-feature-additions)
+    * [Rebalancing] (#rebalancing)
+    * [Fixes and Other Changes] (#fixes-and-other-changes)
+    * [Future Content] (#future-content)
+ * [Colony Reborn] (#30-march-2017---colony-reborn)
+    * [Content and Feature Additions] (#content-and-feature-additions-1)
+    * [Rebalancing] (#rebalancing-1)
+    * [Fixes and Other Changes] (#fixes-and-other-changes-1)
+    * [Future Content] (#future-content-1)
+ * [Live Fire] (#23-february-2017---the-live-fire-patch)
+    * [Content and Feature Additions] (#content-and-feature-additions-2)
+    * [Rebalancing] (#rebalancing-2)
+    * [Fixes and Other Changes] (#fixes-and-other-changes-2)
+    * [Future Content] (#future-content-2)
+
 # Latest Client Changes
+
+## 25 April 2017 - A Glitch in the Frontier
+
+### Content and Feature Additions:
+
+* New Map: **Glitch**
+  * "Pilot Simulator"
+  * "A medium-sized map designed for objective modes and inspired by Captain Lastimosa’s home planet of Harmony. Vertical drops and long, twisting paths dominate the environment, perfect for chaining together long wall runs to seamlessly glide across the map."
+* New Live Fire Map: **Deck**
+  * "MRVN run facility for Pilot combat simulation and observation."
+  * "Tight interior spaces, exposed courtyards, and watchful drones circling overhead. You may see a M.R.V.N. or two puttering around in the background."
+* New Faction: **M.R.V.N. - *Marvin's Finest Hour***
+  * For anyone who wants a little less chatter in their ear. If you'd still like to know what the MRVN unit is saying, you can turn on subtitles to see it all.
+  * Call me crazy, but something about him smells of an ARG. Just gives me that feeling, with a dynamic day counter and previous hintings on the Titanfall Twitter...
+* New Execution: **Get to the Point**
+  * "Show your opponent up close how sharp a Pulse Blade is."
+  * Pulse Blade execution. Unlock it by getting 10 kills with a Pulse Blade direct hit. May be unlocked retroactively if you already meet the requirement.
+* New Featured Gamemodes:
+  * **Titan Brawl**
+    * "Think of this as Team Deathmatch with just Titans. 5v5 mode with Titans only [no ejecting] and respawning. Each kill counts for 1 point and first team to 30 points wins."
+  * **Iron Last Titan Standing**
+    * "It's the Last Titan Standing you know and love with a few new rules. 5v5 with no ejecting and no batteries."
+  * **Marked for Death**
+    * "6v6. One member of each team is Marked as targets and both teams must defend their target while trying to kill the other team’s target. Once one of the marked players are killed, the surviving Mark’s team is rewarded a point. After a few seconds, new Marks are chosen. First team to 10 kills wins."
+    * Titanfall 1 returnee
+  * Each mode will be rotated around as featured modes
+* Main menu spruced up with a new background video and some featured content highlights from Respawn.
+* Pilot Regeneration cap raised from 10 to 100.
+  * You'll get a new "Generation Card" attached to your calling card every 10 generations starting after G10.
+* Live Fire maps and the mode are now available in Private Matches.
+  * All maps support the Live Fire gamemode.
+  * Live Fire designated maps (Stacks, Meadows, and Deck) support the Live Fire, Amped Hardpoint, Pilot vs Pilot, and Capture the Flag gamemodes.
+* If you own them, you can now swap between Prime and Standard Titan executions for each of your Titans, or have it set to Random.
+  * [There's also some nice hints about the Ronin and Tone Prime executions in there...] (#future-content)
+* When matchmaking is has found and is connecting you a to a match, it will helpfully make a sound to let you know so. If you're a PC player, make sure you've enabled *Audio* > *Sound In Background* so you can hear it when Alt+Tab'd.
+* There is now a 1 in 100 chance of an "Easter Egg" dropship animation.
+
+### Rebalancing:
+
+#### All Titans
+
+* Punches now have a limited angle of effect of 30 degrees. This is a fixed angle in front of you, similar to weapon spread.
+
+#### Legion
+
+* Ejecting will now cancel any charging Power Shot, preventing post-mortem shots.
+
+#### Ion
+
+* Laser Shot effective cone decreased from 1.5 degrees to 1 degree, and the crosshair has been scaled down to reflect this.
+  * If you don't know what I'm talking about, [refer here for an explanation on how Laser Shot works.] (https://www.reddit.com/r/titanfall/comments/5p7gs7/i_have_figured_out_why_exactly_ions_laser_shot_is/)
+
+#### Arc Grenades
+
+* Maximum charges decreased from 2 to 1.
+* Cooldown time per charge decreased from 18.2 seconds to 12.5 seconds.
+
+#### X-55 Devotion
+
+* Amped close range damage decreased from 50 to 45.
+* Amped very far damage decreaased from 40 to 30.
+
+#### EVA-8 Shotgun
+
+* Ideal damage distance decreased from 12.5 feet to 6.25 feet, meaning damage falloff will be much steeper.
+* Pellet spread increased from 6 degrees to 8 degrees.
+
+#### Mastiff
+
+* Crosshair redesigned to more accurately represent pellet spread.
+* First stage of bolt growth time/distance sped up from 0.075 seconds/4.3 meters to 0.025 seconds/1.4 meters.
+  * If you don't know what bolt growth is: In a nutshell some projectile weapons' projectiles get bigger over time as they fly. Basically, the Mastiff's shots will become bigger faster. For more information about weapon bolt stats, [consult the table.] (https://docs.google.com/spreadsheets/d/1nxDADMLQfHCO6Z-hO0Dv5FJ1HSv7JsPEdcfQpoELRkg/edit#gid=1601279539)
+
+#### Charge Rifle
+
+* Close range anti-Titan damage raised from 825 to 1025. Long range anti-Titan damage raised from 525 to 725.
+* Consequently, close range anti-Titan damage while using the Charge Hack mod raised from 575 to 775. Long range anti-Titan damage raised from 200 to 400.
+* Amped close range anti-Titan damage raised from 1200 to 1400. Long range anti-Titan damage raised from 900 to 1100.
+* Amped close range anti-Titan damage while using the Charge Hack mod raised from 950 to 1150. Long range anti-Titan damage raised from 575 to 775.
+
+#### Archer
+
+* Launch speed decreased from 76.6 MPH to 51 MPH.
+* Turning speed decreased from 12.8 MPH to 5.3 MPH.
+* Top speed decreased from 85.1 MPH to 59.6 MPH.
+* Amped top speed decreased from 68.1 MPH to 55.3 MPH.
+
+### Fixes and Other Changes:
+
+* Ronin will now correctly block all damage consistently.
+* Sunflares removed from Colony, Exoplanet, and Forwardbase Kodai. For whatever reason, this is done via a function which checks a setting in the current server playlist rather than just removing the entity from the maps themselves. Whatever floats your boat, Respawn.
+* Hitting an Amped Wall will now produce hitmarkers, like with other particle walls.
+* Weapons using the Tri crosshair (R-201, R-101, R97, CAR, G2A4, Hemlok) will no longer have the center dot disappear when firing.
+* The reticle of the R-101's AOG will no longer be hidden when cloaked.
+* Core Gain from Titan Damage in SP will now be the correct amount (0.01% per point of damage) rather than the value it was nerfed to in MP last patch (0.0075% per point of damage).
+* The chat window will now be scootched down and out of the way of the Top 3 Pilots display at the end of a match.
+* Network/Party Chat will remain persistent between matches.
+
+
+### Future Content:
+*(note: details are somewhat speculatory based on sparse amounts of game code and text bank tokens)*
+
+* Thanks to the addition of a menu to select Titan executions, names have been provided for Ronin and Tone Primes' executions:
+  * Tone: **Target Acquired**
+  * Ronin: **Thunder and Lightning**
+* Ramm (the Berserker/Fighter Ogre Titan) had his punch also specifically updated with the Titan punch nerf, with an effective angle of 45 degrees. If they're balancing him, maybe he's not completely off the table yet.
+* On a related note, Archon (the Arc Cannon Stryder Titan) had his name token updated slightly. It almost seems like a typo (they moved an underscore into the middle of the word "Stryder", creating "NPC_TITAN_STRYDE_RARC"), but it's worth noting. Better safe than sorry.
+* A new Titan Ability was added for Nuke Ejection. This is *probably* just for Frontier Defense.
+  * It also has references to a "Spider" passive (Nuke Ticks?) and an "Ordnance Core" (for Mortar Titans?).
+  * The Boost Activation "weapon" was updated to support a "Nuke Titan" boost.
+* The Archer has received a "Mortar Mode" mod. Seems to give the rockets tickles for damage, so I imagine this is a placeholder for more Frontier Defense things as they work on them.
+* The Kraber has received a "PVE Elite" mod. Raises its damage from 49 per round to 70 when used by NPCs. Sniper Spectres, here we come.
+* Frontier Defense development continues, with new NPCs and features:
+  * Mortar Spectres, who will be equipped with the above mentioned Archers with the Mortar mod. Curiously, they are seemingly set not to attack the Harvester, so they will presumably be expressly for Pilot suppression and harassment.
+  * Boss Titans for each class. For now they seem mostly identical to normal NPC Titans, but also seem to have unique camos and decals associated with them.
+  * Cloak Drones have been lying around for a while as a cut piece of equipment for Engineer Pilots, but have now had some movement stats tossed into them, so they'll likely be back for FD.
+  * Specialists have had their model set to be the Shield Captains, confirming they will be some variant of them.
+  * Pilot and Titan Sentries have had separate playertypes added for FD, with (effectively) no time limit but significantly less HP, 150 and 300 respectively.
+  * It seems there will be a separate system of currency for PVE. Can't tell if it'll be persistent between matches or MOBA-styled currency that is only for the match, only that there'll be a starting amount of 500. [A few reward values for kills have already been set.] (https://a.pomf.cat/jmkzxh.png)
+  * Models for Droz and Davis are being loaded with "FD" prefixes, so I wonder who the player faction will be???
+* Monarch development rolls along, with some varied additions and changes to existing files.
+  * Only real new number: Superior Chassis will raise her HP from 10000 to 15000.
+  * Some new unique assets now, rather than recycling Tone's animations.
+* More support for minimap resizing and zooming added. Implementation to live when!?
+* Some stuff discussing a "Boost Store". Burn Cards for Frontier Defense or something, maybe?
+*
+
+---
+
+# Older Changes
 
 ## 30 March 2017 - Colony Reborn
 
@@ -6,14 +154,14 @@
 
 ### Content and Feature Additions:
 
-* New Map: Colony
-* New Weapon: R-101 Carbine
+* New Map: **Colony**
+* New Weapon: **R-101 Carbine**
   * "Factory issue scoped predecessor of the R-201 rifle."
   * Comes with an AOG in place of iron sights
   * Stats are identical to the R-201
-* New Execution: Curb Check
-* Prime Titan: Legion Prime
-* Prime Titan: Northstar Prime
+* New Execution: **Curb Check**
+* Prime Titan: **Legion Prime**
+* Prime Titan: **Northstar Prime**
 * Trial gameplay added for 2 SP levels
 * A shitton of new patches, camos, banners, etc. purchaseable and free
 * Ticks should now appear on the player's minimap like a normal minion
@@ -25,7 +173,7 @@
 
 #### All Titans
 
-* Core points earned from damage dealt to other Titans decreased from 0.01% per damage to 0.075% damage (decreased by 25%)
+* Core points earned from damage dealt to other Titans decreased from 0.01% per damage to 0.0075% damage (decreased by 25%)
 * Electric Smoke maximum effective radius increased from 21.9 feet to 23.4 feet
 
 #### Scorch
@@ -96,7 +244,7 @@
 * Damage per zap against Titans increased from 300 to 350
 * Flight speed decreased from 34 MPH to 21 MPH
 
-### Fixes:
+### Fixes and Other Changes:
 
 * Spectres have a new property that seems to prevent them from cowering like Grunts
 * For whatever reason, some grappling hook related properties were removed from the base Titan datablock
@@ -192,10 +340,6 @@
   * Seems it'll be a simple quick chat menu to point out objectives, commend teammates, and send emoji? No clue if it'll be voiced or anything
 * Some support added for the minimap to be zoomed in or out by the player, surprised this isn't already implemented
 * Seems like it'll be possible to invite friends to a network from within the game rather than having to mess with the official website
-
----
-
-# Older Changes
 
 ## 23 February 2017 - The Live Fire Patch
 
@@ -352,7 +496,7 @@
 * Damaage lowered from flat 25 to 25-10
 * Damage scaling added, ranging between 150 ft to 133.3 ft
 
-### Fixes:
+### Fixes and Other Changes:
 
 * Angel City has a banner now
 * Fixed occasionally getting stuck in eject animation
@@ -547,7 +691,7 @@
 
 * Amped damage from 100-50-35 to +45 - +5 - +5 against humans, and 350-300 to +100 - +100 against heavy armor
 
-### Fixes:
+### Fixes and Other Changes:
 
 * Fixed incorrect impact sounds for Grappling Hook catching on client from another player
 * Fixed incorrect sounds for melee between two non-client players
