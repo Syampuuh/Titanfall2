@@ -1,6 +1,6 @@
 ## Table of Contents
 
- * [Monarch's Reign](#30-april-2017---monarch-s-reign)
+ * [Monarch's Reign](#30-april-2017---monarchs-reign)
     * [Content and Feature Additions](#content-and-feature-additions)
     * [Rebalancing](#rebalancing)
     * [Fixes and Other Changes](#fixes-and-other-changes)
