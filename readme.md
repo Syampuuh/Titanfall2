@@ -47,7 +47,7 @@
 
 ### Rebalancing:
 
-### Universal
+#### Universal
 
 * Damage done to Titan Shields now generate Earn/Core meter just like normal Titan damage.
 * Titan Earn/Core meter percentage earned from damage dealt to other Titans decreased from 0.0075% to 0.007% per point of damage.
@@ -79,8 +79,8 @@
 
 #### X55-Devotion
 
-* Damage decreased from 25-30-35 to 15-20-25.
-* Amped damage decreased from 30-40-45 to 20-25-35.
+* Damage decreased from 35-30-25 to 25-20-15.
+* Amped damage decreased from 45-40-30 to 35-20-25.
 
 #### Longbow DMR
 
@@ -88,7 +88,7 @@
 
 #### RE-45 Autopistol
 
-* Suppressed damage increased from 9-12-17 to 12-14-20.
+* Suppressed damage increased from 17-12-9 to 20-14-12.
 
 #### Hammond P2016
 
