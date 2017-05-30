@@ -81,7 +81,7 @@ WeaponData
 	"critical_hit_damage_scale"						"1"
 
 	"ammo_clip_size"   								"6"
-   "titanarmor_critical_hit_required"              "1"
+  	"titanarmor_critical_hit_required"              "1"
 
 	dof_zoom_focusArea_horizontal					0.06
 	dof_zoom_focusArea_top							0.070
@@ -399,8 +399,8 @@ WeaponData
 			"fire_sound_2_player_1p"			"Weapon_Wingman_FireSuppressed_1P"
 			"fire_sound_2_player_3p"			"Weapon_Wingman_FireSuppressed_3P"
 			"fire_sound_2_npc"					"Weapon_Wingman_FireSuppressed_NPC"
-			"damage_near_value"   				"40"
-			"damage_far_value"					"20"
+			"damage_near_value"   				"--5"
+			"damage_far_value"					"--5"
 			"bodygroup2_set"					"1"
 
 			//"rumble"  						"4"
@@ -498,6 +498,28 @@ WeaponData
 			"damage_near_value"   							"90"
 			"damage_far_value"								"75"
    	 		"damage_very_far_value"							"45"
+			"damage_near_value_titanarmor"					"450"
+			"damage_far_value_titanarmor" 					"400"
+		}
+		low_ttk
+		{
+			"damage_near_value"   							"--25" //75 5 -> 6
+			//"damage_far_value"							"50" //50 6 -> 7
+		}
+		amped_ttk
+		{
+			"is_burn_mod"		"1"
+
+			//FX
+			"tracer_effect"   								"P_wpn_tracer_BC"
+			"tracer_effect_first_person"                    "P_wpn_tracer_BC"
+			"fx_muzzle_flash_view"							"wpn_muzzleflash_pistol_elec_FP"
+			"fx_muzzle_flash_world"							"wpn_muzzleflash_pistol_elec"
+			"projectile_trail_effect_0" 					"weapon_kraber_projectile_burn"
+			"impact_effect_table"		 					"titan_bullet_elec"
+
+			"damage_near_value"   							"++10" // 4 -> 5
+			"damage_far_value"								"++10" // 4 -> 6
 			"damage_near_value_titanarmor"					"450"
 			"damage_far_value_titanarmor" 					"400"
 		}

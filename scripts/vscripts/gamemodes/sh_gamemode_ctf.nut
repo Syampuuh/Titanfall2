@@ -11,9 +11,12 @@ global function GetFlagState
 global function GameHasFlags
 global function CTF_GetFlagReturnTime
 global function CTF_GetDropTimeout
+global function CTF_GetFlagReturnRadius
 
 const CTF_DROP_TIMEOUT = 20.0
 const CTF_FLAG_RETURN_TIME = 2.5 //Must sync up with const in ctf_flag_return.rui
+const CTF_FLAG_RETURN_RADIUS = 100.0
+
 global const FLAG_FX_FRIENDLY = $"P_flag_fx_friend"
 global const FLAG_FX_ENEMY = $"P_flag_fx_foe"
 
@@ -114,6 +117,11 @@ function GameHasFlags()
 float function CTF_GetFlagReturnTime()
 {
 	return GetCurrentPlaylistVarFloat( "ctf_flag_return_time", CTF_FLAG_RETURN_TIME )
+}
+
+float function CTF_GetFlagReturnRadius()
+{
+	return GetCurrentPlaylistVarFloat( "ctf_flag_return_radius", CTF_FLAG_RETURN_RADIUS )
 }
 
 float function CTF_GetDropTimeout()

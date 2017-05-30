@@ -184,7 +184,13 @@ WeaponData
 
 			custom_float_0		1.5		// CHARGE TIME
 		}
-
+		tactical_balance
+		{
+			"ammo_min_to_fire"								"200"
+			"ammo_per_shot"									"200"
+			"fire_duration"									"2.5"
+			"regen_ammo_refill_rate"						"16"
+		}
 	}
 
 	active_crosshair_count				"2"

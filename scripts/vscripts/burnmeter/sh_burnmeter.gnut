@@ -17,6 +17,8 @@ global function BurnReward_GetTopInventoryItemBurnCard
 global function OnWeaponPrimaryAttack_nuke_eject
 #endif
 
+global function GetAllBoostTurretTypes
+
 global const BURN_METER_SMALL_POINT_VALUE = 1
 global const BURN_METER_MID_POINT_VALUE = 2
 global const BURN_METER_LARGE_POINT_VALUE = 5
@@ -68,6 +70,13 @@ struct
 	bool shouldCycleOnRelease = false
 
 } file
+
+array<string> turretBurnCards = [
+	"burnmeter_ap_turret_weapon",
+	"burnmeter_at_turret_weapon",
+	"burnmeter_ap_turret_weapon_infinite",
+	"burnmeter_at_turret_weapon_infinite",
+]
 
 void function ShBurnMeter_Init()
 {
@@ -449,3 +458,8 @@ void function CycleOnRelease( entity player )
 	}
 }
 #endif
+
+array<string> function GetAllBoostTurretTypes()
+{
+	return turretBurnCards
+}

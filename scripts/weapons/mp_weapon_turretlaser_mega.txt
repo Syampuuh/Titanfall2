@@ -451,12 +451,6 @@ WeaponData
 			"shortprintname"								"AT Turret"
 			"charge_time" 									"0.5"
 		}
-		pas_at_hunter
-		{
-			"ammo_stockpile_max"							"*2"
-			"ammo_clip_size"								"*2"
-			"ammo_default_total"							"*2"
-		}
 		pas_fast_ads
 		{
 			//Fast ADS

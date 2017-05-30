@@ -4,7 +4,9 @@ npc_titan_vanguard
 {
 	AIClass					titan_buddy
 	footstep_type			"buddy"
-	title 					"#NPC_TITAN_VANGUARD"
+	title 					"#NPC_TITAN_VANGUARD"		[$mp]
+	title 					"#NPC_TITAN_VANGUARD_SP"	[$sp]
+
 
 	ui_targetinfo			"ui/targetinfo_titan"       [$mp]
 	ui_targetinfo			"ui/targetinfo_titan_sp"    [$sp]

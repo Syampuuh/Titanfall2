@@ -116,9 +116,9 @@ WeaponData
 
 
 		// Damage - When Used by Players
-		"damage_near_value"   							"35"
-		"damage_far_value"								"30"
-		"damage_very_far_value"							"25"
+		"damage_near_value"   							"25"
+		"damage_far_value"								"20"
+		"damage_very_far_value"							"15"
 		"damage_near_value_titanarmor"					"80"
 		"damage_far_value_titanarmor" 					"60"
 		"damage_rodeo" 									"200"
@@ -572,9 +572,9 @@ WeaponData
 			//"bodygroup1_set"							"0"
 			//"bodygroup4_set"							"1"
 
-			"damage_near_value"   							"45"
-			"damage_far_value"								"40"
-			"damage_very_far_value"							"30"
+			"damage_near_value"   							"35"
+			"damage_far_value"								"25"
+			"damage_very_far_value"							"20"
 			"damage_near_value_titanarmor"					"180"
 			"damage_far_value_titanarmor" 					"160"
 
@@ -587,6 +587,28 @@ WeaponData
 		{
 			"primary_fire_does_not_block_sprint"			"1"
 			"crosshair_force_sprint_fade_disabled"          "1"
+		}
+		low_ttk
+		{
+			"damage_near_value"   							"--5" //25 4 -> 5
+			"damage_far_value"								"--2" //20 5 -> 6
+	   	 	"damage_very_far_value"							"--1" //15 7 -> 8
+		}
+		amped_ttk
+		{
+			"is_burn_mod"		"1"
+
+			//FX
+			"tracer_effect_first_person"                "P_wpn_tracer_BC"
+			"tracer_effect"   							"P_wpn_tracer_BC"
+
+			"damage_flags"								"DF_BULLET | DF_INSTANT | DF_DISMEMBERMENT | DF_GIB"
+
+			"damage_near_value"   							"++5" // 5 -> 4
+			"damage_far_value"								"++4" // 6 -> 5
+   	 		"damage_very_far_value"							"++2" // 8 -> 7
+			"damage_near_value_titanarmor"					"180"
+			"damage_far_value_titanarmor" 					"160"
 		}
 	}
 

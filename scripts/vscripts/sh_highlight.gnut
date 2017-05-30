@@ -598,6 +598,9 @@ void function ClearEnemyHighlightDelayed( entity victim )
 {
 	// TEMP
 	wait 1.0
+	if ( !IsValid( victim ) )
+		return
+
 	Highlight_ClearEnemyHighlight( victim )
 }
 #endif

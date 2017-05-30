@@ -14,6 +14,7 @@ global function Riff_AmmoLimit
 global function Riff_EliminationMode
 global function Riff_TitanQueueLimit
 global function Riff_BoostAvailability
+global function Riff_TeamShareEarnMeter
 
 #if SERVER
 	global function Riff_IsTitanAvailable
@@ -91,11 +92,37 @@ function RiffSettings_Init()
 		int boostsAvailable = GetCurrentPlaylistVarInt( "boosts_enabled", eBoostAvailability.Default )
 		level.nv.boostAvailability = boostsAvailable
 
+		int teamShareCoreMeter = GetCurrentPlaylistVarInt( "riff_team_share_earn_meter", eTeamShareEarnMeter.Disabled )
+		Assert( spawnAsTitan < eTeamShareEarnMeter.LastShareCoreMeter )
+		level.nv.teamShareCoreMeter = teamShareCoreMeter
+
 		level.titanAvailabilityCheck <- function( player ) { return false }
+
+		AddCallback_GameStateEnter( eGameState.Prematch, RiffSettings_GameStateInit )
+		AddCallback_OnPilotBecomesTitan( RiffSettings_PilotBecomesTitan )
+
 	#endif // SERVER
 }
 
 #if SERVER
+
+void function RiffSettings_GameStateInit()
+{
+	if ( Riff_TitanExitEnabled() != eTitanExitEnabled.Default && Riff_TitanExitEnabled() != eTitanExitEnabled.Always )
+	{
+		SetGlobalNetBool( "titanEjectEnabled", false )
+	}
+}
+
+void function RiffSettings_PilotBecomesTitan( entity player, entity npc_titan )
+{
+	if ( Riff_TitanExitEnabled() != eTitanExitEnabled.Default && Riff_TitanExitEnabled() != eTitanExitEnabled.Always )
+	{
+		if ( PlayerHasPassive( player, ePassives.PAS_AUTO_EJECT ) )
+			TakePassive( player.GetTitanSoul(), ePassives.PAS_AUTO_EJECT )
+	}
+}
+
 function SetupDamageModifiersForAiLethality()
 {
 	// emp grenade
@@ -106,7 +133,6 @@ function SetupDamageModifiersForAiLethality()
 	AddDamageModifierForAiLethality( eDamageSourceId.mp_titanweapon_arc_cannon, eAILethality.High, "npc_spectre", 0.75 )
 	AddDamageModifierForAiLethality( eDamageSourceId.mp_titanweapon_arc_cannon, eAILethality.VeryHigh, "npc_spectre", 0.61 )
 }
-
 
 function Riff_ForceSetSpawnAsTitan( eState )
 {
@@ -151,6 +177,11 @@ function Riff_ForceAllowNPCs( eState )
 }
 
 #endif // SERVER
+
+int function Riff_TeamShareEarnMeter()
+{
+	return expect int( GetServerVar( "teamShareCoreMeter" ) )
+}
 
 function Riff_AmmoLimit()
 {

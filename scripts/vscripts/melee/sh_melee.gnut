@@ -506,6 +506,11 @@ bool function PlayerTriesSyncedMelee( entity player, entity target )
 
 	if ( !player.Lunge_IsActive() || !player.Lunge_IsGroundExecute() || !player.Lunge_IsLungingToEntity() || (player.Lunge_GetTargetEntity() != target) )
 	{
+#if SERVER
+		print( "SERVER: " + player + " is calling Lunge_SetTargetEntity() from PlayerTriesSyncedMelee()\n" )
+#else
+		print( "CLIENT: " + player + " is calling Lunge_SetTargetEntity() from PlayerTriesSyncedMelee()\n" )
+#endif
 		player.Lunge_SetTargetEntity( target, false )
 	}
 
@@ -979,6 +984,11 @@ SyncedMeleeChooser ornull function GetSyncedMeleeChooserForPlayerVsTarget( entit
 void function CodeCallback_OnMeleeAttackAnimEvent( entity player )
 {
 	Assert( IsValid( player ) )
+#if SERVER
+	print( "SERVER: " + player + " is calling CodeCallback_OnMeleeAttackAnimEvent()\n" )
+#else
+	print( "CLIENT: " + player + " is calling CodeCallback_OnMeleeAttackAnimEvent()\n" )
+#endif
 	if ( player.PlayerMelee_IsAttackActive() )
 	{
 		if ( player.IsTitan() )
@@ -1034,7 +1044,7 @@ bool function ShouldPlayerExecuteTarget( entity player, entity target )
 		entity soul = target.GetTitanSoul()
 		if ( soul != null )
 		{
-			if ( soul.GetShieldHealth() > 0 )
+			if ( soul.GetShieldHealth() > 0 && GetCurrentPlaylistVarInt( "titan_shield_blocks_execution", 0 ) != 0 )
 				return false
 		}
 

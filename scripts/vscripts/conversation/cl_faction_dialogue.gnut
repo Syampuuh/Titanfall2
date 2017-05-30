@@ -4,10 +4,19 @@ global function GenerateFactionDialogueAlias
 global function PlayFactionDialogueOnLocalClientPlayer
 global function ServerCallback_SpawnFactionCommanderInDropship
 
-global function SetFactionDialoguePrefixOverride
-global function GetFactionDialoguePrefixOverride
-global function SetFactionLeaderDropshipIntroOverride
-global function GetFactionLeaderDropshipIntroOverride
+global function IsFactionLeaderOverriden
+global function GetOverrideFactionLeader
+global function SetOverrideFactionLeader
+global function ClearOverrideFactionLeader
+
+global struct OverrideFactionLeaderStruct //Note that this is meant for game mode specific faction leader overrides like Frontier Defence. The alternative for this is to make an actual faction but have a column that specifies which game mode it is overriden for, etc, but then you also have to do work to make it not show up as a faction you can pick, make sure you earn the faction XP for the faction you had before, add persistence data, etc.
+{
+	string dialoguePrefix
+	string factionName
+	asset factionLogo
+	bool useWaveForm
+	void functionref( int shipEHandle, float dropshipSpawnTime ) dropshipIntroOverride
+}
 
 struct
 {
@@ -15,8 +24,8 @@ struct
 		int factionLeaderAnimIndex = -1
 		bool forceEasterEgg = false
 	#endif
-	string factionDialoguePrefixOverride = ""
-	void functionref( int shipEHandle, float dropshipSpawnTime ) factionLeaderDropshipIntroOverride = null
+	bool factionLeaderOverriden = false
+	OverrideFactionLeaderStruct& overrideFactionLeaderData
 }
 file
 
@@ -27,8 +36,12 @@ file
 
 string function GenerateFactionDialogueAlias( entity player, string conversationSuffix  )
 {
-	string factionPrefix = GetFactionDialoguePrefixOverride() //Mainly for Frontier Defence, where it has its own announcer. Don't want to override GetFactionChoice() because that's used by FactionXP etc.
-	if ( factionPrefix == "" )
+	string factionPrefix
+	if ( IsFactionLeaderOverriden() )
+	{
+	 	factionPrefix = file.overrideFactionLeaderData.dialoguePrefix //Mainly for Frontier Defence, where it has its own announcer. Don't want to override GetFactionChoice() because that's used by FactionXP etc.
+	}
+	else
 	{
 		string factionChoice = GetFactionChoice( player )
 		factionPrefix = factionLeaderData[ factionChoice ].dialoguePrefix
@@ -74,7 +87,7 @@ void function PlayFactionDialogueOnLocalClientPlayer( string conversationName )
 	//Generate alias from playerEHandle and number of altAliases we have
 	string soundAlias = GenerateFactionDialogueAlias( listeningPlayer, conversationName  )
 
-	bool useWaveForm = FactionUsesWaveform( faction ) && !IsWatchingReplay() // no waveforms in kill replay, confusing
+	bool useWaveForm = ShouldUseWaveForm( faction )
 	string waveformName = ""
 	if ( useWaveForm )
 		waveformName = GetFactionCharacterName( faction )
@@ -99,7 +112,7 @@ void function ForcePlayFactionDialogueOnLocalClientPlayer( string conversationNa
 	//Generate alias from playerEHandle and number of altAliases we have
 	string soundAlias = GenerateFactionDialogueAlias( listeningPlayer, conversationName  )
 
-	bool useWaveForm = FactionUsesWaveform( faction ) && !IsWatchingReplay() // no waveforms in kill replay, confusing
+	bool useWaveForm = ShouldUseWaveForm( faction )
 	string waveformName = ""
 	if ( useWaveForm )
 		waveformName = GetFactionCharacterName( faction )
@@ -108,13 +121,13 @@ void function ForcePlayFactionDialogueOnLocalClientPlayer( string conversationNa
 
 void function ServerCallback_SpawnFactionCommanderInDropship( int shipEHandle, float dropshipSpawnTime ) //Awkward that it's here, could be in cl_classic_mp.nut but it uses data that is read in from sh_faction_dialogue.nut
 {
-	if ( GetFactionLeaderDropshipIntroOverride() == null )
+	if ( IsFactionLeaderOverriden() )
 	{
-		thread ServerCallback_SpawnFactionCommanderInDropship_threaded( shipEHandle, dropshipSpawnTime )
+		thread file.overrideFactionLeaderData.dropshipIntroOverride( shipEHandle, dropshipSpawnTime )
 	}
 	else
 	{
-		thread GetFactionLeaderDropshipIntroOverride()( shipEHandle, dropshipSpawnTime )
+		thread ServerCallback_SpawnFactionCommanderInDropship_threaded( shipEHandle, dropshipSpawnTime )
 	}
 
 }
@@ -206,25 +219,44 @@ void function ModelSetSkin2( entity model ) //Marvin specific
 	model.SetSkin( 2 )
 }
 
-void function SetFactionDialoguePrefixOverride( string value )
+bool function IsFactionLeaderOverriden()
 {
-	file.factionDialoguePrefixOverride = value
+	return file.factionLeaderOverriden
 }
 
-string function GetFactionDialoguePrefixOverride()
+ OverrideFactionLeaderStruct function GetOverrideFactionLeader()
+ {
+ 	Assert ( IsFactionLeaderOverriden() )
+ 	return file.overrideFactionLeaderData
+ }
+
+void function SetOverrideFactionLeader( OverrideFactionLeaderStruct overrideFactionLeaderData )
 {
-	return file.factionDialoguePrefixOverride
+	file.factionLeaderOverriden = true
+	file.overrideFactionLeaderData = overrideFactionLeaderData
+
+}
+void function ClearOverrideFactionLeader()
+{
+	file.factionLeaderOverriden = false
+	OverrideFactionLeaderStruct newBlankData
+	file.overrideFactionLeaderData =  newBlankData
+
 }
 
-void function SetFactionLeaderDropshipIntroOverride( void functionref( int shipEHandle, float dropshipSpawnTime ) value )
+bool function ShouldUseWaveForm( string factionName )
 {
-	file.factionLeaderDropshipIntroOverride = value
+	if ( !FactionUsesWaveform( factionName ) )
+		return false
 
-}
+	if ( IsWatchingReplay() ) // no waveforms in kill replay, confusing
+		return false
 
-void functionref( int shipEHandle, float dropshipSpawnTime ) function GetFactionLeaderDropshipIntroOverride()
-{
-	return file.factionLeaderDropshipIntroOverride
+	if ( IsFactionLeaderOverriden() && !file.overrideFactionLeaderData.useWaveForm )
+		return false
+
+	return true
+
 }
 
 #if DEV

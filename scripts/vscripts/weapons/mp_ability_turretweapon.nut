@@ -6,6 +6,7 @@ global function OnWeaponDeactivate_turretweapon
 #if SERVER
 global function DeployableTurret_SetAISettingsForPlayer_AP
 global function DeployableTurret_SetAISettingsForPlayer_AT
+global function CalculatePlayerTurretCount
 #endif
 
 const float DEPLOYABLE_TURRET_PLACEMENT_RANGE_MAX = 80
@@ -53,12 +54,14 @@ void function DeployableTurrentWeapon_Init()
 	#endif
 }
 
-
+#if SERVER
 void function DeployableTurret_ClientConnected( entity player )
 {
 	TurretAISettingsData playerTurretSettings
 	file.playerTurretAISettings[player] <- playerTurretSettings
+	player.p.turretArrayId = CreateScriptManagedEntArray()
 }
+#endif
 
 void function InitTurretPoseDataForModel( asset modelName )
 {
@@ -169,7 +172,13 @@ var function OnWeaponPrimaryAttack_turretweapon( entity weapon, WeaponPrimaryAtt
 		entity turret = DeployTurret( ownerPlayer, placementInfo.origin, placementInfo.angles, weapon, placementInfo )
 		turret.kv.AccuracyMultiplier = DEPLOYABLE_TURRET_ACCURACY_MULTIPLIER
 		DispatchSpawn( turret )
+
+		if ( turret.Dev_GetAISettingByKeyField( "cleanup_between_rounds" ) == null || turret.Dev_GetAISettingByKeyField( "cleanup_between_rounds" ) == 1 )
+			thread TrapDestroyOnRoundEnd( ownerPlayer, turret )
+
+		turret.e.burnReward = weapon.e.burnReward
 		thread KillTurretAfterDelay( turret ) //Needs to be after dispatch spawn
+		thread TrackTurretDeath( ownerPlayer, turret )
 
 		AddTurretSpawnProtection( turret )
 
@@ -197,7 +206,6 @@ entity function DeployTurret( entity player, vector origin, vector angles, entit
 	turret.SetBossPlayer( player )
 	turret.ai.preventOwnerDamage = true
 	turret.StartDeployed()
-	thread TrapDestroyOnRoundEnd( player, turret )
 	SetTeam( turret, team )
 	EmitSoundOnEntity( turret, "Boost_Card_SentryTurret_Deployed_3P" )
 
@@ -213,6 +221,37 @@ entity function DeployTurret( entity player, vector origin, vector angles, entit
 	return turret
 }
 
+void function TrackTurretDeath( entity ownerPlayer, entity turret )
+{
+	turret.EndSignal( "OnDestroy" )
+	ownerPlayer.EndSignal( "OnDestroy" )
+
+	AddToScriptManagedEntArray( ownerPlayer.p.turretArrayId, turret )
+
+	OnThreadEnd(
+		function() : ( turret, ownerPlayer )
+		{
+			if ( IsValid( ownerPlayer ) )
+			{
+				CalculatePlayerTurretCount( ownerPlayer )
+			}
+		}
+	)
+
+	WaitForever()
+}
+
+void function CalculatePlayerTurretCount( entity ownerPlayer )
+{
+	int turrets = GetScriptManagedEntArrayLen( ownerPlayer.p.turretArrayId )
+	int burncards = PlayerInventory_CountTurrets( ownerPlayer )
+	ownerPlayer.SetPlayerNetInt( "burn_numTurrets", turrets + burncards )
+
+	#if DEVSCRIPTS
+	if ( BoostStoreEnabled() )
+		Remote_CallFunction_UI( ownerPlayer, "ServerCallback_UpdateTurretCount", turrets + burncards, GetGlobalNetInt( "burn_turretLimit" ) )
+	#endif
+}
 
 string function DeployableTurret_GetAISettingsForPlayer_AP( entity player )
 {

@@ -53,6 +53,8 @@ WeaponData
 	"charge_require_input"							"0"
 	"passive"										"PAS_FUSION_CORE" //Core Srcreen FX
 
+    "charge_allow_melee"                            "0"
+
 	"proficiency_poor_additional_rest"				"10"
 	"proficiency_average_additional_rest"			"8"
 	"proficiency_good_additional_rest"				"6"

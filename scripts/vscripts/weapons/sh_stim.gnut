@@ -8,6 +8,8 @@ global function EndlessStimEnd
 global int COCKPIT_STIM_FX
 global int PILOT_STIM_HLD_FX
 
+global const float STIM_EFFECT_SEVERITY = 0.4	// assuming 'movement_speedboost_extraScale' is 2.0
+
 void function StimShared_Init()
 {
 	COCKPIT_STIM_FX = PrecacheParticleSystem( $"P_heal" )
@@ -31,10 +33,9 @@ void function EndlessStimEnd( entity player )
 	player.Signal( "StopEndlessStim" )
 }
 
-void function StimPlayer( entity player, float duration )
+void function StimPlayer( entity player, float duration, float severity = STIM_EFFECT_SEVERITY )
 {
-	const float EFFECT_SEVERITY = 0.4	// assuming 'movement_speedboost_extraScale' is 2.0
-	StimPlayer_Internal( player, duration, EFFECT_SEVERITY )
+	StimPlayer_Internal( player, duration, severity )
 }
 
 void function StimPlayer_Internal( entity player, float duration, float effectSeverity )

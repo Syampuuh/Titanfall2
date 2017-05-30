@@ -679,6 +679,118 @@ void function ScriptCompilerTest()
 {
 	#if DEV
 		ScriptCompilerTestDev()
+		if ( "originalConstTable" in getroottable() )
+			DumpConstTable( expect table( getroottable().originalConstTable ) )
 	#endif
 }
+
+
+
+#if DEV
+
+
+struct ConstTableEntry
+{
+	var k
+	var v
+}
+
+int function SortConstTableEntries( ConstTableEntry a, ConstTableEntry b )
+{
+	if ( a.k > b.k )
+		return 1
+	else if ( a.k < b.k )
+		return -1
+
+	return 0;
+}
+
+int function SortEnumKeyEntries( ConstTableEntry a, ConstTableEntry b )
+{
+	if ( a.v > b.v )
+		return 1
+	else if ( a.v < b.v )
+		return -1
+
+	return 0;
+}
+
+void function DumpConstTable( table constTable )
+{
+	CodeWarning( "game running with -scriptdocs" )
+	DevTextBufferClear()
+	string constFileName = ""
+
+	#if CLIENT
+		constFileName = "scripts/codeconsts_CLIENT.txt"
+		DevTextBufferWrite( "\n// [CLIENT] generated file: do not modify\n\n" )
+	#elseif SERVER
+		constFileName = "scripts/codeconsts_SERVER.txt"
+		DevTextBufferWrite( "\n// [SERVER] generated file: do not modify\n\n" )
+	#elseif UI
+		constFileName = "scripts/codeconsts_UI.txt"
+		DevTextBufferWrite( "\n// [UI] generated file: do not modify\n\n" )
+	#endif
+
+	array< ConstTableEntry > constTableEntries
+	foreach ( k, v in constTable )
+	{
+		ConstTableEntry tableEntry
+		tableEntry.k = k
+		tableEntry.v = v
+		constTableEntries.append( tableEntry )
+	}
+
+	constTableEntries.sort( SortConstTableEntries )
+
+	foreach ( entry in constTableEntries )
+	{
+		var k = entry.k
+		var v = entry.v
+
+		if ( type( v ) == "table" )
+		{
+			DevTextBufferWrite( "global enum " + k + "\n" )
+			DevTextBufferWrite( "{\n" )
+			table t = expect table( v )
+			array< ConstTableEntry > enumKeys
+			foreach ( key, val in t )
+			{
+				if ( key == "" )
+					continue
+
+				ConstTableEntry keyEntry
+				keyEntry.k = key
+				keyEntry.v = val
+				enumKeys.append( keyEntry )
+				// DevTextBufferWrite( "\t" + key + " = " + val )
+			}
+
+			enumKeys.sort( SortEnumKeyEntries )
+
+			foreach ( entry in enumKeys )
+			{
+				var key = entry.k
+				var val = entry.v
+				DevTextBufferWrite( "\t" + key + " = " + val + "\n" )
+			}
+
+			DevTextBufferWrite( "}\n" )
+		}
+		else if ( type( v ) == "array" )
+		{
+			//			DevTextBufferWrite( "array? " + k )
+		}
+		else
+		{
+			DevTextBufferWrite( "global const " + type( v ) + " " + k + " = " + v + "\n" )
+		}
+	}
+
+	DevTextBufferWrite( "// end generated file\n\n" )
+
+	DevP4Checkout( constFileName )
+	DevTextBufferDumpToFile( constFileName )
+}
+#endif
 

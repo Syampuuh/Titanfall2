@@ -275,6 +275,8 @@ void function Server_MP_Init()
 	SpectreChatter_MP_Init()
 	GruntChatter_MP_Init()
 
+	Decoy_Init()
+
 	PIN_Init()
 
 	#if DEVSCRIPTS

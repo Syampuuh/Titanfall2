@@ -42,6 +42,8 @@ WeaponData
 	"charge_sound_1p"								"weapon_coreability_salvo_fire_chargeup_1p"
 	"charge_sound_3p"								"weapon_coreability_salvo_chargeup_3p"
 
+    "charge_allow_melee"                            "0"
+
 	"offhand_keep_primary_in_hand"					"1"
 
 	// Behavior

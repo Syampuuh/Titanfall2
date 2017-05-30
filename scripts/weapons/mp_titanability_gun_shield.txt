@@ -69,5 +69,9 @@ WeaponData
 		{
 			"regen_ammo_refill_rate"						"*10"
 		}
+		npc_infinite_shield
+		{
+			"fire_duration"									"999.0"
+		}
 	}
 }

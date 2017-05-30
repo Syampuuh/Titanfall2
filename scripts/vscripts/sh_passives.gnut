@@ -318,7 +318,7 @@ function PassivesShared_Init()
 		"pas_power_cell",
 		"pas_wallhang",
 		"pas_fast_health_regen",
-		"pas_pilot_hardcore_settings"
+		"pas_pilot_hardcore_settings",
 	]
 
 	// these are player settings mods
@@ -409,5 +409,9 @@ array<string> function GetSetFileModsForSettingType( string settingType, array<s
 		if ( passives.contains( mod ) )
 			setFileMods.append( mod )
 	}
+
+	if ( settingType == "pilot" && GetCurrentPlaylistVarInt( "tactical_balance", 0 ) >= 1 )
+		setFileMods.append( "tactical_balance" )
+
 	return setFileMods
 }

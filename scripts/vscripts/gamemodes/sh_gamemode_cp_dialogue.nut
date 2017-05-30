@@ -38,6 +38,7 @@ void function GamemodeCP_VO_Think( entity hardpoint )
 			stateDebugStrings[CAPTURE_POINT_STATE_CAPTURED] <- "CAPTURE_POINT_STATE_CAPTURED"
 			stateDebugStrings[CAPTURE_POINT_STATE_AMPING] <- "CAPTURE_POINT_STATE_AMPING"
 			stateDebugStrings[CAPTURE_POINT_STATE_AMPED] <- "CAPTURE_POINT_STATE_AMPED"
+			stateDebugStrings[CAPTURE_POINT_STATE_SELF_UNAMPING] <- "CAPTURE_POINT_STATE_SELF_UNAMPING"
 			printt( hardpoint.GetHardpointID(), stateDebugStrings[oldState], "->", stateDebugStrings[newState] )
 		#endif
 
@@ -73,6 +74,29 @@ void function GamemodeCP_VO_Think( entity hardpoint )
 		{
 			printt( "completed amping hardpoint" )
 			GamemodeCP_VO_Amped( hardpoint )
+		}
+		else if ( oldState == CAPTURE_POINT_STATE_AMPED && newState == CAPTURE_POINT_STATE_SELF_UNAMPING )
+		{
+			printt( "naturally unamping unoccupied hardpoint" )
+
+		}
+		else if ( oldState == CAPTURE_POINT_STATE_SELF_UNAMPING && newState == CAPTURE_POINT_STATE_CAPPING )
+		{
+			//Started capping a point that was naturally unamping
+			printt( "Started capping a point that was naturally unamping" )
+			GamemodeCP_VO_StartCapping( hardpoint )
+		}
+
+		else if ( oldState == CAPTURE_POINT_STATE_SELF_UNAMPING && newState == CAPTURE_POINT_STATE_CAPTURED )
+		{
+			//Started capping a point that was naturally unamping
+			printt( "Point unamped all the way to normal capped" )
+
+		}
+		else if ( oldState == CAPTURE_POINT_STATE_CAPPING && newState == CAPTURE_POINT_STATE_SELF_UNAMPING )
+		{
+			printt( "Started manually unamping a point but got interrupted" )
+
 		}
 		else if ( oldState == CAPTURE_POINT_STATE_CAPPING && newState == CAPTURE_POINT_STATE_CAPPING )
 		{
@@ -191,6 +215,10 @@ void function GamemodeCP_VO_StartCapping( entity hardpoint )
 		}
 
 		int cappingTeam = CapturePoint_GetCappingTeam( hardpoint )
+
+		// special handling for odd "neutral" capture point state
+		if ( CapturePoint_GetOwningTeam( hardpoint ) == TEAM_UNASSIGNED && CapturePoint_GetGoalProgress( hardpoint ) == 0.0 )
+			cappingTeam = GetOtherTeam( cappingTeam )
 
 		array<entity> cappingTeamPlayers = GetPlayerArrayOfTeam( cappingTeam )
 

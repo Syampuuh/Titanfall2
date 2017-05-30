@@ -31,12 +31,20 @@ void function OnWeaponActivate_titanweapon_arcwave( entity weapon )
 {
 	entity offhandWeapon = weapon.GetWeaponOwner().GetOffhandWeapon( OFFHAND_MELEE )
 	if ( IsValid( offhandWeapon ) && offhandWeapon.HasMod( "super_charged" ) )
-		weapon.PlayWeaponEffectNoCull( SWORD_GLOW_FP, SWORD_GLOW, "sword_edge" )
+	{
+		if ( weapon.HasMod( "modelset_prime" ) )
+			weapon.PlayWeaponEffectNoCull( SWORD_GLOW_PRIME_FP, SWORD_GLOW_PRIME, "sword_edge" )
+		else
+			weapon.PlayWeaponEffectNoCull( SWORD_GLOW_FP, SWORD_GLOW, "sword_edge" )
+	}
 }
 
 void function OnWeaponDeactivate_titanweapon_arcwave( entity weapon )
 {
-	weapon.StopWeaponEffect( SWORD_GLOW_FP, SWORD_GLOW )
+	if ( weapon.HasMod( "modelset_prime" ) )
+		weapon.StopWeaponEffect( SWORD_GLOW_PRIME_FP, SWORD_GLOW_PRIME )
+	else
+		weapon.StopWeaponEffect( SWORD_GLOW_FP, SWORD_GLOW )
 }
 
 var function OnWeaponPrimaryAttack_titanweapon_arc_wave( entity weapon, WeaponPrimaryAttackParams attackParams )

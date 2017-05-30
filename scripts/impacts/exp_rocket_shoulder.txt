@@ -104,7 +104,7 @@ ImpactTable
 	{
 		"C" "Default.Rocket_Explosion_1P_vs_3P"
 		"D" "Default.Rocket_Explosion_1P_vs_3P"
-		"E" "Default.Rocket_Explosion_1P_vs_3P"
+		"E" "Titan.Rocket_Explosion_1P_vs_3P"
 
 		"F" "Default.Rocket_Explosion_1P_vs_3P"
 		"G" "Default.Rocket_Explosion_1P_vs_3P"

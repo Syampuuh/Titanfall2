@@ -981,15 +981,3 @@ void function ServerCallback_UpdateHeroStats()
 
 	printt( "#################################" )
 }
-
-bool function HasVanguardChassisUpgrade( entity titan )
-{
-	if ( !titan.IsTitan() )
-		return false
-
-	entity offhandWeapon = titan.GetOffhandWeapon( OFFHAND_MELEE )
-	if ( IsValid( offhandWeapon ) )
-		return offhandWeapon.HasMod( "vanguard_upgrade" )
-
-	return false
-}

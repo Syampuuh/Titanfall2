@@ -10,7 +10,8 @@ npc_turret_sentry_burn_card_ap_fd
 	Health							600 [$sp]
 	Health							150 [$mp]
 
-	turret_lifetime			999999999999999.0 //Make sure to change #BURNMETER_AP_TURRETWEAPON_DESC
+	turret_lifetime			999999999999999.0
+	cleanup_between_rounds	0
 
 	//MaxTurretYaw        	360
 }

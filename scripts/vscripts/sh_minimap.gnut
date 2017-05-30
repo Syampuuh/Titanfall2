@@ -13,6 +13,8 @@ global const MFD_MINIMAP_ENEMY_MATERIAL = $"vgui/HUD/minimap_mfd_enemy"
 #if SERVER
 	global function InitMinimapSettings
 	global function UpdatePlayerMinimapMaterials
+	global function Minimap_PingForPlayer
+	global function Minimap_PingForTeam
 #endif
 
 struct
@@ -57,6 +59,7 @@ global enum eMinimapObject_prop_script
 	FD_MORTAR_POSITION,
 	PVE_OBJECTIVE_AREA,
 	BOOST_STORE,
+	ARC_TRAP,
 	COUNT
 }
 
@@ -65,6 +68,7 @@ global enum eMinimapObject_npc
 	DEFAULT,
 	AI_TDM_AI,
 	AI_PVEOBJECTIVE,
+	FD_TURRET,
 	COUNT
 }
 
@@ -313,5 +317,21 @@ void function InitMinimapSettings( entity npc )
 	npc.Minimap_SetZOrder( MINIMAP_Z_NPC )
 }
 
+void function Minimap_PingForPlayer( entity player, vector origin, float radius, float duration, vector color, int count = 1, bool reverse = false )
+{
+	Remote_CallFunction_NonReplay( player, "ServerCallback_PingMinimap", origin.x, origin.y, origin.z, radius, duration, color.x, color.y, color.z, count, reverse )
+}
+
+
+void function Minimap_PingForTeam( int team, vector origin, float radius, float duration, vector color, int count = 1, bool reverse = false )
+{
+	array<entity> players = GetPlayerArrayOfTeam( team )
+	{
+		foreach ( player in players )
+		{
+			Minimap_PingForPlayer( player, origin, radius, duration, color, count, reverse )
+		}
+	}
+}
 
 #endif

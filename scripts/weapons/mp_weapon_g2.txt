@@ -543,6 +543,27 @@ WeaponData
 		{
 
 		}
+		low_ttk
+		{
+			"damage_near_value"   							"--10" //45 3 -> 3
+			"damage_far_value"								"--5" //35 3 -> 4
+			"damage_headshot_scale"							"2.0"
+		}
+		amped_ttk
+		{
+			"is_burn_mod"		"1"
+
+			//FX
+			"tracer_effect"   								"P_wpn_tracer_BC"
+			"tracer_effect_first_person"                    "P_wpn_tracer_BC"
+			"fx_muzzle_flash_view"							"wpn_muzzleflash_smg_elec_FP"
+			"fx_muzzle_flash_world"							"wpn_muzzleflash_smg_elec"
+
+			"damage_near_value"   							"++5" // 4 -> 3
+			"damage_far_value"								"++5" // 4 -> 3
+			"damage_near_value_titanarmor"					"240"
+			"damage_far_value_titanarmor" 					"210"
+		}
 	}
 
 	"ui1_enable"		"1"

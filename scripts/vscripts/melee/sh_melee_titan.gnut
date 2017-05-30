@@ -80,6 +80,10 @@ void function TitanMeleeAttack( entity titan )
 {
 	if ( !IsValid( titan ) )
 		return
+
+	if ( !IsValid( titan.GetTitanSoul() ) ) //JFS defensive fix. Next game clean this up so there are not parts of the frame where NPC Titans have no soul but still exist
+			return
+
 	if ( titan.PlayerMelee_GetAttackHitEntity() )	// won't do any more melee hits if we hit something on a previous frame
 		return
 	if ( IsInExecutionMeleeState( titan ) )

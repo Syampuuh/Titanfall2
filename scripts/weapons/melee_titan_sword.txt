@@ -68,6 +68,8 @@ WeaponData
 	"impact_effect_table"							"titan_sword"
 	"impulse_force"   								"5000"
 
+	"clear_fx_on_new_view_model"					"1"
+
 	"zoom_effects"									"0"
 
 	"melee_lunge_target_range"						"100"
@@ -169,6 +171,7 @@ WeaponData
 			"offhand_transition_has_attach_detach_anim_events"	"0"
 			"activitymodifier"									"melee_titan_sword_super_charged"
 			"melee_angle"										"45"
+			"clear_fx_on_new_view_model"						"0"
 		}
 
 		super_charged_SP
@@ -178,6 +181,14 @@ WeaponData
 			"offhand_transition_has_attach_detach_anim_events" 	"0"
 			"activitymodifier"									"melee_titan_sword_super_charged"
 			"melee_angle"										"45"
+			"clear_fx_on_new_view_model"						"0"
+		}
+
+		modelset_prime
+		{
+            "viewmodel"   									"models/weapons/titan_sword/atpov_titan_sword_prime.mdl"
+            "playermodel" 									"models/weapons/titan_sword/w_titan_sword_prime.mdl"
+            "holstermodel"    								"models/weapons/titan_sword/w_titan_sword_prime.mdl"
 		}
 	}
 }

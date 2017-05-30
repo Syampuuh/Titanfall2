@@ -5,8 +5,8 @@ WeaponData
 	"description"									"#WPN_TITAN_STUN_LASER_DESC"
 	"longdesc"										"#WPN_TITAN_STUN_LASER_LONGDESC"
 
-	"menu_icon"										"rui/titan_loadout/ordnance/laser_shot_menu"
-	"hud_icon"										"rui/titan_loadout/ordnance/laser_shot"
+	"menu_icon"										"rui/titan_loadout/defensive/titan_defensive_energy_siphon_menu"
+	"hud_icon"										"rui/titan_loadout/defensive/titan_defensive_energy_siphon"
 
 	"draw_latest_non_offhand_when_offhand_is_active"	"1"
 
@@ -15,7 +15,7 @@ WeaponData
 
 	// General
 	"weaponClass" 									"titan"
-	"weaponType"									"defense"
+	"weaponType"									"shoulder"
 	"fire_mode"   									"offhand"
 
 	/////////
@@ -29,7 +29,7 @@ WeaponData
 	"reload_enabled"								"0"
 	"ammo_per_shot"									"120"
 	// Regen Ammo
-	"regen_ammo_refill_rate"						"12.0"
+	"regen_ammo_refill_rate"						"10.0"
 	"regen_ammo_refill_start_delay"					"1.0"
 
 	"OnWeaponAttemptOffhandSwitch" 					"OnWeaponAttemptOffhandSwitch_titanweapon_stun_laser"
@@ -111,8 +111,11 @@ WeaponData
 	"charge_effect_1p"								"P_wpn_monarch_charge_v1"
 	"charge_effect_3p"								"P_wpn_monarch_charge_v1"
 	"charge_effect_attachment"						"muzzle_flash"	// on titan in 3p, on weapon in 1p
-	"fx_muzzle_flash_attach"						"muzzle_flash"	// on titan in 3p, on weapon in 1p
+	"charge_effect_show_during_drain" "0"
 
+	"fx_muzzle_flash_view"							"P_wpn_monarch_mflash_v1"
+	"fx_muzzle_flash_world"							"P_wpn_monarch_mflash_v1"
+	"fx_muzzle_flash_attach"						"muzzle_flash"	// on titan in 3p, on weapon in 1p
 
 	"impact_effect_table" 							"exp_monarch_beam_v1"
 	"projectile_adjust_to_gun_barrel"				"1"
@@ -331,10 +334,11 @@ WeaponData
 		}
 		energy_field
 		{
-			"impact_effect_table" 							"exp_emp"
-			"hud_icon"										"rui/titan_loadout/passive/vanguard_core1"
-			"explosionradius" 								"400"
-			"explosion_inner_radius"  						"400"
+			"impact_effect_table" 							"exp_monarch_beam_LG_v1"
+			"explosionradius" 								"350"
+			"explosion_inner_radius"  						"350"
+
+			"hud_icon"										"rui/titan_loadout/passive/monarch_core_energy_transfer" //Deliberately swapped with energy transfer
 		}
 
 		energy_transfer
@@ -346,13 +350,15 @@ WeaponData
 			"charge_effect_1p"								"P_wpn_monarch_charge_v2"
 			"charge_effect_3p"								"P_wpn_monarch_charge_v2"
 
+			"fx_muzzle_flash_view"							"P_wpn_monarch_mflash_v2"
+			"fx_muzzle_flash_world"							"P_wpn_monarch_mflash_v2"
+
 			"tracer_effect"   								"P_wpn_monarch_beam_v2"
 			"tracer_effect_first_person"  					"P_wpn_monarch_beam_v2"
 
 			"impact_effect_table" 							"exp_monarch_beam_v2"
 
-
-			"hud_icon"										"rui/titan_loadout/passive/vanguard_core2"
+			"hud_icon"										"rui/titan_loadout/passive/monarch_core_energy_field"
 		}
 
 		energy_field_energy_transfer
@@ -360,16 +366,20 @@ WeaponData
 			"fire_sound_1_player_1p"						"Weapon_EnergySyphon_Lvl2_Fire_1P"
 			"fire_sound_1_player_3p"						"Weapon_EnergySyphon_Lvl2_Fire_3P"
 
-			"impact_effect_table" 							"exp_emp"
-			"hud_icon"										"rui/titan_loadout/core/titan_core_vanguard"
-			"explosionradius" 								"400"
-			"explosion_inner_radius"  						"400"
+			"impact_effect_table" 							"exp_monarch_beam_LG_v2"
+			"explosionradius" 								"350"
+			"explosion_inner_radius"  						"350"
 
 			"charge_effect_1p"								"P_wpn_monarch_charge_v2"
 			"charge_effect_3p"								"P_wpn_monarch_charge_v2"
 
+			"fx_muzzle_flash_view"							"P_wpn_monarch_mflash_v2"
+			"fx_muzzle_flash_world"							"P_wpn_monarch_mflash_v2"
+
 			"tracer_effect"   								"P_wpn_monarch_beam_v2"
 			"tracer_effect_first_person"  					"P_wpn_monarch_beam_v2"
+
+			"hud_icon"										"rui/titan_loadout/passive/monarch_core_energy_transfer"
 		}
 	}
 

@@ -54,6 +54,7 @@
 	import	"titan_ogre.set"
 	import	"titan_ogre_berserker.set"
 	import	"titan_ogre_minigun.set"
+	import	"titan_ogre_minigun_nuke.set"
 	import	"titan_ogre_meteor.set"
 	import	"titan_ogre_meteor_nuke.set"
 	import	"titan_ogre_scorch_prime.set"

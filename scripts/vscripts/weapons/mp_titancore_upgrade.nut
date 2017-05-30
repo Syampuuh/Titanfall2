@@ -179,9 +179,18 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 					Remote_CallFunction_Replay( owner, "ServerCallback_PlayTitanConversation", conversationID )
 					Remote_CallFunction_NonReplay( owner, "ServerCallback_VanguardUpgradeMessage", 8 )
 
-					array<string> settingMods = owner.GetPlayerSettingsMods()
-					settingMods.append( "core_health_upgrade" )
-					owner.SetPlayerSettingsWithMods( owner.GetPlayerSettings(), settingMods )
+					if ( !GetDoomedState( owner ) )
+					{
+						int missingHealth = owner.GetMaxHealth() - owner.GetHealth()
+						array<string> settingMods = owner.GetPlayerSettingsMods()
+						settingMods.append( "core_health_upgrade" )
+						owner.SetPlayerSettingsWithMods( owner.GetPlayerSettings(), settingMods )
+						owner.SetHealth( max( owner.GetMaxHealth() - missingHealth, VANGUARD_CORE8_HEALTH_AMOUNT ) )
+					}
+					else
+					{
+						owner.SetHealth( owner.GetMaxHealth() )
+					}
 				}
 				else
 				{

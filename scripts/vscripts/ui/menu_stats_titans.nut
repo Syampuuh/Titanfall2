@@ -220,6 +220,10 @@ asset function GetTitanStatImage( string titanRef )
 		case "legion":
 			image = $"r2_ui/menus/loadout_icons/titans/legion_icon"
 			break
+
+		case "vanguard":
+			image = $"r2_ui/menus/loadout_icons/titans/vanguard_icon"
+			break
 	}
 
 	return image

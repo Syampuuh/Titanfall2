@@ -18,6 +18,8 @@ WeaponData
 	"playermodel" 									"models/weapons/titan_sword/w_titan_sword.mdl"
 	"projectilemodel" 								"models/dev/empty_model.mdl"
 
+	"OnWeaponActivate"								"OnWeaponActivate_titanweapon_arcwave"
+	"OnWeaponDeactivate"							"OnWeaponDeactivate_titanweapon_arcwave"
 	"OnWeaponPrimaryAttack"							"OnWeaponPrimaryAttack_titanweapon_arc_wave"
 	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_titanweapon_arc_wave"
 	"OnProjectileCollision"							"OnProjectileCollision_weapon_tether"
@@ -44,6 +46,8 @@ WeaponData
 	"offhand_holster_primary"						"1"
 	"hide_holstered_sidearm_when_active"			"1"
 	// "offhand_transition_has_attach_detach_anim_events" "1"
+
+	"clear_fx_on_new_view_model"					"0"
 
 	// TEMP: SCRIPT WAVE SETTINGS
 	"wave_max_count"								"15"
@@ -206,11 +210,18 @@ WeaponData
 
 			"is_burn_mod"		"1"
 		}
+
 		pas_ronin_arcwave
 		{
 			"ammo_per_shot"									"50"
 			"ammo_min_to_fire"								"50"
 			"regen_ammo_refill_rate"						"*0.5"
+		}
+
+		modelset_prime
+		{
+            "viewmodel"   									"models/weapons/titan_sword/atpov_titan_sword_prime_emp_wave.mdl"
+            "playermodel" 									"models/weapons/titan_sword/w_titan_sword_prime.mdl"
 		}
 	}
 }

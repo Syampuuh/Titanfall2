@@ -358,7 +358,12 @@ string function MakeLockingOnWarningDisplayString( array<entity> lockingEnemies,
 		Assert( IsValid( activeLockingWeapon ) )
 		string activeLockingWeaponType = activeLockingWeapon.GetWeaponClass()
 		if ( activeLockingWeaponType == "human" )
-			return "#HUD_ENEMY_PILOT_LOCKING"
+		{
+			if ( lockingEnemies[0].IsNPC() )
+				return "#HUD_ENEMY_LOCKING"
+			else
+				return "#HUD_ENEMY_PILOT_LOCKING"
+		}
 		else if ( activeLockingWeaponType == "titan" )
 			return "#HUD_ENEMY_TITAN_LOCKING"
 		else if ( activeLockingWeaponType == "drone" )
@@ -382,7 +387,12 @@ string function MakeLockedOnWarningDisplayString( array<entity> lockingEnemies, 
 		Assert( IsValid( activeLockingWeapon ) )
 		string activeLockingWeaponType = activeLockingWeapon.GetWeaponClass()
 		if ( activeLockingWeaponType == "human" )
-			return "#HUD_ENEMY_PILOT_LOCK"
+		{
+			if ( lockingEnemies[0].IsNPC() )
+				return "#HUD_ENEMY_LOCK"
+			else
+				return "#HUD_ENEMY_PILOT_LOCK"
+		}
 		else if ( activeLockingWeaponType == "titan" )
 			return "#HUD_ENEMY_TITAN_LOCK"
 		else

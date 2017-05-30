@@ -65,10 +65,7 @@ WeaponData
 
 	Mods
 	{
-		pas_vanguard_upgrade
-		{
 
-		}
 	}
 }
 

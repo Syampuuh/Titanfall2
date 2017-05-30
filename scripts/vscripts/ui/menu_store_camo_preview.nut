@@ -40,16 +40,14 @@ void function OnOpenStoreMenuCamoPreview()
 
 	file.camoRefs = Store_GetCamoRefs( uiGlobal.entitlementId )
 
-	switch ( uiGlobal.entitlementId )
-	{
-		case ET_DLC1_CAMO:
-			Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), "#STORE_CAMO_PACK_DLC1" )
-			break
-
-		case ET_DLC3_CAMO:
-			Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), "#STORE_CAMO_PACK_DLC3" )
-			break
-	}
+	string titleText
+	if ( uiGlobal.entitlementId == ET_DLC1_CAMO )
+		titleText = "#STORE_CAMO_PACK_DLC1"
+	else if ( uiGlobal.entitlementId == ET_DLC3_CAMO )
+		titleText = "#STORE_CAMO_PACK_DLC3"
+	else if ( uiGlobal.entitlementId == ET_DLC5_CAMO )
+		titleText = "#STORE_CAMO_PACK_DLC5"
+	Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), titleText )
 
 	file.hasEntitlement = LocalPlayerHasEntitlement( uiGlobal.entitlementId )
 

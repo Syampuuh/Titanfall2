@@ -490,11 +490,6 @@ WeaponData
 
 
 		}
-		pas_at_hunter
-		{
-			"ammo_stockpile_max"							"*2"
-			"ammo_default_total"							"*2"
-		}
 		pas_fast_ads
 		{
 			//Fast ADS

@@ -17,6 +17,7 @@ classes
 	import npc_dropship_dogfighter.txt
 	import npc_dropship_hero.txt
 	import npc_frag_drone.txt
+	import npc_frag_drone_fd.txt
 	import npc_frag_drone_throwable.txt
 	import npc_gunship.txt
 	import npc_gunship_scripted.txt
@@ -45,6 +46,7 @@ classes
 	import npc_spectre.txt
     import npc_spectre_mortar.txt
 	import npc_stalker.txt
+	import npc_stalker_fd.txt
 	import npc_stalker_crawling.txt
 	import npc_stalker_crawling_mossy.txt
 	import npc_stalker_zombie.txt
@@ -52,6 +54,7 @@ classes
 	import npc_super_spectre.txt
 	import npc_super_spectre_burnmeter.txt
 	import npc_super_spectre_aitdm.txt
+	import npc_super_spectre_fd.txt
 	import npc_super_spectre_calmer.txt
 	import npc_titan.txt
 	import npc_titan_arc.txt
@@ -59,6 +62,7 @@ classes
 	import npc_titan_atlas_stickybomb.txt
 	import npc_titan_atlas_stickybomb_boss_fd.txt
 	import npc_titan_atlas_tracker.txt
+	import npc_titan_atlas_tracker_fd_sniper.txt
 	import npc_titan_atlas_tracker_boss_fd.txt
 	import npc_titan_atlas_tracker_mortar.txt
 	import npc_titan_atlas_vanguard.txt
@@ -91,10 +95,10 @@ classes
 	import npc_titan_ogre_fighter.txt
 	import npc_titan_ogre_fighter_berserker_core.txt
 	import npc_titan_ogre_meteor.txt
-	import npc_titan_ogre_meteor_nuke.txt
 	import npc_titan_ogre_meteor_boss_fd.txt
 	import npc_titan_ogre_minigun.txt
 	import npc_titan_ogre_minigun_boss_fd.txt
+	import npc_titan_ogre_minigun_nuke.txt
 	import npc_titan_proto_stasisgun.txt
 	import npc_titan_sarah.txt
 	import npc_titan_vanguard.txt
@@ -108,6 +112,7 @@ classes
 	import npc_titan_stryder_rocketeer.txt
 	import npc_titan_stryder_rocketeer_dash_core.txt
 	import npc_titan_stryder_sniper.txt
+	import npc_titan_stryder_sniper_fd.txt
 	import npc_titan_stryder_sniper_boss_fd.txt
 	import npc_turret_mega.txt
 	import npc_turret_mega_nowindup.txt

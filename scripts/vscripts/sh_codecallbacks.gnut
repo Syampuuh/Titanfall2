@@ -33,6 +33,15 @@ global function CodeCallback_ClaimClientSidePickup_MatchCandy
 #endif // SERVER
 #endif
 
+#if MP && !DEVSCRIPTS
+	#if CLIENT
+	global function ClientCodeCallback_OnPickup_MatchCandy
+	#endif // CLIENT
+	#if SERVER
+	global function CodeCallback_ClaimClientSidePickup_MatchCandy
+	#endif // SERVER
+#endif
+
 
 #if SERVER
 struct
@@ -413,6 +422,21 @@ void function CodeCallback_OnUseReleased( entity player )
 }
 
 #if SP
+#if CLIENT
+void function ClientCodeCallback_OnPickup_MatchCandy( int points, int CSPUFLAGflags )
+{
+	Assert( 0, "Unexpected usage." )
+}
+#endif // CLIENT
+#if SERVER
+void function CodeCallback_ClaimClientSidePickup_MatchCandy( entity player, int amount, int flags, int recieptID )
+{
+	Assert( 0, "Unexpected usage." )
+}
+#endif // SERVER
+#endif
+
+#if MP && !DEVSCRIPTS
 #if CLIENT
 void function ClientCodeCallback_OnPickup_MatchCandy( int points, int CSPUFLAGflags )
 {

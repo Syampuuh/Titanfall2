@@ -459,11 +459,6 @@ WeaponData
 			"fx_muzzle_flash_attach"						"muzzle_flash"
 
 		}
-		pas_at_hunter
-		{
-			"ammo_stockpile_max"							"*2"
-			"ammo_default_total"							"*2"
-		}
 
 		ar_trajectory
 		{
@@ -492,6 +487,10 @@ WeaponData
 			"primary_fire_does_not_block_sprint"			"1"
 			"crosshair_force_sprint_fade_disabled"          "1"
 		}
+		at_unlimited_ammo
+        {
+            "ammo_no_remove_from_stockpile"					"1"
+        }
 	}
 
 	"ui1_enable"		"1"

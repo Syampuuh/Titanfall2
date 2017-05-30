@@ -38,6 +38,7 @@ void function InitPlayVideoMenu()
 	file.milesAudio[ "meet_scorch" ] 	<- "Titan_Video_Scorch"
 	file.milesAudio[ "meet_northstar" ] <- "Titan_Video_Northstar"
 	file.milesAudio[ "meet_ronin" ] 	<- "Titan_Video_Ronin"
+	file.milesAudio[ "meet_monarch" ] 	<- "Titan_Video_Monarch"
 }
 
 void function PlayVideoMenu( string video, bool skippable = true, void functionref() func = null )

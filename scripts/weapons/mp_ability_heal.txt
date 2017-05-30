@@ -156,6 +156,11 @@ WeaponData
 		{
 
 		}
+
+		tactical_balance
+		{
+
+		}
 	}
 
 	"ordnance_crosshair_always_on_start_index"	"0"

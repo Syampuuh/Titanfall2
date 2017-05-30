@@ -8,7 +8,7 @@ global function UICodeCallback_CommunitySaveFailed
 global function UICodeCallback_ShowCommunityJoinRequest
 global function OnSwitchButton_Activate
 global function OnBrowseNetworksButton_Activate
-#if DEVSCRIPTS
+#if NETWORK_INVITE
 global function OnInviteFriendsToNetworkButton_Activate
 #endif
 
@@ -2650,7 +2650,7 @@ string function GetMyRegion_Localized()
 	return myRegion_localized
 }
 
-#if DEVSCRIPTS
+#if NETWORK_INVITE
 void function OnInviteFriendsToNetworkButton_Activate( var button )
 {
 	AdvanceMenu( GetMenu( "InviteFriendsToNetworkMenu" ) )

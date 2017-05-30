@@ -168,6 +168,7 @@ function RemoteFunctions_Init()
 	RegisterServerVar( "playerBleedout", null )
 	RegisterServerVar( "titanQueueLimit", 0 )
 	RegisterServerVar( "boostAvailability", 0 )
+	RegisterServerVar( "teamShareCoreMeter", 0 )
 	RegisterNetworkedVariable( "titanEjectEnabled", SNDC_GLOBAL, SNVT_BOOL, true )
 	RegisterNetworkedVariable( "titanfallEnabled", SNDC_GLOBAL, SNVT_BOOL, true )
 
@@ -824,8 +825,12 @@ function RemoteFunctions_Init()
 	Remote_RegisterFunction( "ServerCallback_GetObjectiveReminderOnLoad" )
 	Remote_RegisterFunction( "ServerCallback_ClearObjectiveReminderOnLoad" )
 
+	Remote_RegisterFunction( "ServerCallback_PingMinimap" )
+
 	//Boosts
 	RegisterNetworkedVariable( "boostTimedEffectLastsTill", SNDC_PLAYER_EXCLUSIVE, SNVT_TIME )
+	RegisterNetworkedVariable( "burn_numTurrets", SNDC_PLAYER_EXCLUSIVE, SNVT_INT )
+	RegisterNetworkedVariable( "burn_turretLimit", SNDC_GLOBAL, SNVT_INT, 5 )
 
 	#if CLIENT
 		//RegisterNetworkedVariableChangeCallback_time( "t", Changed )

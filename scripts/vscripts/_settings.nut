@@ -523,6 +523,7 @@ global const CAPTURE_POINT_MAX_PULSE_SPEED			= 2.0				// longest pulse time
 global const CAPTURE_POINT_STATE_UNASSIGNED		= 0					// State at start of match
 global const CAPTURE_POINT_STATE_HALTED			= 1					// In this state the bar is not moving and the icon is at full oppacity
 global const CAPTURE_POINT_STATE_CAPPING		= 2				// In this state the bar is moving and the icon pulsate
+global const CAPTURE_POINT_STATE_SELF_UNAMPING	= 3		// In this state the bar is moving and the icon pulsate
 
 //Script assumes >= CAPTURE_POINT_STATE_CAPTURED is equivalent to captured. Keep these two last numerically.
 global const CAPTURE_POINT_STATE_CAPTURED			= 4				// TBD what this looks like exatly.
@@ -530,7 +531,6 @@ global const CAPTURE_POINT_STATE_AMPING				= 5
 global const CAPTURE_POINT_STATE_AMPED				= 6				// If held for > 1 minute.
 
 global const CAPTURE_POINT_STATE_CONTESTED	= 7					// In this state the bar is not moving and the icon is at full oppacity
-global const CAPTURE_POINT_STATE_IDLE		= 7					// In this state the bar is not moving and the icon is at full oppacity
 //global const CAPTURE_POINT_STATE_GAINING	= 7					// In this state the bar is not moving and the icon is at full oppacity
 //global const CAPTURE_POINT_STATE_LOSING		= 7					// In this state the bar is not moving and the icon is at full oppacity
 
@@ -760,7 +760,7 @@ global const COCKPIT_HEALTHBARS						= 1
 #if SP
 global const CORE_BUILD_PERCENT_FROM_TITAN_DAMAGE_INFLICTED = 0.0100
 #else
-global const CORE_BUILD_PERCENT_FROM_TITAN_DAMAGE_INFLICTED = 0.0075
+global const CORE_BUILD_PERCENT_FROM_TITAN_DAMAGE_INFLICTED = 0.0070
 #endif
 global const float CORE_BUILD_PERCENT_FROM_TITAN_DAMAGE_RECEIVED	= 0.002		// converts damage -> core %
 global const float CORE_BUILD_PERCENT_FROM_DOOM_INFLICTED			= 10.0		// core %

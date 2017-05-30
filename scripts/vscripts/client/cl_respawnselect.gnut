@@ -94,7 +94,7 @@ void function UpdateRespawnSelectHud()
 {
 	entity player = GetLocalClientPlayer()
 
-	if ( RespawnSelect_ShouldShowResapwnAsPilot( player ) )
+	if ( RespawnSelect_ShouldShowRespawnAsPilot( player ) )
 	{
 		RegisterRespawnCommands()
 		RuiSetBool( file.respawnHintRui, "isVisible", true )
@@ -102,6 +102,14 @@ void function UpdateRespawnSelectHud()
 		RuiSetBool( file.respawnHintRui, "isTitanAlive", RespawnSelect_CanPlayerSpawnIntoTitan( player ) )
 		RuiSetGameTime( file.respawnHintRui, "nextSpawnTime", GetNextRespawnTime( player ) )
 		RuiSetString( file.respawnHintRui, "titanSpawnAsText", GetTitanSpawnAsText() )
+		RuiSetBool( file.respawnHintRui, "shouldShowSkipReplay", false )
+	}
+	else if ( RespawnSelect_ShouldShowSkipReplay( player ) )
+	{
+		RegisterRespawnCommands()
+		RuiSetBool( file.respawnHintRui, "isVisible", true )
+		RuiSetBool( file.respawnHintRui, "shouldShowSkipReplay", true )
+		RuiSetBool( file.respawnHintRui, "isTitanAvailable", false )
 	}
 	else
 	{
@@ -222,7 +230,7 @@ void function PlayerPressed_RespawnTitan( entity player )
 }
 
 
-bool function RespawnSelect_ShouldShowResapwnAsPilot( entity player )
+bool function RespawnSelect_ShouldShowRespawnAsPilot( entity player )
 {
 	if ( IsAlive( player ) && !IsWatchingKillReplay() )
 	{
@@ -249,6 +257,38 @@ bool function RespawnSelect_ShouldShowResapwnAsPilot( entity player )
 	}
 
 	return true
+}
+
+bool function RespawnSelect_ShouldShowSkipReplay( entity player )
+{
+	/*if ( IsAlive( player ) )
+	{
+		printt( "IsAlive( player )" )
+		return false
+	}*/
+
+	if ( !IsWatchingKillReplay() )
+	{
+		printt( "IsWatchingKillReplay()"  )
+		return false
+	}
+
+	if ( !IsPlayerEliminated( player ) )
+	{
+		printt( "PlayerEliminated( player )" )
+		return false
+	}
+
+	int gameState = GetGameState()
+
+	if ( gameState != eGameState.Playing && gameState != eGameState.Epilogue )
+	{
+		printt( "Fail gamestate check" )
+		return false
+	}
+
+	return true
+
 }
 
 

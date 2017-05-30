@@ -213,6 +213,8 @@ bool function TryHeadshotDeathFX( entity victim )
 
 	// Swap the head bodygroup
 	int bodyGroupIndex = victim.FindBodyGroup( "head" )
+	if ( bodyGroupIndex == -1 )
+		bodyGroupIndex = victim.FindBodyGroup( "removableHead" )
 
 	if ( bodyGroupIndex > -1 )
 	{

@@ -763,6 +763,79 @@ SpawnPointFP function GetSpawnPointForStyle( FlightPath flightPath, CallinData d
 	return spawnPoint
 }
 
+//Function tests to see if a given flight path with a given CallinData returns a valid dropship spawn point.
+//Note: Avoid calling this function in general game play. Instead, use a wrapper function such as DropshipCanZiplineDropAtSpawnPoint to test a flight path to a spawn
+//and then store the spawn for later use.
+bool function TestSpawnPointForStyle( FlightPath flightPath, CallinData drop )
+{
+
+	Assert( !GamePlayingOrSuddenDeath(), "TestSpawnPointsForStyle should only be called OnEntitiesLoaded and not during general gameplay." )
+
+	if ( GetAINScriptVersion() != AIN_REV )
+		return false
+
+	PerfStart( PerfIndexServer.GetSpawnPointForStyle )
+
+	int style = drop.style
+	if ( !drop.styleSet )
+	{
+		if ( !drop.yawSet )
+		{
+			style = eDropStyle.NEAREST
+		}
+		else
+		{
+			style = eDropStyle.NEAREST_YAW
+		}
+	}
+
+	SpawnPointFP spawnPoint
+
+	switch ( style )
+	{
+		case eDropStyle.NEAREST_YAW:
+			spawnPoint = FindNearestDropPositionWithYaw( flightPath, drop )
+			break
+
+		case eDropStyle.NEAREST:
+			spawnPoint = FindNearestDropPosition( flightPath, drop )
+			break
+
+		case eDropStyle.FLYER_PICKUP:
+		case eDropStyle.ZIPLINE_NPC:
+			spawnPoint = TryFromOrigin_FallbackToNearest( flightPath, drop )
+			break
+
+		case eDropStyle.RANDOM_FROM_YAW:
+			spawnPoint = FindSpawnpointFromYawOnly( flightPath, drop ) // owner, 1800 )
+			break
+
+		case eDropStyle.FORCED:
+			spawnPoint = CreateSpawnPointManual( drop.origin, Vector( 0, drop.yaw, 0 ), GetNearestNodeToPos( drop.origin ) )
+			break
+
+		case eDropStyle.NEAREST_YAW_FALLBACK:
+			spawnPoint = FindNearestDropPosWithYawAndFallback( flightPath, drop )
+			break
+
+//		case eDropStyle.FROM_SET_DISTANCE:
+//			spawnPoint = FindSpawnpointAtDistance( flightPath, CallinData drop )
+//
+//			break
+
+		default:
+			Assert(0, "Unknown style " + style )
+			break
+	}
+
+	PerfEnd( PerfIndexServer.GetSpawnPointForStyle )
+
+	if ( !spawnPoint.valid )
+		return false
+
+	return true
+}
+
 Point function GetWarpinPosition( asset model, string animation, vector origin, vector angles )
 {
 	Point start

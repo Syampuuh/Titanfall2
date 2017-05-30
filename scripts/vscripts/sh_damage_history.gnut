@@ -16,10 +16,12 @@ global function GetRodeoAttacksByPlayer
 global function GetLastDamageSourceStringForAttacker
 global function TotalDamageOverTime_BlendedOut
 global function ClearRecentDamageHistory
+global function AttackerDamagesSort
 
 global struct AttackerDamage
 {
 	entity attacker
+	string attackerName
 	float totalDamage
 	table<int,float> damageBySource
 }
@@ -106,7 +108,8 @@ DamageHistoryStruct function StoreDamageHistoryAndUpdate( entity storeEnt, float
 		damageHistory.victimIsTitan = false
 	}
 
-	UpdateDamageHistory( storeEnt, maxTime, time )
+	if ( maxTime >= 0 )
+		UpdateDamageHistory( storeEnt, maxTime, time )
 
 	storeEnt.e.recentDamageHistory.insert( 0, damageHistory )
 

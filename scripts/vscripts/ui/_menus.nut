@@ -609,7 +609,9 @@ void function CloseSubmenu( bool openStackMenu = true )
 			OpenMenuWrapper( uiGlobal.activeMenu, false )
 	}
 	else
+	{
 		uiGlobal.activeMenu = null
+	}
 
 	Signal( uiGlobal.signalDummy, "ActiveMenuChanged" )
 }
@@ -908,6 +910,7 @@ void function InitMenus()
 	AddMenu( "FDMenu", $"resource/ui/menus/playlist_fd.menu", InitFDPlaylistMenu )
 	AddMenu( "FDHostMatchMenu", $"resource/ui/menus/fd_host_match.menu", InitFDHostMatchMenu )
 	AddMenu( "FDMapsMenu", $"resource/ui/menus/fd_map_select.menu", InitFDMapsMenu )
+	AddMenu( "FDTitanUpgradeMenu", $"resource/ui/menus/fd_titan_upgrade.menu", InitFDTitanUpgradeMenu )
 	AddMenu( "PVELobbyMenu", $"resource/ui/menus/pvelobby.menu", InitPVELobbyMenu, "#PVELOBBY" )
 	AddMenu( "PVETacticalsMenu", $"resource/ui/menus/pve_tacticals.menu", InitPVETacticalsMenu )
 	#endif
@@ -931,9 +934,11 @@ void function InitMenus()
 	AddMenu( "CommunityEditMenu", $"resource/ui/menus/community_edit.menu" )
 	AddMenu( "CommunityAdminSendMessage", $"resource/ui/menus/community_sendMessage.menu" )
 	AddMenu( "CommunityAdminInviteRequestMenu", $"resource/ui/menus/community_inviteRequest.menu" )
-#if DEVSCRIPTS
+#if NETWORK_INVITE
 	AddMenu( "InviteFriendsToNetworkMenu", $"resource/ui/menus/invite_friends.menu", InitInviteFriendsToNetworkMenu )
-	//AddMenu( "InviteFriendsToPartyMenu", $"resource/ui/menus/invite_friends.menu", InitInviteFriendsToPartyMenu )
+#endif
+#if DEVSCRIPTS
+		//AddMenu( "InviteFriendsToPartyMenu", $"resource/ui/menus/invite_friends.menu", InitInviteFriendsToPartyMenu )
 	AddMenu( "PathChooserDialog", $"resource/ui/menus/dialog_pathchooser.menu", InitPathChooserDialog )
 #endif
 
@@ -1816,6 +1821,11 @@ void function UICodeCallback_EntitlementsChanged()
 {
 	switch ( uiGlobal.activeMenu )
 	{
+		case GetMenu( "StoreMenu_Bundles" ):
+			EntitlementsChanged_Bundles()
+			EmitUISound( "UI_Menu_Store_Purchase_Success" )
+			break
+
 		case GetMenu( "StoreMenu_PrimeTitans" ):
 			EntitlementsChanged_PrimeTitans()
 			EmitUISound( "UI_Menu_Store_Purchase_Success" )

@@ -194,7 +194,6 @@ void function InitPersistentData( entity player )
 	if ( initializedVersion < 223 )
 	{
 		InitDefaultLoadouts() //Repopulate Default loadouts before getting the value for default loadout
-		#if DEVSCRIPTS
 		SetPersistentTitanLoadout( player, 6, GetDefaultTitanLoadout( 6 ) )
 		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", 6 )
 		if ( enumName != "" )
@@ -202,7 +201,6 @@ void function InitPersistentData( entity player )
 			player.SetPersistentVar( "titanXP[" + enumName + "]", 0 )
 			player.SetPersistentVar( "previousTitanXP[" + enumName + "]", 0 )
 		}
-		#endif
 	}
 	if ( initializedVersion < 223 )
 	{
@@ -229,6 +227,35 @@ void function InitPersistentData( entity player )
 	{
 		if ( GetPersistentSpawnLoadoutIndex( player, "titan" ) > (NUM_PERSISTENT_TITAN_LOADOUTS - 1) )
 			SetPersistentSpawnLoadoutIndex( player, "titan", 0 )
+	}
+
+	if ( initializedVersion < 227 )
+	{
+		int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+		for ( int i = 0; i < enumCount; i++ )
+		{
+			string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
+			if ( enumName != "" )
+				player.SetPersistentVar( "titanFDUnlockPoints[" + enumName + "]", 0 )
+		}
+	}
+
+	//Reseting Monarch's loadout so Shield Amplifier is the primary kit and not Core Meter.
+	if ( initializedVersion < 228 )
+	{
+		InitDefaultLoadouts()
+		SetPersistentTitanLoadout( player, 6, GetDefaultTitanLoadout( 6 ) )
+		ResetLoadoutPropertyToDefault( player, "titan", 6, "name" ) //These are probably already covered by the SetPersistentTitanLoadout(), but I don't want to risk breaking anything now
+		ResetLoadoutPropertyToDefault( player, "titan", 6, "titanClass" )
+		ResetLoadoutPropertyToDefault( player, "titan", 6, "special" )
+		ResetLoadoutPropertyToDefault( player, "titan", 6, "antirodeo" )
+		ResetLoadoutPropertyToDefault( player, "titan", 6, "passive1" )
+		ResetLoadoutPropertyToDefault( player, "titan", 6, "passive2" )
+		ResetLoadoutPropertyToDefault( player, "titan", 6, "passive3" )
+		ResetLoadoutPropertyToDefault( player, "titan", 6, "passive4" )
+		ResetLoadoutPropertyToDefault( player, "titan", 6, "passive5" )
+		ResetLoadoutPropertyToDefault( player, "titan", 6, "passive6" )
+		ResetLoadoutPropertyToDefault( player, "titan", 6, "titanExecution" )
 	}
 
 	player.SetPersistentVar( "initializedVersion", PERSISTENCE_INIT_VERSION )
@@ -281,27 +308,47 @@ void function RegenPersistentLoadouts( entity player )
 	{
 		PilotLoadoutDef loadout = GetDefaultPilotLoadout( loadoutIndex )
 
-		// NOT reset: name
-		// TODO: Don't reset owned items
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "suit" ) ) )
+		{
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "suit",				loadout.suit )
+		}
 
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "suit",				loadout.suit )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "race",				loadout.race )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primary",			loadout.primary )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryAttachment",	loadout.primaryAttachment )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod1",		loadout.primaryMod1 )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod2",		loadout.primaryMod2 )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod3",		loadout.primaryMod3 )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondary",			loadout.secondary )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod1",		loadout.secondaryMod1 )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod2",		loadout.secondaryMod2 )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod3",		loadout.secondaryMod3 )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "ordnance",			loadout.ordnance )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive1",			loadout.passive1 )
-		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive2",			loadout.passive2 )
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "race" ) ) )
+		{
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "race",				loadout.race )
+		}
+
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primary" ) ) )
+		{
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primary",			loadout.primary )
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryAttachment",	loadout.primaryAttachment )
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod1",		loadout.primaryMod1 )
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod2",		loadout.primaryMod2 )
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod3",		loadout.primaryMod3 )
+		}
+
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondary" ) ) )
+		{
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondary",			loadout.secondary )
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod1",		loadout.secondaryMod1 )
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod2",		loadout.secondaryMod2 )
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod3",		loadout.secondaryMod3 )
+		}
+
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "ordnance" ) ) )
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "ordnance",			loadout.ordnance )
+
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive1" ) ) )
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive1",			loadout.passive1 )
+
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive2" ) ) )
+			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive2",			loadout.passive2 )
 	}
 
-	for ( int loadoutIndex = NUM_PERSISTENT_TITAN_LOADOUTS-1; loadoutIndex >= 0; loadoutIndex-- )
-		SetPersistentTitanLoadout( player, loadoutIndex, GetDefaultTitanLoadout( loadoutIndex ) )
+	//for ( int loadoutIndex = NUM_PERSISTENT_TITAN_LOADOUTS-1; loadoutIndex >= 0; loadoutIndex-- )
+	//{
+	//	SetPersistentTitanLoadout( player, loadoutIndex, GetDefaultTitanLoadout( loadoutIndex ) )
+	//}
 }
 
 void function SetPersistentUnlocksToDefaults( entity player )

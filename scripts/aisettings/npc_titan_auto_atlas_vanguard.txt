@@ -8,5 +8,5 @@ npc_titan_auto_atlas_vanguard
 	maxDodgePerPeriod		1 		 	// Don't dodge more than this many times in dodgePeriod
 	npc_titan_player_settings	"titan_atlas_vanguard"
 
-	footstep_type			"tone" //VG2UPDATE
+	footstep_type			"buddy"
 }

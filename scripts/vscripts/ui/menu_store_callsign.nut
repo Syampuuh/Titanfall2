@@ -33,9 +33,20 @@ void function InitStoreMenuCallsign()
 	Hud_AddEventHandler( button, UIE_CLICK, OnCallsignButton_Activate )
 	file.buttons.append( button )
 
-	button = Hud_GetChild( file.menu, "ButtonLast" )
+	button = Hud_GetChild( file.menu, "Button1" )
 	SetButtonRuiText( button, "#STORE_CALLSIGN_PACK_DLC3" )
 	button.s.entitlementId <- ET_DLC3_CALLSIGN
+	rui = Hud_GetRui( button )
+	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_callsigns" )
+	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_callsigns_hl" )
+	RuiSetFloat( rui, "fontSize", 36 )
+	RuiSetFloat( rui, "cornerHeight", 15 )
+	Hud_AddEventHandler( button, UIE_CLICK, OnCallsignButton_Activate )
+	file.buttons.append( button )
+
+	button = Hud_GetChild( file.menu, "ButtonLast" )
+	SetButtonRuiText( button, "#STORE_CALLSIGN_PACK_DLC5" )
+	button.s.entitlementId <- ET_DLC5_CALLSIGN
 	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_callsigns" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_callsigns_hl" )

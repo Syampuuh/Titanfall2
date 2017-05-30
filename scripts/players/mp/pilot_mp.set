@@ -102,7 +102,10 @@
 			{
 				wallrun			"0"
 			}
-
+			tactical_balance
+			{
+				grapple_power_regen_rate	*0.85
+			}
 			r2_80
 			{
 			}

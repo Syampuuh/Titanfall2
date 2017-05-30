@@ -73,7 +73,7 @@ resource/ui/menus/abilityselect.menu
 			scriptID				0
 	        xpos					96
     	    ypos                    160
-			navUp					Button8
+			navUp					Button10
 			navDown					Button2
 			navLeft					Button1
 			navRight				Button1
@@ -89,7 +89,7 @@ resource/ui/menus/abilityselect.menu
 			pin_to_sibling			Button0
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	TOP_RIGHT
-			navUp					Button9
+			navUp					Button11
 			navDown					Button3
 			navLeft					Button0
 			navRight				Button0
@@ -207,7 +207,7 @@ resource/ui/menus/abilityselect.menu
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					Button6
-			navDown					Button0
+			navDown					Button10
 			navLeft					Button9
 			navRight				Button9
 		}
@@ -222,10 +222,44 @@ resource/ui/menus/abilityselect.menu
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	TOP_RIGHT
 			navUp					Button7
-			navDown					Button1
+			navDown					Button11
 			navLeft					Button8
 			navRight				Button8
 		}
+
+// BUTTON ROW 6 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Button10
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				AbilitySelectClass
+			scriptID				10
+			ypos                    6
+			pin_to_sibling			Button8
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button8
+			navDown					Button0
+			navLeft					Button11
+			navRight				Button11
+		}
+		Button11
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				AbilitySelectClass
+			scriptID				11
+			xpos					6
+			pin_to_sibling			Button10
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+			navUp					Button9
+			navDown					Button1
+			navLeft					Button10
+			navRight				Button10
+		}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

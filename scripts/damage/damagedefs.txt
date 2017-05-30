@@ -219,6 +219,20 @@ DamageDefs
 		"impact_effect_table"		"exp_stalker_powersupply"
 	}
 
+	damagedef_stalker_powersupply_explosion_large_at
+	{
+		"damage" 					"50"
+		"damage_heavy_armor"		"1250"
+		"inner_radius"				"200"
+		"radius"					"350"
+		"impulse_force"				"25000"
+		"explosion_flags"			""
+
+		"obituary"					"#DEATH_STALKER_POWERSUPPLY"
+		"damage_flags"				"DF_RAGDOLL | DF_EXPLOSION | DF_KNOCK_BACK"
+		"impact_effect_table"		"exp_stalker_powersupply"
+	}
+
 	damagedef_shield_captain_arc_shield
 	{
 		"damage" 					"15"

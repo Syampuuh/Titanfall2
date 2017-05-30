@@ -711,7 +711,7 @@ void function UpdateOpenInvites( OpenInvite openInvite, string message, string p
 					}
 					else
 					{
-						CallsignIcon callsignIcon = CallsignIcon_GetByIndex( member.callsignIdx )
+						callsignIcon = CallsignIcon_GetByIndex( member.callsignIdx )
 					}
 				}
 				else

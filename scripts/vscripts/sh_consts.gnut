@@ -1,6 +1,7 @@
 global typedef IntFromEntityCompare int functionref( entity, entity )
 
 global const bool DEVSCRIPTS = false
+global const bool NETWORK_INVITE = true
 
 global const bool PRE_RELEASE_DEMO = false
 
@@ -52,8 +53,8 @@ global const PVE_SANDBOX = "pve_sandbox"
 
 global const VERBOSE_DAMAGE_PRINTOUTS = false
 
-global const SAVEGAME_VERSION = 11 // increment when saves need to be tossed
-global const PERSISTENCE_INIT_VERSION = 226
+global const SAVEGAME_VERSION = 12 // increment when saves need to be tossed
+global const PERSISTENCE_INIT_VERSION = 228
 
 global const TEMP_NETWORTH_VAR = "activeBCID"
 global const NETWORTH_VAR = "netWorth"
@@ -684,11 +685,7 @@ global const SAFE_TITANFALL_DISTANCE = 125
 global const SAFE_TITANFALL_DISTANCE_CTF = 270
 
 global const NUM_PERSISTENT_PILOT_LOADOUTS = 10
-#if DEVSCRIPTS
 global const NUM_PERSISTENT_TITAN_LOADOUTS = 7
-#else
-global const NUM_PERSISTENT_TITAN_LOADOUTS = 6
-#endif
 
 global const EMBARK_TIMEOUT = 13.0 // how long you have to reach your titan before it stands up and bubble shield starts to fade
 
@@ -1143,6 +1140,7 @@ global enum eItemTypes
 	TITAN_SCORCH_EXECUTION,
 	TITAN_LEGION_EXECUTION,
 	TITAN_VANGUARD_EXECUTION,
+	TITAN_FD_UPGRADE,
 	COUNT
 }
 
@@ -1287,6 +1285,16 @@ global enum eSpawnAsTitan
 	Never,
 
 	LastSpawnAsTitan
+}
+
+global enum eTeamShareEarnMeter
+{
+	Disabled,
+	Enabled,
+	OwnedOnly,
+	OverdriveOnly,
+
+	LastShareCoreMeter
 }
 
 global enum eWaveSpawnType
@@ -1568,23 +1576,30 @@ global enum eEventNotifications
 	AT_SupplyDropExpired,
 	WEAP_AmmoFull,
 	WEAP_GotAmmo,
-	HUNTED_PlayerBecomesHunter,
-	HUNTED_PlayerSecuresAsset,
-	HUNTED_PlayerDropsAsset,
-	HUNTED_Reinforcements,
 	SPEEDBALL_FlagPickedUp,
 	SPEEDBALL_FlagDropped,
 	DON_Reinforcements,
 	BLEEDOUT_SelfHealPrompt,
-	BATT_HealthFull,
-	BATT_Full,
 	VANGUARD_ShieldGain,
+	#if DEVSCRIPTS
+	HUNTED_PlayerBecomesHunter,
+	HUNTED_PlayerSecuresAsset,
+	HUNTED_PlayerDropsAsset,
+	HUNTED_Reinforcements,
 	FD_AnnounceWaveStart,
 	FD_AnnounceWaveEnd,
 	FD_WaveLost,
 	FD_WaveRestart,
 	FD_AmmoRefilled,
-	FD_NotifyWaveBonusIncoming
+	FD_NotifyWaveBonusIncoming,
+	FD_PlayerHealedHarvester,
+	FD_PlayerBoostedHarvesterShield,
+	FD_StoreClosing,
+	FD_StoreOpen,
+	FD_PlayerReady,
+	#endif
+	BATT_HealthFull,
+	BATT_Full,
 }
 
 global enum ePermanentEventNotifications

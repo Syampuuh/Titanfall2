@@ -24,6 +24,8 @@ WeaponData
 	"aimassist_disable_hipfire"						"1"
 	"aimassist_disable_ads"							"1"
 
+	"clear_fx_on_new_view_model"					"0"
+
 	// Menu Stats
 
 	MP_BASE
@@ -207,5 +209,11 @@ WeaponData
 			"npc_rest_time_between_bursts_min"				"*2"
 			"npc_rest_time_between_bursts_max"				"*2"
 		}
+
+        modelset_prime
+        {
+            "viewmodel"   									"models/weapons/titan_sword/atpov_titan_sword_prime_block.mdl"
+            "playermodel" 									"models/weapons/titan_sword/w_titan_sword_prime.mdl"
+        }
 	}
 }

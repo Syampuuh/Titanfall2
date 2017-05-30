@@ -19,12 +19,20 @@ void function InitStoreMenuCustomization()
 	{
 		var buttonDLC1 = Hud_GetChild( file.menu, "Titan" + i + "DLC1" )
 		var buttonDLC3 = Hud_GetChild( file.menu, "Titan" + i + "DLC3" )
+		var buttonDLC5 = Hud_GetChild( file.menu, "Titan" + i + "DLC5" )
+
 		buttonDLC1.s.rowIndex <- i
 		buttonDLC3.s.rowIndex <- i
+		buttonDLC5.s.rowIndex <- i
+
 		Hud_AddEventHandler( buttonDLC1, UIE_GET_FOCUS, OnCustomizationButton_Focused )
 		Hud_AddEventHandler( buttonDLC1, UIE_CLICK, OnCustomizationButton_Activate )
+
 		Hud_AddEventHandler( buttonDLC3, UIE_GET_FOCUS, OnCustomizationButton_Focused )
 		Hud_AddEventHandler( buttonDLC3, UIE_CLICK, OnCustomizationButton_Activate )
+
+		Hud_AddEventHandler( buttonDLC5, UIE_GET_FOCUS, OnCustomizationButton_Focused )
+		Hud_AddEventHandler( buttonDLC5, UIE_CLICK, OnCustomizationButton_Activate )
 	}
 
 	AddMenuFooterOption( file.menu, BUTTON_A, "#A_BUTTON_VIEW_PACK" )
@@ -43,6 +51,7 @@ void function OnOpenStoreMenuCustomization()
 
 		int entitlementIdDLC1 = -1
 		int entitlementIdDLC3 = -1
+		int entitlementIdDLC5 = -1
 		asset titanIcon = $""
 		asset titanIconDim = $""
 
@@ -51,6 +60,7 @@ void function OnOpenStoreMenuCustomization()
 			case "ion":
 				entitlementIdDLC1 = ET_DLC1_ION
 				entitlementIdDLC3 = ET_DLC3_ION
+				entitlementIdDLC5 = ET_DLC5_ION
 				titanIcon = $"rui/menu/store/ion_store_icon_hl"
 				titanIconDim = $"rui/menu/store/ion_store_icon"
 				break
@@ -58,6 +68,7 @@ void function OnOpenStoreMenuCustomization()
 			case "scorch":
 				entitlementIdDLC1 = ET_DLC1_SCORCH
 				entitlementIdDLC3 = ET_DLC3_SCORCH
+				entitlementIdDLC5 = ET_DLC5_SCORCH
 				titanIcon = $"rui/menu/store/scorch_store_icon_hl"
 				titanIconDim = $"rui/menu/store/scorch_store_icon"
 				break
@@ -65,6 +76,7 @@ void function OnOpenStoreMenuCustomization()
 			case "northstar":
 				entitlementIdDLC1 = ET_DLC1_NORTHSTAR
 				entitlementIdDLC3 = ET_DLC3_NORTHSTAR
+				entitlementIdDLC5 = ET_DLC5_NORTHSTAR
 				titanIcon = $"rui/menu/store/northstar_store_icon_hl"
 				titanIconDim = $"rui/menu/store/northstar_store_icon"
 				break
@@ -72,6 +84,7 @@ void function OnOpenStoreMenuCustomization()
 			case "ronin":
 				entitlementIdDLC1 = ET_DLC1_RONIN
 				entitlementIdDLC3 = ET_DLC3_RONIN
+				entitlementIdDLC5 = ET_DLC5_RONIN
 				titanIcon = $"rui/menu/store/ronin_store_icon_hl"
 				titanIconDim = $"rui/menu/store/ronin_store_icon"
 				break
@@ -79,6 +92,7 @@ void function OnOpenStoreMenuCustomization()
 			case "tone":
 				entitlementIdDLC1 = ET_DLC1_TONE
 				entitlementIdDLC3 = ET_DLC3_TONE
+				entitlementIdDLC5 = ET_DLC5_TONE
 				titanIcon = $"rui/menu/store/tone_store_icon_hl"
 				titanIconDim = $"rui/menu/store/tone_store_icon"
 				break
@@ -86,6 +100,7 @@ void function OnOpenStoreMenuCustomization()
 			case "legion":
 				entitlementIdDLC1 = ET_DLC1_LEGION
 				entitlementIdDLC3 = ET_DLC3_LEGION
+				entitlementIdDLC5 = ET_DLC5_LEGION
 				titanIcon = $"rui/menu/store/legion_store_icon_hl"
 				titanIconDim = $"rui/menu/store/legion_store_icon"
 				break
@@ -107,12 +122,25 @@ void function OnOpenStoreMenuCustomization()
 		rui = Hud_GetRui( button )
 		RuiSetString( rui, "buttonText", "#STORE_CUSTOMIZATION_PACKS_TWO" )
 		RuiSetBool( rui, "isOwned", LocalPlayerHasEntitlement( entitlementIdDLC3 ) )
+
+		button = Hud_GetChild( file.menu, "Titan" + i + "DLC5" )
+		button.s.entitlementId <- entitlementIdDLC5
+		rui = Hud_GetRui( button )
+		RuiSetString( rui, "buttonText", "#STORE_CUSTOMIZATION_PACKS_THREE" )
+		RuiSetBool( rui, "isOwned", LocalPlayerHasEntitlement( entitlementIdDLC5 ) )
 	}
 }
 
 void function OnCustomizationButton_Focused( var button )
 {
 	int index = expect int( button.s.rowIndex )
+//	int entitlementId = expect int( button.s.entitlementId )
+//
+//	RunMenuClientFunction( "UpdateTitanModel", index, TITANMENU_NO_CUSTOMIZATION | TITANMENU_FORCE_NON_PRIME )
+//	RunMenuClientFunction( "ClearTitanDecalPreview" )
+//	TitanLoadoutDef loadout = GetCachedTitanLoadout( index )
+//	int skinIndex = expect int( GetItemDisplayData( Store_GetCustomizationRefs( entitlementId )[5], loadout.titanClass ).i.skinIndex )
+//	RunMenuClientFunction( "PreviewTitanSkinChange", skinIndex )
 	RunMenuClientFunction( "UpdateTitanModel", index, TITANMENU_NO_CUSTOMIZATION | TITANMENU_FORCE_NON_PRIME )
 
 	for ( int i = 0; i < MAX_STORE_PRIME_TITANS; i++ )

@@ -50,7 +50,6 @@ void function OnOpenStoreMenuCustomizationPreview()
 	UI_SetPresentationType( ePresentationType.TITAN_NOSE_ART )
 
 	file.hasEntitlement = LocalPlayerHasEntitlement( uiGlobal.entitlementId )
-
 	file.customizationRefs = Store_GetCustomizationRefs( uiGlobal.entitlementId )
 
 	string menuTitle
@@ -59,36 +58,42 @@ void function OnOpenStoreMenuCustomizationPreview()
 	{
 		case ET_DLC1_ION:
 		case ET_DLC3_ION:
+		case ET_DLC5_ION:
 			menuTitle = "#CUSTOMIZATION_PACK_ION"
 			file.loadoutIndex = 0
 			break
 
 		case ET_DLC1_SCORCH:
 		case ET_DLC3_SCORCH:
+		case ET_DLC5_SCORCH:
 			menuTitle = "#CUSTOMIZATION_PACK_SCORCH"
 			file.loadoutIndex = 1
 			break
 
 		case ET_DLC1_NORTHSTAR:
 		case ET_DLC3_NORTHSTAR:
+		case ET_DLC5_NORTHSTAR:
 			menuTitle = "#CUSTOMIZATION_PACK_NORTHSTAR"
 			file.loadoutIndex = 2
 			break
 
 		case ET_DLC1_RONIN:
 		case ET_DLC3_RONIN:
+		case ET_DLC5_RONIN:
 			menuTitle = "#CUSTOMIZATION_PACK_RONIN"
 			file.loadoutIndex = 3
 			break
 
 		case ET_DLC1_TONE:
 		case ET_DLC3_TONE:
+		case ET_DLC5_TONE:
 			menuTitle = "#CUSTOMIZATION_PACK_TONE"
 			file.loadoutIndex = 4
 			break
 
 		case ET_DLC1_LEGION:
 		case ET_DLC3_LEGION:
+		case ET_DLC5_LEGION:
 			menuTitle = "#CUSTOMIZATION_PACK_LEGION"
 			file.loadoutIndex = 5
 			break
@@ -163,31 +168,37 @@ void function OnBuyButton_Activate( var button )
 		{
 			case ET_DLC1_ION:
 			case ET_DLC3_ION:
+			case ET_DLC5_ION:
 				dialogData.header = "#STORE_BUY_CUSTOMIZATION_PACK_ION"
 				break
 
 			case ET_DLC1_SCORCH:
 			case ET_DLC3_SCORCH:
+			case ET_DLC5_SCORCH:
 				dialogData.header = "#STORE_BUY_CUSTOMIZATION_PACK_SCORCH"
 				break
 
 			case ET_DLC1_NORTHSTAR:
 			case ET_DLC3_NORTHSTAR:
+			case ET_DLC5_NORTHSTAR:
 				dialogData.header = "#STORE_BUY_CUSTOMIZATION_PACK_NORTHSTAR"
 				break
 
 			case ET_DLC1_RONIN:
 			case ET_DLC3_RONIN:
+			case ET_DLC5_RONIN:
 				dialogData.header = "#STORE_BUY_CUSTOMIZATION_PACK_RONIN"
 				break
 
 			case ET_DLC1_TONE:
 			case ET_DLC3_TONE:
+			case ET_DLC5_TONE:
 				dialogData.header = "#STORE_BUY_CUSTOMIZATION_PACK_TONE"
 				break
 
 			case ET_DLC1_LEGION:
 			case ET_DLC3_LEGION:
+			case ET_DLC5_LEGION:
 				dialogData.header = "#STORE_BUY_CUSTOMIZATION_PACK_LEGION"
 				break
 		}

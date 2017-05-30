@@ -424,7 +424,7 @@ WeaponData
 		}
 		pro_screen
 		{
-			"ui8_enable"		"1"			
+			"ui8_enable"		"1"
 			"bodygroup5_set"	"1"
 		}
 
@@ -458,11 +458,6 @@ WeaponData
 			"fx_muzzle_flash_view"							"P_wpn_muzzleflash_law_fp_burn"
 			"fx_muzzle_flash_world"							"P_wpn_muzzleflash_law_burn"
 
-		}
-		pas_at_hunter
-		{
-			"ammo_stockpile_max"							"*2"
-			"ammo_default_total"							"*2"
 		}
 		pas_fast_ads
 		{
@@ -514,8 +509,12 @@ WeaponData
             "explosion_inner_radius"  						"*0"
             "explosionradius" 								"*0"
 		}
+		at_unlimited_ammo
+        {
+            "ammo_no_remove_from_stockpile"					"1"
+        }
 	}
-	
+
 	"ui8_enable"		"0"
 	UiData8
 	{
@@ -527,7 +526,7 @@ WeaponData
 			proOwnedByPlayer			proscreen_owner_is_player
 		}
 	}
-	
+
 	active_crosshair_count				"1"
 	rui_crosshair_index					"0"
 

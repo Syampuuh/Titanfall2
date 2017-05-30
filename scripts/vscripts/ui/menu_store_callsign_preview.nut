@@ -87,28 +87,25 @@ void function OnOpenStoreMenuCallsignPreview()
 {
 	UI_SetPresentationType( ePresentationType.NO_MODELS )
 
-	switch ( uiGlobal.entitlementId )
-	{
-		case ET_DLC1_CALLSIGN:
-			Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), "#STORE_CALLSIGN_PACK_DLC1" )
-			break
-
-		case ET_DLC3_CALLSIGN:
-			Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), "#STORE_CALLSIGN_PACK_DLC3" )
-			break
-	}
+	string titleText
+	if ( uiGlobal.entitlementId == ET_DLC1_CALLSIGN )
+		titleText = "#STORE_CALLSIGN_PACK_DLC1"
+	else if ( uiGlobal.entitlementId == ET_DLC3_CALLSIGN )
+		titleText = "#STORE_CALLSIGN_PACK_DLC3"
+	else if ( uiGlobal.entitlementId == ET_DLC5_CALLSIGN )
+		titleText = "#STORE_CALLSIGN_PACK_DLC5"
+	Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), titleText )
 
 	file.iconRefs = Store_GetPatchRefs( uiGlobal.entitlementId )
 	file.bannerRefs = Store_GetBannerRefs( uiGlobal.entitlementId )
-
 	file.hasEntitlement = LocalPlayerHasEntitlement( uiGlobal.entitlementId )
 
 	file.gridData.rows = 5
 	file.gridData.columns = 4
 	file.gridData.numElements = 20
 	file.gridData.pageType = eGridPageType.HORIZONTAL
-	file.gridData.tileWidth = 113//203
-	file.gridData.tileHeight = 50// 90
+	file.gridData.tileWidth = 113
+	file.gridData.tileHeight = 50
 	file.gridData.paddingVert = 4
 	file.gridData.paddingHorz = 6
 	file.gridData.panelTopPadding = 74

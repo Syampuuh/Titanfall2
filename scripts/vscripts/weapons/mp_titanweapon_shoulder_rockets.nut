@@ -1,3 +1,4 @@
+global function MpTitanWeaponShoulderRockets_Init
 global function OnWeaponOwnerChanged_titanweapon_shoulder_rockets
 global function OnWeaponPrimaryAttack_titanweapon_shoulder_rockets
 global function OnWeaponAttemptOffhandSwitch_titanweapon_shoulder_rockets
@@ -13,10 +14,8 @@ global function OnWeaponNpcPrimaryAttack_titanweapon_shoulder_rockets
 const SHOULDERROCKETS_NUM_ROCKETS_PER_SHOT 		= 1
 const float SHOULDERROCKETS_MISSILE_SPEED 		= 1000.0
 const SHOULDERROCKETS_APPLY_RANDOM_SPREAD 		= true
-const SHOULDERROCKETS_LAUNCH_OUT_ANG 			= 10
 const SHOULDERROCKETS_LAUNCH_OUT_TIME 			= 0.2
 const SHOULDERROCKETS_LAUNCH_IN_LERP_TIME 		= 0.0
-const SHOULDERROCKETS_LAUNCH_IN_ANG 			= -10
 const SHOULDERROCKETS_LAUNCH_IN_TIME 			= 0.0
 const SHOULDERROCKETS_LAUNCH_STRAIGHT_LERP_TIME 	= -0.2
 
@@ -24,7 +23,17 @@ struct
 {
 	int validShotTimes = 0
 	float lastValidUseTime = -999
+	int launch_out_angle = 10
+	int launch_in_angle = -10
 } file
+
+void function MpTitanWeaponShoulderRockets_Init()
+{
+	#if MP
+		file.launch_in_angle = -5
+		file.launch_out_angle = 5
+	#endif
+}
 
 bool function OnWeaponAttemptOffhandSwitch_titanweapon_shoulder_rockets( entity weapon )
 {
@@ -57,7 +66,7 @@ void function Init_titanweapon_shoulder_rockets( entity weapon )
 		float homingSpeed = IsMultiplayer() ? ( VANGUARD_SHOULDER_MISSILE_SPEED / SHOULDERROCKETS_MISSILE_SPEED * 250 ) : 250.0
 		SmartAmmo_SetMissileHomingSpeed( weapon, homingSpeed )
 		SmartAmmo_SetUnlockAfterBurst( weapon, true )
-		SmartAmmo_SetExpandContract( weapon, SHOULDERROCKETS_NUM_ROCKETS_PER_SHOT, SHOULDERROCKETS_APPLY_RANDOM_SPREAD, SHOULDERROCKETS_LAUNCH_OUT_ANG, SHOULDERROCKETS_LAUNCH_OUT_TIME, SHOULDERROCKETS_LAUNCH_IN_LERP_TIME, SHOULDERROCKETS_LAUNCH_IN_ANG, SHOULDERROCKETS_LAUNCH_IN_TIME, SHOULDERROCKETS_LAUNCH_STRAIGHT_LERP_TIME )
+		SmartAmmo_SetExpandContract( weapon, SHOULDERROCKETS_NUM_ROCKETS_PER_SHOT, SHOULDERROCKETS_APPLY_RANDOM_SPREAD, file.launch_out_angle, SHOULDERROCKETS_LAUNCH_OUT_TIME, SHOULDERROCKETS_LAUNCH_IN_LERP_TIME, file.launch_in_angle, SHOULDERROCKETS_LAUNCH_IN_TIME, SHOULDERROCKETS_LAUNCH_STRAIGHT_LERP_TIME )
 		weapon.w.initialized = true
 	}
 }

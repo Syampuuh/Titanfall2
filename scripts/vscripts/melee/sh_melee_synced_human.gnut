@@ -10,6 +10,7 @@ global function AnimEvent_detach_knife
 const SWORD_MODEL = $"models/weapons/bolo_sword/v_bolo_sword.mdl"
 global const KNIFE_MODEL = $"models/weapons/combat_knife/w_combat_knife.mdl"
 global const PULSE_BLADE_MODEL = $"models/weapons/kunai/w_kunai.mdl"
+global const WINGMAN_MODEL = $"models/weapons/b3wing/w_b3wing.mdl"
 
 const HUMAN_BLOOD_FX = $"impact_flesh"
 const MECHANICAL_BLOOD_FX = $"P_impact_metal_spectre"
@@ -132,7 +133,7 @@ function MeleeSyncedHumanShared_Init()
 		#if SERVER
 			AnimEventData givePistolEvent
 			givePistolEvent.eventName = "attach_knife"
-			givePistolEvent.callback = AnimEvent_attach_pistol
+			givePistolEvent.callback = AnimEvent_attach_p2011
 
 			AnimEventData takePistolEvent
 			takePistolEvent.eventName = "detach_knife"
@@ -349,6 +350,65 @@ function MeleeSyncedHumanShared_Init()
 		    #endif
 	    }
 
+	    {
+	    	//Cloak execution
+	    	#if SERVER
+		    	AnimEventData giveKnifeEvent
+		    	giveKnifeEvent.eventName = "attach_knife"
+		    	giveKnifeEvent.callback = AnimEvent_attach_knife
+
+		    	AnimEventData takeKnifeEvent
+		    	takeKnifeEvent.eventName = "detach_knife"
+		    	takeKnifeEvent.callback = AnimEvent_detach_knife
+
+		    	AnimEventData cloakOnEvent
+		    	cloakOnEvent.eventName = "cloak_on"
+		    	cloakOnEvent.callback = AnimEvent_Cloak_On
+
+		    	AnimEventData cloakOffEvent
+		    	cloakOffEvent.eventName = "cloak_off"
+		    	cloakOffEvent.callback = AnimEvent_Cloak_Off
+
+		    	AnimEventData headStabEvent
+		    	headStabEvent.eventName = "headshot_death" //Use head shot instead of headstab for this execution
+		    	headStabEvent.callback = AnimEvent_headshot_death
+
+		    	AnimEventData turnoffExecutionDOFEvent
+		    	turnoffExecutionDOFEvent.eventName = "turnoff_execution_dof"
+		    	turnoffExecutionDOFEvent.callback = AnimEvent_turnoff_executionDOF
+
+		    	AnimEventData mechanicalSparkSoundEvent
+				mechanicalSparkSoundEvent.eventName = "mechanical_sparks_sound"
+				mechanicalSparkSoundEvent.callback = AnimEvent_mechanical_sparks_sound_event
+	    	#endif
+
+	    	SyncedMelee syncedMelee
+	    	syncedMelee.ref = "execution_cloak"
+	    	syncedMelee.direction = < -1, 0, 0 >
+	    	syncedMelee.distance = HUMAN_EXECUTION_RANGE
+	    	syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_cloak"
+	    	syncedMelee.targetAnimation3p = "pt_mp_execution_victim_cloak"
+	    	syncedMelee.thirdPersonCameraAttachment = "VDU"
+
+	    	#if SERVER
+	    		syncedMelee.attacker3pAnimEvents = [ giveKnifeEvent, takeKnifeEvent, cloakOnEvent, cloakOffEvent, turnoffExecutionDOFEvent ]
+	    		syncedMelee.target3pAnimEvents = [ headStabEvent, turnoffExecutionDOFEvent, mechanicalSparkSoundEvent ]
+	    	#endif
+
+    	    syncedMelee.minDot = 0.2
+    	    syncedMelee.isAttackerRef = false
+    	    AddSyncedMelee( meleeChooser, syncedMelee )
+    	    #if SERVER
+    		    AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+    	    #endif
+
+	    }
+
+		#if DEVSCRIPTS
+	    {
+	    }
+		#endif
+
 		{
 			// Placeholder for the Random Execution
 			SyncedMelee syncedMelee
@@ -413,10 +473,15 @@ void function AnimEvent_detach_knife( entity ent )
 
 const string PISTOL_TARGETNAME = "AnimEvent_attach_pistol"
 
-void function AnimEvent_attach_pistol( entity ent )
+void function AnimEvent_attach_p2011( entity ent )
+{
+	AnimEvent_attach_pistol_common( ent, STEAL_PISTOL_MODEL, "w_p2011_mp_execution_gun_steal", StealP2011MuzzleFlash )
+}
+
+void function AnimEvent_attach_pistol_common( entity ent, asset pistolModel, string animation, void functionref( entity ) muzzleFlashCallback = null )
 {
 	ent.EndSignal( "OnDeath" )
-	entity pistol = CreatePropDynamic( STEAL_PISTOL_MODEL )
+	entity pistol = CreatePropDynamic( pistolModel )
 
 	OnThreadEnd(
 	function() : ( pistol )
@@ -428,10 +493,11 @@ void function AnimEvent_attach_pistol( entity ent )
 	pistol.kv.targetname = PISTOL_TARGETNAME
 	pistol.SetParent( ent, "KNIFE", false, 0.0 )
 
-	AddAnimEvent( pistol, "muzzle_flash", StealP2011MuzzleFlash )
+	if ( muzzleFlashCallback != null )
+		AddAnimEvent( pistol, "muzzle_flash", muzzleFlashCallback )
 
-	float duration = pistol.GetSequenceDuration( "w_p2011_mp_execution_gun_steal" )
-	pistol.Anim_Play( "w_p2011_mp_execution_gun_steal" )
+	float duration = pistol.GetSequenceDuration( animation )
+	pistol.Anim_Play( animation )
 
 	wait ( duration - 0.15 )
 }
@@ -637,4 +703,29 @@ void function AnimEvent_mriPulseEvent( entity ent )
 	}
 }
 
+void function AnimEvent_Cloak_On( entity ent )
+{
+	EnableCloak( ent, 1.5, 0.35 ) //Make sure duration is longer than animation seqeunce length
+
+}
+
+void function AnimEvent_Cloak_Off( entity ent )
+{
+	DisableCloak( ent, 0.35 )
+}
+
+void function AnimEvent_turnoff_executionDOF( entity ent )
+{
+	if ( ent.IsPlayer() )
+		RemoveCinematicFlag( ent, CE_FLAG_EXECUTION ) //This flag is added in PlayerTriesSyncedMelee(). Cloak interacts badly with DOF (adding this flag turns DOF effect on), so for cloak execution only we remove the DOF.
+}
+
+void function AnimEvent_mechanical_sparks_sound_event( entity victim )
+{
+	if ( victim.IsMechanical() )
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Cloak_AndroidSparks" )
+}
+
+
 #endif //if server. These are all anim event functions that should be run on the server anyway, no reason for them to be defined on the client.
+

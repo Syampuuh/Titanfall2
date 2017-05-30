@@ -1,0 +1,5 @@
+#base "npc_stalker.txt"
+npc_stalker_fd
+{
+	minGoalRadius					16
+}

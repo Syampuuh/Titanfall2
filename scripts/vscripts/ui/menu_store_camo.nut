@@ -27,9 +27,19 @@ void function InitStoreMenuCamo()
 	RuiSetFloat( rui, "cornerHeight", 15 )
 	Hud_AddEventHandler( button, UIE_CLICK, OnCamoButton_Activate )
 
-	button = Hud_GetChild( file.menu, "ButtonLast" )
+	button = Hud_GetChild( file.menu, "Button1" )
 	SetButtonRuiText( button, "#STORE_CAMO_PACK_DLC3" )
 	button.s.entitlementId <- ET_DLC3_CAMO
+	rui = Hud_GetRui( button )
+	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_camo" )
+	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_camo_hl" )
+	RuiSetFloat( rui, "fontSize", 36 )
+	RuiSetFloat( rui, "cornerHeight", 15 )
+	Hud_AddEventHandler( button, UIE_CLICK, OnCamoButton_Activate )
+
+	button = Hud_GetChild( file.menu, "ButtonLast" )
+	SetButtonRuiText( button, "#STORE_CAMO_PACK_DLC5" )
+	button.s.entitlementId <- ET_DLC5_CAMO
 	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_camo" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_camo_hl" )
@@ -57,7 +67,11 @@ void function OnOpenStoreMenuCamo()
 	bool hasEntitlement = LocalPlayerHasEntitlement( ET_DLC1_CAMO )
 	RuiSetBool( Hud_GetRui( button ), "isOwned", hasEntitlement )
 
-	button = Hud_GetChild( file.menu, "ButtonLast" )
+	button = Hud_GetChild( file.menu, "Button1" )
 	hasEntitlement = LocalPlayerHasEntitlement( ET_DLC3_CAMO )
+	RuiSetBool( Hud_GetRui( button ), "isOwned", hasEntitlement )
+
+	button = Hud_GetChild( file.menu, "ButtonLast" )
+	hasEntitlement = LocalPlayerHasEntitlement( ET_DLC5_CAMO )
 	RuiSetBool( Hud_GetRui( button ), "isOwned", hasEntitlement )
 }

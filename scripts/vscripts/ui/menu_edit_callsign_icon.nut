@@ -193,6 +193,7 @@ void function CallsignIconButton_Activate( var button, int elemNum )
 	CallsignIcon callsignIcon = CallsignIcon_GetByRef( ref )
 	ClientCommand( "SetCallsignIcon " + ref )
 	UpdateCallsignIconElement( file.callsignCard, callsignIcon )
+	ResetCommunityUserInfoCacheState( GetPlayerUID() );
 
 	file.selectionMade = true
 	CloseActiveMenu()

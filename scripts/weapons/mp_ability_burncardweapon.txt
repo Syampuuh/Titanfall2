@@ -182,6 +182,13 @@ WeaponData
                 "readymessage"              "#HUD_BURNMETER_READY_NUKE_TITAN"
                 "readyhint"                 "#HUD_BURNMETER_READY_NUKE_TITAN_DESC"
             }
+
+            burnmeter_harvester_shield
+            {
+                "hud_icon"				    "rui/menu/boosts/boost_icon_harvester"
+                "readymessage"              "#BURNMETER_HARVESTER_SHIELD"
+                "readyhint"                 "#BURNMETER_HARVESTER_SHIELD_DESC"
+            }
 		}
 
 	RUI_CrosshairData

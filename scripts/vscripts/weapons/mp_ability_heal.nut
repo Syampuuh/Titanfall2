@@ -15,7 +15,10 @@ var function OnWeaponPrimaryAttack_ability_heal( entity weapon, WeaponPrimaryAtt
 	}
 
 	float duration = weapon.GetWeaponSettingFloat( eWeaponVar.fire_duration )
-	StimPlayer( ownerPlayer, duration )
+	if ( weapon.HasMod( "tactical_balance" ) )
+		StimPlayer( ownerPlayer, duration, STIM_EFFECT_SEVERITY * 0.8 )
+	else
+		StimPlayer( ownerPlayer, duration )
 
 	PlayerUsedOffhand( ownerPlayer, weapon )
 

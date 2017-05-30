@@ -22,6 +22,7 @@ global bool TITAN_CORE_ENABLED = true
 
 void function ClientCodeCallback_MapSpawn()
 {
+	ScriptCompilerTest()
 	LevelVarInit()
 
 	Hud = getroottable().Hud

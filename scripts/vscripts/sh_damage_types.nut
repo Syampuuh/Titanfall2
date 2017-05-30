@@ -35,6 +35,7 @@ global enum eDamageSourceId
 	damagedef_frag_drone_throwable_NPC
 	damagedef_stalker_powersupply_explosion_small
 	damagedef_stalker_powersupply_explosion_large
+	damagedef_stalker_powersupply_explosion_large_at
 	damagedef_shield_captain_arc_shield
 
 	//---------------------------
@@ -283,6 +284,7 @@ global enum eDamageSourceId
 	mp_titanability_rearm
 	mp_titancore_upgrade
 	mp_titanweapon_xo16_vanguard
+	mp_weapon_arc_trap
 
 	bombardment
 	bleedout

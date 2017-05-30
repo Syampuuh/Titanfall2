@@ -90,6 +90,22 @@ void function OnActivate( entity weapon, int blockType )
 void function OnDeactivate( entity weapon, int blockType )
 {
 	EndShield( weapon )
+
+	asset first_fx
+	asset third_fx
+
+	if ( weapon.HasMod( "modelset_prime" ) )
+	{
+		first_fx = SWORD_GLOW_PRIME_FP
+		third_fx = SWORD_GLOW_PRIME
+	}
+	else
+	{
+		first_fx = SWORD_GLOW_FP
+		third_fx = SWORD_GLOW
+	}
+
+	weapon.StopWeaponEffect( first_fx, third_fx )
 }
 
 bool function OnAttemptOffhandSwitch( entity weapon, int blockType )
@@ -104,11 +120,39 @@ void function BlockSwordCoreFXThink( entity weapon, entity weaponOwner )
 	weapon.EndSignal( "WeaponDeactivateEvent" )
 	weapon.EndSignal( "OnDestroy" )
 
-	weapon.PlayWeaponEffectNoCull( SWORD_GLOW_FP, SWORD_GLOW, "sword_edge" )
+	asset first_fx
+	asset third_fx
 
+	if ( weapon.HasMod( "modelset_prime" ) )
+	{
+		first_fx = SWORD_GLOW_PRIME_FP
+		third_fx = SWORD_GLOW_PRIME
+	}
+	else
+	{
+		first_fx = SWORD_GLOW_FP
+		third_fx = SWORD_GLOW
+	}
+
+	OnThreadEnd(
+	function() : ( weapon, first_fx, third_fx )
+		{
+			if ( IsValid( weapon ) )
+				weapon.StopWeaponEffect( first_fx, third_fx )
+		}
+	)
+
+	weapon.PlayWeaponEffectNoCull( first_fx, third_fx, "sword_edge" )
+
+#if SERVER
 	weaponOwner.WaitSignal( "CoreEnd" )
+#endif
 
-	weapon.StopWeaponEffect( SWORD_GLOW_FP, SWORD_GLOW )
+#if CLIENT
+	entity offhandWeapon = weaponOwner.GetOffhandWeapon( OFFHAND_MELEE )
+	while ( IsValid( offhandWeapon ) && offhandWeapon.HasMod("super_charged" ) )
+		WaitFrame()
+#endif
 }
 
 

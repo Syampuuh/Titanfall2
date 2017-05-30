@@ -2,6 +2,7 @@
 npc_super_spectre_aitdm
 {
 	enable_frag_drones				0
+	enable_harvester_assault        1
 
 	MinForceWalkDist				300
 	MinForceWalkDistVsHeavyArmor	150

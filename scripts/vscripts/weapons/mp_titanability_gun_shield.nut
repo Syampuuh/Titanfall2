@@ -50,11 +50,11 @@ var function OnWeaponPrimaryAttack_gun_shield( entity weapon, WeaponPrimaryAttac
 	float duration = weapon.GetWeaponSettingFloat( eWeaponVar.fire_duration )
 	if ( weaponOwner.IsPlayer() )
 		PlayerUsedOffhand( weaponOwner, weapon )
-	thread GunShieldThink( primaryWeapon, weaponOwner, duration )
+	thread GunShieldThink( primaryWeapon, weapon, weaponOwner, duration )
 	return weapon.GetWeaponSettingInt( eWeaponVar.ammo_per_shot )
 }
 
-void function GunShieldThink( entity weapon, entity owner, float duration )
+void function GunShieldThink( entity weapon, entity shieldWeapon, entity owner, float duration )
 {
 	weapon.EndSignal( "OnDestroy" )
 	owner.EndSignal( "OnDestroy" )
@@ -96,10 +96,13 @@ void function GunShieldThink( entity weapon, entity owner, float duration )
 	}
 
 	#if SERVER
-		thread Sv_CreateGunShield( owner, weapon, duration )
+		thread Sv_CreateGunShield( owner, weapon, shieldWeapon, duration )
 	#endif
 
-	wait duration
+	if ( duration > 0 )
+		wait duration
+	else
+		WaitForever()
 }
 
 bool function CanUseGunShield( entity owner, bool reqZoom = true )
@@ -128,7 +131,7 @@ var function OnWeaponNpcPrimaryAttack_gun_shield( entity weapon, WeaponPrimaryAt
 #endif
 
 #if SERVER
-void function Sv_CreateGunShield( entity titan, entity weapon, float duration )
+void function Sv_CreateGunShield( entity titan, entity weapon, entity shieldWeapon, float duration )
 {
 	titan.EndSignal( "OnDeath" )
 	titan.EndSignal( "OnDestroy" )
@@ -137,7 +140,7 @@ void function Sv_CreateGunShield( entity titan, entity weapon, float duration )
 	titan.EndSignal( "ContextAction_SetBusy" )
 
 	entity vortexWeapon = weapon
-	entity vortexSphere = CreateGunShieldVortexSphere( titan, vortexWeapon )
+	entity vortexSphere = CreateGunShieldVortexSphere( titan, vortexWeapon, shieldWeapon )
 	int weaponEHandle = vortexWeapon.GetEncodedEHandle()
 	int shieldEHandle = vortexSphere.GetEncodedEHandle()
 	entity shieldWallFX = vortexSphere.e.shieldWallFX
@@ -189,10 +192,13 @@ void function Sv_CreateGunShield( entity titan, entity weapon, float duration )
 		}
 	)
 
-	wait duration
+	if ( duration > 0 )
+		wait duration
+	else
+		WaitForever()
 }
 
-entity function CreateGunShieldVortexSphere( entity player, entity vortexWeapon )
+entity function CreateGunShieldVortexSphere( entity player, entity vortexWeapon, entity shieldWeapon )
 {
 	int attachmentID = vortexWeapon.LookupAttachment( "gun_shield" )
 	float sphereRadius = TITAN_GUN_SHIELD_RADIUS
@@ -233,6 +239,13 @@ entity function CreateGunShieldVortexSphere( entity player, entity vortexWeapon 
 
 	vortexSphere.SetTakeDamageType( DAMAGE_YES )
 
+	if ( shieldWeapon.HasMod( "npc_infinite_shield" ) )
+	{
+		vortexSphere.SetInvulnerable()
+		SetVortexSphereBulletHitRules( vortexSphere, GunShield_InvulBulletHitRules )
+		SetVortexSphereProjectileHitRules( vortexSphere, GunShield_InvulProjectileHitRules )
+	}
+
 	DispatchSpawn( vortexSphere )
 
 	vortexSphere.SetOwner( player )
@@ -257,15 +270,23 @@ entity function CreateGunShieldVortexSphere( entity player, entity vortexWeapon 
 	shieldWallFX.kv.cpoint1 = cpoint.GetTargetName()
 	shieldWallFX.SetStopType( "destroyImmediately" )
 	shieldWallFX.DisableHibernation()
-	shieldWallFX.SetLocalOrigin( Vector(0,0,0) )
+	shieldWallFX.SetLocalOrigin( < 0, 0, 0 > )
 
-	vortexSphere.SetGunVortexAngles( Vector(0,0,180) )
+	vortexSphere.SetGunVortexAngles( < 0, 0, 180 > )
 	vortexSphere.SetGunVortexAttachment( "gun_shield" )
 	vortexSphere.SetVortexEffect( shieldWallFX)
 
 	DispatchSpawn( shieldWallFX )
 
-	thread UpdateGunShieldColor( vortexSphere )
+	if ( shieldWeapon.HasMod( "npc_infinite_shield" ) )
+	{
+		shieldWallFX.e.cpoint.SetOrigin( < 246.0, 134.0, 40.0 > ) // AMPED COLOR
+	}
+	else
+	{
+		thread UpdateGunShieldColor( vortexSphere )
+	}
+
 	return vortexSphere
 }
 
@@ -276,6 +297,16 @@ void function UpdateGunShieldColor( entity vortexSphere )
 		UpdateShieldWallColorForFrac( vortexSphere.e.shieldWallFX, GetHealthFrac( vortexSphere ) )
 		WaitFrame()
 	}
+}
+
+var function GunShield_InvulBulletHitRules( entity vortexSphere, var damageInfo )
+{
+	DamageInfo_SetDamage( damageInfo, 0 )
+}
+
+bool function GunShield_InvulProjectileHitRules( entity vortexSphere, entity attacker, bool takesDamageByDefault )
+{
+	return false
 }
 #endif
 

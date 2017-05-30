@@ -301,14 +301,14 @@ bool function PlaylistButton_Click_Internal( var button, string playlistName, ar
 			ColiseumPlaylist_SpendTicketDialogue( button, requiredTickets )
 			return false
 		}
-		else if ( requiredTickets == 2 && file.showColiseumPartyWarning )
+		else if ( requiredTickets == 2 ) //&& file.showColiseumPartyWarning )
 		{
 			ColiseumPlaylist_WarnFriendDialogue( refreshButtons, button )
 			return false
 		}
 		else
 		{
-			ColiseumPlaylist_OfferToBuyTickets( refreshButtons, button )
+			ColiseumPlaylist_OfferToBuyTickets( refreshButtons, button, 1 )
 			return false
 		}
 	}
@@ -437,12 +437,20 @@ void function ColiseumPlaylist_SpendTicketDialogue( var button, int numTickets =
 void function ColiseumPlaylist_OfferToBuyTicketAfterWarn()
 {
 	file.showColiseumPartyWarning = false
-	ColiseumPlaylist_OfferToBuyTickets( file.coliseumRefreshButtons, file.coliseumButton )
+
+	int requiredTickets = 1
+	if ( GetPartySize() == 2 )
+		requiredTickets = 2
+
+	int ticketsToBuy = requiredTickets - Player_GetColiseumTicketCount( GetLocalClientPlayer() )
+
+	if ( ticketsToBuy > 0 )
+		ColiseumPlaylist_OfferToBuyTickets( file.coliseumRefreshButtons, file.coliseumButton, ticketsToBuy )
 }
 
-void function ColiseumPlaylist_OfferToBuyTickets( array<var> refreshButtons, var button )
+void function ColiseumPlaylist_OfferToBuyTickets( array<var> refreshButtons, var button, int numTickets )
 {
-	OpenBuyTicketDialog( refreshButtons, button )
+	OpenBuyTicketDialog( refreshButtons, button, numTickets )
 }
 
 void function BuyIntoColiseumTicketParty()

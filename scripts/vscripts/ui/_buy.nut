@@ -12,6 +12,8 @@ struct ItemToBuy
 	string parentRef
 	int cost
 	int availableCredits
+	int availableFDUnlockPoints
+	int type
 	void functionref( var ) equipFunc
 }
 
@@ -28,6 +30,7 @@ void function OpenBuyItemDialog( array<var> buttons, var button, string itemName
 	file.itemToBuy.ref = ref
 	file.itemToBuy.parentRef = parentRef
 	file.itemToBuy.equipFunc = equipFunc
+	file.itemToBuy.type = GetItemType( file.itemToBuy.ref )
 
 	if ( parentRef == "" )
 		file.itemToBuy.cost = GetItemCost( ref )
@@ -35,6 +38,9 @@ void function OpenBuyItemDialog( array<var> buttons, var button, string itemName
 		file.itemToBuy.cost = GetSubitemCost( parentRef, ref )
 
 	file.itemToBuy.availableCredits = GetAvailableCredits( GetUIPlayer() )
+
+	if ( file.itemToBuy.type == eItemTypes.TITAN_FD_UPGRADE )
+		file.itemToBuy.availableFDUnlockPoints = GetAvailableFDUnlockPoints( GetUIPlayer(), parentRef )
 
 	DialogData dialogData
 	if ( GetItemRequiresPrime( file.itemToBuy.ref ) )
@@ -65,7 +71,22 @@ void function OpenBuyItemDialog( array<var> buttons, var button, string itemName
 
 		AddDialogButton( dialogData, "#OK" )
 	}
-	else if ( file.itemToBuy.availableCredits >= file.itemToBuy.cost )
+	else if ( file.itemToBuy.availableFDUnlockPoints >= file.itemToBuy.cost && file.itemToBuy.type == eItemTypes.TITAN_FD_UPGRADE )
+	{
+		string unlockReqText = Localize( GetItemUnlockReqText( ref, parentRef ) )
+		string itemTypeName = Localize( GetItemRefTypeName( ref, parentRef ) )
+		dialogData.header = Localize( "#BUY_HEADER", Localize( itemName ), file.itemToBuy.cost, unlockReqText )
+//		dialogData.message = unlockReqText
+
+		DialogMessageRuiData ruiMessage
+		ruiMessage.message = unlockReqText
+		dialogData.ruiMessage = ruiMessage
+		dialogData.noChoiceWithNavigateBack = true
+
+		AddDialogButton( dialogData, "#BUY", BuyItem )
+		AddDialogButton( dialogData, "#CANCEL" )
+	}
+	else if ( file.itemToBuy.availableCredits >= file.itemToBuy.cost && file.itemToBuy.type != eItemTypes.TITAN_FD_UPGRADE )
 	{
 		string unlockReqText = Localize( GetItemUnlockReqText( ref, parentRef ) )
 		string itemTypeName = Localize( GetItemRefTypeName( ref, parentRef ) )
@@ -84,7 +105,11 @@ void function OpenBuyItemDialog( array<var> buttons, var button, string itemName
 	{
 		EmitUISound( "blackmarket_purchase_fail" )
 		string unlockReqText = Localize( GetItemUnlockReqText( ref, parentRef ) )
-		string message = Localize( "#BUY_HEADER_INSUFFICIENT_CREDITS", file.itemToBuy.cost - file.itemToBuy.availableCredits, Localize( itemName ) )
+		string message
+		if ( file.itemToBuy.type == eItemTypes.TITAN_FD_UPGRADE )
+			message = Localize( "#BUY_HEADER_INSUFFICIENT_CREDITS", file.itemToBuy.cost - file.itemToBuy.availableFDUnlockPoints, Localize( itemName ) )
+		else
+			message = Localize( "#BUY_HEADER_INSUFFICIENT_CREDITS", file.itemToBuy.cost - file.itemToBuy.availableCredits, Localize( itemName ) )
 
 		dialogData.header = "#BUY_HEADER_INSUFFICIENT_CREDITS_TITLE"
 		dialogData.message = message// + "\n\n^CCCCCC00" + unlockReqText
@@ -110,9 +135,12 @@ void function BuyItem()
 {
 	EmitUISound( "UI_Menu_Item_Purchased_Stinger" )
 	Hud_SetLocked( file.itemToBuy.button, false )
-	int creditsAvailable = file.itemToBuy.availableCredits - file.itemToBuy.cost
-	RefreshCreditsAvailable( creditsAvailable )
-	RefreshCreditsAvailableAllButtons( file.buttons, creditsAvailable )
+	if ( file.itemToBuy.type != eItemTypes.TITAN_FD_UPGRADE )
+	{
+		int creditsAvailable = file.itemToBuy.availableCredits - file.itemToBuy.cost
+		RefreshCreditsAvailable( creditsAvailable )
+		RefreshCreditsAvailableAllButtons( file.buttons, creditsAvailable )
+	}
 
 	ClientCommand( "BuyItem " + file.itemToBuy.ref + " " + file.itemToBuy.parentRef )
 
@@ -120,11 +148,17 @@ void function BuyItem()
 		file.itemToBuy.equipFunc( file.itemToBuy.button )
 }
 
-void function OpenBuyTicketDialog( array<var> buttons, var button )
+void function OpenBuyTicketDialog( array<var> buttons, var button, int numTickets )
 {
 
 	ItemDisplayData displayData = GetItemDisplayData( "coliseum_ticket" )
 	string itemName = GetItemName( "coliseum_ticket" )
+
+	// TODO: HACK HACK THIS IS BAD
+	if ( numTickets > 1 )
+	{
+		itemName = Localize( "#ITEM_COLISEUM_TICKET_MULTIPLE", numTickets )
+	}
 
 	file.buttons = buttons
 	file.itemToBuy.button = button
@@ -133,7 +167,7 @@ void function OpenBuyTicketDialog( array<var> buttons, var button )
 
 	DialogData dialogData
 
-	file.itemToBuy.cost = GetItemCost( displayData.ref )
+	file.itemToBuy.cost = GetItemCost( displayData.ref ) * numTickets
 
 	if ( file.itemToBuy.cost <= 0 )
 	{
@@ -168,17 +202,17 @@ void function OpenBuyTicketDialog( array<var> buttons, var button )
 
 void function BuyTicket()
 {
+	int requiredTickets = 1
+	if ( GetPartySize() == 2 )
+		requiredTickets = 2
+
 	EmitUISound( "UI_Menu_Item_Purchased_Stinger" )
 	Hud_SetLocked( file.itemToBuy.button, false )
 	int creditsAvailable = file.itemToBuy.availableCredits - file.itemToBuy.cost
 	RefreshCreditsAvailable( creditsAvailable )
 	RefreshCreditsAvailableAllButtons( file.buttons, creditsAvailable )
 	int numTickets = Player_GetColiseumTicketCount( GetLocalClientPlayer() )
-	ClientCommand( "BuyTicket " )
-
-	int requiredTickets = 1
-	if ( GetPartySize() == 2 )
-		requiredTickets = 2
+	ClientCommand( "BuyTicket " + requiredTickets )
 
 	if ( numTickets + 1 >= requiredTickets )
 		BuyIntoColiseumTicket()

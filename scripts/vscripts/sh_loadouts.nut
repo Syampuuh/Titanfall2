@@ -95,6 +95,7 @@ void function PopulateDefaultTitanLoadouts( TitanLoadoutDef[ NUM_PERSISTENT_TITA
 		loadout.passive4 			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "passive4" ) )
 		loadout.passive5 			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "passive5" ) )
 		loadout.passive6 			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "passive6" ) )
+		loadout.titanExecution 		= GetLoadoutPropertyDefault( "titan", i, "titanExecution" )
 
 		OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( loadout )
 
@@ -1352,6 +1353,7 @@ string function GetValidatedPersistentLoadoutValue( entity player, string loadou
 		{
 			if ( !PersistenceEnumValueIsValid( loadoutPropertyEnum, value ) )
 			{
+				printt( "Invalid Loadout Property: ", loadoutType, loadoutIndex, loadoutProperty, value )
 				value = ResetLoadoutPropertyToDefault( player, loadoutType, loadoutIndex, loadoutProperty ) //TODO: This will call player.SetPersistentVar() directly. Awkward to do this in a getter function
 				ClientCommand( player, "disconnect #RESETTING_LOADOUT", 0 ) //Kick player out with a "Resetting Invalid Loadout" message. Mainly necessary so UI/Client script don't crash out later with known, bad data from persistence
 			}
@@ -1360,6 +1362,7 @@ string function GetValidatedPersistentLoadoutValue( entity player, string loadou
 		{
 			if ( FailsLoadoutValidationCheck( player, loadoutType, loadoutIndex, loadoutProperty, value ) )
 			{
+				printt( "Invalid Loadout Property: ", loadoutType, loadoutIndex, loadoutProperty, value )
 				value = ResetLoadoutPropertyToDefault( player, loadoutType, loadoutIndex, loadoutProperty ) //TODO: This will call player.SetPersistentVar() directly. Awkward to do this in a getter function
 				ClientCommand( player, "disconnect #RESETTING_LOADOUT", 0 ) //Kick player out with a "Resetting Invalid Loadout" message. Mainly necessary so UI/Client script don't crash out later with known, bad data from persistence
 			}
@@ -2556,10 +2559,8 @@ string function GetParentLoadoutProperty( string loadoutType, string propertyNam
 int function GetPersistentSpawnLoadoutIndex( entity player, string loadoutType )
 {
 	int loadoutIndex = player.GetPersistentVarAsInt( loadoutType + "SpawnLoadout.index" )
-	#if !DEVSCRIPTS
-		if ( loadoutType == "titan" && loadoutIndex >= NUM_PERSISTENT_TITAN_LOADOUTS )
-			loadoutIndex = 0
-	#endif
+	if ( loadoutType == "titan" && loadoutIndex >= NUM_PERSISTENT_TITAN_LOADOUTS )
+		loadoutIndex = 0
 
 	return loadoutIndex
 }
@@ -2887,6 +2888,7 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		SetPersistentLoadoutValue( player, "titan", loadoutIndex, "passive4",			loadout.passive4 )
 		SetPersistentLoadoutValue( player, "titan", loadoutIndex, "passive5",			loadout.passive5 )
 		SetPersistentLoadoutValue( player, "titan", loadoutIndex, "passive6",			loadout.passive6 )
+		SetPersistentLoadoutValue( player, "titan", loadoutIndex, "titanExecution",		loadout.titanExecution )
 	}
 
 	bool function PlayerIsInGracePeriod( entity player )

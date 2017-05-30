@@ -126,6 +126,7 @@ const table<asset> mapImages =
 	mp_lf_deck = $"loadscreens/mp_lf_deck_lobby",
 	mp_coliseum = $"loadscreens/mp_coliseum_lobby",
 	mp_coliseum_column = $"loadscreens/mp_coliseum_column_lobby",
+	mp_relic02 = $"loadscreens/mp_relic02_lobby",
 }
 
 void function MenuPrivateMatch_Init()

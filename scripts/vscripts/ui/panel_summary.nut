@@ -724,14 +724,6 @@ void function DisplayPlayerLevelUp( int lastGen, int lastLevel )
 
 bool function IsPostGameDataModePVE( entity player )
 {
-	int latestGameModeIndex = player.GetPersistentVarAsInt( "postGameData.gameMode" )
-	if ( latestGameModeIndex < 0 )
-		return false
-
-	string storedModeString = PersistenceGetEnumItemNameForIndex( "gameModes", latestGameModeIndex )
-	if ( storedModeString == PVE_SANDBOX )
-		return true
-
 	return false
 }
 
@@ -763,11 +755,6 @@ var function PGDisplay()
 	if ( !player )
 		return
 
-	if ( IsPostGameDataModePVE( player ) )
-	{
-		PGDisplay_PVE( player )
-		return
-	}
 	RuiSetBool( file.meritBar, "isPVE", false )
 
 	file.previousPlayerXP = player.GetPersistentVarAsInt( "previousXP" )
@@ -785,7 +772,7 @@ var function PGDisplay()
 
 	// JFS hax for detecting random unlocks from coliseum
 	int latestGameModeIndex = player.GetPersistentVarAsInt( "postGameData.gameMode" )
-	if ( latestGameModeIndex >= 0 )
+	if ( latestGameModeIndex >= 0 && latestGameModeIndex < PersistenceGetEnumCount( "gameModes" ) )
 	{
 		string lastModeName = PersistenceGetEnumItemNameForIndex( "gameModes", latestGameModeIndex )
 		if ( (lastModeName == "coliseum") && player.GetPersistentVarAsInt( "matchWin" ) )

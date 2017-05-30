@@ -93,8 +93,8 @@ void function ScoreboardFocus( entity player )
 	if ( !level.showingScoreboard )
 	{
 		#if DEVSCRIPTS
-		if ( BoostStoreEnabled() )
-			CycleInventory( player )
+		// if ( BoostStoreEnabled() )
+		//	 CycleInventory( player )
 		EnableDpadComms( player )
 		#endif
 		return

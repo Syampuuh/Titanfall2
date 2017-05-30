@@ -135,6 +135,7 @@ void function InitWeaponScripts()
 	MpWeaponDmr_Init()
 	MpWeaponProximityMine_Init()
 	MpWeaponRocketLauncher_Init()
+	MpWeaponNPCRocketLauncher_Init()
 	MpWeaponSatchel_Init()
 	MpWeaponSmartPistol_Init()
 	MpWeaponSniper_Init()
@@ -168,6 +169,11 @@ void function InitWeaponScripts()
 	MpTitanAbilityHover_Init()
 	MpTitanWeaponTrackerRockets_Init()
 	MpTitanWeaponStunLaser_Init()
+	MpTitanWeaponShoulderRockets_Init()
+
+	#if MP && DEVSCRIPTS
+		MpWeaponArcTrap_Init()
+	#endif
 
 	#if SERVER
 		BallLightning_Init()

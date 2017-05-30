@@ -1,7 +1,7 @@
 playlists
 {
 	version stable
-	versionNum 3292
+	versionNum 3219
 	Gamemodes
 	{
 		defaults
@@ -16,6 +16,7 @@ playlists
                 enable_sun_flare_mp_forwardbase_kodai 0
                 enable_sun_flare_mp_colony02 0
 				enable_coliseum_updates 1
+				enable_coliseum_party 1
 				maphack_on_minimap_only 0
 				mp_angel_city_available 1
 				angel_city_replacement groundwar
@@ -106,6 +107,8 @@ playlists
 				fast_tdm 0
 				arena_loadout 0
 				fd_difficulty 0
+				low_ttk	1
+				tactical_balance 1
 
 				//No longer used? No references in script for these
 				xp2coins_modifier 0.1
@@ -141,20 +144,23 @@ playlists
 				faq_patchnotes_version 5
 				faq_patchnotes_count 13
 
-				faq_community_version 3
-				faq_community_url_00	"https://www.youtube.com/embed/fCCckqclBoA?autoplay=1"
-				faq_community_url_01	"https://www.titanfall.com/en_us/news/frontier-news-network-11/"
-				faq_community_url_02	"https://forums.titanfall.com/en-us/discussion/11482/colony-reborn-the-patch-notes#latest"
-				faq_community_url_03	"https://www.youtube.com/embed/AaCqzxMus0A?list=PLD1fk2ODxOaYNyuBsA-V26KB9i7dhCpB_?autoplay=1?autoplay=1"
-				faq_community_url_04	"http://www.respawn.com/thebeacon"
-				faq_community_url_05	"https://www.youtube.com/embed/Kvx3WsYIePk?autoplay=1"
-				faq_community_url_06	"http://imgur.com/a/CBqPO"
-				faq_community_url_07	"https://www.youtube.com/embed/4MMtDSrcXYU?autoplay=1"
-				faq_community_url_08	"http://www.youtube.com/embed/I_6hViuy3kc?autoplay=1"
-				faq_community_url_09	"http://www.youtube.com/embed/Wtu3fUs9i7M?autoplay=1"
-				faq_community_url_10	"http://www.youtube.com/embed/EXwdWuSuiYA?autoplay=1"
-				faq_community_url_11	"http://www.youtube.com/embed/nHvoaAAhGno?autoplay=1"
-				faq_community_count 12
+				faq_community_version 5
+				faq_community_url_00    "https://www.youtube.com/embed/JKiuY3Ocwzo?autoplay=1"
+				faq_community_url_01    "https://forums.titanfall.com/en-us/discussion/12003/a-glitch-in-the-frontier-the-patch-notes#latest"
+				faq_community_url_02    "https://www.ea.com/games/titanfall/titanfall-2/news/frontier-news-network-14"
+				faq_community_url_03	"https://www.ea.com/games/titanfall/titanfall-2/news/frontier-news-network-13"
+				faq_community_url_04	"https://forums.titanfall.com/en-us/discussion/11482/colony-reborn-the-patch-notes#latest"
+				faq_community_url_05	"https://www.youtube.com/embed/AaCqzxMus0A?list=PLD1fk2ODxOaYNyuBsA-V26KB9i7dhCpB_?autoplay=1?autoplay=1"
+				faq_community_url_06	"http://www.respawn.com/inside-development-colony-remastered"
+				faq_community_url_07	"https://www.youtube.com/embed/4B1iwGAjDn8?autoplay=1"
+				faq_community_url_08	"http://imgur.com/a/CBqPO"
+				faq_community_url_09    "https://www.youtube.com/embed/fCCckqclBoA?autoplay=1"
+				faq_community_url_10	"https://www.youtube.com/embed/4MMtDSrcXYU?autoplay=1"
+				faq_community_url_11	"http://www.youtube.com/embed/I_6hViuy3kc?autoplay=1"
+				faq_community_url_12	"http://www.youtube.com/embed/Wtu3fUs9i7M?autoplay=1"
+				faq_community_url_13	"http://www.youtube.com/embed/EXwdWuSuiYA?autoplay=1"
+				faq_community_url_14	"http://www.youtube.com/embed/nHvoaAAhGno?autoplay=1"
+				faq_community_count 15
 
 				mixtape_matchmaking 1					// 0 = old style, 1 = new style
 				mixtape_version 2						// bump to re-trigger the "NEW!" notify.
@@ -202,6 +208,7 @@ playlists
 				mp_thaw 1
 				mp_angel_city 1
 				mp_colony02 1
+                mp_relic02 1
 			}
 		}
 		at
@@ -282,6 +289,8 @@ playlists
 				suddendeath_timelimit 2
 				timelimit 12
 				max_players 10
+				phase_shift_drop_flag 1
+				ctf_flag_return_time 1
 
 				gamemode_score_hint #GAMEMODE_SCORE_HINT_CTF
 				gamemode_bullet_001	#GAMEMODE_BULLET_CTF_001
@@ -425,6 +434,8 @@ playlists
 				timelimit 12
 				max_players 12
 				maxExtraRounds 3
+				phase_shift_drop_flag 1
+				ctf_flag_return_time 1
 
                 idlekick_minutes 1
                 idlekick_min_alive_seconds 20
@@ -437,6 +448,45 @@ playlists
 				gamemode_bullet_005	#GAMEMODE_BULLET_PS_005
 			}
 		}
+		fd
+        {
+ 			inherit defaults
+ 			vars
+ 			{
+ 				roundscorelimit 3
+				roundtimelimit 60.0
+ 				em_player_fast_kills 12
+ 				em_player_kills 15
+ 				max_players 4
+ 				riff_allow_npcs 1
+ 				scorelimit 2500
+ 				suddendeath_timelimit 2
+ 				titan_build_time 240
+ 				titan_rebuild_time 240
+ 				spawn_zone_enabled 1
+                respawn_delay 4
+                timelimit 30
+                skyshow_enabled 1
+                max_teams 1
+                riff_wave_spawn 4
+                wave_spawn_interval 25
+                boost_store_mode fd
+                titan_loadout_experiment 0
+                use_new_tacticals 0
+                earn_meter_tick_frac 0
+
+ 				gamemode_score_hint #GAMEMODE_SCORE_HINT_AT
+ 				gamemode_bullet_001	#GAMEMODE_BULLET_AT_001
+ 				gamemode_bullet_002	#GAMEMODE_BULLET_AT_002
+ 				gamemode_bullet_003	#GAMEMODE_BULLET_AT_003
+ 				gamemode_bullet_004	#GAMEMODE_BULLET_AT_004
+ 				gamemode_bullet_005	#GAMEMODE_BULLET_AT_005
+ 			}
+ 			maps
+ 			{
+ 				mp_angel_city 1
+ 			}
+ 		}
 // END OF MP GAMEMODES LINE ----------------------------------------------------
 		solo
 		{
@@ -460,38 +510,40 @@ playlists
 				visible 0
 			}
 		}
-		glitch_247
+		relic_247
 		{
 			inherit defaults
 			vars
 			{
-				name "#PL_glitch"
-				lobbytitle #PL_glitch_lobby
-				description #PL_glitch_desc
-				abbreviation #PL_glitch_abbr
+				name "#PL_relic"
+				lobbytitle #PL_relic_lobby
+				description #PL_relic_desc
+				abbreviation #PL_relic_abbr
 				image aitdm
 				mixtape_promo_slot 0
 				visible 1
 			}
 			gamemodes
 			{
-				ctf
+				aitdm
 				{
-					vars
-					{
-
-					}
-
 					maps
 					{
-						mp_glitch 1
+						mp_relic02 1
+					}
+				}
+				at
+				{
+					maps
+					{
+						mp_relic02 1
 					}
 				}
 				ctf
 				{
 					maps
 					{
-						mp_glitch 1
+						mp_relic02 1
 					}
 				}
 				cp
@@ -503,21 +555,7 @@ playlists
 
 					maps
 					{
-						mp_glitch 1
-					}
-				}
-				ctf
-				{
-					maps
-					{
-						mp_glitch 1
-					}
-				}
-				speedball
-				{
-					maps
-					{
-						mp_glitch 1
+						mp_relic02 1
 					}
 				}
 				lts
@@ -529,7 +567,7 @@ playlists
 
 					maps
 					{
-						mp_glitch 1
+						mp_relic02 1
 					}
 				}
 			}
@@ -566,6 +604,7 @@ playlists
 						mp_homestead 1
 						mp_angel_city 1
 						mp_colony02 1
+                        mp_relic02 1
 						mp_complex3 1
 						mp_drydock 2
 						mp_crashsite3 2
@@ -575,6 +614,7 @@ playlists
 						mp_thaw 1
 						mp_angel_city 1
 						mp_colony02 1
+                        mp_relic02 1
 					}
 				}
 			}
@@ -615,6 +655,7 @@ playlists
 						mp_eden 2
 						mp_angel_city 1
 						mp_colony02 1
+                        mp_relic02 1
 					}
 				}
 			}
@@ -648,6 +689,7 @@ playlists
 						mp_forwardbase_kodai 2
 						mp_angel_city 1
 						mp_colony02 1
+                        mp_relic02 1
 						mp_complex3 2
 						mp_thaw 2
 						mp_glitch 1
@@ -694,6 +736,7 @@ playlists
 						mp_eden 2
 						mp_angel_city 1
 						mp_colony02 1
+                        mp_relic02 1
 						mp_crashsite3 2
 						mp_black_water_canal 2
 						mp_complex3 2
@@ -704,6 +747,7 @@ playlists
 						mp_eden 2
 						mp_angel_city 1
 						mp_colony02 1
+                        mp_relic02 1
 						mp_forwardbase_kodai 1
 						mp_grave 2
 						mp_drydock 3
@@ -724,9 +768,10 @@ playlists
 				description #PL_iron_last_titan_standing_desc
 				abbreviation #PL_iron_last_titan_standing_abbr
 				image lts
-				mixtape_promo_slot 7
+				//mixtape_promo_slot 7
 				iron_rules	1
-				visible 1
+				boosts_enabled 1
+				visible 0
 			}
 			gamemodes
 			{
@@ -739,26 +784,7 @@ playlists
 
 					maps
 					{
-						mp_drydock 3
-						mp_eden 2
-						mp_angel_city 1
-						mp_colony02 1
-						mp_crashsite3 2
-						mp_black_water_canal 2
-						mp_complex3 2
-						mp_drydock 3
-						mp_thaw 2
-						mp_glitch 1
-						mp_crashsite3 2
-						mp_eden 2
-						mp_angel_city 1
-						mp_colony02 1
-						mp_forwardbase_kodai 1
-						mp_grave 2
-						mp_drydock 3
-						mp_homestead 1
-						mp_thaw 2
-						mp_glitch 1
+						mp_relic02 1
 					}
 				}
 			}
@@ -798,6 +824,7 @@ playlists
 						mp_glitch 1
 						mp_angel_city 1
 						mp_colony02 1
+                        mp_relic02 1
 						mp_grave 2
 						mp_homestead 2
 						mp_drydock 2
@@ -806,6 +833,7 @@ playlists
 						mp_eden 2
 						mp_black_water_canal 2
 						mp_glitch 1
+                        mp_relic02 1
 					}
 				}
 			}
@@ -842,11 +870,64 @@ playlists
 						mp_forwardbase_kodai 1
 						mp_angel_city 1
 						mp_colony02 1
+                        mp_relic02 1
 						mp_grave 1
 						mp_thaw 1
 						mp_homestead 1
 						mp_glitch 1
 					}
+				}
+			}
+		}
+		titan_tdm
+		{
+			inherit defaults
+			vars
+			{
+				name #PL_pilot_hunter
+				lobbytitle #PL_pilot_hunter_lobby
+				description #PL_pilot_hunter_desc
+				abbreviation #PL_pilot_hunter_abbr
+				image lts
+				visible 0
+				max_players 10
+				scorelimit 30
+				//mixtape_promo_slot 7
+				//mixtape_slot ##
+				riff_titan_availability 1
+				riff_titan_exit_enabled 2
+				riff_spawn_as_titan 1
+				boosts_enabled 1
+				spawn_zone_enabled 0
+				custom_intro_length 13.5
+				respawn_delay 10
+				evac_enabled 0
+				gamemode_score_hint #GAMEMODE_SCORE_HINT_TITAN_TDM
+			}
+			gamemodes
+			{
+				tdm
+				{
+				    maps
+				    {
+						mp_black_water_canal 1
+						mp_thaw 1
+						mp_homestead 1
+						mp_forwardbase_kodai 1
+						mp_angel_city 1
+
+						mp_black_water_canal 1
+						mp_thaw 1
+						mp_homestead 1
+						mp_forwardbase_kodai 1
+						mp_eden 1
+
+						mp_black_water_canal 1
+						mp_thaw 1
+						mp_homestead 1
+						mp_forwardbase_kodai 1
+						mp_grave 1
+				    }
 				}
 			}
 		}
@@ -896,6 +977,7 @@ playlists
 					{
 						mp_black_water_canal 2
 						mp_colony02 1
+                        mp_relic02 1
 						mp_complex3 1
 						mp_crashsite3 1
 						mp_drydock 1
@@ -918,7 +1000,7 @@ playlists
 				lobbytitle #PL_coliseum_lobby
 				description #PL_coliseum_desc
 				image coliseum
-				mixtape_promo_slot 2
+				mixtape_promo_slot 4
 				visible 1
 			}
 			gamemodes
@@ -961,6 +1043,7 @@ playlists
                         mp_angel_city 1
                         mp_colony02 1
                         mp_glitch 1
+						mp_relic02 1
 			        }
 			    }
 
@@ -980,6 +1063,7 @@ playlists
                         mp_angel_city 1
                         mp_colony02 1
                         mp_glitch 1
+						mp_relic02 1
 			        }
 			    }
 
@@ -1002,6 +1086,7 @@ playlists
 						mp_lf_stacks 1
 						mp_lf_deck 1
 						mp_lf_meadow 1
+						mp_relic02 1
 			        }
 			    }
 
@@ -1021,6 +1106,7 @@ playlists
                         mp_angel_city 1
                         mp_colony02 1
                         mp_glitch 1
+						mp_relic02 1
 			        }
 			    }
 
@@ -1043,6 +1129,7 @@ playlists
 						mp_lf_stacks 1
 						mp_lf_deck 1
 						mp_lf_meadow 1
+						mp_relic02 1
 			        }
 			    }
 
@@ -1062,6 +1149,7 @@ playlists
                         mp_angel_city 1
                         mp_colony02 1
                         mp_glitch 1
+						mp_relic02 1
 			        }
 			    }
 
@@ -1084,6 +1172,7 @@ playlists
 						mp_lf_stacks 1
 						mp_lf_deck 1
 						mp_lf_meadow 1
+						mp_relic02 1
 			        }
 			    }
 
@@ -1106,6 +1195,7 @@ playlists
 						mp_lf_stacks 1
 						mp_lf_deck 1
 						mp_lf_meadow 1
+						mp_relic02 1
 			        }
 			    }
 			}
@@ -1120,11 +1210,12 @@ playlists
 				description #PL_ctf_lf_desc
 				abbreviation #PL_ctf_lf_abbr
 				image lf
-				visible 1
-				scorelimit 50
-				mixtape_promo_slot 8
+				visible 0
+				scorelimit 5
+				//mixtape_promo_slot 8
 				boosts_enabled 1
 				phase_shift_drop_flag 1
+				ctf_flag_return_time 1
 			}
 			gamemodes
 			{
@@ -1178,14 +1269,15 @@ playlists
 				description #PL_marked_for_death_desc
 				abbreviation #PL_marked_for_death_abbr
 				image mfd
-				visible 1
-				mixtape_promo_slot 5
+				visible 0
+				//mixtape_promo_slot 5
 			}
 			gamemodes
 			{
 				mfd {}
 			}
 		}
+
 // END OF MP PLAYLISTS LINE ----------------------------------------------------
 
 		"Load a map on the command line"
@@ -1309,39 +1401,42 @@ playlists
 			"Language" "german"
 			"Tokens"
 			{
-				"COMMUNITYUPDATE_00_A"	"Erster Blick auf das Gameplay mit allen neuen Inhalten des Kolonierückkehr-Updates ab dem 30.3.2017 verfügbar!\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_00_Q"	"Trailer - Kolonierückkehr-DLC"
-				"COMMUNITYUPDATE_01_A"	"Wirf einen Blick auf alle neuen Inhalte des Kolonierückkehr-Updates ...\n\n\nDrücke `2%[A_BUTTON|MOUSE1]%`0, um sie dir anzusehen."
-				"COMMUNITYUPDATE_01_Q"	"Grenzland-News-Network - 23.03.2017"
-				"COMMUNITYUPDATE_02_A"	"Lies die Liste aller Änderungen und Updates, die wir in diesem Monat für das Kolonierückkehr-Update vorgenommen haben.\n\n\nDrücke `2%[A_BUTTON|MOUSE1]%`0, um sie dir anzusehen."
-				"COMMUNITYUPDATE_02_Q"	"Kolonierückkehr-Patch-Notizen"
-				"COMMUNITYUPDATE_03_A"	"Bist du neu in Titanfall 2? Lass dir von Sensei Frothy Omen die Möglichkeiten eines Piloten zeigen – von einfachen Doppelsprüngen bis hin zu Schuss- und Explosionswaffen.\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_03_Q"	"Titanfall 2 Pilotenschule"
-				"COMMUNITYUPDATE_04_A"	"Lead Designer Jason McCord spricht über die Entwicklung der Kampagne-Mission, die dem Team als Vorlage für den Singleplayer-Modus diente.\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_04_Q"	"Entwicklerblog - Entstehung von \"Der Sender\""
-				"COMMUNITYUPDATE_05_A"	"Benchy, einer der wohl tödlichsten Spieler in Titanfall, zeigt uns, wie man in Titanfall 2 als Scharfschütze vorgeht.\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_05_Q"	"Montage - Kraber God von Benchy"
-				"COMMUNITYUPDATE_06_A"	"Die Designerin Nicole Peh hat einige fantastische Wallpaper entworfen, die zeigen, welche Art von Restaurant die einzelnen Titans besitzen würden.\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_06_Q"	"Fankunst - Titan-Wallpaper"
-				"COMMUNITYUPDATE_07_A"	"Vorstellung von `1Live Fire`0: ein rasanter 6 vs. 6 Piloten-Modus, der aufregende Nahkämpfe an vorderster Front bietet.\n\nEnthält zwei neue speziell für Live Fire entworfene Karten: `1Stacks`0 und `1Meadow`0.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_07_Q"	"Trailer - Live-Fire-DLC"
-				"COMMUNITYUPDATE_08_A"	"Erlebe eine Neuauflage der beliebten `1Angel City`0-Karte aus dem ersten Titanfall. Mach dich bereit für die ersten kostenlosen Inhalte zum Herunterladen für Titanfall 2. `1Angel City's Most Wanted`0 ist ab dem 3. Dezember für alle Spieler verfügbar. Diese Inhalte bieten neue kosmetische Optionen, die dem Grenzland noch mehr Flair verleihen. \n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_08_Q"	"Trailer - Angel-City-DLC"
-				"COMMUNITYUPDATE_09_A"	"Willkommen zurück!\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_09_Q"	"Trailer - Encore"
-				"COMMUNITYUPDATE_10_A"	"Zwei Legenden, ein Erbe.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_10_Q"	"Trailer - Become One"
-				"COMMUNITYUPDATE_11_A"	"Grenzenlos.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_11_Q"	"Trailer - Piloten-Gameplay"
+				"COMMUNITYUPDATE_00_A"	"Neue Karten, mehr Primes, ein neuer Titan und mehr ist unterwegs. Alle Infos findest du hier.\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_00_Q"	"Grenzland-News-Network: DLC-Fahrplan"
+				"COMMUNITYUPDATE_01_A"	"Erster Blick auf das Gameplay mit allen neuen Inhalten des Kolonierückkehr-Updates ab dem 30.3.2017 verfügbar!\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_01_Q"	"Trailer - Kolonierückkehr"
+				"COMMUNITYUPDATE_02_A"	"Wirf einen Blick auf alle neuen Inhalte des Kolonierückkehr-Updates ...\n\n\nDrücke `2%[A_BUTTON|MOUSE1]%`0, um sie dir anzusehen."
+				"COMMUNITYUPDATE_02_Q"	"Grenzland-News-Network - 23.03.2017"
+				"COMMUNITYUPDATE_03_A"	"Lies die Liste aller Änderungen und Updates, die wir in diesem Monat für das Kolonierückkehr-Update vorgenommen haben.\n\n\nDrücke `2%[A_BUTTON|MOUSE1]%`0, um sie dir anzusehen."
+				"COMMUNITYUPDATE_03_Q"	"Kolonierückkehr-Patch-Notizen"
+				"COMMUNITYUPDATE_04_A"	"Bist du neu in Titanfall 2? Lass dir von Sensei Frothy Omen die Möglichkeiten eines Piloten zeigen – von einfachen Doppelsprüngen bis hin zu Schuss- und Explosionswaffen.\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_04_Q"	"Titanfall 2 Pilotenschule"
+				"COMMUNITYUPDATE_05_A"	"Lead Designer Jason McCord spricht über die Entwicklung der Kampagne-Mission, die dem Team als Vorlage für den Singleplayer-Modus diente.\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_05_Q"	"Entwicklerblog - Entstehung von \"Der Sender\""
+				"COMMUNITYUPDATE_06_A"	"Respawns Animator Moy Parra kehrt mit einer weiteren fantastischen Episode von Titan Toons zurück.\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_06_Q"	"Titan Toons: Live Fire Repeat"
+				"COMMUNITYUPDATE_07_A"	"Die Designerin Nicole Peh hat einige fantastische Wallpaper entworfen, die zeigen, welche Art von Restaurant die einzelnen Titans besitzen würden.\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_07_Q"	"Fankunst - Titan-Wallpaper"
+				"COMMUNITYUPDATE_08_A"	"Vorstellung von Live Fire: ein rasanter 6 vs. 6 Piloten-Modus, der aufregende Nahkämpfe an vorderster Front bietet. Enthält zwei neue, speziell für Live Fire entworfene, Karten: Stacks und Meadow. Diese beiden kostenlosen Karten sind eng umgrenzte Todeszonen, die perfekt auf die Rasanz und Intensität des Modus abgestimmt sind.\n\n\nDrücke zum Ansehen `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_08_Q"	"Trailer - Live-Fire-DLC"
+				"COMMUNITYUPDATE_09_A"	"Erlebe eine Neuauflage der beliebten `1Angel City`0-Karte aus dem ersten Titanfall. Mach dich bereit für die ersten kostenlosen Inhalte zum Herunterladen für Titanfall 2. `1Angel City's Most Wanted`0 ist ab dem 3. Dezember für alle Spieler verfügbar. Diese Inhalte bieten neue kosmetische Optionen, die dem Grenzland noch mehr Flair verleihen. \n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_09_Q"	"Trailer - Angel-City-DLC"
+				"COMMUNITYUPDATE_10_A"	"Willkommen zurück!\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_10_Q"	"Trailer - Encore"
+				"COMMUNITYUPDATE_11_A"	"Zwei Legenden, ein Erbe.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_11_Q"	"Trailer - Werde Eins"
+				"COMMUNITYUPDATE_12_A"	"Grenzenlos.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_12_Q"	"Trailer - Piloten-Gameplay"
 				"COMMUNITYUPDATE_DESC"	"`3Titanfall Community-Updates`0\n\nInfos und Links aus dem ganzen Netz.\n\nWeitere Infos:\n`2%$rui/bullet_point%`0Folge uns auf Twitter `1@Respawn`0\n`2%$rui/bullet_point%`0Folge uns auf `1facebook.com/RespawnEntertainment`0\n`2%$rui/bullet_point%`0Besuche uns auf `1www.respawn.com`0"
 				"COMMUNITYUPDATE_NAME"	"Community"
+				"GAMEMODE_TDM"	"Titan Brawl"
 				"KNB_SUBJECT_00_DESC"	"`3Was ist neu in Titanfall?`0\n\nHier erfährst du, was sich in Titanfall 2 geändert hat!"
 				"KNB_SUBJECT_00_NAME"	"Patch-Notizen"
 				"KNB_SUBJECT_00_SUB_00_A"	"Auf der linken Seite sehr ihr, welche Änderungen wir in den dritten DLC für Titanfall 2, Kolonierückkehr, gepackt haben. Allerdings sind die aufgelisteten Veränderungen nur ein kleiner Teil des gesamten Patches.\n\nWie immer freuen wir uns auf euer Feedback und werden auch zukünftig weitere Verbesserungen vornehmen. Viel Spaß!\n\n\n\n\n\nDie vollständigen Patch-Notizen findet ihr auf `3titanfall.com`0."
 				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 30.März - Kolonierückkehr"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Neue Karte - Kolonie\n\n`2%$rui/bullet_point%`0Neue Exekution: Curb-Check: Mach mit deinem Kletterhaken brutale Curb-Checks.\n\n`2%$rui/bullet_point%`0Neue Waffe - R-101"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Neue Karte - Kolonie\n\n`2%$rui/bullet_point%`0Neue Exekution: Curb-Check: Führe mit deinem Kletterhaken brutale Curb-Checks aus.\n\n`2%$rui/bullet_point%`0Neue Waffe - R-101"
 				"KNB_SUBJECT_00_SUB_01_Q"	"`2%$rui/bullet_point%`0Neue Inhalte [Gratis]"
-				"KNB_SUBJECT_00_SUB_02_A"	"Neue Prime Titans:\n`2%$rui/bullet_point%`0Northstar and Legion: Hebe dich mit neuen Looks und Exekutionen von der Masse ab.\n\nTitan-Art-Packs:\n`2%$rui/bullet_point%`0Ein Pack pro Titan. Enthält fünf neue Nose Arts und eine exklusive Kriegslackierung.\n\nRufzeichen-Pack:\n`2%$rui/bullet_point%`0Enthält Sofortzugang zu 20 neuen und exklusiven Rufzeichen, Bannern und 10 Rufzeichen-Plaketten.\n\nTarnungspack:\n`2%$rui/bullet_point%`0Enthält 20 neue und exklusive Tarnungen für alle Titans, Titanwaffen, Piloten und Pilotenwaffen.\n"
+				"KNB_SUBJECT_00_SUB_02_A"	"Neue Prime Titans:\n`2%$rui/bullet_point%`0Northstar und Legion: Hebe dich mit neuen Looks und Exekutionen von der Masse ab.\n\nTitan-Art-Packs:\n`2%$rui/bullet_point%`0Ein Pack pro Titan. Enthält fünf neue Nose Arts und eine exklusive Kriegslackierung.\n\nRufzeichen-Pack:\n`2%$rui/bullet_point%`0Enthält Sofortzugang zu 20 neuen und exklusiven Rufzeichen, Bannern und 10 Rufzeichen-Plaketten.\n\nTarnungspack:\n`2%$rui/bullet_point%`0Enthält 20 neue und exklusive Tarnungen für alle Titans, Titanwaffen, Piloten und Pilotenwaffen.\n"
 				"KNB_SUBJECT_00_SUB_02_Q"	"`2%$rui/bullet_point%`0Neue Inhalte [Kostenpflichtig]"
 				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Angel City wurde Kartenrotation hinzugefügt.\n`2%$rui/bullet_point%`0Es wurde ein Problem behoben, durch das Spieler aufgrund von Verbindungsabbrüchen beim Zurücksetzen des Loadouts nicht spielen konnten.\n`2%$rui/bullet_point%`0Net-Wert sollte jetzt korrekt deine insgesamt erhaltenen Credits angeben.\n`2%$rui/bullet_point%`0Devotion-Schaden auf kurze Distanz wurde leicht reduziert.\n`2%$rui/bullet_point%`0Devotion-Schaden auf mittlere Distanz wurde reduziert. Für den Kill ist jetzt eine Kugel mehr erforderlich."
 				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 2. März - Server-Update"
@@ -1413,10 +1508,10 @@ playlists
 				"PL_ffa_abbr"	"FFA"
 				"PL_ffa_desc"	"Jeder Pilot kämpft für sich selbst. Eliminiere alle Gegner.\n^FFC83200Spieler: 1 vs. 11\nZeitlimit: 10 Min.\nMax. Party-Größe: 1"
 				"PL_ffa_lobby"	"Frei für alle-Lobby"
-				"PL_glitch"	"Glitch 24/7"
-				"PL_glitch_abbr"	"GLI"
-				"PL_glitch_desc"	"Glitch, rund um die Uhr. ^CCCCCC00Sucht nach Spielen in den Modi ^FFC83200CTF^CCCCCC00, ^FFC83200Verstärkter Hardpoint^CCCCCC00, ^FFC83200Piloten vs. Piloten^CCCCCC00, ^FFC83200Live Fire^CCCCCC00 und ^FFC83200Last Titan Standing^CCCCCC00."
-				"PL_glitch_lobby"	"Glitch 24/7-Lobby"
+				"PL_Relic"	"Relic 24/7"
+				"PL_Relic_abbr"	"GLI"
+				"PL_Relic_desc"	"Relic, rund um die Uhr. ^CCCCCC00Sucht nach Spielen in den Modi ^FFC83200CTF^CCCCCC00, ^FFC83200Verstärkter Hardpoint^CCCCCC00, ^FFC83200Piloten vs. Piloten^CCCCCC00, ^FFC83200Live Fire^CCCCCC00 und ^FFC83200Last Titan Standing^CCCCCC00."
+				"PL_Relic_lobby"	"Relic 24/7-Lobby"
 				"PL_groud_war_lobby"	"8 vs. 8 Mixtape-Lobby"
 				"PL_ground_war"	"8 vs. 8 Mixtape"
 				"PL_ground_war_abbr"	"8 vs. 8"
@@ -1441,12 +1536,13 @@ playlists
 				"PL_load_a_map_on_the_command_line"	"Lade eine Karte auf der Befehlszeile -devonly"
 				"PL_marked_for_death"	"Todgeweiht"
 				"PL_marked_for_death_abbr"	"TG"
-				"PL_marked_for_death_desc"	"Zerstört oder beschützt die markierten Ziele.\n^FFC83200Spieler: 6 vs. 6  \nZeitlimit: 12 Min.\nMax. Party-Größe: 6"
+				"PL_marked_for_death_desc"	"Eliminiere oder beschütze die markierten Ziele.\n^FFC83200Spieler: 6 vs. 6  \nZeitlimit: 12 Min.\nMax. Party-Größe: 6"
 				"PL_marked_for_death_lobby"	"Todgeweiht-Lobby"
-				"PL_pilot_hunter"	"Gefecht"
-				"PL_pilot_hunter_abbr"	"GEF"
-				"PL_pilot_hunter_desc"	"Neutralisiere gegnerische Piloten und Titans. \n^FFC83200Spieler: 8 vs. 8\nZeitlimit: 10 Min.\nMax. Party-Größe: 8"
-				"PL_pilot_hunter_lobby"	"Gefecht-Lobby"
+				"PL_pilot_hunter"	"Titan Brawl"
+				"PL_pilot_hunter_abbr"	"TTDM"
+				"PL_pilot_hunter_desc"	"Neutralisiere gegnerische Titans. \n^FFC83200Spieler: 5 vs. 5\nZeitlimit: 10 Min.\nMax. Party-Größe: 5"
+				"PL_pilot_hunter_hint"	"Neutralisiere gegnerische Titans.\nKein Ausstieg"
+				"PL_pilot_hunter_lobby"	"Titan Brawl-Lobby"
 				"PL_pilot_skirmish"	"Piloten vs. Piloten"
 				"PL_pilot_skirmish_abbr"	"PvP"
 				"PL_pilot_skirmish_desc"	"Neutralisiere gegnerische Piloten. Titanfalls nicht erlaubt.\n^FFC83200Spieler: 8 vs. 8      * Keine Titans\nZeitlimit: 10 Min.\nMax. Party-Größe: 8"
@@ -1472,32 +1568,35 @@ playlists
 			"Language" "portuguese"
 			"Tokens"
 			{
-				"COMMUNITYUPDATE_00_A"	"Primeiro vídeo de jogabilidade com o novo conteúdo da atualização Colônia Renascida, disponível em 30/03/2017\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_00_Q"	"Trailer de jogabilidade de Colônia Renascida"
-				"COMMUNITYUPDATE_01_A"	"Veja todos os detalhes sobre as novidades da atualização Colônia Renascida...\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_01_Q"	"Rede de Notícias da Fronteira - 23/03/2017"
-				"COMMUNITYUPDATE_02_A"	"Leia a lista completa de mudanças e melhorias que fizemos neste mês para a atualização Colônia Renascida.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_02_Q"	"Detalhes do patch Colônia Renascida"
-				"COMMUNITYUPDATE_03_A"	"Chegou agora a Titanfall 2? Deixe que o sensei Frothy Omen ensine você a usar o pulo duplo básico, além de armas e explosivos.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_03_Q"	"Escola de Pilotos de Titanfall 2"
-				"COMMUNITYUPDATE_04_A"	"O designer-chefe Jason McCord reflete sobre a criação da missão de campanha que ajudou a definir a abordagem da equipe para o modo de um jogador.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_04_Q"	"Blog de Desenvolvimento - Criando \"O Sinalizador\""
-				"COMMUNITYUPDATE_05_A"	"Benchy, possivelmente um dos jogadores mais mortais em Titanfall, nos ensina a usar os fuzis de precisão em Titanfall 2.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_05_Q"	"Montagem - Kraber God por Benchy"
-				"COMMUNITYUPDATE_06_A"	"A artista Nicole Peh criou papéis de parede incríveis inspirados nos tipos de restaurante que cada Titã poderia ter.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_06_Q"	"Arte de Fã - Papéis de parede de Titãs"
-				"COMMUNITYUPDATE_07_A"	"Introduzindo `1Queima-roupa`0: um modo muito rápido de 6v6, apenas com Pilotos, que coloca o combate competitivo a curta distância em primeiro plano.\n\nApresentando dois novos mapas criados especificamente para Queima-roupa: `1Pilhas`0 e `1Campina`0.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_07_Q"	"Trailer - DLC Queima-roupa"
-				"COMMUNITYUPDATE_08_A"	"Experimente a versão renovada do mapa favorito dos fãs no primeiro Titanfall: `1Angel City`0. Aguarde o primeiro DLC grátis de Titanfall 2, \"O Mais Procurado de Angel City\", disponível dia 1º de dezembro para todos os jogadores. Esse conteúdo inclui novas opções cosméticas para adicionar ainda mais bom gosto à Fronteira. \n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_08_Q"	"Trailer - DLC Angel City"
-				"COMMUNITYUPDATE_09_A"	"Que bom que voltou.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_09_Q"	"Trailer \"Bis!\""
-				"COMMUNITYUPDATE_10_A"	"Duas lendas, um legado.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_10_Q"	"Trailer - Become One"
-				"COMMUNITYUPDATE_11_A"	"Sem limites.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_11_Q"	"Trailer - Jogabilidade de Pilotos"
+				"COMMUNITYUPDATE_00_A"	"Estão a caminho novos mapas, mais Primes, um novo Titã e muito mais. Leia todos os detalhes aqui.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_00_Q"	"Rede de Notícias da Fronteira: Roteiro do DLC"
+				"COMMUNITYUPDATE_01_A"	"Primeiro vídeo de jogabilidade exibindo todas as novidades da atualização Colônia Renascida, disponível em 30/03/2017!\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_01_Q"	"Trailer de jogabilidade de Colônia Renascida"
+				"COMMUNITYUPDATE_02_A"	"Veja os detalhes de todas as novidades da atualização Colônia Renascida...\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_02_Q"	"Rede de Notícias da Fronteira - 23/03/2017"
+				"COMMUNITYUPDATE_03_A"	"Leia a lista completa de mudanças e atualizações que fizemos neste mês para a atualização Colônia Renascida.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_03_Q"	"Notas do patch Colônia Renascida"
+				"COMMUNITYUPDATE_04_A"	"Chegou agora a Titanfall 2? Deixe o sensei Frothy Omen te mostrar o que é ser um Piloto, ensinando como usar o pulo duplo básico, as armas e os explosivos.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_04_Q"	"Escola de Pilotos de Titanfall 2"
+				"COMMUNITYUPDATE_05_A"	"Jason McCord, Designer Chefe, reflete sobre a criação da missão que ajudou a definir a abordagem da equipe para o modo de jogo Campanha.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_05_Q"	"Blog da Respawn - Criando \"O Sinalizador\""
+				"COMMUNITYUPDATE_06_A"	"Moy Parra, animador da Respawn, está de volta com mais um episódio fantástico de Titan Toons.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_06_Q"	"Titan Toons: Queima-roupa sem parar"
+				"COMMUNITYUPDATE_07_A"	"A artista Nicole Peh criou alguns papéis de parede incríveis, inspirados nos tipos de restaurantes que cada Titã poderia ter.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_07_Q"	"Arte de Fã - Papéis de parede de Titãs"
+				"COMMUNITYUPDATE_08_A"	"Apresentamos Queima-roupa - um modo de jogo ultrarrápido, exclusivo para confrontos 6 contra 6 entre Pilotos, que privilegia o combate competitivo a curta distância. Contém dois novos mapas, criados especialmente para o modo Queima-roupa: Pilhas e Prado. São mapas fechados e mortais, criados sob medida para a natureza ágil e intensa desse modo.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_08_Q"	"Trailer de jogabilidade: Bem-vindo a Queima-roupa"
+				"COMMUNITYUPDATE_09_A"	"Experimente a versão renovada de um mapa favorito dos fãs no primeiro Titanfall: `1Angel City`0. Aguarde o primeiro DLC grátis de Titanfall 2 com `1O Mais Procurado de Angel City`0, disponível dia 1º de dezembro para todos os jogadores. Esse conteúdo inclui novas opções cosméticas para adicionar ainda mais bom gosto à Fronteira. \n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_09_Q"	"Trailer de jogabilidade: Bem-vindo a Angel City"
+				"COMMUNITYUPDATE_10_A"	"Que bom que voltou.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_10_Q"	"Trailer: Bis"
+				"COMMUNITYUPDATE_11_A"	"Duas lendas, um legado.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_11_Q"	"Trailer de Jogabilidade (1 jogador): Tornem-se Um"
+				"COMMUNITYUPDATE_12_A"	"Sem limites.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_12_Q"	"Trailer de Jogabilidade (Multiplayer): Pilotos"
 				"COMMUNITYUPDATE_DESC"	"`3Atualizações da Comunidade de Titanfall`0\n\nInformações e links da web.\n\nPara mais:\n`2%$rui/bullet_point%`0Siga-nos no Twitter `1@Respawn`0\n`2%$rui/bullet_point%`0Curta nossa página em `1facebook.com/RespawnEntertainment`0\n`2%$rui/bullet_point%`0Junte-se a nós em `1www.respawn.com`0"
 				"COMMUNITYUPDATE_NAME"	"Comunidade"
+				"GAMEMODE_TDM"	"Furor de Titãs"
 				"KNB_SUBJECT_00_DESC"	"`3Quais as novidades de Titanfall?`0\n\nConfira aqui o que mudou em Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Observações do patch"
 				"KNB_SUBJECT_00_SUB_00_A"	"Confira os itena à esquerda para ver as mudanças incluídas no terceiro DLC de Titanfall 2: Colônia Renascida. É importante observar que as mudanças e correções listadas são apenas uma pequena amostra do que está incluído no patch\n\nComo sempre, continuaremos ouvindo suas opiniões e realizando melhorias no futuro!\n\n\n\n\n\nPara ver os detalhes completos do patch, visite `3titanfall.com`0."
@@ -1530,10 +1629,10 @@ playlists
 				"PL_aitdm_abbr"	"EXA"
 				"PL_aitdm_desc"	"Elimine todos os inimigos.\n^FFC83200Jogadores: 6v6      *IA\nLimite de tempo: 10 min\nTamanho máximo do grupo: 6"
 				"PL_aitdm_lobby"	"Sala de espera: Exaustão"
-				"PL_ANGEL_CITY"	"Angel City 24h"
+				"PL_ANGEL_CITY"	"Angel City Permanente"
 				"PL_angel_city_abbr"	"AC"
 				"PL_angel_city_desc"	"Somente Angel City, o tempo todo.\n^FFC83200*Recompensa                   *Exaustão\n*PCA"
-				"PL_angel_city_lobby"	"Sala de espera: Angel City 24h"
+				"PL_angel_city_lobby"	"Sala de espera: Angel City Permanente"
 				"PL_at_coop"	"Fuga (Coop)"
 				"PL_at_coop_desc"	"Você acaba de fugir da prisão só com uma pistola. Sobreviva até o transporte de evacuação chegar. Elimine inimigos para ganhar dinheiro e comprar armas. \n^FFC83200Jogadores: 6\nTamanho máximo do grupo: 6"
 				"PL_at_coop_lobby"	"Sala de espera de Fuga"
@@ -1576,10 +1675,10 @@ playlists
 				"PL_ffa_abbr"	"CPS"
 				"PL_ffa_desc"	"Salve-se quem puder, elimine todos os inimigos.\n^FFC83200Jogadores: 1v11\nLimite de tempo: 10 min\nTamanho máximo do grupo: 1"
 				"PL_ffa_lobby"	"Sala de espera: CUPS"
-				"PL_glitch"	"Erro Permanente"
-				"PL_glitch_abbr"	"ERR"
-				"PL_glitch_desc"	"Somente Erro, o tempo todo. ^CCCCCC00Isto vai buscar partidas de ^FFC83200Captura de Bandeira^CCCCCC00, ^FFC83200Ponto de Controle Amplificado^CCCCCC00, ^FFC83200Pilotos vs Pilotos^CCCCCC00, ^FFC83200Queima-roupa^CCCCCC00 e ^FFC83200Sobrevivência de Titã^CCCCCC00."
-				"PL_glitch_lobby"	"Sala de espera: Erro Permanente"
+				"PL_Relic"	"Falha Permanente"
+				"PL_Relic_abbr"	"FAL"
+				"PL_Relic_desc"	"Somente Falha, o tempo todo. ^CCCCCC00Isto vai buscar partidas de ^FFC83200Captura de Bandeira^CCCCCC00, ^FFC83200Ponto de Controle Amplificado^CCCCCC00, ^FFC83200Pilotos vs Pilotos^CCCCCC00, ^FFC83200Queima-roupa^CCCCCC00 e ^FFC83200Sobrevivência de Titã^CCCCCC00."
+				"PL_Relic_lobby"	"Sala de espera: Falha Permanente"
 				"PL_groud_war_lobby"	"Sala de espera: Variedade 8v8"
 				"PL_ground_war"	"Variedade 8v8"
 				"PL_ground_war_abbr"	"8v8"
@@ -1606,10 +1705,11 @@ playlists
 				"PL_marked_for_death_abbr"	"MPM"
 				"PL_marked_for_death_desc"	"Elimine ou proteja os alvos marcados.\n^FFC83200Jogadores: 6v6  \nLimite de tempo: 12m\nTamanho máximo do grupo: 6"
 				"PL_marked_for_death_lobby"	"Sala de espera: Marcado para Morrer"
-				"PL_pilot_hunter"	"Duelos"
-				"PL_pilot_hunter_abbr"	"DLS"
-				"PL_pilot_hunter_desc"	"Elimine Titãs e Pilotos inimigos. \n^FFC83200Jogadores: 8v8\nLimite de tempo: 10 min\nTamanho máximo do grupo: 8"
-				"PL_pilot_hunter_lobby"	"Sala de espera: Duelos"
+				"PL_pilot_hunter"	"Furor de Titãs"
+				"PL_pilot_hunter_abbr"	"FUR"
+				"PL_pilot_hunter_desc"	"Elimine Titãs inimigos. \n^FFC83200Jogadores: 5v5\nLimite de tempo: 10 min.\nTamanho máximo do grupo: 5"
+				"PL_pilot_hunter_hint"	"Elimine Titãs inimigos.\nSem ejeção"
+				"PL_pilot_hunter_lobby"	"Sala de espera: Furor de Titãs"
 				"PL_pilot_skirmish"	"Pilotos vs. Pilotos"
 				"PL_pilot_skirmish_abbr"	"PvP"
 				"PL_pilot_skirmish_desc"	"Elimine os Pilotos inimigos. Não há lançamentos de Titãs.\n^FFC83200Jogadores: 8v8      *Sem Titãs\nLimite de tempo: 10 min\nTamanho máximo do grupo: 8"
@@ -1635,45 +1735,48 @@ playlists
 			"Language" "japanese"
 			"Tokens"
 			{
-				"COMMUNITYUPDATE_00_A"	"まずは、2017年3月30日配信開始の「コロニーリボーン」に収録された新コンテンツをすべて紹介したプレイ動画をご覧ください。\n\n\n `2%[A_BUTTON|MOUSE1]%`0で再生。"
-				"COMMUNITYUPDATE_00_Q"	"「コロニーリボーン」ゲームプレイトレーラー"
-				"COMMUNITYUPDATE_01_A"	"「コロニーリボーン」アップデートに収録されたすべての新コンテンツを詳しくご紹介します…\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
-				"COMMUNITYUPDATE_01_Q"	"フロンティアニュースネットワーク - 17.03.23"
-				"COMMUNITYUPDATE_02_A"	"今月の「コロニーリボーン」アップデートで変更や更新を行った点を漏らさずご紹介します。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
-				"COMMUNITYUPDATE_02_Q"	"「コロニーリボーン」のパッチノート"
-				"COMMUNITYUPDATE_03_A"	"タイタンフォール 2を初めてプレイする方のために、Frothy Omen先生が基本のダブルジャンプから、武器や軍需品の使用まで、パイロットのいろはを教えてくれます。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
-				"COMMUNITYUPDATE_03_Q"	"タイタンフォール 2 パイロットスクール"
-				"COMMUNITYUPDATE_04_A"	"リードデザイナーのジェイソン・マコードが、開発チームのシングルプレイヤー制作手法を決定づけた、あるキャンペーンミッションの制作について振り返ります。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
-				"COMMUNITYUPDATE_04_Q"	"Respawn開発ブログ - ビーコンの制作"
-				"COMMUNITYUPDATE_05_A"	"タイタンフォール最恐プレイヤーのひとり、Benchy氏がタイタンフォール 2の狙撃の極意を披露します。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示"
-				"COMMUNITYUPDATE_05_Q"	"ダイジェスト動画 - Kraber God by Benchy"
-				"COMMUNITYUPDATE_06_A"	"アーティストのニコル・ペイが、「各タイタンがレストランを経営したら？」というコンセプトで素敵な壁紙を作ってくれました。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
-				"COMMUNITYUPDATE_06_Q"	"オリジナルイラスト - タイタンの壁紙"
-				"COMMUNITYUPDATE_07_A"	"`1ライブファイア`0登場:パイロット専用、超高速の6対6モードで激しい接近戦が最大の特徴です。\n\nライブファイア専用の最新マップ2種、`1スタック`0と`1草原`0を収録しています。\n\n\n `2%[A_BUTTON|MOUSE1]%`0で再生。"
-				"COMMUNITYUPDATE_07_Q"	"「ライブファイア」ゲームプレイトレーラー"
-				"COMMUNITYUPDATE_08_A"	"元祖タイタンフォールの人気マップ、`1エンジェルシティ`0のリマスター版を体験せよ！2016年12月1日より全プレイヤーへ配信される無料DLC第1弾、`1エンジェルシティ・モスト・ウォンテッド`0に向けてスタンバイしましょう。フロンティアを彩る新しい装飾オプションも収録しています。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で再生。"
-				"COMMUNITYUPDATE_08_Q"	"「エンジェルシティ」ゲームプレイトレーラー"
-				"COMMUNITYUPDATE_09_A"	"お帰りなさい。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で再生。"
-				"COMMUNITYUPDATE_09_Q"	"絶賛「アンコール」トレーラー"
-				"COMMUNITYUPDATE_10_A"	"2人のレジェンド、1つの伝説。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で再生。"
-				"COMMUNITYUPDATE_10_Q"	"「Become One」ゲームプレイトレーラー"
-				"COMMUNITYUPDATE_11_A"	"無限の可能性。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で再生。"
-				"COMMUNITYUPDATE_11_Q"	"「パイロット」ゲームプレイトレーラー"
+				"COMMUNITYUPDATE_00_A"	"フロンティア・ニュース・ネットワーク:\n\n新しいマップ、プライム機体、タイタンが登場予定。詳しい情報はこちら。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示"
+				"COMMUNITYUPDATE_00_Q"	"「FNN」:DLCロードマップ"
+				"COMMUNITYUPDATE_01_A"	"まずは、2017年3月30日配信開始の「コロニーリボーン」に収録された新コンテンツをすべて紹介したプレイ動画をご覧ください。\n\n\n `2%[A_BUTTON|MOUSE1]%`0で再生。"
+				"COMMUNITYUPDATE_01_Q"	"「コロニーリボーン」ゲームプレイトレーラー"
+				"COMMUNITYUPDATE_02_A"	"「コロニーリボーン」アップデートに収録されたすべての新コンテンツを詳しくご紹介します…\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
+				"COMMUNITYUPDATE_02_Q"	"フロンティアニュースネットワーク - 17.03.23"
+				"COMMUNITYUPDATE_03_A"	"今月の「コロニーリボーン」アップデートで実施した変更や更新を漏らさずご紹介します。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
+				"COMMUNITYUPDATE_03_Q"	"「コロニーリボーン」のパッチノート"
+				"COMMUNITYUPDATE_04_A"	"タイタンフォール 2を初めてプレイする方のために、Frothy Omen先生が基本のダブルジャンプから、武器や軍需品の使用まで、パイロットのいろはを教えてくれます。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
+				"COMMUNITYUPDATE_04_Q"	"タイタンフォール 2 パイロットスクール"
+				"COMMUNITYUPDATE_05_A"	"リードデザイナーのジェイソン・マコードが、開発チームのシングルプレイヤー制作手法を決定づけた、あるキャンペーンミッションの制作について振り返ります。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
+				"COMMUNITYUPDATE_05_Q"	"Respawn開発ブログ - ビーコンの制作"
+				"COMMUNITYUPDATE_06_A"	"Respawnのアニメーター、モイ・パッラが素敵なお話をまたTitan Toonsで作ってくれました。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
+				"COMMUNITYUPDATE_06_Q"	"Titan Toons:「ライブファイア繰り返し」"
+				"COMMUNITYUPDATE_07_A"	"アーティストのニコル・ペイが、「各タイタンがレストランを経営したら？」というコンセプトで素敵な壁紙を作ってくれました。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
+				"COMMUNITYUPDATE_07_Q"	"オリジナルイラスト - タイタンの壁紙"
+				"COMMUNITYUPDATE_08_A"	"`1ライブファイア`0登場:パイロット専用、超高速の6対6モードで熾烈な接近戦が最大の特徴です。ライブファイア専用の最新マップ2種、`1スタック`0と`1草原`0を収録しています。これら2種類の無料マップは、高速の激戦が展開するモード特性に合わせて制作された、タイトで密閉された死のリングです。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で再生。"
+				"COMMUNITYUPDATE_08_Q"	"「ライブファイア」ゲームプレイトレーラー"
+				"COMMUNITYUPDATE_09_A"	"元祖タイタンフォールの人気マップ、`1エンジェルシティ`0のリマスター版を体験せよ！2016年12月1日より全プレイヤーへ配信される無料DLC第1弾、`1エンジェルシティ・モスト・ウォンテッド`0に向けてスタンバイしましょう。フロンティアを彩る新しい装飾オプションも収録しています。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で再生。"
+				"COMMUNITYUPDATE_09_Q"	"「エンジェルシティ」ゲームプレイトレーラー"
+				"COMMUNITYUPDATE_10_A"	"お帰りなさい。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で再生。"
+				"COMMUNITYUPDATE_10_Q"	"絶賛「アンコール」トレーラー"
+				"COMMUNITYUPDATE_11_A"	"2人のレジェンド、1つの伝説。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で再生。"
+				"COMMUNITYUPDATE_11_Q"	"「Become One」ゲームプレイトレーラー"
+				"COMMUNITYUPDATE_12_A"	"無限の可能性。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で再生。"
+				"COMMUNITYUPDATE_12_Q"	"「パイロット」ゲームプレイトレーラー"
 				"COMMUNITYUPDATE_DESC"	"`3タイタンフォールコミュニティの最新情報`0\n\nオンラインから、情報をたっぷりとお届けします。\n\n詳細は、次の手順でご覧ください。\n`2%$rui/bullet_point%`0Twitterで`1@Respawn`0をフォロー\n`2%$rui/bullet_point%`0`1facebook.com/RespawnEntertainment`0で「いいね！」\n`2%$rui/bullet_point%`0 `1www.respawn.com`0をチェック"
 				"COMMUNITYUPDATE_NAME"	"コミュニティ"
+				"GAMEMODE_TDM"	"タイタンブロール"
 				"KNB_SUBJECT_00_DESC"	"`3タイタンフォール更新履歴`0\n\nこちらをチェックして、タイタンフォール 2の変更点を確認しましょう！"
 				"KNB_SUBJECT_00_NAME"	"パッチノート"
-				"KNB_SUBJECT_00_SUB_00_A"	"タイタンフォール 2のDLC第3弾「コロニーリボーン」配信にあたり、開発チームが力を尽くして導入した変更点の数々を、以下でチェックしましょう。なお、こちらに掲載されている変更点や修正点は、パッチの内容の一例にすぎません。\n\n今後とも皆様のフィードバックは真摯に拝見し、さらになる改善を実施します。それでは、どうぞ！\n\n\n\n\n\nパッチノート全文は、`3titanfall.com`0でご覧いただけます。"
+				"KNB_SUBJECT_00_SUB_00_A"	"タイタンフォール 2のDLC第3弾「コロニーリボーン」で行われた主な変更を、左に箇条書きでご紹介します。なお、こちらに掲載されている変更点や修正点は、パッチの内容の一例にすぎません。\n\n今後とも皆様のフィードバックは真摯に拝見し、さらになる改善を実施します。それでは、どうぞ！\n\n\n\n\n\nパッチノート全文は、`3titanfall.com`0でご覧いただけます。"
 				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 3月30日 - コロニーリボーン"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0新マップ - 植民地\n\n`2%$rui/bullet_point%`0新処刑攻撃:ロードチェック:グラップルを使って、地面の強度を確認。\n\n`2%$rui/bullet_point%`0新兵器:R101"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0新マップ - 植民地\n\n`2%$rui/bullet_point%`0新処刑攻撃 - ロードチェック:グラップルを使って、地面の強度を確認。\n\n`2%$rui/bullet_point%`0新兵器 - R-101"
 				"KNB_SUBJECT_00_SUB_01_Q"	"`2%$rui/bullet_point%`0新コンテンツ［無料］"
 				"KNB_SUBJECT_00_SUB_02_A"	"新型プライムタイタン:\n`2%$rui/bullet_point%`0ノーススター、リージョン:新デザインの機体と処刑攻撃で注目を集めましょう！\n\nタイタン用アートパック:\n`2%$rui/bullet_point%`0タイタンごとに1種が登場し、新ノーズアート5種と限定ウォーペイントスキン1種を収録。\n\nコールサインパック:\n`2%$rui/bullet_point%`0限定新コールサインバナー20種とコールサインパッチ10種をすぐにゲット。\n\n迷彩パック:\n`2%$rui/bullet_point%`0すべてのタイタン、タイタン兵器、パイロット、パイロット用武器に適用できる限定新迷彩を20種類収録。\n"
 				"KNB_SUBJECT_00_SUB_02_Q"	"`2%$rui/bullet_point%`0 新コンテンツ［有料］"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0マップのローテーションにエンジェルシティを追加。\n`2%$rui/bullet_point%`0ロードアウトをリセットする際に接続が切断されて、プレイできなくなった問題を修正。\n`2%$rui/bullet_point%`0総合評価がクレジットの通算獲得額を正確に反映するように修正。\n`2%$rui/bullet_point%`0ディヴォーションの近距離ダメージをわずかに軽減。\n`2%$rui/bullet_point%`0ディヴォーションの中距離ダメージを軽減し、キルに必要な弾数を1つ増加。"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0マップのローテーションにエンジェルシティを追加\n`2%$rui/bullet_point%`0ロードアウトをリセットする際に接続が切断されて、プレイできなくなった問題を修正。\n`2%$rui/bullet_point%`0総合評価がクレジットの通算獲得額を正確に反映するように修正。\n`2%$rui/bullet_point%`0ディヴォーションの近距離ダメージをわずかに軽減。\n`2%$rui/bullet_point%`0ディヴォーションの中距離ダメージを軽減し、キルに必要な弾数を1つ増加。"
 				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 3月2日 - サーバーアップデート"
-				"KNB_SUBJECT_00_SUB_04_A"	"タイタンフォール 2のDLC第2弾「ライブファイア」配信にあたり、開発チームが力を尽くして導入した変更点の数々を、以下でチェックしましょう。なお、こちらに掲載されている変更点や修正点は、パッチの内容の一例にすぎません。\n\n今後とも皆様のフィードバックは真摯に拝見し、さらになる改善を実施します。それでは、どうぞ！\n\n\n\n\n\nパッチノート全文は、`3titanfall.com`0でご覧いただけます。"
+				"KNB_SUBJECT_00_SUB_04_A"	"タイタンフォール 2のDLC第2弾「ライブファイア」で行われた主な変更を、左に箇条書きでご紹介します。なお、こちらに掲載されている変更点や修正点は、パッチの内容の一例にすぎません。\n\n今後とも皆様のフィードバックは真摯に拝見し、さらになる改善を実施します。それでは、どうぞ！\n\n\n\n\n\nパッチノート全文は、`3titanfall.com`0でご覧いただけます。"
 				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 2月23日 - ライブファイア"
-				"KNB_SUBJECT_00_SUB_05_A"	"ライブファイア:パイロット同士が戦い、勝ち残りを賭けて戦います！リスポーンなし、6対6のラウンド制マッチで、1分以内に敵を全滅させるとラウンド勝利です。また、ラウンド終了時に自分のチームが中立のフラッグを所持していた場合も勝利となります。5ラウンド先取したチームがマッチの勝者となります。\n\n`2%$rui/bullet_point%`0ライブファイア用新マップ - 緑あふれる「草原」では、草の生い茂る通路と垣間見える岩石部が長期戦では待機地点として、側方から敵を攻める際には隠れ蓑として活躍します。また、ジップラインが復活します！\n\n`2%$rui/bullet_point%`0ライブファイア用新マップ - 工業地帯の「スタック」は、高い建造物に囲まれた中央の密集地点と、それを挟む開けた地形で構成されています。マップの高低差が鍵を握り、高所からの攻撃と外の通路からの突撃が活性化します。\n\n`2%$rui/bullet_point%`0新処刑攻撃:レイトアタック:興奮剤で加速した連続パンチを繰り出して、敵を打ち倒します。\n"
+				"KNB_SUBJECT_00_SUB_05_A"	"ライブファイア:パイロット同士が戦い、勝ち残りを賭けて戦います！リスポーンなし、6対6のラウンド制マッチで、1分以内に敵を全滅させるとラウンド勝利です。また、ラウンド終了時に自分のチームが中立のフラッグを所持していた場合も勝利となります。5ラウンド先取したチームがマッチの勝者となります。\n\n`2%$rui/bullet_point%`0ライブファイア用新マップ - 緑あふれる「草原」では、草の生い茂る通路と垣間見える岩石部が長期戦では待機地点として、側方から敵を攻める際には隠れみのとして活躍します。また、ジップラインが復活します！\n\n`2%$rui/bullet_point%`0ライブファイア用新マップ - 工業地帯の「スタック」は、高い建造物に囲まれた中央の密集地点と、それを挟む開けた地形で構成されています。マップの高低差が鍵を握り、高所からの攻撃と外の通路からの突撃が活性化します。\n\n`2%$rui/bullet_point%`0新処刑攻撃:レイトアタック:興奮剤で加速した連続パンチを繰り出して、敵を打ち倒します。\n"
 				"KNB_SUBJECT_00_SUB_05_Q"	"`2%$rui/bullet_point%`0新コンテンツ［無料］"
 				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0ミックステープマッチメイキング:マルチプレイヤーのマッチメイキングを全面刷新しました。自分だけのお気に入りモードを「ミックステープ」のように好きなだけ組み合わせられる新機能です。\n`2%$rui/bullet_point%`0コントローラー:ボタン割り当てのカスタマイズ機能を搭載(パイロット・タイタン用)。\n`2%$rui/bullet_point%`0コントローラー:しゃがみボタンに、「長押しでしゃがみ」を行う設定を追加。\n`2%$rui/bullet_point%`0コントローラー:エイムボタンに、「切り替え」設定を追加。\n`2%$rui/bullet_point%`0操作:「%use%を長押しでロデオ」させる設定を追加。\n`2%$rui/bullet_point%`0HUDの改善:HUDにおけるパーティーメンバーの色分け表示を廃止(色覚特性のプレイヤーに配慮)。\n`2%$rui/bullet_point%`0コミュニティーFAQ:配信予定のパッチやDLCに加え、トレーラーやプレイヤーの皆様の作品をお届けするFAQの新項目です。\n`2%$rui/bullet_point%`0フィルムグレインのスライダーを追加。"
 				"KNB_SUBJECT_00_SUB_06_Q"	"`2%$rui/bullet_point%`0新機能"
@@ -1681,13 +1784,13 @@ playlists
 				"KNB_SUBJECT_00_SUB_07_Q"	"`2%$rui/bullet_point%`0バランス調整"
 				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0ホロパイロットのデコイの改良。デコイはジップラインに配置でき、物をまたぐか壁と衝突した際の復帰が早まり、脅威スコープやソナーグレネードで視認でき、ドームシールド上を走らず、天井に激突せず、侵入ポイントを通過すると死亡するようになりました。\n`2%$rui/bullet_point%`0プレイヤーが発射と同時にリロードを押していると、クレーバーをセミオートで発射できなくなりました。\n`2%$rui/bullet_point%`0タイタンが処刑攻撃を実行して無敵状態になっている間は、ライフバーが金色で点滅するようになりました。\n`2%$rui/bullet_point%`0視界設定をユーザーごとに保存できるようになりました。\n`2%$rui/bullet_point%`0ロードアウトの編集中に武器を切り替える際に、引き続き使用できる場合はMOD設定が引き継がれるようになりました。\n"
 				"KNB_SUBJECT_00_SUB_08_Q"	"`2%$rui/bullet_point%`0改善点"
-				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0スナイパーと増幅壁で隔てられていても、狙撃手が至近距離にいると撃たれてしまう問題を修正。\n`2%$rui/bullet_point%`0セントリーが増幅壁越しの標的を適切に追跡するように修正。\n`2%$rui/bullet_point%`0味方を通して銃弾を発射した際に軌跡が表示されない問題を修正。\n`2%$rui/bullet_point%`0マルチプレイヤーにおいてR201でストーカーを攻撃しても四肢が残り、他の武器に対する優位性が失われていた問題を修正。\n`2%$rui/bullet_point%`0フェーズシフト状態で増幅壁やハードカバーを使用した際に生じるバグを修正。\n`2%$rui/bullet_point%`0プレイヤーがタレットを空中に設置できることがあった問題を修正。\n`2%$rui/bullet_point%`0HUDで電気スモークの残数が不適切に表示されていた問題を修正。\n`2%$rui/bullet_point%`0スコアボードで、パイロットが操作するタイタンを撃破した際に、パイロットキル2回としてカウントされることがあった問題を修正。\n"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0スナイパーと増幅壁で隔てられていても、狙撃手が至近距離にいると撃たれてしまう問題を修正。\n`2%$rui/bullet_point%`0セントリーが増幅壁越しの標的を適切に追跡するように修正。\n`2%$rui/bullet_point%`0味方を通して銃弾を発射した際に軌跡が表示されない問題を修正。\n`2%$rui/bullet_point%`0Fixed theマルチプレイヤーにおいてR-201でストーカーを攻撃しても四肢が残り、他の武器に対する優位性が失われていた問題を修正。\n`2%$rui/bullet_point%`0フェーズシフト状態で増幅壁やハードカバーを使用した際に生じるバグを修正。\n`2%$rui/bullet_point%`0プレイヤーがタレットを空中に設置できることがあった問題を修正。\n`2%$rui/bullet_point%`0HUDで電気スモークの残数が不適切に表示されていた問題を修正。\n`2%$rui/bullet_point%`0スコアボードで、パイロットが操作するタイタンを撃破した際に、パイロットキル2回としてカウントされることがあった問題を修正。\n"
 				"KNB_SUBJECT_00_SUB_09_Q"	"`2%$rui/bullet_point%`0バグ修正"
 				"KNB_SUBJECT_00_SUB_10_A"	"`2%$rui/bullet_point%`0プレイヤーの接続レベルを伝えるログ機能を追加し、ラグや接続切れが発生した際にレポートの追跡調査に活用。\n`2%$rui/bullet_point%`0敗北時保護機能の発生要件を大幅に緩和 - 参加が遅れ、勝率が低いマッチに参加した際に、敗北が記録されない確率が上昇。ゲームが一定程度以上進行した状態でマッチに参加すると、敗北が記録されない旨を通知。\n`2%$rui/bullet_point%`0グラビティースターがパイロットに直撃した際のダメージが上昇。\n`2%$rui/bullet_point%`0フラットライン、R-97、スピットファイア、L-スター、ダブルテイク、EPGおよびサンダーボルトのダメージ上昇。\n`2%$rui/bullet_point%`0ボルトのダメージ減少。\n`2%$rui/bullet_point%`0再生によるパイロットのロードアウト名のリセットを廃止。\n`2%$rui/bullet_point%`0アシストによる武器の経験値獲得が復活。"
 				"KNB_SUBJECT_00_SUB_10_Q"	"%$rui/hud/scoreboard/status_titan% 1月23日 - サーバーアップデート・パート1"
 				"KNB_SUBJECT_00_SUB_11_A"	"`2%$rui/bullet_point%`0パイロットセントリーを弱体化。\n`2%$rui/bullet_point%`0ファイヤースターが味方タイタンで爆発した際に現れる、\"テルミットが付着\"という表示を廃止。\n`2%$rui/bullet_point%`0イオンのヴォーテックスシールドの吸収力がフレームレートで変化する問題を修正。\n`2%$rui/bullet_point%`0総合施設におけるAIの不適切なナビゲーションを修正。\n`2%$rui/bullet_point%`0墜落現場のコリジョンを修正し、プレイヤーが壁にめり込む問題を修正。\n`2%$rui/bullet_point%`0リージョンがスマートコア発動後にオーバーコアを使えない問題を修正。\n`2%$rui/bullet_point%`0Fairfightカテゴリーにより、サーバーへのアクセスが不適切に制限された問題を修正。\n`2%$rui/bullet_point%`0安定性に関する各種修正を実施。"
 				"KNB_SUBJECT_00_SUB_11_Q"	"`2%$rui/bullet_point%`0パート2"
-				"KNB_SUBJECT_00_SUB_12_A"	"新しいコンテンツ、機能や修正が盛りだくさん！タイタンフォール 2のDLC第1弾「エンジェルシティ・モスト・ウォンテッド」配信にあたり、開発チームが力を尽くして導入した変更点の数々を、以下でチェックしましょう。なお、こちらに掲載されている変更点や修正点は、パッチの内容の一例にすぎません。\n\n今後とも皆様のフィードバックは真摯に拝見し、さらになる改善を実施します。それでは、どうぞ！\n\n\n\n\n\nパッチノート全文は、`3titanfall.com`0 でご覧いただけます。"
+				"KNB_SUBJECT_00_SUB_12_A"	"新しいコンテンツ、機能や修正が盛りだくさん！タイタンフォール 2のDLC第1弾「エンジェルシティ・モスト・ウォンテッド」で行われた様々な変更を、以下に箇条書きでご紹介します。なお、こちらに掲載されている変更点や修正点は、パッチの内容の一例にすぎません。\n\n今後とも皆様のフィードバックは真摯に拝見し、さらになる改善を実施します。それでは、どうぞ！\n\n\n\n\n\nパッチノート全文は、`3titanfall.com`0 でご覧いただけます。"
 				"KNB_SUBJECT_00_SUB_12_Q"	"%$rui/hud/scoreboard/status_titan% 11月30日 - エンジェルシティモストウォンテッド"
 				"PL_aitdm"	"消耗戦"
 				"PL_aitdm_abbr"	"ATT"
@@ -1704,7 +1807,7 @@ playlists
 				"PL_attrition_abbr"	"BH"
 				"PL_attrition_desc"	"敵を倒して金を稼げ。稼いだボーナスを特定の地点で「アップロード」すればさらに獲得額が上昇。\n^FFC83200プレイヤー数:5対5      *AI\n時間制限:10分\n最大パーティー人数:5"
 				"PL_attrition_lobby"	"賞金稼ぎロビー"
-				"PL_capture_the_flag"	"キャプチャーザフラッグ"
+				"PL_capture_the_flag"	"キャプチャー・ザ・フラッグ"
 				"PL_capture_the_flag_abbr"	"CTF"
 				"PL_capture_the_flag_desc"	"敵のフラッグを奪って基地へ持ち帰れ。その間も敵チームにこちらのフラッグを奪わせるな！\n^FFC83200プレイヤー数:5対5\n時間制限:12分\n最大パーティー人数:5"
 				"PL_capture_the_flag_lobby"	"CTFロビー"
@@ -1715,10 +1818,10 @@ playlists
 				"PL_colony_abbr"	"植民地"
 				"PL_colony_desc"	"いつでも植民地だけを。^CCCCCC00このリストでは、^FFC83200消耗戦^CCCCCC00、^FFC83200パイロット対パイロット^CCCCCC00と^FFC83200LTS^CCCCCC00のマッチを検索します。"
 				"PL_colony_lobby"	"植民地24/7ロビー"
-				"PL_ctf_lf"	"Capture the Flag\n(Live Fire)"
+				"PL_ctf_lf"	"キャプチャー・ザ・フラッグ\n(ライブファイア)"
 				"PL_ctf_lf_abbr"	"ATT"
-				"PL_ctf_lf_desc"	"Fast paced Capture the Flag in Live Fire maps.\n^FFC83200Players: 6v6\nMax Party Size: 6\n^F4D5A600No Titans     No Boosts     Phase Shift Drops Flag"
-				"PL_ctf_lf_lobby"	"CTF Live Fire Lobby"
+				"PL_ctf_lf_desc"	"ライブファイアのマップで繰り広げる高速のキャプチャー・ザ・フラッグ。\n^FFC83200プレイヤー数:6対6\n最大パーティー人数:6\n^F4D5A600タイタンなし     ブーストなし     フェーズシフトでフラッグ落下"
+				"PL_ctf_lf_lobby"	"CTFライブファイアロビー"
 				"PL_default_description"	"デフォルトの説明"
 				"PL_default_lobbytitle"	"デフォルトのロビータイトル"
 				"PL_default_name"	"デフォルトの名前"
@@ -1739,10 +1842,10 @@ playlists
 				"PL_ffa_abbr"	"FFA"
 				"PL_ffa_desc"	"全パイロットが自分のために戦う。敵をすべて始末しろ。\n^FFC83200プレイヤー数:1対11\n時間制限:10分\n最大パーティー人数:1"
 				"PL_ffa_lobby"	"フリー・フォー・オールロビー"
-				"PL_glitch"	"グリッチ24/7"
-				"PL_glitch_abbr"	"GLI"
-				"PL_glitch_desc"	"いつでもグリッチ。^CCCCCC00このリストでは^FFC83200CTF^CCCCCC00、^FFC83200拠点増幅^CCCCCC00、^FFC83200パイロット対パイロット^CCCCCC00、^FFC83200ライブファイア^CCCCCC00と^FFC83200LTS^CCCCCC00のマッチを検索します。"
-				"PL_glitch_lobby"	"グリッチ24/7ロビー"
+				"PL_Relic"	"グリッチ24/7"
+				"PL_Relic_abbr"	"GLI"
+				"PL_Relic_desc"	"いつでもグリッチ。^CCCCCC00このリストでは^FFC83200キャプチャー・ザ・フラッグ^CCCCCC00、^FFC83200拠点増幅^CCCCCC00、^FFC83200パイロット対パイロット^CCCCCC00、^FFC83200ライブファイア^CCCCCC00と^FFC83200LTS^CCCCCC00のマッチを検索します。"
+				"PL_Relic_lobby"	"グリッチ24/7ロビー"
 				"PL_groud_war_lobby"	"8v8ミックステープロビー"
 				"PL_ground_war"	"8v8ミックステープ"
 				"PL_ground_war_abbr"	"8v8"
@@ -1756,7 +1859,7 @@ playlists
 				"PL_iron_last_titan_standing_abbr"	"ILTS"
 				"PL_iron_last_titan_standing_desc"	"タイタンのみ、ラウンド制の勝ち抜き戦。3ラウンド先取で勝利。\n^FFC83200プレイヤー数:5対5      *パイロットなし\n時間制限:1ラウンド3分      *リスポーンなし\n最大パーティー人数:5"
 				"PL_iron_last_titan_standing_lobby"	"PL_iron_last_titan_standing_lobby"
-				"PL_last_titan_standing"	"LTS"
+				"PL_last_titan_standing"	"ラスト・タイタン・スタンディング"
 				"PL_last_titan_standing_abbr"	"LTS"
 				"PL_last_titan_standing_desc"	"全員がタイタンに乗った状態で開始し、ラウンド単位で勝ち残りを狙う。先に3ラウンド勝利したチームが勝者となる。\n^FFC83200プレイヤー数:5対5      *タイタンでスタート\n時間制限:1ラウンド3分      *リスポーンなし\n最大パーティー人数:5"
 				"PL_last_titan_standing_lobby"	"LTSロビー"
@@ -1767,12 +1870,13 @@ playlists
 				"PL_load_a_map_on_the_command_line"	"コマンド行でマップをロード -devonly"
 				"PL_marked_for_death"	"マーク・フォー・デス"
 				"PL_marked_for_death_abbr"	"MFD"
-				"PL_marked_for_death_desc"	"マークされた味方を守って敵を倒せ。\n^FFC83200プレイヤー数:6対6  \n時間制限:12分\n最大パーティー人数:6"
+				"PL_marked_for_death_desc"	"マークされた標的の命をめぐる攻防戦。\n^FFC83200プレイヤー数:6対6  \n時間制限:12分\n最大パーティー人数:6"
 				"PL_marked_for_death_lobby"	"マーク・フォー・デス・ロビー"
-				"PL_pilot_hunter"	"スカーミッシュ"
-				"PL_pilot_hunter_abbr"	"SKM"
-				"PL_pilot_hunter_desc"	"敵のパイロットやタイタンを倒せ。\n^FFC83200プレイヤー数:8対8\n時間制限:10分\n最大パーティー人数:8"
-				"PL_pilot_hunter_lobby"	"スカーミッシュロビー"
+				"PL_pilot_hunter"	"タイタンブロール"
+				"PL_pilot_hunter_abbr"	"TTDM"
+				"PL_pilot_hunter_desc"	"敵のタイタンを倒せ。\n^FFC83200プレイヤー数:5対5\n時間制限:10分\n最大パーティー人数:5"
+				"PL_pilot_hunter_hint"	"敵のタイタンを倒せ。\n脱出なし"
+				"PL_pilot_hunter_lobby"	"タイタンブロールのロビー"
 				"PL_pilot_skirmish"	"パイロット対パイロット"
 				"PL_pilot_skirmish_abbr"	"PvP"
 				"PL_pilot_skirmish_desc"	"敵パイロットを撃破せよ。タイタンフォール禁止。\n^FFC83200プレイヤー数:8対8      *タイタンなし\n時間制限:10分\n最大パーティー人数:8"
@@ -1798,32 +1902,35 @@ playlists
 			"Language" "russian"
 			"Tokens"
 			{
-				"COMMUNITYUPDATE_00_A"	"Обзор обновления «Новая колония», выход которого состоится 30 марта 2017 года!\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_00_Q"	"Игровой трейлер «Новая колония»"
-				"COMMUNITYUPDATE_01_A"	"Подробный обзор обновления «Новая колония»...\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_01_Q"	"Новостная сеть Фронтира — 23.03.2017"
-				"COMMUNITYUPDATE_02_A"	"Обзор изменений и улучшений, внесенных в этом месяце для обновления «Новая колония».\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_02_Q"	"Описание изменений «Новой колонии»"
-				"COMMUNITYUPDATE_03_A"	"Впервые в Titanfall 2? Мастер Frothy Omen научит вас основам игры за пилота: от двойных прыжков до стрельбы и применения спецоружия.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_03_Q"	"Школа пилотов Titanfall 2"
-				"COMMUNITYUPDATE_04_A"	"Главный дизайнер Джейсон Маккорд рассуждает о кампании, разработка которой помогла команде определиться с подходом к созданию одиночного режима.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_04_Q"	"Блог разработчиков Respawn — «Маяк»"
-				"COMMUNITYUPDATE_05_A"	"Возможно, самый опасный игрок в Titanfall, Benchy показывает чудеса обращения со снайперским оружием в Titanfall 2.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_05_Q"	"Монтаж — Бог «Крабера» от Benchy"
-				"COMMUNITYUPDATE_06_A"	"Художник Николь Пех нарисовал фантастические обои ресторанов для Титанов.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_06_Q"	"Фан-арт — обои с Титанами"
-				"COMMUNITYUPDATE_07_A"	"Новый режим `1Перестрелка`0: молниеносные поединки пилотов 6 на 6 на короткой дистанции.\n\nДля этого режима мы специально разработали две новые карты: `1Склад`0 и `1Луг`0. Эти две бесплатные карты идеально подходят для смертельной перестрелки в узком пространстве.\n\n\nЧтобы посмотреть, нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_07_Q"	"Трейлер DLC «Перестрелка»"
-				"COMMUNITYUPDATE_08_A"	"Всеми любимая карта `1Город Ангелов`0 из первой части Titanfall снова в строю. Первое бесплатное DLC для Titanfall 2 под названием `1Особо опасные в Городе Ангелов`0 доступно для всех игроков с 1 декабря. В обновлении также есть улучшения внешнего вида, которые немного изменят Фронтир. \n\n\nЧтобы посмотреть, нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_08_Q"	"Трейлер DLC «Город Ангелов»"
-				"COMMUNITYUPDATE_09_A"	"С возвращением.\n\n\nЧтобы посмотреть, нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_09_Q"	"Трейлер «На бис»"
-				"COMMUNITYUPDATE_10_A"	"Две легенды. Одно наследие.\n\n\nЧтобы посмотреть, нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_10_Q"	"Трейлер «Стать одним»"
-				"COMMUNITYUPDATE_11_A"	"Никаких ограничений.\n\n\nЧтобы посмотреть, нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_11_Q"	"Трейлер «Игра за пилотов»"
+				"COMMUNITYUPDATE_00_A"	"Новые карты, Титаны, Праймы и многое другое скоро появятся в игре. Хотите узнать больше?\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_00_Q"	"Новостная сеть Фронтира: планы на DLC"
+				"COMMUNITYUPDATE_01_A"	"Обзор обновления «Новая колония», выход которого состоялся 30 марта 2017 года!\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_01_Q"	"Трейлер игрового процесса «Новой колонии»"
+				"COMMUNITYUPDATE_02_A"	"Подробный обзор обновления «Новая колония»...\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_02_Q"	"Новостная сеть Фронтира — 23.03.2017"
+				"COMMUNITYUPDATE_03_A"	"Обзор изменений и улучшений, внесенных в этом месяце для обновления «Новая колония».\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_03_Q"	"Описание изменений «Новой колонии»"
+				"COMMUNITYUPDATE_04_A"	"Впервые в Titanfall 2? Мастер Frothy Omen научит вас основам игры за пилота: от двойных прыжков до стрельбы и применения спецоружия.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_04_Q"	"Школа пилотов Titanfall 2"
+				"COMMUNITYUPDATE_05_A"	"Главный дизайнер Джейсон Маккорд размышляет об этапе игровой кампании, разработка которого помогла команде определиться с подходом к одиночному режиму.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_05_Q"	"Блог разработчиков Respawn: создание «Маяка»"
+				"COMMUNITYUPDATE_06_A"	"Мой Парра, аниматор Respawn, опубликовал очередной фантастический эпизод Titan Toons.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_06_Q"	"Titan Toons: Вечная «Перестрелка»"
+				"COMMUNITYUPDATE_07_A"	"Художник Николь Пех нарисовал фантастические обои на основе гипотетических ресторанов, которые могли бы принадлежать Титанам.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_07_Q"	"Фан-арт: обои с Титанами"
+				"COMMUNITYUPDATE_08_A"	"«Перестрелка» — новый адреналиновый режим, в котором две команды из шести пилотов сражаются до последней капли крови. Для этого режима мы специально создали две новые бесплатные карты: «Луг» и «Громады». Это компактные закрытые арены, идеально подходящие для напряженных боев на близких дистанциях.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_08_Q"	"Трейлер «Добро пожаловать в Перестрелку»"
+				"COMMUNITYUPDATE_09_A"	"Всеми любимая карта `1Город Ангелов`0 из первой части Titanfall снова в строю. Первое бесплатное DLC для Titanfall 2 под названием `1Особо опасные в Городе Ангелов`0 доступно для всех игроков с 1 декабря. В обновлении также есть улучшения внешнего вида, которые немного изменят Фронтир. \n\n\nЧтобы посмотреть, нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_09_Q"	"Трейлер «Добро пожаловать в Город Ангелов»"
+				"COMMUNITYUPDATE_10_A"	"С возвращением!\n\n\nЧтобы посмотреть, нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_10_Q"	"Трейлер «На бис»"
+				"COMMUNITYUPDATE_11_A"	"Две легенды. Одно наследие.\n\n\nЧтобы посмотреть, нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_11_Q"	"Трейлер одиночной игры «Единое целое»"
+				"COMMUNITYUPDATE_12_A"	"Никаких ограничений.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_12_Q"	"Трейлер сетевой игры «Пилоты»"
 				"COMMUNITYUPDATE_DESC"	"`3Новости сообщества Titanfall`0\n\nНовости и ссылки со всего Интернета.\n\nХотите еще?\n`2%$rui/bullet_point%`0Подпишитесь на нас в Twitter: `1@Respawn`0\n`2%$rui/bullet_point%`0Поставьте «Нравится» на `1facebook.com/RespawnEntertainment`0\n`2%$rui/bullet_point%`0Заходите на `1www.respawn.com`0."
 				"COMMUNITYUPDATE_NAME"	"Сообщество"
+				"GAMEMODE_TDM"	"Драка Титанов"
 				"KNB_SUBJECT_00_DESC"	"`3Что нового в Titanfall?`0\n\nНажмите сюда и узнайте, что изменилось в Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Изменения"
 				"KNB_SUBJECT_00_SUB_00_A"	"Слева приведен список улучшений, которые вносит третий набор загружаемого контента для Titanfall 2: «Новая колония». Отметим, что перечисленные изменения и исправления — лишь малая часть обновления.\n\nКак и всегда, мы будем изучать ваши отзывы и вносить дополнительные улучшения. Приятной игры!\n\n\n\n\n\nПолное описание обновления можно найти на `3titanfall.com`0."
@@ -1902,10 +2009,10 @@ playlists
 				"PL_ffa_abbr"	"ВПВ"
 				"PL_ffa_desc"	"Каждый сам за себя. Убейте всех пилотов.\n^FFC83200Игроки: 1 на 11\nЛимит времени: 10 мин\nРазмер команды: 1"
 				"PL_ffa_lobby"	"Лобби: Все против всех"
-				"PL_glitch"	"«Разлом» 24/7 "
-				"PL_glitch_abbr"	"РЗЛМ"
-				"PL_glitch_desc"	"«Разлом» 24/7. ^CCCCCC00Поиск матчей в режимах ^FFC83200ЗФ^CCCCCC00, ^FFC83200«Усиленные опорные пункты»^CCCCCC00, ^FFC83200«Пилоты против пилотов»^CCCCCC00, ^FFC83200«Перестрелка»^CCCCCC00 и ^FFC83200«Последний из Титанов»^CCCCCC00."
-				"PL_glitch_lobby"	"Лобби: «Разлом» 24/7"
+				"PL_Relic"	"«Разлом» 24/7 "
+				"PL_Relic_abbr"	"РЗЛМ"
+				"PL_Relic_desc"	"«Разлом» 24/7. ^CCCCCC00Поиск матчей в режимах ^FFC83200ЗФ^CCCCCC00, ^FFC83200«Усиленные опорные пункты»^CCCCCC00, ^FFC83200«Пилоты против пилотов»^CCCCCC00, ^FFC83200«Перестрелка»^CCCCCC00 и ^FFC83200«Последний из Титанов»^CCCCCC00."
+				"PL_Relic_lobby"	"Лобби: «Разлом» 24/7"
 				"PL_groud_war_lobby"	"Смешанный набор 8 на 8: лобби"
 				"PL_ground_war"	"Смешанный набор 8 на 8"
 				"PL_ground_war_abbr"	"8 на 8"
@@ -1930,12 +2037,13 @@ playlists
 				"PL_load_a_map_on_the_command_line"	"Загрузка карты из командной строки -devonly"
 				"PL_marked_for_death"	"Приговор — смерть"
 				"PL_marked_for_death_abbr"	"П-С"
-				"PL_marked_for_death_desc"	"Убивайте или защищайте назначенные цели.\n^FFC83200Игроки: 6 на 6\nВремя: 12 мин\nРазмер команды: 6"
+				"PL_marked_for_death_desc"	"Убивайте или защищайте приговоренные цели.\n^FFC83200Игроки: 6 на 6\nВремя: 12 мин\nРазмер команды: 6"
 				"PL_marked_for_death_lobby"	"Лобби: Приговор — смерть"
-				"PL_pilot_hunter"	"Схватка"
-				"PL_pilot_hunter_abbr"	"СХВ"
-				"PL_pilot_hunter_desc"	"Убивайте вражеских пилотов и Титанов. \n^FFC83200Игроки: 8 на 8\nЛимит времени: 10 мин\nРазмер команды: 8"
-				"PL_pilot_hunter_lobby"	"Лобби: Схватка"
+				"PL_pilot_hunter"	"Драка Титанов"
+				"PL_pilot_hunter_abbr"	"TTDM"
+				"PL_pilot_hunter_desc"	"Убивайте вражеских Титанов. \n^FFC83200Игроки: 5 на 5\nЛимит времени: 10 мин\nРазмер команды: 5"
+				"PL_pilot_hunter_hint"	"Убивайте вражеских Титанов.\nКатапультирование запрещено"
+				"PL_pilot_hunter_lobby"	"Зал ожидания: Драка Титанов"
 				"PL_pilot_skirmish"	"Пилоты против пилотов"
 				"PL_pilot_skirmish_abbr"	"ППП"
 				"PL_pilot_skirmish_desc"	"Убивайте вражеских пилотов. Высадка Титана не разрешена.\n^FFC83200Игроки: 8 на 8      *Без Титанов\nЛимит времени: 10 мин\nРазмер команды: 8"
@@ -1961,37 +2069,40 @@ playlists
 			"Language" "spanish"
 			"Tokens"
 			{
-				"COMMUNITYUPDATE_00_A"	"Un primer vistazo al juego donde se muestran todas las novedades que llegan con la actualización Colony Reborn, disponible el 30/3/2017.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_00_Q"	"Tráiler de juego «Colony Reborn»"
-				"COMMUNITYUPDATE_01_A"	"Consulta un listado completo de todas las novedades de la actualización Colony Reborn...\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_01_Q"	"Red de noticias de la Frontera: 23/03/2017"
-				"COMMUNITYUPDATE_02_A"	"Consulta el listado completo de todos los cambios y novedades de este mes en la actualización Colony Reborn.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_02_Q"	"Notas de parche Colony Reborn"
-				"COMMUNITYUPDATE_03_A"	"¿Acabas de empezar en Titanfall 2? Déjate aconsejar por el sensei Frothy Omen, que te instruirá en el «camino del piloto», desde saltos dobles básicos al uso de armas de fuego y armas explosivas.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_03_Q"	"Escuela de pilotos de Titanfall 2"
-				"COMMUNITYUPDATE_04_A"	"El diseñador jefe Jason McCord recuerda cómo se creó la misión de campaña que ayudó a definir la manera en que el equipo enfocó la creación del modo un jugador.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_04_Q"	"Blog de Respawn: Creación de La baliza"
-				"COMMUNITYUPDATE_05_A"	"Uno de los jugadores más mortíferos de Titanfall, Benchy, nos enseña cómo ser un francotirador de primera en Titanfall 2.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_05_Q"	"Montaje: «Kraber God» por Benchy"
-				"COMMUNITYUPDATE_06_A"	"La diseñadora Nicole Peh ha creado unos fondos de pantalla fantásticos inspirados en el tipo de restaurantes regentaría cada titán.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlos."
-				"COMMUNITYUPDATE_06_Q"	"«Fan Art»: fondos de pantalla de titanes"
-				"COMMUNITYUPDATE_07_A"	"Presentamos `1Munición real`0, un frenético modo 6 contra 6 solo para pilotos centrado en combates competitivos a corta distancia.\n\nCon dos nuevos mapas diseñados específicamente para este modo: `1Chimeneas`0 y `1Prado`0.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
-				"COMMUNITYUPDATE_07_Q"	"Tráiler: DLC «Munición real»"
-				"COMMUNITYUPDATE_08_A"	"Disfruta de la versión remasterizada de uno de los mapas favoritos de los fans del Titanfall original: `1Angel City`0. Prepárate para el primer DLC gratis para Titanfall 2 con `1Más buscados de Angel City`0, disponible el 1 de diciembre de 2016 para todos los jugadores. Incluye nuevas opciones cosméticas para darle un toque fresco a la Frontera. \n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
-				"COMMUNITYUPDATE_08_Q"	"Tráiler: DLC «Angel City»"
-				"COMMUNITYUPDATE_09_A"	"Bienvenido.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
-				"COMMUNITYUPDATE_09_Q"	"Tráiler de premios «Encore»"
-				"COMMUNITYUPDATE_10_A"	"Dos leyendas, un legado.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
-				"COMMUNITYUPDATE_10_Q"	"Tráiler: «Sed uno en combate»"
-				"COMMUNITYUPDATE_11_A"	"Sin límites.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
-				"COMMUNITYUPDATE_11_Q"	"Tráiler: «Juego de pilotos»"
+				"COMMUNITYUPDATE_00_A"	"Nuevos mapas, más titanes prime, un nuevo titán y más en camino. Consulta toda la información aquí.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_00_Q"	"Red de noticias de la Frontera: plan de DLC"
+				"COMMUNITYUPDATE_01_A"	"Un primer vistazo al juego donde se muestran todas las novedades que llegan con la actualización Colony Reborn, disponible el 30/3/2017.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_01_Q"	"Tráiler de juego «Colony Reborn»"
+				"COMMUNITYUPDATE_02_A"	"Consulta un listado completo de todas las novedades de la actualización Colony Reborn...\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_02_Q"	"Red de noticias de la Frontera: 23/03/2017"
+				"COMMUNITYUPDATE_03_A"	"Consulta el listado completo de todos los cambios y novedades de este mes en la actualización Colony Reborn.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_03_Q"	"Notas del parche Colony Reborn"
+				"COMMUNITYUPDATE_04_A"	"¿Acabas de empezar en Titanfall 2? Déjate aconsejar por el senséi Frothy Omen, que te instruirá en el «camino del piloto», desde saltos dobles básicos al uso de armas de fuego y armas explosivas.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_04_Q"	"Escuela de pilotos de Titanfall 2"
+				"COMMUNITYUPDATE_05_A"	"El diseñador jefe Jason McCord recuerda cómo se creó la misión de campaña que ayudó a definir la manera en que el equipo enfocó la creación del modo Un jugador.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_05_Q"	"Blog de Respawn: Creación de La baliza"
+				"COMMUNITYUPDATE_06_A"	"El animador de Respawn Moy Parra vuelve con otro fantástico episodio de Titan Toons.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_06_Q"	"Titan Toons: Munición Real Repetición"
+				"COMMUNITYUPDATE_07_A"	"La diseñadora Nicole Peh ha creado unos fantásticos fondos de pantalla inspirados en el tipo de restaurantes que regentaría cada titán.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlos."
+				"COMMUNITYUPDATE_07_Q"	"«Fan Art»: fondos de pantalla de titanes"
+				"COMMUNITYUPDATE_08_A"	"Presentamos Munición real, un frenético modo 6 contra 6 solo para pilotos centrado en combates competitivos a corta distancia. Con dos nuevos mapas diseñados específicamente para este modo: Chimeneas y Prado. Estos dos mapas gratuitos son zonas de combate letales y opresivas creadas específicamente para este modo frenético e intenso.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_08_Q"	"Tráiler de juego «Bienvenidos a Munición real»"
+				"COMMUNITYUPDATE_09_A"	"Disfruta de la versión remasterizada de uno de los mapas favoritos de los fans del Titanfall original: `1Angel City`0. Prepárate para el primer DLC gratis para Titanfall 2 con `1Más buscados de Angel City`0, disponible el 1 de diciembre de 2016 para todos los jugadores. Incluye nuevas opciones cosméticas para darle un toque fresco a la Frontera. \n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_09_Q"	"Tráiler de juego «Bienvenidos a Angel City»"
+				"COMMUNITYUPDATE_10_A"	"Bienvenidos.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_10_Q"	"Tráiler de premios «Encore»"
+				"COMMUNITYUPDATE_11_A"	"Dos leyendas, un legado.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_11_Q"	"Tráiler de juego de Un jugador «Sed uno en combate»"
+				"COMMUNITYUPDATE_12_A"	"Sin límites.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_12_Q"	"Tráiler de juego Multijugador «Pilotos»"
 				"COMMUNITYUPDATE_DESC"	"`3Noticias de comunidad de Titanfall`0\n\nInformación y enlaces en la red.\n\nPara más información:\n`2%$rui/bullet_point%`0Síguenos en Twitter `1@Respawn`0\n`2%$rui/bullet_point%`0Hazte fan en `1facebook.com/RespawnEntertainment`0\n`2%$rui/bullet_point%`0Únete en `1www.respawn.com`0"
 				"COMMUNITYUPDATE_NAME"	"Comunidad"
+				"GAMEMODE_TDM"	"Batalla de titanes"
 				"KNB_SUBJECT_00_DESC"	"`3¿Qué novedades trae Titanfall?`0\n\n¡Consulta aquí qué ha cambiado en Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Notas de parche"
 				"KNB_SUBJECT_00_SUB_00_A"	"Consulta la lista de la izquierda para ver los cambios incluidos en el tercer DLC de Titanfall 2: Colony Reborn. Ten en cuenta que los cambios y soluciones indicados son solo una pequeña parte de lo que contiene el parche.\n\nComo siempre, seguiremos atentos a vuestros comentarios y continuaremos implementando mejoras en el futuro. ¡Que lo disfrutes!\n\n\n\n\n\nPara leer las notas del parche completas, visita `3titanfall.com`0."
 				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 30 de marzo: Colony Reborn"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Colonia\n\n`2%$rui/bullet_point%`0Nueva ejecución: Aplastacráneos: aplasta el cráneo a tus enemigos con estilo con el garfio.\n\n`2%$rui/bullet_point%`0Nueva arma: R-101"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Colonia.\n\n`2%$rui/bullet_point%`0Nueva ejecución: Aplastacráneos: aplasta el cráneo a tus enemigos con estilo con el garfio.\n\n`2%$rui/bullet_point%`0Nueva arma: R-101."
 				"KNB_SUBJECT_00_SUB_01_Q"	"`2%$rui/bullet_point%`0Nuevo contenido [gratis]"
 				"KNB_SUBJECT_00_SUB_02_A"	"Nuevos titanes prime:\n`2%$rui/bullet_point%`0Northstar y Legion: destaca con un aspecto y ejecuciones renovados.\n\nPacks visuales de titán:\n`2%$rui/bullet_point%`0Un pack por titán, que incluye cinco nuevas decoraciones y una pintura de guerra exclusiva.\n\nPack de indicativos:\n`2%$rui/bullet_point%`0Incluye acceso instantáneo a 20 banderas y 10 parches de indicativo nuevos y exclusivos.\n\nPack de camuflajes:\n`2%$rui/bullet_point%`0Incluye 20 nuevos camuflajes aplicables a todos los titanes, armas de titán, piloto y armas de piloto.\n"
 				"KNB_SUBJECT_00_SUB_02_Q"	"`2%$rui/bullet_point%`0Nuevo contenido [de pago]"
@@ -2043,7 +2154,7 @@ playlists
 				"PL_colony_lobby"	"Vestíbulo de Colonia 24/7"
 				"PL_ctf_lf"	"Captura la bandera\n(Munición real)"
 				"PL_ctf_lf_abbr"	"DGT"
-				"PL_ctf_lf_desc"	"Frenético Captura la bandera en mapas de Munición real.\n^FFC83200Jugadores: 6 contra 6\nTamaño máximo de grupo: 6\n^F4D5A600Sin titanes     Sin potenciadores     Al usar el salto de fase, se pierde la bandera"
+				"PL_ctf_lf_desc"	"Frenético Captura la bandera en mapas de Munición real.\n^FFC83200Jugadores: 6 contra6\nTamaño máximo de grupo: 6\n^F4D5A600Sin titanes     Sin potenciadores     Al usar el salto de fase, se pierde la bandera"
 				"PL_ctf_lf_lobby"	"Vestíbulo CLB Munición real"
 				"PL_default_description"	"Descripción predeterminada"
 				"PL_default_lobbytitle"	"Título de vestíbulo por defecto"
@@ -2065,10 +2176,10 @@ playlists
 				"PL_ffa_abbr"	"BC"
 				"PL_ffa_desc"	"Cada piloto por su cuenta; elimina a todos los enemigos.\n^FFC83200Jugadores: 1 contra 11\nLímite de tiempo: 10 min\nTamaño máximo de grupo: 1"
 				"PL_ffa_lobby"	"Vestíbulo de Batalla campal"
-				"PL_glitch"	"Glitch 24/7"
-				"PL_glitch_abbr"	"GLI"
-				"PL_glitch_desc"	"Mapa Glitch, continuamente. ^CCCCCC00Buscará partidas de ^FFC83200CLB^CCCCCC00, ^FFC83200Fortines cargados^CCCCCC00, ^FFC83200Pilotos contra pilotos^CCCCCC00, ^FFC83200Munición real^CCCCCC00 y ^FFC83200Último titán en pie^CCCCCC00."
-				"PL_glitch_lobby"	"Vestíbulo de Glitch 24/7"
+				"PL_Relic"	"Relic 24/7"
+				"PL_Relic_abbr"	"GLI"
+				"PL_Relic_desc"	"Mapa Relic, continuamente. ^CCCCCC00Buscará partidas de ^FFC83200Captura la bandera^CCCCCC00, ^FFC83200Fortines cargados^CCCCCC00, ^FFC83200Pilotos contra pilotos^CCCCCC00, ^FFC83200Munición real^CCCCCC00 y ^FFC83200Último titán en pie^CCCCCC00."
+				"PL_Relic_lobby"	"Vestíbulo de Relic 24/7"
 				"PL_groud_war_lobby"	"Vestíbulo de Variado 8c8"
 				"PL_ground_war"	"Variado 8c8"
 				"PL_ground_war_abbr"	"8c8"
@@ -2093,12 +2204,13 @@ playlists
 				"PL_load_a_map_on_the_command_line"	"Carga un mapa en la línea de comandos. Solo para desarrollo."
 				"PL_marked_for_death"	"Condenado"
 				"PL_marked_for_death_abbr"	"CON"
-				"PL_marked_for_death_desc"	"Elimina o protege al blanco.\n^FFC83200Jugadores: 6 contra 6 \nLímite de tiempo: 12 min\nTamaño máximo de grupo: 6"
+				"PL_marked_for_death_desc"	"Elimina o protege los blancos marcados.\n^FFC83200Jugadores: 6 contra 6 \nLímite de tiempo: 12 min\nTamaño máximo de grupo: 6"
 				"PL_marked_for_death_lobby"	"Vestíbulo de Condenado"
-				"PL_pilot_hunter"	"Escaramuza"
-				"PL_pilot_hunter_abbr"	"ECM"
-				"PL_pilot_hunter_desc"	"Elimina pilotos y titanes enemigos. \n^FFC83200Jugadores: 8 contra 8\nLímite de tiempo: 10 min\nTamaño máximo de grupo: 8"
-				"PL_pilot_hunter_lobby"	"Vestíbulo de Escaramuza"
+				"PL_pilot_hunter"	"Batalla de titanes"
+				"PL_pilot_hunter_abbr"	"BDT"
+				"PL_pilot_hunter_desc"	"Elimina titanes enemigos. \n^FFC83200Jugadores: 5 contra 5\nLímite de tiempo: 10 min\nTamaño máximo de grupo: 5"
+				"PL_pilot_hunter_hint"	"Elimina titanes enemigos.\nSin eyección"
+				"PL_pilot_hunter_lobby"	"Vestíbulo de Batalla de titanes"
 				"PL_pilot_skirmish"	"Pilotos contra pilotos"
 				"PL_pilot_skirmish_abbr"	"PcP"
 				"PL_pilot_skirmish_desc"	"Elimina pilotos enemigos. No se permiten titanes.\n^FFC83200Jugadores: 8 contra 8      *Sin titanes\nLímite de tiempo: 10 min\nTamaño máximo de grupo: 8"
@@ -2124,43 +2236,46 @@ playlists
 			"Language" "tchinese"
 			"Tokens"
 			{
-				"COMMUNITYUPDATE_00_A"	"率先觀看展示所有於 2017 年 3 月 30 日推出的「殖民地復興」更新中登場的新內容！\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_00_Q"	"「殖民地復興」遊戲預告片"
-				"COMMUNITYUPDATE_01_A"	"徹底分析「殖民地復興」更新的所有新內容...\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_01_Q"	"邊境新聞網 - 03.23.2017"
-				"COMMUNITYUPDATE_02_A"	"閱讀我們在本月份為「殖民地復興」更新所做的變更與更新完整清單。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_02_Q"	"「殖民地復興」修補檔資訊"
-				"COMMUNITYUPDATE_03_A"	"《Titanfall 2》的新手？讓 Frothy Omen 老師從基本的二連跳到使用武器與火力彈藥教你各種駕馭鐵馭的方式。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_03_Q"	"《Titanfall 2》鐵馭教學"
-				"COMMUNITYUPDATE_04_A"	"首席設計師 Jason McCord 回想協助團隊定調如何著手創造單人遊戲的戰役任務的製作過程。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_04_Q"	"Respawn 開發日誌 - 製作「信號台」"
-				"COMMUNITYUPDATE_05_A"	"他可說是《Titanfall》裡最致命的玩家，Benchy 讓我們見識一下在《Titanfall 2》中要如何狙擊。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_05_Q"	"蒙太奇 - Benchy 的克萊博之神"
-				"COMMUNITYUPDATE_06_A"	"藝術家 Nicole Peh 以每種泰坦會經營哪種餐廳為靈感創作了一些超棒的桌布。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_06_Q"	"粉絲創作 - 泰坦桌布"
-				"COMMUNITYUPDATE_07_A"	"`1烈火戰場`0介紹：快節奏的 6 對 6 鐵馭對戰模式，呈現競爭激烈的近距離戰鬥。\n\n提供專門為烈火戰場設計的兩張全新地圖：`1層次`0和`1草原`0。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_07_Q"	"預告片 -「烈火戰場」DLC"
-				"COMMUNITYUPDATE_08_A"	"體驗經過重製的初代《Titanfall》玩家最愛的`1天使城`0地圖。為在 12 月 1 日與`1天使城通緝令`0一同向所有玩家發佈的首個免費《Titanfall 2》DLC 做好準備。此內容包含新的外觀選項，可讓您在邊境上更加英姿煥發。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_08_Q"	"預告片 -「天使城」DLC"
-				"COMMUNITYUPDATE_09_A"	"歡迎回來。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_09_Q"	"「Encore」讚譽影片"
-				"COMMUNITYUPDATE_10_A"	"兩位傳奇，一次遺贈。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_10_Q"	"預告片 -「合而為一」"
-				"COMMUNITYUPDATE_11_A"	"永無止境。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_11_Q"	"預告片 -「鐵馭玩法」"
+				"COMMUNITYUPDATE_00_A"	"全新地圖、更多至尊泰坦、一具全新泰坦和更多內容即將推出。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_00_Q"	"邊境新聞網：DLC 藍圖"
+				"COMMUNITYUPDATE_01_A"	"率先觀看展示所有於 2017 年 3 月 30 日推出的「殖民地重生」更新中登場的新內容！\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_01_Q"	"「殖民地重生」遊戲玩法預告片"
+				"COMMUNITYUPDATE_02_A"	"徹底分析「殖民地重生」更新的所有新內容...\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_02_Q"	"邊境新聞網 - 03.23.2017"
+				"COMMUNITYUPDATE_03_A"	"閱讀我們在本月份為「殖民地重生」更新所做的變更與更新完整清單。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_03_Q"	"「殖民地重生」修補檔資訊"
+				"COMMUNITYUPDATE_04_A"	"《Titanfall 2》的新手？讓 Frothy Omen 老師從基本的二連跳到使用武器與火力彈藥教你各種駕馭鐵馭的方式。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_04_Q"	"《Titanfall 2》鐵馭教學"
+				"COMMUNITYUPDATE_05_A"	"首席設計師 Jason McCord 回想協助團隊定調如何著手創造單人遊戲的戰役任務的製作過程。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_05_Q"	"Respawn 開發日誌 - 製作「信號台」"
+				"COMMUNITYUPDATE_06_A"	"Respawn 的動畫設計師 Moy Parra 推出了新一集精彩的 Titan Toons 動畫。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_06_Q"	"Titan Toons：再玩一場烈火戰場"
+				"COMMUNITYUPDATE_07_A"	"藝術家 Nicole Peh 以每種泰坦會經營哪種餐廳為靈感創作了一些超棒的桌布。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_07_Q"	"粉絲創作 - 泰坦桌布"
+				"COMMUNITYUPDATE_08_A"	"「烈火戰場」簡介：超快節奏的 6 對 6 鐵馭對戰模式，讓您體驗邊境上刺激的近距離戰鬥。「烈火戰場」包含兩張全新的專屬地圖：「堆積地」和「草原」。這兩張免費地圖提供了封閉式的對戰空間，是專門為快節奏的近戰模式而設計。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_08_Q"	"「歡迎來到烈火戰場」游戲玩法預告片"
+				"COMMUNITYUPDATE_09_A"	"體驗經過重製的初代《Titanfall》玩家最愛的`1天使城`0地圖。為在 12 月 1 日與`1天使城通緝令`0一同向所有玩家發佈的首個免費《Titanfall 2》DLC 做好準備。此內容包含新的外觀選項，可讓您在邊境上更加英姿煥發。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_09_Q"	"「歡迎來到天使城」游戲玩法預告片"
+				"COMMUNITYUPDATE_10_A"	"歡迎回來。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_10_Q"	"「Encore」讚譽影片"
+				"COMMUNITYUPDATE_11_A"	"兩位傳奇，一次遺贈。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_11_Q"	"「合而為一」單人模式游戲玩法預告片"
+				"COMMUNITYUPDATE_12_A"	"永無止境。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_12_Q"	"「鐵馭」多人模式游戲玩法預告片"
 				"COMMUNITYUPDATE_DESC"	"`3Titanfall 社群更新`0\n\n來自網路的資訊和連結。\n\n更多內容：\n`2%$rui/bullet_point%`0在 Twitter 上關注我們 `1@Respawn`0\n`2%$rui/bullet_point%`0在 `1facebook.com/RespawnEntertainment`0 追蹤我們\n`2%$rui/bullet_point%`0造訪 `1www.respawn.com`0 加入我們"
 				"COMMUNITYUPDATE_NAME"	"社群"
+				"GAMEMODE_TDM"	"泰坦爭鬥"
 				"KNB_SUBJECT_00_DESC"	"`3《Titanfall》有什麼新內容？`0\n\n從此處瞭解《Titanfall 2》的改變！"
 				"KNB_SUBJECT_00_NAME"	"修補檔資訊"
-				"KNB_SUBJECT_00_SUB_00_A"	"請見下方來瞭解研發團隊努力置入於《Titanfall 2》第三個 DLC「殖民地復興」的各項內容。請注意，下方列出的變更與修復範圍僅是本修補檔的一小部份。\n\n一如往常，我們將會持續地關注意見並在未來做出改善。遊戲愉快！\n\n\n\n\n\n完整版修補檔細節請見 `3titanfall.com`0。"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 3 月 30 日 - 殖民地復興"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0新地圖 - 殖民地\n\n`2%$rui/bullet_point%`0新處決：使用鉤爪帥氣地猛擊。\n\n`2%$rui/bullet_point%`0新武器：R101"
+				"KNB_SUBJECT_00_SUB_00_A"	"請見左邊的重點來瞭解我們對《Titanfall 2》第三個 DLC「殖民地重生」做出的內容變更。請記得下方列出的變更與修復範圍僅是本修補檔的一小部份。\n\n一如往常，我們將會持續地關注意見並在未來做出改善。遊戲愉快！\n\n\n\n\n\n完整版修補檔細節請見 `3titanfall.com`0。"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 3 月 30 日 - 殖民地重生"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0新地圖 - 殖民地\n\n`2%$rui/bullet_point%`0新處決 - 撲街：帥氣地使用鉤爪將敵人頭部砸向地面。\n\n`2%$rui/bullet_point%`0新武器 - R-101"
 				"KNB_SUBJECT_00_SUB_01_Q"	"`2%$rui/bullet_point%`0新內容（免費）"
-				"KNB_SUBJECT_00_SUB_02_A"	"新至尊泰坦：\n`2%$rui/bullet_point%`0北極星和軍團：透過全新外觀和處決動畫來在戰場上獨樹一格！\n\n泰坦藝術組合包\n`2%$rui/bullet_point%`0每具泰坦皆有一包，其中包含五種全新機頭藝術和獨家戰鬥塗裝\n\n呼叫代號組合包：\n`2%$rui/bullet_point%`0使用後立即可取得 20 種全新的專屬呼叫代號旗幟和 10 種呼叫代號徽章。\n\n迷彩組合包：\n`2%$rui/bullet_point%`0包含 20 種全新的專屬迷彩，供您套用於任何泰坦、泰坦武器、鐵馭或鐵馭武器上。\n"
+				"KNB_SUBJECT_00_SUB_02_A"	"新至尊泰坦：\n`2%$rui/bullet_point%`0北極星和軍團：透過全新外觀和處決動畫來在戰場上獨樹一格！\n\n泰坦藝術包：\n`2%$rui/bullet_point%`0每具泰坦皆有一包，其中包含五種全新機頭藝術和獨家戰鬥塗裝。\n\n呼叫代號包：\n`2%$rui/bullet_point%`0使用後立即可取得 20 種全新的專屬呼叫代號旗幟和 10 種呼叫代號徽章。\n\n迷彩包：\n`2%$rui/bullet_point%`0包含 20 種全新的專屬迷彩，供您套用於任何泰坦、泰坦武器、鐵馭或鐵馭武器上。\n"
 				"KNB_SUBJECT_00_SUB_02_Q"	"`2%$rui/bullet_point%`0新內容（付費）"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0天使城加入地圖隊列中\n`2%$rui/bullet_point%`0修復玩家因斷線後配置遭重置而無法遊戲的問題。\n`2%$rui/bullet_point%`0身價現在將準確地顯示您有史以來所獲得的總點數。\n`2%$rui/bullet_point%`0稍微減少專注衝鋒槍的近距離傷害。\n`2%$rui/bullet_point%`0減少專注衝鋒槍的中距離傷害，必須額外擊中一發子彈才可擊殺敵人。"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0天使城地圖新增至地圖隊列。\n`2%$rui/bullet_point%`0修正玩家們因為配置重置斷線而無法遊戲的問題。\n`2%$rui/bullet_point%`0身價將準確地顯示歷史賺取總點數。\n`2%$rui/bullet_point%`0稍微減少專注衝鋒槍的近距離傷害。\n`2%$rui/bullet_point%`0減少專注衝鋒槍的中距離傷害，必須額外擊中一發子彈才可擊殺敵人。"
 				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 3 月 2 日 - 伺服器更新"
-				"KNB_SUBJECT_00_SUB_04_A"	"請見下方來瞭解研發團隊努力置入於《Titanfall 2》第二個 DLC「烈火戰場」的各項內容。請注意，下方列出的變更與修復範圍僅是本修補檔的一小部份。\n\n一如往常，我們將會持續地關注意見並在未來做出改善。遊戲愉快！\n\n\n\n\n\n完整版修補檔細節請見 `3titanfall.com`0。"
+				"KNB_SUBJECT_00_SUB_04_A"	"請見左邊的重點來瞭解我們對《Titanfall 2》第二個 DLC「烈火戰場」做出的內容變更。請記得下方列出的變更與修復範圍僅是本修補檔的一小部份。\n\n一如往常，我們將會持續地關注意見並在未來做出改善。遊戲愉快！\n\n\n\n\n\n完整版修補檔細節請見 `3titanfall.com`0。"
 				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 2 月 23 日 - 烈火戰場"
 				"KNB_SUBJECT_00_SUB_05_A"	"烈火戰場：全新鐵馭對鐵馭殲滅模式！這是一場 6 對 6 回合制無重生比賽，您將會有一分鐘時間消滅敵方所有玩家或是在比賽時間結束時持有中立旗幟來取得勝利。先贏 5 回合的隊伍勝。\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - 草原，這張地圖擁有一條條被岩石環繞的草地路線，更具有適合遠距離進攻的環境和詭異的側擊路線。另外，地圖中還包含著纜繩！\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - 堆積地，這是個含有大量空曠環境的工業地區，而地圖中央則是一個由四周高牆所圍出的緊密空間。此地圖的垂直性將鼓勵玩家們從高處進攻或從外圍路線進行猛襲。\n\n`2%$rui/bullet_point%`0全新處決動畫：延遲猛擊：使用興奮劑後猛烈地向敵人揮動拳頭並將敵人砸倒在地。\n"
 				"KNB_SUBJECT_00_SUB_05_Q"	"`2%$rui/bullet_point%`0新內容〔免費〕"
@@ -2168,15 +2283,15 @@ playlists
 				"KNB_SUBJECT_00_SUB_06_Q"	"`2%$rui/bullet_point%`0新功能"
 				"KNB_SUBJECT_00_SUB_07_A"	"強力\n`2%$rui/bullet_point%`0減少彈群核心傷害。\n`2%$rui/bullet_point%`0移除彈群核心火箭的傷害遞減。\n`2%$rui/bullet_point%`0增加聲納突波冷卻時間。\n`2%$rui/bullet_point%`0減少 40mm 子彈大小。\n\n北極星\n`2%$rui/bullet_point%`0移除飛行核心火箭的傷害遞減。\n`2%$rui/bullet_point%`0增加衝刺值回復速度。\n\n烈焰\n`2%$rui/bullet_point%`0使用主武器瞄準鏡將會顯示彈道。\n\n離子\n`2%$rui/bullet_point%`0修復渦漩防護罩反彈子彈時會造成大量噴濺傷害的 Bug。\n"
 				"KNB_SUBJECT_00_SUB_07_Q"	"`2%$rui/bullet_point%`0平衡性變更"
-				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0改善幻影鐵馭誘餌。誘餌現在能夠在纜繩上使用、在踩到東西或碰到牆壁時比以前較為穩固、能夠被威脅視鏡和聲納榴彈發現、不再出現於圓頂護照頂端、不再撞到天花板或是在跑過門口時消失。\n`2%$rui/bullet_point%`0玩家使用克萊博時，同時按下填彈和開槍將無法使其半自動發射。\n`2%$rui/bullet_point%`0泰坦在進行處決時的無敵狀態下，其血條會變為金色並開始閃爍。\n`2%$rui/bullet_point%`0每個用戶都能儲存自己的視野設置。\n`2%$rui/bullet_point%`0在編輯配置時更換武器，遊戲將會盡量保留您的改裝選擇。\n"
+				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0改善幻影鐵馭誘餌。誘餌現在能夠在纜繩上使用、在踩到東西或碰到牆壁時比以前較為穩固、能夠被威脅視鏡和聲納榴彈發現、不再出現於圓頂護罩頂端、不再撞到天花板或是在跑過門口時消失。\n`2%$rui/bullet_point%`0玩家使用克萊博時，同時按下填彈和開槍將無法使其半自動發射。\n`2%$rui/bullet_point%`0泰坦在進行處決時的無敵狀態下，其血條會變為金色並開始閃爍。\n`2%$rui/bullet_point%`0每個用戶都能儲存自己的視野設置。\n`2%$rui/bullet_point%`0在編輯配置時更換武器，遊戲將會盡量保留您的改裝選擇。\n"
 				"KNB_SUBJECT_00_SUB_08_Q"	"`2%$rui/bullet_point%`0改善"
-				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0修復狙擊手距離很近時能夠擊穿強化障壁的問題。\n`2%$rui/bullet_point%`0修復砲塔隔著強化障壁的瞄準問題。\n`2%$rui/bullet_point%`0修復瞄準光束在使用彈藥類武器射向隊友時不會出現的問題。\n`2%$rui/bullet_point%`0修復 MP R201 無法讓潛行者解體，進而使此武器與同類武器相比時對潛行者效果較差的問題。\n`2%$rui/bullet_point%`0修復在瞬間轉移後使用 A 障壁或堅固掩護的問題。\n`2%$rui/bullet_point%`0修復玩家有時候能夠在空中設置砲塔的問題。\n`2%$rui/bullet_point%`0修復抬頭顯示顯示錯誤電子煙幕數量的問題。\n`2%$rui/bullet_point%`0修復有時候計分板將擊殺鐵馭駕駛的泰坦算作為擊殺 2 名鐵馭的問題。\n"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0修復狙擊手距離很近時能夠擊穿強化障壁的問題。\n`2%$rui/bullet_point%`0修復砲塔隔著強化障壁的瞄準問題。\n`2%$rui/bullet_point%`0修復瞄準光束在使用彈藥類武器射向隊友時不會出現的問題。\n`2%$rui/bullet_point%`0修復 MP R-201 無法讓潛行者解體，進而使此武器與同類武器相比時對潛行者效果較差的問題。\n`2%$rui/bullet_point%`0修復在瞬間轉移後使用 A 障壁或堅盾掩護的問題。\n`2%$rui/bullet_point%`0修復玩家有時候能夠在空中設置砲塔的問題。\n`2%$rui/bullet_point%`0修復抬頭顯示中顯示錯誤電子煙幕數量的問題。\n`2%$rui/bullet_point%`0修復有時候計分板將擊殺鐵馭駕駛的泰坦算作為擊殺 2 名鐵馭的問題。\n"
 				"KNB_SUBJECT_00_SUB_09_Q"	"`2%$rui/bullet_point%`0Bug 修復"
-				"KNB_SUBJECT_00_SUB_10_A"	"`2%$rui/bullet_point%`0新增回報玩家連線品質的記錄功能，協助我們追蹤遊戲延遲與斷線的回報\n`2%$rui/bullet_point%`0大幅降低比賽落敗保護機制的條件––我們明白延遲加入比賽的玩家勝率較低，所以藉此方法改善因此被判定比賽落敗的情況。如果延遲加入比賽，且該賽事已大勢已定，你將收到訊息告知不會遭判落敗\n`2%$rui/bullet_point%`0提升鐵馭使用引力飛鏢的直接命中傷害\n`2%$rui/bullet_point%`0提高平行步槍、R-97、噴火槍、L-Star、雙擊狙擊步槍、EPG 與雷電砲的傷害\n`2%$rui/bullet_point%`0降低電能衝鋒槍的傷害\n`2%$rui/bullet_point%`0重生不會再重置鐵馭的裝備名稱\n`2%$rui/bullet_point%`0協助現已再度計入武器經驗值\n`2%$rui/bullet_point%`0削弱鐵馭哨兵\n`2%$rui/bullet_point%`0飛火星如果對友方泰坦引爆，不會再顯示鋁熱劑附著"
+				"KNB_SUBJECT_00_SUB_10_A"	"`2%$rui/bullet_point%`0新增回報玩家連線品質的記錄功能，協助我們追蹤遊戲延遲與斷線的回報\n`2%$rui/bullet_point%`0大幅降低比賽落敗保護機制的條件––我們明白延遲加入比賽的玩家勝率較低，所以藉此方法改善因此被判定比賽落敗的情況。如果延遲加入比賽，且該賽事已大勢已定，你將收到訊息告知不會遭判落敗\n`2%$rui/bullet_point%`0提升鐵馭使用引力飛鏢的直接命中傷害\n`2%$rui/bullet_point%`0提高平行步槍、R-97、噴火槍、L-Star、雙擊狙擊步槍、EPG 與雷電砲的傷害\n`2%$rui/bullet_point%`0降低電能衝鋒槍的傷害\n`2%$rui/bullet_point%`0重生不會再重置鐵馭的裝備名稱\n`2%$rui/bullet_point%`0助攻現已再度計入武器經驗值\n`2%$rui/bullet_point%`0削弱鐵馭哨兵\n`2%$rui/bullet_point%`0飛火星如果對友方泰坦引爆，不會再顯示鋁熱劑附著"
 				"KNB_SUBJECT_00_SUB_10_Q"	"%$rui/hud/scoreboard/status_titan% 1 月 23 日––伺服器更新第 1 部分"
 				"KNB_SUBJECT_00_SUB_11_A"	"`2%$rui/bullet_point%`0修正離子渦漩防護罩在幀率範圍內時的能量消耗\n`2%$rui/bullet_point%`0修正綜合設施中人工智慧導航運作不良的問題\n`2%$rui/bullet_point%`0修正墜機地點的畫面重疊問題，避免玩家出現於牆壁當中\n`2%$rui/bullet_point%`0修正啟動智慧核心後無法使用軍團超級核心的問題\n`2%$rui/bullet_point%`0修正「FairFight 類型與本遊戲伺服器不相容」的問題\n`2%$rui/bullet_point%`0修正多項穩定性問題"
 				"KNB_SUBJECT_00_SUB_11_Q"	"`2%$rui/bullet_point%`0第 2 部分"
-				"KNB_SUBJECT_00_SUB_12_A"	"號外！新內容、新功能和遊戲修復。請見下方來瞭解研發團隊努力趕工置入於《Titanfall 2》第一個 DLC「天使城通緝令」的各項內容。請記得下方列出的更變與修復範圍僅是本修補檔的一小部份。\n\n一如往常，我們將會持續地關注意見並在未來做出改善。遊戲愉快！\n\n\n\n\n\n完整版修補檔細節請見 `3titanfall.com`0。"
+				"KNB_SUBJECT_00_SUB_12_A"	"號外！新內容、新功能和遊戲修復。請見以下重點來瞭解我們置入於《Titanfall 2》第一個 DLC「天使城通緝令」的各項內容。請記得下方列出的變更與修復範圍僅是本修補檔的一小部份。\n\n一如往常，我們將會持續地關注意見並在未來做出改善。遊戲愉快！\n\n\n\n\n\n完整版修補檔細節請見 `3titanfall.com`0。"
 				"KNB_SUBJECT_00_SUB_12_Q"	"%$rui/hud/scoreboard/status_titan% 11 月 30 日 - 天使城通緝令"
 				"PL_aitdm"	"消耗戰"
 				"PL_aitdm_abbr"	"ATT"
@@ -2201,13 +2316,13 @@ playlists
 				"PL_coliseum_desc"	"在鐵籠裡以強化行動力進行一對一戰鬥。每次擊殺對手便贏一回合。5 戰 3 勝者可獲得擁護禮包獎勵。^FFC83200\n玩家：1 對 1     *無泰坦\n時間限制：3 分鐘      *無重生\n**^FFFFFF00需要競技場門票或支付入場費"
 				"PL_coliseum_lobby"	"競技場大廳"
 				"PL_colony"	"殖民地 24/7"
-				"PL_colony_abbr"	"殖民地"
-				"PL_colony_desc"	"所有殖民地，持續不斷。 ^CCCCCC00這將會搜尋^FFC83200消耗戰^CCCCCC00、^FFC83200鐵馭對鐵馭^CCCCCC00、及^FFC83200泰坦殊死戰^CCCCCC00對戰。"
+				"PL_colony_abbr"	"COL"
+				"PL_colony_desc"	"所有殖民地，持續不斷。 ^CCCCCC00這將會搜尋^FFC83200消耗戰^CCCCCC00、^FFC83200鐵馭對鐵馭^CCCCCC00、及^FFC83200泰坦殊死戰^CCCCCC00的比賽。"
 				"PL_colony_lobby"	"殖民地 24/7 大廳"
-				"PL_ctf_lf"	"Capture the Flag\n(Live Fire)"
+				"PL_ctf_lf"	"奪旗\n（烈火戰場）"
 				"PL_ctf_lf_abbr"	"ATT"
-				"PL_ctf_lf_desc"	"Fast paced Capture the Flag in Live Fire maps.\n^FFC83200Players: 6v6\nMax Party Size: 6\n^F4D5A600No Titans     No Boosts     Phase Shift Drops Flag"
-				"PL_ctf_lf_lobby"	"CTF Live Fire Lobby"
+				"PL_ctf_lf_desc"	"在烈火戰場地圖中進行快節奏的奪旗比賽。\n^FFC83200玩家：6 對 6\n最大派對人數：6\n^F4D5A600無泰坦     無強化     瞬間轉移會造成旗幟掉落"
+				"PL_ctf_lf_lobby"	"奪旗烈火戰場大廳"
 				"PL_default_description"	"預設說明"
 				"PL_default_lobbytitle"	"預設大廳名稱"
 				"PL_default_name"	"預設名稱"
@@ -2228,10 +2343,10 @@ playlists
 				"PL_ffa_abbr"	"FFA"
 				"PL_ffa_desc"	"所有鐵馭為自己而戰，擊殺所有敵人。\n^FFC83200玩家：1 對 11\n時間限制：10 分鐘\n最大派對人數：1"
 				"PL_ffa_lobby"	"混戰大廳"
-				"PL_glitch"	"異常24/7"
-				"PL_glitch_abbr"	"故障"
-				"PL_glitch_desc"	"異常情形持續不斷。^CCCCCC00這將搜尋^FFC83200奪旗^CCCCCC00、^FFC83200強攻佔點^CCCCCC00, ^FFC83200鐵馭對鐵馭^CCCCCC00, ^FFC83200烈火戰場^CCCCCC00，與^FFC83200泰坦殊死戰^CCCCCC00對戰。"
-				"PL_glitch_lobby"	"異常24/7大廳"
+				"PL_Relic"	"異常24/7"
+				"PL_Relic_abbr"	"GLI"
+				"PL_Relic_desc"	"異常情形持續不斷。^CCCCCC00這將搜尋^FFC83200奪旗^CCCCCC00、^FFC83200強攻佔點^CCCCCC00, ^FFC83200鐵馭對鐵馭^CCCCCC00, ^FFC83200烈火戰場^CCCCCC00，與^FFC83200泰坦殊死戰^CCCCCC00的比賽。"
+				"PL_Relic_lobby"	"異常24/7大廳"
 				"PL_groud_war_lobby"	"8 對 8 綜合大廳"
 				"PL_ground_war"	"8 對 8 綜合"
 				"PL_ground_war_abbr"	"8v8"
@@ -2242,7 +2357,7 @@ playlists
 				"PL_hardpoint_lobby"	"強化據點大廳"
 				"PL_hunted"	"遭獵殺"
 				"PL_iron_last_titan_standing"	"鐵血泰坦殊死戰"
-				"PL_iron_last_titan_standing_abbr"	"鐵血泰坦殊死戰"
+				"PL_iron_last_titan_standing_abbr"	"ILTS"
 				"PL_iron_last_titan_standing_desc"	"僅泰坦參加的回合制殲滅戰。先贏 3 回合者獲勝。\n^FFC83200玩家：5 對 5      *無鐵馭\n時間限制：每回合 3 分鐘      *無重生\n最大派對人數：5"
 				"PL_iron_last_titan_standing_lobby"	" "
 				"PL_last_titan_standing"	"泰坦殊死戰"
@@ -2255,13 +2370,14 @@ playlists
 				"PL_live_fire_lobby"	"烈火戰場大廳"
 				"PL_load_a_map_on_the_command_line"	"在命令行載入地圖－devonly"
 				"PL_marked_for_death"	"獵殺標記"
-				"PL_marked_for_death_abbr"	"獵殺標記"
-				"PL_marked_for_death_desc"	"擊殺或保護被標記的目標。\n^FFC83200玩家人數：6對6\n限制時間：12分鐘\n每隊最多人數：6"
+				"PL_marked_for_death_abbr"	"MFD"
+				"PL_marked_for_death_desc"	"擊殺或保護被標記的目標。\n^FFC83200玩家：6 對 6\n時間限制：12 分鐘\n最大派對人數：6"
 				"PL_marked_for_death_lobby"	"獵殺標記大廳"
-				"PL_pilot_hunter"	"小規模戰鬥"
-				"PL_pilot_hunter_abbr"	"SKM"
-				"PL_pilot_hunter_desc"	"擊殺敵方鐵馭與泰坦。\n^FFC83200玩家：8對8\n時間限制：10 分鐘\n最大派對人數：8"
-				"PL_pilot_hunter_lobby"	"小規模戰鬥大廳"
+				"PL_pilot_hunter"	"泰坦爭鬥"
+				"PL_pilot_hunter_abbr"	"TTDM"
+				"PL_pilot_hunter_desc"	"擊殺敵方泰坦。\n^FFC83200玩家：5 對 5\n時間限制：10 分鐘\n最大派對人數：5"
+				"PL_pilot_hunter_hint"	"擊殺敵方泰坦。\n無彈射"
+				"PL_pilot_hunter_lobby"	"泰坦爭鬥大廳"
 				"PL_pilot_skirmish"	"鐵馭對鐵馭"
 				"PL_pilot_skirmish_abbr"	"PvP"
 				"PL_pilot_skirmish_desc"	"擊殺敵方鐵馭。無法呼叫泰坦。\n^FFC83200玩家：8 對 8     *無泰坦\n時間限制：10 分鐘\n最大派對人數：8"
@@ -2287,32 +2403,35 @@ playlists
 			"Language" "italian"
 			"Tokens"
 			{
-				"COMMUNITYUPDATE_00_A"	"Prima occhiata al gioco, per scoprire tutte le novità dell'aggiornamento Colonia Rinata disponibile dal 30/03/2017!\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_00_Q"	"Trailer gameplay \"Colonia Rinata\""
-				"COMMUNITYUPDATE_01_A"	"Scopri i dettagli di tutte le novità inserite nell'aggiornamento Colonia Rinata...\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_01_Q"	"Notizie dalla Frontiera - 23/03/2017"
-				"COMMUNITYUPDATE_02_A"	"Leggi l'elenco completo delle modifiche e delle novità inserite questo mese nell'aggiornamento Colonia Rinata.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_02_Q"	"Note sulla patch Colonia Rinata"
-				"COMMUNITYUPDATE_03_A"	"Non conosci Titanfall 2? Lascia che sensei Frothy Omen ti insegni le mosse del pilota, dal doppio salto di base all'uso di armi e ordigni.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_03_Q"	"Scuola per piloti Titanfall 2"
-				"COMMUNITYUPDATE_04_A"	"Il Lead Designer Jason McCord riflette sulla creazione della missione di campagna che ha definito l'approccio del team sulla creazione della modalità per singolo giocatore.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_04_Q"	"Blog di Respawn - creando \"Il trasmettitore\""
-				"COMMUNITYUPDATE_05_A"	"Benchy, probabilmente uno dei giocatori migliori in Titanfall, ci mostra come mirare e sparare in Titanfall 2.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_05_Q"	"Montage - Kraber God di Benchy"
-				"COMMUNITYUPDATE_06_A"	"L'artista Nicole Peh ha creato sfondi fantastici ispirati al tipo di ristoranti che ogni Titan avrebbe.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_06_Q"	"Fan Art - Sfondi Titan"
-				"COMMUNITYUPDATE_07_A"	"Presentazione di `1Live Fire`0: una modalità ultra-rapida 6v6 per piloti che pone in prima linea il combattimento a distanza ravvicinata.\n\nSono incluse due nuove mappe progettate specificamente per Live Fire: `1Cataste`0 e `1Prateria`0.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_07_Q"	"Trailer - DLC Live Fire"
-				"COMMUNITYUPDATE_08_A"	"Prova una versione rivisitata di una della mappe preferite del Titanfall originale, `1Angel City`0. Tieniti pronto per il primo DLC gratuito per Titanfall 2 con `1Ricercato di Angel City`0 disponibile il 1 dicembre. Questo contenuto comprende nuove opzioni estetiche per aggiungere un po’ di eleganza alla Frontiera. \n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_08_Q"	"Trailer - DLC Angel City"
-				"COMMUNITYUPDATE_09_A"	"Bentornato.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_09_Q"	"Trailer \"Encore\" Accolades"
-				"COMMUNITYUPDATE_10_A"	"Due leggende, una sola eredità.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_10_Q"	"Trailer - Diventate una cosa sola"
-				"COMMUNITYUPDATE_11_A"	"Senza limiti.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_11_Q"	"Trailer - Gameplay piloti"
+				"COMMUNITYUPDATE_00_A"	"Sono in arrivo nuove mappe, altri Prime, un nuovo Titan e tanto altro ancora. Scopri tutti i dettagli qui.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_00_Q"	"Notizie dalla Frontiera: roadmap dei DLC"
+				"COMMUNITYUPDATE_01_A"	"Prima occhiata al gioco, per scoprire tutte le novità dell'aggiornamento Colonia Rinata disponibile dal 30/03/2017!\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_01_Q"	"Trailer gameplay \"Colonia Rinata\""
+				"COMMUNITYUPDATE_02_A"	"Scopri i dettagli di tutte le novità dell'aggiornamento Colonia Rinata...\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_02_Q"	"Notizie dalla Frontiera - 23/03/2017"
+				"COMMUNITYUPDATE_03_A"	"Leggi l'elenco completo delle modifiche e delle novità dell'aggiornamento Colonia Rinata di questo mese.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_03_Q"	"Note sulla patch Colonia Rinata"
+				"COMMUNITYUPDATE_04_A"	"Non conosci Titanfall 2? Lascia che sensei Frothy Omen ti insegni le mosse del pilota, dal doppio salto di base all'uso di armi ed equipaggiamento.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_04_Q"	"Scuola per piloti Titanfall 2"
+				"COMMUNITYUPDATE_05_A"	"Il Lead Designer Jason McCord riflette sulla creazione della missione di campagna che ha consentito di definire l'approccio del team sulla creazione della modalità Giocatore singolo.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_05_Q"	"Blog sviluppatori Respawn - Creazione del trasmettitore"
+				"COMMUNITYUPDATE_06_A"	"L'animatore di Respawn Moy Parra è tornato con un altro fantastico episodio di Titan Toons.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_06_Q"	"Titan Toons: Live Fire Repeat"
+				"COMMUNITYUPDATE_07_A"	"L'artista Nicole Peh ha creato sfondi fantastici ispirati al tipo di ristoranti che ogni Titan avrebbe.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_07_Q"	"Fan Art - Sfondi Titan"
+				"COMMUNITYUPDATE_08_A"	"Presentazione di Live Fire: una modalità ultra-rapida 6v6 per piloti che pone in prima linea il combattimento a distanza ravvicinata. Sono incluse due nuove mappe progettate specificamente per Live Fire: Cataste e Prateria. Queste due mappe gratuite sono aree di gioco strette e mortali progettate specificamente per la natura intensa e rapida di questa nuova modalità.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_08_Q"	"Trailer gameplay “Benvenuti in Live Fire”"
+				"COMMUNITYUPDATE_09_A"	"Prova una versione rivisitata di una della mappe preferite del Titanfall originale, `1Angel City`0. Tieniti pronto per il primo DLC gratuito per Titanfall 2 con `1Ricercato di Angel City`0 disponibile il 1 dicembre. Questo contenuto comprende nuove opzioni estetiche per aggiungere un po’ di eleganza alla Frontiera. \n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_09_Q"	"Trailer gameplay “Benvenuti in Angel City”"
+				"COMMUNITYUPDATE_10_A"	"Bentornato.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_10_Q"	"Trailer \"Encore\" Accolades"
+				"COMMUNITYUPDATE_11_A"	"Due leggende, una sola eredità.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_11_Q"	"Trailer gameplay singolo “Diventate una cosa sola”"
+				"COMMUNITYUPDATE_12_A"	"Senza limiti.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_12_Q"	"Trailer gameplay multigiocatore “Piloti”"
 				"COMMUNITYUPDATE_DESC"	"`3Aggiornamenti community Titanfall`0\n\nInfo e collegamenti da tutto il Web.\n\nPer altre informazioni:\n`2%$rui/bullet_point%`0Seguici su Twitter `1@Respawn`0\n`2%$rui/bullet_point%`0Metti un like su `1facebook.com/RespawnEntertainment`0\n`2%$rui/bullet_point%`0Unisciti a noi visitando l’indirizzo `1www.respawn.com`0"
 				"COMMUNITYUPDATE_NAME"	"Community"
+				"GAMEMODE_TDM"	"Scontro tra Titan"
 				"KNB_SUBJECT_00_DESC"	"`3Quali sono le novità di Titanfall?`0\n\nQui potrai vedere tutte le novità in Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Note sulla patch"
 				"KNB_SUBJECT_00_SUB_00_A"	"Guarda i punti a sinistra per scoprire le modifiche incluse nel terzo DLC di Titanfall 2, Colonia Rinata. Le modifiche e le correzioni elencate sono solo un piccolo esempio del contenuto della patch.\n\nCome sempre, continueremo a esaminare i commenti ricevuti e apportare ulteriori miglioramenti in futuro. Buon divertimento!\n\n\n\n\n\nPer informazioni complete sulla patch, visita `3titanfall.com`0."
@@ -2325,7 +2444,7 @@ playlists
 				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 2 marzo - Aggiornamento server"
 				"KNB_SUBJECT_00_SUB_04_A"	"Guarda i punti a sinistra per scoprire le modifiche incluse nel secondo DLC di Titanfall 2, Live Fire. Le modifiche e le correzioni elencate sono solo un piccolo esempio del contenuto della patch.\n\nCome sempre, continueremo a esaminare i commenti ricevuti e apportare ulteriori miglioramenti in futuro. Buon divertimento!\n\n\n\n\n\nPer informazioni complete sulla patch, visita `3titanfall.com`0."
 				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 23 febbraio - Live Fire"
-				"KNB_SUBJECT_00_SUB_05_A"	"Live Fire: una nuova modalità di gioco 6v6 a eliminazione, pilota contro pilota! Basata su round senza rientri, hai un minuto per eliminare la squadra rivale e vincere il round. Puoi vincere il round anche se la tua squadra è in possesso della bandiera neutra allo scadere del tempo. Vince la partita la squadra che si aggiudica per prima 5 round.\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Prateria, un luogo lussureggiante con percorsi erbosi e affioramenti rocciosi che offre l’ambiente ideale per lunghi combattimenti e percorsi tortuosi per gli aggiramenti. Sono stati reintrodotti anche i cavi!\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Cataste, un luogo industriale con aree aperte che racchiude un denso punto centrale incorniciato da imponenti strutture. La verticalità incoraggia gli attacchi dall'alto e gli assalti dai percorsi esterni.\n\n`2%$rui/bullet_point%`0Nuova esecuzione: Colpo ritardato: un turbinio di pugni alimentati dagli stimolanti che mettono il tuo nemico al tappeto."
+				"KNB_SUBJECT_00_SUB_05_A"	"Live Fire: una nuova modalità di gioco 6v6 a eliminazione, pilota contro pilota! Basata su round senza rientri, hai un minuto per eliminare la squadra rivale e vincere il round. Puoi vincere il round anche se la tua squadra è in possesso della bandiera neutra allo scadere del tempo. Vince la partita la squadra che si aggiudica per prima 5 round.\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Prateria, un luogo lussureggiante con percorsi erbosi e affioramenti rocciosi che offre l’ambiente ideale per lunghi combattimenti e percorsi tortuosi per gli aggiramenti. Sono stati reintrodotti anche i cavi!\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Cataste, un luogo industriale con aree aperte che racchiude un denso punto centrale incorniciato da imponenti strutture. La verticalità incoraggia gli attacchi dall'alto e gli assalti dai percorsi esterni.\n\n`2%$rui/bullet_point%`0Nuova esecuzione - Colpo ritardato: un turbinio di pugni alimentati dagli stimolanti che mettono il tuo nemico al tappeto."
 				"KNB_SUBJECT_00_SUB_05_Q"	"`2%$rui/bullet_point%`0Nuovi contenuti [gratuiti]"
 				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Matchmaking Remix: uno stravolgimento completo del nostro matchmaking multigiocatore. Questa nuova funzionalità consente di creare un \"Remix\" delle modalità che preferisci.\n`2%$rui/bullet_point%`0Gamepad: mappatura comandi personalizzata (pilota e Titan)\n`2%$rui/bullet_point%`0Gamepad: comando per abbassarsi - Opzione \"Tieni premuto per abbassarti\"\n`2%$rui/bullet_point%`0Gamepad: comando mirino - Opzione \"Attiva/Disattiva\"\n`2%$rui/bullet_point%`0Controlli: Opzione \"Tieni premuto %use% per eseguire il rodeo\"\n`2%$rui/bullet_point%`0Hud avanzato: disabilita colori membri del gruppo su HUD (alcuni giocatori daltonici potrebbero preferire questa funzione)\n`2%$rui/bullet_point%`0Domande frequenti della community: nuova sezione delle FAQ per mettere in evidenza patch future, rilasci di DLC, trailer e creazioni dalla community\n`2%$rui/bullet_point%`0Aggiunto cursore grana della pellicola"
 				"KNB_SUBJECT_00_SUB_06_Q"	"`2%$rui/bullet_point%`0Nuove funzionalità"
@@ -2391,10 +2510,10 @@ playlists
 				"PL_ffa_abbr"	"TCT"
 				"PL_ffa_desc"	"Ogni pilota è solo. Uccidi tutti i nemici.\n^FFC83200Giocatori: 1v11\nTempo limite: 10 min.\nDimensioni max gruppo: 1"
 				"PL_ffa_lobby"	"Lobby Tutti contro tutti"
-				"PL_glitch"	"Glitch 24/7"
-				"PL_glitch_abbr"	"ANM"
-				"PL_glitch_desc"	"Sempre e soltanto Glitch. ^CCCCCC00Questa operazione effettuerà una ricerca per corrispondenze di ^FFC83200CLB^CCCCCC00, ^FFC83200Punto di controllo amplificato^CCCCCC00, ^FFC83200Piloti contro piloti^CCCCCC00, ^FFC83200Live Fire^CCCCCC00 e ^FFC83200Sopravvivenza Titan^CCCCCC00."
-				"PL_glitch_lobby"	"Lobby Glitch 24/7"
+				"PL_Relic"	"Relic 24/7"
+				"PL_Relic_abbr"	"GLI"
+				"PL_Relic_desc"	"Sempre e soltanto Relic. ^CCCCCC00Questa operazione effettuerà una ricerca per corrispondenze di ^FFC83200CLB^CCCCCC00, ^FFC83200Punto di controllo amplificato^CCCCCC00, ^FFC83200Piloti contro piloti^CCCCCC00, ^FFC83200Live Fire^CCCCCC00 e ^FFC83200Sopravvivenza Titan^CCCCCC00."
+				"PL_Relic_lobby"	"Lobby Relic 24/7"
 				"PL_groud_war_lobby"	"Lobby Remix 8v8"
 				"PL_ground_war"	"Remix 8v8"
 				"PL_ground_war_abbr"	"8v8"
@@ -2406,7 +2525,7 @@ playlists
 				"PL_hunted"	"Preda"
 				"PL_iron_last_titan_standing"	"ST d'acciaio"
 				"PL_iron_last_titan_standing_abbr"	"STA"
-				"PL_iron_last_titan_standing_desc"	"Solo Titan, scontro organizzato in round a eliminazione. La vittoria va a chi vince per primo 3 round.\n^FFC83200Giocatori: 5v5      *NO PILOTI\nTempo limite: 3 m per round      *Nessun rientro\nDimensioni max gruppo: 5"
+				"PL_iron_last_titan_standing_desc"	"Solo Titan, scontro organizzato in round a eliminazione. La vittoria va a chi vince per primo 3 round.\n^FFC83200Giocatori: 5v5      *NO PILOTI\nTempo limite: 3 min per round      *Nessun rientro\nDimensioni max gruppo: 5"
 				"PL_iron_last_titan_standing_lobby"	"PL_iron_last_titan_standing_lobby"
 				"PL_last_titan_standing"	"Sopravvivenza Titan"
 				"PL_last_titan_standing_abbr"	"ST"
@@ -2421,10 +2540,11 @@ playlists
 				"PL_marked_for_death_abbr"	"MAM"
 				"PL_marked_for_death_desc"	"Uccidi o proteggi i bersagli marchiati.\n^FFC83200Giocatori: 6v6  \nTempo limite: 12 m\nDimensioni max gruppo: 6"
 				"PL_marked_for_death_lobby"	"Lobby Marchiato a morte"
-				"PL_pilot_hunter"	"Scontro"
-				"PL_pilot_hunter_abbr"	"SCN"
-				"PL_pilot_hunter_desc"	"Uccidi piloti e Titan nemici.  \n^FFC83200Giocatori: 8v8\nTempo limite: 10 min.\nDimensioni max gruppo: 8"
-				"PL_pilot_hunter_lobby"	"Lobby Scontro"
+				"PL_pilot_hunter"	"Scontro tra Titan"
+				"PL_pilot_hunter_abbr"	"TTDM"
+				"PL_pilot_hunter_desc"	"Uccidi Titan nemici. \n^FFC83200Giocatori: 5v5\nTempo limite: 10m\nDimensioni max gruppo: 5"
+				"PL_pilot_hunter_hint"	"Uccidi i Titan nemici.\nNessuna espulsione"
+				"PL_pilot_hunter_lobby"	"Lobby Scontro tra Titan"
 				"PL_pilot_skirmish"	"Piloti contro piloti"
 				"PL_pilot_skirmish_abbr"	"PvP"
 				"PL_pilot_skirmish_desc"	"Uccidi i piloti nemici. Titanfall non consentiti.\n^FFC83200Giocatori: 8v8      *Nessun Titan\nTempo limite: 10 min.\nDimensioni max gruppo: 8"
@@ -2450,6 +2570,7 @@ playlists
 			"Language" "english"
 			"Tokens"
 			{
+                "GAMEMODE_SCORE_HINT_TITAN_TDM" "Kill 3 Titans without dying."
 				"PL_speedball" "Live Fire"
 				"PL_speedball_lobby" "Live Fire Lobby"
 				"PL_speedball_desc" "Fight for possession of a netural flag. Eliminate the enemy team or possess the flag when the clock runs out to win the round. Winner is the first to 5 rounds won.\n^FFC83200Players: 6v6      *No Titans\nTime Limit: 60 seconds per round      *No Respawns\nMax Party Size: 6"
@@ -2476,10 +2597,10 @@ playlists
 				"PL_colony_lobby"	"Colony 24/7 Lobby"
 				"PL_colony_desc"	"All Colony, all the time. ^CCCCCC00This will search for matches of ^FFC83200Attrition^CCCCCC00, ^FFC83200Pilots vs Pilots^CCCCCC00, and ^FFC83200Last Titan Standing^CCCCCC00."
 				"PL_colony_abbr"	"COL"
-				"PL_glitch"			"Glitch 24/7"
-				"PL_glitch_lobby"	"Glitch 24/7 Lobby"
-				"PL_glitch_desc"	"All Glitch, all the time. ^CCCCCC00This will search for matches of ^FFC83200CTF^CCCCCC00, ^FFC83200Amped Hardpoint^CCCCCC00, ^FFC83200Pilots vs Pilots^CCCCCC00, ^FFC83200Live Fire^CCCCCC00, and ^FFC83200Last Titan Standing^CCCCCC00."
-				"PL_glitch_abbr"	"GLI"
+				"PL_Relic"			"Relic 24/7"
+				"PL_Relic_lobby"	"Relic 24/7 Lobby"
+				"PL_Relic_desc"	"All Relic, all the time. ^CCCCCC00This will search for matches of ^FFC83200CTF^CCCCCC00, ^FFC83200Amped Hardpoint^CCCCCC00, ^FFC83200Pilots vs Pilots^CCCCCC00, ^FFC83200Live Fire^CCCCCC00, and ^FFC83200Last Titan Standing^CCCCCC00."
+				"PL_Relic_abbr"	"GLI"
 				"PL_ctf_lf"	"Capture the Flag\n(Live Fire)"
 				"PL_ctf_lf_lobby"	"CTF Live Fire Lobby"
 				"PL_ctf_lf_desc"	"Fast paced Capture the Flag in Live Fire maps.\n^FFC83200Players: 6v6\nMax Party Size: 6\n^F4D5A600No Titans     No Boosts     Phase Shift Drops Flag"
@@ -2515,11 +2636,13 @@ playlists
 				"PL_iron_last_titan_standing_lobby"	""
 				"PL_iron_last_titan_standing_desc"	"Titans-only, round-based elimination match-up. Winner is the first to 3 rounds won.\n^FFC83200Players: 5v5      *NO PILOTS\nTime Limit: 3m per round      *No Respawns\nMax Party Size: 5"
 				"PL_iron_last_titan_standing_abbr"	"ILTS"
-				"PL_pilot_hunter"	"Skirmish"
 				"PL_promo_limited"	"Skirmish\n(Limited Time!)"
-				"PL_pilot_hunter_lobby"	"Skirmish Lobby"
-				"PL_pilot_hunter_desc"	"Kill enemy pilots and Titans. \n^FFC83200Players: 8v8\nTime Limit: 10m\nMax Party Size: 8"
-				"PL_pilot_hunter_abbr"	"SKM"
+				"GAMEMODE_TDM" "Titan Brawl"
+				"PL_pilot_hunter"	"Titan Brawl"
+				"PL_pilot_hunter_lobby"	"Titan Brawl Lobby"
+				"PL_pilot_hunter_desc"	"Kill enemy Titans. \n^FFC83200Players: 5v5\nTime Limit: 10m\nMax Party Size: 5"
+				"PL_pilot_hunter_abbr"	"TTDM"
+				"PL_pilot_hunter_hint"	"Kill enemy Titans.\nNo Ejection // No Disembark"
 				"PL_variety_pack"	"Mixtape"
 				"PL_variety_pack_lobby"	"Mixtape Lobby"
 				"PL_variety_pack_desc"	"Varying player counts and including a variety of maps on these modes:\n^FFC83200*Bounty Hunt                   *Attrition\n*Last Titan Standing      *Amped Hardpoint\n*Pilots vs. Pilots              *Capture the Flag"
@@ -2560,43 +2683,52 @@ playlists
 				"COMMUNITYUPDATE_NAME"						"Community"
 				"COMMUNITYUPDATE_DESC"						"`3Titanfall Community Updates`0\n\nGet latest info and see stuff we think is rad from around the web.\n\nFor more:\n`2%$rui/bullet_point%`0Follow us on Twitter `1@Respawn`0\n`2%$rui/bullet_point%`0Like us on `1facebook.com/RespawnEntertainment`0\n`2%$rui/bullet_point%`0Join us at `1www.respawn.com`0"
 
-				"COMMUNITYUPDATE_00_Q"						"\"Colony Reborn\" Gameplay Trailer"
-				"COMMUNITYUPDATE_00_A"						"First look at gameplay showing off all the new stuff coming with the Colony Reborn update available on 3/30/2017!\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_00_Q"						"\"A Glitch in the Frontier\" Gameplay Trailer"
+				"COMMUNITYUPDATE_00_A"						"All is not as it appears on the Frontier - prepare to enter the newest free DLC pack for Titanfall 2: A Glitch in the Frontier - featuring the new map “Glitch”. Inspired by Captain Lastimosa’s home planet of Harmony, vertical drops and long, twisting paths dominate the environment, perfect for chaining together long wall runs to seamlessly glide across the map. A new Live Fire map also joins the fold: Deck, which features tight interior spaces, exposed courtyards, and watchful drones circling overhead. If you’re feeling overwhelmed, the ever-helpful M.R.V.N.s are now here as an all-new faction to lend a cheery robotic hand. Finally, the new Pulse Blade execution is available to unlock to use whenever you feel the need to get your point across.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_01_Q"						"Frontier News Network - 03.23.2017"
-				"COMMUNITYUPDATE_01_A"						"Get a full breakdown of everything new that's part of the Colony Reborn Update...\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_01_Q"                      "Patch Notes for A Glitch in the Frontier"
+				"COMMUNITYUPDATE_01_A"                      "Take a gander at all the changes and new content that comes with our latest update."
 
-				"COMMUNITYUPDATE_02_Q"						"Colony Reborn Patch Notes"
-				"COMMUNITYUPDATE_02_A"						"Read the full list of changes and updates we've made this month for the Colony Reborn update.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_02_Q"						"FNN 04.18.2017: A Glitch in the Frontier"
+				"COMMUNITYUPDATE_02_A"						"Get the details of what's coming in the next DLC and enjoy some of our favorite fan art!\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_03_Q"						"Titanfall 2 Pilot School"
-				"COMMUNITYUPDATE_03_A"						"New to Titanfall 2? Let sensei Frothy Omen teach you the ways of the Pilot from basic double jumping to using weapons and ordnance.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_03_Q"						"FNN: More DLC on the Way!"
+				"COMMUNITYUPDATE_03_A"						"Take a look at our roadmap showing what to expect for DLC over the next few months.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_04_Q"						"Respawn Dev Blog - Making The Beacon"
-				"COMMUNITYUPDATE_04_A"						"Lead Designer Jason McCord relfects on creating the campaign mission that helped define how the team would approach creating single player.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_04_Q"						"Colony Reborn Patch Notes"
+				"COMMUNITYUPDATE_04_A"						"Read the full list of changes and updates we've made this month for the Colony Reborn update.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_05_Q"						"Montage - Kraber God by Benchy"
-				"COMMUNITYUPDATE_05_A"						"Arguably one of the deadliest players in Titanfall, Benchy shows us what's up with how to snipe in Titanfall 2.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_05_Q"						"Titanfall 2 Pilot School"
+				"COMMUNITYUPDATE_05_A"						"New to Titanfall 2? Let sensei Frothy Omen teach you the ways of the Pilot from basic double jumping to using weapons and ordnance.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_06_Q"						"Fan Art - Titan Wallpapers"
-				"COMMUNITYUPDATE_06_A"						"Artist Nicole Peh created some fantastic wallpapers inspired by what kind of restaurants each titan would own.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_06_Q"						"Respawn Dev Blog - Remastering Colony"
+				"COMMUNITYUPDATE_06_A"						"Senior Environment Artist Kristen Altamirano walks us through the process of remastering a map.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_07_Q"						"\"Welcome to Live Fire\" Gameplay Trailer"
-				"COMMUNITYUPDATE_07_A"						"Introducing Live Fire: a lightning fast 6v6 Pilot only mode that brings competitive, close quarter combat to the forefront. Featuring two brand new maps designed specifically for Live Fire: Stacks and Meadow. These two free maps are tight, enclosed death boxes designed specifically for the fast-paced, intense nature of the mode.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_07_Q"						"Titan Toons: Live Fire Repeat"
+				"COMMUNITYUPDATE_07_A"						"Respawn's animator Moy Parra is back at it again with another fantastic episode of Titan Toons.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_08_Q"						"\"Welcome to Angel City\" Gameplay Trailer"
-				"COMMUNITYUPDATE_08_A"						"Experience a remastered version of the fan favorite map from the original Titanfall, `1Angel City`0. Stand by for the first free DLC for Titanfall 2 with `1Angel City's Most Wanted`0 available on December 1st for all players. This content includes new cosmetic options to add more flair to to the Frontier. \n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_08_Q"						"Fan Art - Titan Wallpapers"
+				"COMMUNITYUPDATE_08_A"						"Artist Nicole Peh created some fantastic wallpapers inspired by what kind of restaurants each titan would own.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_09_Q"						"\"Encore\" Accolades Trailer"
-				"COMMUNITYUPDATE_09_A"						"Welcome back.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_09_Q"						"\"Colony Reborn\" Gameplay Trailer"
+				"COMMUNITYUPDATE_09_A"						"Return to an iconic fan favorite multiplayer map from the original Titanfall: Colony. Mix in all of the new tacticals & Titans from Titanfall 2, and Pilots & Titans will have to keep their wits about them to survive in this tightly-packed idyllic village of back alleys, blind corners and exposed rooftops; available for free on March 30th for all players. The “Colony Reborn” DLC pack includes the return of classic weapons like the tricked out R-101 assault rifle, a new grapple execution, and new cosmetic options for purchase to look your best while you paint the town red.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_10_Q"						"\"Become One\" Single Player Gameplay Trailer"
-				"COMMUNITYUPDATE_10_A"						"Two legends, one legacy.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_10_Q"						"\"Welcome to Live Fire\" Gameplay Trailer"
+				"COMMUNITYUPDATE_10_A"						"Introducing Live Fire: a lightning fast 6v6 Pilot only mode that brings competitive, close quarter combat to the forefront. Featuring two brand new maps designed specifically for Live Fire: Stacks and Meadow. These two free maps are tight, enclosed death boxes designed specifically for the fast-paced, intense nature of the mode.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_11_Q"						"\"Pilots\" Multiplayer Gameplay Trailer"
-				"COMMUNITYUPDATE_11_A"						"Limitless.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_11_Q"						"\"Welcome to Angel City\" Gameplay Trailer"
+				"COMMUNITYUPDATE_11_A"						"Experience a remastered version of the fan favorite map from the original Titanfall, `1Angel City`0. Stand by for the first free DLC for Titanfall 2 with `1Angel City's Most Wanted`0 available on December 1st for all players. This content includes new cosmetic options to add more flair to to the Frontier. \n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				// faq_community_count = 12
+				"COMMUNITYUPDATE_12_Q"						"\"Encore\" Accolades Trailer"
+				"COMMUNITYUPDATE_12_A"						"Welcome back.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+
+				"COMMUNITYUPDATE_13_Q"						"\"Become One\" Single Player Gameplay Trailer"
+				"COMMUNITYUPDATE_13_A"						"Two legends, one legacy.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+
+				"COMMUNITYUPDATE_14_Q"						"\"Pilots\" Multiplayer Gameplay Trailer"
+				"COMMUNITYUPDATE_14_A"						"Limitless.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+
+				// faq_community_count = 15
 
 				// FAQ - Patch Notes
 				//
@@ -2649,32 +2781,35 @@ playlists
 			"Language" "french"
 			"Tokens"
 			{
-				"COMMUNITYUPDATE_00_A"	"Obtenez le tout premier aperçu du gameplay et du contenu de la mise à jour Nouvelle colonie, disponible le 30/03/2017 !\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
-				"COMMUNITYUPDATE_00_Q"	"Trailer de gameplay \"Nouvelle colonie\""
-				"COMMUNITYUPDATE_01_A"	"Découvrez toutes les nouveautés de la mise à jour Nouvelle colonie...\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
-				"COMMUNITYUPDATE_01_Q"	"Actu de la Frontière - 23/03/2017"
-				"COMMUNITYUPDATE_02_A"	"Consultez la liste complète des changements et des modifications inclus à la mise à jour Nouvelle colonie.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
-				"COMMUNITYUPDATE_02_Q"	"Notes de patch Nouvelle colonie"
-				"COMMUNITYUPDATE_03_A"	"Vous débutez dans Titanfall 2 ? Frothy Omen vous explique comment devenir un pilote d'élite, des mouvements basiques comme le double saut au maniement avancé des armes et des explosifs.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la suite."
-				"COMMUNITYUPDATE_03_Q"	"École de pilotage de Titanfall 2"
-				"COMMUNITYUPDATE_04_A"	"Le concepteur en chef Jason McCord nous explique comment la création de la mission La Balise a contribué à façonner l'expérience solo de Titanfall 2.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
-				"COMMUNITYUPDATE_04_Q"	"Blog Respawn - Création de La Balise"
-				"COMMUNITYUPDATE_05_A"	"Benchy, qui figure parmi les joueurs les plus redoutables de toute la communauté, vous dévoile comment enchaîner les tirs de précision dans Titanfall 2.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la suite."
-				"COMMUNITYUPDATE_05_Q"	"Montage - \"Kraber God\" par Benchy"
-				"COMMUNITYUPDATE_06_A"	"La talentueuse Nicole Peh a créé de superbes fonds d’écran présentant le type de restaurant que chaque Titan pourrait posséder.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir les fonds d’écran."
-				"COMMUNITYUPDATE_06_Q"	"Fan-art : fonds d’écran Titan"
-				"COMMUNITYUPDATE_07_A"	"Découvrez `1Live Fire`0, un tout nouveau mode de jeu pour pilotes, proposant des affrontements ultra-rapides en combat rapproché en 6c6.\n\nCombattez sur deux nouvelles cartes spécialement conçues pour Live Fire : `1Empilements`0 et `1Prairie`0.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
-				"COMMUNITYUPDATE_07_Q"	"Trailer du DLC \"Live Fire\""
-				"COMMUNITYUPDATE_08_A"	"Découvrez la version remasterisée d'`1Angel City`0, la carte favorite des joueurs du premier Titanfall ! Préparez-vous pour le premier DLC gratuit de Titanfall 2, `1Liste noire d'Angel City`0, qui sera disponible le 1er décembre pour tous les joueurs. Ce nouveau contenu inclut également des optimisations cosmétiques qui vous aideront à vous démarquer sur les champs de bataille de la Frontière. \n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
-				"COMMUNITYUPDATE_08_Q"	"Trailer du DLC \"Angel City\""
-				"COMMUNITYUPDATE_09_A"	"Bon retour parmi nous !\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo"
-				"COMMUNITYUPDATE_09_Q"	"Trailer - \"Encore\""
-				"COMMUNITYUPDATE_10_A"	"Deux légendes, un héritage.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
-				"COMMUNITYUPDATE_10_Q"	"Trailer - \"Ne faites plus qu'un\""
-				"COMMUNITYUPDATE_11_A"	"Sans limite.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
-				"COMMUNITYUPDATE_11_Q"	"Trailer de gameplay \"Pilotes\""
+				"COMMUNITYUPDATE_00_A"	"Découvrez une kyrielle de nouveautés incluant un Titan, des cartes et du contenu Prime !\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
+				"COMMUNITYUPDATE_00_Q"	"Actu de la Frontière : programme de DLC"
+				"COMMUNITYUPDATE_01_A"	"Obtenez le tout premier aperçu du gameplay et du contenu de la mise à jour Nouvelle colonie, disponible le 30/03/2017 !\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_01_Q"	"Trailer de gameplay \"Nouvelle colonie\""
+				"COMMUNITYUPDATE_02_A"	"Découvrez toutes les nouveautés de la mise à jour Nouvelle colonie...\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
+				"COMMUNITYUPDATE_02_Q"	"Actu de la Frontière - 23/03/2017"
+				"COMMUNITYUPDATE_03_A"	"Consultez la liste complète des changements et des modifications inclus à la mise à jour Nouvelle colonie.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
+				"COMMUNITYUPDATE_03_Q"	"Notes de patch Nouvelle colonie"
+				"COMMUNITYUPDATE_04_A"	"Vous débutez dans Titanfall 2 ? Frothy Omen vous explique comment devenir un pilote d'élite, des mouvements basiques comme le double saut au maniement avancé des armes et des explosifs.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la suite."
+				"COMMUNITYUPDATE_04_Q"	"École de pilotage de Titanfall 2"
+				"COMMUNITYUPDATE_05_A"	"Le concepteur en chef Jason McCord nous explique comment la création de la mission La Balise a contribué à façonner l'expérience solo de Titanfall 2.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
+				"COMMUNITYUPDATE_05_Q"	"Blog Respawn - Création de La Balise"
+				"COMMUNITYUPDATE_06_A"	"Moy Parra, animateur chez Respawn, est de retour avec un nouvel épisode fantastique des Titan Toons.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_06_Q"	"Titan Toons : \"Live Fire Repeat\""
+				"COMMUNITYUPDATE_07_A"	"La talentueuse Nicole Peh a créé de superbes fonds d’écran présentant le type de restaurant que chaque Titan pourrait posséder.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir les fonds d’écran."
+				"COMMUNITYUPDATE_07_Q"	"Fan-art : fonds d’écran Titan"
+				"COMMUNITYUPDATE_08_A"	"Découvrez Live Fire, un tout nouveau mode de jeu pour pilotes proposant des affrontements ultra-rapides à 6c6 en combat rapproché. Combattez sur deux nouvelles cartes spécialement conçues pour Live Fire : Empilements et Prairie. Ces deux cartes comportent des zones de jeu resserrées parfaitement adaptées au caractère intense et débridé de ce nouveau mode de jeu.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_08_Q"	"Trailer de gameplay \"Bienvenue dans Live Fire\""
+				"COMMUNITYUPDATE_09_A"	"Découvrez la version remasterisée d'`1Angel City`0, la carte favorite des joueurs du premier Titanfall ! Préparez-vous pour le premier DLC gratuit de Titanfall 2, `1Liste noire d'Angel City`0, qui sera disponible le 1er décembre pour tous les joueurs. Ce nouveau contenu inclut également des optimisations cosmétiques qui vous aideront à vous démarquer sur les champs de bataille de la Frontière. \n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_09_Q"	"Trailer de gameplay \"Bienvenue à Angel City\""
+				"COMMUNITYUPDATE_10_A"	"Bon retour parmi nous !\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_10_Q"	"Trailer de rappel \"Récompenses\""
+				"COMMUNITYUPDATE_11_A"	"Deux légendes, un héritage.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_11_Q"	"Trailer de gameplay solo \"Ne faites plus qu'un\""
+				"COMMUNITYUPDATE_12_A"	"Sans limite.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_12_Q"	"Trailer de gameplay multijoueur \"Pilotes\""
 				"COMMUNITYUPDATE_DESC"	"`3Titanfall - Mises à jour de la communauté`0\n\nDes infos et des liens en provenance de tout le web.\n\nPour ne rien manquer :\n`2%$rui/bullet_point%`0Suivez-nous sur Twitter `1@Respawn`0\n`2%$rui/bullet_point%`0Rendez-vous sur `1facebook.com/RespawnEntertainment`0\n`2%$rui/bullet_point%`0Rejoignez-nous sur `1www.respawn.com`0"
 				"COMMUNITYUPDATE_NAME"	"Communauté"
+				"GAMEMODE_TDM"	"Combat de Titan"
 				"KNB_SUBJECT_00_DESC"	"`3Quoi de neuf dans Titanfall ?`0\n\nPrenez connaissance des nouvelles fonctionnalités de Titanfall 2 !"
 				"KNB_SUBJECT_00_NAME"	"Notes de patch"
 				"KNB_SUBJECT_00_SUB_00_A"	"Consultez la liste à puces sur la gauche pour découvrir les nouveautés du troisième DLC de Titanfall 2 : Nouvelle colonie. N'oubliez pas que les modifications et correctifs listés ici ne sont qu'un aperçu de ce qui vous attend dans le patch.\n\nComme toujours, nous allons écouter vos remarques afin de continuer à améliorer votre expérience. Amusez-vous bien !\n\n\n\n\n\nPour consulter l'intégralité des notes de patch, rendez-vous sur `3www.titanfall.com/fr`0."
@@ -2753,10 +2888,10 @@ playlists
 				"PL_ffa_abbr"	"CPS"
 				"PL_ffa_desc"	"Chaque pilote joue seul et doit abattre tous ses ennemis.\n^FFC83200Joueurs : 1c11\nLimite de temps : 10 min\nTaille max. du groupe : 1"
 				"PL_ffa_lobby"	"Salon Chacun pour soi"
-				"PL_glitch"	"Glitch 24/7"
-				"PL_glitch_abbr"	"GLI"
-				"PL_glitch_desc"	"Affrontements exclusivement sur la carte Glitch. ^CCCCCC00Vous allez chercher des parties en modes ^FFC83200CDD^CCCCCC00, ^FFC83200Point clé amplifié^CCCCCC00, ^FFC83200Pilotes contre pilotes^CCCCCC00, ^FFC83200Live Fire^CCCCCC00 et ^FFC83200Dernier Titan^CCCCCC00."
-				"PL_glitch_lobby"	"Salon Glitch 24/7"
+				"PL_Relic"	"Relic 24/7"
+				"PL_Relic_abbr"	"GLI"
+				"PL_Relic_desc"	"Affrontements exclusivement sur la carte Relic. ^CCCCCC00Vous allez chercher des parties en modes ^FFC83200CDD^CCCCCC00, ^FFC83200Point clé amplifié^CCCCCC00, ^FFC83200Pilotes contre pilotes^CCCCCC00, ^FFC83200Live Fire^CCCCCC00 et ^FFC83200Dernier Titan^CCCCCC00."
+				"PL_Relic_lobby"	"Salon Relic 24/7"
 				"PL_groud_war_lobby"	"Salon Mixtape 8c8"
 				"PL_ground_war"	"Mixtape 8c8"
 				"PL_ground_war_abbr"	"8c8"
@@ -2781,14 +2916,15 @@ playlists
 				"PL_load_a_map_on_the_command_line"	"Charger carte par ligne de commande –dev uniquement"
 				"PL_marked_for_death"	"Condamnation"
 				"PL_marked_for_death_abbr"	"COND"
-				"PL_marked_for_death_desc"	"Abattez ou protégez les cible désignées.\n^FFC83200Joueurs : 6c6  \nLimite de temps : 12 min\nTaille max. du groupe : 6"
+				"PL_marked_for_death_desc"	"Abattez ou protégez les cibles désignées.\n^FFC83200Joueurs : 6c6  \nLimite de temps : 12 min\nTaille max. du groupe : 6"
 				"PL_marked_for_death_lobby"	"Salon Condamnation"
-				"PL_pilot_hunter"	"Escarmouche"
-				"PL_pilot_hunter_abbr"	"ESC"
-				"PL_pilot_hunter_desc"	"Éliminez les pilotes et Titans ennemis. \n^FFC83200Joueurs : 8c8\nLimite de temps : 10 min\nTaille max. du groupe : 8"
-				"PL_pilot_hunter_lobby"	"Salon Escarmouche"
+				"PL_pilot_hunter"	"Combat de Titan"
+				"PL_pilot_hunter_abbr"	"CDT"
+				"PL_pilot_hunter_desc"	"Détruisez les Titans ennemis. \n^FFC83200Joueurs : 5c5\nLimite de temps : 10 min\nTaille max. du groupe : 5"
+				"PL_pilot_hunter_hint"	"Détruisez les Titans ennemis.\nPas d'éjection"
+				"PL_pilot_hunter_lobby"	"Salon Combat de Titan"
 				"PL_pilot_skirmish"	"Pilotes contre pilotes"
-				"PL_pilot_skirmish_abbr"	"JcJ"
+				"PL_pilot_skirmish_abbr"	"PcP"
 				"PL_pilot_skirmish_desc"	"Tuez les pilotes ennemis. Aucun largage de Titan n’est autorisé.\n^FFC83200Joueurs : 8c8      *Aucun Titan\nLimite de temps : 10 min\nTaille max. du groupe : 8"
 				"PL_pilot_skirmish_lobby"	"Salon PcP"
 				"PL_pl_rebuild_all_paths"	"Tout reconstruire"
@@ -2812,32 +2948,35 @@ playlists
 			"Language" "polish"
 			"Tokens"
 			{
-				"COMMUNITYUPDATE_00_A"	"Pokaz rozgrywki, prezentujący nowości w aktualizacji Nowa Kolonia, która wyjdzie 30.03.2017 r.!\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby obejrzeć."
-				"COMMUNITYUPDATE_00_Q"	"Zwiastun rozgrywki „Nowa Kolonia”"
-				"COMMUNITYUPDATE_01_A"	"Zobacz pełną listę wszystkich nowości w aktualizacji „Nowa Kolonia”...\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_01_Q"	"Doniesienia z Kresów – 23 marca 2017 r."
-				"COMMUNITYUPDATE_02_A"	"Przeczytaj pełną listę zmian i aktualizacji, które trafią do gry w tym miesiącu w aktualizacji „Nowa Kolonia”.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_02_Q"	"Opis patcha „Nowa Kolonia”"
-				"COMMUNITYUPDATE_03_A"	"To twój pierwszy kontakt z Titanfall 2? Pozwól, że sensei Frothy Omen nauczy cię, jak być dobrym pilotem, zaczynając od takich podstawowych rzeczy jak podwójne skoki, a kończąc na korzystaniu z broni zwykłej i ciężkiej.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_03_Q"	"Szkoła pilotów Titanfall 2"
-				"COMMUNITYUPDATE_04_A"	"Główny projektant Jason McCord opowiada o tworzeniu misji z kampanii, która pomogła określić, jak zespół będzie podchodził do tworzenia trybu dla pojedynczego gracza.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_04_Q"	"Blog Respawn – Tworzenie „Nadajnika”"
-				"COMMUNITYUPDATE_05_A"	"Benchy, który jest prawdopodobnie jednym z najlepszych graczy w Titanfall, pokazuje, jak strzelać ze snajperki w Titanfall 2.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_05_Q"	"Montaż – mistrz Krabera, Benchy"
-				"COMMUNITYUPDATE_06_A"	"Artystka Nicole Peh stworzyła fantastyczne tapety pokazujące, jak wyglądałyby restauracje każdego z Tytanów.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_06_Q"	"Prace fanów – tapety Tytanów"
-				"COMMUNITYUPDATE_07_A"	"Prezentujemy `1Szybki szturm`0 – błyskawiczny tryb 6 na 6 dla Pilotów, w którym najważniejsza jest rywalizacja i walka na krótkim dystansie.\n\nDodaliśmy dwie nowe mapy zaprojektowane specjalnie dla trybu Szybki szturm: `1Stosy`0 i `1Łąka`0. Obydwie zostały stworzone z myślą o dynamicznej i intensywnej atmosferze tego trybu. \n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_07_Q"	"Zwiastun – DLC „Szybki szturm”"
-				"COMMUNITYUPDATE_08_A"	"Poznaj odświeżoną wersję `1Miasta Aniołów`0, ulubionej mapy graczy z pierwszej części Titanfall. Przygotuj się na nadejście pierwszego darmowego pakietu DLC do Titanfall 2 – zestawu `1„Renegat z Miasta Aniołów”`0, który udostępnimy wszystkim graczom już 1 grudnia. Zestaw zawiera nowe opcje kosmetyczne, dzięki którym wyróżnisz się podczas walk na Kresach. \n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_08_Q"	"Zwiastun – DLC „Miasto Aniołów”"
-				"COMMUNITYUPDATE_09_A"	"Witaj z powrotem.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_09_Q"	"Zwiastun – „Bis”"
-				"COMMUNITYUPDATE_10_A"	"Dwie legendy, jedna historia.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_10_Q"	"Zwiastun – „Połącz siły”"
-				"COMMUNITYUPDATE_11_A"	"Bez ograniczeń.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_11_Q"	"Zwiastun – „Rozgrywka pilota”"
+				"COMMUNITYUPDATE_00_A"	"W najbliższym czasie możecie spodziewać się m.in. nowych map i nowych Tytanów Prime. Wszystkie informacje znajdziecie tutaj.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby obejrzeć."
+				"COMMUNITYUPDATE_00_Q"	"Doniesienia z Kresów – harmonogram DLC"
+				"COMMUNITYUPDATE_01_A"	"Pierwszy film z rozgrywką prezentujący nowości w aktualizacji Nowa Kolonia, która zostanie udostępniona 30 marca 2017 r.!\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby obejrzeć."
+				"COMMUNITYUPDATE_01_Q"	"Zwiastun – rozgrywka w „Nowej Kolonii”"
+				"COMMUNITYUPDATE_02_A"	"Zobacz, co znajdzie się w aktualizacji „Nowa Kolonia”...\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_02_Q"	"Doniesienia z Kresów – 23 marca 2017 r."
+				"COMMUNITYUPDATE_03_A"	"Przeczytaj pełną listę zmian i aktualizacji, które trafią do gry w tym miesiącu w aktualizacji „Nowa Kolonia”.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_03_Q"	"Informacje o aktualizacji „Nowa Kolonia”"
+				"COMMUNITYUPDATE_04_A"	"To twój pierwszy kontakt z Titanfall 2? Pozwól, że sensei Frothy Omen nauczy cię, jak być dobrym pilotem, zaczynając od takich podstawowych rzeczy jak podwójne skoki, a kończąc na korzystaniu z broni zwykłej i ciężkiej.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_04_Q"	"Szkoła pilotów Titanfall 2"
+				"COMMUNITYUPDATE_05_A"	"Główny projektant Jason McCord opowiada o tworzeniu misji z kampanii, która pomogła nakreślić wizję tego, jak zespół będzie podchodził do tworzenia trybu dla pojedynczego gracza.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_05_Q"	"Blog Respawn – kulisy tworzenia „Nadajnika”"
+				"COMMUNITYUPDATE_06_A"	"Animator z Respawn, Moy Parra powraca z kolejnym wspaniałym odcinkiem Titan Toons.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_06_Q"	"Titan Toons: Szybki szturm (powtórka)"
+				"COMMUNITYUPDATE_07_A"	"Artystka Nicole Peh stworzyła fantastyczne tapety pokazujące, jak wyglądałyby restauracje każdego z Tytanów.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_07_Q"	"Prace fanów – tapety Tytanów"
+				"COMMUNITYUPDATE_08_A"	"Poznajcie „Szybki szturm” – niezwykle szybki tryb 6 na 6 dla pilotów, w którym nie zabraknie zaciętych potyczek na krótkich dystansach. Specjalnie na potrzeby tego trybu przygotowaliśmy dwie nowe mapy: „Stosy” i „Polana”. Są to ciasne przestrzenie, na których toczyć się będzie dynamiczna i zażarta rywalizacja.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_08_Q"	"Zwiastun – rozgrywka w trybie „Szybki szturm”"
+				"COMMUNITYUPDATE_09_A"	"Poznaj odświeżoną wersję `1Miasta Aniołów`0, ulubionej mapy graczy z pierwszej części Titanfall. Przygotuj się na nadejście pierwszego darmowego pakietu DLC do Titanfall 2 – zestawu `1„Renegat z Miasta Aniołów”`0, który udostępnimy wszystkim graczom już 1 grudnia. Zestaw zawiera nowe opcje kosmetyczne, dzięki którym wyróżnisz się podczas walk na Kresach. \n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_09_Q"	"Zwiastun – rozgrywka w Mieście Aniołów"
+				"COMMUNITYUPDATE_10_A"	"Witaj z powrotem.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_10_Q"	"Zwiastun – „Bis”"
+				"COMMUNITYUPDATE_11_A"	"Dwie legendy, jedna historia.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_11_Q"	"Zwiastun – rozgrywka w trybie fabularnym"
+				"COMMUNITYUPDATE_12_A"	"Bez ograniczeń.\n\n\nNaciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_12_Q"	"Zwiastun – rozgrywka pilotów w trybie online"
 				"COMMUNITYUPDATE_DESC"	"`3Co nowego u społeczności Titanfall?`0\n\nInformacje i linki z całego świata.\n\nAby dowiedzieć się więcej:\n`2%$rui/bullet_point%`0śledź nas na Twitterze `1@Respawn`0\n`2%$rui/bullet_point%`0polub nasz profil na `1facebook.com/RespawnEntertainment`0\n`2%$rui/bullet_point%`0dołącz do nas na stronie `1www.respawn.com`0"
 				"COMMUNITYUPDATE_NAME"	"Społeczność"
+				"GAMEMODE_TDM"	"Starcie Tytanów"
 				"KNB_SUBJECT_00_DESC"	"`3Co nowego w Titanfall?`0\n\nZajrzyj tutaj, by zobaczyć zmiany w Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Inf. o aktualizacji"
 				"KNB_SUBJECT_00_SUB_00_A"	"Po lewej stronie widnieje lista, na której wyszczególniono zmiany wprowadzone w trzecim DLC do Titanfall 2, „Nowej Kolonii”. Musimy wspomnieć, że wymienione poprawki są tylko niewielką częścią tego, co znajduje się w aktualizacji.\n\nJak zawsze będziemy przyglądać się waszym komentarzom i wprowadzać kolejne zmiany w przyszłości. Miłej zabawy!\n\n\n\n\n\nAby przeczytać pełny opis aktualizacji, zajrzyjcie na stronę `3titanfall.com`0."
@@ -2852,7 +2991,7 @@ playlists
 				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 23 lutego: Szybki szturm"
 				"KNB_SUBJECT_00_SUB_05_A"	"Szybki szturm: nowy tryb eliminacyjny, w którym zmagają się wyłącznie piloci! To oparty na rundach tryb 6 na 6, w którym nie można się odradzać. Gracze mają minutę na wyeliminowanie drużyny przeciwnej. Możliwe jest także wygranie rundy poprzez kontrolowanie neutralnej flagi, gdy upłynie czas. O wygranej decyduje zwycięstwo w pięciu rundach.\n\n`2%$rui/bullet_point%`0Nowa dedykowana mapa – Łąka, lokacja pełna pokrytych bujną roślinnością ścieżek pomiędzy skalistymi wzgórzami, pozwalających na ataki z ukrycia. Do tego wracają liny zjazdowe!\n\n`2%$rui/bullet_point%`0Nowa dedykowana mapa – Stosy, lokacja przemysłowa pełna otwartych przestrzeni, z gęstą zabudową w centrum, otoczoną strzelistymi strukturami. Idealna do walki w pionie i szybkich ataków z zewnętrznych zaułków.\n\n`2%$rui/bullet_point%`0Nowa egzekucja – Późne uderzenie: napędzany stymulantem grad ciosów, który wbija przeciwnika w ziemię.\n"
 				"KNB_SUBJECT_00_SUB_05_Q"	"`2%$rui/bullet_point%`0Nowa zawartość [darmowa]"
-				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Matchmaking - Remix: całkowita zmiana menu matchmakingu. Nowa funkcja umożliwi wam tworzenie własnych „remiksów” trybów.\n`2%$rui/bullet_point%`0Kontroler: własne przypisywanie przycisków (dla Pilota i Tytana)\n`2%$rui/bullet_point%`0Kontroler: Przycisk kucania – opcja „przytrzymaj, aby kucnąć” \n`2%$rui/bullet_point%`0Kontroler: Przycisk celowania - opcja „Wł./wył.” \n`2%$rui/bullet_point%`0Sterowanie: opcja „Przytrzymaj %use%, aby dosiąść Tytana” \n`2%$rui/bullet_point%`0Zaawansowany HUD: Wyłącz kolory członków grupy (opcja dla graczy z zaburzeniami postrzegania kolorów)\n`2%$rui/bullet_point%`0Pytania i odpowiedzi - społeczność: Nowe kategorie dla nadchodzących uaktualnień, dodatków, zwiastunów i dzieł społeczności\n`2%$rui/bullet_point%`0Dodany pasek ziarnistości obrazu"
+				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Matchmaking - Remix: całkowita zmiana menu matchmakingu. Nowa funkcja umożliwi wam tworzenie własnych „remiksów” trybów.\n`2%$rui/bullet_point%`0Kontroler: własne przypisywanie przycisków (dla Pilota i Tytana)\n`2%$rui/bullet_point%`0Kontroler: Przycisk kucania – opcja „przytrzymaj, aby kucnąć” \n`2%$rui/bullet_point%`0Kontroler: Przycisk celowania - opcja „Wł./wył.” \n`2%$rui/bullet_point%`0Sterowanie: opcja „Przytrzymaj %use%, aby dosiąść Tytana” \n`2%$rui/bullet_point%`0Zaawansowany HUD: Wyłącz kolory członków grupy (opcja dla graczy z zaburzeniami postrzegania kolorów)\n`2%$rui/bullet_point%`0FAQ - społeczność: Nowe kategorie dla nadchodzących uaktualnień, dodatków, zwiastunów i dzieł społeczności\n`2%$rui/bullet_point%`0Dodany pasek ziarnistości obrazu"
 				"KNB_SUBJECT_00_SUB_06_Q"	"`2%$rui/bullet_point%`0Nowe funkcje"
 				"KNB_SUBJECT_00_SUB_07_A"	"Ton\n`2%$rui/bullet_point%`0Zmniejszono obrażenia rdzenia salwy.\n`2%$rui/bullet_point%`0Usunięto spadek obrażeń od rakiet rdzenia salwy.\n`2%$rui/bullet_point%`0Zwiększono czas odnowienia sonaru.\n`2%$rui/bullet_point%`0Zmniejszono wielkość pocisków działa 40 mm.\n\nPolaris\n`2%$rui/bullet_point%`0Usunięto spadek obrażeń od rakiet rdzenia wzlotu.\n`2%$rui/bullet_point%`0Zwiększono tempo regeneracji zrywu.\n\nSpopielacz\n`2%$rui/bullet_point%`0Celowanie przy użyciu głównej broni wyświetla drogę pocisku.\n\nKationa\n`2%$rui/bullet_point%`0Naprawiono błąd tarczy wirowej, który powodował, że odbite pociski zadawały wysokie obrażenia rozpryskowe.\n"
 				"KNB_SUBJECT_00_SUB_07_Q"	"`2%$rui/bullet_point%`0Zmiany balansu"
@@ -2894,7 +3033,7 @@ playlists
 				"PL_colony_lobby"	"Kolonia 24/7 – lobby"
 				"PL_ctf_lf"	"Walka o flagę\n(Szybki szturm)"
 				"PL_ctf_lf_abbr"	"WoF"
-				"PL_ctf_lf_desc"	"Dynamiczna rozgrywka w trybie Walka o flagę na mapach z „Szybkim szturmem”.\n^FFC83200Gracze: 6 na 6\nMaksymalny rozmiar grupy: 6\n^F4D5A600Brak Tytanów     Brak wzmocnień     Przeskok fazowy powoduje upuszczenie flagi"
+				"PL_ctf_lf_desc"	"Dynamiczna rozgrywka w trybie Walka o flagę na mapach z „Szybkim szturmem”.\n^FFC83200Gracze: 6 na6\nMaksymalny rozmiar grupy: 6\n^F4D5A600Brak Tytanów     Brak wzmocnień     Przeskok fazowy powoduje upuszczenie flagi"
 				"PL_ctf_lf_lobby"	"Lobby: WoF (Szybki szturm)"
 				"PL_default_description"	"Domyślny opis"
 				"PL_default_lobbytitle"	"Domyślny tytuł lobby"
@@ -2916,10 +3055,10 @@ playlists
 				"PL_ffa_abbr"	"KNK"
 				"PL_ffa_desc"	"Każdy na każdego, musisz wyeliminować wszystkich przeciwników.\n^FFC83200Gracze: 1 na 11\nLimit czasu: 10 min.\nMaksymalny rozmiar grupy: 1"
 				"PL_ffa_lobby"	"Lobby: Każdy na każdego"
-				"PL_glitch"	"Błąd 24/7"
-				"PL_glitch_abbr"	"BŁD"
-				"PL_glitch_desc"	"Błąd non-stop. ^CCCCCC00Wyszukiwane będą gry w trybach: ^FFC83200WOF^CCCCCC00, ^FFC83200Obrona umocnień^CCCCCC00, ^FFC83200Piloci kontra piloci^CCCCCC00, ^FFC83200Szybki szturm^CCCCCC00 i ^FFC83200Do ostatniego Tytana^CCCCCC00."
-				"PL_glitch_lobby"	"Lobby: Błąd 24/7"
+				"PL_Relic"	"Błąd 24/7"
+				"PL_Relic_abbr"	"BŁD"
+				"PL_Relic_desc"	"Błąd non-stop. ^CCCCCC00Wyszukiwane będą gry w trybach: ^FFC83200WOF^CCCCCC00, ^FFC83200Obrona umocnień^CCCCCC00, ^FFC83200Piloci kontra piloci^CCCCCC00, ^FFC83200Szybki szturm^CCCCCC00 i ^FFC83200Do ostatniego Tytana^CCCCCC00."
+				"PL_Relic_lobby"	"Lobby: Błąd 24/7"
 				"PL_groud_war_lobby"	"8 na 8 Remix – lobby"
 				"PL_ground_war"	"8 na 8 Remix"
 				"PL_ground_war_abbr"	"8 na 8"
@@ -2946,10 +3085,11 @@ playlists
 				"PL_marked_for_death_abbr"	"NC"
 				"PL_marked_for_death_desc"	"Zabijaj lub chroń oznaczone cele.\n^FFC83200Gracze: 6 na 6  \nLimit czasu: 12 min\nMaksymalny rozmiar grupy: 6"
 				"PL_marked_for_death_lobby"	"Lobby: Na celowniku"
-				"PL_pilot_hunter"	"Starcie pilotów"
+				"PL_pilot_hunter"	"Starcie Tytanów"
 				"PL_pilot_hunter_abbr"	"SKM"
-				"PL_pilot_hunter_desc"	"Zabij wrogich pilotów i ich Tytany. \n^FFC83200Gracze: 8 na 8\nLimit czasu: 10 min.\nMaksymalny rozmiar grupy: 8"
-				"PL_pilot_hunter_lobby"	"Lobby: Starcie pilotów"
+				"PL_pilot_hunter_desc"	"Zniszcz wrogie Tytany. \n^FFC83200Gracze: 5 na 5\nLimit czasu: 10 min\nMaksymalny rozmiar grupy: 5"
+				"PL_pilot_hunter_hint"	"Niszcz wrogie Tytany.\nBrak katapultowania"
+				"PL_pilot_hunter_lobby"	"Lobby: Starcie Tytanów"
 				"PL_pilot_skirmish"	"Piloci kontra piloci"
 				"PL_pilot_skirmish_abbr"	"PvP"
 				"PL_pilot_skirmish_desc"	"Zabij wrogich pilotów. Zrzuty Tytanów niedozwolone.\n^FFC83200Gracze: 8 na 8      *Bez Tytanów\nLimit czasu: 10 min.\nMaksymalny rozmiar grupy: 8"
@@ -2975,32 +3115,35 @@ playlists
 			"Language" "mspanish"
 			"Tokens"
 			{
-				"COMMUNITYUPDATE_00_A"	"¡El primer vistazo a la jugabilidad muestra todas las novedades que llegan con la actualización Colonia Renacida, disponible el 30/03/2017!\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_00_Q"	"Tráiler de jugabilidad de \"Colonia Renacida\""
-				"COMMUNITYUPDATE_01_A"	"Checa el desglose completo de todas las novedades que llegan con la actualización \"Colonia Renacida\"...\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_01_Q"	"Red de noticias de la Frontera 23/03/2017"
-				"COMMUNITYUPDATE_02_A"	"Lee la lista completa de cambios y actualizaciones que hemos hecho este mes para la actualización Colonia Renacida.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verla."
-				"COMMUNITYUPDATE_02_Q"	"Notas sobre parches de Colonia Renacida"
-				"COMMUNITYUPDATE_03_A"	"¿Qué novedades hay en Titanfall 2? Dejemos que el maestro Frothy Omen te enseñe cómo hacer saltos dobles de piloto básicos y a usar las armas y la artillería.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_03_Q"	"Escuela de pilotos de Titanfall 2"
-				"COMMUNITYUPDATE_04_A"	"El diseñador jefe, Jason McCord, reflexiona sobre la creación de la misión de campaña, que ayudó a definir la forma en que el equipo creó la campaña de un jugador.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_04_Q"	"Blog de Respawn: creación de La baliza"
-				"COMMUNITYUPDATE_05_A"	"Benchy, probablemente uno de los jugadores más letales de Titanfall, nos muestra cómo usar el francotirador en Titanfall 2.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_05_Q"	"Montaje: Kraber God, por Benchy"
-				"COMMUNITYUPDATE_06_A"	"La artista Nicole Peh creó unos fondos de pantalla fantásticos sobre los tipos de restaurante que tendría cada titán.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_06_Q"	"Arte de fans.: fondos de pantalla de titán"
-				"COMMUNITYUPDATE_07_A"	"Presentamos `1Fuego vivo`0: un modo vertiginoso de 6vs6 exclusivo para pilotos que se centra en el combate competitivo y de corto alcance.\n\nIncluye dos mapas nuevos diseñados específicamente para Fuego vivo: `1Almacenes`0 y `1Pradera`0.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_07_Q"	"Tráiler del DLC Fuego vivo"
-				"COMMUNITYUPDATE_08_A"	"Disfruta la versión remasterizada del mapa favorito de los aficionados del Titanfall original, `1Ciudad Ángel`0. Permanece atento al primer DLC gratis de Titanfall 2 con `1El más deseado de Ciudad Ángel`0 disponible el 1 de diciembre para todos los jugadores. Este contenido incluye nuevas opciones estéticas para darle más estilo a la Frontera. \n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_08_Q"	"Tráiler del DLC Ciudad Ángel"
-				"COMMUNITYUPDATE_09_A"	"Bienvenido de nuevo.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_09_Q"	"Comentarios del tráiler \"Encore\""
-				"COMMUNITYUPDATE_10_A"	"Dos leyendas, un legado.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_10_Q"	"Tráiler de Sean uno"
-				"COMMUNITYUPDATE_11_A"	"Sin límites.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_11_Q"	"Tráiler de jugabilidad de los pilotos"
+				"COMMUNITYUPDATE_00_A"	"Mapas nuevos, más Primes, un titán nuevo y más están en camino. Lee aquí toda la información.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_00_Q"	"Red de noticias de la Frontera: hoja de ruta del DLC"
+				"COMMUNITYUPDATE_01_A"	"¡El primer vistazo a la jugabilidad muestra todas las novedades que llegan con la actualización Colonia Renacida, disponible el 30/03/2017!\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_01_Q"	"Tráiler de jugabilidad de \"Colonia Renacida\""
+				"COMMUNITYUPDATE_02_A"	"Checa el desglose completo de todas las novedades que llegan con la actualización Colonia Renacida...\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_02_Q"	"Red de noticias de la Frontera 23/03/2017"
+				"COMMUNITYUPDATE_03_A"	"Lee la lista completa de cambios y actualizaciones que hemos hecho este mes para la actualización Colonia Renacida.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verla."
+				"COMMUNITYUPDATE_03_Q"	"Notas sobre parches de Colonia Renacida"
+				"COMMUNITYUPDATE_04_A"	"¿Qué novedades hay en Titanfall 2? Dejemos que el maestro Frothy Omen te enseñe cómo hacer saltos dobles de piloto básicos y a usar las armas y la artillería.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_04_Q"	"Escuela de pilotos de Titanfall 2"
+				"COMMUNITYUPDATE_05_A"	"El diseñador jefe, Jason McCord, reflexiona sobre la creación de la misión de campaña, que ayudó a definir la forma en que el equipo creó la campaña de un jugador.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_05_Q"	"Blog de desarrollo de Respawn: creación de la baliza"
+				"COMMUNITYUPDATE_06_A"	"Moy Parra, el animador de Respawn, regresa con otro episodio fantástico de titanes animados.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_06_Q"	"Titanes animados: Repetición de Fuego vivo"
+				"COMMUNITYUPDATE_07_A"	"La artista Nicole Peh creó unos fondos de pantalla fantásticos sobre los tipos de restaurante que tendría cada titán.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_07_Q"	"Arte de los aficionados: fondos de pantalla de titán"
+				"COMMUNITYUPDATE_08_A"	"Presentamos Fuego vivo: un modo vertiginoso de 6vs6 exclusivo para pilotos que se centra en el combate competitivo y de corto alcance. Incluye dos mapas nuevos diseñados específicamente para Fuego vivo: Aglomeración y Pradera. Estos mapas gratuitos, diseñados específicamente para este modo intenso y frenético, son cajas letales estrechas y cerradas.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_08_Q"	"Tráiler de jugabilidad \"Bienvenidos a Fuego vivo\""
+				"COMMUNITYUPDATE_09_A"	"Disfruta la versión remasterizada del mapa favorito de los aficionados del Titanfall original, `1Ciudad Ángel`0. Permanece atento al primer DLC gratis de Titanfall 2 con `1El más deseado de Ciudad Ángel`0 disponible el 1 de diciembre para todos los jugadores. Este contenido incluye nuevas opciones estéticas para darle más estilo a la Frontera. \n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_09_Q"	"Tráiler de jugabilidad \"Bienvenidos a Ciudad Ángel\""
+				"COMMUNITYUPDATE_10_A"	"Bienvenido de nuevo.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_10_Q"	"Tráiler de comentarios \"Encore\""
+				"COMMUNITYUPDATE_11_A"	"Dos leyendas, un legado.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_11_Q"	"Tráiler de jugabilidad de un jugador \"Sean uno\""
+				"COMMUNITYUPDATE_12_A"	"Sin límites.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_12_Q"	"Tráiler de jugabilidad de multijugador \"Pilotos\""
 				"COMMUNITYUPDATE_DESC"	"`3Actualizaciones en la comunidad de Titanfall`0\n\nInformación y enlaces de la web.\n\nPara más información:\n`2%$rui/bullet_point%`0Síguenos en Twitter `1@Respawn`0\n`2%$rui/bullet_point%`0Danos me gusta en `1facebook.com/RespawnEntertainment`0\n`2%$rui/bullet_point%`0Únete a nosotros en `1www.respawn.com`0"
 				"COMMUNITYUPDATE_NAME"	"Comunidad"
+				"GAMEMODE_TDM"	"Pelea titánica"
 				"KNB_SUBJECT_00_DESC"	"`3¿Qué es nuevo en Titanfall?`0\n\n¡Chécalo aquí para ver qué ha cambiado en Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Notas de la insignia"
 				"KNB_SUBJECT_00_SUB_00_A"	"Checa los puntos destacados a la izquierda y descubre los cambios que hemos incluido en el tercer DLC de Titanfall 2: Colonia Renacida. Es importante tener en cuenta que los cambios y arreglos listados solo son una pequeña muestra de lo que incluye el parche.\n\nComo siempre, seguiremos al pendiente de los comentarios para hacer más mejoras en el futuro. ¡Disfruta!\n\n\n\n\n\nPara ver las notas completas sobre parches, visita `3titanfall.com`0."
@@ -3079,10 +3222,10 @@ playlists
 				"PL_ffa_abbr"	"TCT"
 				"PL_ffa_desc"	"Cada piloto por su cuenta; elimina a todos los enemigos.\n^FFC83200Jugadores: 1vs11\nLímite de tiempo: 10 min.\nTamaño máximo de grupo: 1"
 				"PL_ffa_lobby"	"Lobby de Todos contra todos"
-				"PL_glitch"	"Fallo 24/7"
-				"PL_glitch_abbr"	"FAL"
-				"PL_glitch_desc"	"Fallo, sin interrupciones. ^CCCCCC00Buscará partidas de ^FFC83200CLB^CCCCCC00, ^FFC83200Punto clave amplificado^CCCCCC00, ^FFC83200Batalla de pilotos^CCCCCC00, ^FFC83200Fuego vivo^CCCCCC00 y ^FFC83200Último titán en pie^CCCCCC00."
-				"PL_glitch_lobby"	"Lobby de Fallo 24/7"
+				"PL_Relic"	"Fallo 24/7"
+				"PL_Relic_abbr"	"FAL"
+				"PL_Relic_desc"	"Fallo, sin interrupciones. ^CCCCCC00Buscará partidas de ^FFC83200CLB^CCCCCC00, ^FFC83200Punto clave amplificado^CCCCCC00, ^FFC83200Batalla de pilotos^CCCCCC00, ^FFC83200Fuego vivo^CCCCCC00 y ^FFC83200Último titán en pie^CCCCCC00."
+				"PL_Relic_lobby"	"Lobby de Fallo 24/7"
 				"PL_groud_war_lobby"	"Lobby diverso 8vs8"
 				"PL_ground_war"	"Diverso 8vs8"
 				"PL_ground_war_abbr"	"8vs8"
@@ -3109,10 +3252,11 @@ playlists
 				"PL_marked_for_death_abbr"	"MPM"
 				"PL_marked_for_death_desc"	"Elimina o protege los objetivos marcados.\n^FFC83200Jugadores: 6vs6  \nLímite de tiempo: 12 min\nNúmero máximo de miembros del grupo: 6"
 				"PL_marked_for_death_lobby"	"Lobby de Marcado para morir"
-				"PL_pilot_hunter"	"Escaramuza"
-				"PL_pilot_hunter_abbr"	"ECM"
-				"PL_pilot_hunter_desc"	"Elimina a los pilotos y titanes enemigos. \n^FFC83200Jugadores: 8vs8\nLímite de tiempo: 10 min.\nTamaño máximo del grupo: 8"
-				"PL_pilot_hunter_lobby"	"Lobby de Escaramuza"
+				"PL_pilot_hunter"	"Pelea titánica"
+				"PL_pilot_hunter_abbr"	"PLTT"
+				"PL_pilot_hunter_desc"	"Elimina a los titanes enemigos. \n^FFC83200Jugadores: 5vs5\nLímite de tiempo: 10 min.\nTamaño máximo del grupo: 5"
+				"PL_pilot_hunter_hint"	"Elimina a los titanes enemigos.\nSin eyección"
+				"PL_pilot_hunter_lobby"	"Lobby de Pelea titánica"
 				"PL_pilot_skirmish"	"Batalla de pilotos"
 				"PL_pilot_skirmish_abbr"	"PvP"
 				"PL_pilot_skirmish_desc"	"Elimina a los pilotos enemigos.  No se permiten despliegues de titán.\n^FFC83200Jugadores: 8vs8      *Sin titanes\nLímite de tiempo: 10 min.\nTamaño máximo del grupo: 8"

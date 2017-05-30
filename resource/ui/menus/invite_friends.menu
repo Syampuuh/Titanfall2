@@ -1,0 +1,75 @@
+resource/ui/menus/invite_friends.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+        RuiMenuTitle
+        {
+            ControlName				RuiPanel
+			xpos					107
+			ypos					75
+            wide					1600
+            tall					65
+            visible 				1
+            rui						"ui/invite_to_network_label.rpak"
+        }
+
+		ImgTopBar
+		{
+			ControlName				ImagePanel
+			InheritProperties		MenuTopBar
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		GridPanel
+		{
+			ControlName				CNestedPanel
+			xpos					96
+            ypos                    160
+			wide					934
+			tall					796
+			visible					1
+			tabPosition				1
+			controlSettingsFile		"resource/ui/menus/panels/invite_friends_selection_grid.res"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

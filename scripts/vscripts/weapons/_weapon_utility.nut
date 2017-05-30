@@ -217,6 +217,10 @@ function WeaponUtility_Init()
 		AddCallback_EntitiesDidLoad( EntitiesDidLoad )
 
 		HOLO_PILOT_TRAIL_FX = PrecacheParticleSystem( $"P_ar_holopilot_trail" )
+
+		PrecacheParticleSystem( $"wpn_laser_blink" )
+		PrecacheParticleSystem( $"wpn_laser_blink_fast" )
+		PrecacheParticleSystem( $"P_ordinance_icon_owner" )
 	#endif
 }
 
@@ -2133,10 +2137,18 @@ array<string> function GetWeaponBurnMods( string weaponClassName )
 {
 	array<string> burnMods = []
 
+	string prefix
+
 	array<string> mods = GetWeaponMods_Global( weaponClassName )
+
+	if ( GetCurrentPlaylistVarInt( "low_ttk", 0 ) >= 1 && mods.contains( "amped_ttk" ) )
+		prefix = "amped_ttk"
+	else
+		prefix = "burn_mod"
+
 	foreach ( mod in mods )
 	{
-		if ( mod.find( "burn_mod" ) == 0 )
+		if ( mod.find( prefix ) == 0 )
 			burnMods.append( mod )
 	}
 
@@ -2758,7 +2770,7 @@ void function PAS_CooldownReduction_OnKill( entity victim, entity attacker, var 
 	switch ( GetWeaponInfoFileKeyField_Global( weapon.GetWeaponClassName(), "cooldown_type" ) )
 	{
 		case "grapple":
-			attacker.SetSuitGrapplePower( attacker.GetSuitGrapplePower() + 34 )
+			attacker.SetSuitGrapplePower( attacker.GetSuitGrapplePower() + 25 )
 			break
 
 		case "ammo":
@@ -2766,11 +2778,11 @@ void function PAS_CooldownReduction_OnKill( entity victim, entity attacker, var 
 		case "ammo_deployed":
 		case "ammo_timed":
 			int maxAmmo = weapon.GetWeaponPrimaryClipCountMax()
-			weapon.SetWeaponPrimaryClipCountNoRegenReset( min( maxAmmo, weapon.GetWeaponPrimaryClipCount() + ( maxAmmo / 3 ) ) )
+			weapon.SetWeaponPrimaryClipCountNoRegenReset( min( maxAmmo, weapon.GetWeaponPrimaryClipCount() + ( maxAmmo / 4 ) ) )
 			break
 
 		case "chargeFrac":
-			weapon.SetWeaponChargeFraction( max( 0, weapon.GetWeaponChargeFraction() - 0.34 ) )
+			weapon.SetWeaponChargeFraction( max( 0, weapon.GetWeaponChargeFraction() - 0.25 ) )
 			break
 
 //		case "mp_ability_ground_slam":
@@ -3078,11 +3090,15 @@ void function Elecriticy_DamagedPlayerOrNPC( entity ent, var damageInfo, asset h
 	else if ( ent.IsTitan() )
 	{
 		EMPGrenade_AffectsShield( ent, damageInfo )
+		#if MP
+		GiveEMPStunStatusEffects( ent, 2.5, 1.0 )
+		#endif
 		thread EMPGrenade_AffectsAccuracy( ent )
 	}
 	else if ( ent.IsMechanical() )
 	{
 		#if MP
+		GiveEMPStunStatusEffects( ent, 2.5, 1.0 )
 		DamageInfo_ScaleDamage( damageInfo, 2.05 )
 		#endif
 	}
@@ -3544,6 +3560,20 @@ array<string> function GetWeaponModsFromDamageInfo( var damageInfo )
 void function OnPlayerGetsNewPilotLoadout( entity player, PilotLoadoutDef loadout )
 {
 	SetPlayerCooldowns( player )
+	if ( GetCurrentPlaylistVarInt( "low_ttk", 0 ) >= 1 )
+	{
+		array<entity> weapons = player.GetMainWeapons()
+		foreach( weapon in weapons )
+		{
+			if ( weapon.HasMod( "silencer" ) )
+				weapon.RemoveMod( "silencer" )
+		}
+		player.GiveExtraWeaponMod( "low_ttk" )
+	}
+	if ( GetCurrentPlaylistVarInt( "tactical_balance", 0 ) >= 1 )
+	{
+		player.GiveExtraWeaponMod( "tactical_balance" )
+	}
 }
 
 void function SetPlayerCooldowns( entity player )

@@ -276,6 +276,21 @@ int function GetAvailableCredits( entity player )
 	return player.GetPersistentVarAsInt( "credits" )
 }
 
+int function GetAvailableFDUnlockPoints( entity player, string titanClass )
+{
+	int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+	for ( int i = 0; i < enumCount; i++ )
+	{
+		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
+		if ( enumName == titanClass )
+		{
+			return player.GetPersistentVarAsInt( "titanFDUnlockPoints[" + enumName + "]" )
+		}
+	}
+
+	unreachable
+}
+
 #if SERVER
 	#if DEV
 	void function DEV_AddCredits( int additionalCredits, entity optionalPlayer = null )
@@ -320,6 +335,13 @@ void function SetAvailableCredits( entity player, int credits )
 	}
 
 	player.SetPersistentVar( "credits", credits )
+}
+
+void function SetAvailableFDUnlockPoints( entity player, string titanClass, int points )
+{
+	printt( "GIVE POINTS ", points )
+	printt( " TO TITAN ", titanClass )
+	player.SetPersistentVar( "titanFDUnlockPoints[" + titanClass + "]", points )
 }
 
 void function AddCreditsForXPGained()

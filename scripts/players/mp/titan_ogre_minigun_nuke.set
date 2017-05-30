@@ -1,0 +1,24 @@
+#base "titan_ogre_minigun.set"
+"titan_ogre_minigun_nuke"
+{
+    keep_title_on_autotitan			1
+
+    core_building_icon  "rui/titan_loadout/core/titan_core_nuke"
+    core_ready_icon     "rui/titan_loadout/core/titan_core_nuke"
+
+	"global"
+	{
+	    printname			"#NPC_TITAN_AUTO_NUKE"
+
+		healthPerSegment 1500 	[$sp]
+		health			10500	[$sp]
+		healthDoomed	4000	[$sp]
+
+		healthPerSegment 2500 	[$mp]
+		health			12500	[$mp]
+		healthDoomed	2500	[$mp]
+
+		healthShield	2500	[$mp]
+		healthShield	2500	[$sp]
+	}
+}

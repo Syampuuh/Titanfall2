@@ -510,8 +510,8 @@ WeaponData
 		{
 			"is_burn_mod"		"1"
 
-			"damage_near_value"   							"100"
-			"damage_far_value"								"100"
+			"damage_near_value"   							"80"
+			"damage_far_value"								"80"
 			"damage_near_value_titanarmor"					"580"
 			"damage_far_value_titanarmor" 					"580"
 //			"explosion_damage"								"85"
@@ -520,12 +520,30 @@ WeaponData
 			"tracer_effect"   								"P_wpn_tracer_sniper_BC"
 			"fx_muzzle_flash_view"							"wpn_muzzleflash_snp_hmn_FP_burn"
 			"fx_muzzle_flash_world"							"wpn_muzzleflash_snp_hmn_burn"
+		}
 
-
-	}
 		tactical_cdr_on_kill
 		{
 
+		}
+		low_ttk
+		{
+			"fire_rate"									"3.0"
+		}
+		amped_ttk
+		{
+			"is_burn_mod"		"1"
+
+			//Effects
+			"tracer_effect_first_person"                    "P_wpn_tracer_sniper_BC"
+			"tracer_effect"   								"P_wpn_tracer_sniper_BC"
+			"fx_muzzle_flash_view"							"wpn_muzzleflash_snp_hmn_FP_burn"
+			"fx_muzzle_flash_world"							"wpn_muzzleflash_snp_hmn_burn"
+
+			"damage_near_value"   							"++20" // 4 -> 5
+			"damage_far_value"								"++20" // 4 -> 6
+			"damage_near_value_titanarmor"					"400"
+			"damage_far_value_titanarmor" 					"400"
 		}
 	}
 

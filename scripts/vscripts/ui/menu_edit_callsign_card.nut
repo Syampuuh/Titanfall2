@@ -200,6 +200,7 @@ void function CallsignCardButton_Activate( var button, int elemNum )
 	CallingCard callsignCard = CallingCard_GetByRef( ref )
 	ClientCommand( "SetCallsignCard " + ref )
 	UpdateCallsignCardElement( file.callsignCard, callsignCard )
+	ResetCommunityUserInfoCacheState( GetPlayerUID() )
 
 	file.selectionMade = true
 	CloseActiveMenu()

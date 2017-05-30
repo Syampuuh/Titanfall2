@@ -196,8 +196,10 @@ void function InitStatsTables()
 	AddPersistentStat( "kills_stats", "wallhangingPilots", 			"",		"killStats.wallhangingPilots", "#" )
 	AddPersistentStat( "kills_stats", "whileWallhanging", 			"",		"killStats.whileWallhanging", "#" )
 
-	AddPersistentStat( "kills_stats", "pilotExecution", 			"",		"killStats.pilotExecution", "#" )
-	AddPersistentStat( "kills_stats", "pilotExecutePilot", 			"",		"killStats.pilotExecutePilot", "#UNLOCK_KILLS_PILOT_EXECUTION" )
+	AddPersistentStat( "kills_stats", "pilotExecution", 					"",		"killStats.pilotExecution", "#" )
+	AddPersistentStat( "kills_stats", "pilotExecutePilot", 					"",		"killStats.pilotExecutePilot", "#UNLOCK_KILLS_PILOT_EXECUTION" )
+	AddPersistentStat( "kills_stats", "pilotExecutePilotWhileCloaked", 		"",		"killStats.pilotExecutePilotWhileCloaked", "#UNLOCK_KILLS_PILOT_EXECUTION_WHILE_CLOAKED" )
+	AddPersistentStat( "kills_stats", "pilotKillsWithHoloPilotActive", 		"",		"killStats.pilotKillsWithHoloPilotActive", "#UNLOCK_KILLS_PILOT_KILLS_WHILE_HOLOPILOT_ACTIVE" )
 
 	int pilotExecutionCount = PersistenceGetEnumCount( "pilotExecution" )
 	for ( int i = 0; i < pilotExecutionCount; i++ )

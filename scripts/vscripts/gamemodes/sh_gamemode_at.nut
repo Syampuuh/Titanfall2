@@ -201,11 +201,11 @@ void function GamemodeAtShared_Init()
 	AddBountyInfo( "npc_titan_stryder_sniper_bounty", "TALON", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar_world" )
 
 	//Monarch
-	AddBountyInfo( "npc_titan_atlas_vanguard_bounty", "MONARCH 1", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar_world" )
-	AddBountyInfo( "npc_titan_atlas_vanguard_bounty", "MONARCH 2", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar_world" )
-	AddBountyInfo( "npc_titan_atlas_vanguard_bounty", "MONARCH 3", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar_world" )
-	AddBountyInfo( "npc_titan_atlas_vanguard_bounty", "MONARCH 4", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar_world" )
-	AddBountyInfo( "npc_titan_atlas_vanguard_bounty", "MONARCH 5", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar_world" )
+	AddBountyInfo( "npc_titan_atlas_vanguard_bounty", "SOVEREIGN", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar", $"rui/hud/gametype_icons/bounty_hunt/bounty_tone_world" )
+	AddBountyInfo( "npc_titan_atlas_vanguard_bounty", "EMPRESS", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar", $"rui/hud/gametype_icons/bounty_hunt/bounty_tone_world" )
+	AddBountyInfo( "npc_titan_atlas_vanguard_bounty", "TYRANT", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar", $"rui/hud/gametype_icons/bounty_hunt/bounty_tone_world" )
+	AddBountyInfo( "npc_titan_atlas_vanguard_bounty", "VICEROY", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar", $"rui/hud/gametype_icons/bounty_hunt/bounty_tone_world" )
+	AddBountyInfo( "npc_titan_atlas_vanguard_bounty", "PHARAOH", $"rui/hud/gametype_icons/bounty_hunt/bounty_northstar", $"rui/hud/gametype_icons/bounty_hunt/bounty_tone_world" )
 
 	for ( int i=0; i<5; i++ )
 		AddBountyInfo( "player", "", $"rui/hud/gametype_icons/bounty_hunt/bounty_legion", $"rui/hud/bounty_hunt/pilot1_icon" )

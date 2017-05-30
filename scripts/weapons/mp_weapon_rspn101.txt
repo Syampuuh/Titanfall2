@@ -116,7 +116,7 @@ WeaponData
 		"damage_near_distance"							"1500"
 		"damage_far_distance" 							"2000"
 
-	    "damage_very_far_value"							"10"
+	    "damage_very_far_value"							"12"
 	    "damage_very_far_distance"						"3500"
 
 
@@ -596,7 +596,28 @@ WeaponData
 			"damage_near_value_titanarmor"					"170"
 			"damage_far_value_titanarmor" 					"150"
 		}
+		low_ttk
+		{
+			"damage_near_value"   							"--5" //25 4 -> 5
+			"damage_far_value"								"--2" //17 6 -> 7
+	   	 	//"damage_very_far_value"						"12" //10 12 -> 10
+		}
+		amped_ttk
+		{
+			"is_burn_mod"		"1"
 
+			//FX
+			"tracer_effect"   								"P_wpn_tracer_BC"
+			"tracer_effect_first_person"                    "P_wpn_tracer_BC"
+			"fx_muzzle_flash_view"							"wpn_muzzleflash_smg_elec_FP"
+			"fx_muzzle_flash_world"							"wpn_muzzleflash_smg_elec"
+
+			"damage_near_value"   							"++5" // 5 -> 4
+			"damage_far_value"								"++2" // 7 -> 6
+   	 		"damage_very_far_value"							"++2" // 9 -> 8
+			"damage_near_value_titanarmor"					"170"
+			"damage_far_value_titanarmor" 					"150"
+		}
 	}
 
 	"ui1_enable"		"1"

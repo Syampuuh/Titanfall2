@@ -1560,7 +1560,10 @@ bool function CodeCallback_OnVortexHitBullet( entity weapon, entity vortexSphere
 
 	#if SERVER
 		if ( vortexSphere.e.BulletHitRules != null )
+		{
 			vortexSphere.e.BulletHitRules( vortexSphere, damageInfo )
+			takesDamage = takesDamage && (DamageInfo_GetDamage( damageInfo ) > 0)
+		}
 	#endif
 
 	vector damageAngles = vortexSphere.GetAngles()
@@ -1609,7 +1612,12 @@ bool function CodeCallback_OnVortexHitBullet( entity weapon, entity vortexSphere
 			damage = HandleWeakToPilotWeapons( vortexSphere, weapon.GetWeaponClassName(), damage )
 
 		if ( takesDamage )
+		{
+			//JFS - Arc Round bug fix for Monarch. Projectiles vortex callback doesn't even have damageInfo, so the shield modifier here doesn't exist in VortexSphereDrainHealthForDamage like it should.
+			ShieldDamageModifier damageModifier = GetShieldDamageModifier( damageInfo )
+			damage *= damageModifier.damageScale
 			VortexSphereDrainHealthForDamage( vortexSphere, damage )
+		}
 
 		if ( DamageInfo_GetAttacker( damageInfo ) && DamageInfo_GetAttacker( damageInfo ).IsTitan() )
 			EmitSoundAtPosition( teamNum, DamageInfo_GetDamagePosition( damageInfo ), "TitanShieldWall.Heavy.BulletImpact_3P_vs_3P" )

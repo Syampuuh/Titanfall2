@@ -1,4 +1,5 @@
 global function Cl_ItemInventory_Init
+global function ServerCallback_ShowCycleHint
 global function ItemInventory_ShowCycleHint
 global function CycleInventory
 
@@ -14,4 +15,9 @@ void function ItemInventory_ShowCycleHint( entity player )
 void function CycleInventory( entity player )
 {
 	player.ClientCommand( "CycleInventory" )
+}
+
+void function ServerCallback_ShowCycleHint()
+{
+	ItemInventory_ShowCycleHint( GetLocalViewPlayer() )
 }

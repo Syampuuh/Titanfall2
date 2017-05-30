@@ -80,6 +80,7 @@ struct
 	var findGameButton
 	var inviteRoomButton
 	var inviteFriendsButton
+	var inviteFriendsToNetworkButton
 
 	var networksMoreButton
 
@@ -400,10 +401,10 @@ void function SetupComboButtonTest( var menu )
 	file.lobbyButtons.append( browseButton )
 	Hud_AddEventHandler( browseButton, UIE_CLICK, OnBrowseNetworksButton_Activate )
 	file.browseNetworkButton = browseButton
-	#if DEVSCRIPTS
-		var inviteButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#INVITE_FRIENDS" )
-		file.lobbyButtons.append( inviteButton )
-		Hud_AddEventHandler( inviteButton, UIE_CLICK, OnInviteFriendsToNetworkButton_Activate )
+	#if NETWORK_INVITE
+		file.inviteFriendsToNetworkButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#INVITE_FRIENDS" )
+		file.lobbyButtons.append( file.inviteFriendsToNetworkButton )
+		Hud_AddEventHandler( file.inviteFriendsToNetworkButton, UIE_CLICK, OnInviteFriendsToNetworkButton_Activate )
 	#endif
 
 	// var networksMoreButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#COMMUNITY_MORE" )
@@ -916,7 +917,7 @@ float function GetMixtapeWaitTimeForPlaylist( string playlistName )
 	return maxWaitTime
 }
 
-void function UpdateRestartMatchmakingStatus( float time ) 
+void function UpdateRestartMatchmakingStatus( float time )
 {
 	if ( AmIPartyMember() )
 	{
@@ -1199,10 +1200,12 @@ void function RefreshCreditsAvailable( int creditsOverride = -1 )
 	int pveCredits = 0
 	bool isPVE = CurrentMenuIsPVEMenu()
 	#if DEVSCRIPTS
-	UpdatePVEPurchasePrediction( player )
-	pveCredits = GetPVECreditsForPlayer( player )
 	if ( isPVE )
-		pveTitle = "#PVE_TITLEEXAMPLE"
+	{
+		TitanLoadoutDef loadout = GetCachedTitanLoadout( uiGlobal.editingLoadoutIndex )
+		pveCredits = GetAvailableFDUnlockPoints( player, loadout.titanClass )
+		pveTitle = GetTitanLoadoutName( loadout )
+	}
 	#endif
 
 	foreach ( elem in file.creditsAvailableElems )
@@ -1341,6 +1344,7 @@ function UpdateLobbyUI()
 	thread MonitorPlaylistChange()
 	thread UpdateChatroomThread()
 	thread UpdateInviteJoinButton()
+	thread UpdateInviteFriendsToNetworkButton()
 	thread UpdatePlayerInfo()
 
 	if ( uiGlobal.EOGOpenInLobby )
@@ -1371,6 +1375,23 @@ void function UpdateInviteJoinButton()
 			ComboButton_SetText( file.inviteRoomButton, Localize( "#MENU_TITLE_INVITE_ROOM" ) )
 		else
 			ComboButton_SetText( file.inviteRoomButton, Localize( "#MENU_TITLE_JOIN_NETWORK" ) )
+
+		WaitFrame()
+	}
+}
+
+void function UpdateInviteFriendsToNetworkButton()
+{
+	EndSignal( uiGlobal.signalDummy, "CleanupInGameMenus" )
+	var menu = GetMenu( "LobbyMenu" )
+
+	while ( true )
+	{
+		bool areInvitesToNetworkNotAllowed = !DoesCurrentCommunitySupportChat()
+		if ( areInvitesToNetworkNotAllowed || ( IsCurrentCommunityInviteOnly() && !AreWeAdminInCurrentCommunity() ) )
+			DisableButton( file.inviteFriendsToNetworkButton )
+		else
+			EnableButton( file.inviteFriendsToNetworkButton )
 
 		WaitFrame()
 	}

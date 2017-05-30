@@ -533,6 +533,26 @@ WeaponData
 			"damage_near_value_titanarmor"					"100"
 			"damage_far_value_titanarmor" 					"60"
 		}
+		low_ttk
+		{
+			"damage_near_value"   							"--2" //20 5 -> 6
+			//"damage_far_value"							"12" //12 6 -> 7
+		}
+		amped_ttk
+		{
+			"is_burn_mod"		"1"
+
+			//FX
+			"fx_muzzle_flash_view"							"P_wpn_muz_mastiff_amp_FP"
+			"fx_muzzle_flash_world"							"P_wpn_muz_mastiff_amp"
+			"projectile_trail_effect_0" 					"P_mastiff_proj_amp"
+			"impact_effect_table" 							"titan_bullet_elec"
+
+			"damage_near_value"   							"++7" // 4 -> 5
+			"damage_far_value"								"++4" // 4 -> 6
+			"damage_near_value_titanarmor"					"100"
+			"damage_far_value_titanarmor" 					"60"
+		}
 	}
 
 		// UI

@@ -60,20 +60,23 @@ var function OnWeaponPrimaryAttack_titanweapon_tracker_rockets( entity weapon, W
 		weapon.SetWeaponChargeFractionForced( weapon.GetWeaponChargeFraction() + shotFrac )
 	}
 
-	var allTargets = weapon.SmartAmmo_GetTargets()
-	foreach ( target in allTargets )
+	if ( weapon.SmartAmmo_IsEnabled() )
 	{
-		if ( SmartAmmo_EntHasEnoughTrackedMarks( weapon, expect entity( target.ent ) ) )
+		var allTargets = weapon.SmartAmmo_GetTargets()
+		foreach ( target in allTargets )
 		{
-			#if SERVER
-			if (target.ent.IsPlayer() && target.ent in weapon.w.targetLockEntityStatusEffectID)
+			if ( SmartAmmo_EntHasEnoughTrackedMarks( weapon, expect entity( target.ent ) ) )
 			{
-				int statusID = weapon.w.targetLockEntityStatusEffectID[expect entity(target.ent)]
-				thread DelayedDisableToneLockOnNotification( expect entity(target.ent), statusID )
-			}
+				#if SERVER
+					if (target.ent.IsPlayer() && target.ent in weapon.w.targetLockEntityStatusEffectID)
+					{
+						int statusID = weapon.w.targetLockEntityStatusEffectID[expect entity(target.ent)]
+						thread DelayedDisableToneLockOnNotification( expect entity(target.ent), statusID )
+					}
 
-			owner.Signal("TrackerRocketsFired")
-			#endif
+					owner.Signal("TrackerRocketsFired")
+				#endif
+			}
 		}
 	}
 

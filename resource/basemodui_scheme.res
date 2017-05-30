@@ -2626,7 +2626,7 @@ Scheme
 
 		RuiStoreButtonPrime
 		{
-			wide					560
+			wide					680
 			tall					71
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1

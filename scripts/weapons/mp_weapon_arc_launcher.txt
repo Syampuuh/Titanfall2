@@ -403,11 +403,6 @@ WeaponData
 			"fx_muzzle_flash_world"							"P_wpn_mflash_arcball_amp"
 		}
 
-		pas_at_hunter
-		{
-			"ammo_stockpile_max"							"*2"
-			"ammo_default_total"							"*2"
-		}
 		pas_fast_ads
 		{
 			//Fast ADS
@@ -435,6 +430,10 @@ WeaponData
 			"reloadempty_time"					"*0.7"
 			"reloadempty_time_late1"			"*0.7"
 		}
+		at_unlimited_ammo
+        {
+            "ammo_no_remove_from_stockpile"					"1"
+        }
 	}
 
 	"ui1_enable"		"1"

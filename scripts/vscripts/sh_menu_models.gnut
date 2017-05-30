@@ -169,6 +169,8 @@
 	global const STORE_BG_DEFAULT = 0
 	global const STORE_BG_BUNDLE1 = 1
 	global const STORE_BG_BUNDLE2 = 2
+	global const STORE_BG_BUNDLE3 = 3
+	global const STORE_BG_BUNDLE4 = 4
 
 #if CLIENT
 
@@ -780,6 +782,12 @@
 			case STORE_BG_BUNDLE2:
 				file.menuStoreBackground.SetModel( $"models/test/brad/store_card_colony.mdl" )
 				break
+			case STORE_BG_BUNDLE3:
+				file.menuStoreBackground.SetModel( $"models/test/brad/store_card_relic.mdl" )
+				break
+			case STORE_BG_BUNDLE4:
+				file.menuStoreBackground.SetModel( $"models/test/brad/store_card_prime_bundle.mdl" )
+				break
 		}
 	}
 
@@ -944,7 +952,7 @@
 		asset model = GetBoostModel( ref )
 
 		vector refOrigin = mover.GetOrigin()
-		vector refAngles = mover.GetAngles()
+		vector refAngles = mover.GetAngles() + <0, 0, 90>
 
 		entity modelEnt = CreateClientSidePropDynamic( refOrigin, refAngles, model )
 		modelEnt.SetParent( mover )
@@ -1271,8 +1279,10 @@
 		if ( IsValid( file.menuTitan.prop ) )
 			file.menuTitan.prop.Destroy()
 
-		if ( bodyModel == $"models/titans/light/titan_light_locust.mdl" || bodyModel == $"models/titans/light/titan_light_ronin_prime.mdl" )
+		if ( bodyModel == $"models/titans/light/titan_light_locust.mdl" )
 			file.menuTitan.prop = CreateAttachedModel( file.menuTitan.body, $"models/weapons/titan_sword/w_titan_sword.mdl", "SIDEARM_HOLSTER" )
+		else if ( bodyModel == $"models/titans/light/titan_light_ronin_prime.mdl" )
+			file.menuTitan.prop = CreateAttachedModel( file.menuTitan.body, $"models/weapons/titan_sword/w_titan_sword_prime.mdl", "SIDEARM_HOLSTER" )
 	}
 
 	void function SetEditingPilotLoadoutIndex( entity player, int loadoutIndex )

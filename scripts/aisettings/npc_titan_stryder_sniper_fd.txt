@@ -1,0 +1,6 @@
+#base "npc_titan_stryder_sniper.txt"
+npc_titan_stryder_sniper_fd
+{
+	minGoalRadius			100
+	assaultHarvester                0
+}

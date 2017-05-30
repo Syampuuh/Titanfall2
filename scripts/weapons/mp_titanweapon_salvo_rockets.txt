@@ -59,6 +59,8 @@ WeaponData
 	"fx_muzzle_flash_world"							"P_muzzleflash_predator"
 	"fx_muzzle_flash_attach"						"muzzle_flash"
 
+	"owner_muzzle_index"							"1"
+
 	"damage_type" 									"burn"
 	"critical_hit"									"0"
 

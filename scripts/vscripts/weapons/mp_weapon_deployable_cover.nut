@@ -248,6 +248,12 @@ void function OnAmpedWallDamaged( entity ampedWall, var damageInfo )
 
 	if ( attacker.IsPlayer() )
 		attacker.NotifyDidDamage( ampedWall, 0, DamageInfo_GetDamagePosition( damageInfo ), DamageInfo_GetCustomDamageType( damageInfo ), DamageInfo_GetDamage( damageInfo ), DamageInfo_GetDamageFlags( damageInfo ), DamageInfo_GetHitGroup( damageInfo ), DamageInfo_GetWeapon( damageInfo ), DamageInfo_GetDistFromAttackOrigin( damageInfo ) )
+
+	float damage = DamageInfo_GetDamage( damageInfo )
+	ShieldDamageModifier damageModifier = GetShieldDamageModifier( damageInfo )
+	damage *= damageModifier.damageScale
+
+	DamageInfo_SetDamage( damageInfo, damage )
 }
 
 #endif

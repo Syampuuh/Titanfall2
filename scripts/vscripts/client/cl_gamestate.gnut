@@ -25,22 +25,29 @@ global function GetGameStartTime
 
 global function ClGameState_RegisterGameStateAsset
 
-const int PTS_TYPE_NONE 			= 0
-const int PTS_TYPE_DEAD 			= 1
-const int PTS_TYPE_DEAD_PILOT_TITAN = 2
-const int PTS_TYPE_DEAD_READY 		= 3
-const int PTS_TYPE_PILOT 			= 4
-const int PTS_TYPE_READY 			= 5
-const int PTS_TYPE_PILOT_TITAN 		= 6
-const int PTS_TYPE_EVAC 			= 7
-const int PTS_TYPE_ION 				= 8
-const int PTS_TYPE_SCORCH 			= 9
-const int PTS_TYPE_RONIN 			= 10
-const int PTS_TYPE_TONE 			= 11
-const int PTS_TYPE_LEGION 			= 12
-const int PTS_TYPE_NORTHSTAR 		= 13
-const int PTS_TYPE_VANGUARD 		= 14
-const int PTS_TYPE_COUNT			= 15
+global function ClGameState_SetPilotTitanStatusCallback
+
+global enum ePlayerStatusType
+{
+	PTS_TYPE_NONE,
+	PTS_TYPE_DEAD,
+	PTS_TYPE_DEAD_PILOT_TITAN,
+	PTS_TYPE_DEAD_READY,
+	PTS_TYPE_PILOT,
+	PTS_TYPE_READY,
+	PTS_TYPE_PILOT_TITAN,
+	PTS_TYPE_EVAC,
+	PTS_TYPE_ION,
+	PTS_TYPE_SCORCH,
+	PTS_TYPE_RONIN,
+	PTS_TYPE_TONE,
+	PTS_TYPE_LEGION,
+	PTS_TYPE_NORTHSTAR,
+	PTS_TYPE_VANGUARD,
+	PTS_TYPE_WAVE_READY,
+	PTS_TYPE_WAVE_NOT_READY,
+	PTS_TYPE_COUNT,
+}
 
 struct PilotTitanStatus
 {
@@ -64,6 +71,7 @@ struct
 	int gameModeScoreBarUpdateFlags = 0
 
 	table< int, PilotTitanStatus> pilotTitanStatus
+	int functionref( entity,int ) pilotTitanStatusCallback
 
 	asset gameStateRuiAsset = $""
 } file
@@ -469,7 +477,7 @@ string function GetTitanClass( entity titan )
 
 array<int> function GetPilotTitanStatusForTeam( int team )
 {
-	array<int> statusTypes = [ PTS_TYPE_NONE, PTS_TYPE_NONE, PTS_TYPE_NONE, PTS_TYPE_NONE, PTS_TYPE_NONE, PTS_TYPE_NONE, PTS_TYPE_NONE, PTS_TYPE_NONE ]
+	array<int> statusTypes = [ ePlayerStatusType.PTS_TYPE_NONE, ePlayerStatusType.PTS_TYPE_NONE, ePlayerStatusType.PTS_TYPE_NONE, ePlayerStatusType.PTS_TYPE_NONE, ePlayerStatusType.PTS_TYPE_NONE, ePlayerStatusType.PTS_TYPE_NONE, ePlayerStatusType.PTS_TYPE_NONE, ePlayerStatusType.PTS_TYPE_NONE ]
 
 	int playerIndex = 0
 	foreach ( teamPlayer in GetPlayerArrayOfTeam( team ) )
@@ -485,40 +493,40 @@ array<int> function GetPilotTitanStatusForTeam( int team )
 			if ( !teamPlayer.IsTitan() )
 			{
 				if ( IsAlive( teamPlayer ) )
-					statusTypes[playerIndex] = PTS_TYPE_PILOT_TITAN
+					statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_PILOT_TITAN
 				else
-					statusTypes[playerIndex] = PTS_TYPE_DEAD_PILOT_TITAN
+					statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_DEAD_PILOT_TITAN
 			}
 			else
 			{
 				if ( !IsAlive( teamPlayer ) )
 				{
-					statusTypes[playerIndex] = PTS_TYPE_DEAD
+					statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_DEAD
 				}
 				else
 				{
 					switch ( GetTitanClass( titan ) )
 					{
 						case "ion":
-							statusTypes[playerIndex] = PTS_TYPE_ION
+							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_ION
 							break
 						case "scorch":
-							statusTypes[playerIndex] = PTS_TYPE_SCORCH
+							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_SCORCH
 							break
 						case "ronin":
-							statusTypes[playerIndex] = PTS_TYPE_RONIN
+							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_RONIN
 							break
 						case "tone":
-							statusTypes[playerIndex] = PTS_TYPE_TONE
+							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_TONE
 							break
 						case "legion":
-							statusTypes[playerIndex] = PTS_TYPE_LEGION
+							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_LEGION
 							break
 						case "northstar":
-							statusTypes[playerIndex] = PTS_TYPE_NORTHSTAR
+							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_NORTHSTAR
 							break
 						case "vanguard":
-							statusTypes[playerIndex] = PTS_TYPE_VANGUARD
+							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_VANGUARD
 							break
 					}
 				}
@@ -528,25 +536,29 @@ array<int> function GetPilotTitanStatusForTeam( int team )
  		{
 			if ( IsAlive( teamPlayer ) )
 			{
-				statusTypes[playerIndex] = IsTitanAvailable( teamPlayer ) ? PTS_TYPE_READY : PTS_TYPE_PILOT
+				statusTypes[playerIndex] = IsTitanAvailable( teamPlayer ) ? ePlayerStatusType.PTS_TYPE_READY : ePlayerStatusType.PTS_TYPE_PILOT
 
 				if ( GetWaveSpawnType() == eWaveSpawnType.DROPSHIP && teamPlayer.GetParent() != null )
 				{
 					entity playerParent = teamPlayer.GetParent()
 					if ( playerParent.IsNPC() && IsDropship( playerParent ) )
 					{
-						statusTypes[playerIndex] = PTS_TYPE_EVAC
+						statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_EVAC
 					}
 				}
 			}
 			else
 			{
-				statusTypes[playerIndex] = IsTitanAvailable( teamPlayer ) ? PTS_TYPE_DEAD_READY : PTS_TYPE_DEAD
+				statusTypes[playerIndex] = IsTitanAvailable( teamPlayer ) ? ePlayerStatusType.PTS_TYPE_DEAD_READY : ePlayerStatusType.PTS_TYPE_DEAD
 			}
 		}
 
+		if ( file.pilotTitanStatusCallback != null )
+			statusTypes[playerIndex] = file.pilotTitanStatusCallback( teamPlayer, statusTypes[playerIndex] )
+
 		playerIndex++
 	}
+
 
 	statusTypes.sort( PilotTitanStatusSort )
 
@@ -1091,4 +1103,9 @@ void function DisplayPostMatchTop3()
 float function GetGameStartTime()
 {
 	return expect float( level.nv.gameStartTime.tofloat() )
+}
+
+void function ClGameState_SetPilotTitanStatusCallback( int functionref(entity,int) func )
+{
+	file.pilotTitanStatusCallback = func
 }

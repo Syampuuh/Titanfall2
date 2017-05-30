@@ -4,6 +4,7 @@ global function GetHintForTitanLoadout
 
 #if SERVER
 global function ShowDeathHint
+global function GetBestDeathHintForNPCTitle
 
 #if SP
 global function ShowDeathHintSP
@@ -14,6 +15,7 @@ global function ShowDeathHintSP
 #if CLIENT
 global function ServerCallback_ShowDeathHint
 global function DeathHintDisplay
+global function GetHintFromId
 #endif
 
 const int NUM_CLASS_NAME_COLUMNS = 5
@@ -87,6 +89,11 @@ void function DeathHints_Init()
 	int locStringColumn = GetDataTableColumnByName( dataTable, "locString" )
 	int mapNameColumn = GetDataTableColumnByName( dataTable, "mapName" )
 
+	#if MP
+	int gameModeColumn = GetDataTableColumnByName( dataTable, "gameMode" )
+	string currGameMode = GameRules_GetGameMode()
+	#endif
+
 	string currMapName
 
 	#if SERVER || CLIENT
@@ -114,6 +121,12 @@ void function DeathHints_Init()
 
 		if ( mapName != "" && mapName != currMapName )
 			continue
+
+		#if MP
+		string gameMode = GetDataTableString( dataTable, i, gameModeColumn )
+		if ( gameMode != "" && gameMode != currGameMode )
+			continue
+		#endif
 
 		int source = eHints[ sourceName ]
 		int index
@@ -212,6 +225,14 @@ string function GetHintForTitanLoadout( TitanLoadoutDef loadout )
 void function DeathHint_PlayerConnect( entity player )
 {
 	player.p.deathHintViews.resize( file.indexToHintString.len() )
+}
+
+int function GetBestDeathHintForNPCTitle( entity player, string title )
+{
+	array<DeathHintGroup> hintGroups = GetHintGroupsWithWeighting( eHints.npc_title, [title], [0.0] )
+	int hintId = GetHintIDFromHintGroups_WeightedByPreviousViews( player, hintGroups )
+	player.p.deathHintViews[ hintId ]++
+	return hintId
 }
 
 bool function ShowDeathHint( entity player, var damageInfo )
@@ -805,7 +826,12 @@ int function GetHintIDFromHintGroups_WeightedByPreviousViews( entity player, arr
 #if CLIENT
 void function ServerCallback_ShowDeathHint( int hintId )
 {
-	thread ShowDeathHintThread( file.indexToHintString[ hintId ] )
+	thread ShowDeathHintThread( GetHintFromId( hintId ) )
+}
+
+string function GetHintFromId( int hintId )
+{
+	return file.indexToHintString[ hintId ]
 }
 
 void function ShowDeathHintThread( string hint )

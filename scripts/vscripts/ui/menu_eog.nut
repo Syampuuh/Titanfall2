@@ -190,7 +190,11 @@ bool function EOGIsPageEnabled( menu )
 	if ( !player )
 		return false
 
-	string lastModeName = PersistenceGetEnumItemNameForIndex( "gameModes", player.GetPersistentVar( "postGameData.gameMode" ) )
+	int latestGameModeIndex = player.GetPersistentVarAsInt( "postGameData.gameMode" )
+	if ( latestGameModeIndex < 0 || latestGameModeIndex >= PersistenceGetEnumCount( "gameModes" ) )
+		return false
+
+	string lastModeName = PersistenceGetEnumItemNameForIndex( "gameModes", latestGameModeIndex )
 	switch ( menu )
 	{
 		case GetMenu( "EOG_XP" ):

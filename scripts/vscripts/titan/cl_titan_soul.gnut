@@ -42,7 +42,20 @@ void function ClientCodeCallback_TitanVarChanged( entity soul )
 	}
 
 	soul.soul.lastOwner = titan
+
 	soul.Signal( "OnSoulTransfer" )
+	if ( !ModelHasFXGroup( titan.GetModelName() ) )
+		return
+	if ( !soul.IsDoomed() )
+	{
+		ModelFX_DisableGroup( titan, "titanDoomed" )
+		ModelFX_EnableGroup( titan, "titanHealth" )
+	}
+	else
+	{
+		ModelFX_DisableGroup( titan, "titanHealth" )
+		ModelFX_EnableGroup( titan, "titanDoomed" )
+	}
 }
 
 void function ClientCodeCallback_DoomedStateChanged( entity soul )

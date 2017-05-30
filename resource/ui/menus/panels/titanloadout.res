@@ -72,8 +72,8 @@
 
         navUp                 	ButtonPassive1
         navDown                	ButtonPassive3
-        navLeft           	    ButtonPassive6
-        navRight           	    ButtonPassive4
+        navLeft           	    ButtonFDTitanUpgrades
+        navRight           	    ButtonFDTitanUpgrades
 
         pin_to_sibling			ButtonPassive1
         pin_corner_to_sibling	TOP_RIGHT
@@ -264,6 +264,24 @@
         pin_to_sibling_corner	TOP_RIGHT
     }
 
+    ButtonFDTitanUpgrades
+    {
+		ControlName				RuiButton
+		InheritProperties		LoadoutButtonSmall
+        xpos					0
+        scriptID				"fdTitanUpgrades"
+        ypos					10
+
+		navLeft                 ButtonPassive2
+        navRight                ButtonPassive2
+        navDown               	ButtonTitanExecutions
+        navUp               	ButtonPassive4
+
+        pin_to_sibling			ButtonTitanExecutions
+        pin_corner_to_sibling	TOP_LEFT
+        pin_to_sibling_corner	BOTTOM_LEFT
+    }
+
     LabelAppearance
 	{
 		ControlName				Label
@@ -281,39 +299,6 @@
 		pin_to_sibling				HintIcon
 		pin_corner_to_sibling			LEFT
 		pin_to_sibling_corner			RIGHT
-	}
-
-	HintBackground
-	{
-		ControlName				RuiPanel
-		xpos					-400
-		ypos 					-20
-		wide					400
-		tall					150
-		visible					0
-		rui 					"ui/basic_image.rpak"
-		drawColor				"0 0 0 120"
-		scaleImage				1
-		zpos					0
-
-		pin_to_sibling			ButtonPassive2
-        pin_corner_to_sibling	TOP_LEFT
-        pin_to_sibling_corner	TOP_LEFT
-	}
-
-	HintIcon
-	{
-		ControlName 			RuiPanel
-		xpos					-4
-		wide					80
-		tall					80
-		pin_to_sibling				HintBackground
-		pin_corner_to_sibling			LEFT
-		pin_to_sibling_corner			LEFT
-		visible					0
-		rui 					"ui/basic_image.rpak"
-		scaleImage				1
-		zpos					1
 	}
 
 	LabelDetails
@@ -337,17 +322,17 @@
 		InheritProperties		LoadoutButtonMedium
         classname				TitanLoadoutPanelButtonClass
         scriptID				"passive4"
-		xpos					0//-400
-		ypos					-20
+		xpos					-400
+		ypos					0
 
         navLeft           	    ButtonPassive3
         navRight            	ButtonPassive5
-        navDown               	ButtonCamoSkin
-        navUp               	ButtonCamoSkin
+        navDown               	ButtonTitanExecutions
+        navUp               	ButtonTitanExecutions
 
-        pin_to_sibling			HintBackground
-        pin_corner_to_sibling	BOTTOM_LEFT
-        pin_to_sibling_corner	BOTTOM_LEFT
+        pin_to_sibling			ButtonPassive3
+        pin_corner_to_sibling	TOP_LEFT
+        pin_to_sibling_corner	TOP_LEFT
     }
     ButtonPassive5
     {
@@ -360,8 +345,8 @@
 
         navLeft           	    ButtonPassive4
         navRight            	ButtonPassive6
-        navDown               	ButtonNoseArt
-        navUp               	ButtonNoseArt
+        navDown               	ButtonCamoSkin
+        navUp               	ButtonCamoSkin
 
         pin_to_sibling			ButtonPassive4
         pin_corner_to_sibling	TOP_LEFT
@@ -378,8 +363,8 @@
 
         navLeft           	    ButtonPassive5
         navRight            	ButtonPassive3
-        navDown               	ButtonWeaponCamo
-        navUp               	ButtonWeaponCamo
+        navDown               	ButtonNoseArt
+        navUp               	ButtonNoseArt
 
         pin_to_sibling			ButtonPassive5
         pin_corner_to_sibling	TOP_LEFT

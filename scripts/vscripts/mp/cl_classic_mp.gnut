@@ -194,11 +194,23 @@ void function StartPlayerCountdown()
 		{
 			//RuiSetImage( Hud_GetRui( file.teamElems[TEAM_IMC].logo ), "logo", $"rui/hud/scoreboard/logo_imc" )
 			//RuiSetImage( Hud_GetRui( file.teamElems[TEAM_MILITIA].logo ), "logo", $"rui/hud/scoreboard/logo_mcorp" )
+			asset factionLogo
+			string factionTitle
 
-			string factionChoice = GetFactionChoice( player )
-			ItemDisplayData displayData = GetItemDisplayData( factionChoice )
-			asset factionLogo = displayData.image
-			string factionTitle = displayData.name
+			if ( IsFactionLeaderOverriden() )
+			{
+				OverrideFactionLeaderStruct overriddenFactionLeaderData = GetOverrideFactionLeader()
+				factionLogo = overriddenFactionLeaderData.factionLogo
+				factionTitle = overriddenFactionLeaderData.factionName
+
+			}
+			else
+			{
+				string factionChoice = GetFactionChoice( player )
+				ItemDisplayData displayData = GetItemDisplayData( factionChoice )
+				factionLogo = displayData.image
+				factionTitle = displayData.name
+			}			
 
 			RuiSetGameTime( file.introJumpingRUI, "fadeStartTime", Time() )
 			RuiSetGameTime( file.introJumpingRUI, "gameStartTime", gameStartTime )

@@ -631,8 +631,8 @@ WeaponData
 			"ui1_enable"		"0"
 			"ui7_enable"		"1"
 			"ammo_min_to_fire"	"0"
-			"dof_zoom_nearDepthStart"						"0.0"
-			"dof_zoom_nearDepthEnd"							"9.0"
+			"dof_zoom_nearDepthStart"						"* 0.0"
+			"dof_zoom_nearDepthEnd"							"* 0.5"
 		}
 
 		less_npc_burst
@@ -688,6 +688,26 @@ WeaponData
 			"reloadempty_time_late1"						"2.77"
 			"reloadempty_time_late2"						"1.57"
 			"reloadempty_time_late3"						"0.57"
+		}
+		low_ttk
+		{
+			"damage_near_value"   							"--3" //23 5 -> 5
+			"damage_far_value"								"--2" //18 6 -> 7
+		}
+		amped_ttk
+		{
+			"is_burn_mod"		"1"
+
+			//EFfects
+			"projectile_trail_effect_0" 					"P_projectile_lstar_burn"
+			"fx_muzzle_flash_view"							"P_muz_lstar_FP_burn"
+			"fx_muzzle_flash_world"							"P_muz_lstar_burn"
+
+			"damage_near_value"   							"++5" // 4 -> 5
+			"damage_far_value"								"++2" // 4 -> 6
+			"damage_near_value_titanarmor"					"185"
+			"damage_far_value_titanarmor" 					"165"
+
 		}
 	}
 

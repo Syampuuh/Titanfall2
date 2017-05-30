@@ -9,6 +9,7 @@ struct
 	var menu
 	GridMenuData gridData
 	FriendsData& friendsData
+	int selectedElemNum
 } file
 
 
@@ -16,6 +17,7 @@ void function InitInviteFriendsToNetworkMenu()
 {
 	RegisterSignal( "EndUpdateInviteFriendsToNetworkMenu" )
 	RegisterSignal( "EndUpdateMenuTitle" )
+	RegisterSignal( "EndConfirmFriendInvite" )
 
 	var menu = GetMenu( "InviteFriendsToNetworkMenu" )
 	file.menu = menu
@@ -139,18 +141,47 @@ bool function FriendButton_Init( var button, int elemNum )
 	return true
 }
 
-void function FriendButton_Activate( var button, int elemNum )
+void function ConfirmFriendInvite_Final()
 {
-	if ( Hud_IsLocked( button ) )
-		return
-
-	Friend friend = file.friendsData.friends[elemNum]
+	Friend friend = file.friendsData.friends[file.selectedElemNum]
 	string name = friend.name
 	string id = friend.id
 	int communityId = GetCurrentCommunityId()
 	printt( "Friend Name:", name, "id:", id, "communityId:", communityId)
 
 	InviteUserToCommunity( id, communityId )
+}
+
+void function ConfirmFriendInvite_Thread()
+{
+	Signal( uiGlobal.signalDummy, "EndConfirmFriendInvite" )
+	EndSignal( uiGlobal.signalDummy, "EndConfirmFriendInvite" )
+
+	DialogData dialogData
+
+	Friend friend = file.friendsData.friends[file.selectedElemNum]
+	string name = friend.name
+	var communityName = GetCurrentCommunityName()
+
+	dialogData.header = Localize( "#COMMUNITY_INVITECONFIRMSENDHEADER" )
+	dialogData.message = Localize( "#COMMUNITY_INVITECONFIRMSENDMSG", name, communityName )
+
+	AddDialogButton( dialogData, "#YES", ConfirmFriendInvite_Final )
+	AddDialogButton( dialogData, "#NO" )
+
+	AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
+	AddDialogFooter( dialogData, "#B_BUTTON_BACK" )
+
+	OpenDialog( dialogData )
+}
+
+void function FriendButton_Activate( var button, int elemNum )
+{
+	if ( Hud_IsLocked( button ) )
+		return
+
+	file.selectedElemNum = elemNum
+	thread ConfirmFriendInvite_Thread()
 }
 
 void function FriendButton_GetFocus( var button, int elemNum )

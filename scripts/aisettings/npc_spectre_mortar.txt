@@ -1,6 +1,8 @@
 #base "npc_spectre.txt"
 npc_spectre_mortar
 {
+    title							#NPC_SPECTRE_MORTAR
+
 	minGoalRadius					8
 	assaultHarvester                0
 

@@ -285,9 +285,7 @@ void function ShowRUIHUD( entity cockpit )
 	RuiSetBool( file.cockpitRui, "ejectIsAllowed", ejectIsAllowed )
 
 	string playerSettings = GetLocalViewPlayer().GetPlayerSettings()
-	float health = float( player.GetMaxHealth() ) //float( player.GetPlayerSettingsField( "health" ) )
-	if ( HasVanguardChassisUpgrade( player ) )
-		health += VANGUARD_CORE8_HEALTH_AMOUNT
+	float health = player.GetPlayerModHealth()
 	float healthPerSegment = GetPlayerSettingsFieldForClassName_HealthPerSegment( playerSettings )
 	RuiSetInt( file.cockpitRui, "numHealthSegments", int( health / healthPerSegment ) )
 	RuiTrackFloat( file.cockpitRui, "cockpitColor", player, RUI_TRACK_STATUS_EFFECT_SEVERITY, eStatusEffect.cockpitColor )
@@ -336,7 +334,7 @@ string function GetVanguardCoreString( entity player, int index )
 		}
 		else
 		{
-			return  Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE1_TITLE" ), Localize( "#UPGRADE_NOT_INSTALLED" ) )
+			return  Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE1_TITLE" ), Localize( "#UPGRADE_IN_PROGRESS" ) )
 		}
 	}
 	if ( index == 2 )
@@ -347,7 +345,10 @@ string function GetVanguardCoreString( entity player, int index )
 		}
 		else
 		{
-			return  Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE2_TITLE" ), Localize( "#UPGRADE_NOT_INSTALLED" ) )
+			if ( soul.GetTitanSoulNetInt( "upgradeCount" ) >= 1 )
+				return  Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE2_TITLE" ), Localize( "#UPGRADE_IN_PROGRESS" ) )
+			else
+				return  Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE2_TITLE" ), Localize( "#UPGRADE_NOT_INSTALLED" ) )
 		}
 	}
 	if ( index == 3 )
@@ -358,7 +359,10 @@ string function GetVanguardCoreString( entity player, int index )
 		}
 		else
 		{
-			return  Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE3_TITLE" ), Localize( "#UPGRADE_NOT_INSTALLED" ) )
+			if ( soul.GetTitanSoulNetInt( "upgradeCount" ) >= 2 )
+				return  Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE3_TITLE" ), Localize( "#UPGRADE_IN_PROGRESS" ) )
+			else
+				return  Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE3_TITLE" ), Localize( "#UPGRADE_NOT_INSTALLED" ) )
 		}
 	}
 
@@ -1118,7 +1122,13 @@ void function PlayerPressed_EjectEnable( entity player )
 	if ( IsDisplayingDpadComms( player ) )
 	{
 		return
-	}#endif
+	}
+	// TODO: BAD BAD BAD BAD
+	if ( FD_ReadyUpEnabled() )
+	{
+		return
+	}
+	#endif
 	#endif
 
 	if ( !player.IsTitan() )
@@ -1219,9 +1229,7 @@ void function TitanCockpitHealthChangedThink( cockpit, entity player )
 			RuiSetFloat( rui, "newHealthFrac", newHealthFrac )
 
 			string playerSettings = GetLocalViewPlayer().GetPlayerSettings()
-			float health = float( player.GetMaxHealth() ) //float( player.GetPlayerSettingsField( "health" ) )
-	        if ( HasVanguardChassisUpgrade( player ) )
-		        health += VANGUARD_CORE8_HEALTH_AMOUNT
+			float health = player.GetPlayerModHealth()
 			float healthPerSegment = GetPlayerSettingsFieldForClassName_HealthPerSegment( playerSettings )
 			RuiSetInt( rui, "numHealthSegments", int( health / healthPerSegment ) )
 		}
@@ -1442,9 +1450,7 @@ void function UpdateHealthSegmentCount()
 
 	entity player = GetLocalViewPlayer()
 	string playerSettings = player.GetPlayerSettings()
-	float health = float( player.GetMaxHealth() ) //float( player.GetPlayerSettingsField( "health" ) )
-	if ( HasVanguardChassisUpgrade( player ) )
-		health += VANGUARD_CORE8_HEALTH_AMOUNT
+	float health = player.GetPlayerModHealth()
 	float healthPerSegment = GetPlayerSettingsFieldForClassName_HealthPerSegment( playerSettings )
 	RuiSetInt( file.cockpitRui, "numHealthSegments", int( health / healthPerSegment ) )
 }

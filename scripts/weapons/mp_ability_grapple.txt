@@ -181,5 +181,8 @@ WeaponData
 
 			custom_float_0		1.5		// CHARGE TIME
 		}
+		tactical_balance
+		{
+		}
 	}
 }

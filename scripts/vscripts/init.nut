@@ -6,7 +6,6 @@
 
 global function printl
 global function Msg
-global function DumpConstTable
 global function CodeCallback_Precompile
 
 global struct EchoTestStruct
@@ -388,104 +387,12 @@ void function Msg( var text )
 	return print( text );
 }
 
-struct ConstTableEntry
-{
-	var k
-	var v
-}
-
-int function SortConstTableEntries( ConstTableEntry a, ConstTableEntry b )
-{
-	if ( a.k > b.k )
-		return 1
-	else if ( a.k < b.k )
-		return -1
-
-	return 0;
-}
-
-int function SortEnumKeyEntries( ConstTableEntry a, ConstTableEntry b )
-{
-	if ( a.v > b.v )
-		return 1
-	else if ( a.v < b.v )
-		return -1
-
-	return 0;
-}
-
-void function DumpConstTable()
-{
-	table constTable = clone getconsttable()
-
-#if CLIENT
-	printl( "\n// [CLIENT] generated file: do not modify\n" )
-#elseif SERVER
-	printl( "\n// [SERVER] generated file: do not modify\n" )
-#elseif UI
-	printl( "\n// [UI] generated file: do not modify\n" )
-#endif
-
-	array< ConstTableEntry > constTableEntries
-	foreach ( k, v in constTable )
-	{
-		ConstTableEntry tableEntry
-		tableEntry.k = k
-		tableEntry.v = v
-		constTableEntries.append( tableEntry )
-	}
-
-	constTableEntries.sort( SortConstTableEntries )
-
-	foreach ( entry in constTableEntries )
-	{
-		var k = entry.k
-		var v = entry.v
-
-		if ( type( v ) == "table" )
-		{
-			printl( "global enum " + k )
-			printl( "{" )
-				table t = expect table( v )
-				array< ConstTableEntry > enumKeys
-				foreach ( key, val in t )
-				{
-					if ( key == "" )
-						continue
-
-					ConstTableEntry keyEntry
-					keyEntry.k = key
-					keyEntry.v = val
-					enumKeys.append( keyEntry )
-					// printl( "\t" + key + " = " + val )
-				}
-
-				enumKeys.sort( SortEnumKeyEntries )
-
-				foreach ( entry in enumKeys )
-				{
-					var key = entry.k
-					var val = entry.v
-					printl( "\t" + key + " = " + val )
-				}
-
-			printl( "}" )
-		}
-		else if ( type( v ) == "array" )
-		{
-//			printl( "array? " + k )
-		}
-		else
-		{
-			printl( "global const " + type( v ) + " " + k + " = " + v )
-		}
-	}
-
-	printl( "// end generated file\n" )
-}
-
 void function CodeCallback_Precompile()
 {
-	//DumpConstTable()
+#if DEV
+	// save the const table for later printing when documenting code consts
+	//if ( Dev_CommandLineHasParm( "-scriptdocs" ) )
+	//	getroottable().originalConstTable <- clone getconsttable()
+#endif
 }
 

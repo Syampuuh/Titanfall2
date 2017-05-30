@@ -10,12 +10,14 @@ global function OnWeaponNPCPrimaryAttack_titanweapon_stun_laser
 const FX_EMP_BODY_HUMAN			= $"P_emp_body_human"
 const FX_EMP_BODY_TITAN			= $"P_emp_body_titan"
 const FX_SHIELD_GAIN_SCREEN		= $"P_xo_shield_up"
+const SHIELD_BODY_FX			= $"P_xo_armor_body_CP"
 
 
 void function MpTitanWeaponStunLaser_Init()
 {
 
 	PrecacheParticleSystem( FX_SHIELD_GAIN_SCREEN )
+	PrecacheParticleSystem( SHIELD_BODY_FX )
 
 	#if SERVER
 		AddDamageCallbackSourceID( eDamageSourceId.mp_titanweapon_stun_laser, StunLaser_DamagedTarget )
@@ -80,12 +82,31 @@ void function StunLaser_DamagedTarget( entity target, var damageInfo )
 		{
 			entity soul = target.GetTitanSoul()
 			if ( IsValid( soul ) )
-				soul.SetShieldHealth( min( soul.GetShieldHealth() + 750, soul.GetShieldHealthMax() ) )
+			{
+				int shieldRestoreAmount = 750
+				if ( SoulHasPassive( soul, ePassives.PAS_VANGUARD_SHIELD ) )
+					shieldRestoreAmount = int( 1.25 * shieldRestoreAmount )
+				soul.SetShieldHealth( min( soul.GetShieldHealth() + shieldRestoreAmount, soul.GetShieldHealthMax() ) )
+			}
 			if ( target.IsPlayer() )
 				MessageToPlayer( target, eEventNotifications.VANGUARD_ShieldGain, target )
 
 			if ( attacker.IsPlayer() )
 				EmitSoundOnEntityOnlyToPlayer( target, attacker, "EnergySyphon_ShieldGive" )
+
+			float shieldHealthFrac = GetShieldHealthFrac( target )
+			if ( shieldHealthFrac < 1.0 )
+			{
+				int shieldbodyFX = GetParticleSystemIndex( SHIELD_BODY_FX )
+				int attachID
+				if ( target.IsTitan() )
+					attachID = target.LookupAttachment( "exp_torso_main" )
+				else
+					attachID = target.LookupAttachment( "ref" )
+
+				entity shieldFXEnt = StartParticleEffectOnEntity_ReturnEntity( target, shieldbodyFX, FX_PATTACH_POINT_FOLLOW, attachID )
+				EffectSetControlPointVector( shieldFXEnt, 1, < 115, 247, 255 > )
+			}
 		}
 	}
 	else
@@ -93,7 +114,11 @@ void function StunLaser_DamagedTarget( entity target, var damageInfo )
 		int shieldRestoreAmount = target.GetArmorType() == ARMOR_TYPE_HEAVY ? 750 : 250
 		entity soul = attacker.GetTitanSoul()
 		if ( IsValid( soul ) )
+		{
+			if ( SoulHasPassive( soul, ePassives.PAS_VANGUARD_SHIELD ) )
+				shieldRestoreAmount = int( 1.25 * shieldRestoreAmount )
 			soul.SetShieldHealth( min( soul.GetShieldHealth() + shieldRestoreAmount, soul.GetShieldHealthMax() ) )
+		}
 		if ( attacker.IsPlayer() )
 			MessageToPlayer( attacker, eEventNotifications.VANGUARD_ShieldGain, attacker )
 	}

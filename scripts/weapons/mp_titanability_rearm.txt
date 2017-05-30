@@ -37,6 +37,8 @@ WeaponData
 	"OnWeaponNPCPrimaryAttack"						"OnWeaponNPCPrimaryAttack_titanability_rearm"
 	"OnWeaponAttemptOffhandSwitch"					"OnWeaponAttemptOffhandSwitch_titanability_rearm"
 
+	"offhand_interupts_weapon_anims"				"1"
+
 	MP_BASE
 	{
 		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
@@ -59,6 +61,9 @@ WeaponData
 	"charge_end_forces_fire"  						"1"
 	"charge_require_input"							"0"
 	"charge_remain_full_when_fired"					"1"
+
+	"play_offhand_charging_anim"  					"1"
+	"play_offhand_start_end_anim"					"1"
 
 	// Behavior
 	"allow_empty_fire"								"0"
@@ -97,14 +102,14 @@ WeaponData
 	{
 		pas_vanguard_rearm
 		{
-			"regen_ammo_refill_rate"						"20"
+			"regen_ammo_refill_rate"						"16.66"
 			"regen_ammo_refill_start_delay"					"0.0"
 		}
 
 		rapid_rearm
 		{
-			"charge_time" 									"0.1"
-			"hud_icon"										"rui/titan_loadout/passive/vanguard_core2"
+			"charge_time" 									"0.2"
+			"hud_icon"										"rui/titan_loadout/passive/monarch_core_swift_rearm"
 		}
 	}
 

@@ -429,8 +429,8 @@ WeaponData
 			"silenced"							"1"
 			"fire_sound_1_player_1p"			"weapon_shotgunpistol_fire_suppressed_1p"
 			"fire_sound_1_player_3p"			"weapon_shotgunpistol_fire_suppressed_3p"
-			"damage_near_value"   				"17"
-			"damage_far_value"					"13"
+			"damage_near_value"   				"--10"
+			"damage_far_value"					"--4"
 			//"bodygroup2_set"					"1"
 
 			//"rumble"  						"4"
@@ -510,6 +510,11 @@ WeaponData
 			"fx_muzzle_flash_world"							"P_wpn_muz_mastiff_amp"
 			"projectile_trail_effect_0" 					"P_mastiff_proj_amp"
 			"impact_effect_table" 							"titan_bullet_elec"
+		}
+
+		low_ttk
+		{
+			"fire_rate"   									"2.5"
 		}
 	}
 
