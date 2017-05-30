@@ -145,6 +145,7 @@
   * NPCs will be able to carry and lock-on with Archers.
   * A mod was added to Legion's Gunshield for NPCs to have it up indefinitely.
   * All anti-Titan weapons have received internal mods to support an infinite ammo pool.
+  * New Boost Icons for the Boost Store: [Arc Traps, something for the Harvester, and the Nuke Titan drop.](https://my.mixtape.moe/yplnca.png) I think.
 * Gamemode settings added for a team to share a Titan Earn/Core Meter, perhaps for a wacky featured mode?
 * Code to track executions while a Holo Pilot is active has been added, and the item datablock for the Holo execution has been added, requiring 20 kills with a Holo active to unlock it. Seems this one *should* begin tracking now, but it might require you to run the game in dev mode first?
 * Datablocks do *exist* for warpaints for Monarch, but the actual items in the arrays (which aren't in the VPKs) are disabled so I can't get a look at them. No clue why they're disabled to start with.
