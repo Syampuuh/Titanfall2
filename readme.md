@@ -1,22 +1,158 @@
 ## Table of Contents
 
- * [A Glitch in the Frontier](#25-april-2017---a-glitch-in-the-frontier)
+ * [Monarch's Reign](#30-april-2017---monarch-s-reign)
     * [Content and Feature Additions](#content-and-feature-additions)
     * [Rebalancing](#rebalancing)
     * [Fixes and Other Changes](#fixes-and-other-changes)
     * [Future Content](#future-content)
- * [Colony Reborn](#30-march-2017---colony-reborn)
+ * [A Glitch in the Frontier](#25-april-2017---a-glitch-in-the-frontier)
     * [Content and Feature Additions](#content-and-feature-additions-1)
     * [Rebalancing](#rebalancing-1)
     * [Fixes and Other Changes](#fixes-and-other-changes-1)
     * [Future Content](#future-content-1)
- * [Live Fire](#23-february-2017---the-live-fire-patch)
+ * [Colony Reborn](#30-march-2017---colony-reborn)
     * [Content and Feature Additions](#content-and-feature-additions-2)
     * [Rebalancing](#rebalancing-2)
     * [Fixes and Other Changes](#fixes-and-other-changes-2)
     * [Future Content](#future-content-2)
+ * [Live Fire](#23-february-2017---the-live-fire-patch)
+    * [Content and Feature Additions](#content-and-feature-additions-3)
+    * [Rebalancing](#rebalancing-3)
+    * [Fixes and Other Changes](#fixes-and-other-changes-3)
+    * [Future Content](#future-content-3)
+ * [Angel City](#29-november-2016---the-angel-city-patch)
+    * [Content and Feature Additions](#content-and-feature-additions-4)
+    * [Rebalancing](#rebalancing-4)
+    * [Fixes and Other Changes](#fixes-and-other-changes-4)
 
 # Latest Client Changes
+
+## 30 May 2017 - Monarch's Reign
+
+### Content and Feature Additions:
+
+* New Titan: **Monarch**
+  * "Mid-range Vanguard-class Titan that can upgrade itself on the battlefield."
+  * Monarch Bounty Titans: *Sovereign*, *Empress*, *Tyrant*, *Viceroy*, and *Pharaoh*.  
+* New Map: **Relic**
+  * "Parts salvaged from this old IMC shipwreck are sent into the valley below for further processing."
+* New Execution: **Now You See Me**
+* Prime Titan: **Tone Prime**
+* Prime Titan: **Ronin Prime**
+* New Pilot Kit: **Titan Hunter**
+  * Destroying a Titan gives an extra 10% to your Earn meter.
+* Banners added for Generations 10 to 100.
+* Buncha new cosmetics to buy.
+* The feature to invite friends to a network from within the game has been added.
+
+### Rebalancing:
+
+### Universal
+
+* Damage done to Titan Shields now generate Earn/Core meter just like normal Titan damage.
+* Titan Earn/Core meter percentage earned from damage dealt to other Titans decreased from 0.0075% to 0.007% per point of damage.
+* Titan Executions can no longer be prevented by Titan Shields.
+
+#### Tactikill
+
+* Kills with the Tactikill weapon mod will now reward 25% of a tactical's charge instead of 33%.
+
+#### R201/R101 Carbines
+
+* Very far damage increased from 10 to 12.
+
+#### Flatline
+
+* Damage decreased from 35-30-20 to 30-25-15.
+* Amped damage decreased from 50-35-25 to 45-35-20.
+
+#### R-97
+
+* Very far damage decreased from 16 to 14. Yep. That's it.
+
+#### Volt
+
+* Near damage increased from 23 to 25.
+* Amped near damage increased from 25 to 35.
+* Vertical recoil widened from -0.01°-0.1° per shot to -0.15°-0.35° per shot.
+* Horizontal recoil increased from 0.0°-0.3° per shot to 0.1°-0.4° per shot.
+
+#### X55-Devotion
+
+* Damage decreased from 25-30-35 to 15-20-25.
+* Amped damage decreased from 30-40-45 to 20-25-35.
+
+#### Longbow DMR
+
+* Amped damage decreased from 100 to 80.
+
+#### RE-45 Autopistol
+
+* Suppressed damage increased from 9-12-17 to 12-14-20.
+
+#### Hammond P2016
+
+* Near damage decreased from 45 to 40.
+* Very far damage added, taking effect at 125 feet, and scaling down to 20 damage.
+* Suppressed damage adjusted from 30-25 to 32-25-15.
+* Amped very far damage added, set to 25.
+
+#### SA-3 Mozambique
+
+* Suppressed damage increased from 17-13 to 20-16.
+
+#### Wingman
+
+* Suppressed damage increased from 40-20-10 to 40-35-25.
+* Amped near damage decreased from 100 to 90.
+
+#### Ion
+
+* Laser Shot maximum damage to Titans reduced from 2800 to 2400.
+  * Nitty gritty: Laser Shot used to do 1400 damage on impact and up to another 1400 damage from its explosion, though that maximum damage was rarely properly applied in full thanks to how inconsistent explosive damage tends to be with direct hits. Both values have now been lowered to 1200.
+* Laser Shot energy cost increased from 500 to 550 (out of 1000 total).
+* Laser Core damage reduced from 350 to 325 (DPS reduced from 3500 to 3250).
+
+### Fixes and Other Changes:
+
+* Crash Site has a bunch of ziplines now and some improved collision clipping for player movement.
+* Friendly turrets will now be visible on the minimap.
+* CTF Flag Return radius redefined to 6.25 feet (previous value unknown).
+* Network invites will now show the actual patches of everyone joining instead of just question marks.
+* The manifestation of spooky flying ghost Gunshields should be fixed now.
+* Scorch and Tone can no longer melee while their cores are active.
+* Melee fixes, allegedly, again.
+
+
+### Future Content:
+*(note: details are somewhat speculatory based on sparse amounts of game code and text bank tokens)*
+
+* The playlist setting "enable_coliseum_party" has been added, suggesting that something like a Wingman Coliseum mode might be coming soon.
+* Settings for "low_ttk" and "tactical_rebalance" been added, probably for the "major balancing changes" that Respawn intends to play with as a featured mode. Judging from existing values, it might be a mode where everyone has half HP and will definitely have some various weapon performance changes. I will compile the changes to each weapon in a table some time soon, hopefully before the mode actually goes live.
+* The typo in Archon's name introduced in the last patch was fixed, so that's still a big "maybe."
+* Frontier Defense:
+  * Added to the playlists settings:
+    * 3 waves?
+	* 2500 points to win?
+	* 4 players
+	* Definitely uses its own boost system
+	* Not indicitive of anything, but only supports Angel City right now, as we saw in the roadmap image a few weeks ago.
+  * New text was also added to display a player's "Frontier Level" and "Frontier Generation", so FD will likely use its own separate leveling system in addition to its own currency. With that in mind, it seems like FD is meant to be a completely separate mode of play, as in "Campaign, Multiplayer, and Frontier Defense."
+  * Lots of new code added to the item/inventory system to complement that, allowing for a separate pool of unlocks and loadouts for FD.
+  * More NPCs added, including ticks and AI settings for each base Titan type.
+  * Code added so the gamemode can override your MP Faction setting, presumably to set you up to be in the 6-4 as mentioned in prior patch notes.
+  * Some new code referring to an "Arc Trap" has appeared. The actual datablocks for it don't seem to be in the client, so anyone's guess what it is, but they'll be big enough to be visible on the minimap like a turret apparently. Classifying this as FD feature because [it's loaded alongside a bunch of other FD stuff in dev mode.](https://my.mixtape.moe/hrryst.png)
+  * NPCs will be able to carry and lock-on with Archers.
+  * A mod was added to Legion's Gunshield for NPCs to have it up indefinitely.
+  * All anti-Titan weapons have received internal mods to support an infinite ammo pool.
+* Gamemode settings added for a team to share a Titan Earn/Core Meter, perhaps for a wacky featured mode?
+* Code to track executions while a Holo Pilot is active has been added, and the item datablock for the Holo execution has been added, requiring 20 kills with a Holo active to unlock it. Seems this one *should* begin tracking now, but it might require you to run the game in dev mode first?
+* Datablocks do *exist* for warpaints for Monarch, but the actual items in the arrays (which aren't in the VPKs) are disabled so I can't get a look at them. No clue why they're disabled to start with.
+	
+
+---
+
+# Older Changes
 
 ## 25 April 2017 - A Glitch in the Frontier
 
@@ -143,10 +279,6 @@
 * More support for minimap resizing and zooming added. Implementation to live when!?
 * Some stuff discussing a "Boost Store". Burn Cards for Frontier Defense or something, maybe?
 
----
-
-# Older Changes
-
 ## 30 March 2017 - Colony Reborn
 
 *(includes server-sided changes made immediately following the Live Fire patch, and who knows how many subsequent changes made quietly)*
@@ -172,7 +304,7 @@
 
 #### All Titans
 
-* Core points earned from damage dealt to other Titans decreased from 0.01% per damage to 0.0075% damage (decreased by 25%)
+* Titan Earn/Core meter percentage earned from damage dealt to other Titans decreased from 0.01% per damage to 0.0075% damage (decreased by 25%)
 * Electric Smoke maximum effective radius increased from 21.9 feet to 23.4 feet
 
 #### Scorch
