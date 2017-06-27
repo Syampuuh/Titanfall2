@@ -1,31 +1,138 @@
 ## Table of Contents
 
- * [Monarch's Reign](#30-may-2017---monarchs-reign)
+ * [The War Games](#27-june-2017---the-war-games)
     * [Content and Feature Additions](#content-and-feature-additions)
     * [Rebalancing](#rebalancing)
     * [Fixes and Other Changes](#fixes-and-other-changes)
     * [Future Content](#future-content)
- * [A Glitch in the Frontier](#25-april-2017---a-glitch-in-the-frontier)
+ * [Monarch's Reign](#30-may-2017---monarchs-reign)
     * [Content and Feature Additions](#content-and-feature-additions-1)
     * [Rebalancing](#rebalancing-1)
     * [Fixes and Other Changes](#fixes-and-other-changes-1)
     * [Future Content](#future-content-1)
- * [Colony Reborn](#30-march-2017---colony-reborn)
+ * [A Glitch in the Frontier](#25-april-2017---a-glitch-in-the-frontier)
     * [Content and Feature Additions](#content-and-feature-additions-2)
     * [Rebalancing](#rebalancing-2)
     * [Fixes and Other Changes](#fixes-and-other-changes-2)
     * [Future Content](#future-content-2)
- * [Live Fire](#23-february-2017---the-live-fire-patch)
+ * [Colony Reborn](#30-march-2017---colony-reborn)
     * [Content and Feature Additions](#content-and-feature-additions-3)
     * [Rebalancing](#rebalancing-3)
     * [Fixes and Other Changes](#fixes-and-other-changes-3)
     * [Future Content](#future-content-3)
- * [Angel City](#29-november-2016---the-angel-city-patch)
+ * [Live Fire](#23-february-2017---the-live-fire-patch)
     * [Content and Feature Additions](#content-and-feature-additions-4)
     * [Rebalancing](#rebalancing-4)
     * [Fixes and Other Changes](#fixes-and-other-changes-4)
+    * [Future Content](#future-content-4)
+ * [Angel City](#29-november-2016---the-angel-city-patch)
+    * [Content and Feature Additions](#content-and-feature-additions-5)
+    * [Rebalancing](#rebalancing-5)
+    * [Fixes and Other Changes](#fixes-and-other-changes-5)
 
 # Latest Client Changes
+
+## 27 June 2017 - The War Games
+
+### Content and Feature Additions
+
+* New Map: **War Games**
+  * "Pilots on the Frontier frequently use simulator pods to train, using life-like recreations of historical battles as combat scenarios."
+* New Live Fire Map: **Traffic**
+  * "A weathered test site where pilot positioning is pitted against mobility across two busy thoroughfares."
+* New Execution: **Shadow Boxing**
+* New Mode: **Free Agents**
+  * "Free-for-all with a twist. Collect 3 batteries to call in a Titan. Battery locations are placed around the map. Pilots drop batteries on death."
+  * Featured mode, will be be in the featured slot eventually.
+* Titan Brawl added to matchmaking queues.
+  * Assist tracking replaced with Titan damage in Titan Brawl's scoreboard.
+* Pilots can now carry 3 weapons, both a sidearm and an AT weapon.
+* A buncha new Private Match settings.
+
+
+### Rebalancing
+
+#### Amped Weapons
+
+* Amped Weapons is a now temporary boost, applying its effect for only 30 seconds after activation.
+* As far as I can tell, the effect is also completely removed when a weapon is dropped and picked back up, so no more Amped robbery.
+* Respawn's patch notes claim that Amped damage has also been decreased, but there's nothing in the client to actually back that up. It might have been (another) last second change that had to be put out server-side or something?
+
+#### R-97
+
+* Very far damage decreased from 14 to 10.
+
+### Fixes and Other Changes
+
+* The Epilogue evacuation ship will now depart as soon as all living players have boarded.
+* Various improvements to the CTF UI.
+* Running over a Stalker now deals 1250 damage to Titans (the full damage of their power supplies). They've been painted red in MP to distinguish them from the less hurty ones in SP.
+  * Titans approaching a Stalker will be shown an indicator arrow as if they were a grenade or Tick.
+  * The explosion spawned by this *may* have a radius of 20 feet that could potentially cause collateral damage beyond just the Titan responsible; testing is needed. Pilots accidentally detonating Stalkers and damaging friendly Titans was already always a concern, this would be some hellish payback from the Titans to friendly Pilots.
+* Monarch no longer accidentally gains two charges of smoke when using Overcore; this was actually fixed like ~2 weeks ago in the same server-sided change that brought the R97's very far damage down a bit more.
+* Whenever it comes back, High TTK mode will support suppressors for pistols now.
+
+
+### Future Content
+
+* Entries for Prime skins have been added for each Pilot weapon in the text banks. Each Primary and Sidearm has 6 skins, while each AT weapon has 3.
+  * It's not currently clear if these will be model variants or just unique textures, but the quantity of them points towards the latter.
+* A new status effect has been added for "damage_received_multiplier". Jarate, anyone?
+* Frontier Defense:
+  * Plasma Drones have been added. You might remember them as the flying drones that fired small plasma shots in SP.
+  * Titans class has been given FD-exclusive upgrades, but it's not clear if these will be optional equipment, tied to boosts, or automatically applied in the mode:
+    * All Titans
+	  * 2500 extra HP
+    * Ion
+	  * Energy regeneration rate increase from 80/s to 100/s
+	  * Maximum energy increase from 1000 to 1250
+	  * Kills with Laser Core extend its firing time, 2 more seconds for titans, 1 second for Reapers, and 0.3 seconds for anything else
+	  * Splitter Rifle shots consume 20 energy instead of 30 when split
+	    * This would be 23 energy instead of 35 if using Refraction Lens
+	* Tone
+	  * 40mm Cannon blast radius increased to 14 feet from 9 feet
+	  * 40mm Cannon can load 24 shells, doubled from 12
+	  * Sonar Pulses last 8 seconds, increased from 5 seconds
+	  * Sonar Pulses can do damage somehow
+	  * Salvo Core outputs double the rockets
+	* Monarch
+	  * Threat-scope highlighting for XO-16
+	  * XO-16 spread halved, and can zoom in further like the Railgun
+	  * XO-16 rounds restore 35 shield per shot hit against enemy Titans
+	* Ronin
+	  * Gain Core Meter by blocking damage, formula seems to be (Damage blocked * 0.00007)
+	  * 1.5x Phase Dash speed
+	  * 1.25x Sword damage
+	  * Two charges of Phase Dash
+	  * Sword Core lasts twice as long
+	* Northstar
+	  * Railgun critical hit scale increase from 1.5x to 2.0x
+	  * Railgun charges 1.7x faster
+	* Legion
+	  * Gunshield health increase from 2500 to 7500 (Bulwark puts it at 5000)
+	  * Two Power Shots and 1.15x recharge rate
+	  * Smart Core lasts twice as long
+	  * Larger spread for Close Range Power Shot
+	  * Long Range Power Shots do 1.5x damage for every target the shell passes through
+	  * 180 rounds loaded at once, increased from 100
+	  * Normal Predator Cannon fire can pass through targets
+	  * No movement speed decrease at all while Cannon is spun up
+	  * 1.4x faster reload
+	* Scorch
+	  * Replace gas canisters with explosive barrels that detonate when damaged
+	  * Flame Core sends out two waves
+	  * All thermite damage increased to 1.2x
+	  * Gain core at 1.5x normal rate
+	  * Thermite Launcher can load 2 shells, upgradeable to 3 shells, and performs a per-shell reload like the Mastiff
+  * Some things that will be on the minimap: Loadout Chest, Battery Exchange, Boost Store, Mortar Position, and Arc Traps.
+  * Another new Boost: "Rodeo Grenade", or "Super Rodeo". No other details yet.
+  * A sandbag prop has also been added. Probably just to be spawned around the map as extra cover, but it would be cool if they were a deployable or something.
+  * Tablet and knife props has been added for Droz, while Gates has been given a P2016. For the intro animations, presumably.
+* Prism versions of each of the Titan Regeneration callsigns have been added in devmode, but there are currently no associated unlock conditions.
+
+---
+
+# Older Changes
 
 ## 30 May 2017 - Monarch's Reign
 
@@ -149,11 +256,6 @@
 * Gamemode settings added for a team to share a Titan Earn/Core Meter, perhaps for a wacky featured mode?
 * Code to track executions while a Holo Pilot is active has been added, and the item datablock for the Holo execution has been added, requiring 20 kills with a Holo active to unlock it. Seems this one *should* begin tracking now, but it might require you to run the game in dev mode first?
 * Datablocks do *exist* for warpaints for Monarch, but the actual items in the arrays (which aren't in the VPKs) are disabled so I can't get a look at them. No clue why they're disabled to start with.
-	
-
----
-
-# Older Changes
 
 ## 25 April 2017 - A Glitch in the Frontier
 
