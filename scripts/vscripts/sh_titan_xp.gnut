@@ -30,13 +30,17 @@ global struct ShTitanXP
 global ShTitanXP shTitanXP
 
 const MAX_TITAN_GEN = 99
+const int FD_TITAN_MAX_GEN = 1
 
 struct
 {
 	array<int> titanXPPipsPerLevel
 	array<int> titanXPForLevel
+	array<int> fdTitanXPPipsPerLevel
+	array<int> fdTitanXPForLevel
 	bool initialized = false
 	int maxLevelPerGen
+	int fdMaxLevelPerGen
 } file
 
 void function ShTitanXP_Init()
@@ -46,31 +50,33 @@ void function ShTitanXP_Init()
 
 	file.initialized = true
 
-	var dataTable = GetDataTable( $"datatable/xp_per_titan_level.rpak" )
-	int numRows = GetDatatableRowCount( dataTable )
-
-	file.maxLevelPerGen = numRows
-
-	file.titanXPPipsPerLevel.resize( file.maxLevelPerGen + 1 )
-	file.titanXPForLevel.resize( file.maxLevelPerGen + 2 )
-
-	file.titanXPPipsPerLevel[ 0 ] = 0
-	file.titanXPForLevel[ 0 ] = 0
-	file.titanXPForLevel[ 1 ] = 0
-	for ( int i = 0; i < numRows; i++ )
 	{
-		int xpPerLevel = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "xpPerLevel" ) )
-		file.titanXPPipsPerLevel[ i + 1 ] = xpPerLevel
-		file.titanXPForLevel[ i + 2 ] = file.titanXPForLevel[ i + 1 ] + xpPerLevel
-	}
+		var dataTable = GetDataTable( $"datatable/xp_per_titan_level.rpak" )
+		int numRows = GetDatatableRowCount( dataTable )
 
-	int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+		file.maxLevelPerGen = numRows
 
-	for ( int i = 0; i < enumCount; i++ )
-	{
-		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
-		if ( enumName != "" )
-			shTitanXP.titanClasses.append( enumName )
+		file.titanXPPipsPerLevel.resize( file.maxLevelPerGen + 1 )
+		file.titanXPForLevel.resize( file.maxLevelPerGen + 2 )
+
+		file.titanXPPipsPerLevel[ 0 ] = 0
+		file.titanXPForLevel[ 0 ] = 0
+		file.titanXPForLevel[ 1 ] = 0
+		for ( int i = 0; i < numRows; i++ )
+		{
+			int xpPerLevel = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "xpPerLevel" ) )
+			file.titanXPPipsPerLevel[ i + 1 ] = xpPerLevel
+			file.titanXPForLevel[ i + 2 ] = file.titanXPForLevel[ i + 1 ] + xpPerLevel
+		}
+
+		int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+
+		for ( int i = 0; i < enumCount; i++ )
+		{
+			string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
+			if ( enumName != "" )
+				shTitanXP.titanClasses.append( enumName )
+		}
 	}
 }
 
@@ -244,3 +250,4 @@ int function TitanGetMaxRawLevel( string titanRef )
 {
 	return TitanGetRawLevelForXP( titanRef, TitanGetMaxXP( titanRef ) )
 }
+

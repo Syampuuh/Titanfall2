@@ -232,7 +232,7 @@ void function showit()
 void function ServerCallback_CP_PlayMatchEndingMusic()
 {
 	StopMusic()
-	thread ForceLoopMusic( eMusicPieceID.GAMEMODE_1 )
+	thread ForceLoopMusic_DEPRECATED( eMusicPieceID.GAMEMODE_1 )
 }
 
 void function ClGamemodeCP_OnWinnerDetermined()

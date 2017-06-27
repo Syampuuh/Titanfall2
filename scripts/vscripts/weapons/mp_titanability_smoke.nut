@@ -1,8 +1,20 @@
 
 global function OnWeaponPrimaryAttack_titanability_smoke
+global function MpTitanAbilitySmoke_Init
 #if SERVER
 	global function OnWeaponNpcPrimaryAttack_titanability_smoke
 #endif
+
+const SHIELD_BODY_FX			= $"P_xo_armor_body_CP"
+
+void function MpTitanAbilitySmoke_Init()
+{
+	PrecacheParticleSystem( SHIELD_BODY_FX )
+
+	#if SERVER
+		AddDamageCallbackSourceID( eDamageSourceId.mp_titanability_smoke, ElectricSmoke_DamagedTarget )
+	#endif
+}
 
 var function OnWeaponPrimaryAttack_titanability_smoke( entity weapon, WeaponPrimaryAttackParams attackParams )
 {
@@ -96,5 +108,53 @@ void function TitanSmokescreen( entity ent, entity weapon )
 							  < -fxOffset, 0.0, fxHeightOffset> ]
 
 	Smokescreen( smokescreen )
+}
+
+void function ElectricSmoke_DamagedTarget( entity target, var damageInfo )
+{
+	if ( !target.IsTitan() )
+		return
+
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	if ( !IsValid( attacker ) )
+		return
+
+	array<entity> weapons = attacker.GetMainWeapons()
+	if ( weapons.len() < 1 )
+		return
+
+	entity weapon = weapons[0]
+	if ( !IsValid( weapon ) )
+		return
+
+	if ( attacker.GetTeam() == target.GetTeam() )
+	{
+		if ( ( attacker == target && weapon.HasMod( "fd_vanguard_utility_1" ) ) || weapon.HasMod( "fd_vanguard_utility_2" ) )
+		{
+			entity soul = target.GetTitanSoul()
+			if ( IsValid( soul ) )
+			{
+				int shieldRestoreAmount = 35
+				soul.SetShieldHealth( min( soul.GetShieldHealth() + shieldRestoreAmount, soul.GetShieldHealthMax() ) )
+
+				float shieldHealthFrac = GetShieldHealthFrac( target )
+				if ( shieldHealthFrac < 1.0 )
+				{
+					int shieldbodyFX = GetParticleSystemIndex( SHIELD_BODY_FX )
+					int attachID
+					if ( target.IsTitan() )
+						attachID = target.LookupAttachment( "exp_torso_main" )
+					else
+						attachID = target.LookupAttachment( "ref" )
+
+					entity shieldFXEnt = StartParticleEffectOnEntity_ReturnEntity( target, shieldbodyFX, FX_PATTACH_POINT_FOLLOW, attachID )
+					EffectSetControlPointVector( shieldFXEnt, 1, < 115, 247, 255 > )
+				}
+			}
+		}
+
+		DamageInfo_SetDamage( damageInfo, 0 )
+		return
+	}
 }
 #endif // SERVER

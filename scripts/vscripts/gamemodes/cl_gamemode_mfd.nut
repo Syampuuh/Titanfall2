@@ -383,12 +383,12 @@ function PlayMarkedForDeathMusic( player ) //Long term should look into API-ing 
 	OnThreadEnd(
 		function() : (  )
 		{
-			StopLoopMusic()
+			StopLoopMusic_DEPRECATED()
 			PlayActionMusic()
 		}
 	)
 
-	waitthread ForceLoopMusic( eMusicPieceID.GAMEMODE_1 ) 	//Is looping music, so doesn't return from this until the end signals kick in
+	waitthread ForceLoopMusic_DEPRECATED( eMusicPieceID.GAMEMODE_1 ) 	//Is looping music, so doesn't return from this until the end signals kick in
 }
 
 function DelayPlayingUnmarkedEffect( entity player )

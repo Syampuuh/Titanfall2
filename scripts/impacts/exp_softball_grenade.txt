@@ -126,7 +126,7 @@ ImpactTable
 
 		"V" "explo_softball_impact_1p"
 		"W" "explo_softball_impact_1p"
-		"X"	"explo_softball_impact_1p"
+		"X"	"TitanBubbleShield.Explosive.BulletImpact_1P_vs_3P"
 		"Y" "explo_softball_impact_1p"
 		"Z" "explo_softball_impact_1p"
 

@@ -31,7 +31,7 @@ function UIVars_Init()
 	RegisterUIVar( "showGameSummary", false )
 	RegisterUIVar( "badRepPresent", false )
 	RegisterUIVar( "privatematch_map", 0 )
-	RegisterUIVar( "privatematch_mode", 2 )
+	RegisterUIVar( "privatematch_mode", 0 )
 	RegisterUIVar( "privatematch_starting", 0 )
 	RegisterUIVar( "coopLobbyMap", null ) // ePrivateMatchMaps.mp_fracture
 	RegisterUIVar( "createamatch_isPrivate", false )

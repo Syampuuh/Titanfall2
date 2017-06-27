@@ -309,5 +309,9 @@ WeaponData
 			"core_duration"									"5.0"
 			"sustained_discharge_duration"					"5.0" // core duration
 		}
+		fd_laser_cannon
+		{
+
+		}
 	}
 }

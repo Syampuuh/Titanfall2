@@ -220,6 +220,19 @@ void function FlameWall_DamagedTarget( entity ent, var damageInfo )
 
 	Thermite_DamagePlayerOrNPCSounds( ent )
 	Scorch_SelfDamageReduction( ent, damageInfo )
+
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	if ( !IsValid( attacker ) || attacker.GetTeam() == ent.GetTeam() )
+		return
+
+	array<entity> weapons = attacker.GetMainWeapons()
+	if ( weapons.len() > 0 )
+	{
+		if ( weapons[0].HasMod( "fd_fire_damage_upgrade" )  )
+			DamageInfo_ScaleDamage( damageInfo, FD_FIRE_DAMAGE_SCALE )
+		if ( weapons[0].HasMod( "fd_hot_streak" ) )
+			UpdateScorchHotStreakCoreMeter( attacker, DamageInfo_GetDamage( damageInfo ) )
+	}
 }
 
 #endif

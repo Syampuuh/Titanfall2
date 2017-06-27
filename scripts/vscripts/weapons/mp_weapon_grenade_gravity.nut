@@ -44,7 +44,10 @@ void function OnProjectileCollision_weapon_grenade_gravity( entity projectile, v
 	if ( !didStick )
 		return
 	#if SERVER
-	thread GravityGrenadeThink( projectile, hitEnt, normal, pos )
+		if ( projectile.IsMarkedForDeletion() )
+			return
+
+		thread GravityGrenadeThink( projectile, hitEnt, normal, pos )
 	#endif
 }
 

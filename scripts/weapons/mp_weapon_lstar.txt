@@ -707,7 +707,6 @@ WeaponData
 			"damage_far_value"								"++2" // 4 -> 6
 			"damage_near_value_titanarmor"					"185"
 			"damage_far_value_titanarmor" 					"165"
-
 		}
 	}
 

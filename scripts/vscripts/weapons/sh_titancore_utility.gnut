@@ -38,6 +38,7 @@ const EMP_BLAST_EFFECT = $"P_titan_core_atlas_blast"
 const EMP_BLAST_CHARGE_EFFECT = $"P_titan_core_atlas_charge"
 
 #if SERVER
+	global function SetUsedCoreCallback
 	global function CreateDefaultChargeEffect
 	global function SetCoreEffect
 	global function CreateCoreEffect
@@ -48,6 +49,13 @@ const EMP_BLAST_CHARGE_EFFECT = $"P_titan_core_atlas_charge"
 	global function OnAbilityEnd_DashCore
 
 	global function LowerEnemyAccuracy
+#endif
+
+#if SERVER
+struct
+{
+	void functionref( entity, entity ) usedCoreCallback
+} file
 #endif
 
 function MpTitanabilityFusionCore_Init()
@@ -72,6 +80,11 @@ function MpTitanabilityFusionCore_Init()
 }
 
 #if SERVER
+void function SetUsedCoreCallback( void functionref( entity, entity ) func )
+{
+	file.usedCoreCallback = func
+}
+
 void function TitanCore_OnDamage( entity ent, var damageInfo )
 {
 	float damageReduction = StatusEffect_Get( ent, eStatusEffect.damage_reduction )
@@ -283,6 +296,9 @@ bool function CoreBegin( entity player, entity titan, entity weapon )
 		EmitSoundOnEntity( titan, "Titan_CoreAbility_Sustain" )
 
 	SetCoreEffect( titan, CreateCoreEffect, EMP_BLAST_EFFECT )
+
+	if ( file.usedCoreCallback != null )
+		file.usedCoreCallback( titan, weapon )
 
 	return true
 }

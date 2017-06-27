@@ -4,11 +4,19 @@ global function DialogueShared_Init
 
 global function RegisterConversation
 
+global function DoesConversationExist
+
 global function IsForcedDialogueOnly
+global function GetAllConversationData
+global function GetIndexToConversationTable
+global function GetConversationToIndexTable
+global function GetConversationStruct
 global function GetConversationName
 global function GetConversationDebounce
+global function GetConversationPriority
 global function GetConversationLastPlayedTime
 global function SetConversationLastPlayedTime
+global function GetInheritedDebounceConversations
 
 global function Dispatch
 
@@ -25,23 +33,28 @@ global const int BLISK_ID		=	1
 global const int SPYGLASS_ID	=	2
 global const int GRAVES_ID		=	3
 
+global struct ConversationStruct
+{
+	int priority
+	float debounceTime
+	float lastPlayedTime
+	array<string> inheritedDebounceConversations
+	table< int, array > conversationTable //Mainly an SP concept at this point in time
+}
+
+
 struct
 {
-	table<int, string> vduIdToString
+	table< int, string > indexToConv
+	table< string, int > convToIndex
+	table< string, ConversationStruct > conversations
+
 } file
 
-function DialogueShared_Init()
+
+void function DialogueShared_Init()
 {
-	level.Conversations <- {}
-
-	level.ConvToIndex <- {}
-	level.IndexToConv <- {}
-
-	level.scenes <- {}
-
 	DialogueScheduleShared_Init()
-
-	file.vduIdToString[ GENERIC_PILOT	] <-	"generic"
 
 	#if CLIENT
 		DialogueScheduleClient_Init()
@@ -58,52 +71,84 @@ function DialogueShared_Init()
 	Weapon_Dialogue_Init()
 }
 
-void function RegisterConversation( string conversation, int priority, float debounceTime = DEFAULT_CONVERSATION_DEBOUNCE_TIME )
+void function RegisterConversation( string conversation, int priority, float debounceTime = DEFAULT_CONVERSATION_DEBOUNCE_TIME, array<string> inheritedDebounceConversations = [] )
 {
 	convIndex++
 	#if SERVER
-		level.ConvToIndex[ conversation ] <- convIndex
+		file.convToIndex[ conversation ] <- convIndex
 	#else
-		local convTable = { conv = conversation, prio = priority }
-		level.IndexToConv[ convIndex ] <- convTable
+		file.indexToConv[ convIndex ] <- conversation
 	#endif
 
-	level.Conversations[conversation] <- {}
-	level.Conversations[conversation]["neutral"] <- []
-	level.Conversations[conversation][TEAM_MILITIA] <- []
-	level.Conversations[conversation][TEAM_IMC] <- []
-	level.Conversations[conversation][TEAM_BOTH] <- []
-	level.Conversations[conversation].scene <- {}
-	level.Conversations[conversation].scene["neutral"] <- null
-	level.Conversations[conversation].scene[TEAM_MILITIA] <- null
-	level.Conversations[conversation].scene[TEAM_IMC] <- null
-	level.Conversations[conversation].priority <- priority
-	level.Conversations[conversation].debounceTime <- debounceTime
-	level.Conversations[conversation].lastPlayedTime <- 0.0
+	ConversationStruct dataStruct
+
+	dataStruct.conversationTable[ TEAM_MILITIA ] <- []
+	dataStruct.conversationTable[ TEAM_IMC ] <- []
+	dataStruct.conversationTable[ TEAM_BOTH ] <- []
+	dataStruct.priority = priority
+	dataStruct.debounceTime = debounceTime
+	dataStruct.lastPlayedTime = 0.0
+	dataStruct.inheritedDebounceConversations = inheritedDebounceConversations
+
+	file.conversations[ conversation ] <- dataStruct
 }
 
-string function GetConversationName( index )
+table< string, ConversationStruct > function GetAllConversationData()
 {
-	Assert( index in level.IndexToConv )
-	return expect string( level.IndexToConv[ index ].conv )
+	return file.conversations
+}
+
+table< int, string > function GetIndexToConversationTable()
+{
+	return file.indexToConv
+}
+
+table< string, int> function GetConversationToIndexTable()
+{
+	return file.convToIndex
+}
+
+bool function DoesConversationExist( string conversationName )
+{
+	return conversationName in file.conversations
+}
+
+ConversationStruct function GetConversationStruct( string conversationName )
+{
+	return file.conversations[ conversationName ]
+}
+
+string function GetConversationName( int index )
+{
+	return file.indexToConv[ index ]
+}
+
+int function GetConversationPriority( string conversationType )
+{
+	return file.conversations[ conversationType ].priority
 }
 
 float function GetConversationLastPlayedTime( string conversationType )
 {
-	return expect float( level.Conversations[ conversationType ].lastPlayedTime )
+	return file.conversations[ conversationType ].lastPlayedTime
 }
 
 void function SetConversationLastPlayedTime( string conversationType, float time )
 {
-	level.Conversations[ conversationType ].lastPlayedTime = time
+	file.conversations[ conversationType ].lastPlayedTime = time
 }
 
 float function GetConversationDebounce( string conversationType )
 {
-	return expect float( level.Conversations[ conversationType ].debounceTime )
+	return file.conversations[ conversationType ].debounceTime
 }
 
-function Dispatch( team, alias )
+array<string> function GetInheritedDebounceConversations( string conversationType )
+{
+	return file.conversations[ conversationType ].inheritedDebounceConversations
+}
+
+string function Dispatch( int team, string alias )
 {
 	switch ( team )
 	{
@@ -116,9 +161,10 @@ function Dispatch( team, alias )
 	}
 
 	Assert( 0, "Unknown team " + team )
+	unreachable
 }
 
-function Voices( team, baseAlias, array<int> voiceAvailability )
+array<string> function Voices( int team, string baseAlias, array<int> voiceAvailability )
 {
 	switch ( team )
 	{
@@ -131,9 +177,10 @@ function Voices( team, baseAlias, array<int> voiceAvailability )
 	}
 
 	Assert( 0, "Unknown team " + team )
+	unreachable
 }
 
-function AI_Dialogue_AliasAllVoices( aliasPreVoice, aliasPostVoice, array<int> voiceAvailability, hasDry = true )
+array<string> function AI_Dialogue_AliasAllVoices( string aliasPreVoice, string aliasPostVoice, array<int> voiceAvailability, bool hasDry = true )
 {
 	Assert( !Flag( "EntitiesDidLoad" ) ) // you must set up your aliases at map init so they can be precached
 
@@ -153,17 +200,18 @@ function AI_Dialogue_AliasAllVoices( aliasPreVoice, aliasPostVoice, array<int> v
 	}
 	Assert( firstAvailableVoiceIndex >= 0 )
 
-	local res = []
+	array<string> res
 	for ( int voiceIndex = 0; voiceIndex < VOICE_COUNT; voiceIndex++ )
 	{
 		int useIndex = voiceIndex
 		if ( !voiceAvailability[ useIndex ] )
 			useIndex = firstAvailableVoiceIndex
 
-		local radioAlias = aliasPreVoice + (useIndex + 1) + aliasPostVoice
+		string radioAlias = aliasPreVoice + (useIndex + 1) + aliasPostVoice
 
 		res.append( radioAlias )
 	}
+
 	return res
 }
 
@@ -175,7 +223,7 @@ bool function IsForcedDialogueOnly( entity player )
 	return player.GetForcedDialogueOnly()
 }
 
-bool function ShouldPlaySquadConversation( entity player, conversationType, allowedTime, org, rangeSqr )
+bool function ShouldPlaySquadConversation( entity player, string conversationType, float allowedTime, vector org, float rangeSqr )
 {
 	if ( !IsValid( player ) )
 		return false
@@ -201,10 +249,9 @@ bool function ShouldPlaySquadConversation( entity player, conversationType, allo
 	return DistanceSqr( player.GetOrigin(), org ) <= rangeSqr
 }
 
-function RegisterAutoTitanConversations()
+void function RegisterAutoTitanConversations()
 {
-
-	foreach(  modifiedAliasSuffix in  TITAN_OS_VOICE_PACK )
+	foreach (  modifiedAliasSuffix in TITAN_OS_VOICE_PACK )
 	{
 		if ( modifiedAliasSuffix != "Bt" )
 			RegisterConversation( "diag_gs_titan" + modifiedAliasSuffix + "_autoEngagePilot", VO_PRIORITY_PLAYERSTATE )
@@ -214,7 +261,7 @@ function RegisterAutoTitanConversations()
 
 		#if CLIENT
 
-		local lines = [	{ dialogType = "radio",
+		array lines = [	{ dialogType = "radio",
 			choices = [
 				"diag_gs_titan" + modifiedAliasSuffix + "_autoEngageTitans"
 			]}	]

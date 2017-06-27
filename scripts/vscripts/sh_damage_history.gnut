@@ -6,6 +6,7 @@ global function WasRecentlyHitByEntity
 global function WasRecentlyHitByDamageSourceId
 global function GetLatestAssistingPlayerInfo
 global function GetTotalDamageTakenInTime
+global function GetTotalDamageTaken
 global function GetTotalDamageTakenByPlayer
 global function GetDamageSortedByAttacker
 global function GetTitansHitMeInTime
@@ -210,6 +211,17 @@ bool function WasRecentlyHitForDamageType( entity player, float damageType, floa
 	}
 
 	return false
+}
+
+float function GetTotalDamageTaken( entity player )
+{
+	float total = 0
+	foreach ( history in player.e.recentDamageHistory )
+	{
+		total += history.damage
+	}
+
+	return total
 }
 
 float function GetTotalDamageTakenInTime( entity player, float hitTime )

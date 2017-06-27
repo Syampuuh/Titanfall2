@@ -16,7 +16,7 @@ void function ServerCallback_PlaySpectreChatterMP( int conversationIndex, int sp
 	if ( !ShouldPlaySpectreChatterMPLine( conversationName, player, spectre ) )
 		return
 
-	int priority = expect int(  GetConversationPriority( conversationName )  )
+	int priority = GetConversationPriority( conversationName )
 
 	//For spectre chatter conversationName is same as alias
 	PlayOneLinerConversationOnEntWithPriority( conversationName, conversationName, spectre, priority ) //Could just do an EmitSound here without worrying about priority etc, but done for the sake of consistency

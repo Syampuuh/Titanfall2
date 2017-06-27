@@ -26,6 +26,7 @@ global function GetGameStartTime
 global function ClGameState_RegisterGameStateAsset
 
 global function ClGameState_SetPilotTitanStatusCallback
+global function GetPilotTitanStatusForPlayer
 
 global enum ePlayerStatusType
 {
@@ -87,7 +88,7 @@ function ClGameState_Init()
 
 	AddCallback_OnClientScriptInit( ClGameState_AddClient )
 
-	var rui = CreatePermanentCockpitRui( GetGameStateAsset(), 1000 )
+	var rui = CreatePermanentCockpitRui( GetGameStateAsset(), MINIMAP_Z_BASE - 1 )
 	file.gamestate_info = rui
 
 	if ( file.gameModeScoreBarUpdateRules == null )
@@ -145,7 +146,7 @@ asset function GetGameStateAsset()
 		return $"ui/gamestate_info_fra.rpak"
 
 	if ( GAMETYPE == FFA )
-		return $"ui/gamestate_info_fra.rpak"
+		return $"ui/gamestate_info_ffa.rpak"
 
 	if ( GAMETYPE == FORT_WAR )
 		return $"ui/gamestate_info_fw.rpak"
@@ -309,12 +310,11 @@ void function ClGameStateThink_WaitingForPlayers( player )
 	}
 }
 
-void function ClGameStateThink_PickLoadOut( player )
+void function ClGameStateThink_PickLoadOut( entity player )
 {
-	if ( IsMultiplayerPlaylist() && level.classicMP_Client_GameStateThinkFunc_PickLoadOut )
-		ClassicMP_Client_CallGameStateThinkFunc_PickLoadOut( player )
+	if ( IsMultiplayerPlaylist() && ClassicMP_Client_GetGameStateThinkFunc_PickLoadOut() != null )
+		ClassicMP_Client_GetGameStateThinkFunc_PickLoadOut()( player )
 }
-
 
 entity function GetTopCompetitor( int team )
 {
@@ -482,89 +482,94 @@ array<int> function GetPilotTitanStatusForTeam( int team )
 	int playerIndex = 0
 	foreach ( teamPlayer in GetPlayerArrayOfTeam( team ) )
 	{
-		entity titan
-		if ( teamPlayer.GetPetTitan() )
-			titan = teamPlayer.GetPetTitan()
-		else if ( teamPlayer.IsTitan() )
-			titan = teamPlayer
-
-		if ( titan && titan.GetTitanSoul() )
-		{
-			if ( !teamPlayer.IsTitan() )
-			{
-				if ( IsAlive( teamPlayer ) )
-					statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_PILOT_TITAN
-				else
-					statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_DEAD_PILOT_TITAN
-			}
-			else
-			{
-				if ( !IsAlive( teamPlayer ) )
-				{
-					statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_DEAD
-				}
-				else
-				{
-					switch ( GetTitanClass( titan ) )
-					{
-						case "ion":
-							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_ION
-							break
-						case "scorch":
-							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_SCORCH
-							break
-						case "ronin":
-							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_RONIN
-							break
-						case "tone":
-							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_TONE
-							break
-						case "legion":
-							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_LEGION
-							break
-						case "northstar":
-							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_NORTHSTAR
-							break
-						case "vanguard":
-							statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_VANGUARD
-							break
-					}
-				}
-			}
-		}
-		else
- 		{
-			if ( IsAlive( teamPlayer ) )
-			{
-				statusTypes[playerIndex] = IsTitanAvailable( teamPlayer ) ? ePlayerStatusType.PTS_TYPE_READY : ePlayerStatusType.PTS_TYPE_PILOT
-
-				if ( GetWaveSpawnType() == eWaveSpawnType.DROPSHIP && teamPlayer.GetParent() != null )
-				{
-					entity playerParent = teamPlayer.GetParent()
-					if ( playerParent.IsNPC() && IsDropship( playerParent ) )
-					{
-						statusTypes[playerIndex] = ePlayerStatusType.PTS_TYPE_EVAC
-					}
-				}
-			}
-			else
-			{
-				statusTypes[playerIndex] = IsTitanAvailable( teamPlayer ) ? ePlayerStatusType.PTS_TYPE_DEAD_READY : ePlayerStatusType.PTS_TYPE_DEAD
-			}
-		}
-
-		if ( file.pilotTitanStatusCallback != null )
-			statusTypes[playerIndex] = file.pilotTitanStatusCallback( teamPlayer, statusTypes[playerIndex] )
-
+		statusTypes[playerIndex] = GetPilotTitanStatusForPlayer( teamPlayer )
 		playerIndex++
 	}
-
 
 	statusTypes.sort( PilotTitanStatusSort )
 
 	return statusTypes
 }
 
+int function GetPilotTitanStatusForPlayer( entity teamPlayer )
+{
+	int statusIndex = ePlayerStatusType.PTS_TYPE_NONE
+	entity titan
+	if ( teamPlayer.GetPetTitan() )
+		titan = teamPlayer.GetPetTitan()
+	else if ( teamPlayer.IsTitan() )
+		titan = teamPlayer
+
+	if ( titan && titan.GetTitanSoul() )
+	{
+		if ( !teamPlayer.IsTitan() )
+		{
+			if ( IsAlive( teamPlayer ) )
+				statusIndex = ePlayerStatusType.PTS_TYPE_PILOT_TITAN
+			else
+				statusIndex = ePlayerStatusType.PTS_TYPE_DEAD_PILOT_TITAN
+		}
+		else
+		{
+			if ( !IsAlive( teamPlayer ) )
+			{
+				statusIndex = ePlayerStatusType.PTS_TYPE_DEAD
+			}
+			else
+			{
+				switch ( GetTitanClass( titan ) )
+				{
+					case "ion":
+						statusIndex = ePlayerStatusType.PTS_TYPE_ION
+						break
+					case "scorch":
+						statusIndex = ePlayerStatusType.PTS_TYPE_SCORCH
+						break
+					case "ronin":
+						statusIndex = ePlayerStatusType.PTS_TYPE_RONIN
+						break
+					case "tone":
+						statusIndex = ePlayerStatusType.PTS_TYPE_TONE
+						break
+					case "legion":
+						statusIndex = ePlayerStatusType.PTS_TYPE_LEGION
+						break
+					case "northstar":
+						statusIndex = ePlayerStatusType.PTS_TYPE_NORTHSTAR
+						break
+					case "vanguard":
+						statusIndex = ePlayerStatusType.PTS_TYPE_VANGUARD
+						break
+				}
+			}
+		}
+	}
+	else
+		{
+		if ( IsAlive( teamPlayer ) )
+		{
+			statusIndex = IsTitanAvailable( teamPlayer ) ? ePlayerStatusType.PTS_TYPE_READY : ePlayerStatusType.PTS_TYPE_PILOT
+
+			if ( GetWaveSpawnType() == eWaveSpawnType.DROPSHIP && teamPlayer.GetParent() != null )
+			{
+				entity playerParent = teamPlayer.GetParent()
+				if ( playerParent.IsNPC() && IsDropship( playerParent ) )
+				{
+					statusIndex = ePlayerStatusType.PTS_TYPE_EVAC
+				}
+			}
+		}
+		else
+		{
+			statusIndex = IsTitanAvailable( teamPlayer ) ? ePlayerStatusType.PTS_TYPE_DEAD_READY : ePlayerStatusType.PTS_TYPE_DEAD
+		}
+	}
+
+	if ( file.pilotTitanStatusCallback != null )
+		statusIndex = file.pilotTitanStatusCallback( teamPlayer, statusIndex )
+
+	return statusIndex
+}
 
 int function PilotTitanStatusSort( int a, int b )
 {
@@ -594,7 +599,10 @@ void function UpdatePilotTitanStatusDisplayWithCount( int team, int friendlyCoun
 
 void function UpdatePilotTitanStatusDisplay( int team )
 {
-	UpdatePilotTitanStatusDisplayWithCount( team, 8, 8 )
+	if ( GAMETYPE == "fd" )
+		UpdatePilotTitanStatusDisplayWithCount( team, 4, 0 )
+	else
+		UpdatePilotTitanStatusDisplayWithCount( team, 8, 8 )
 }
 
 void function ClGameStateThink_Postmatch( player )
@@ -625,8 +633,8 @@ void function ClGameState_Changed()
 			break
 
 		case eGameState.WaitingForPlayers:
-			if ( IsMultiplayerPlaylist() && level.classicMP_Client_GameStateEnterFunc_WaitingForPlayers )
-				ClassicMP_Client_CallGameStateEnterFunc_WaitingForPlayers( player )
+			if ( IsMultiplayerPlaylist() && ClassicMP_Client_GetGameStateEnterFunc_WaitingForPlayers() != null )
+				ClassicMP_Client_GetGameStateEnterFunc_WaitingForPlayers()( player )
 			//player.cv.gamescomWaitTillReady.Hide()
 
 			//player.cv.waitingForPlayersDesc.SetText( "#HUD_WAITING_FOR_PLAYERS_BASIC" )
@@ -636,8 +644,8 @@ void function ClGameState_Changed()
 			break
 
 		case eGameState.PickLoadout:
-			if ( IsMultiplayerPlaylist() && level.classicMP_Client_GameStateEnterFunc_PickLoadOut )
-				ClassicMP_Client_CallGameStateEnterFunc_PickLoadOut( player )
+			if ( IsMultiplayerPlaylist() && ClassicMP_Client_GetGameStateEnterFunc_PickLoadOut() != null )
+				ClassicMP_Client_GetGameStateEnterFunc_PickLoadOut()( player )
 
 			break
 
@@ -688,6 +696,7 @@ void function ClGameState_Changed()
 					break
 
 				case TEAM_DEATHMATCH:
+				case TITAN_BRAWL:
 				case HARDCORE_TDM:
 					Announcement_SetSubText( announcement, "#GAMEMODE_ANNOUNCEMENT_SUDDEN_DEATH_TDM" )
 					break

@@ -47,6 +47,7 @@ global const GRENADE_INDICATOR_SONAR_MODEL = $"models/hud/grenade_indicator/gren
 global const GRENADE_INDICATOR_TICK_MODEL = $"models/hud/grenade_indicator/grenade_indicator_tick.mdl"
 #else
 global const GRENADE_INDICATOR_TICK_MODEL = $"models/hud/grenade_indicator/grenade_indicator_frag_sentry.mdl"
+global const GRENADE_INDICATOR_STALKER_MODEL = $"models/hud/grenade_indicator/bang_indicator.mdl"
 #endif
 global const GRENADE_MODEL = $"models/weapons/grenades/m20_f_grenade.mdl"
 global const DAMAGEARROW_MODEL = $"models/weapons/bullets/damage_arrow.mdl"
@@ -115,6 +116,11 @@ void function Death_Package_Init()
 		PrecacheModel( GRENADE_INDICATOR_FRAG_MODEL )
 		PrecacheModel( GRENADE_INDICATOR_SONAR_MODEL )
 		PrecacheModel( GRENADE_INDICATOR_TICK_MODEL )
+
+		#if MP
+		PrecacheModel( GRENADE_INDICATOR_STALKER_MODEL )
+		#endif
+
 		PrecacheModel( DAMAGEARROW_MODEL )
 
 		PrecacheModel( $"models/weapons/bullets/mgl_grenade.mdl" )

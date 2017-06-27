@@ -230,6 +230,13 @@ void function OnCamoSelectMenu_Open()
 
 			file.skinItemData = GetCamoItemRefs( eItemTypes.CAMO_SKIN, loadout.secondary )
 		}
+		else if ( uiGlobal.editingLoadoutProperty == "weapon3CamoIndex" )
+		{
+			Hud_SetText( file.menuTitle, "#ITEM_TYPE_CAMO_SKIN" )
+			UI_SetPresentationType( ePresentationType.PILOT_WEAPON )
+
+			file.skinItemData = GetCamoItemRefs( eItemTypes.CAMO_SKIN, loadout.weapon3 )
+		}
 		else
 		{
 			Assert( false )
@@ -281,7 +288,7 @@ void function OnCamoSelectMenu_NavigateBack()
 	}
 	else if ( uiGlobal.editingLoadoutType == "pilot" )
 	{
-		if ( uiGlobal.editingLoadoutProperty == "camoIndex" || uiGlobal.editingLoadoutProperty == "primaryCamoIndex" || uiGlobal.editingLoadoutProperty == "secondaryCamoIndex" )
+		if ( uiGlobal.editingLoadoutProperty == "camoIndex" || uiGlobal.editingLoadoutProperty == "primaryCamoIndex" || uiGlobal.editingLoadoutProperty == "secondaryCamoIndex" || uiGlobal.editingLoadoutProperty == "weapon3CamoIndex" )
 			RunMenuClientFunction( "ClearAllPilotPreview" )
 		else
 			Assert( false )
@@ -329,6 +336,8 @@ bool function CamoButton_Init( var button, int elemNum )
 		return false
 
 	ItemDisplayData displayData = file.skinItemData[elemNum]
+	printt( "CamoButton_Init:", elemNum, "displayData.ref:", displayData.ref )
+
 	if ( displayData.ref == "" )
 		return false
 
@@ -383,6 +392,10 @@ bool function CamoButton_Init( var button, int elemNum )
 		else if ( uiGlobal.editingLoadoutProperty == "secondaryCamoIndex" )
 		{
 			isSelected = loadout.secondaryCamoIndex == persistentId
+		}
+		else if ( uiGlobal.editingLoadoutProperty == "weapon3CamoIndex" )
+		{
+			isSelected = loadout.weapon3CamoIndex == persistentId
 		}
 		else
 		{
@@ -479,7 +492,7 @@ void function CamoButton_GetFocus( var button, int elemNum )
 			//if ( IsSubItemLocked( player, ref, parentRef ) )
 			//	RunMenuClientFunction( "ClearAllTitanPreview" )
 			//else
-				RunMenuClientFunction( "PreviewTitanWeaponCamoChange", eItemTypes.TITAN_PRIMARY, GetItemPersistenceId( ref ) )
+				RunMenuClientFunction( "PreviewTitanWeaponCamoChange", GetItemPersistenceId( ref ) )
 		}
 		else
 		{
@@ -490,6 +503,8 @@ void function CamoButton_GetFocus( var button, int elemNum )
 	{
 		PilotLoadoutDef loadout = GetCachedPilotLoadout( uiGlobal.editingLoadoutIndex )
 
+		printt( "uiGlobal.editingLoadoutType == pilot, itemType:", itemType )
+
 		if ( uiGlobal.editingLoadoutProperty == "camoIndex" )
 		{
 			//if ( IsItemLocked( player, ref  ) )
@@ -497,19 +512,9 @@ void function CamoButton_GetFocus( var button, int elemNum )
 			//else
 				RunMenuClientFunction( "PreviewPilotCamoChange", GetItemPersistenceId( ref ) )
 		}
-		else if ( uiGlobal.editingLoadoutProperty == "primaryCamoIndex" )
+		else if ( uiGlobal.editingLoadoutProperty == "primaryCamoIndex" || uiGlobal.editingLoadoutProperty == "secondaryCamoIndex" || uiGlobal.editingLoadoutProperty == "weapon3CamoIndex" )
 		{
-			//if ( IsSubItemLocked( player, ref, parentRef ) )
-			//	RunMenuClientFunction( "ClearAllPilotPreview" )
-			//else
-				RunMenuClientFunction( "PreviewPilotWeaponCamoChange", eItemTypes.PILOT_PRIMARY, GetItemPersistenceId( ref ) )
-		}
-		else if ( uiGlobal.editingLoadoutProperty == "secondaryCamoIndex" )
-		{
-			//if ( IsSubItemLocked( player, ref, parentRef ) )
-			//	RunMenuClientFunction( "ClearAllPilotPreview" )
-			//else
-				RunMenuClientFunction( "PreviewPilotWeaponCamoChange", eItemTypes.PILOT_SECONDARY, GetItemPersistenceId( ref ) )
+			RunMenuClientFunction( "PreviewPilotWeaponCamoChange", GetItemPersistenceId( ref ) )
 		}
 		else
 		{
@@ -617,11 +622,17 @@ void function CamoButton_Activate( var button, int elemNum )
 			{
 				EmitUISound( "Menu_LoadOut_TitanCamo_Select" )
 				RunMenuClientFunction( "SaveTitanCamoPreview" )
+
+				if ( !IsLobby() && uiGlobal.editingLoadoutIndex == uiGlobal.titanSpawnLoadoutIndex )
+					uiGlobal.updateTitanSpawnLoadout = true
 			}
 			else if ( uiGlobal.editingLoadoutProperty == "primaryCamoIndex" )
 			{
 				EmitUISound( "Menu_LoadOut_WeaponCamo_Select" )
 				RunMenuClientFunction( "ClearAllTitanPreview" )
+
+				if ( !IsLobby() && uiGlobal.editingLoadoutIndex == uiGlobal.titanSpawnLoadoutIndex )
+					uiGlobal.updateTitanSpawnLoadout = true
 			}
 			else
 			{
@@ -634,11 +645,17 @@ void function CamoButton_Activate( var button, int elemNum )
 			{
 				EmitUISound( "Menu_LoadOut_PilotCamo_Select" )
 				RunMenuClientFunction( "ClearAllPilotPreview" )
+
+				if ( !IsLobby() && uiGlobal.editingLoadoutIndex == uiGlobal.pilotSpawnLoadoutIndex )
+					uiGlobal.updatePilotSpawnLoadout = true
 			}
-			else if ( uiGlobal.editingLoadoutProperty == "primaryCamoIndex" || uiGlobal.editingLoadoutProperty == "secondaryCamoIndex" )
+			else if ( uiGlobal.editingLoadoutProperty == "primaryCamoIndex" || uiGlobal.editingLoadoutProperty == "secondaryCamoIndex" || uiGlobal.editingLoadoutProperty == "weapon3CamoIndex" )
 			{
 				EmitUISound( "Menu_LoadOut_WeaponCamo_Select" )
 				RunMenuClientFunction( "ClearAllPilotPreview" )
+
+				if ( !IsLobby() && uiGlobal.editingLoadoutIndex == uiGlobal.pilotSpawnLoadoutIndex )
+					uiGlobal.updatePilotSpawnLoadout = true
 			}
 			else
 			{

@@ -2713,7 +2713,7 @@ Scheme
 
 		RuiBindLabel
 		{
-			wide					200
+			wide					600
 			tall					27
 			visible					1
             rui						"ui/bind_label.rpak"
@@ -2903,8 +2903,12 @@ Scheme
 			style					DialogListButton
 			rui						"ui/wide_button.rpak"
 			labelText               ""
+			nonDefaultColor	"244 213 166 255"
 		}
 
+		// TODO: ControlsSwitchButton is identical to SwitchButton, and they are
+		// both used in identical situations... doesn't seem Controls need their
+		// own SwitchButton
 		ControlsSwitchButton
 		{
 			wide					740
@@ -2915,8 +2919,7 @@ Scheme
 			style					DialogListButton
 			rui						"ui/wide_button.rpak"
 			labelText               ""
-			//nonDefaultConVarColor	"246 134 40 255"
-			nonDefaultConVarColor	"244 213 166 255"
+			nonDefaultColor	"244 213 166 255"
 		}
 
 		CommunityEditButton
@@ -3334,6 +3337,22 @@ Scheme
 			textAlignment			left
 			labelText 				""
 			rui						"ui/burn_card_button.rpak"
+		}
+
+		BoostStoreButton
+		{
+			xpos					0
+			ypos					0
+			zpos					2
+			wide					64
+			tall					64
+			visible					1
+			enabled					1
+			style					RuiButton
+			allcaps					0
+			textAlignment			left
+			labelText 				""
+			rui						"ui/boost_store_button.rpak"
 		}
 
 		CamoButton
@@ -3771,6 +3790,19 @@ Scheme
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
+		}
+
+		SliderControlCurrentValue
+		{
+			xpos					-325
+			wide					225
+			tall					40
+
+			font					Default_17_ShadowGlow
+			textAlignment			"east"
+
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	TOP_RIGHT
 		}
 
 		DropDownMenu
@@ -4557,6 +4589,16 @@ Scheme
 			bgcolor_override		"0 0 0 60"
 			visible					1
 			enabled					1
+		}
+
+		MenuTooltipLarge
+		{
+			rui						"ui/control_options_description.rpak"
+			tall					370
+			wide 					720
+
+			xpos					975
+			ypos					193
 		}
 
 		EOGScoreboardColumnHeader

@@ -43,7 +43,7 @@ void function ServerCallback_PlayGruntChatterMP( int conversationIndex, int grun
 	if ( !ShouldPlayGruntChatterMPLine( conversationName, player, grunt ) )
 		return
 
-	int priority = expect int(  GetConversationPriority( conversationName )  )
+	int priority = GetConversationPriority( conversationName )
 
 	string alias = GenerateGruntChatterMPAlias( grunt, conversationName )
 

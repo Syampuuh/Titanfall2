@@ -83,7 +83,7 @@ void function PlayFactionDialogueOnLocalClientPlayer( string conversationName )
 		return
 
 	//Check for priority. TODO: Cancel existing conversations if needed
-	int priority = expect int(  GetConversationPriority( conversationName )  )
+	int priority = GetConversationPriority( conversationName )
 	//Generate alias from playerEHandle and number of altAliases we have
 	string soundAlias = GenerateFactionDialogueAlias( listeningPlayer, conversationName  )
 
@@ -108,7 +108,7 @@ void function ForcePlayFactionDialogueOnLocalClientPlayer( string conversationNa
 		return
 
 	//Check for priority. TODO: Cancel existing conversations if needed
-	int priority = expect int(  GetConversationPriority( conversationName )  )
+	int priority =   GetConversationPriority( conversationName )
 	//Generate alias from playerEHandle and number of altAliases we have
 	string soundAlias = GenerateFactionDialogueAlias( listeningPlayer, conversationName  )
 

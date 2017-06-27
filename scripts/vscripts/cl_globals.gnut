@@ -11,6 +11,7 @@ global struct MenuCharacterDef
 	array<string> mods
 	asset weaponModel = $""
 	int weaponCamoIndex = -1
+	int weaponSkinIndex = 0
 }
 
 global struct ClGlobals
@@ -121,6 +122,14 @@ global struct ClGlobals
 
 	bool showMatchLossProtection = false
 	bool canShowLateJoinMessage = true
+	bool lockScoreboard = false
+
+	void functionref() initScoreboardFunc
+	void functionref() showScoreboardFunc
+	void functionref() hideScoreboardFunc
+	void functionref(int) scoreboardInputFunc
+
+	bool showingScoreboard = false
 }
 
 global ClGlobals clGlobal

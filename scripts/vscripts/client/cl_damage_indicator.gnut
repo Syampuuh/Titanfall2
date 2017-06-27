@@ -468,7 +468,7 @@ vector function GetRandomOriginWithinBounds( entity ent )
 	return ent.GetOrigin() + randomOffset
 }
 
-void function GrenadeArrowThink( entity player, entity grenade, float damageRadius, float startDelay, bool requireLos )
+void function GrenadeArrowThink( entity player, entity grenade, float damageRadius, float startDelay, bool requireLos, string requiredPlayerState = "any" )
 {
 	EndSignal( grenade, "OnDeath" ) //On death added primarily for frag_drones
 	EndSignal( grenade, "OnDestroy" )
@@ -487,9 +487,20 @@ void function GrenadeArrowThink( entity player, entity grenade, float damageRadi
 			requireLos = false
 		}
 	}
-	else if ( grenade.IsNPC() && grenade.GetSignifierName() == "npc_frag_drone" )
+	else if ( grenade.IsNPC() )
 	{
-		grenadeModel = GRENADE_INDICATOR_TICK_MODEL
+		switch ( grenade.GetSignifierName() )
+		{
+			#if MP
+			case "npc_stalker":
+				grenadeModel = GRENADE_INDICATOR_STALKER_MODEL
+				break
+			#endif
+
+			case "npc_frag_drone":
+				grenadeModel = GRENADE_INDICATOR_TICK_MODEL
+				break
+		}
 	}
 
 	entity arrow = CreateClientSidePropDynamic( < 0, 0, 0 >, < 0, 0, 0 >, GRENADE_INDICATOR_ARROW_MODEL )
@@ -524,30 +535,48 @@ void function GrenadeArrowThink( entity player, entity grenade, float damageRadi
 	{
 		cockpit = player.GetCockpit()
 
-		if ( Distance( player.GetOrigin(), grenade.GetOrigin() ) > damageRadius || !cockpit )
+		switch ( requiredPlayerState )
 		{
-			shouldBeVisible = false
+			case "any":
+				break
+			case "pilot":
+				shouldBeVisible = !player.IsTitan()
+				break
+			case "titan":
+				shouldBeVisible = player.IsTitan()
+				break
+			default:
+				Assert( false, "Invalid player state! Allower states: 'any' 'pilot' 'titan'" )
+
 		}
-		else
+
+		if ( shouldBeVisible )
 		{
-			bool tracePassed = false
-
-			if ( requireLos )
-			{
-				TraceResults result = TraceLine( grenade.GetOrigin(), GetRandomOriginWithinBounds( player ), grenade, TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
-
-				if ( result.fraction == 1.0 )
-					tracePassed = true
-			}
-
-			if ( requireLos && !tracePassed )
+			if ( Distance( player.GetOrigin(), grenade.GetOrigin() ) > damageRadius || !cockpit )
 			{
 				shouldBeVisible = false
 			}
 			else
 			{
-				shouldBeVisible = true
-				lastVisibleTime = Time()
+				bool tracePassed = false
+
+				if ( requireLos )
+				{
+					TraceResults result = TraceLine( grenade.GetOrigin(), GetRandomOriginWithinBounds( player ), grenade, TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
+
+					if ( result.fraction == 1.0 )
+						tracePassed = true
+				}
+
+				if ( requireLos && !tracePassed )
+				{
+					shouldBeVisible = false
+				}
+				else
+				{
+					shouldBeVisible = true
+					lastVisibleTime = Time()
+				}
 			}
 		}
 

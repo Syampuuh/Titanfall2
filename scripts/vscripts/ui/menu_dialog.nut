@@ -212,6 +212,7 @@ void function OpenDialog( DialogData dialogData )
 
 	var frameElem = Hud_GetChild( menu, "DialogFrame" )
 	RuiSetImage( Hud_GetRui( frameElem ), "basicImage", $"rui/menu/common/dialog_gradient" )
+	RuiSetFloat3( Hud_GetRui( frameElem ), "basicImageColor", < 1, 1, 1 > )
 
 	// TODO: Add support for string vars? Was 4 vars before.
 	Hud_SetText( Hud_GetChild( menu, "DialogHeader" ), dialogData.header )
@@ -241,6 +242,12 @@ void function OpenDialog( DialogData dialogData )
 		RuiSetFloat( Hud_GetRui( messageRuiElem ), "style1FontScale", dialogData.ruiMessage.style1FontScale )
 		RuiSetFloat( Hud_GetRui( messageRuiElem ), "style2FontScale", dialogData.ruiMessage.style2FontScale )
 		RuiSetFloat( Hud_GetRui( messageRuiElem ), "style3FontScale", dialogData.ruiMessage.style3FontScale )
+
+		var rightImageRuiElem = GetSingleElementByClassname( menu, "DialogRightImageClass" )
+		if ( rightImageRuiElem )
+		{
+			RuiSetImage( Hud_GetRui( rightImageRuiElem ), "basicImage", dialogData.rightImage )
+		}
 	}
 
 	var spinnerElem = GetSingleElementByClassname( menu, "DialogSpinnerClass" )
@@ -292,7 +299,7 @@ void function OpenDialog( DialogData dialogData )
 			Hud_Show( button )
 
 			if ( uiGlobal.dialogButtonData[ index ].startFocused )
-				thread DelayedSetFocus( button )
+				thread HACK_DelayedSetFocus_BecauseWhy( button )
 		}
 		else
 		{
@@ -358,13 +365,6 @@ void function OpenDialog( DialogData dialogData )
 	UpdateDialogFooterVisibility( menu, IsControllerModeActive() )
 
 	AdvanceMenu( menu )
-}
-
-// BUG: Bugging this to code because we shouldn't need to do this...
-void function DelayedSetFocus( var item )
-{
-	WaitEndFrame()
-	Hud_SetFocused( item )
 }
 
 // No way to test a named element exists so this is a workaround

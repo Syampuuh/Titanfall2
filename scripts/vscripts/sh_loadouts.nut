@@ -1,4 +1,6 @@
+#if SERVER
 untyped
+#endif
 
 globalize_all_functions
 
@@ -49,13 +51,17 @@ void function PopulateDefaultPilotLoadouts( PilotLoadoutDef[ NUM_PERSISTENT_PILO
 		loadout.secondaryMod1 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "secondaryMod1" ) )
 		loadout.secondaryMod2 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "secondaryMod2" ) )
 		loadout.secondaryMod3 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "secondaryMod3" ) )
+		loadout.weapon3				= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "weapon3" ) )
+		loadout.weapon3Mod1 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "weapon3Mod1" ) )
+		loadout.weapon3Mod2 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "weapon3Mod2" ) )
+		loadout.weapon3Mod3 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "weapon3Mod3" ) )
 		loadout.ordnance 			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "ordnance" ) )
 		loadout.passive1 			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "passive1" ) )
 		loadout.passive2 			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "passive2" ) )
 
 		//TODO: Why isn't execution initialized here?
 
-		UpdateDerivedPilotLoadoutData( loadout )
+		UpdateDerivedPilotLoadoutData( loadout, false )
 
 		//loadout.race
 		//ValidateDefaultLoadoutData( "pilot", loadout.primary )
@@ -67,7 +73,12 @@ void function PopulateDefaultPilotLoadouts( PilotLoadoutDef[ NUM_PERSISTENT_PILO
 		//ValidateDefaultLoadoutData( "pilot", loadout.secondary )
 		//ValidateWeaponSubitem( loadout.secondary, loadout.secondaryMod1, eItemTypes.PILOT_SECONDARY_MOD )
 		//ValidateWeaponSubitem( loadout.secondary, loadout.secondaryMod2, eItemTypes.PILOT_SECONDARY_MOD )
-		Assert( ( loadout.primaryMod1 == "" && loadout.primaryMod2 == "" ) || ( loadout.secondaryMod1 != loadout.secondaryMod2 ), "!!! Secondary mod1 and mod2 in default pilot loadout: " + loadout.name + " should be different but are both set to: " + loadout.secondaryMod1 )
+		Assert( ( loadout.secondaryMod1 == "" && loadout.secondaryMod2 == "" ) || ( loadout.secondaryMod1 != loadout.secondaryMod2 ), "!!! Secondary mod1 and mod2 in default pilot loadout: " + loadout.name + " should be different but are both set to: " + loadout.secondaryMod1 )
+
+		//ValidateDefaultLoadoutData( "pilot", loadout.weapon3 )
+		//ValidateWeaponSubitem( loadout.weapon3, loadout.weapon3Mod1, eItemTypes.PILOT_SECONDARY_MOD )
+		//ValidateWeaponSubitem( loadout.weapon3, loadout.weapon3Mod2, eItemTypes.PILOT_SECONDARY_MOD )
+		Assert( ( loadout.weapon3Mod1 == "" && loadout.weapon3Mod2 == "" ) || ( loadout.weapon3Mod1 != loadout.weapon3Mod2 ), "!!! Weapon3 mod1 and mod2 in default pilot loadout: " + loadout.name + " should be different but are both set to: " + loadout.weapon3Mod1 )
 
 		//ValidateDefaultLoadoutData( "pilot", loadout.ordnance )
 		//ValidateDefaultLoadoutData( "pilot", loadout.special )
@@ -171,6 +182,10 @@ void function PopulatePilotLoadoutFromPersistentData( entity player, PilotLoadou
 	loadout.secondaryMod1		= GetValidatedPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod1" )
 	loadout.secondaryMod2		= GetValidatedPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod2" )
 	loadout.secondaryMod3		= GetValidatedPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod3" )
+	loadout.weapon3 			= GetValidatedPersistentLoadoutValue( player, "pilot", loadoutIndex, "weapon3" )
+	loadout.weapon3Mod1			= GetValidatedPersistentLoadoutValue( player, "pilot", loadoutIndex, "weapon3Mod1" )
+	loadout.weapon3Mod2			= GetValidatedPersistentLoadoutValue( player, "pilot", loadoutIndex, "weapon3Mod2" )
+	loadout.weapon3Mod3			= GetValidatedPersistentLoadoutValue( player, "pilot", loadoutIndex, "weapon3Mod3" )
 	loadout.ordnance 			= GetValidatedPersistentLoadoutValue( player, "pilot", loadoutIndex, "ordnance" )
 	loadout.passive1 			= GetValidatedPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive1" )
 	loadout.passive2 			= GetValidatedPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive2" )
@@ -180,7 +195,8 @@ void function PopulatePilotLoadoutFromPersistentData( entity player, PilotLoadou
 	loadout.primarySkinIndex	= GetValidatedPersistentLoadoutValueInt( player, "pilot", loadoutIndex, "primarySkinIndex" ) //Important: Skin index needs to be gotten after camoIndex for loadout validation purposes
 	loadout.secondaryCamoIndex	= GetValidatedPersistentLoadoutValueInt( player, "pilot", loadoutIndex, "secondaryCamoIndex" )
 	loadout.secondarySkinIndex	= GetValidatedPersistentLoadoutValueInt( player, "pilot", loadoutIndex, "secondarySkinIndex" ) //Important: Skin index needs to be gotten after camoIndex for loadout validation purposes
-
+	loadout.weapon3CamoIndex	= GetValidatedPersistentLoadoutValueInt( player, "pilot", loadoutIndex, "weapon3CamoIndex" )
+	loadout.weapon3SkinIndex	= GetValidatedPersistentLoadoutValueInt( player, "pilot", loadoutIndex, "weapon3SkinIndex" ) //Important: Skin index needs to be gotten after camoIndex for loadout validation purposes
 
 	UpdateDerivedPilotLoadoutData( loadout )
 }
@@ -288,10 +304,12 @@ string function GetPersistentLoadoutPropertyType( string loadoutProperty )
 		case "primaryCamoIndex":
 		case "secondarySkinIndex":
 		case "secondaryCamoIndex":
+		case "weapon3SkinIndex":
+		case "weapon3CamoIndex":
 			return "int"
 	}
 
-			return "string"
+	return "string"
 }
 
 
@@ -299,6 +317,7 @@ string function GetPersistentLoadoutPropertyType( string loadoutProperty )
 // TODO: If we change a property that has a parent or child relationship, all related properties need updating if invalid
 // 		A parent change should validate children and set invalid to defaults
 // 		If a child change is invalid for the parent, it should be changed to a valid default based on the parent
+// TODO: Return type. Currently getting passed to AddClientCommandCallback() which expects a bool return, but this isn't setup to return values.
 function SetPersistentLoadoutValue( entity player, string loadoutType, int loadoutIndex, string loadoutProperty, string value )
 {
 	 //printt( "=======================================================================================" )
@@ -370,9 +389,9 @@ function SetPersistentLoadoutValue( entity player, string loadoutType, int loado
 	{
 		if ( FailsLoadoutValidationCheck( player, loadoutType, loadoutIndex, loadoutProperty, value ) )
 		{
-			/*printt( "=======================================================================================" )
+			printt( "=======================================================================================" )
 	 		printt( "SetPersistentLoadoutValue failed FailsLoadoutValidationCheck with loadoutType:", loadoutType, "loadoutIndex:", loadoutIndex, "loadoutProperty:" , loadoutProperty, "value:", value )
-	 		printt( "=======================================================================================" )*/
+	 		printt( "=======================================================================================" )
 
 			//Assert( false, "SetPersistentLoadoutValue() call " + loadoutType + " " + loadoutProperty + ", value: " + value + " failed FailsLoadoutValidationCheck() check!" )
 			return
@@ -420,9 +439,8 @@ function SetPersistentLoadoutValue( entity player, string loadoutType, int loado
 	thread UpdateCachedLoadouts()
 }
 
-string function GetRefFromLoadoutTypeIndexPropertyAndValue( string loadoutType, int index, string property, var value )
+string function GetRefFromLoadoutTypeIndexPropertyAndValue( entity player, string loadoutType, int index, string property, var value )
 {
-
 	bool isPilotLoadout = ( loadoutType == "pilot" )
 	bool isTitanLoadout = ( loadoutType == "titan" )
 	if ( !isPilotLoadout && !isTitanLoadout )
@@ -461,12 +479,24 @@ string function GetRefFromLoadoutTypeIndexPropertyAndValue( string loadoutType, 
 
 		case "primaryCamoIndex":
 		case "secondaryCamoIndex":
+		case "weapon3CamoIndex":
 		{
 			int valueAsInt = ForceCastVarToInt( value )
 			if ( !IsValidCamoIndex( valueAsInt ) )
 				return INVALID_REF
 			else
 				return CamoSkins_GetByIndex( valueAsInt ).ref
+		}
+		break
+
+		case "primarySkinIndex":
+		case "secondarySkinIndex":
+		case "weapon3SkinIndex":
+		{
+			string parentProperty = GetParentLoadoutProperty( loadoutType, property )
+			string weaponRef = GetPersistentLoadoutValue( player, loadoutType, index, parentProperty )
+			int valueAsInt = ForceCastVarToInt( value )
+			return GetSkinRefFromWeaponRefAndPersistenceValue( weaponRef, valueAsInt )
 		}
 		break
 
@@ -504,7 +534,6 @@ string function GetRefFromLoadoutTypeIndexPropertyAndValue( string loadoutType, 
 	}
 
 	unreachable
-
 }
 
 bool function IsValidCamoIndex( int camoIndex )
@@ -552,6 +581,9 @@ bool function IsLoadoutSubitemValid( entity player, string loadoutType, int load
 		case "secondaryMod1":
 		case "secondaryMod2":
 		case "secondaryMod3":
+		case "weapon3Mod1":
+		case "weapon3Mod2":
+		case "weapon3Mod3":
 			if ( loadoutType == "pilot" )
 			{
 				string parentProperty = GetParentLoadoutProperty( loadoutType, property )
@@ -568,6 +600,8 @@ bool function IsLoadoutSubitemValid( entity player, string loadoutType, int load
 		case "primaryCamoIndex":
 		case "secondarySkinIndex":
 		case "secondaryCamoIndex":
+		case "weapon3SkinIndex":
+		case "weapon3CamoIndex":
 		case "primeSkinIndex":
 		case "primeCamoIndex":
 		case "primeDecalIndex":
@@ -617,20 +651,20 @@ bool function FailsLoadoutValidationCheck( entity player, string loadoutType, in
 
 	if ( AllowCamoIndexToSkipValidation( loadoutType, loadoutProperty, value ) ) //Special case: Warpaints will set camoIndex
 	{
-		//printt( "AllowCamoIndexToSkipValidation" )
+//		printt( "AllowCamoIndexToSkipValidation" )
 		return false
 	}
 
 	if ( AllowSkinIndexToSkipValidation( loadoutType, loadoutProperty, value ) ) //Skins need to be handled differently because they are only valid refs for warpaints, and we set values of 0, 1 and 2 for different cases
 	{
-		//printt( "AllowSkinIndexToSkipValidation" )
+//		printt( "AllowSkinIndexToSkipValidation" )
 		return false
 	}
 
-	string ref = GetRefFromLoadoutTypeIndexPropertyAndValue( loadoutType, loadoutIndex, loadoutProperty, value )
+	string ref = GetRefFromLoadoutTypeIndexPropertyAndValue( player, loadoutType, loadoutIndex, loadoutProperty, value )
 	if ( !IsRefValid( ref ) )
 	{
-		//printt( "!IsRefValid( " + ref + " ), generated from loadoutType: " + loadoutType + ", loadoutIndex: " + loadoutIndex + ". loadoutProperty: " + loadoutProperty + ", value: " + value )
+		printt( "!IsRefValid( " + ref + " ), generated from loadoutType: " + loadoutType + ", loadoutIndex: " + loadoutIndex + ". loadoutProperty: " + loadoutProperty + ", value: " + value )
 		return true
 	}
 
@@ -642,18 +676,39 @@ bool function FailsLoadoutValidationCheck( entity player, string loadoutType, in
 
 	if ( FailsItemLockedValidationCheck( player, loadoutType, loadoutIndex, loadoutProperty, ref ) )
 	{
-		//printt( "FailsItemLockedValidationCheck, player: " + player + ", ref: " + ref )
+		printt( "FailsItemLockedValidationCheck, player: " + player + ", ref: " + ref )
 		return true
 	}
 
-	if ( !ValueIsValidForLoadoutTypeIndexAndProperty( loadoutType, loadoutIndex, loadoutProperty, value, ref ) )
+	if ( !IsValueValidForLoadoutTypeIndexAndProperty( loadoutType, loadoutIndex, loadoutProperty, value, ref ) )
 	{
-		//printt( "!ValueIsValidForLoadoutTypeIndexAndProperty, loadoutType: " + loadoutType + ", loadoutIndex: " + loadoutIndex + ", loadoutProperty: " + loadoutProperty + ", value: " + value + " ref: " + ref )
+		//printt( "!IsValueValidForLoadoutTypeIndexAndProperty, loadoutType: " + loadoutType + ", loadoutIndex: " + loadoutIndex + ", loadoutProperty: " + loadoutProperty + ", value: " + value + " ref: " + ref )
 		return true
 	}
+
+	if ( ( loadoutProperty == "secondary" || loadoutProperty == "weapon3" ) && !IsValueValidForPropertyWithCategoryRestriction( player, loadoutIndex, loadoutProperty, string( value ) ) )
+		return true
 
 	//printt( "End FailsLoadoutValidationCheck" )
 	return false
+}
+
+bool function IsValueValidForPropertyWithCategoryRestriction( entity player, int loadoutIndex, string targetProperty, string targetValue )
+{
+	Assert( targetProperty == "secondary" || targetProperty == "weapon3" )
+
+	string otherProperty
+	if ( targetProperty == "secondary" )
+		otherProperty = "weapon3"
+	else
+		otherProperty = "secondary"
+
+	string otherValue = GetPersistentLoadoutValue( player, "pilot", loadoutIndex, otherProperty )
+
+	if ( ItemsInSameMenuCategory( targetValue, otherValue ) )
+		return false
+
+	return true
 }
 
 bool function FailsItemLockedValidationCheck( entity player, string loadoutType, int loadoutIndex, string loadoutProperty, string ref  )
@@ -755,7 +810,7 @@ bool function AllowCamoIndexToSkipValidation( string loadoutType, string loadout
 
 bool function AllowSkinIndexToSkipValidation( string loadoutType, string loadoutProperty, var value ) //TODO: test weapon skin/camo combinations?
 {
-	int valueAsInt  = ForceCastVarToInt( value )//TODO: Awkward, getting around the fact that you can't do int( value )  if it's already an int.
+	int valueAsInt = ForceCastVarToInt( value ) //TODO: Awkward, getting around the fact that you can't do int( value )  if it's already an int.
 
 	switch( loadoutProperty )
 	{
@@ -770,14 +825,15 @@ bool function AllowSkinIndexToSkipValidation( string loadoutType, string loadout
 
 		case "primeSkinIndex": //Prime Titans don't support war paints, so should only support values of 0 and 2
 		{
-			return ((valueAsInt == SKIN_INDEX_BASE) || (valueAsInt == TITAN_SKIN_INDEX_CAMO))
+			return ( (valueAsInt == SKIN_INDEX_BASE) || (valueAsInt == TITAN_SKIN_INDEX_CAMO) )
 		}
 		break
 
 		case "primarySkinIndex":
 		case "secondarySkinIndex":
+		case "weapon3SkinIndex":
 		{
-			return ( (valueAsInt == SKIN_INDEX_BASE) || (valueAsInt == PLAYER_WEAPON_SKIN_INDEX_CAMO) )
+			return ( (valueAsInt == SKIN_INDEX_BASE) || (valueAsInt == WEAPON_SKIN_INDEX_CAMO) )
 		}
 		break
 
@@ -788,7 +844,7 @@ bool function AllowSkinIndexToSkipValidation( string loadoutType, string loadout
 	unreachable
 }
 
-bool function ValueIsValidForLoadoutTypeIndexAndProperty( string loadoutType, int loadoutIndex, string loadoutProperty, var value, string ref )
+bool function IsValueValidForLoadoutTypeIndexAndProperty( string loadoutType, int loadoutIndex, string loadoutProperty, var value, string ref )
 {
 	bool isTitanLoadout = (loadoutType == "titan")
 	bool isPilotLoadout = (loadoutType == "pilot")
@@ -802,51 +858,47 @@ bool function ValueIsValidForLoadoutTypeIndexAndProperty( string loadoutType, in
 	switch ( loadoutProperty )
 	{
 		case "suit":
-			return ( (itemType == eItemTypes.PILOT_SUIT) && isPilotLoadout)
+			return ( (itemType == eItemTypes.PILOT_SUIT) && isPilotLoadout )
 
 		case "race":
-
-			return ((itemType == eItemTypes.RACE) && isPilotLoadout)
+			return ( (itemType == eItemTypes.RACE) && isPilotLoadout )
 
 		case "execution":
-
-			return ((itemType == eItemTypes.PILOT_EXECUTION) && isPilotLoadout)
+			return ( (itemType == eItemTypes.PILOT_EXECUTION) && isPilotLoadout )
 
 		case "titanExecution":
 			return ( isTitanLoadout && IsValidTitanExecution( loadoutIndex, loadoutProperty, value, ref ) )
 
 		case "primary": //Only Pilots store their primary in persistence
-
-			return ((itemType == eItemTypes.PILOT_PRIMARY) && isPilotLoadout)
+			return ( (itemType == eItemTypes.PILOT_PRIMARY) && isPilotLoadout )
 
 		case "primaryAttachment": //Only Pilots their primary in persistence
-
-			return ( ( itemType == eItemTypes.SUB_PILOT_WEAPON_ATTACHMENT || itemType == eItemTypes.PILOT_PRIMARY_ATTACHMENT ) && isPilotLoadout)
+			return ( (itemType == eItemTypes.SUB_PILOT_WEAPON_ATTACHMENT || itemType == eItemTypes.PILOT_PRIMARY_ATTACHMENT) && isPilotLoadout )
 
 		case "primaryMod1": //Only Pilots have primary mods in persistence
 		case "primaryMod2":
 		case "primaryMod3":
-			return ((itemType == eItemTypes.SUB_PILOT_WEAPON_MOD || itemType == eItemTypes.PILOT_PRIMARY_MOD ) && isPilotLoadout)
+			return ( (itemType == eItemTypes.SUB_PILOT_WEAPON_MOD || itemType == eItemTypes.PILOT_PRIMARY_MOD) && isPilotLoadout )
 
 		case "secondary": //Only Pilots store their secondary in persistence
-
-			return ((itemType == eItemTypes.PILOT_SECONDARY) && isPilotLoadout)
+		case "weapon3":
+			return ( (itemType == eItemTypes.PILOT_SECONDARY) && isPilotLoadout )
 
 		case "secondaryMod1": //Only Pilots store their secondary in persistence
 		case "secondaryMod2": //Only Pilots store their secondary in persistence
 		case "secondaryMod3": //Only Pilots store their secondary in persistence
-
-			return ((itemType == eItemTypes.SUB_PILOT_WEAPON_MOD || itemType == eItemTypes.PILOT_SECONDARY_MOD) && isPilotLoadout)
+		case "weapon3Mod1":
+		case "weapon3Mod2":
+		case "weapon3Mod3":
+			return ( (itemType == eItemTypes.SUB_PILOT_WEAPON_MOD || itemType == eItemTypes.PILOT_SECONDARY_MOD) && isPilotLoadout )
 
 		case "ordnance":
-
-			return ((itemType == eItemTypes.PILOT_ORDNANCE) && isPilotLoadout)
+			return ( (itemType == eItemTypes.PILOT_ORDNANCE) && isPilotLoadout )
 
 		case "passive1":
 			if ( isPilotLoadout )
 			{
-
-				return (itemType == eItemTypes.PILOT_PASSIVE1)
+				return ( itemType == eItemTypes.PILOT_PASSIVE1 )
 			}
 			else
 			{
@@ -855,7 +907,7 @@ bool function ValueIsValidForLoadoutTypeIndexAndProperty( string loadoutType, in
 
 		case "passive2":
 			if ( isPilotLoadout )
-				return (itemType == eItemTypes.PILOT_PASSIVE2)
+				return ( itemType == eItemTypes.PILOT_PASSIVE2 )
 			else
 				return IsValidTitanPassive( loadoutIndex, loadoutProperty, value, ref )
 
@@ -863,10 +915,10 @@ bool function ValueIsValidForLoadoutTypeIndexAndProperty( string loadoutType, in
 		case "passive4":
 		case "passive5":
 		case "passive6":
-			return (isTitanLoadout && IsValidTitanPassive( loadoutIndex, loadoutProperty, value, ref ))
+			return ( isTitanLoadout && IsValidTitanPassive( loadoutIndex, loadoutProperty, value, ref ) )
 
 		case "isPrime":
-			return (isTitanLoadout && PersistenceEnumValueIsValid( "titanIsPrimeTitan", value )) //Technically will be covered by enumValue checks before LoadoutValidation checks, but included here for completeness
+			return ( isTitanLoadout && PersistenceEnumValueIsValid( "titanIsPrimeTitan", value ) ) //Technically will be covered by enumValue checks before LoadoutValidation checks, but included here for completeness
 
 		//TODO: Need to get ref for these correctly!
 		case "skinIndex":
@@ -875,6 +927,8 @@ bool function ValueIsValidForLoadoutTypeIndexAndProperty( string loadoutType, in
 		case "primaryCamoIndex":
 		case "secondarySkinIndex":
 		case "secondaryCamoIndex":
+		case "weapon3SkinIndex":
+		case "weapon3CamoIndex":
 		case "decalIndex":
 		case "primeSkinIndex":
 		case "primeCamoIndex":
@@ -886,7 +940,7 @@ bool function ValueIsValidForLoadoutTypeIndexAndProperty( string loadoutType, in
 		case "special":
 		case "antirodeo":
 			string defaultValue = GetLoadoutPropertyDefault( loadoutType, loadoutIndex, loadoutProperty )
-			return (value == defaultValue)
+			return ( value == defaultValue )
 
 		default:
 			Assert( false, "Unknown loadoutProperty " + loadoutProperty )
@@ -905,9 +959,9 @@ bool function ValidateSkinAndCamoIndexesAsAPair( entity player, string loadoutTy
 		case "primeSkinIndex":
 		case "primarySkinIndex":
 		case "secondarySkinIndex":
+		case "weapon3SkinIndex":
 			isSkinIndex = true
 			break
-
 	}
 
 	if ( !isSkinIndex )
@@ -966,12 +1020,20 @@ bool function ValidateSkinAndCamoIndexesAsAPair( entity player, string loadoutTy
 			break
 		}
 		case "primarySkinIndex":
-		case "secondarySkinIndex": //1 is skin for camo, only other valid value is 0
+		case "secondarySkinIndex":
+		case "weapon3SkinIndex": //1 is skin for camo
 		{
-			if ( valueAsInt == PLAYER_WEAPON_SKIN_INDEX_CAMO && camoIndexValue <= CAMO_INDEX_BASE )
+			if ( valueAsInt == WEAPON_SKIN_INDEX_CAMO )
 			{
-				ResetSkinAndCamoIndexesToZero( player, loadoutType, loadoutIndex, loadoutProperty, camoProperty )
-				return false // HACK: Work around fact that when we switch weapons we don't do a corresponding call to set camo and skin indexes
+				if ( camoIndexValue <= CAMO_INDEX_BASE )
+				{
+					ResetSkinAndCamoIndexesToZero( player, loadoutType, loadoutIndex, loadoutProperty, camoProperty )
+					return false // HACK: Work around fact that when we switch weapons we don't do a corresponding call to set camo and skin indexes
+				}
+			}
+			else
+			{
+				return SetCamoIndexToValue( player, loadoutType, loadoutIndex, camoProperty, 0 ) //Set to default of 0 for weapon skins
 			}
 
 			break
@@ -1020,6 +1082,10 @@ string function GetCorrectCamoProperty( string loadoutProperty ) //HACK HACK: sh
 
 		case "secondarySkinIndex":
 			returnValue = "secondaryCamoIndex"
+			break
+
+		case "weapon3SkinIndex":
+			returnValue = "weapon3CamoIndex"
 			break
 
 		default:
@@ -1148,6 +1214,9 @@ string function GetParentRefFromLoadoutInfoAndRef( entity player, string loadout
 		case "secondaryMod1":
 		case "secondaryMod2":
 		case "secondaryMod3":
+		case "weapon3Mod1":
+		case "weapon3Mod2":
+		case "weapon3Mod3":
 		{
 			string parentProperty = GetParentLoadoutProperty( loadoutType, property )
 			string loadoutString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, parentProperty )
@@ -1193,7 +1262,7 @@ string function GetParentRefFromLoadoutInfoAndRef( entity player, string loadout
 		{
 			if ( isPilotLoadout )
 			{
-				string loadoutString = BuildPersistentVarAccessorString( "pilot", loadoutIndex, "primary" )
+				string loadoutString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, "primary" )
 				return string( player.GetPersistentVar( loadoutString ) )
 			}
 			else
@@ -1207,21 +1276,49 @@ string function GetParentRefFromLoadoutInfoAndRef( entity player, string loadout
 			if ( !isPilotLoadout ) //Only Pilots have secondaries
 				return ""
 
-			string loadoutString = BuildPersistentVarAccessorString( "pilot", loadoutIndex, "secondary" )
+			string loadoutString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, "secondary" )
 			return string( player.GetPersistentVar( loadoutString ) )
 		}
 
-		case "primeSkinIndex": //These should have been taken care of earlier in AllowSkinIndexToSkipValidation()
-		case "primarySkinIndex":
-		case "secondarySkinIndex":
-			return ""
+		case "weapon3CamoIndex":
+		{
+			if ( !isPilotLoadout )
+				return ""
 
+			string loadoutString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, "weapon3" )
+			return string( player.GetPersistentVar( loadoutString ) )
+		}
+
+		case "primarySkinIndex":
+		{
+			string loadoutString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, "primary" )
+			return string( player.GetPersistentVar( loadoutString ) )
+		}
+
+		case "secondarySkinIndex":
+		{
+			if ( !isPilotLoadout ) //Only Pilots have secondaries
+				return ""
+
+			string loadoutString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, "secondary" )
+			return string( player.GetPersistentVar( loadoutString ) )
+		}
+
+		case "weapon3SkinIndex":
+		{
+			if ( !isPilotLoadout )
+				return ""
+
+			string loadoutString = BuildPersistentVarAccessorString( loadoutType, loadoutIndex, "weapon3" )
+			return string( player.GetPersistentVar( loadoutString ) )
+		}
+
+		case "primeSkinIndex": //Should be taken care of earlier in AllowSkinIndexToSkipValidation()
 		default:
 			return ""
 	}
 
 	unreachable
-
 }
 
 int function ForceCastVarToInt( var value ) //HACK: working around inability to cast an int to int. Reexamine when less busy!
@@ -1245,6 +1342,8 @@ string function GetLoadoutPropertyDefault( string loadoutType, int loadoutIndex,
 		case "primaryCamoIndex":
 		case "secondarySkinIndex":
 		case "secondaryCamoIndex":
+		case "weapon3SkinIndex":
+		case "weapon3CamoIndex":
 		case "primeSkinIndex":
 		case "primeCamoIndex":
 		case "primeDecalIndex":
@@ -1287,6 +1386,53 @@ string function GetLoadoutPropertyDefault( string loadoutType, int loadoutIndex,
 
 	//printt( "GetLoadoutPropertyDefault, loadoutType: " + loadoutType + ", loadoutIndex: " + loadoutIndex + ", propertyName: " + propertyName + ", resultString: " + resultString )
 	return resultString
+}
+
+string function GetCategoryRestrictedResetValue( entity player, int loadoutIndex, string targetProperty, string otherProperty )
+{
+	string loadoutType = "pilot"
+	string otherPropertyValue = GetPersistentLoadoutValue( player, loadoutType, loadoutIndex, otherProperty )
+	string potentialDefaultValue = GetLoadoutPropertyDefault( loadoutType, loadoutIndex, targetProperty )
+	string resetValue = potentialDefaultValue
+
+	if ( otherPropertyValue != "" )
+	{
+		int otherCategory = expect int( GetItemDisplayData( otherPropertyValue ).i.menuCategory )
+		int potentialDefaultCategory = expect int( GetItemDisplayData( potentialDefaultValue ).i.menuCategory )
+
+		if ( potentialDefaultCategory == otherCategory )
+		{
+			Assert( otherCategory == eSecondaryWeaponCategory.AT || otherCategory == eSecondaryWeaponCategory.PISTOL )
+			if ( otherCategory == eSecondaryWeaponCategory.AT )
+				resetValue = GetWeaponCategoryBasedDefault( eSecondaryWeaponCategory.PISTOL )
+			else
+				resetValue = GetWeaponCategoryBasedDefault( eSecondaryWeaponCategory.AT )
+		}
+	}
+
+	return resetValue
+}
+
+string function GetWeaponCategoryBasedDefault( int category )
+{
+	string val
+
+	switch ( category )
+	{
+		case eSecondaryWeaponCategory.AT:
+			val = "mp_weapon_defender"
+			break
+
+		case eSecondaryWeaponCategory.PISTOL:
+			val = "mp_weapon_autopistol"
+			break
+
+		default:
+			Assert( 0, "category: " + DEV_GetEnumStringFromIndex( "eSecondaryWeaponCategory", category ) + " not handled in GetWeaponCategoryBasedDefault()" )
+			break
+	}
+
+	return val
 }
 
 string function BuildPersistentVarAccessorString( string loadoutType, int loadoutIndex, string propertyName )
@@ -1358,6 +1504,7 @@ string function GetValidatedPersistentLoadoutValue( entity player, string loadou
 				ClientCommand( player, "disconnect #RESETTING_LOADOUT", 0 ) //Kick player out with a "Resetting Invalid Loadout" message. Mainly necessary so UI/Client script don't crash out later with known, bad data from persistence
 			}
 		}
+
 		if ( LoadoutPropertyRequiresItemValidation( loadoutProperty ) && value != "" )
 		{
 			if ( FailsLoadoutValidationCheck( player, loadoutType, loadoutIndex, loadoutProperty, value ) )
@@ -1408,15 +1555,23 @@ void function ResolveInvalidLoadoutChildValues( entity player, string loadoutTyp
 		{
 			string childValue
 
-			if ( childProperty == "primaryCamoIndex" || childProperty == "secondaryCamoIndex" ) // TODO: Keep skin on weapon change if possible
+			if ( childProperty == "primaryCamoIndex" || childProperty == "secondaryCamoIndex" || childProperty == "weapon3CamoIndex" ) // TODO: Keep skin on weapon change if possible
 			{
 				//printt( "====== loadoutProperty:", loadoutProperty, "childProperty:", childProperty, "will blind RESET" )
 			}
-			else if ( childProperty == "primarySkinIndex" || childProperty == "secondarySkinIndex" )
+			else if ( childProperty == "primarySkinIndex" || childProperty == "secondarySkinIndex" || childProperty == "weapon3SkinIndex" )
 			{
 				//printt( "====== loadoutProperty:", loadoutProperty, "childProperty:", childProperty, "will blind RESET" )
 			}
-			else if ( ( childProperty == "primaryMod2" || childProperty == "primaryMod3" || childProperty == "secondaryMod2" || childProperty == "secondaryMod3" ) && IsSubItemLocked( player, childProperty.tolower(), parentValue ) ) // check required feature locked
+			else if ( (childProperty == "primaryMod2" || childProperty == "primaryMod3") && IsSubItemLocked( player, childProperty.tolower(), parentValue ) ) // check primarymod2 or primarymod3 feature locked
+			{
+				//printt( "====== loadoutProperty:", loadoutProperty, "childProperty:", childProperty, "will RESET due to feature lock" )
+			}
+			else if ( (childProperty == "secondaryMod2" || childProperty == "weapon3Mod2") && IsSubItemLocked( player, "secondarymod2", parentValue ) ) // check secondarymod2 feature locked
+			{
+				//printt( "====== loadoutProperty:", loadoutProperty, "childProperty:", childProperty, "will RESET due to feature lock" )
+			}
+			else if ( (childProperty == "secondaryMod3" || childProperty == "weapon3Mod3") && IsSubItemLocked( player, "secondarymod3", parentValue ) ) // check secondarymod3 feature locked
 			{
 				//printt( "====== loadoutProperty:", loadoutProperty, "childProperty:", childProperty, "will RESET due to feature lock" )
 			}
@@ -1763,6 +1918,22 @@ string function GetPilotLoadoutValue( PilotLoadoutDef loadout, string property )
 			value = loadout.secondaryMod3
 			break
 
+		case "weapon3":
+			value = loadout.weapon3
+			break
+
+		case "weapon3Mod1":
+			value = loadout.weapon3Mod1
+			break
+
+		case "weapon3Mod2":
+			value = loadout.weapon3Mod2
+			break
+
+		case "weapon3Mod3":
+			value = loadout.weapon3Mod3
+			break
+
 		case "special":
 			value = loadout.special
 			break
@@ -1809,6 +1980,14 @@ string function GetPilotLoadoutValue( PilotLoadoutDef loadout, string property )
 
 		case "secondaryCamoIndex":
 			value = string ( loadout.secondaryCamoIndex )
+			break
+
+		case "weapon3SkinIndex":
+			value = string( loadout.weapon3SkinIndex )
+			break
+
+		case "weapon3CamoIndex":
+			value = string ( loadout.weapon3CamoIndex )
 			break
 
 		default:
@@ -1877,6 +2056,22 @@ void function SetPilotLoadoutValue( PilotLoadoutDef loadout, string property, st
 			loadout.secondaryMod3 = value
 			break
 
+		case "weapon3":
+			loadout.weapon3 = value
+			break
+
+		case "weapon3Mod1":
+			loadout.weapon3Mod1 = value
+			break
+
+		case "weapon3Mod2":
+			loadout.weapon3Mod2 = value
+			break
+
+		case "weapon3Mod3":
+			loadout.weapon3Mod3 = value
+			break
+
 		case "special":
 			loadout.special = value
 			break
@@ -1919,6 +2114,14 @@ void function SetPilotLoadoutValue( PilotLoadoutDef loadout, string property, st
 
 		case "secondaryCamoIndex":
 			loadout.secondaryCamoIndex = int( value )
+			break
+
+		case "weapon3SkinIndex":
+			loadout.weapon3SkinIndex = int( value )
+			break
+
+		case "weapon3CamoIndex":
+			loadout.weapon3CamoIndex = int( value )
 			break
 	}
 }
@@ -2155,6 +2358,10 @@ bool function IsValidPilotLoadoutProperty( string propertyName )
 		case "secondaryMod1":
 		case "secondaryMod2":
 		case "secondaryMod3":
+		case "weapon3":
+		case "weapon3Mod1":
+		case "weapon3Mod2":
+		case "weapon3Mod3":
 		case "ordnance":
 		case "special":
 		case "passive1":
@@ -2166,6 +2373,8 @@ bool function IsValidPilotLoadoutProperty( string propertyName )
 		case "primaryCamoIndex":
 		case "secondarySkinIndex":
 		case "secondaryCamoIndex":
+		case "weapon3SkinIndex":
+		case "weapon3CamoIndex":
 			return true
 	}
 
@@ -2216,6 +2425,7 @@ var function GetPilotLoadoutPropertyEnum( string property )
 
 		case "primary":
 		case "secondary":
+		case "weapon3":
 		case "special":
 		case "ordnance":
 		case "melee":
@@ -2228,6 +2438,9 @@ var function GetPilotLoadoutPropertyEnum( string property )
 		case "secondaryMod1":
 		case "secondaryMod2":
 		case "secondaryMod3":
+		case "weapon3Mod1":
+		case "weapon3Mod2":
+		case "weapon3Mod3":
 			return "pilotMod"
 
 		case "passive1":
@@ -2283,6 +2496,7 @@ int function GetItemTypeFromPilotLoadoutProperty( string loadoutProperty )
 			break
 
 		case "secondary":
+		case "weapon3": // Most cases need to treat as secondary, so don't return eItemTypes.PILOT_WEAPON3 here
 			itemType = eItemTypes.PILOT_SECONDARY
 			break
 
@@ -2313,11 +2527,14 @@ int function GetItemTypeFromPilotLoadoutProperty( string loadoutProperty )
 
 		case "secondaryMod1":
 		case "secondaryMod2":
+		case "weapon3Mod1":
+		case "weapon3Mod2":
 			itemType = eItemTypes.PILOT_SECONDARY_MOD
 			break
 
 		case "primaryMod3":
 		case "secondaryMod3":
+		case "weapon3Mod3":
 			itemType = eItemTypes.PILOT_WEAPON_MOD3
 			break
 
@@ -2413,13 +2630,18 @@ string function GetLoadoutChildPropertyDefault( string loadoutType, string prope
 			case "secondaryMod1":
 			case "secondaryMod2":
 			case "secondaryMod3":
+			case "weapon3Mod1":
+			case "weapon3Mod2":
+			case "weapon3Mod3":
 				resetValue = GetWeaponBasedDefaultMod( parentValue, propertyName )
 				break
 
 			case "primaryCamoIndex":
-			case "secondaryCamoIndex":
 			case "primarySkinIndex":
+			case "secondaryCamoIndex":
 			case "secondarySkinIndex":
+			case "weapon3CamoIndex":
+			case "weapon3SkinIndex":
 				resetValue = "0"
 				break
 		}
@@ -2459,6 +2681,14 @@ array<string> function GetChildLoadoutProperties( string loadoutType, string pro
 				childProperties.append( "secondaryMod3" )
 				childProperties.append( "secondaryCamoIndex" )
 				childProperties.append( "secondarySkinIndex" )
+				break
+
+			case "weapon3":
+				childProperties.append( "weapon3Mod1" )
+				childProperties.append( "weapon3Mod2" )
+				childProperties.append( "weapon3Mod3" )
+				childProperties.append( "weapon3CamoIndex" )
+				childProperties.append( "weapon3SkinIndex" )
 				break
 
 			/*case "melee":
@@ -2516,6 +2746,7 @@ string function GetParentLoadoutProperty( string loadoutType, string propertyNam
 			case "primaryMod2":
 			case "primaryMod3":
 			case "primaryCamoIndex":
+			case "primarySkinIndex":
 				parentProperty = "primary"
 				break
 
@@ -2523,7 +2754,16 @@ string function GetParentLoadoutProperty( string loadoutType, string propertyNam
 			case "secondaryMod2":
 			case "secondaryMod3":
 			case "secondaryCamoIndex":
+			case "secondarySkinIndex":
 				parentProperty = "secondary"
+				break
+
+			case "weapon3Mod1":
+			case "weapon3Mod2":
+			case "weapon3Mod3":
+			case "weapon3CamoIndex":
+			case "weapon3SkinIndex":
+				parentProperty = "weapon3"
 				break
 
 			case "passive1":
@@ -2565,11 +2805,13 @@ int function GetPersistentSpawnLoadoutIndex( entity player, string loadoutType )
 	return loadoutIndex
 }
 
+#if SERVER
 void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType, int loadoutIndex )
 {
 	Assert( loadoutIndex >= 0 )
 	player.SetPersistentVar( loadoutType + "SpawnLoadout.index", loadoutIndex )
 }
+#endif // SERVER
 
 #if UI
 	void function SetEditLoadout( string loadoutType, int loadoutIndex )
@@ -2594,6 +2836,19 @@ void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType,
 		return GetCachedTitanLoadout( uiGlobal.editingLoadoutIndex )
 	}
 
+	int function GetLoadoutIndexForTitanClass( string titanClass )
+	{
+		for ( int loadoutIndex = 0; loadoutIndex < NUM_PERSISTENT_TITAN_LOADOUTS; loadoutIndex++ )
+		{
+			TitanLoadoutDef loadout = GetCachedTitanLoadout( loadoutIndex )
+
+			if ( loadout.titanClass == titanClass )
+				return loadoutIndex
+		}
+
+		return -1
+	}
+
 	string function GetPilotLoadoutName( PilotLoadoutDef loadout )
 	{
 		if ( IsTokenLoadoutName( loadout.name ) )
@@ -2610,9 +2865,9 @@ void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType,
 		return loadout.name
 	}
 
-	function SetTextFromItemName( element, string ref )
+	void function SetTextFromItemName( var element, string ref )
 	{
-		local text = ""
+		string text = ""
 
 		if ( ref != "" )
 			text = GetItemName( ref )
@@ -2620,9 +2875,9 @@ void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType,
 		Hud_SetText( element, text )
 	}
 
-	function SetTextFromItemDescription( element, string ref )
+	void function SetTextFromItemDescription( var element, string ref )
 	{
-		local text = ""
+		string text = ""
 
 		if ( ref != "" )
 			text = GetItemDescription( ref )
@@ -2630,24 +2885,21 @@ void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType,
 		Hud_SetText( element, text )
 	}
 
-	function SetTextFromItemLongDescription( element, string ref )
+	void function SetTextFromItemLongDescription( var element, string ref )
 	{
-		local text = ""
+		string text = ""
 
 		if ( ref != "" )
 			text = GetItemLongDescription( ref )
 
-		if ( text == null )
-			Hud_SetText( element, "ERROR: NO LONG DESC SPECIFIED" )
-		else
-			Hud_SetText( element, text )
+		Hud_SetText( element, text )
 	}
 
-	function SetImageFromItemImage( element, string ref )
+	void function SetImageFromItemImage( var element, string ref )
 	{
 		if ( ref != "" )
 		{
-			element.SetImage( GetItemImage( ref ) )
+			Hud_SetImage( element, GetItemImage( ref ) )
 			Hud_Show( element )
 		}
 		else
@@ -2656,29 +2908,29 @@ void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType,
 		}
 	}
 
-	function SetTextFromSubItemClipSize( element, string ref, string modRef )
+	void function SetTextFromSubItemClipSize( var element, string ref, string modRef )
 	{
 		Hud_SetText( element, "" )
 		if ( ref != "" && modRef != "" )
 		{
-			local clipDiff = GetSubItemClipSizeStat( ref, modRef )
-			if ( clipDiff == null || clipDiff == 0 )
+			int clipDiff = GetSubItemClipSizeStat( ref, modRef )
+			if ( clipDiff == 0 )
 				return
 
 			if ( clipDiff > 0 )
 			{
-				element.SetColor( 141, 197, 84, 255 )
+				Hud_SetColor( element, 141, 197, 84, 255 )
 				Hud_SetText( element, "#MOD_CLIP_AMMO_INCREASE", string( clipDiff ) )
 			}
 			else
 			{
-				element.SetColor( 211, 77, 61, 255 )
+				Hud_SetColor( element, 211, 77, 61, 255 )
 				Hud_SetText( element, "#MOD_CLIP_AMMO_DECREASE", string( abs( clipDiff ) ) )
 			}
 		}
 	}
 
-	function SetTextFromSubitemName( var element, string parentRef, string childRef, string defaultText = "" )
+	void function SetTextFromSubitemName( var element, string parentRef, string childRef, string defaultText = "" )
 	{
 		string text = defaultText
 
@@ -2688,9 +2940,9 @@ void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType,
 		Hud_SetText( element, text )
 	}
 
-	function SetTextFromSubitemDescription( element, string parentRef, string childRef, defaultText = "" )
+	void function SetTextFromSubitemDescription( var element, string parentRef, string childRef, string defaultText = "" )
 	{
-		local text = defaultText
+		string text = defaultText
 
 		if ( parentRef != "" && childRef != "" && childRef != "none" )
 			text = GetSubitemDescription( parentRef, childRef )
@@ -2698,31 +2950,28 @@ void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType,
 		Hud_SetText( element, text )
 	}
 
-	function SetTextFromSubitemLongDescription( element, string parentRef, string childRef, defaultText = "" )
+	void function SetTextFromSubitemLongDescription( var element, string parentRef, string childRef, string defaultText = "" )
 	{
-		local text = defaultText
+		string text = defaultText
 
 		if ( parentRef != "" && childRef != "" && childRef != "none" )
 			text = GetSubitemLongDescription( parentRef, childRef )
 
-		if ( text == null )
-			Hud_SetText( element, "ERROR: NO LONG DESC SPECIFIED" )
-		else
-			Hud_SetText( element, text )
+		Hud_SetText( element, text )
 	}
 
-	function SetImageFromSubitemImage( element, string parentRef, string childRef, asset defaultIcon = $"" )
+	void function SetImageFromSubitemImage( var element, string parentRef, string childRef, asset defaultIcon = $"" )
 	{
 		if ( parentRef != "" && childRef != "" && childRef != "none" )
 		{
-			element.SetImage( GetSubitemImage( parentRef, childRef ) )
+			Hud_SetImage( element, GetSubitemImage( parentRef, childRef ) )
 			Hud_Show( element )
 		}
 		else
 		{
 			if ( defaultIcon != $"" )
 			{
-				element.SetImage( defaultIcon )
+				Hud_SetImage( element, defaultIcon )
 				Hud_Show( element )
 			}
 			else
@@ -2732,9 +2981,9 @@ void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType,
 		}
 	}
 
-	function SetTextFromSubitemUnlockReq( element, string parentRef, string childRef, defaultText = "" )
+	void function SetTextFromSubitemUnlockReq( var element, string parentRef, string childRef, string defaultText = "" )
 	{
-		local text = defaultText
+		string text = defaultText
 
 		if ( parentRef != "" && childRef != "" && childRef != "none" )
 			text = GetItemUnlockReqText( childRef, parentRef )
@@ -2869,6 +3118,10 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod1",		loadout.secondaryMod1 )
 		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod2",		loadout.secondaryMod2 )
 		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod3",		loadout.secondaryMod3 )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "weapon3",			loadout.weapon3 )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "weapon3Mod1",		loadout.weapon3Mod1 )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "weapon3Mod2",		loadout.weapon3Mod2 )
+		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "weapon3Mod3",		loadout.weapon3Mod3 )
 		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "ordnance",			loadout.ordnance )
 		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive1",			loadout.passive1 )
 		SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive2",			loadout.passive2 )
@@ -2893,6 +3146,9 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 
 	bool function PlayerIsInGracePeriod( entity player )
 	{
+		if ( svGlobal.isInPilotGracePeriod && !player.IsTitan() )
+			return true
+
 		if ( player.s.inGracePeriod )
 			return true
 
@@ -3074,6 +3330,7 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 	{
 		string bot_force_pilot_primary = GetConVarString( "bot_force_pilot_primary" )
 		string bot_force_pilot_secondary = GetConVarString( "bot_force_pilot_secondary" )
+		//string bot_force_pilot_weapon3 = GetConVarString( "bot_force_pilot_weapon3" ) // TODO: Convar needs to be added in code
 		string bot_force_pilot_ordnance = GetConVarString( "bot_force_pilot_ordnance" )
 		string bot_force_pilot_ability = GetConVarString( "bot_force_pilot_ability" )
 
@@ -3098,6 +3355,16 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 			loadout.secondaryMod3 = ""
 			loadout.secondaryMods = []
 		}
+
+		// Weapon3
+		//if ( DevFindItemByName( eItemTypes.PILOT_SECONDARY, bot_force_pilot_weapon3 ) )
+		//{
+		//	loadout.weapon3 = bot_force_pilot_weapon3
+		//	loadout.weapon3Mod1 = ""
+		//	loadout.weapon3Mod2 = ""
+		//	loadout.weapon3Mod3 = ""
+		//	loadout.weapon3Mods = []
+		//}
 
 		// Ordnance/Offhand
 		if ( DevFindItemByName( eItemTypes.PILOT_ORDNANCE, bot_force_pilot_ordnance ) )
@@ -3147,7 +3414,7 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 	{
 		int loadoutIndex = GetPersistentSpawnLoadoutIndex( player, "titan" )
 		TitanLoadoutDef loadout = GetTitanLoadoutFromPersistentData( player, loadoutIndex )
-		OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( loadout )
+		OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( loadout, player )
 
 		return loadout
 	}
@@ -3179,6 +3446,10 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		player.SetPersistentVar( "activePilotLoadout.secondaryMod1",		loadout.secondaryMod1 )
 		player.SetPersistentVar( "activePilotLoadout.secondaryMod2", 		loadout.secondaryMod2 )
 		player.SetPersistentVar( "activePilotLoadout.secondaryMod3", 		loadout.secondaryMod3 )
+		player.SetPersistentVar( "activePilotLoadout.weapon3", 				loadout.weapon3 )
+		player.SetPersistentVar( "activePilotLoadout.weapon3Mod1",			loadout.weapon3Mod1 )
+		player.SetPersistentVar( "activePilotLoadout.weapon3Mod2", 			loadout.weapon3Mod2 )
+		player.SetPersistentVar( "activePilotLoadout.weapon3Mod3", 			loadout.weapon3Mod3 )
 		player.SetPersistentVar( "activePilotLoadout.ordnance",				loadout.ordnance )
 		player.SetPersistentVar( "activePilotLoadout.passive1",				loadout.passive1 )
 		player.SetPersistentVar( "activePilotLoadout.passive2",				loadout.passive2 )
@@ -3188,6 +3459,8 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		player.SetPersistentVar( "activePilotLoadout.primaryCamoIndex",		loadout.primaryCamoIndex )
 		player.SetPersistentVar( "activePilotLoadout.secondarySkinIndex", 	loadout.secondarySkinIndex )
 		player.SetPersistentVar( "activePilotLoadout.secondaryCamoIndex",	loadout.secondaryCamoIndex )
+		player.SetPersistentVar( "activePilotLoadout.weapon3SkinIndex", 	loadout.weapon3SkinIndex )
+		player.SetPersistentVar( "activePilotLoadout.weapon3CamoIndex",		loadout.weapon3CamoIndex )
 	}
 
 	void function SetActivePilotLoadoutIndex( entity player, int loadoutIndex )
@@ -3291,6 +3564,10 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		loadout.secondaryMod1		= string( player.GetPersistentVar( "activePilotLoadout.secondaryMod1" ) )
 		loadout.secondaryMod2		= string( player.GetPersistentVar( "activePilotLoadout.secondaryMod2" ) )
 		loadout.secondaryMod3		= string( player.GetPersistentVar( "activePilotLoadout.secondaryMod3" ) )
+		loadout.weapon3 			= string( player.GetPersistentVar( "activePilotLoadout.weapon3" ) )
+		loadout.weapon3Mod1			= string( player.GetPersistentVar( "activePilotLoadout.weapon3Mod1" ) )
+		loadout.weapon3Mod2			= string( player.GetPersistentVar( "activePilotLoadout.weapon3Mod2" ) )
+		loadout.weapon3Mod3			= string( player.GetPersistentVar( "activePilotLoadout.weapon3Mod3" ) )
 		loadout.ordnance 			= string( player.GetPersistentVar( "activePilotLoadout.ordnance" ) )
 		loadout.passive1 			= string( player.GetPersistentVar( "activePilotLoadout.passive1" ) )
 		loadout.passive2 			= string( player.GetPersistentVar( "activePilotLoadout.passive2" ) )
@@ -3300,6 +3577,8 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		loadout.primaryCamoIndex	= player.GetPersistentVarAsInt( "activePilotLoadout.primaryCamoIndex" )
 		loadout.secondarySkinIndex	= player.GetPersistentVarAsInt( "activePilotLoadout.secondarySkinIndex" )
 		loadout.secondaryCamoIndex	= player.GetPersistentVarAsInt( "activePilotLoadout.secondaryCamoIndex" )
+		loadout.weapon3SkinIndex	= player.GetPersistentVarAsInt( "activePilotLoadout.weapon3SkinIndex" )
+		loadout.weapon3CamoIndex	= player.GetPersistentVarAsInt( "activePilotLoadout.weapon3CamoIndex" )
 
 		UpdateDerivedPilotLoadoutData( loadout )
 
@@ -3332,7 +3611,7 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		loadout.primeDecalIndex		= player.GetPersistentVarAsInt( "activeTitanLoadout.primeDecalIndex" )
 
 		UpdateDerivedTitanLoadoutData( loadout )
-		OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( loadout )
+		OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( loadout, player )
 
 		//int loadoutIndex = GetActiveTitanLoadoutIndex( player )
 
@@ -3363,20 +3642,25 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 	}
 #endif
 
-void function UpdateDerivedPilotLoadoutData( PilotLoadoutDef loadout )
+// Added doOverrideCallback as a temporary measure to work around an issue the callback override added here is causing
+// This is called in PopulateDefaultPilotLoadouts() which sets the data GetDefaultPilotLoadout() returns
+// GetDefaultPilotLoadout() should never be returning overridden loadouts because it is used in many places to correct or reset persistent loadout data
+void function UpdateDerivedPilotLoadoutData( PilotLoadoutDef loadout, bool doOverrideCallback = true )
 {
 	loadout.setFile 			= GetSuitAndGenderBasedSetFile( loadout.suit, loadout.race )
 	loadout.special				= GetSuitBasedTactical( loadout.suit )
 	loadout.primaryAttachments	= [ loadout.primaryAttachment ]
 	loadout.primaryMods			= [ loadout.primaryMod1, loadout.primaryMod2, loadout.primaryMod3 ]
 	loadout.secondaryMods		= [ loadout.secondaryMod1, loadout.secondaryMod2, loadout.secondaryMod3 ]
+	loadout.weapon3Mods			= [ loadout.weapon3Mod1, loadout.weapon3Mod2, loadout.weapon3Mod3 ]
 	loadout.setFileMods 		= GetSetFileModsForSettingType( "pilot", [ loadout.passive1, loadout.passive2 ] )
 
 	#if SERVER
-	foreach ( callbackFunc in svGlobal.onUpdateDerivedPilotLoadoutCallbacks )
-	{
-		callbackFunc( loadout )
-	}
+		if ( doOverrideCallback )
+		{
+			foreach ( callbackFunc in svGlobal.onUpdateDerivedPilotLoadoutCallbacks )
+				callbackFunc( loadout )
+		}
 	#endif
 }
 
@@ -3417,61 +3701,79 @@ void function UpdateDerivedTitanLoadoutData( TitanLoadoutDef loadout )
 	loadout.primeTitanRef	= GetPrimeTitanRefForTitanClass( loadout.titanClass )
 }
 
+void function PrintPilotLoadoutIndex( entity player, int index )
+{
+	PrintPilotLoadout( GetPilotLoadoutFromPersistentData( player, index ) )
+}
+
+void function PrintTitanLoadoutIndex( entity player, int index )
+{
+	PrintTitanLoadout( GetTitanLoadoutFromPersistentData( player, index ) )
+}
+
 void function PrintPilotLoadouts( entity player )
 {
 	for ( int i = 0; i < NUM_PERSISTENT_PILOT_LOADOUTS; i++ )
-		PrintPilotLoadout( GetPilotLoadoutFromPersistentData( player, i ) )
+		PrintPilotLoadoutIndex( player, i )
 }
 
 void function PrintTitanLoadouts( entity player )
 {
 	for ( int i = 0; i < NUM_PERSISTENT_TITAN_LOADOUTS; i++ )
-		PrintTitanLoadout( GetTitanLoadoutFromPersistentData( player, i ) )
+		PrintTitanLoadoutIndex( player, i )
 }
 
 void function PrintPilotLoadout( PilotLoadoutDef loadout )
 {
 	printt( "PILOT LOADOUT:" )
 	printt( "    PERSISTENT DATA:" )
-	printt( "        name                 \"" + loadout.name + "\"" )
-	printt( "        suit                 \"" + loadout.suit + "\"" )
-	printt( "        race                 \"" + loadout.race + "\"" )
-	printt( "        execution            \"" + loadout.execution + "\"" )
-	printt( "        primary              \"" + loadout.primary + "\"" )
-	printt( "        primaryAttachment    \"" + loadout.primaryAttachment + "\"" )
-	printt( "        primaryMod1          \"" + loadout.primaryMod1 + "\"" )
-	printt( "        primaryMod2          \"" + loadout.primaryMod2 + "\"" )
-	printt( "        primaryMod3          \"" + loadout.primaryMod3 + "\"" )
-	printt( "        secondary            \"" + loadout.secondary + "\"" )
-	printt( "        secondaryMod1        \"" + loadout.secondaryMod1 + "\"" )
-	printt( "        secondaryMod2        \"" + loadout.secondaryMod2 + "\"" )
-	printt( "        secondaryMod3        \"" + loadout.secondaryMod3 + "\"" )
-	printt( "        ordnance             \"" + loadout.ordnance + "\"" )
-	printt( "        special              \"" + loadout.special + "\"" )
-	printt( "        passive1             \"" + loadout.passive1 + "\"" )
-	printt( "        passive2             \"" + loadout.passive2 + "\"" )
-	printt( "        skinIndex            \"" + loadout.skinIndex + "\"" )
-	printt( "        camoIndex            \"" + loadout.camoIndex + "\"" )
-	printt( "        primarySkinIndex     \"" + loadout.primarySkinIndex + "\"" )
-	printt( "        primaryCamoIndex     \"" + loadout.primaryCamoIndex + "\"" )
-	printt( "        secondarySkinIndex   \"" + loadout.secondarySkinIndex + "\"" )
-	printt( "        secondaryCamoIndex   \"" + loadout.secondaryCamoIndex + "\"" )
+	printt( "        name                     \"" + loadout.name + "\"" )
+	printt( "        suit                     \"" + loadout.suit + "\"" )
+	printt( "        race                     \"" + loadout.race + "\"" )
+	printt( "        execution                \"" + loadout.execution + "\"" )
+	printt( "        primary                  \"" + loadout.primary + "\"" )
+	printt( "            primaryAttachment    \"" + loadout.primaryAttachment + "\"" )
+	printt( "            primaryMod1          \"" + loadout.primaryMod1 + "\"" )
+	printt( "            primaryMod2          \"" + loadout.primaryMod2 + "\"" )
+	printt( "            primaryMod3          \"" + loadout.primaryMod3 + "\"" )
+	printt( "            primarySkinIndex     "   + loadout.primarySkinIndex )
+	printt( "            primaryCamoIndex     "   + loadout.primaryCamoIndex )
+	printt( "        secondary                \"" + loadout.secondary + "\"" )
+	printt( "            secondaryMod1        \"" + loadout.secondaryMod1 + "\"" )
+	printt( "            secondaryMod2        \"" + loadout.secondaryMod2 + "\"" )
+	printt( "            secondaryMod3        \"" + loadout.secondaryMod3 + "\"" )
+	printt( "            secondarySkinIndex   "   + loadout.secondarySkinIndex )
+	printt( "            secondaryCamoIndex   "   + loadout.secondaryCamoIndex )
+	printt( "        weapon3                  \"" + loadout.weapon3 + "\"" )
+	printt( "            weapon3Mod1          \"" + loadout.weapon3Mod1 + "\"" )
+	printt( "            weapon3Mod2          \"" + loadout.weapon3Mod2 + "\"" )
+	printt( "            weapon3Mod3          \"" + loadout.weapon3Mod3 + "\"" )
+	printt( "            weapon3SkinIndex     "   + loadout.weapon3SkinIndex )
+	printt( "            weapon3CamoIndex     "   + loadout.weapon3CamoIndex )
+	printt( "        ordnance                 \"" + loadout.ordnance + "\"" )
+	printt( "        special                  \"" + loadout.special + "\"" )
+	printt( "        passive1                 \"" + loadout.passive1 + "\"" )
+	printt( "        passive2                 \"" + loadout.passive2 + "\"" )
+	printt( "        skinIndex                "   + loadout.skinIndex )
+	printt( "        camoIndex                "   + loadout.camoIndex )
 	printt( "    DERIVED DATA:" )
-	printt( "        setFile              \"" + loadout.setFile + "\"" )
-	print(  "        setFileMods          " )
+	printt( "        setFile                  \"" + loadout.setFile + "\"" )
+	print(  "        setFileMods              " )
 	PrintStringArray( loadout.setFileMods )
-	printt( "        melee                \"" + loadout.melee + "\"" )
-	print(  "        meleeMods            " )
+	printt( "        melee                    \"" + loadout.melee + "\"" )
+	print(  "        meleeMods                " )
 	PrintStringArray( loadout.meleeMods )
-	print(  "        primaryAttachments   " )
+	print(  "        primaryAttachments       " )
 	PrintStringArray( loadout.primaryAttachments )
-	print(  "        primaryMods          " )
+	print(  "        primaryMods              " )
 	PrintStringArray( loadout.primaryMods )
-	print(  "        secondaryMods        " )
+	print(  "        secondaryMods            " )
 	PrintStringArray( loadout.secondaryMods )
-	print(  "        specialMods          " )
+	print(  "        weapon3Mods              " )
+	PrintStringArray( loadout.weapon3Mods )
+	print(  "        specialMods              " )
 	PrintStringArray( loadout.specialMods )
-	print(  "        ordnanceMods         " )
+	print(  "        ordnanceMods             " )
 	PrintStringArray( loadout.ordnanceMods )
 }
 
@@ -3493,15 +3795,15 @@ void function PrintTitanLoadout( TitanLoadoutDef loadout )
 	printt( "        passive5             \"" + loadout.passive5 + "\"" )
 	printt( "        passive6             \"" + loadout.passive6 + "\"" )
 	printt( "        voice                \"" + loadout.voice + "\"" )
-	printt( "        skinIndex            \"" + loadout.skinIndex + "\"" )
-	printt( "        camoIndex            \"" + loadout.camoIndex + "\"" )
-	printt( "        decalIndex           \"" + loadout.decalIndex + "\"" )
-	printt( "        primarySkinIndex     \"" + loadout.primarySkinIndex + "\"" )
-	printt( "        primaryCamoIndex     \"" + loadout.primaryCamoIndex + "\"" )
-	printt( "        isPrime     		  \"" + loadout.isPrime + "\"" )
-	printt( "        primeSkinIndex       \"" + loadout.primeSkinIndex + "\"" )
-	printt( "        primeCamoIndex       \"" + loadout.primeCamoIndex + "\"" )
-	printt( "        primeDecalIndex      \"" + loadout.primeDecalIndex + "\"" )
+	printt( "        skinIndex            "   + loadout.skinIndex )
+	printt( "        camoIndex            "   + loadout.camoIndex )
+	printt( "        decalIndex           "   + loadout.decalIndex )
+	printt( "        primarySkinIndex     "   + loadout.primarySkinIndex )
+	printt( "        primaryCamoIndex     "   + loadout.primaryCamoIndex )
+	printt( "        isPrime              \"" + loadout.isPrime + "\"" )
+	printt( "        primeSkinIndex       "   + loadout.primeSkinIndex )
+	printt( "        primeCamoIndex       "   + loadout.primeCamoIndex )
+	printt( "        primeDecalIndex      "   + loadout.primeDecalIndex )
 	printt( "    DERIVED DATA:" )
 	print(  "        setFileMods          " )
 	PrintStringArray( loadout.setFileMods )
@@ -3567,6 +3869,10 @@ string function GetSkinPropertyName( string camoPropertyName )
 			skinPropertyName = "secondarySkinIndex"
 			break
 
+		case "weapon3CamoIndex":
+			skinPropertyName = "weapon3SkinIndex"
+			break
+
 		default:
 			Assert( false, "Unknown camoPropertyName: " + camoPropertyName )
 			break
@@ -3578,7 +3884,7 @@ string function GetSkinPropertyName( string camoPropertyName )
 int function GetSkinIndexForCamo( string modelType, string camoPropertyName, int camoIndex )
 {
 	Assert( modelType == "pilot" || modelType == "titan" )
-	Assert( camoPropertyName == "camoIndex" || camoPropertyName == "primeCamoIndex" || camoPropertyName == "primaryCamoIndex" || camoPropertyName == "secondaryCamoIndex" )
+	Assert( camoPropertyName == "camoIndex" || camoPropertyName == "primeCamoIndex" || camoPropertyName == "primaryCamoIndex" || camoPropertyName == "secondaryCamoIndex" || camoPropertyName == "weapon3CamoIndex" )
 
 	int skinIndex = SKIN_INDEX_BASE
 
@@ -3591,7 +3897,7 @@ int function GetSkinIndexForCamo( string modelType, string camoPropertyName, int
 			else
 				skinIndex = TITAN_SKIN_INDEX_CAMO
 		}
-		else if ( camoPropertyName == "primaryCamoIndex" || camoPropertyName == "secondaryCamoIndex" )
+		else if ( camoPropertyName == "primaryCamoIndex" || camoPropertyName == "secondaryCamoIndex" || camoPropertyName == "weapon3CamoIndex" )
 		{
 			skinIndex = WEAPON_SKIN_INDEX_CAMO
 		}
@@ -3659,3 +3965,53 @@ bool function HasPrimeToMatchExecutionType( entity player, int itemType )
 	}
 	unreachable
 }
+
+bool function IsTitanLoadoutAvailable( entity player, string titanClass )
+{
+	return player.GetPersistentVarAsInt( "titanClassLockState[" + titanClass + "]" ) == TITAN_CLASS_LOCK_STATE_AVAILABLE
+}
+
+#if UI || CLIENT
+void function SwapSecondaryAndWeapon3LoadoutData( entity player, int loadoutIndex )
+{
+	// Keep CLIENT matching UI
+	#if UI
+		RunClientScript( "SwapSecondaryAndWeapon3LoadoutData", player, loadoutIndex )
+	#endif // UI
+
+	string loadoutType = "pilot"
+
+	PilotLoadoutDef loadout
+	loadout.secondary = shGlobal.cachedPilotLoadouts[ loadoutIndex ].secondary
+	loadout.secondaryMod1 = shGlobal.cachedPilotLoadouts[ loadoutIndex ].secondaryMod1
+	loadout.secondaryMod2 = shGlobal.cachedPilotLoadouts[ loadoutIndex ].secondaryMod2
+	loadout.secondaryMod3 = shGlobal.cachedPilotLoadouts[ loadoutIndex ].secondaryMod3
+	loadout.secondarySkinIndex = shGlobal.cachedPilotLoadouts[ loadoutIndex ].secondarySkinIndex
+	loadout.secondaryCamoIndex = shGlobal.cachedPilotLoadouts[ loadoutIndex ].secondaryCamoIndex
+
+	loadout.weapon3 = shGlobal.cachedPilotLoadouts[ loadoutIndex ].weapon3
+	loadout.weapon3Mod1 = shGlobal.cachedPilotLoadouts[ loadoutIndex ].weapon3Mod1
+	loadout.weapon3Mod2 = shGlobal.cachedPilotLoadouts[ loadoutIndex ].weapon3Mod2
+	loadout.weapon3Mod3 = shGlobal.cachedPilotLoadouts[ loadoutIndex ].weapon3Mod3
+	loadout.weapon3SkinIndex = shGlobal.cachedPilotLoadouts[ loadoutIndex ].weapon3SkinIndex
+	loadout.weapon3CamoIndex = shGlobal.cachedPilotLoadouts[ loadoutIndex ].weapon3CamoIndex
+
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "secondary", loadout.weapon3 )
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "secondaryMod1", loadout.weapon3Mod1 )
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "secondaryMod2", loadout.weapon3Mod2 )
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "secondaryMod3", loadout.weapon3Mod3 )
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "secondarySkinIndex", string( loadout.weapon3SkinIndex ) )
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "secondaryCamoIndex", string( loadout.weapon3CamoIndex ) )
+
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "weapon3", loadout.secondary )
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "weapon3Mod1", loadout.secondaryMod1 )
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "weapon3Mod2", loadout.secondaryMod2 )
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "weapon3Mod3", loadout.secondaryMod3 )
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "weapon3SkinIndex", string( loadout.secondarySkinIndex ) )
+	SetPilotLoadoutValue( shGlobal.cachedPilotLoadouts[ loadoutIndex ], "weapon3CamoIndex", string( loadout.secondaryCamoIndex ) )
+
+	#if UI
+		ClientCommand( "SwapSecondaryAndWeapon3PersistentLoadoutData " + loadoutIndex )
+	#endif // UI
+}
+#endif // UI || CLIENT

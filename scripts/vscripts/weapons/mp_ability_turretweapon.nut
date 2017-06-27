@@ -52,6 +52,8 @@ void function DeployableTurrentWeapon_Init()
 	#if SERVER
 		AddCallback_OnClientConnected( DeployableTurret_ClientConnected )
 	#endif
+
+	RegisterSignal( "DeploySentryTurret" )
 }
 
 #if SERVER
@@ -200,6 +202,8 @@ entity function DeployTurret( entity player, vector origin, vector angles, entit
 
 	int team = player.GetTeam()
 
+	player.Signal( "DeploySentryTurret" )
+
 	entity turret = CreateEntity( "npc_turret_sentry" )
 	turret.SetOrigin( origin )
 	turret.SetAngles( angles )
@@ -209,9 +213,9 @@ entity function DeployTurret( entity player, vector origin, vector angles, entit
 	SetTeam( turret, team )
 	EmitSoundOnEntity( turret, "Boost_Card_SentryTurret_Deployed_3P" )
 
-	if( weapon.HasMod( "burnmeter_at_turret_weapon" ) )
+	if( weapon.HasMod( "burnmeter_at_turret_weapon" ) || weapon.HasMod( "burnmeter_at_turret_weapon_inf" ) )
 		SetSpawnOption_AISettings( turret, DeployableTurret_GetAISettingsForPlayer_AT( player ) )
-	else if( weapon.HasMod( "burnmeter_ap_turret_weapon" ) )
+	else if( weapon.HasMod( "burnmeter_ap_turret_weapon" ) || weapon.HasMod( "burnmeter_ap_turret_weapon_inf" ) )
 		SetSpawnOption_AISettings( turret, DeployableTurret_GetAISettingsForPlayer_AP( player ) )
 	else
 		SetSpawnOption_AISettings( turret, "npc_turret_sentry_plasma" )
@@ -246,11 +250,6 @@ void function CalculatePlayerTurretCount( entity ownerPlayer )
 	int turrets = GetScriptManagedEntArrayLen( ownerPlayer.p.turretArrayId )
 	int burncards = PlayerInventory_CountTurrets( ownerPlayer )
 	ownerPlayer.SetPlayerNetInt( "burn_numTurrets", turrets + burncards )
-
-	#if DEVSCRIPTS
-	if ( BoostStoreEnabled() )
-		Remote_CallFunction_UI( ownerPlayer, "ServerCallback_UpdateTurretCount", turrets + burncards, GetGlobalNetInt( "burn_turretLimit" ) )
-	#endif
 }
 
 string function DeployableTurret_GetAISettingsForPlayer_AP( entity player )
@@ -298,6 +297,8 @@ void function KillTurretAfterDelay( entity turret )
 	turret.EndSignal( "OnDeath" )
 
 	float delay = expect float( turret.Dev_GetAISettingByKeyField( "turret_lifetime" ) )
+	if ( delay <= 0 )
+		return
 	wait delay
 	turret.Die()
 

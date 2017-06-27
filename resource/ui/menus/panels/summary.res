@@ -144,6 +144,19 @@
         zpos                    120
     }
 
+    ProgressionUnlocks
+    {
+        ControlName				RuiPanel
+        rui                     "ui/postgame_progression_display.rpak"
+        xpos                    0
+        ypos                    0
+        wide					1920
+        tall					1080
+        visible					0
+
+        zpos                    120
+    }
+
     PlayerLevelUp
     {
         ControlName				RuiPanel
@@ -161,6 +174,19 @@
     {
         ControlName				RuiPanel
         rui                     "ui/postgame_generic_level_up_display.rpak"
+        xpos                    0
+        ypos                    0
+        wide					1920
+        tall					1080
+        visible					1
+
+        zpos                    500
+    }
+
+    FDLevelUp
+    {
+        ControlName				RuiPanel
+        rui                     "ui/postgame_fd_level_up_display.rpak"
         xpos                    0
         ypos                    0
         wide					1920

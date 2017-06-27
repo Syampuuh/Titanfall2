@@ -130,6 +130,21 @@ void function GameModes_Init_SV_CL()
 	GameMode_AddSharedInit( gameMode, GamemodeFFA_Dialogue_Init )
 #endif
 
+	gameMode = FREE_AGENCY
+	#if SERVER
+		GameMode_AddServerInit( gameMode, FFA_Init )
+		GameMode_AddServerInit( gameMode, GamemodeFFAShared_Init )
+		GameMode_SetPilotSpawnpointsRatingFunc( gameMode, RateSpawnpoints_Generic )
+		GameMode_SetTitanSpawnpointsRatingFunc( gameMode, RateSpawnpoints_Generic )
+	#elseif CLIENT
+		GameMode_AddClientInit( gameMode, GamemodeFFAShared_Init )
+		GameMode_AddClientInit( gameMode, ClGamemodeFRA_Init )
+	#endif
+	#if !UI
+		GameMode_SetScoreCompareFunc( gameMode, CompareAssaultScore )
+		GameMode_AddSharedInit( gameMode, GamemodeFFA_Dialogue_Init )
+	#endif
+
 	gameMode = SPEEDBALL
 #if SERVER
 	GameMode_AddServerInit( gameMode, GamemodeSpeedball_Init )
@@ -156,6 +171,17 @@ void function GameModes_Init_SV_CL()
 		GameMode_SetScoreCompareFunc( gameMode, CompareMFD )
 		GameMode_AddSharedInit( gameMode, GamemodeMfdDialogue_Init )
 		GameMode_AddSharedInit( gameMode, GamemodeMfdShared_Init )
+	#endif
+
+	gameMode = TITAN_BRAWL
+	#if SERVER
+		GameMode_AddServerInit( gameMode, GamemodeTTDM_Init )
+		GameMode_SetPilotSpawnpointsRatingFunc( gameMode, RateSpawnpoints_Directional )
+		GameMode_SetTitanSpawnpointsRatingFunc( gameMode, RateSpawnpoints_Directional )
+		GameMode_SetEvacEnabled( gameMode, false )
+	#endif
+	#if !UI
+		GameMode_SetScoreCompareFunc( gameMode, CompareLTS )
 	#endif
 
 	#if DEVSCRIPTS

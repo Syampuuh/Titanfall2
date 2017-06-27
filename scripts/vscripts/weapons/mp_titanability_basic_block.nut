@@ -13,6 +13,10 @@ global function OnWeaponAttemptOffhandSwitch_ability_swordblock
 global function OnWeaponPrimaryAttack_ability_swordblock
 global function OnWeaponChargeBegin_ability_swordblock
 
+struct
+{
+	float earn_meter_titan_multiplier = 1.0
+} file
 
 void function MpTitanAbilityBasicBlock_Init()
 {
@@ -22,6 +26,7 @@ void function MpTitanAbilityBasicBlock_Init()
 #endif
 
 	PrecacheParticleSystem( $"P_impact_xo_sword" )
+	file.earn_meter_titan_multiplier = GetCurrentPlaylistVarFloat( "earn_meter_titan_multiplier", 1.0 )
 }
 
 const int TITAN_BLOCK = 1
@@ -302,6 +307,13 @@ void function BasicBlock_OnDamage( entity blockingEnt, var damageInfo )
 	float damageScale = HandleBlockingAndCalcDamageScaleForHit( blockingEnt, damageInfo )
 	if ( damageScale == 1.0 )
 		return
+
+	entity weapon = blockingEnt.GetOffhandWeapon( OFFHAND_LEFT )
+	if ( blockingEnt.IsPlayer() && weapon.HasMod( "fd_sword_block" ) )
+	{
+		float meterReward = DamageInfo_GetDamage( damageInfo ) * (1.0 - damageScale) * CORE_BUILD_PERCENT_FROM_TITAN_DAMAGE_INFLICTED * 0.01 * file.earn_meter_titan_multiplier
+		PlayerEarnMeter_AddEarnedAndOwned( blockingEnt, 0.0, meterReward )
+	}
 
 	entity attacker = DamageInfo_GetAttacker( damageInfo )
 

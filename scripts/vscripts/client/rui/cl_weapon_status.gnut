@@ -15,6 +15,8 @@ struct
 
 	bool[6] slotVisible = [true, true, true, true, true, true]
 	bool ammo_counter_visible = true
+
+	int lastSelectedIndex
 } file
 
 void function ClWeaponStatus_Init()
@@ -108,26 +110,80 @@ void function OnSelectedWeaponChanged( entity selectedWeapon )
 		return
 	}
 
+	if ( GetLocalViewPlayer().PlayerMelee_IsAttackActive() )
+		return
+
+	if ( GetLocalViewPlayer().IsUsingOffhandWeapon() )
+		return
+
+	asset primaryIcon = $""
 	asset secondaryIcon = $""
+	asset tertiaryIcon = $""
 	array<entity> mainWeapons = GetLocalViewPlayer().GetMainWeapons()
-	foreach ( weapon in mainWeapons )
-	{
-		if ( weapon == selectedWeapon )
-			continue
+	#if MP
+		int activeIndex
+		foreach ( index, weapon in mainWeapons )
+		{
+			asset hudIcon = GetWeaponInfoFileKeyFieldAsset_WithMods_Global( weapon.GetWeaponClassName(), weapon.GetMods(), "hud_icon" )
+			if ( index == 0 )
+				primaryIcon = hudIcon
+			else if ( index == 1 )
+				secondaryIcon = hudIcon
+			else if ( index == 2 )
+				tertiaryIcon = hudIcon
 
-		if ( selectedWeapon.GetWeaponType() == WT_ANTITITAN )
-			continue
+			if ( weapon == selectedWeapon )
+				activeIndex = index
+		}
 
-		if ( weapon.GetWeaponType() == WT_ANTITITAN )
-			continue
+		if ( activeIndex == 0 )
+		{
+			RuiSetImage( file.ammo_counter, "tertiaryHudIcon", tertiaryIcon )
+			RuiSetImage( file.ammo_counter, "secondaryHudIcon", secondaryIcon )
+			RuiSetGameTime( file.ammo_counter, "tapPingTime", Time() )
+		}
+		else if ( activeIndex == 1 )
+		{
+			RuiSetImage( file.ammo_counter, "tertiaryHudIcon", tertiaryIcon )
+			RuiSetImage( file.ammo_counter, "secondaryHudIcon", primaryIcon )
+			RuiSetGameTime( file.ammo_counter, "tapPingTime", Time() )
+		}
+		else if ( activeIndex == 2 )
+		{
+			if ( file.lastSelectedIndex == 0 )
+			{
+				RuiSetImage( file.ammo_counter, "tertiaryHudIcon", $"" )
+				RuiSetImage( file.ammo_counter, "secondaryHudIcon", primaryIcon )
+			}
+			else if ( file.lastSelectedIndex == 1 )
+			{
+				RuiSetImage( file.ammo_counter, "tertiaryHudIcon", $"" )
+				RuiSetImage( file.ammo_counter, "secondaryHudIcon", secondaryIcon )
+			}
+		}
 
-		if ( GetLocalViewPlayer().IsTitan() )
-			continue
+		file.lastSelectedIndex = activeIndex
+	#else
+		foreach ( weapon in mainWeapons )
+		{
+			if ( weapon == selectedWeapon )
+				continue
 
-		asset hudIcon = GetWeaponInfoFileKeyFieldAsset_WithMods_Global( weapon.GetWeaponClassName(), weapon.GetMods(), "hud_icon" )
-		secondaryIcon = hudIcon
-	}
-	RuiSetImage( file.ammo_counter, "secondaryHudIcon", secondaryIcon )
+			if ( selectedWeapon.GetWeaponType() == WT_ANTITITAN )
+				continue
+
+			if ( weapon.GetWeaponType() == WT_ANTITITAN )
+				continue
+
+			if ( GetLocalViewPlayer().IsTitan() )
+				continue
+
+			asset hudIcon = GetWeaponInfoFileKeyFieldAsset_WithMods_Global( weapon.GetWeaponClassName(), weapon.GetMods(), "hud_icon" )
+			secondaryIcon = hudIcon
+		}
+		RuiSetImage( file.ammo_counter, "secondaryHudIcon", secondaryIcon )
+		RuiSetImage( file.ammo_counter, "tertiaryHudIcon", $"" )
+	#endif
 
 	InitAmmoCounterRui( file.ammo_counter, GetLocalViewPlayer(), selectedWeapon )
 
@@ -237,9 +293,14 @@ void function InitWeaponStatusRuis( entity player )
 		thread TrackOffhandWeaponSlot( player, file.ability_left_hud, OFFHAND_LEFT )
 		thread TrackOffhandWeaponSlot( player, file.ability_center_hud, OFFHAND_RIGHT )
 		if ( IsMultiplayer() )
+		{
 			thread TrackOffhandWeaponSlot( player, file.dpad_left_hud, OFFHAND_INVENTORY )
+			//thread TrackHoldToSwapSlot( player, file.ammo_counter )
+		}
 		else
+		{
 			thread TrackATWeaponSlot( player, file.dpad_left_hud )
+		}
 		RuiSetBool( file.ability_right_hud, "isVisible", false )
 	}
 }
@@ -250,6 +311,73 @@ void function UpdateOffhandRuiVisibility( var rui, string hintText )
 		RuiSetString( rui, "hintText", hintText )
 	else
 		RuiSetString( rui, "hintText", "" )
+}
+
+void function TrackHoldToSwapSlot( entity player, var rui )
+{
+	player.EndSignal( "EndTrackOffhandWeaponSlot" )
+	player.EndSignal( "OnDeath" )
+
+	OnThreadEnd(
+		function() : ( rui )
+		{
+			//RuiSetBool( rui, "isVisible", false )
+		}
+	)
+
+	float holdWeaponSwapTime = GetConVarFloat( "holdWeaponSwapTime" )
+	RuiSetFloat( rui, "holdWeaponSwapTime", holdWeaponSwapTime )
+	RuiSetFloat( rui, "holdTime", 0.0 )
+	RuiSetBool( rui, "holdHintVisible", false )
+
+	entity lastWeapon = null
+	bool holdWeaponActive = false
+	bool lastIsHolding = false
+	float holdChangeTime = 0.0
+	while ( IsAlive( player ) )
+	{
+		entity activeWeapon = player.GetActiveWeapon()
+		if ( activeWeapon != lastWeapon )
+		{
+			array<entity> mainWeapons = player.GetMainWeapons()
+			if ( mainWeapons.len() > 2 )
+			{
+				if ( mainWeapons[2] == activeWeapon )
+				{
+					holdWeaponActive = true
+				}
+				else
+				{
+					holdWeaponActive = false
+				}
+			}
+		}
+
+		if ( !holdWeaponActive )
+		{
+			bool isHolding = player.IsInputCommandHeld( IN_WEAPON_CYCLE )
+			if ( isHolding != lastIsHolding )
+				holdChangeTime = Time()
+
+			if ( isHolding )
+			{
+				RuiSetFloat( rui, "holdTime", Time() - holdChangeTime )
+			}
+			else
+			{
+				RuiSetFloat( rui, "holdTime", 0.0 )
+			}
+			lastIsHolding = isHolding
+		}
+		else
+		{
+			RuiSetFloat( rui, "holdTime", 0.0 )
+		}
+		RuiSetBool( rui, "holdHintVisible", IsControllerModeActive() )
+
+		lastWeapon = activeWeapon
+		WaitFrame()
+	}
 }
 
 void function TrackOffhandWeaponSlot( entity player, var rui, int slot )

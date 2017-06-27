@@ -32,6 +32,12 @@ const int MIC_STATE_MUTED = 5
 
 global function ClScoreboardMp_Init
 global function ClScoreboardMp_GetGameTypeDescElem
+global function ScoreboardFocus
+global function ScoreboardLoseFocus
+global function ScoreboardSelectPrevPlayer
+global function ScoreboardSelectNextPlayer
+global function GetScoreBoardFooterRui
+global function SetScoreboardUpdateCallback
 
 struct {
 	bool hasFocus = false
@@ -67,14 +73,16 @@ struct {
 	table playerElems
 
 	var scoreboardRUI
+
+	void functionref(entity,var) scoreboardUpdateCallback
 } file
 
 function ClScoreboardMp_Init()
 {
-	level.initScoreboardFunc = InitScoreboardMP
-	level.showScoreboardFunc = ShowScoreboardMP
-	level.hideScoreboardFunc = HideScoreboardMP
-	level.scoreboardInputFunc = ScoreboardInputMP
+	clGlobal.initScoreboardFunc = InitScoreboardMP
+	clGlobal.showScoreboardFunc = ShowScoreboardMP
+	clGlobal.hideScoreboardFunc = HideScoreboardMP
+	clGlobal.scoreboardInputFunc = ScoreboardInputMP
 
 	RegisterConCommandTriggeredCallback( "scoreboard_focus", ScoreboardFocus )
 	RegisterConCommandTriggeredCallback( "scoreboard_toggle_focus", ScoreboardToggleFocus )
@@ -90,7 +98,7 @@ void function ScoreboardFocus( entity player )
 	}
 	#endif
 
-	if ( !level.showingScoreboard )
+	if ( !clGlobal.showingScoreboard )
 	{
 		#if DEVSCRIPTS
 		// if ( BoostStoreEnabled() )
@@ -120,7 +128,7 @@ void function ScoreboardFocus( entity player )
 
 void function ScoreboardLoseFocus( entity player )
 {
-	if ( !level.showingScoreboard )
+	if ( !clGlobal.showingScoreboard )
 		return
 
 	EmitSoundOnEntity( player, "menu_click" )
@@ -155,7 +163,7 @@ int function GetScoreboardDisplaySlotCount()
 	return minint( MAX_TEAM_SLOTS, rawValue )
 }
 
-function InitScoreboardMP()
+void function InitScoreboardMP()
 {
 	entity localPlayer = GetLocalClientPlayer()
 	int myTeam = localPlayer.GetTeam()
@@ -299,7 +307,7 @@ function ScoreboardFadeOut()
 	}
 }
 
-function ShowScoreboardMP()
+void function ShowScoreboardMP()
 {
 	entity localPlayer = GetLocalClientPlayer()
 
@@ -381,7 +389,7 @@ function ShowScoreboardMP()
 	{
 		localPlayer = GetLocalClientPlayer()
 
-		Assert( level.showingScoreboard )
+		Assert( clGlobal.showingScoreboard )
 
 		if ( file.hasFocus )
 		{
@@ -529,32 +537,40 @@ function ShowScoreboardMP()
 				// Update player icon
 				//-------------------
 
-				if ( !playerIsAlive )
+				switch ( GetPilotTitanStatusForPlayer( player ) )
 				{
-					if ( player.GetPetTitan() )
-					{
-						RuiSetImage( rui, "playerStatus", $"rui/hud/scoreboard/status_dead_with_titan" )
-					}
-					else
-					{
+					case ePlayerStatusType.PTS_TYPE_DEAD_READY:
+					case ePlayerStatusType.PTS_TYPE_DEAD:
 						RuiSetImage( rui, "playerStatus", $"rui/hud/scoreboard/status_dead" )
-					}
-				}
-				else if ( player.GetEntIndex() in file.evacPlayers )
-				{
-					RuiSetImage( rui, "playerStatus", $"rui/hud/scoreboard/status_evac" )
-				}
-				else if ( player.GetPetTitan() )
-				{
-					RuiSetImage( rui, "playerStatus", $"rui/hud/scoreboard/status_alive_with_titan" )
-				}
-				else if ( player.IsTitan() )
-				{
-					RuiSetImage( rui, "playerStatus", $"rui/hud/scoreboard/status_titan" )
-				}
-				else
-				{
-					RuiSetImage( rui, "playerStatus", $"rui/hud/scoreboard/status_pilot" )
+					break
+					case ePlayerStatusType.PTS_TYPE_DEAD_PILOT_TITAN:
+						RuiSetImage( rui, "playerStatus", $"rui/hud/scoreboard/status_dead_with_titan" )
+					break
+					case ePlayerStatusType.PTS_TYPE_ION:
+					case ePlayerStatusType.PTS_TYPE_SCORCH:
+					case ePlayerStatusType.PTS_TYPE_RONIN:
+					case ePlayerStatusType.PTS_TYPE_TONE:
+					case ePlayerStatusType.PTS_TYPE_LEGION:
+					case ePlayerStatusType.PTS_TYPE_NORTHSTAR:
+					case ePlayerStatusType.PTS_TYPE_VANGUARD:
+						RuiSetImage( rui, "playerStatus", $"rui/hud/scoreboard/status_titan" )
+					break
+					case ePlayerStatusType.PTS_TYPE_PILOT_TITAN:
+						RuiSetImage( rui, "playerStatus", $"rui/hud/scoreboard/status_alive_with_titan" )
+					break
+					case ePlayerStatusType.PTS_TYPE_EVAC:
+						RuiSetImage( rui, "playerStatus", $"rui/hud/scoreboard/status_evac" )
+					break
+					case ePlayerStatusType.PTS_TYPE_READY:
+					case ePlayerStatusType.PTS_TYPE_PILOT:
+						RuiSetImage( rui, "playerStatus", $"rui/hud/scoreboard/status_pilot" )
+					break
+					case ePlayerStatusType.PTS_TYPE_WAVE_READY:
+						RuiSetImage( rui, "playerStatus", $"rui/hud/gametype_icons/bounty_hunt/bh_green_check" )
+					break
+					case ePlayerStatusType.PTS_TYPE_WAVE_NOT_READY:
+						RuiSetImage( rui, "playerStatus", $"rui/hud/gametype_icons/bounty_hunt/bh_grey_check" )
+					break
 				}
 
 				/*
@@ -624,6 +640,9 @@ function ShowScoreboardMP()
 
 				UpdateScoreboardForGamemode( player, rui, Hud_GetRui( file.header.scoreHeader ) )
 
+				if ( file.scoreboardUpdateCallback != null )
+					file.scoreboardUpdateCallback( player, rui )
+
 				index++
 
 				if ( index >= maxPlayerDisplaySlots )
@@ -649,7 +668,9 @@ function ShowScoreboardMP()
 				loadingCount = GetTeamPendingPlayersLoading( team )
 			}
 
-			if ( team > 0 )
+			if ( team > 0
+				&& ( !UseSingleTeamScoreboard() || team == TEAM_MILITIA )  // if you run this block for both teams, then it will show players "connecting" for both teams
+				)
 			{
 				local numDone = 0
 				for ( int idx = 0; idx < (reservedCount + connectingCount + loadingCount); idx++ )
@@ -802,7 +823,7 @@ void function UpdateScoreboardForGamemode( entity player, var rowRui, var scoreH
 	RuiSetInt( scoreHeaderRui, "playerScore4NumDigits", playerScore4NumDigits )
 }
 
-function HideScoreboardMP()
+void function HideScoreboardMP()
 {
 	ScoreboardFadeOut()
 	wait( 0.1 )
@@ -884,32 +905,28 @@ int function GetNumTeamPlayers()
 	return GetCurrentPlaylistVarInt( "max_players", MAX_TEAM_SLOTS ) / 2
 }
 
-function ScoreboardInputMP( key )
+void function ScoreboardInputMP( int key )
 {
-	Assert( level.showingScoreboard )
+	Assert( clGlobal.showingScoreboard )
 
 	entity player = GetLocalClientPlayer()
 
 	switch( key )
 	{
 		case SCOREBOARD_INPUT_SELECT_PREV:
-			EmitSoundOnEntity( player, "menu_click" )
-			file.selectedPlayer = file.prevPlayer
-			SetScoreboardPlayer( file.selectedPlayer )
+			ScoreboardSelectPrevPlayer( player )
 			break
 
 		case SCOREBOARD_INPUT_SELECT_NEXT:
-			EmitSoundOnEntity( player, "menu_click" )
-			file.selectedPlayer = file.nextPlayer
-			SetScoreboardPlayer( file.selectedPlayer )
+			ScoreboardSelectNextPlayer( player )
 			break
 
 		case SCOREBOARD_FOCUS:
-			ScoreboardFocus( GetLocalClientPlayer() )
+			ScoreboardFocus( player )
 			break
 
 		case SCOREBOARD_LOSE_FOCUS:
-			ScoreboardLoseFocus( GetLocalClientPlayer() )
+			ScoreboardLoseFocus( player )
 			break
 	}
 }
@@ -922,4 +939,28 @@ var function ClScoreboardMp_GetGameTypeDescElem()
 bool function UseSingleTeamScoreboard()
 {
 	return ( IsFFAGame() || IsSingleTeamMode() )
+}
+
+void function ScoreboardSelectNextPlayer( entity player )
+{
+	EmitSoundOnEntity( player, "menu_click" )
+	file.selectedPlayer = file.nextPlayer
+	SetScoreboardPlayer( file.selectedPlayer )
+}
+
+void function ScoreboardSelectPrevPlayer( entity player )
+{
+	EmitSoundOnEntity( player, "menu_click" )
+	file.selectedPlayer = file.prevPlayer
+	SetScoreboardPlayer( file.selectedPlayer )
+}
+
+var function GetScoreBoardFooterRui()
+{
+	return Hud_GetRui( file.footer )
+}
+
+void function SetScoreboardUpdateCallback( void functionref( entity, var ) func )
+{
+	file.scoreboardUpdateCallback = func
 }

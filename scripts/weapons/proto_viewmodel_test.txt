@@ -490,6 +490,30 @@ WeaponData
 			"fx_muzzle_flash_world"				"wpn_muzzleflash_pistol_sup"
 			"fx_muzzle_flash_attach"			"muzzle_flash_suppressor_sq"
 		}
+		silencer_low_ttk //HACK JFS: Doesn't get applied on amped weapons. See bug 170460
+		{
+			"silenced"							"1"
+		//	"bodygroup8_set"					"1"
+			"damage_near_value"   				"49"
+			"damage_far_value"					"34"
+			//"rumble"  						"4"
+			"tracer_effect"   					"P_wpn_tracer_pistol"
+			"minimap_reveal_distance"			"1"
+			"fire_sound_2_player_1p"						""
+			"fire_sound_2_player_3p"						""
+
+			"burst_or_looping_fire_sound_start_1p"			"Weapon_R101_FirstShotSuppressed_1P"
+			"burst_or_looping_fire_sound_middle_1p"			"Weapon_R101_LoopSuppressed_1P"
+			"burst_or_looping_fire_sound_end_1p"			"Weapon_R101_LoopSuppressedEnd_1P"
+
+			"burst_or_looping_fire_sound_start_3p"			"Weapon_R101_FirstShotSuppressed_3P"
+			"burst_or_looping_fire_sound_middle_3p"			"Weapon_R101_LoopSuppressed_3P"
+			"burst_or_looping_fire_sound_end_3p"			"Weapon_R101_LoopSuppressedEnd_3P"
+
+			"fx_muzzle_flash_view"				"wpn_muzzleflash_pistol_sup_FP"
+			"fx_muzzle_flash_world"				"wpn_muzzleflash_pistol_sup"
+			"fx_muzzle_flash_attach"			"muzzle_flash_suppressor_sq"
+		}
 
 		m4style
 		{

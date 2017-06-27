@@ -1117,19 +1117,6 @@ function PlayerPressed_QuickDisembark( player )
 
 void function PlayerPressed_EjectEnable( entity player )
 {
-	#if MP
-	#if DEVSCRIPTS
-	if ( IsDisplayingDpadComms( player ) )
-	{
-		return
-	}
-	// TODO: BAD BAD BAD BAD
-	if ( FD_ReadyUpEnabled() )
-	{
-		return
-	}
-	#endif
-	#endif
 
 	if ( !player.IsTitan() )
 		return
@@ -1385,11 +1372,13 @@ function TitanEMP_Internal( maxValue, duration, fadeTime, doFlash = true, doSoun
 	local wide = 16
 	local tall = 9
 
+	float fovOffset = Graph( player.GetFOV(), 75, 120, 4, 2.5 )
+
 	local empVgui = CreateClientsideVGuiScreen( "vgui_titan_emp", VGUI_SCREEN_PASS_VIEWMODEL, Vector(0,0,0), Vector(0,0,0), wide, tall );
 
 	//empVgui.SetParent( player.GetViewModelEntity(), "CAMERA_BASE" )
 	empVgui.SetParent( player )
-	empVgui.SetAttachOffsetOrigin( < 4, wide / 2, -tall / 2 > )
+	empVgui.SetAttachOffsetOrigin( < fovOffset, wide / 2, -tall / 2 > )
 	empVgui.SetAttachOffsetAngles( angles )
 
 	empVgui.GetPanel().WarpEnable()

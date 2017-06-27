@@ -6,8 +6,6 @@ global function ClDialogue_Init
 global function ServerCallback_PlayConversation
 global function ServerCallback_PlayTitanConversation
 global function ServerCallback_PlaySquadConversation
-global function ServerCallback_CancelScene
-global function Dialog_AddClient
 global function SetDialogueDebugLevel
 global function GetDialogueDebugLevel
 global function VerifyConversationAliases
@@ -16,7 +14,6 @@ global function CancelConversation
 global function AddSpeakerToBlacklist
 global function RemoveSpeakerFromBlacklist
 global function AbortConversationDueToPriority
-global function GetConversationPriority
 
 global function CreateWaveform
 global function DestroyWaveform
@@ -156,15 +153,6 @@ function SetDialogueDebugLevel( int level )
 	file.DebugLevel = level
 }
 
-function Dialog_AddClient( entity player )
-{
-	player.cv.activeScenes <- {}
-}
-
-function GetConversationPriority( string conversationType )
-{
-	return level.Conversations[ conversationType ].priority
-}
 
 int function GetTeamForConversation( entity player )
 {
@@ -198,29 +186,21 @@ function PlayConversationToLocalClient( string convAlias )
 
 }
 
-function ServerCallback_PlayTitanConversation( conversationIndex )
+void function ServerCallback_PlayTitanConversation( int conversationIndex )
 {
 	entity player = GetLocalClientPlayer()
 	string conversationType = GetConversationName( conversationIndex )
 	TitanCockpit_PlayDialog( GetLocalViewPlayer(), conversationType )
 }
 
-function ServerCallback_PlayConversation( conversationIndex )
+void function ServerCallback_PlayConversation( int conversationIndex )
 {
 	entity player = GetLocalClientPlayer()
 	string conversationType = GetConversationName( conversationIndex )
 	PlayConversationToLocalClient( conversationType )
 }
 
-function ServerCallback_CancelScene( sceneIndex )
-{
-	// scene index unused... we only ever made one scene
-
-	entity player = GetLocalClientPlayer()
-	player.cv.activeScenes = {}
-}
-
-void function ServerCallback_PlaySquadConversation( conversationIndex, eHandle1, eHandle2, eHandle3, eHandle4 )
+void function ServerCallback_PlaySquadConversation( int conversationIndex, eHandle1, eHandle2, eHandle3, eHandle4 )
 {
 	#if GRUNT_CHATTER_MP_ENABLED
 		return
@@ -406,13 +386,6 @@ function ClAttemptConversation( string conversationType, entity player, priority
 
 	int team = GetTeamForConversation( player )
 
-	if ( !AttemptScene( conversationType, player, team ) )
-	{
-		if ( file.DebugLevel > 0 )
-			printt( "Scene not valid" )
-			return
-	}
-
 	#if SP
 	float startTime = Time()
 	QueueItem queueItem
@@ -449,84 +422,6 @@ function ClAttemptConversation( string conversationType, entity player, priority
 	thread ClRunConversation( player, conversationType )
 }
 
-
-function AttemptScene( string conversationName, entity player, team )
-{
-	local conversationTable = level.Conversations[ conversationName ]
-
-	local sceneName = null
-
-	sceneName = conversationTable.scene[team]
-	if ( !sceneName )
-		sceneName = conversationTable.scene["neutral"]
-
-	if ( !sceneName )
-	{
-		foreach ( sceneName, sceneData in player.cv.activeScenes )
-		{
-			// TODO: add a timeout check on sceneData
-
-			if ( conversationName in level.scenes[sceneName].exclusions[team] )
-			{
-				if ( file.DebugLevel > 0 )
-					printt( conversationName, "exluded from", sceneName, "for team", team )
-				return false
-			}
-		}
-
-		return true
-	}
-
-	local scene = level.scenes[sceneName]
-	local conversation = scene.conversations[team][conversationName]
-
-	if ( !(sceneName in player.cv.activeScenes) )
-	{
-		// not a valid starting conversation for this scene
-		if ( !(conversation.flags & CONVFLAG_STARTPOINT) )
-		{
-			if ( file.DebugLevel > 0 )
-				printt( "not a valid starting conversation for this scene" )
-			return false
-		}
-
-		player.cv.activeScenes[sceneName] <- {
-			index = -1
-			startTime = Time()
-			lastTime = null
-		}
-	}
-
-	// scene timed out
-	if ( player.cv.activeScenes[sceneName].lastTime && Time() - player.cv.activeScenes[sceneName].lastTime > 60.0 )
-	{
-		if ( file.DebugLevel > 0 )
-			printt( "scene timed out", ( Time() - player.cv.activeScenes[sceneName].lastTime ) )
-		delete player.cv.activeScenes[sceneName]
-
-		// try it again in case it's a valid start point
-		return AttemptScene( conversationName, player, team )
-	}
-
-	if ( !(conversation.flags & CONVFLAG_UNORDERED) )
-	{
-		// we're already beyond this point
-		if ( player.cv.activeScenes[sceneName].index >= conversation.index )
-		{
-			if ( file.DebugLevel > 0 )
-				printt( "we're already beyond this point" )
-			return false
-		}
-		player.cv.activeScenes[sceneName].index = conversation.index
-	}
-
-	player.cv.activeScenes[sceneName].lastTime = Time()
-
-	if ( conversation.flags & CONVFLAG_ENDPOINT )
-		delete player.cv.activeScenes[sceneName]
-
-	return true
-}
 
 void function CancelSquadConversation( squad )
 {
@@ -702,17 +597,18 @@ function ClRunSquadConversation( entity player, string conversationType, squad )
 
 function ClSelectRandomConversation( string conversationType, team )
 {
-	local conversationTable = level.Conversations[ conversationType ]
-	local conversationArray
+	ConversationStruct convStruct = GetConversationStruct( conversationType )
+	array conversationArray
 
-	Assert( team in conversationTable )
+	expect int( team )
 
-	conversationArray = conversationTable[ team ]
+	Assert( team in convStruct.conversationTable )
+	conversationArray = convStruct.conversationTable[ team ]
 
 	if ( conversationArray.len() == 0 )
 	{
-		Assert( "neutral" in conversationTable, "Conversation " + conversationType + " isn't available for team ID: " + team )
-		conversationArray = conversationTable[ "neutral" ]
+		conversationArray = convStruct.conversationTable[ TEAM_BOTH ]
+		Assert( conversationArray.len() > 0, "Conversation " + conversationType + " isn't available for team ID: " + team )
 	}
 
 	Assert( IsArray( conversationArray ) )
@@ -1400,13 +1296,13 @@ function VerifyConversationAliases()
 	e.failed <- {}
 	e.tried <- {}
 	local conv
-	foreach ( Table in level.Conversations )
+	foreach ( conversationName, convStruct in GetAllConversationData() )
 	{
-		foreach ( conv in Table[ TEAM_IMC ] )
+		foreach ( conv in convStruct.conversationTable[ TEAM_IMC ] )
 		{
 			VerifyConversation( conv, e )
 		}
-		foreach ( conv in Table[ TEAM_MILITIA ] )
+		foreach ( conv in convStruct.conversationTable[ TEAM_MILITIA ] )
 		{
 			VerifyConversation( conv, e )
 		}

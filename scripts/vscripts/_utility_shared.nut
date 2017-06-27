@@ -170,10 +170,7 @@ void function InitWeaponScripts()
 	MpTitanWeaponTrackerRockets_Init()
 	MpTitanWeaponStunLaser_Init()
 	MpTitanWeaponShoulderRockets_Init()
-
-	#if MP && DEVSCRIPTS
-		MpWeaponArcTrap_Init()
-	#endif
+	MpTitanAbilitySmoke_Init()
 
 	#if SERVER
 		BallLightning_Init()
@@ -2127,6 +2124,35 @@ int function CompareATCOOP( entity a, entity b )
 	return 0
 }
 
+int function CompareFD( entity a, entity b )
+{
+	int aVal = a.GetPlayerGameStat( PGS_SCORE )
+	int bVal = b.GetPlayerGameStat( PGS_SCORE )
+
+	if ( aVal < bVal )
+		return 1
+	else if ( aVal > bVal )
+		return -1
+
+	aVal = a.GetPlayerGameStat( PGS_NPC_KILLS )
+	bVal = b.GetPlayerGameStat( PGS_NPC_KILLS )
+
+	if ( aVal > bVal )
+		return 1
+	else if ( aVal < bVal )
+		return -1
+
+	aVal = a.GetPlayerGameStat( PGS_TITAN_KILLS )
+	bVal = b.GetPlayerGameStat( PGS_TITAN_KILLS )
+
+	if ( aVal < bVal )
+		return 1
+	else if ( aVal > bVal )
+		return -1
+
+	return 0
+}
+
 int function CompareTitanKills( entity a, entity b )
 {
 	int aVal = a.GetPlayerGameStat( PGS_TITAN_KILLS )
@@ -3915,6 +3941,13 @@ bool function PlayerCanSeePos( entity player, vector pos, bool doTrace, float de
 	}
 
 	return true
+}
+
+bool function VectorsFacingSameDirection( vector v1, vector v2, float degreesThreshold )
+{
+	float minDot = deg_cos( degreesThreshold )
+	float dot = DotProduct( Normalize( v1 ), Normalize( v2 ) )
+	return ( dot >= minDot )
 }
 
 vector function GetRelativeDelta( vector origin, entity ref, string attachment = "" )

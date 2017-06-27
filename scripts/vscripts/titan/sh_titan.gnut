@@ -283,6 +283,7 @@ function TitanEjectPlayer( entity ejectTitan, bool instant = false ) //TODO: Thi
 	e.inflictor <- ( "inflictor" in soul.lastAttackInfo ) ? soul.lastAttackInfo.inflictor : null
 	e.damageSourceId <- ( "damageSourceId" in soul.lastAttackInfo ) ? soul.lastAttackInfo.damageSourceId : -1
 	e.damageTypes <- soul.lastAttackInfo.scriptType
+	e.overrideAttacker <- soul.soul.nukeAttacker
 
 	local nuclearPayload = 0
 	if ( IsValid( e.player ) )
@@ -886,11 +887,11 @@ function NuclearCoreExplosionChainReaction( vector origin, e )
 	if ( IsValid( e.player ) )
 	{
 		thread __CreateFxInternal( TITAN_NUCLEAR_CORE_FX_1P, null, "", origin, Vector(0,RandomInt(360),0), C_PLAYFX_SINGLE, null, 1, expect entity( e.player ) )
-		thread __CreateFxInternal( TITAN_NUCLEAR_CORE_FX_3P, null, "", origin, Vector(0,RandomInt(360),0), C_PLAYFX_SINGLE, null, 6, expect entity( e.player ) )
+		thread __CreateFxInternal( TITAN_NUCLEAR_CORE_FX_3P, null, "", origin + Vector( 0, 0, -100 ), Vector(0,RandomInt(360),0), C_PLAYFX_SINGLE, null, 6, expect entity( e.player ) )
 	}
 	else
 	{
-		PlayFX( TITAN_NUCLEAR_CORE_FX_3P, origin, Vector(0,RandomInt(360),0) )
+		PlayFX( TITAN_NUCLEAR_CORE_FX_3P, origin + Vector( 0, 0, -100 ), Vector(0,RandomInt(360),0) )
 	}
 
 	// one extra explosion that does damage to physics entities at smaller radius
@@ -957,6 +958,9 @@ function NuclearCoreExplosionChainReaction( vector origin, e )
 
 entity function GetExplosionOwner( e )
 {
+	if ( IsValid( expect entity( e.overrideAttacker ) ) )
+		return expect entity( e.overrideAttacker )
+
 	if ( IsValid( expect entity( e.player ) ) )
 		return expect entity( e.player )
 

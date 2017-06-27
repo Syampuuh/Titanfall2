@@ -215,5 +215,10 @@ WeaponData
             "viewmodel"   									"models/weapons/titan_sword/atpov_titan_sword_prime_block.mdl"
             "playermodel" 									"models/weapons/titan_sword/w_titan_sword_prime.mdl"
         }
+
+        fd_sword_block
+        {
+
+        }
 	}
 }

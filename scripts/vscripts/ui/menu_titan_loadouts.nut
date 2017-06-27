@@ -1,6 +1,8 @@
 untyped
 
 global function InitTitanLoadoutsMenu
+global function SCB_UpdateTitanLoadouts
+global function UpdateTitanLoadoutsMenu
 
 struct
 {
@@ -103,7 +105,10 @@ void function UpdateTitanLoadout( int loadoutIndex )
 	UpdateTitanLoadoutPanel( file.loadoutPanel, loadout )
 	RunMenuClientFunction( "UpdateTitanModel", loadoutIndex )
 
-	RHud_SetText( file.unlockReq, GetItemUnlockReqText( loadout.titanClass ) )
+	if ( !IsTitanLoadoutAvailable( GetUIPlayer(), loadout.titanClass ) )
+		RHud_SetText( file.unlockReq, Localize( "#TITAN_CLASS_UNAVAILABLE" ) )
+	else
+		RHud_SetText( file.unlockReq, GetItemUnlockReqText( loadout.titanClass ) )
 }
 
 void function OnLoadoutButton_Activate( var button )
@@ -121,6 +126,9 @@ void function OnLoadoutButton_Activate( var button )
 		{
 			buttons.append( button )
 		}
+
+		if ( !IsTitanLoadoutAvailable( GetUIPlayer(), loadout.titanClass ) )
+			return
 
 		OpenBuyItemDialog( buttons, button, GetItemName( loadout.titanClass ), loadout.titanClass )
 		return
@@ -161,4 +169,25 @@ void function OnLoadoutButton_LostFocus( var button )
 
 	if ( !RefHasAnyNewSubitem( player, loadout.titanClass ) )
 		ClearNewStatus( button, loadout.titanClass )
+}
+
+void function SCB_UpdateTitanLoadouts()
+{
+	entity player = GetUIPlayer()
+	if ( player == null )
+		return
+
+	if ( uiGlobal.activeMenu == GetMenu( "TitanLoadoutsMenu" ) )
+		UpdateTitanLoadoutsMenu()
+	else if ( uiGlobal.activeMenu == GetMenu( "EditTitanLoadoutsMenu" ) )
+		UpdateEditTitanLoadoutsMenu()
+}
+
+void function UpdateTitanLoadoutsMenu()
+{
+	if ( uiGlobal.activeMenu != GetMenu( "TitanLoadoutsMenu" ) )
+		return
+
+	int loadoutIndex = uiGlobal.titanSpawnLoadoutIndex
+	UpdateTitanLoadoutButtons( loadoutIndex, file.activateButtons )
 }

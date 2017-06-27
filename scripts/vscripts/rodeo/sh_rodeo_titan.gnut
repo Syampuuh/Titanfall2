@@ -12,6 +12,8 @@ global function GetSoulBatteryCount
 global function ShouldLetPlayerRequestBattery
 global function ShouldShowOfferRodeoBatteryHint
 
+global function PlayerHasAmpedWeapons
+
 global const OFFER_RODEO_BATTERY_COOLDOWN = 5.0
 global const REQUEST_RODEO_BATTERY_COOLDOWN = 10.0
 global const REQUEST_RODEO_BATTERY_HINT_COOLDOWN = 30.0
@@ -231,6 +233,27 @@ bool function PlayerHasBattery( entity player )
 		Assert( player == GetLocalViewPlayer(), "Can't get batteryOnBack for non-client player!" ) //look into making the var synched to all clients if need be.
 	#endif
 	return ( IsValid( player.GetPlayerNetEnt( "batteryOnBack" ) ) )
+}
+
+bool function PlayerHasAmpedWeapons( entity player )
+{
+	array<entity> mainWeapons = player.GetMainWeapons()
+
+	bool foundAmpedWeapon = false
+	foreach ( entity weapon in mainWeapons )
+	{
+		string weaponName = weapon.GetWeaponClassName()
+		array<string> burnMods = GetWeaponBurnMods( weaponName )
+		if ( burnMods.len() == 0 )
+			continue
+
+		foundAmpedWeapon = true
+
+		if ( !weapon.GetWeaponSettingBool( eWeaponVar.is_burn_mod ) )
+			return false
+	}
+
+	return foundAmpedWeapon
 }
 
 int function GetNewRodeoPosition( int currentPosition, int directionHeaded )

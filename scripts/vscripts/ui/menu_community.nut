@@ -1302,24 +1302,7 @@ void function LeaveCurrentCommunityDialog()
 void function UICodeCallback_ShowCommunityJoinRequest( int communityId, int totalRemainingRequests, string requesterUID, string requesterHardware )
 {
 	printt( totalRemainingRequests + " total requests left to answer" )
-	if ( totalRemainingRequests > file.totalJoinRequests )
-	{
-		UpdateNetworksMoreButton( true )
-	}
-	else
-	{
-		UpdateNetworksMoreButton( false )
-	}
 	file.totalJoinRequests = totalRemainingRequests
-	// if ( totalRemainingRequests )
-	// {
-	// 	string messageCount = "" + totalRemainingRequests
-	// 	SetButtonRuiText( file.adminViewPendingRequestsButton, Localize( "#COMMUNITY_PENDINGREQUESTSTOJOIN", messageCount ) )
-	// }
-	// else
-	// {
-	// 	SetButtonRuiText( file.adminViewPendingRequestsButton, Localize( "#COMMUNITY_NOPENDINGREQUESTSTOJOIN" ) )
-	// }
 
 	Signal( uiGlobal.signalDummy, "StopUserJoinRequestLookups" )
 	if ( !totalRemainingRequests )

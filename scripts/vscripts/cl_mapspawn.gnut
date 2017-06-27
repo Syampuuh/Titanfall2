@@ -228,7 +228,6 @@ function Init_ClientScripts( entity player )
     if ( !IsLobby() )
     {
 		InitVoiceHUD( player )
-		Dialog_AddClient( player )
 		CapturePointHudInit( player ) //TODO: Reexamine this with more CapturePoint refactoring
     }
 
@@ -240,7 +239,7 @@ function Init_ClientScripts( entity player )
 	{
 		ClassicMP_AddClient()
 		KillReplayHud_AddClient()
-		level.initScoreboardFunc()
+		clGlobal.initScoreboardFunc()
 		InitChallengePopup()
 		MainHud_AddClient( player )
 		ReplacementTitanHUD_AddClient( player )

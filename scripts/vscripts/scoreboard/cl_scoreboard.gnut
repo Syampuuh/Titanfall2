@@ -1,5 +1,3 @@
-untyped
-
 global function ClScoreboard_Init
 
 global function IsInScoreboard
@@ -16,22 +14,17 @@ struct
 	array<void functionref()> scoreboardHideCallbacks
 } file
 
-function ClScoreboard_Init()
+void function ClScoreboard_Init()
 {
-	level.initScoreboardFunc <- null
-	level.showScoreboardFunc <- null
-	level.hideScoreboardFunc <- null
-	level.scoreboardInputFunc <- null
-
 	RegisterConCommandTriggeredCallback( "+showscores", ScoreboardButtonPressed )
 	RegisterMenuButtonPressedCallback( BUTTON_BACK, ScoreboardButtonPressed )
 
 	RegisterSignal( "OnHideScoreboard" )
 
-	level.showingScoreboard <- false
+	clGlobal.showingScoreboard = false
 }
 
-function AddScoreboardShowCallback( void functionref() func )
+void function AddScoreboardShowCallback( void functionref() func )
 {
 	file.scoreboardShowCallbacks.append( func )
 }
@@ -41,29 +34,29 @@ void function AddScoreboardHideCallback( void functionref() func )
 	file.scoreboardHideCallbacks.append( func )
 }
 
-function ShowScoreboard()
+void function ShowScoreboard()
 {
-	if ( level.showingScoreboard )
+	if ( clGlobal.showingScoreboard )
 		return
 
-	level.showingScoreboard = true
+	clGlobal.showingScoreboard = true
 
 	foreach ( func in file.scoreboardShowCallbacks )
 	{
 		func()
 	}
 
-	level.showScoreboardFunc()
+	clGlobal.showScoreboardFunc()
 }
 
-function HideScoreboard()
+void function HideScoreboard()
 {
-	if ( !level.showingScoreboard )
+	if ( !clGlobal.showingScoreboard )
 		return
 
-	level.hideScoreboardFunc()
+	clGlobal.hideScoreboardFunc()
 
-	level.showingScoreboard = false
+	clGlobal.showingScoreboard = false
 
 	foreach ( func in file.scoreboardHideCallbacks )
 	{
@@ -76,17 +69,20 @@ void function ClientCodeCallback_ToggleScoreboard()
 	ScoreboardButtonPressed( null )
 }
 
-function IsInScoreboard( player )
+bool function IsInScoreboard( entity player )
 {
-	return level.showingScoreboard
+	return clGlobal.showingScoreboard
 }
 
-function ScoreboardButtonPressed( localPlayer )
+void function ScoreboardButtonPressed( entity localPlayer )
 {
 	if ( GetGameState() == eGameState.Postmatch )
 		return
 
-	if ( level.showingScoreboard )
+	if ( clGlobal.lockScoreboard )
+		return
+
+	if ( clGlobal.showingScoreboard )
 		thread HideScoreboard()
 	else
 		thread ShowScoreboard()
@@ -94,6 +90,6 @@ function ScoreboardButtonPressed( localPlayer )
 
 void function ClientCodeCallback_ScoreboardInput( int input )
 {
-	if ( level.scoreboardInputFunc )
-		level.scoreboardInputFunc( input )
+	if ( clGlobal.scoreboardInputFunc != null )
+		clGlobal.scoreboardInputFunc( input )
 }

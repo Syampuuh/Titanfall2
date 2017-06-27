@@ -288,6 +288,10 @@ void function ApplyTrackerMark( entity owner, entity hitEnt )
 
 void function OnOwnerDeathOrDisembark(entity owner, entity hitEnt, int statusEffectID)
 {
+	//We check IsAlive before applying this thread, but it still is erroring when an NPC titan is killed before the pulse lands.
+	if ( !IsAlive( owner ) )
+		return
+
 	owner.EndSignal("OnDeath")
 	owner.EndSignal("TrackerRocketsFired")
 	owner.EndSignal("DisembarkingTitan")

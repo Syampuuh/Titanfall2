@@ -25,7 +25,7 @@ const array<int> KNB_SUBJECT_SUB_COUNTS =
 	3,		// KNB_SUBJECT_SUB_COUNTS[4]
 	4,		// KNB_SUBJECT_SUB_COUNTS[5]
 	6,		// KNB_SUBJECT_SUB_COUNTS[6]
-	9,		// KNB_SUBJECT_SUB_COUNTS[7]
+	10,		// KNB_SUBJECT_SUB_COUNTS[7]
 	16,		// KNB_SUBJECT_SUB_COUNTS[8]
 	6,		// KNB_SUBJECT_SUB_COUNTS[9]
 	14,		// KNB_SUBJECT_SUB_COUNTS[10]
@@ -176,12 +176,5 @@ void function OnOpenKnowledgeBaseSubMenu()
 	RuiSetGameTime( file.descriptionRui, "initTime", Time() )
 	RuiSetString( file.descriptionRui, "headerText", "" )
 	RuiSetString( file.descriptionRui, "messageText", "" )
-	thread DelayedSetFocusThread( file.questionButtons[0] )
+	thread HACK_DelayedSetFocus_BecauseWhy( file.questionButtons[0] )
 }
-
-void function DelayedSetFocusThread( var item )
-{
-	WaitEndFrame()
-	Hud_SetFocused( item )
-}
-

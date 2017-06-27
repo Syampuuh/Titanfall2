@@ -498,6 +498,15 @@ WeaponData
 			"threat_scope_bounds_height"	"1.1"
 			"threat_scope_fadeWithDistance"	"0"
 		}
+		fd_upgrade_charge
+		{
+			"charge_time" 									"*0.6"
+			"charge_sound_1p"								"Weapon_Titan_Sniper_WindUp_Amped"
+		}
+		fd_upgrade_crit
+		{
+			"critical_hit_damage_scale"						"2.0"
+		}
 	}
 
 	active_crosshair_count				"1"

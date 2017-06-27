@@ -404,6 +404,57 @@ function MeleeSyncedHumanShared_Init()
 
 	    }
 
+	    //Holopilot Execution
+    	#if SERVER
+	    	AnimEventData givePistolEvent
+			givePistolEvent.eventName = "attach_pistol"
+			givePistolEvent.callback = AnimEvent_attach_wingman
+
+			AnimEventData takePistolEvent
+			takePistolEvent.eventName = "detach_pistol"
+			takePistolEvent.callback = AnimEvent_detach_pistol
+
+	    	AnimEventData spawnDecoy1Event
+			spawnDecoy1Event.eventName = "spawn_decoy1"
+			spawnDecoy1Event.callback = AnimEvent_spawn_decoy1
+
+	    	AnimEventData spawnDecoy2Event
+			spawnDecoy2Event.eventName = "spawn_decoy2"
+			spawnDecoy2Event.callback = AnimEvent_spawn_decoy2
+
+	    	AnimEventData spawnDecoy3Event
+			spawnDecoy3Event.eventName = "spawn_decoy3"
+			spawnDecoy3Event.callback = AnimEvent_spawn_decoy3
+
+			AnimEventData headshotEvent
+			headshotEvent.eventName = "headshot_death"
+			headshotEvent.callback = AnimEvent_headshot_death
+
+			AnimEventData holopilotHeadshotSFXEvent
+			holopilotHeadshotSFXEvent.eventName = "holopilot_headshot_sfx"
+			holopilotHeadshotSFXEvent.callback = AnimEvent_holopilot_headshot_sfx
+    	#endif
+
+    	SyncedMelee syncedMelee
+    	syncedMelee.ref = "execution_holopilot"
+    	syncedMelee.direction = < -1, 0, 0 >
+    	syncedMelee.distance = HUMAN_EXECUTION_RANGE
+    	syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_holo"
+    	syncedMelee.targetAnimation3p = "pt_mp_execution_victim_holo"
+    	syncedMelee.thirdPersonCameraAttachment = "VDU"
+
+    	#if SERVER
+    		syncedMelee.attacker3pAnimEvents = [ givePistolEvent, takePistolEvent, spawnDecoy1Event, spawnDecoy2Event,spawnDecoy3Event ]
+    		syncedMelee.target3pAnimEvents = [headshotEvent, holopilotHeadshotSFXEvent ]
+    	#endif
+
+	    syncedMelee.minDot = 0.2
+	    syncedMelee.isAttackerRef = false
+	    AddSyncedMelee( meleeChooser, syncedMelee )
+	    #if SERVER
+		    AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+	    #endif
+
 		#if DEVSCRIPTS
 	    {
 	    }
@@ -724,6 +775,95 @@ void function AnimEvent_mechanical_sparks_sound_event( entity victim )
 {
 	if ( victim.IsMechanical() )
 		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Cloak_AndroidSparks" )
+}
+
+void function AnimEvent_attach_wingman( entity ent )
+{
+	AnimEvent_attach_pistol_common( ent, WINGMAN_MODEL, "wingman_execution_holo_anim", HoloPilot_Execution_MuzzleFlash )
+}
+
+void function AnimEvent_spawn_decoy1( entity ent )
+{
+	entity decoy = ent.CreateAnimatedPlayerDecoy( "pt_mp_execution_attacker_hologram_01" )
+	SetupDecoy_Common( ent, decoy )
+	HoloPilot_Execution_DecoySetup( decoy )
+	thread HoloPilot_Execution_MonitorLifeTime( ent, decoy )
+
+}
+
+void function AnimEvent_spawn_decoy2( entity ent )
+{
+	entity decoy = ent.CreateAnimatedPlayerDecoy( "pt_mp_execution_attacker_hologram_02" )
+	SetupDecoy_Common( ent, decoy )
+	HoloPilot_Execution_DecoySetup( decoy )
+	thread HoloPilot_Execution_MonitorLifeTime( ent, decoy )
+}
+
+void function AnimEvent_spawn_decoy3( entity ent )
+{
+	entity decoy = ent.CreateAnimatedPlayerDecoy( "pt_mp_execution_attacker_hologram_03" )
+	SetupDecoy_Common( ent, decoy )
+	HoloPilot_Execution_DecoySetup( decoy )
+	thread HoloPilot_Execution_MonitorLifeTime( ent, decoy )
+}
+
+void function HoloPilot_Execution_DecoySetup( entity decoy )
+{
+	/*decoy.SetMaxHealth( 50 )
+	decoy.SetHealth( 50 )*/
+	SetObjectCanBeMeleed( decoy, false )
+	decoy.SetNameVisibleToOwner( false )
+	decoy.SetNameVisibleToFriendly( false )
+	decoy.SetNameVisibleToEnemy( false )
+	decoy.SetTimeout( DECOY_DURATION )
+	decoy.NotSolid()
+	AddAnimEvent( decoy, "decoy_dissolve", HoloPilot_Execution_DissolveDecoy ) //Doesn't seem to work for decoy entities?
+}
+
+void function AnimEvent_holopilot_headshot_sfx( entity victim )
+{
+	if ( victim.IsMechanical() )
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Holopilot_Pt7_HeadshotAndroid" )
+	else
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Holopilot_Pt7_HeadshotHuman" )
+}
+
+void function HoloPilot_Execution_MonitorLifeTime( entity attacker, entity decoy )
+{
+	attacker.EndSignal( "OnDeath" )
+	attacker.EndSignal( "OnDestroy" )
+	decoy.EndSignal( "OnDestroy" )
+
+	OnThreadEnd(
+	function() : ( decoy )
+		{
+			if( IsValid( decoy ) )
+				decoy.Decoy_Dissolve()
+
+		}
+	)
+
+	wait 0.1 //0.1s chosen because it looks fine
+
+}
+
+void function HoloPilot_Execution_DissolveDecoy( entity decoy )
+{
+	//PrintFunc()
+	if( IsValid( decoy ) )
+		decoy.Decoy_Dissolve()
+}
+
+void function HoloPilot_Execution_MuzzleFlash( entity pistol ) //Only real difference between this and p2011 version is the sound effect
+{
+	string attachName = "muzzle_flash"
+	asset effectName = $"wpn_muzzleflash_pistol"
+
+	int muzzleTagIdx = pistol.LookupAttachment( attachName )
+
+	StartParticleEffectOnEntity( pistol, GetParticleSystemIndex( effectName ), FX_PATTACH_POINT_FOLLOW, muzzleTagIdx )
+
+	EmitSoundOnEntity( pistol, "weapon_wingman_fire_3p" ) // sound above cannot play because it's an asset instead of a string
 }
 
 

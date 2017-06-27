@@ -1,0 +1,317 @@
+resource/ui/menus/match_settings.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		visible					1
+		enabled					1
+		pinCorner				0
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+	    MenuCommon
+	    {
+		    ControlName				CNestedPanel
+		    xpos					0
+		    ypos					0
+			wide					f0
+			tall					f0
+		    visible					1
+		    controlSettingsFile		"resource/ui/menus/panels/menu_common.res"
+	    }
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+		Title
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#MATCH_SETTINGS"
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		LblMenuItemDescription
+		{
+			ControlName				RuiPanel
+			InheritProperties		MenuTooltipLarge
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ImgModeSubheaderBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			xpos					121
+			ypos					164
+		}
+		LblModeSubheaderText
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			ImgModeSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"#PM_HEADER_GAME_MODE"
+		}
+
+		BtnScoreLimit
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			ImgModeSubheaderBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnTitanEarn
+			navDown					BtnTimeLimit
+			isValueClampedToStepSize 1
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				style					SliderButton
+			}
+		}
+		LblScoreLimit
+		{
+			ControlName				Label
+			InheritProperties		SliderControlCurrentValue
+			pin_to_sibling			BtnScoreLimit
+		}
+
+		BtnTimeLimit
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			BtnScoreLimit
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnScoreLimit
+			navDown					BtnPilotBoosts
+			isValueClampedToStepSize 1
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties       WideButton
+				style					SliderButton
+			}
+		}
+		LblTimeLimit
+		{
+			ControlName				Label
+			InheritProperties		SliderControlCurrentValue
+			pin_to_sibling			BtnTimeLimit
+		}
+
+		// pilot
+
+		ImgPilotSubheaderBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			pin_to_sibling			BtnTimeLimit
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		LblPilotSubheaderText
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			ImgPilotSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"#PM_HEADER_PILOT"
+		}
+
+		BtnPilotBoosts
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			pin_to_sibling			ImgPilotSubheaderBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnTimeLimit
+			navDown					BtnPilotEarn
+		}
+
+		BtnPilotEarn
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			BtnPilotBoosts
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnPilotBoosts
+			navDown					BtnPilotOverdrive
+			isValueClampedToStepSize 1
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties       WideButton
+				style					SliderButton
+			}
+		}
+		LblPilotEarn
+		{
+			ControlName				Label
+			InheritProperties		SliderControlCurrentValue
+			pin_to_sibling			BtnPilotEarn
+		}
+
+		BtnPilotOverdrive
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			pin_to_sibling			BtnPilotEarn
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnPilotEarn
+			navDown					BtnPilotHealth
+		}
+
+		BtnPilotHealth
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			BtnPilotOverdrive
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnPilotOverdrive
+			navDown					BtnPilotRespawnDelay
+			isValueClampedToStepSize 1
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties       WideButton
+				style					SliderButton
+			}
+		}
+		LblPilotHealth
+		{
+			ControlName				Label
+			InheritProperties		SliderControlCurrentValue
+			pin_to_sibling			BtnPilotHealth
+		}
+
+		BtnPilotRespawnDelay
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			BtnPilotHealth
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnPilotHealth
+			navDown					BtnTitanAvailability
+			isValueClampedToStepSize 1
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties       WideButton
+				style					SliderButton
+			}
+		}
+		LblPilotRespawnDelay
+		{
+			ControlName				Label
+			InheritProperties		SliderControlCurrentValue
+			pin_to_sibling			BtnPilotRespawnDelay
+		}
+
+		// titan
+
+		ImgTitanSubheaderBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			pin_to_sibling			BtnPilotRespawnDelay
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		LblTitanSubheaderText
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			ImgTitanSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"#PM_HEADER_TITAN"
+		}
+
+		BtnTitanAvailability
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			pin_to_sibling			ImgTitanSubheaderBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnPilotRespawnDelay
+			navDown					BtnTitanEarn
+			enabled 0 // TODO: rework Riff_ForceTitanAvailability
+		}
+
+		BtnTitanEarn
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			BtnTitanAvailability
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnTitanAvailability
+			navDown					BtnScoreLimit
+			isValueClampedToStepSize 1
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties       WideButton
+				style					SliderButton
+			}
+		}
+		LblTitanEarn
+		{
+			ControlName				Label
+			InheritProperties		SliderControlCurrentValue
+			pin_to_sibling			BtnTitanEarn
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ButtonTooltip
+		{
+			ControlName				CNestedPanel
+			InheritProperties		ButtonTooltip
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					r119
+			wide					f0
+			tall					36
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+		}
+	}
+}

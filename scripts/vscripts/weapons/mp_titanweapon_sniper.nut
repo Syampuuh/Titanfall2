@@ -19,15 +19,8 @@ const INSTANT_SHOT_DAMAGE 				= 1200
 //const INSTANT_SHOT_TIME_PER_CHARGE	= 0
 const SNIPER_PROJECTILE_SPEED			= 10000
 
-struct ColorSwapStruct
-{
-	int statusEffectId
-	entity weaponOwner
-}
-
 struct {
 	float chargeDownSoundDuration = 1.0 //"charge_cooldown_time"
-	array<ColorSwapStruct> colorSwapStatusEffects
 } file
 
 void function OnWeaponActivate_titanweapon_sniper( entity weapon )
@@ -68,7 +61,13 @@ void function OnHit_TitanWeaponSniper_Internal( entity victim, var damageInfo )
 	bool isCritical = IsCriticalHit( DamageInfo_GetAttacker( damageInfo ), victim, DamageInfo_GetHitBox( damageInfo ), damage, DamageInfo_GetDamageType( damageInfo ) )
 
 	if ( isCritical )
-		f_extraDamage *= expect float( inflictor.ProjectileGetWeaponInfoFileKeyField( "critical_hit_damage_scale" ) )
+	{
+		array<string> projectileMods = inflictor.ProjectileGetMods()
+		if ( projectileMods.contains( "fd_upgrade_crit" ) )
+			f_extraDamage *= 2.0
+		else
+			f_extraDamage *= expect float( inflictor.ProjectileGetWeaponInfoFileKeyField( "critical_hit_damage_scale" ) )
+	}
 
 	//Check to see if damage has been see to zero so we don't override it.
 	if ( damage > 0 && extraDamage > 0 )
@@ -232,7 +231,7 @@ void function OnWeaponStartZoomIn_titanweapon_sniper( entity weapon )
 		entity weaponOwner = weapon.GetWeaponOwner()
 		if ( !IsValid( weaponOwner ) )
 			return
-		AddColorStatusEffect( weaponOwner )
+		AddThreatScopeColorStatusEffect( weaponOwner )
 	}
 	#endif
 }
@@ -245,43 +244,15 @@ void function OnWeaponStartZoomOut_titanweapon_sniper( entity weapon )
 		entity weaponOwner = weapon.GetWeaponOwner()
 		if ( !IsValid( weaponOwner ) )
 			return
-		RemoveColorStatusEffect( weaponOwner )
+		RemoveThreatScopeColorStatusEffect( weaponOwner )
 	}
 	#endif
 }
-
-#if SERVER
-void function RemoveColorStatusEffect( entity player )
-{
-	for ( int i = file.colorSwapStatusEffects.len() - 1; i >= 0; i-- )
-	{
-		entity owner = file.colorSwapStatusEffects[i].weaponOwner
-		if ( !IsValid( owner ) )
-		{
-			file.colorSwapStatusEffects.remove( i )
-			continue
-		}
-		if ( owner == player )
-		{
-			StatusEffect_Stop( player, file.colorSwapStatusEffects[i].statusEffectId )
-			file.colorSwapStatusEffects.remove( i )
-		}
-	}
-}
-
-void function AddColorStatusEffect( entity player )
-{
-	ColorSwapStruct info
-	info.weaponOwner = player
-	info.statusEffectId = StatusEffect_AddTimed( player, eStatusEffect.cockpitColor, COCKPIT_COLOR_THREAT, 100000, 0 )
-	file.colorSwapStatusEffects.append( info )
-}
-#endif
 
 void function OnWeaponOwnerChanged_titanweapon_sniper( entity weapon, WeaponOwnerChangedParams changeParams )
 {
 	#if SERVER
 	if ( IsValid( changeParams.oldOwner ) && changeParams.oldOwner.IsPlayer() )
-		RemoveColorStatusEffect( changeParams.oldOwner )
+		RemoveThreatScopeColorStatusEffect( changeParams.oldOwner )
 	#endif
 }

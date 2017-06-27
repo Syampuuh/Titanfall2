@@ -334,3 +334,12 @@
     pc_offer: "Origin.OFR.50.0002226"
     xb1_offer: "2074ff53-2829-4252-8365-e9553baad694"
 }
+
+{
+  script_const: ET_DLC6_TEMP
+    pc:       TBD
+    ps4:      TBD
+    xb1:      TBD
+    pc_offer: ""
+    xb1_offer: ""
+}

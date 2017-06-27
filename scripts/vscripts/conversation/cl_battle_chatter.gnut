@@ -35,7 +35,7 @@ void function PlayBattleChatterOnClientPlayer( string conversationName, entity s
 
 	//Generate alias from playerEHandle and number of altAliases we have
 	string soundAlias = GenerateBattleChatterAlias( speakingPlayer, conversationName  )
-	int priority = expect int(  GetConversationPriority( conversationName )  )
+	int priority = GetConversationPriority( conversationName )
 
 	PlayOneLinerConversationOnEntWithPriority( conversationName, soundAlias, speakingPlayer, priority )
 

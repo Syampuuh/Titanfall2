@@ -73,5 +73,17 @@ WeaponData
 		{
 			"fire_duration"									"999.0"
 		}
+		npc_more_shield
+		{
+			"npc_use_min_damage"							"100"
+			"npc_use_min_projectile_damage"					"100"
+			"npc_use_max_damage"							"1000"
+			"npc_rest_time_between_bursts_min"				"8"
+			"npc_rest_time_between_bursts_max"				"10"
+		}
+		fd_gun_shield
+		{
+
+		}
 	}
 }

@@ -3,15 +3,15 @@ npc_turret_sentry_burn_card_at_fd
 {
 	DefaultModelName		"models/robots/turret_plasma/turret_plasma.mdl"
 	DefaultWeapon			"mp_weapon_turretplasma"
-	title 					"#NPC_TURRET_SENTRY_AT"
+	title 					"#NPC_TURRET_SENTRY_PLASMA"
 
-	maxEnemyDist			0
+	maxEnemyDist			2000
 
 	Health							600 [$sp]
-	Health							300 [$mp]
+	Health							400 [$mp]
 
-	turret_lifetime			999999999999999999.0 //Make sure to change #BURNMETER_AT_TURRETWEAPON_DESC and #BURNMETER_AT_TURRETWEAPON_DESC_BOOST_ACTIVATION_TEXT
+	turret_lifetime			0.0 //Make sure to change #BURNMETER_AT_TURRETWEAPON_DESC and #BURNMETER_AT_TURRETWEAPON_DESC_BOOST_ACTIVATION_TEXT
 	cleanup_between_rounds	0
 
-	//MaxTurretYaw        	360
+	MaxTurretYaw        	360
 }

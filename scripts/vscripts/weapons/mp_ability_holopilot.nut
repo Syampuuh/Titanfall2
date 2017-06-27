@@ -15,6 +15,11 @@ global function CreateHoloPilotDecoys
 global function SetupDecoy_Common
 
 global function Decoy_Init
+
+#if MP
+global function GetDecoyActiveCountForPlayer
+#endif //if MP
+
 #endif //if server
 
 struct
@@ -159,11 +164,15 @@ void function CreateHoloPilotDecoys( entity player, int numberOfDecoysToMake = 1
 
 			vector forwardVector = AnglesToForward( normalizedAngle )
 			forwardVector *= displacementDistance
-			decoy.SetOrigin( decoy.GetOrigin() + forwardVector )
+			decoy.SetOrigin( player.GetOrigin() + forwardVector ) //Using player origin instead of decoy origin as defensive fix, see bug 223066
 			PutEntityInSafeSpot( decoy, player, null, player.GetOrigin(), decoy.GetOrigin()  )
 		}
 
 		SetupDecoy_Common( player, decoy )
+
+		#if MP
+					thread MonitorDecoyActiveForPlayer( decoy, player )
+			#endif
 	}
 
 	#if BATTLECHATTER_ENABLED
@@ -297,6 +306,40 @@ void function SetupDecoy_Common( entity player, entity decoy ) //functioned out 
 
 		WaitForever()
 	}
+
+	void function MonitorDecoyActiveForPlayer( entity decoy, entity player )
+		{
+			if ( player in file.playerToDecoysActiveTable )
+				++file.playerToDecoysActiveTable[ player ]
+			else
+				file.playerToDecoysActiveTable[ player ] <- 1
+
+			decoy.EndSignal( "OnDestroy" ) //Note that we do this OnDestroy instead of the inbuilt OnHoloPilotDestroyed() etc functions so there is a bit of leeway after the holopilot starts to die/is fully invisible before being destroyed
+			player.EndSignal( "OnDestroy" )
+
+			OnThreadEnd(
+			function() : ( player )
+				{
+					if( IsValid( player ) )
+					{
+						Assert( player in file.playerToDecoysActiveTable )
+						--file.playerToDecoysActiveTable[ player ]
+					}
+
+				}
+			)
+
+			WaitForever()
+		}
+
+		int function GetDecoyActiveCountForPlayer( entity player )
+		{
+			if ( !(player in file.playerToDecoysActiveTable ))
+				return 0
+
+			return file.playerToDecoysActiveTable[player ]
+		}
+
 	#endif // MP
 #endif // SERVER
 

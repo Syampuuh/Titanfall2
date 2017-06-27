@@ -163,8 +163,8 @@ WeaponData
 		super_charged
 		{
 			"fire_mode"											"offhand_melee_hybrid"
-			"melee_damage"										"2200"
-			"melee_damage_heavyarmor"							"2200"
+			"melee_damage"										"++1400"
+			"melee_damage_heavyarmor"							"++1400"
 			"attack_button_presses_melee"						"1"
 			"impact_effect_table"								"titan_sword"
 			"melee_rumble_on_hit"								"titan_melee_hit_swordcore"
@@ -172,6 +172,12 @@ WeaponData
 			"activitymodifier"									"melee_titan_sword_super_charged"
 			"melee_angle"										"45"
 			"clear_fx_on_new_view_model"						"0"
+		}
+
+		fd_sword_upgrade
+		{
+			"melee_damage"									"*1.25"
+			"melee_damage_heavyarmor"						"*1.25"
 		}
 
 		super_charged_SP

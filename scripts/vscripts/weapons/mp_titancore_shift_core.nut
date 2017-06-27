@@ -35,9 +35,14 @@ void function SwordCore_OnPlayedOrNPCKilled( entity victim, entity attacker, var
 	float highlanderBonus = 8.0
 	float remainingTime = highlanderBonus + soul.GetCoreChargeExpireTime() - curTime
 	float duration = soul.GetCoreUseDuration()
-	soul.SetTitanSoulNetFloat( "coreExpireFrac", min( 1.0, remainingTime / duration ) )
-	soul.SetTitanSoulNetFloatOverTime( "coreExpireFrac", 0.0, remainingTime )
-	soul.SetCoreChargeExpireTime( remainingTime + curTime )
+	float coreFrac = min( 1.0, remainingTime / duration )
+	//Defensive fix for this sometimes resulting in a negative value.
+	if ( coreFrac > 0.0 )
+	{
+		soul.SetTitanSoulNetFloat( "coreExpireFrac", coreFrac )
+		soul.SetTitanSoulNetFloatOverTime( "coreExpireFrac", 0.0, remainingTime )
+		soul.SetCoreChargeExpireTime( remainingTime + curTime )
+	}
 }
 #endif
 

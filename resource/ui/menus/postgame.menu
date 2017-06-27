@@ -136,5 +136,20 @@ resource/ui/menus/postgame.menu
 		    visible					0
 		    controlSettingsFile		"resource/ui/menus/panels/summary.res"
 	    }
+
+        // put here so it renders last, even when zorder is the same.
+        // this could be moved if we knew how to make this panel click through
+	    PVEPanel
+	    {
+		    ControlName				CNestedPanel
+		    classname				"TabPanelClass"
+		    xpos					c-960
+		    ypos					c-540
+			wide					%100
+			tall					%100
+			zpos                    1
+		    visible					0
+		    controlSettingsFile		"resource/ui/menus/panels/summary.res"
+	    }
 	}
 }

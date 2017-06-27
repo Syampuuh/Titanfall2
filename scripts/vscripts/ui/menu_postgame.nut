@@ -5,6 +5,7 @@ global function OpenPostGameMenu
 global function ClosePostGameMenu
 global function ClosePostGameMenuAutomaticallyForMatchmaking
 global function SetPutPlayerInMatchMakingWithDelayAfterPostGameMenu
+global function PostGame_NextTab
 
 struct
 {
@@ -146,4 +147,11 @@ void function ClosePostGameMenuAutomaticallyForMatchmaking()
 void function SetPutPlayerInMatchMakingWithDelayAfterPostGameMenu( bool value )
 {
 	file.putPlayerInMatchMakingWithDelayAfterPostGameMenu = value
+}
+
+void function PostGame_NextTab()
+{
+	int nextTabIndex = GetMenuActiveTabIndex( file.menu ) + 1
+	if ( nextTabIndex < GetMenuNumTabs( file.menu ) )
+		ActivateTab( file.menu, nextTabIndex )
 }

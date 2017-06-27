@@ -10,6 +10,7 @@ global function DelayedPulseLocation
 
 const int SONAR_PULSE_RADIUS = 1250
 const float SONAR_PULSE_DURATION = 5.0
+const float FD_SONAR_PULSE_DURATION = 8.0
 
 bool function OnWeaponAttemptOffhandSwitch_titanability_sonar_pulse( entity weapon )
 {
@@ -62,21 +63,23 @@ void function OnProjectileCollision_titanability_sonar_pulse( entity projectile,
 			return
 
 		int team = owner.GetTeam()
-		PulseLocation( owner, team, pos )
 		array<string> mods = projectile.ProjectileGetMods()
+		bool hasIncreasedDuration = mods.contains( "fd_sonar_duration" )
+		bool hasDamageAmp = mods.contains( "fd_sonar_damage_amp" )
+		PulseLocation( owner, team, pos, hasIncreasedDuration, hasDamageAmp )
 		if ( mods.contains( "pas_tone_sonar" ) )
-			thread DelayedPulseLocation( owner, team, pos )
+			thread DelayedPulseLocation( owner, team, pos, hasIncreasedDuration, hasDamageAmp )
 
 	#endif
 }
 
 #if SERVER
-void function DelayedPulseLocation( entity owner, int team, vector pos )
+void function DelayedPulseLocation( entity owner, int team, vector pos, bool hasIncreasedDuration, bool hasDamageAmp )
 {
 	wait 2.0
 	if ( !IsValid( owner ) )
 		return
-	PulseLocation( owner, team, pos )
+	PulseLocation( owner, team, pos, hasIncreasedDuration, hasDamageAmp )
 	if ( owner.IsPlayer() )
 	{
 		EmitSoundAtPositionExceptToPlayer( TEAM_UNASSIGNED, pos, owner, "Titan_Tone_SonarLock_Impact_Pulse_3P" )
@@ -89,12 +92,12 @@ void function DelayedPulseLocation( entity owner, int team, vector pos )
 
 }
 
-void function PulseLocation( entity owner, int team, vector pos )
+void function PulseLocation( entity owner, int team, vector pos, bool hasIncreasedDuration, bool hasDamageAmp )
 {
 	array<entity> nearbyEnemies = GetNearbyEnemiesForSonarPulse( team, pos )
 	foreach( enemy in nearbyEnemies )
 	{
-		thread SonarPulseThink( enemy, pos, team, owner )
+		thread SonarPulseThink( enemy, pos, team, owner, hasIncreasedDuration, hasDamageAmp )
 		ApplyTrackerMark( owner, enemy )
 	}
 	array<entity> players = GetPlayerArray()
@@ -104,26 +107,39 @@ void function PulseLocation( entity owner, int team, vector pos )
 	}
 }
 
-void function SonarPulseThink( entity enemy, vector position, int team, entity sonarOwner )
+void function SonarPulseThink( entity enemy, vector position, int team, entity sonarOwner, bool hasIncreasedDuration, bool hasDamageAmp )
 {
 	enemy.EndSignal( "OnDeath" )
 	enemy.EndSignal( "OnDestroy" )
 
 	SonarStart( enemy, position, team, sonarOwner )
+	int statusEffect = 0
+	if ( hasDamageAmp )
+		statusEffect = StatusEffect_AddEndless( enemy, eStatusEffect.damage_received_multiplier, 0.25 )
 
 	int sonarTeam = sonarOwner.GetTeam()
 	IncrementSonarPerTeam( sonarTeam )
 
 	OnThreadEnd(
-	function() : ( enemy, sonarTeam )
+	function() : ( enemy, sonarTeam, statusEffect, hasDamageAmp )
 		{
 			DecrementSonarPerTeam( sonarTeam )
 			if ( IsValid( enemy ) )
+			{
 				SonarEnd( enemy, sonarTeam )
+				if ( hasDamageAmp )
+					StatusEffect_Stop( enemy, statusEffect )
+			}
 		}
 	)
 
-	wait SONAR_PULSE_DURATION
+	float duration
+	if ( hasIncreasedDuration )
+		duration = FD_SONAR_PULSE_DURATION
+	else
+		duration = SONAR_PULSE_DURATION
+
+	wait duration
 }
 
 array<entity> function GetNearbyEnemiesForSonarPulse( int team, vector origin )

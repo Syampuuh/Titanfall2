@@ -10,6 +10,10 @@ array<string> function GetWeaponsFromPilotLoadout( PilotLoadoutDef loadout )
 	if ( loadout.secondary != "" )
 		weapons.append( loadout.secondary )
 
+	// Skipping weapon3 since SP doesn't use this slot yet and this function is only called in SP
+	//if ( loadout.weapon3 != "" )
+	//	weapons.append( loadout.weapon3 )
+
 	if ( loadout.ordnance != "" )
 		weapons.append( loadout.ordnance )
 
@@ -148,7 +152,7 @@ TitanLoadoutDef ornull function GetTitanLoadoutForColumn( string findCol, string
 }
 
 
-void function OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( TitanLoadoutDef loadout )
+void function OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( TitanLoadoutDef loadout, entity player = null )
 {
 	loadout.primaryMods	= [ loadout.primaryMod ]
 
@@ -167,6 +171,14 @@ void function OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( 
 	foreach ( callbackFunc in svGlobal.onUpdateDerivedTitanLoadoutCallbacks )
 	{
 		callbackFunc( loadout )
+	}
+
+	if ( IsValid( player ) )
+	{
+		foreach ( callbackFunc in svGlobal.onUpdateDerivedPlayerTitanLoadoutCallbacks )
+		{
+			callbackFunc( player, loadout )
+		}
 	}
 	#endif
 }
@@ -523,17 +535,20 @@ void function Loadout_RemoveDupes( PilotLoadoutDef pilotLoadout )
 {
 	array<string> weapons = []
 
-	pilotLoadout.primary = weapons.contains(pilotLoadout.primary) ?  "" : pilotLoadout.primary
-	weapons.append(pilotLoadout.primary)
+	pilotLoadout.primary = weapons.contains( pilotLoadout.primary ) ?  "" : pilotLoadout.primary
+	weapons.append( pilotLoadout.primary )
 
-	pilotLoadout.secondary = weapons.contains(pilotLoadout.secondary) ? "" : pilotLoadout.secondary
-	weapons.append(pilotLoadout.secondary)
+	pilotLoadout.secondary = weapons.contains( pilotLoadout.secondary ) ? "" : pilotLoadout.secondary
+	weapons.append( pilotLoadout.secondary )
 
-	pilotLoadout.ordnance = weapons.contains(pilotLoadout.ordnance) ? "" : pilotLoadout.ordnance
-	weapons.append(pilotLoadout.ordnance)
+	pilotLoadout.weapon3 = weapons.contains( pilotLoadout.weapon3 ) ? "" : pilotLoadout.weapon3
+	weapons.append( pilotLoadout.weapon3 )
 
-	pilotLoadout.special = weapons.contains(pilotLoadout.special) ? "" : pilotLoadout.special
-	weapons.append(pilotLoadout.special)
+	pilotLoadout.ordnance = weapons.contains( pilotLoadout.ordnance ) ? "" : pilotLoadout.ordnance
+	weapons.append( pilotLoadout.ordnance )
+
+	pilotLoadout.special = weapons.contains( pilotLoadout.special ) ? "" : pilotLoadout.special
+	weapons.append( pilotLoadout.special )
 }
 
 void function GivePilotLoadout( entity player, PilotLoadoutDef loadout )
@@ -576,22 +591,11 @@ void function GivePilotLoadout( entity player, PilotLoadoutDef loadout )
 			weapon.SetModBitField( mods )
 		}
 
-		if ( loadout.primaryCamoIndex > 0 )
-		{
-			weapon.SetWeaponSkin( WEAPON_SKIN_INDEX_CAMO )
-			weapon.SetSkin( WEAPON_SKIN_INDEX_CAMO )
-			weapon.SetWeaponCamo( loadout.primaryCamoIndex )
-			weapon.SetCamo( loadout.primaryCamoIndex )
-			//printt( "pilot primary skin/camo", WEAPON_SKIN_INDEX_CAMO, loadout.primaryCamoIndex )
-		}
-		else
-		{
-			weapon.SetWeaponSkin( 0 )
-			weapon.SetSkin( 0 )
-			weapon.SetWeaponCamo( -1 )
-			weapon.SetCamo( -1 )
-			//printt( "pilot primary skin/camo", loadout.primarySkinIndex, -1 )
-		}
+		weapon.SetWeaponSkin( loadout.primarySkinIndex )
+		weapon.SetSkin( loadout.primarySkinIndex )
+		weapon.SetWeaponCamo( loadout.primaryCamoIndex )
+		weapon.SetCamo( loadout.primaryCamoIndex )
+		printt( "pilot primary skin/camo", loadout.primarySkinIndex, loadout.primaryCamoIndex )
 	}
 
 	array<string> secondaryMods = loadout.secondaryMods
@@ -613,22 +617,37 @@ void function GivePilotLoadout( entity player, PilotLoadoutDef loadout )
 			weapon.SetModBitField( mods )
 		}
 
-		if ( loadout.secondaryCamoIndex > 0 )
+		weapon.SetWeaponSkin( loadout.secondarySkinIndex )
+		weapon.SetSkin( loadout.secondarySkinIndex )
+		weapon.SetWeaponCamo( loadout.secondaryCamoIndex )
+		weapon.SetCamo( loadout.secondaryCamoIndex )
+		printt( "pilot secondary skin/camo", loadout.secondarySkinIndex, loadout.secondaryCamoIndex )
+	}
+
+	array<string> weapon3Mods = loadout.weapon3Mods
+	weapon3Mods.removebyvalue( "" )
+	weapon3Mods.removebyvalue( "null" )
+
+	if ( loadout.weapon3 != "" )
+	{
+		entity weapon = player.GiveWeapon( loadout.weapon3, weapon3Mods )
+		#if MP
+			weapon.SetProScreenOwner( player )
+			if ( weapon.HasMod( "pro_screen" ) )
+				UpdateProScreen( player, weapon )
+		#endif
+
+		if ( loadout.weapon3ModsBitfield != null )
 		{
-			weapon.SetWeaponSkin( WEAPON_SKIN_INDEX_CAMO )
-			weapon.SetSkin( WEAPON_SKIN_INDEX_CAMO )
-			weapon.SetWeaponCamo( loadout.secondaryCamoIndex )
-			weapon.SetCamo( loadout.secondaryCamoIndex )
-			//printt( "pilot secondary skin/camo", WEAPON_SKIN_INDEX_CAMO, loadout.secondaryCamoIndex )
+			int mods = expect int( loadout.weapon3ModsBitfield )
+			weapon.SetModBitField( mods )
 		}
-		else
-		{
-			weapon.SetWeaponSkin( 0 )
-			weapon.SetSkin( 0 )
-			weapon.SetWeaponCamo( -1 )
-			weapon.SetCamo( -1 )
-			//printt( "pilot secondary skin/camo", loadout.secondarySkinIndex, -1 )
-		}
+
+		weapon.SetWeaponSkin( loadout.weapon3SkinIndex )
+		weapon.SetSkin( loadout.weapon3SkinIndex )
+		weapon.SetWeaponCamo( loadout.weapon3CamoIndex )
+		weapon.SetCamo( loadout.weapon3CamoIndex )
+		printt( "pilot weapon3 skin/camo", loadout.weapon3SkinIndex, loadout.weapon3CamoIndex )
 	}
 
 	if ( loadout.ordnance != "" )

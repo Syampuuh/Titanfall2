@@ -66,6 +66,7 @@ global function IsDialog
 global function IsDialogActive
 global function IsDialogOnlyActiveMenu
 global function SetNavUpDown
+global function SetNavLeftRight
 global function IsTrialPeriodActive
 global function LaunchGamePurchaseOrDLCStore
 global function SetMenuThinkFunc
@@ -84,6 +85,8 @@ global function SetMenuVarVar
 global function AddMenuVarChangeHandler
 
 global function InviteFriends
+
+global function HACK_DelayedSetFocus_BecauseWhy
 
 #if DURANGO_PROG
 	global function OpenXboxPartyApp
@@ -541,6 +544,8 @@ void function AdvanceMenu( var menu, bool replaceCurrent = false )
 	uiGlobal.menuStack.push( menu )
 	uiGlobal.activeMenu = menu
 
+	uiGlobal.lastMenuNavDirection = MENU_NAV_FORWARD
+
 	if ( uiGlobal.activeMenu )
 	{
 		if ( !IsLobby() && !uiGlobal.mapSupportsMenuModels )
@@ -586,6 +591,8 @@ void function OpenSubmenu( var menu, bool updateMenuPos = true )
 		Hud_SetPos( vguiButtonFrame, submenuPos[0], submenuPos[1] )
 	}
 
+	uiGlobal.lastMenuNavDirection = MENU_NAV_FORWARD
+
 	Signal( uiGlobal.signalDummy, "ActiveMenuChanged" )
 }
 
@@ -599,6 +606,8 @@ void function CloseSubmenu( bool openStackMenu = true )
 
 	CloseMenuWrapper( uiGlobal.activeMenu )
 	uiGlobal.menuStack.pop()
+
+	uiGlobal.lastMenuNavDirection = MENU_NAV_FORWARD
 
 	if ( uiGlobal.menuStack.len() )
 	{
@@ -653,6 +662,8 @@ void function CloseActiveMenu( bool cancelled = false, bool openStackMenu = true
 	else
 		uiGlobal.activeMenu = null
 
+	uiGlobal.lastMenuNavDirection = MENU_NAV_BACK
+
 	if ( wasDialog )
 	{
 		if ( uiGlobal.activeMenu )
@@ -698,6 +709,8 @@ void function CloseAllMenus()
 
 	uiGlobal.menuStack = []
 	uiGlobal.activeMenu = null
+
+	uiGlobal.lastMenuNavDirection = MENU_NAV_BACK
 
 	Signal( uiGlobal.signalDummy, "ActiveMenuChanged" )
 }
@@ -906,14 +919,6 @@ void function InitMenus()
 	AddMenu( "PlayVideoMenu", $"resource/ui/menus/play_video.menu", InitPlayVideoMenu )
 	AddMenu( "LobbyMenu", $"resource/ui/menus/lobby.menu", InitLobbyMenu, "#LOBBY" )
 
-	#if DEVSCRIPTS
-	AddMenu( "FDMenu", $"resource/ui/menus/playlist_fd.menu", InitFDPlaylistMenu )
-	AddMenu( "FDHostMatchMenu", $"resource/ui/menus/fd_host_match.menu", InitFDHostMatchMenu )
-	AddMenu( "FDMapsMenu", $"resource/ui/menus/fd_map_select.menu", InitFDMapsMenu )
-	AddMenu( "FDTitanUpgradeMenu", $"resource/ui/menus/fd_titan_upgrade.menu", InitFDTitanUpgradeMenu )
-	AddMenu( "PVELobbyMenu", $"resource/ui/menus/pvelobby.menu", InitPVELobbyMenu, "#PVELOBBY" )
-	AddMenu( "PVETacticalsMenu", $"resource/ui/menus/pve_tacticals.menu", InitPVETacticalsMenu )
-	#endif
 	AddMenu( "PlaylistMenu", $"resource/ui/menus/playlist.menu", InitPlaylistMenu )
 	AddMenu( "PlaylistMixtapeMenu", $"resource/ui/menus/playlist_mixtape.menu", InitPlaylistMixtapeMenu )
 	AddMenu( "PlaylistMixtapeChecklistMenu", $"resource/ui/menus/playlist_mixtape_checklist.menu", InitPlaylistMixtapeChecklistMenu )
@@ -936,10 +941,6 @@ void function InitMenus()
 	AddMenu( "CommunityAdminInviteRequestMenu", $"resource/ui/menus/community_inviteRequest.menu" )
 #if NETWORK_INVITE
 	AddMenu( "InviteFriendsToNetworkMenu", $"resource/ui/menus/invite_friends.menu", InitInviteFriendsToNetworkMenu )
-#endif
-#if DEVSCRIPTS
-		//AddMenu( "InviteFriendsToPartyMenu", $"resource/ui/menus/invite_friends.menu", InitInviteFriendsToPartyMenu )
-	AddMenu( "PathChooserDialog", $"resource/ui/menus/dialog_pathchooser.menu", InitPathChooserDialog )
 #endif
 
 	AddMenu( "InGameMPMenu", $"resource/ui/menus/ingame_mp.menu", InitInGameMPMenu )
@@ -987,16 +988,11 @@ void function InitMenus()
 	AddMenu( "NoseArtSelectMenu", $"resource/ui/menus/noseartselect.menu", InitNoseArtSelectMenu )
 	AddMenu( "CallsignCardSelectMenu", $"resource/ui/menus/callsigncardselect.menu", InitCallsignCardSelectMenu )
 	AddMenu( "CallsignIconSelectMenu", $"resource/ui/menus/callsigniconselect.menu", InitCallsignIconSelectMenu )
-#if DEVSCRIPTS
-	AddMenu( "EditDpadCommsMenu", $"resource/ui/menus/editdpadcomms.menu", InitEditDpadCommsMenu )
-	AddMenu( "DpadCommsSelectMenu", $"resource/ui/menus/selectdpadcomms.menu", InitSelectDpadCommsMenu )
-	AddMenu( "BoostStoreMenu", $"resource/ui/menus/booststore.menu", InitBoostStoreMenu )
-#endif
 
 	AddMenu( "PrivateLobbyMenu", $"resource/ui/menus/private_lobby.menu", InitPrivateMatchMenu, "#PRIVATE_MATCH" )
 	AddMenu( "MapsMenu", $"resource/ui/menus/map_select.menu", InitMapsMenu )
 	AddMenu( "ModesMenu", $"resource/ui/menus/mode_select.menu", InitModesMenu )
-	//AddMenu( "MatchSettingsMenu", $"resource/ui/menus/match_settings.menu", InitMatchSettingsMenu )
+	AddMenu( "MatchSettingsMenu", $"resource/ui/menus/match_settings.menu", InitMatchSettingsMenu )
 
 	AddMenu( "Advocate_Letter", $"resource/ui/menus/advocate_letter.menu", InitAdvocateLetterMenu )
 	AddMenu( "Generation_Respawn", $"resource/ui/menus/generation_respawn.menu", InitGenerationRespawnMenu )
@@ -1156,21 +1152,7 @@ void function AddMenuElementsByClassname( var menu, string classname )
 
 void function FocusDefault( var menu )
 {
-	if ( menu == GetMenu( "LobbyMenu" ) )
-	{
-		array<var> buttons
-		buttons.append( Hud_GetChild( menu, "StartMatchButton" ) )
-
-		foreach ( button in buttons )
-		{
-			if ( Hud_IsEnabled( button ) )
-			{
-				Hud_SetFocused( button )
-				break
-			}
-		}
-	}
-	else if (
+	if (
 				menu == GetMenu( "MainMenu" ) ||
 				menu == GetMenu( "CategorySelectMenu" ) ||
 			  menu == GetMenu( "AbilitySelectMenu" ) ||
@@ -1244,6 +1226,11 @@ void function AddMenuEventHandler( var menu, int event, void functionref() func 
 	{
 		Assert( uiGlobal.menuData[ menu ].tabChangedFunc == null )
 		uiGlobal.menuData[ menu ].tabChangedFunc = func
+	}
+	else if ( event == eUIEvent.MENU_INPUT_MODE_CHANGED )
+	{
+		Assert( uiGlobal.menuData[ menu ].inputModeChangedFunc == null )
+		uiGlobal.menuData[ menu ].inputModeChangedFunc = func
 	}
 }
 
@@ -1817,6 +1804,38 @@ void function SetNavUpDown( array<var> buttons, var wrap = true )
 	}
 }
 
+void function SetNavLeftRight( array<var> buttons, var wrap = true )
+{
+	Assert( buttons.len() > 0 )
+
+	var first = buttons[0]
+	var last = buttons[buttons.len() - 1]
+	var prev
+	var next
+	var button
+
+	for ( int i = 0; i < buttons.len(); i++ )
+	{
+		button = buttons[i]
+
+		if ( button == first )
+			prev = last
+		else
+			prev = buttons[i - 1]
+
+		if ( button == last )
+			next = first
+		else
+			next = buttons[i + 1]
+
+		button.SetNavLeft( prev )
+		button.SetNavRight( next )
+
+		//printt( "SetNavUP for:", Hud_GetHudName( button ), "to:", Hud_GetHudName( prev ) )
+		//printt( "SetNavDown for:", Hud_GetHudName( button ), "to:", Hud_GetHudName( next ) )
+	}
+}
+
 void function UICodeCallback_EntitlementsChanged()
 {
 	switch ( uiGlobal.activeMenu )
@@ -1917,4 +1936,12 @@ void function UICodeCallback_PartyUpdated()
 			OpenDialog( dialogData )
 		}
 	}
+}
+
+
+void function HACK_DelayedSetFocus_BecauseWhy( var item )
+{
+	WaitEndFrame()
+	if ( IsValid( item ) )
+		Hud_SetFocused( item )
 }

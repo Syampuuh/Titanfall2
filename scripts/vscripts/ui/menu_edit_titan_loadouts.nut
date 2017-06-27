@@ -2,6 +2,7 @@ untyped
 
 global function InitEditTitanLoadoutsMenu
 global function UpdateTitanXP
+global function UpdateEditTitanLoadoutsMenu
 
 struct
 {
@@ -252,6 +253,9 @@ void function OnLoadoutButton_Activate( var button )
 			buttons.append( button )
 		}
 
+		if ( !IsTitanLoadoutAvailable( GetUIPlayer(), loadout.titanClass ) )
+			return
+
 		OpenBuyItemDialog( buttons, button, GetItemName( loadout.titanClass ), loadout.titanClass )
 		return
 	}
@@ -296,4 +300,14 @@ void function OnLoadoutButton_LostFocus( var button )
 
 	if ( !RefHasAnyNewSubitem( player, loadout.titanClass ) && !IsItemNew( player, loadout.primeTitanRef ) )
 		ClearNewStatus( button, loadout.titanClass )
+}
+
+
+void function UpdateEditTitanLoadoutsMenu()
+{
+	if ( uiGlobal.activeMenu != GetMenu( "EditTitanLoadoutsMenu" ) )
+		return
+
+	int loadoutIndex = uiGlobal.titanSpawnLoadoutIndex
+	UpdateTitanLoadoutButtons( loadoutIndex, file.activateButtons )
 }

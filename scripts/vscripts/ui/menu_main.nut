@@ -345,14 +345,14 @@ void function LaunchGame()
 	else if ( uiGlobal.launching == eLaunching.SINGLEPLAYER_MISSION_SELECT )
 		AdvanceMenu( GetMenu( "SinglePlayerMenu" ) )
 	else
-		thread StartMatchmakingIntoEmptyServer( "" )
+		thread StartSearchForPartyServer()
 
 	uiGlobal.launching = eLaunching.FALSE
 }
 
-void function StartMatchmakingIntoEmptyServer( string playlist )
+void function StartSearchForPartyServer()
 {
-	printt( "StartMatchmakingIntoEmptyServer" )
+	printt( "StartSearchForPartyServer" )
 
 #if DURANGO_PROG
 		// IMPORTANT: As a safety measure leave any party view we are in at this point.
@@ -382,18 +382,6 @@ void function StartMatchmakingIntoEmptyServer( string playlist )
 
 	Hud_Show( uiGlobal.ConfirmMenuMessage )
 	Hud_Show( uiGlobal.ConfirmMenuErrorCode )
-
-	// Ps4_Schedule_CheckPlus()
-	// {
-	//    while( Ps4_CheckPlus_Running() )
-	// 		WaitFrame()
-    //
-	//    if( !Ps4_CheckPlus_Allowed() )
-	//    {
-  	// 	  MatchmakingCancel()
-	//       return;
-	// 	}
-	//  }
 
 #if DURANGO_PROG
 		if( !Console_IsOnline() )
@@ -550,9 +538,9 @@ void function StartMatchmakingIntoEmptyServer( string playlist )
 		}
 #endif // PC_PROG
 
-	printt( "MatchmakingBegin" )
+	printt( "SearchForPartyServer" )
 	SetMenuWasMultiplayerPlayedLast( true )
-	MatchmakingBegin( playlist )
+	SearchForPartyServer()
 
 	Hud_SetAutoText( uiGlobal.ConfirmMenuMessage, "", HATT_MATCHMAKING_EMPTY_SERVER_SEARCH_STATE, 0 )
 	Hud_SetAutoText( uiGlobal.ConfirmMenuErrorCode, "", HATT_MATCHMAKING_EMPTY_SERVER_SEARCH_ERROR, 0 )

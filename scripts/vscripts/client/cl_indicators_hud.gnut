@@ -7,6 +7,10 @@ global function OutOfBoundsOverlayHUD_AddPlayer
 global function OutOfBoundsDeadTime_Changed
 global function ServerCallback_UpdateOverheadIconForNPC
 
+global function SetShouldShowFriendIcon
+global function TurnOffAllFriendIcons
+
+
 const vector DEATH_ICON_OFFSET = <0.0, 0.0, 16.0>
 
 const asset OVERHEAD_ICON_AI_FRIENDLY = $"overhead_icon_ai_friendly"
@@ -15,6 +19,8 @@ struct
 {
 	int nextFreeDeathIcon
 	int nextFreeEnemyDeathIcon
+
+	bool shouldShowFriendIcon = true
 } file
 
 function ClIndicatorsHud_Init()
@@ -123,6 +129,9 @@ void function FriendIconAddEntity( entity ent )
 
 void function FriendIconAddEntity_Thread( entity ent )
 {
+	if ( !file.shouldShowFriendIcon )
+		return
+
 	ent.Signal( "FriendIconAddEntity_Thread" )
 	ent.EndSignal( "FriendIconAddEntity_Thread" )
 	ent.EndSignal( "OnDestroy" )
@@ -172,6 +181,22 @@ void function FriendIconAddEntity_Thread( entity ent )
 
 		wait 1.0
 	}
+}
+
+void function SetShouldShowFriendIcon( bool value )
+{
+	file.shouldShowFriendIcon = value
+}
+
+void function TurnOffAllFriendIcons()
+{
+	array<entity> allNPCs = GetNPCArray()
+	foreach( npc in allNPCs  )
+	{
+		npc.Signal( "FriendIconAddEntity_Thread" )
+	}
+
+	SetShouldShowFriendIcon( false )
 }
 
 void function OutOfBoundsOverlayHUD_AddPlayer( entity player )

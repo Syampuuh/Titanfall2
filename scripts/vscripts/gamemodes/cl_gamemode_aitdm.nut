@@ -74,7 +74,8 @@ void function DefconUpdated( int team, int defcon, bool actuallyChanged )
 	if ( team == GetLocalViewPlayer().GetTeam() )
 		return
 
-	if ( GetGameState() > eGameState.Playing )
+	int gameState = GetGameState()
+	if ( gameState < 0 || gameState > eGameState.Playing )
 		return
 
 	array<string> defconStatusSub = [

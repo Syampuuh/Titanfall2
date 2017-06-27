@@ -1,5 +1,6 @@
 
 global function UpdatePilotLoadoutPanel
+global function UpdatePilotLoadoutPanelBinds
 global function UpdatePilotLoadoutButtons
 global function UpdatePilotItemButton
 
@@ -29,7 +30,7 @@ void function UpdatePilotLoadoutButtons( int selectedIndex, var[NUM_PERSISTENT_P
 		Hud_SetLocked( button, IsItemLocked( player, pilotLoadoutRef ) )
 
 		bool shouldShowNew = ButtonShouldShowNew( eItemTypes.FEATURE, pilotLoadoutRef )
-		if ( !shouldShowNew && (RefHasAnyNewSubitem( player, loadout.primary ) || RefHasAnyNewSubitem( player, loadout.secondary )) )
+		if ( !shouldShowNew && (RefHasAnyNewSubitem( player, loadout.primary ) || RefHasAnyNewSubitem( player, loadout.secondary ) || RefHasAnyNewSubitem( player, loadout.weapon3 )) )
 			shouldShowNew = true
 
 		if ( IsItemLocked( player, pilotLoadoutRef ) )
@@ -49,13 +50,13 @@ void function UpdatePilotLoadoutPanel( var loadoutPanel, PilotLoadoutDef loadout
 	SetLabelRuiText( Hud_GetChild( loadoutPanel, "TacticalName" ), Localize( GetItemName( loadout.special ) ) )
 	SetLabelRuiText( Hud_GetChild( loadoutPanel, "PrimaryName" ), Localize( GetItemName( loadout.primary ) ) )
 	SetLabelRuiText( Hud_GetChild( loadoutPanel, "SecondaryName" ), Localize( GetItemName( loadout.secondary ) ) )
+	SetLabelRuiText( Hud_GetChild( loadoutPanel, "Weapon3Name" ), Localize( GetItemName( loadout.weapon3 ) ) )
 	SetLabelRuiText( Hud_GetChild( loadoutPanel, "OrdnanceName" ), Localize( GetItemName( loadout.ordnance ) ) )
 	SetLabelRuiText( Hud_GetChild( loadoutPanel, "Kit1Name" ), Localize( GetItemName( loadout.passive1 ) ) )
 	SetLabelRuiText( Hud_GetChild( loadoutPanel, "Kit2Name" ), Localize( GetItemName( loadout.passive2 ) ) )
 	SetLabelRuiText( Hud_GetChild( loadoutPanel, "ExecutionName" ), Localize( GetItemName( loadout.execution ) ) )
 
-	//SetLabelRuiText( Hud_GetChild( loadoutPanel, "TacticalBind" ), Localize( "%offhand1%" ) )
-	//SetLabelRuiText( Hud_GetChild( loadoutPanel, "OrdnanceBind" ), Localize( "%offhand0%" ) )
+	UpdatePilotLoadoutPanelBinds( loadoutPanel )
 
 	var menu = Hud_GetParent( loadoutPanel )
 	array<var> buttons = GetElementsByClassname( menu, "PilotLoadoutPanelButtonClass" )
@@ -80,16 +81,19 @@ void function UpdatePilotLoadoutPanel( var loadoutPanel, PilotLoadoutDef loadout
 	asset pilotCamoImage = loadout.camoIndex > 0 ? CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.camoIndex ) ) : $"rui/menu/common/appearance_button_swatch"
 	asset primaryCamoImage = loadout.primaryCamoIndex > 0 ? CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.primaryCamoIndex ) ) : $"rui/menu/common/appearance_button_swatch"
 	asset secondaryCamoImage = loadout.secondaryCamoIndex > 0 ? CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.secondaryCamoIndex ) ) : $"rui/menu/common/appearance_button_swatch"
+	asset weapon3CamoImage = loadout.weapon3CamoIndex > 0 ? CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.weapon3CamoIndex ) ) : $"rui/menu/common/appearance_button_swatch"
 
 	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonPilotCamo" ) ), "camoImage", pilotCamoImage )
 	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonPrimarySkin" ) ), "camoImage", primaryCamoImage )
 	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonSecondarySkin" ) ), "camoImage", secondaryCamoImage )
+	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonWeapon3Skin" ) ), "camoImage", weapon3CamoImage )
 
 	array<var> nonItemElements
 	nonItemElements.append( Hud_GetChild( loadoutPanel, "ButtonPilotCamo" ) )
 	nonItemElements.append( Hud_GetChild( loadoutPanel, "ButtonGender" ) )
 	nonItemElements.append( Hud_GetChild( loadoutPanel, "ButtonPrimarySkin" ) )
 	nonItemElements.append( Hud_GetChild( loadoutPanel, "ButtonSecondarySkin" ) )
+	nonItemElements.append( Hud_GetChild( loadoutPanel, "ButtonWeapon3Skin" ) )
 	nonItemElements.append( renameEditBox )
 
 	foreach ( elem in nonItemElements )
@@ -114,10 +118,14 @@ void function UpdatePilotItemButton( var button, PilotLoadoutDef loadout, bool i
 	if ( itemType == eItemTypes.PILOT_PRIMARY_ATTACHMENT || itemType == eItemTypes.PILOT_PRIMARY_MOD || itemType == eItemTypes.PILOT_SECONDARY_MOD || itemType == eItemTypes.PILOT_WEAPON_MOD3 )
 	{
 		string parentProperty = GetParentLoadoutProperty( "pilot", propertyName )
+		Assert( parentProperty == "primary" || parentProperty == "secondary" || parentProperty == "weapon3" )
+
 		if ( parentProperty == "primary" )
 			parentItem = GetItemDisplayData( loadout.primary )
-		else
+		else if ( parentProperty == "secondary" )
 			parentItem = GetItemDisplayData( loadout.secondary )
+		else
+			parentItem = GetItemDisplayData( loadout.weapon3 )
 
 		bool isHiddenAttachment = false
 
@@ -149,7 +157,7 @@ void function UpdatePilotItemButton( var button, PilotLoadoutDef loadout, bool i
 		image = GetImage( itemType, itemRef )
 	}
 
-	if ( (itemType == eItemTypes.PILOT_PRIMARY || itemType == eItemTypes.PILOT_SECONDARY) )
+	if ( itemType == eItemTypes.PILOT_PRIMARY || itemType == eItemTypes.PILOT_SECONDARY )
 	{
 		//if ( isEdit )
 		//{
@@ -185,6 +193,15 @@ void function UpdatePilotItemButton( var button, PilotLoadoutDef loadout, bool i
 
 	bool isLocked = false
 	bool shouldShowNew = false
+
+	// For unlock and subitem checks below, treat weapon3 as secondary
+	if ( propertyName == "weapon3Mod1" )
+		propertyName = "secondaryMod1"
+	else if ( propertyName == "weapon3Mod2" )
+		propertyName = "secondaryMod2"
+	else if ( propertyName == "weapon3Mod3" )
+		propertyName = "secondaryMod3"
+
 	string propertyRef = propertyName.tolower()
 
 	if ( !IsSubItemType( itemType ) )
@@ -224,4 +241,23 @@ void function UpdatePilotItemButton( var button, PilotLoadoutDef loadout, bool i
 		}
 	}
 #endif
+}
+
+void function UpdatePilotLoadoutPanelBinds( var loadoutPanel )
+{
+	if ( IsControllerModeActive() )
+	{
+		//SetLabelRuiText( Hud_GetChild( loadoutPanel, "PrimaryBind" ), "%weaponCycle%" )
+		//SetLabelRuiText( Hud_GetChild( loadoutPanel, "SecondaryBind" ), "%weaponCycle%" )
+		SetLabelRuiText( Hud_GetChild( loadoutPanel, "Weapon3Bind" ), Localize( "#WEAPON3_HOLD_HINT" ) )
+	}
+	else
+	{
+		//SetLabelRuiText( Hud_GetChild( loadoutPanel, "PrimaryBind" ), "%weaponSelectPrimary0%" )
+		//SetLabelRuiText( Hud_GetChild( loadoutPanel, "SecondaryBind" ), "%weaponSelectPrimary1%" )
+		SetLabelRuiText( Hud_GetChild( loadoutPanel, "Weapon3Bind" ), Localize( "#WEAPON3_PRESS_HINT" ) )
+	}
+
+	//SetLabelRuiText( Hud_GetChild( loadoutPanel, "TacticalBind" ), Localize( "%offhand1%" ) )
+	//SetLabelRuiText( Hud_GetChild( loadoutPanel, "OrdnanceBind" ), Localize( "%offhand0%" ) )
 }

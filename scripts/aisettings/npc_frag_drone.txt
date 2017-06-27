@@ -9,6 +9,9 @@ npc_frag_drone
 
 	footstep_type					"Tick"
 
+	minSpeedScale					0.8
+	maxSpeedScale					1.5
+
 	BaseClass						npc_frag_drone
 	AIClass							frag_drone
 	TraverseAnimType				frag_drone

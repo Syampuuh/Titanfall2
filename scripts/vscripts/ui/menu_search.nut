@@ -1,5 +1,4 @@
 global function InitSearchMenu
-global function Search_UpdateNetworksMoreButton
 global function Search_UpdateInboxButtons
 global function IsWaitingBeforeMatchMaking
 global function LocalPlayerIsMixtapeSearching
@@ -193,15 +192,6 @@ void function OnCommunityButton_Activate( var button )
 	handlerFunc( button )
 	Hud_SetFocused( file.firstNetworkSubButton )
 }
-
-void function Search_UpdateNetworksMoreButton( bool newStuff )
-{
-	if ( newStuff )
-		ComboButton_SetText( file.networksMoreButton, "#COMMUNITY_MORE_NEW" )
-	else
-		ComboButton_SetText( file.networksMoreButton, "#COMMUNITY_MORE" )
-}
-
 
 void function Search_UpdateInboxButtons()
 {

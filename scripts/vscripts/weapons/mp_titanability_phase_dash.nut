@@ -57,7 +57,12 @@ var function OnWeaponNPCPrimaryAttack_titanability_phase_dash( entity weapon, We
 void function PhaseDash( entity weapon, entity player )
 {
 	float movestunEffect = 1.0 - StatusEffect_Get( player, eStatusEffect.dodge_speed_slow )
-	SetPlayerVelocityFromInput( player, PHASE_DASH_SPEED * movestunEffect, <0,0,200> )
+	float moveSpeed
+	if ( weapon.HasMod( "fd_phase_distance" ) )
+		moveSpeed = PHASE_DASH_SPEED * movestunEffect * 1.5
+	else
+		moveSpeed = PHASE_DASH_SPEED * movestunEffect
+	SetPlayerVelocityFromInput( player, moveSpeed, <0,0,200> )
 }
 
 void function SetPlayerVelocityFromInput( entity player, float scale, vector baseVel = < 0,0,0 > )

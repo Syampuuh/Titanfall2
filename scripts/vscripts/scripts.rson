@@ -38,7 +38,6 @@ Scripts:
 When: "(SERVER || CLIENT) && MP"
 Scripts:
 [
-	//gamemodes/sh_dev_gamemodes_mp.gnut // DEVSCRIPTS REMOVE
 	gamemodes/sh_gamemodes_mp.gnut
 ]
 
@@ -84,7 +83,6 @@ Scripts:
 	sh_calling_cards.gnut
 	_persistentdata.gnut
 	gamemodes/sh_gamemodes.gnut
-	//gamemodes/sh_dev_gamemodes.gnut // DEVSCRIPTS REMOVE
 	mp/sh_challenges_content.nut
 	sh_loadouts.nut
 	sh_mp_utility_all.gnut
@@ -176,7 +174,6 @@ Scripts:
 When: "(SERVER || CLIENT) && MP"
 Scripts:
 [
-    //_dev_remote_functions_mp.gnut // DEVSCRIPTS REMOVE
 	_remote_functions_mp.gnut
 ]
 
@@ -394,6 +391,7 @@ Scripts:
 	gamemodes/sh_gamemode_lts.nut
 	gamemodes/sh_gamemode_ps.nut
 	gamemodes/sh_gamemode_tdm.nut
+	gamemodes/sh_gamemode_ttdm.nut
 	gamemodes/sh_gamemode_aitdm.nut
 	gamemodes/sh_gamemode_wlts_dialogue.nut
 	gamemodes/sh_gamemode_wlts.nut
@@ -461,8 +459,6 @@ Scripts:
 	ai/_ai_marvin_faces.gnut
 	ai/_ai_marvin_jobs.gnut
 	ai/_ai_marvins.gnut
-	ai/_ai_mortar_titans.gnut
-	ai/_ai_nuke_titans.gnut
 	ai/_ai_soldiers.gnut
 	ai/_ai_spawn.gnut
 	ai/_ai_spawn_content.gnut
@@ -564,7 +560,6 @@ Scripts:
 	lobby/_private_lobby.gnut
 	lobby/sh_lobby.gnut
 
-	_harvester.gnut
     sh_loadouts_mp.nut
 	mp/_ai_mp.gnut
 	_ping.gnut
@@ -612,15 +607,11 @@ Scripts:
 	gamemodes/_gamemode_ctf.nut
 
 	gamemodes/_gamemode_lts.nut
-	gamemodes/_gamemode_lts_bomb.nut
 	gamemodes/_gamemode_mfd.nut
-	gamemodes/_gamemode_mfd_pro.nut
 	gamemodes/_gamemode_ps.nut
-	gamemodes/_gamemode_wps.nut
 	gamemodes/_gamemode_tdm.nut
+	gamemodes/_gamemode_ttdm.nut
 	gamemodes/_gamemode_aitdm.nut
-	gamemodes/_gamemode_wlts.nut
-	gamemodes/_gamemode_bomb.nut
 	gamemodes/_gamemode_ffa.nut
 
 	mp/_base_gametype_mp.gnut
@@ -657,7 +648,6 @@ Scripts:
 	client/cl_codecallbacks_sp.gnut
 	client/rui/cl_sp_hud.gnut
 	client/cl_sp_player.gnut
-	client/cl_player_common.gnut
 	client/cl_respawnselect_sp.gnut
 	client/cl_sp_objective.gnut
 	sp/cl_gamestate_sp.gnut
@@ -682,7 +672,6 @@ Scripts:
 	client/cl_music.gnut
 	client/cl_ping.gnut
 	client/cl_player.gnut
-	client/cl_player_common.gnut
 	client/cl_powerup.gnut
 	client/cl_precache.nut
 	client/cl_respawnselect.gnut
@@ -734,6 +723,7 @@ Scripts:
 When: "CLIENT"
 Scripts:
 [
+	client/cl_player_common.gnut
 	client/cl_utility.gnut
 	ai/cl_ai_emp_titans.gnut
 	ai/cl_ai_suicide_spectres.gnut
@@ -887,6 +877,7 @@ Scripts:
     ui/panel_establishuser.nut
 	ui/menu_gamma.nut
 	ui/menu_map_select.nut
+	ui/menu_match_settings.nut
 	ui/menu_matchmaking_utility.nut
 	ui/menu_mode_select.nut
 	ui/menu_playlist.nut
@@ -959,77 +950,3 @@ Scripts:
 ]
 */
 
-// DEVSCRIPTS CONTENT
-/*
-When: "(SERVER || CLIENT) && MP"
-Scripts:
-[
-	sh_matchcandy.gnut
-	sh_pve_objectives.gnut
-	sh_pve_matchchallenge.gnut
-
-	weapons/mp_weapon_arc_trap.nut
-	weapons/mp_ability_pathchooser.nut
-
-	gamemodes/sh_gamemode_atcoop.nut
-    gamemodes/sh_gamemode_fd.nut
-	gamemodes/sh_gamemode_pve_sandbox.nut
-	gamemodes/sh_gamemode_cq.nut
-
-	gamemodes/sh_gamemode_cq_dialogue.nut
-]
-
-
-When: "SERVER && MP"
-Scripts:
-[
-    ai/_ai_mortar_spectres.gnut
-    ai/_ai_sniper_titans.gnut
-	mp/_battery_port.gnut
-
-	gamemodes/_gamemode_atcoop.nut
-    gamemodes/_gamemode_fd.nut
-	gamemodes/_gamemode_pve_sandbox.nut
-	gamemodes/_gamemode_cq.nut
-]
-
-When: "CLIENT && MP"
-Scripts:
-[
-    gamemodes/cl_gamemode_atcoop.nut
-	gamemodes/cl_gamemode_fd.nut
-	gamemodes/cl_gamemode_pve_sandbox.nut
-    gamemodes/cl_gamemode_cq.nut
-
-	conversation/cl_dpad_comms.gnut
-]
-
-When: "UI"
-Scripts:
-[
-	ui/menu_fdplaylist.nut
-	ui/menu_fd_host_match.nut
-	ui/menu_fd_map_select.nut
-    ui/menu_fd_titan_upgrade.nut
-	ui/menu_pvelobby.nut
-    ui/menu_pve_tacticals.nut
-
-	ui/menu_edit_dpad_comms.nut
-	ui/menu_select_dpad_comms.nut
-
-	ui/menu_boost_store.nut
-
-	ui/menu_pathchooser_dialog.nut
-]
-
-
-When: "MP || UI"
-Scripts:
-[
-	conversation/sh_dpad_comms.gnut
-    sh_pve_tacticals.gnut
-    burnmeter/sh_boost_store.gnut
-]
-*/
-
-// END DEVSCRIPTS CONTENT

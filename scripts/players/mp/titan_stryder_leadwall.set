@@ -40,6 +40,10 @@
 				dodgePowerDrain		33
 				powerregenrate		6.6
 			}
+			fd_health_upgrade
+			{
+				health			2500++	[$mp]
+			}
 		}
 	}
 }

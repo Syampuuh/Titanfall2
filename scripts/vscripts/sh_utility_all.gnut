@@ -1269,6 +1269,14 @@ asset function GetWeaponModel( string weaponName )
 	return modelName
 }
 
+asset function GetWeaponViewmodel( string weaponName )
+{
+	asset modelName = GetWeaponInfoFileKeyFieldAsset_Global( weaponName, "viewmodel" )
+	//asset modelName = $"models/weapons/g2/ptpov_g2a4.mdl"
+
+	return modelName
+}
+
 string function GetTitanClassFromSetFile( string setFile ) //JFS: As of right now titanClass is really just the same thing as "titanCharacterName". Should change this for next game if needed.
 {
 	var result = Dev_GetPlayerSettingByKeyField_Global( setFile, "titanCharacterName" )
@@ -1477,4 +1485,59 @@ bool function EmotesEnabled()
 	#else
 		return false
 	#endif
+}
+
+
+array<string> function GetAvailableTitanRefs( entity player )
+{
+	array<string> availableTitanRefs
+
+	int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+	for ( int i = 0; i < enumCount; i++ )
+	{
+		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
+		if ( enumName == "" )
+			continue
+
+		if ( player.GetPersistentVarAsInt( "titanClassLockState[" + enumName + "]" ) > TITAN_CLASS_LOCK_STATE_AVAILABLE )
+			continue
+
+		availableTitanRefs.append( enumName )
+	}
+
+	return availableTitanRefs
+}
+
+int function GetTitanLoadoutIndexForTitanRef( string titanRef )
+{
+	int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+	for ( int i = 0; i < enumCount; i++ )
+	{
+		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
+		if ( enumName == "" )
+			continue
+
+		if ( enumName == titanRef )
+			return i
+	}
+
+	Assert( false, "Couldn't find titanRef " + titanRef  + " in persistence enum titanClasses" )
+	return -1
+}
+
+string function GetTitanRefForLoadoutIndex( int loadoutIndex )
+{
+	int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+	for ( int i = 0; i < enumCount; i++ )
+	{
+		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
+		if ( enumName == "" )
+			continue
+
+		if ( i == loadoutIndex )
+			return enumName
+	}
+
+	Assert( false, "Couldn't find titanRef for " + loadoutIndex  + " in persistence enum titanClasses" )
+	return ""
 }

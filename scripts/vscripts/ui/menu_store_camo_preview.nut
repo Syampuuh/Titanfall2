@@ -104,13 +104,13 @@ void function StoreCamoPreviewButton_GetFocus( var button, int elemNum )
 	RunMenuClientFunction( "PreviewTitanCamoChange", GetItemPersistenceId( file.camoRefs[ elemNum ].titanRef ) )
 
 	// titan weapon
-	RunMenuClientFunction( "PreviewTitanWeaponCamoChange", eItemTypes.TITAN_PRIMARY, GetItemPersistenceId( file.camoRefs[ elemNum ].ref ) )
+	RunMenuClientFunction( "PreviewTitanWeaponCamoChange", GetItemPersistenceId( file.camoRefs[ elemNum ].ref ) )
 
 	// pilot camo
 	RunMenuClientFunction( "PreviewPilotCamoChange", GetItemPersistenceId( file.camoRefs[ elemNum ].pilotRef ) )
 
 	// pilot weapon camo
-	RunMenuClientFunction( "PreviewPilotWeaponCamoChange", eItemTypes.PILOT_PRIMARY, GetItemPersistenceId( file.camoRefs[ elemNum ].ref ) )
+	RunMenuClientFunction( "PreviewPilotWeaponCamoChange", GetItemPersistenceId( file.camoRefs[ elemNum ].ref ) )
 
 	var title = Hud_GetChild( file.menu, "Title" )
 	var rui = Hud_GetRui( title )

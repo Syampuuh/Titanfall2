@@ -57,10 +57,21 @@ function MpTitanWeaponParticleAccelerator_Init()
 void function OnWeaponStartZoomIn_titanweapon_particle_accelerator( entity weapon )
 {
 	array<string> mods = weapon.GetMods()
-	if ( weapon.HasMod( "pas_ion_weapon_ads" ) )
-		mods.append( "proto_particle_accelerator_pas" )
+	if ( weapon.HasMod( "fd_split_shot_damage") )
+	{
+		if ( weapon.HasMod( "pas_ion_weapon_ads" ) )
+			mods.append( "fd_upgraded_proto_particle_accelerator_pas" )
+		else
+			mods.append( "fd_upgraded_proto_particle_accelerator" )
+	}
 	else
-		mods.append( "proto_particle_accelerator" )
+	{
+		if ( weapon.HasMod( "pas_ion_weapon_ads" ) )
+			mods.append( "proto_particle_accelerator_pas" )
+		else
+			mods.append( "proto_particle_accelerator" )
+	}
+
 	weapon.SetMods( mods )
 
 	#if CLIENT

@@ -548,6 +548,7 @@ WeaponData
 			"damage_near_value"   							"--10" //45 3 -> 3
 			"damage_far_value"								"--5" //35 3 -> 4
 			"damage_headshot_scale"							"2.0"
+			"fire_rate"   									"5.5"
 		}
 		amped_ttk
 		{

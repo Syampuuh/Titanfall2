@@ -33,7 +33,7 @@ global function CodeCallback_ClaimClientSidePickup_MatchCandy
 #endif // SERVER
 #endif
 
-#if MP && !DEVSCRIPTS
+#if MP
 	#if CLIENT
 	global function ClientCodeCallback_OnPickup_MatchCandy
 	#endif // CLIENT
@@ -192,12 +192,12 @@ void function CodeCallback_PlayerClassChanged( entity player )
 			callbackFunc( player )
 		}
 		#if MP
-		if ( IsAlive( player ) && GetCurrentPlaylistVarInt( "pilot_health", 0 ) != 0 )
+		if ( IsAlive( player ) && !player.IsTitan() && GetCurrentPlaylistVarFloat( "pilot_health_multiplier", 0.0 ) != 0.0 )
 		{
-			int pilotHealth = GetCurrentPlaylistVarInt( "pilot_health", 0 )
-
-			player.SetMaxHealth( pilotHealth )
-			player.SetHealth( pilotHealth )
+			float pilotHealthMultiplier = GetCurrentPlaylistVarFloat( "pilot_health_multiplier", 1.0 )
+			int pilotMaxHealth = int( player.GetMaxHealth() * pilotHealthMultiplier )
+			player.SetMaxHealth( pilotMaxHealth )
+			player.SetHealth( pilotMaxHealth )
 		}
 		#endif
 	#else
@@ -436,7 +436,7 @@ void function CodeCallback_ClaimClientSidePickup_MatchCandy( entity player, int 
 #endif // SERVER
 #endif
 
-#if MP && !DEVSCRIPTS
+#if MP
 #if CLIENT
 void function ClientCodeCallback_OnPickup_MatchCandy( int points, int CSPUFLAGflags )
 {

@@ -3,7 +3,7 @@ Tips
 {
 	// The last index of the TIP_XXX entries to find in the localization files (e.g. r1_english.txt)
 	// Code will pick tips between 1 and this index
-	LastTipIndex			32
+	LastTipIndex			33
 
 	// Tips can be unlocked based on the local client player's level. All tips with a level requirement at or below the player's level are unlocked
 

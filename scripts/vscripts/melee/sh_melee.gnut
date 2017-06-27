@@ -307,6 +307,9 @@ bool function CodeCallback_IsValidMeleeExecutionTarget( entity attacker, entity 
 	if ( action == null )
 		return false
 
+	if ( !PlayerMelee_IsExecutionReachable( attacker, target, 0.3 ) )
+		return false
+
 	return true
 }
 
@@ -316,9 +319,6 @@ bool function CodeCallback_IsValidMeleeAttackTarget( entity attacker, entity tar
 		return false
 
 	if ( target.IsBreakableGlass() )
-		return true
-
-	if ( target.IsPlayerDecoy() )
 		return true
 
 	if ( !CanBeMeleed( target ) )
@@ -341,6 +341,14 @@ bool function CodeCallback_IsValidMeleeAttackTarget( entity attacker, entity tar
 
 	if ( target.GetParent() == attacker )
 		return false
+
+	#if SERVER //Awkward, needed because it's CBaseCombatCharacter on server and C_BaseCombatCharacter on client, and because we allow melee on non BaseCombatCharacters like props that don't have ContextActions defined
+		if ( target instanceof CBaseCombatCharacter && target.ContextAction_IsMeleeExecutionTarget() ) //Don't lunge towards a victim that is already being executed )
+			return false
+	#elseif CLIENT
+		if ( target instanceof C_BaseCombatCharacter && target.ContextAction_IsMeleeExecutionTarget() ) //Don't lunge towards a victim that is already being executed )
+			return false
+	#endif
 
 	entity meleeWeapon = attacker.GetMeleeWeapon()
 	if ( !IsValid( meleeWeapon ) )

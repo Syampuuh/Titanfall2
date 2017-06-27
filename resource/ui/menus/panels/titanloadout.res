@@ -72,8 +72,6 @@
 
         navUp                 	ButtonPassive1
         navDown                	ButtonPassive3
-        navLeft           	    ButtonFDTitanUpgrades
-        navRight           	    ButtonFDTitanUpgrades
 
         pin_to_sibling			ButtonPassive1
         pin_corner_to_sibling	TOP_RIGHT
@@ -262,24 +260,6 @@
         pin_to_sibling			ButtonWeaponCamo
         pin_corner_to_sibling	TOP_LEFT
         pin_to_sibling_corner	TOP_RIGHT
-    }
-
-    ButtonFDTitanUpgrades
-    {
-		ControlName				RuiButton
-		InheritProperties		LoadoutButtonSmall
-        xpos					0
-        scriptID				"fdTitanUpgrades"
-        ypos					10
-
-		navLeft                 ButtonPassive2
-        navRight                ButtonPassive2
-        navDown               	ButtonTitanExecutions
-        navUp               	ButtonPassive4
-
-        pin_to_sibling			ButtonTitanExecutions
-        pin_corner_to_sibling	TOP_LEFT
-        pin_to_sibling_corner	BOTTOM_LEFT
     }
 
     LabelAppearance

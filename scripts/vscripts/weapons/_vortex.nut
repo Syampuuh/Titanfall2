@@ -1807,10 +1807,10 @@ bool function CodeCallback_OnVortexHitProjectile( entity weapon, entity vortexSp
 				if ( attacker.IsTitan() )
 				{
 					int team = attacker.GetTeam()
-					PulseLocation( attacker, team, contactPos )
+					PulseLocation( attacker, team, contactPos, false, false )
 					array<string> mods = projectile.ProjectileGetMods()
 					if ( mods.contains( "pas_tone_sonar" ) )
-						thread DelayedPulseLocation( attacker, team, contactPos )
+						thread DelayedPulseLocation( attacker, team, contactPos, false, false )
 				}
 				break
 

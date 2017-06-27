@@ -99,13 +99,7 @@ void function OnOpenControlsAdvancedLookMenu()
 	UI_SetPresentationType( ePresentationType.NO_MODELS )
 	Button_Toggle_CustomEnabled( null )
 
-	thread DelayedSetFocusThread( file.topButton )
-}
-
-void function DelayedSetFocusThread( var item )
-{
-	WaitEndFrame()
-	Hud_SetFocused( item )
+	thread HACK_DelayedSetFocus_BecauseWhy( file.topButton )
 }
 
 void function OnCloseControlsAdvancedLookMenu()

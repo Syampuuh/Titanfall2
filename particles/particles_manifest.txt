@@ -248,6 +248,7 @@ particles_manifest
 	"file"		"particles/wpn_muzzleflash_sentry_turret.pcf"
 	"file"		"particles/player_inlava.pcf"
 	"file"		"particles/xo_inlava.pcf"
+	"file"		"particles/wpn_xo_arc_trap.pcf"
 
 	//R2
 	"file"		"particles/anti_titan_shield_fx.pcf"
@@ -402,6 +403,7 @@ particles_manifest
 	"file"		"particles/impact_Fx_exp_monarch_beam.pcf"
 	"file"		"particles/player_screen_titan_shield.pcf"
 	"file"		"particles/marvin_fx.pcf"
+	"file"		"particles/wpn_smokescreen_FD.pcf"
 
 
 	//DEV FX

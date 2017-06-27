@@ -512,7 +512,6 @@ WeaponData
 			"charge_levels"									"3"
 			"charge_is_triggered_by_ADS"					"1"
 
-			"impact_effect_table" 							"exp_small"
 			"burst_fire_count"								"1"
 			"burst_fire_delay"								"0.75"
 			"fire_rate"   									"5"
@@ -532,6 +531,16 @@ WeaponData
 			"burst_or_looping_fire_sound_end_3p"			"Weapon_40mm_Fire_3P"
 
 			rui_crosshair_index					"1"
+		}
+		fd_splasher_rounds
+		{
+			"explosion_inner_radius"  						"100"
+			"explosionradius" 								"225"
+			"impact_effect_table" 							"40mm_splasher_rounds"
+		}
+		fd_tone_weapon_2
+		{
+			"ammo_clip_size"   							"24"
 		}
 	}
 

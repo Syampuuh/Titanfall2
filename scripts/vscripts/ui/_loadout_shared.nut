@@ -230,9 +230,13 @@ void function SetupLoadoutItemButtons( array<var> buttons, array<ItemDisplayData
 			{
 				image = GetImage( itemType, loadout.primary, itemRef )
 			}
-			else
+			else if ( uiGlobal.editingLoadoutProperty == "secondaryMod1" || uiGlobal.editingLoadoutProperty == "secondaryMod2" ) // Can't depend on itemType here because it will be the same for secondary and weapon3
 			{
 				image = GetImage( itemType, loadout.secondary, itemRef )
+			}
+			else
+			{
+				image = GetImage( itemType, loadout.weapon3, itemRef )
 			}
 		}
 		else
@@ -392,7 +396,12 @@ void function OnCategorySelectMenu_Open()
 	var menu = GetMenu( "CategorySelectMenu" )
 	var menuTitle = Hud_GetChild( menu, "MenuTitle" )
 
-	Hud_SetText( menuTitle, GetDisplayNameFromItemType( uiGlobal.editingItemType ) )
+	string titleText
+	if ( uiGlobal.editingLoadoutProperty == "weapon3" ) // Without this special case handling, the title would show "Secondary"
+		titleText = GetDisplayNameFromItemType( eItemTypes.PILOT_WEAPON3 )
+	else
+		titleText = GetDisplayNameFromItemType( uiGlobal.editingItemType )
+	Hud_SetText( menuTitle, titleText )
 
 	array<CategoryDef> categoryData
 	Assert( itemType == eItemTypes.PILOT_PRIMARY || itemType == eItemTypes.PILOT_SECONDARY )
@@ -442,7 +451,13 @@ void function OnWeaponSelectMenu_Open()
 	else
 		items = GetVisibleItemsOfType( uiGlobal.editingItemType )
 
-	Hud_SetText( menuTitle, GetDisplayNameFromItemType( uiGlobal.editingItemType ) )
+	string titleText
+	if ( uiGlobal.editingLoadoutProperty == "weapon3" ) // Without this special case handling, the title would show "Secondary"
+		titleText = GetDisplayNameFromItemType( eItemTypes.PILOT_WEAPON3 )
+	else
+		titleText = GetDisplayNameFromItemType( uiGlobal.editingItemType )
+	Hud_SetText( menuTitle, titleText )
+
 	SetupLoadoutItemButtons( buttons, items, uiGlobal.editingItemRef )
 
 	if ( uiGlobal.editingItemType == eItemTypes.PILOT_PRIMARY || uiGlobal.editingItemType == eItemTypes.PILOT_SECONDARY )
@@ -656,7 +671,9 @@ void function HideSubmenuBackgroundElems()
 			uiGlobal.editingLoadoutProperty == "primaryMod1" ||
 			uiGlobal.editingLoadoutProperty == "primaryMod2" ||
 			uiGlobal.editingLoadoutProperty == "secondaryMod1" ||
-			uiGlobal.editingLoadoutProperty == "secondaryMod2" )
+			uiGlobal.editingLoadoutProperty == "secondaryMod2" ||
+			uiGlobal.editingLoadoutProperty == "weapon3Mod1" ||
+			uiGlobal.editingLoadoutProperty == "weapon3Mod2" )
 
 	array<var> elems = GetElementsByClassname( GetMenu( "EditPilotLoadoutMenu" ), "HideWhenEditing_" + uiGlobal.editingLoadoutProperty )
 	foreach ( elem in elems )
@@ -671,6 +688,8 @@ void function RestoreHiddenSubmenuBackgroundElems()
 	classnames.append( "HideWhenEditing_primaryMod2" )
 	classnames.append( "HideWhenEditing_secondaryMod1" )
 	classnames.append( "HideWhenEditing_secondaryMod2" )
+	classnames.append( "HideWhenEditing_weapon3Mod1" )
+	classnames.append( "HideWhenEditing_weapon3Mod2" )
 
 	foreach ( classname in classnames )
 	{
@@ -689,7 +708,9 @@ void function OnModSelectMenu_Open()
 			uiGlobal.editingLoadoutProperty == "primaryMod1" ||
 			uiGlobal.editingLoadoutProperty == "primaryMod2" ||
 			uiGlobal.editingLoadoutProperty == "secondaryMod1" ||
-			uiGlobal.editingLoadoutProperty == "secondaryMod2" )
+			uiGlobal.editingLoadoutProperty == "secondaryMod2" ||
+			uiGlobal.editingLoadoutProperty == "weapon3Mod1" ||
+			uiGlobal.editingLoadoutProperty == "weapon3Mod2" )
 
 	PilotLoadoutDef editLoadout = GetPilotEditLoadout()
 	uiGlobal.editingItemType = GetItemTypeFromPilotLoadoutProperty( uiGlobal.editingLoadoutProperty )
@@ -731,7 +752,7 @@ void function OnModSelectMenu_Open()
 		if ( unavailableMod != "" && unavailableMod != "none" )
 			unavailableItems.append( GetItemDisplayData( unavailableMod, parentItemRef ) )
 	}
-	else
+	else if ( uiGlobal.editingLoadoutProperty == "secondaryMod1" || uiGlobal.editingLoadoutProperty == "secondaryMod2" )
 	{
 		parentItemRef = editLoadout.secondary
 		items.extend( GetDisplaySubItemsOfType( parentItemRef, eItemTypes.PILOT_SECONDARY_MOD ) )
@@ -742,6 +763,21 @@ void function OnModSelectMenu_Open()
 			unavailableMod = editLoadout.secondaryMod2
 		else
 			unavailableMod = editLoadout.secondaryMod1
+
+		if ( unavailableMod != "" && unavailableMod != "none" )
+			unavailableItems.append( GetItemDisplayData( unavailableMod, parentItemRef ) )
+	}
+	else // uiGlobal.editingLoadoutProperty == "weapon3Mod1" || uiGlobal.editingLoadoutProperty == "weapon3Mod2"
+	{
+		parentItemRef = editLoadout.weapon3
+		items.extend( GetDisplaySubItemsOfType( parentItemRef, eItemTypes.PILOT_SECONDARY_MOD ) )
+		items.append( CreateNoneMenuItemData( eItemTypes.PILOT_SECONDARY_MOD ) )
+
+		string unavailableMod
+		if ( uiGlobal.editingLoadoutProperty == "weapon3Mod1" )
+			unavailableMod = editLoadout.weapon3Mod2
+		else
+			unavailableMod = editLoadout.weapon3Mod1
 
 		if ( unavailableMod != "" && unavailableMod != "none" )
 			unavailableItems.append( GetItemDisplayData( unavailableMod, parentItemRef ) )
@@ -931,13 +967,13 @@ void function OnWeaponButton_Activate( var button )
 void function Weapon_Equip( var button )
 {
 	entity player = GetUIPlayer()
-	string itemRef = file.buttonItemData[ button ].ref
+	string changingToRef = file.buttonItemData[ button ].ref
 
 	bool itemChanged = false
-	if ( uiGlobal.editingItemRef != itemRef )
+	if ( uiGlobal.editingItemRef != changingToRef )
 		itemChanged = true
 
-	TryUnlockLoadoutAchievement( itemRef )
+	TryUnlockLoadoutAchievement( changingToRef )
 
 	if ( !IsLobby() && itemChanged )
 	{
@@ -945,12 +981,48 @@ void function Weapon_Equip( var button )
 			uiGlobal.updatePilotSpawnLoadout = true
 	}
 
-	uiGlobal.editingItemRef = itemRef
-	uiGlobal.editingParentItemRef = itemRef
+	uiGlobal.editingItemRef = changingToRef
+	uiGlobal.editingParentItemRef = changingToRef
 	uiGlobal.editingSubitemRef = null
 
 	if ( itemChanged )
-		SetCachedLoadoutValue( player, uiGlobal.editingLoadoutType, uiGlobal.editingLoadoutIndex, uiGlobal.editingLoadoutProperty, itemRef )
+	{
+		if ( uiGlobal.editingLoadoutProperty == "secondary" || uiGlobal.editingLoadoutProperty == "weapon3" )
+		{
+			PilotLoadoutDef loadout = GetCachedPilotLoadout( uiGlobal.editingLoadoutIndex )
+
+			string otherSlotRef
+			string otherLoadoutProperty
+			if ( uiGlobal.editingLoadoutProperty == "secondary" )
+			{
+				otherSlotRef = loadout.weapon3
+				otherLoadoutProperty = "weapon3"
+			}
+			else
+			{
+				otherSlotRef = loadout.secondary
+				otherLoadoutProperty = "secondary"
+			}
+
+			if ( changingToRef == otherSlotRef ) // item dupes swap
+			{
+				SwapSecondaryAndWeapon3LoadoutData( player, uiGlobal.editingLoadoutIndex )
+			}
+			else if ( ItemsInSameMenuCategory( changingToRef, otherSlotRef ) ) // category dupes assign value to other slot and swap
+			{
+				SetCachedLoadoutValue( player, uiGlobal.editingLoadoutType, uiGlobal.editingLoadoutIndex, otherLoadoutProperty, changingToRef )
+				SwapSecondaryAndWeapon3LoadoutData( player, uiGlobal.editingLoadoutIndex )
+			}
+			else // no conflict, just change the weapon
+			{
+				SetCachedLoadoutValue( player, uiGlobal.editingLoadoutType, uiGlobal.editingLoadoutIndex, uiGlobal.editingLoadoutProperty, changingToRef )
+			}
+		}
+		else
+		{
+			SetCachedLoadoutValue( player, uiGlobal.editingLoadoutType, uiGlobal.editingLoadoutIndex, uiGlobal.editingLoadoutProperty, changingToRef )
+		}
+	}
 
 	EmitUISound( "Menu_LoadOut_Weapon_Select" )
 
@@ -1334,7 +1406,9 @@ void function Mod_Equip( var button )
 			uiGlobal.editingLoadoutProperty == "primaryMod1" ||
 			uiGlobal.editingLoadoutProperty == "primaryMod2" ||
 			uiGlobal.editingLoadoutProperty == "secondaryMod1" ||
-			uiGlobal.editingLoadoutProperty == "secondaryMod2" )
+			uiGlobal.editingLoadoutProperty == "secondaryMod2" ||
+			uiGlobal.editingLoadoutProperty == "weapon3Mod1" ||
+			uiGlobal.editingLoadoutProperty == "weapon3Mod2" )
 
 	string itemRef = file.buttonItemData[ button ].ref
 	entity player = GetUIPlayer()

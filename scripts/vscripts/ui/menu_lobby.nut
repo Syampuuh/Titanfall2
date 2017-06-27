@@ -4,30 +4,20 @@ untyped
 global function MenuLobby_Init
 
 global function InitLobbyMenu
-//global function PrivateMatchSwitchTeams
 global function UICodeCallback_SetupPlayerListGenElements
 global function UpdateAnnouncementDialog
 global function EnableButton
 global function DisableButton
 
-global function LeaveParty
-global function LeaveMatchAndParty
-
-global function SCB_RefreshLobby
-
-global function CoopMatchButton_Activate
-
 global function UICodeCallback_CommunityUpdated
 global function UICodeCallback_FactionUpdated
 global function Lobby_UpdateInboxButtons
 
-global function UpdateNetworksMoreButton
 global function GetTimeToRestartMatchMaking
 
 global function RefreshCreditsAvailable
 
 global function InviteFriendsIfAllowed
-global function StartPrivateMatch
 global function SetPutPlayerInMatchmakingAfterDelay
 
 global function DLCStoreShouldBeMarkedAsNew
@@ -54,28 +44,10 @@ struct
 	array matchStartCountdownElems
 	array matchStatusRuis
 
-	array MMDevStringElems
-
-	array myTeamLogoElems
-	array myTeamNameElems
-	array enemyTeamLogoElems
-	array enemyTeamNameElems
 	array creditsAvailableElems
-	array teamSlotBackgrounds
-	array teamSlotBackgroundsNeutral
 
-	var enemyTeamBackgroundPanel
-	var friendlyTeamBackgroundPanel
-	var enemyTeamBackground
-	var friendlyTeamBackground
-	var enemyPlayers
-	var friendlyPlayers
 	var chatroomMenu
 	var chatroomMenu_chatroomWidget
-	var firstNetworkSubButton
-
-	var nextMapNameLabel
-	var nextGameModeLabel
 
 	var findGameButton
 	var inviteRoomButton
@@ -105,8 +77,6 @@ struct
 
 	var genUpButton
 
-//	var armoryButton
-
 	array<var> lobbyButtons
 	var playHeader
 	var customizeHeader
@@ -127,33 +97,8 @@ struct
 	ComboStruct &lobbyComboStruct
 } file
 
-struct
-{
-	var startButton
-	var mapButton
-	var modeButton
-
-	var enemiesPanel
-	var friendliesPanel
-} privateMatch
-
 void function MenuLobby_Init()
 {
-	PrecacheHUDMaterial( $"ui/menu/common/menu_background_neutral" )
-	PrecacheHUDMaterial( $"ui/menu/common/menu_background_imc" )
-	PrecacheHUDMaterial( $"ui/menu/common/menu_background_militia" )
-	PrecacheHUDMaterial( $"ui/menu/common/menu_background_imc_blur" )
-	PrecacheHUDMaterial( $"ui/menu/common/menu_background_militia_blur" )
-	PrecacheHUDMaterial( $"ui/menu/common/menu_background_neutral_blur" )
-	PrecacheHUDMaterial( $"ui/menu/common/menu_background_blackMarket" )
-	PrecacheHUDMaterial( $"ui/menu/rank_menus/ranked_FE_background" )
-
-	PrecacheHUDMaterial( $"ui/menu/lobby/friendly_slot" )
-	PrecacheHUDMaterial( $"ui/menu/lobby/friendly_player" )
-	PrecacheHUDMaterial( $"ui/menu/lobby/enemy_slot" )
-	PrecacheHUDMaterial( $"ui/menu/lobby/enemy_player" )
-	PrecacheHUDMaterial( $"ui/menu/lobby/neutral_slot" )
-	PrecacheHUDMaterial( $"ui/menu/lobby/neutral_player" )
 	PrecacheHUDMaterial( $"ui/menu/lobby/player_hover" )
 	PrecacheHUDMaterial( $"ui/menu/lobby/chatroom_player" )
 	PrecacheHUDMaterial( $"ui/menu/lobby/chatroom_hover" )
@@ -179,26 +124,6 @@ void function Lobby_UpdateInboxButtons()
 	var menu = GetMenu( "LobbyMenu" )
 	if ( GetUIPlayer() == null || !IsPersistenceAvailable() )
 		return
-
-	//if ( Inbox_GetTotalMessageCount() == 0 )
-	//{
-	//	SetComboButtonHeaderTitle( menu, file.inboxHeaderIndex, Localize( "#MENU_HEADER_NETWORKS" )  )
-	//	ComboButton_SetText( file.inboxButton, Localize( "#MENU_TITLE_READ" ) )
-	//	Hud_SetLocked( file.inboxButton, true )
-	//}
-	//else if ( Inbox_HasUnreadMessages() )
-	//{
-	//	int messageCount = Inbox_GetTotalMessageCount()
-	//	SetComboButtonHeaderTitle( menu, file.inboxHeaderIndex, Localize( "#MENU_HEADER_NETWORKS_NEW_MSGS", messageCount )  )
-	//	ComboButton_SetText( file.inboxButton, Localize( "#MENU_TITLE_INBOX_NEW_MSGS", messageCount ) )
-	//	Hud_SetLocked( file.inboxButton, false )
-	//}
-	//else
-	//{
-	//	SetComboButtonHeaderTitle( menu, file.inboxHeaderIndex, Localize( "#MENU_HEADER_NETWORKS" )  )
-	//	ComboButton_SetText( file.inboxButton, Localize( "#MENU_TITLE_READ" ) )
-	//	Hud_SetLocked( file.inboxButton, true )
-	//}
 
 	bool hasNewMail = (Inbox_HasUnreadMessages() && Inbox_GetTotalMessageCount() > 0) || PlayerRandomUnlock_GetTotal( GetUIPlayer() ) > 0
 	if ( hasNewMail )
@@ -231,10 +156,8 @@ void function InitLobbyMenu()
 
 	InitOpenInvitesMenu()
 
-	//AddMenuFooterOption( menu, BUTTON_A, profileText, "#MOUSE1_VIEW_PROFILE", null, IsPlayerListFocused ) // Mismatched input for mouse, but ok with null activateFunc.
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT", "", null, ChatroomIsVisibleAndNotFocused )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
-	//AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_MUTE", "#MOUSE2_MUTE", null, IsPlayerListFocused ) // Mismatched input for mouse, but ok with null activateFunc.
 	AddMenuFooterOption( menu, BUTTON_BACK, "#BACK_BUTTON_POSTGAME_REPORT", "#POSTGAME_REPORT", OpenPostGameMenu, IsPostGameMenuValid )
 	AddMenuFooterOption( menu, BUTTON_TRIGGER_RIGHT, "#R_TRIGGER_CHAT", "", null, IsVoiceChatPushToTalk )
 
@@ -250,21 +173,6 @@ void function InitLobbyMenu()
 	AddMenuEventHandler( menu, eUIEvent.MENU_CLOSE, OnLobbyMenu_Close )
 	AddMenuEventHandler( menu, eUIEvent.MENU_NAVIGATE_BACK, OnLobbyMenu_NavigateBack )
 
-	//AddEventHandlerToButton( menu, "PilotLoadoutsButton", UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "PilotLoadoutsMenu" ) ) )
-	//AddEventHandlerToButton( menu, "TitanLoadoutsButton", UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "TitanLoadoutsMenu" ) ) )
-
-	AddEventHandlerToButton( menu, "StartMatchButton", UIE_CLICK, OnStartMatchButton_Activate )
-	AddEventHandlerToButton( menu, "StartMatchButton", UIE_GET_FOCUS, OnStartMatchButton_GetFocus )
-	AddEventHandlerToButton( menu, "StartMatchButton", UIE_LOSE_FOCUS, OnStartMatchButton_LoseFocus )
-
-	AddEventHandlerToButton( menu, "MapsButton", UIE_CLICK, OnMapsButton_Activate )
-	AddEventHandlerToButton( menu, "ModesButton", UIE_CLICK, OnModesButton_Activate )
-	AddEventHandlerToButton( menu, "OldSettingsButton", UIE_CLICK, OnSettingsButton_Activate )
-
-	//AddEventHandlerToButton( menu, "CommunityButton", UIE_CLICK, OnCommunityButton_Activate )
-
-	RegisterUIVarChangeCallback( "badRepPresent", UpdateLobbyBadRepPresentMessage )
-
 	RegisterUIVarChangeCallback( "gameStartTime", GameStartTime_Changed )
 
 	RegisterUIVarChangeCallback( "showGameSummary", ShowGameSummary_Changed )
@@ -273,39 +181,11 @@ void function InitLobbyMenu()
 	file.searchTextElems = GetElementsByClassnameForMenus( "SearchTextClass", uiGlobal.allMenus )
 	file.matchStartCountdownElems = GetElementsByClassnameForMenus( "MatchStartCountdownClass", uiGlobal.allMenus )
 	file.matchStatusRuis = GetElementsByClassnameForMenus( "MatchmakingStatusRui", uiGlobal.allMenus )
-	file.MMDevStringElems = GetElementsByClassnameForMenus( "MMDevStringClass", uiGlobal.allMenus )
-	file.myTeamLogoElems = GetElementsByClassnameForMenus( "MyTeamLogoClass", uiGlobal.allMenus )
-	file.myTeamNameElems = GetElementsByClassnameForMenus( "MyTeamNameClass", uiGlobal.allMenus )
-	file.enemyTeamLogoElems = GetElementsByClassnameForMenus( "EnemyTeamLogoClass", uiGlobal.allMenus )
-	file.enemyTeamNameElems = GetElementsByClassnameForMenus( "EnemyTeamNameClass", uiGlobal.allMenus )
 	file.creditsAvailableElems = GetElementsByClassnameForMenus( "CreditsAvailableClass", uiGlobal.allMenus )
-
-	file.enemyPlayers = Hud_GetChild( menu, "MatchEnemiesPanel" )
-	file.friendlyPlayers = Hud_GetChild( menu, "MatchFriendliesPanel" )
-
-	file.enemyTeamBackgroundPanel = Hud_GetChild( file.enemyPlayers, "LobbyEnemyTeamBackground" )
-	file.friendlyTeamBackgroundPanel = Hud_GetChild( file.friendlyPlayers, "LobbyFriendlyTeamBackground" )
-
-	file.enemyTeamBackground = Hud_GetChild( file.enemyTeamBackgroundPanel, "TeamBackground" )
-	file.friendlyTeamBackground = Hud_GetChild( file.friendlyTeamBackgroundPanel, "TeamBackground" )
-
-	file.teamSlotBackgrounds = GetElementsByClassnameForMenus( "LobbyTeamSlotBackgroundClass", uiGlobal.allMenus )
-	file.teamSlotBackgroundsNeutral = GetElementsByClassnameForMenus( "LobbyTeamSlotBackgroundNeutralClass", uiGlobal.allMenus )
-
-	file.nextMapNameLabel = Hud_GetChild( menu, "NextMapName" )
-	file.nextGameModeLabel = Hud_GetChild( menu, "NextGameModeName" )
-
-	file.firstNetworkSubButton = Hud_GetChild( GetMenu( "CommunitiesMenu" ), "BtnBrowse" )
 
 	file.callsignCard = Hud_GetChild( menu, "CallsignCard" )
 
 	AddEventHandlerToButton( menu, "GenUpButton", UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "Generation_Respawn" ) ) )
-
-	/*#if DURANGO_PROG
-		string profileText = "#A_BUTTON_VIEW_GAMERCARD"
-	#else
-		string profileText = "#A_BUTTON_VIEW_PROFILE"
-	#endif*/
 
 	AddMenuVarChangeHandler( "focus", UpdateFooterOptions )
 	AddMenuVarChangeHandler( "isFullyConnected", UpdateFooterOptions )
@@ -365,13 +245,6 @@ void function SetupComboButtonTest( var menu )
 	Hud_AddEventHandler( file.dpadCommsButton, UIE_CLICK, OnDpadCommsButton_Activate )
 	#endif
 
-	//file.storeButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE" )
-	//Hud_AddEventHandler( file.storeButton, UIE_CLICK, OnStoreButton_Activate )
-//	var armoryButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_ARMORY" )
-//	file.armoryButton = armoryButton
-//	Hud_AddEventHandler( armoryButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ArmoryMenu" ) ) )
-
-
 	headerIndex++
 	buttonIndex = 0
 	file.callsignHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_HEADER_CALLSIGN" )
@@ -407,10 +280,6 @@ void function SetupComboButtonTest( var menu )
 		Hud_AddEventHandler( file.inviteFriendsToNetworkButton, UIE_CLICK, OnInviteFriendsToNetworkButton_Activate )
 	#endif
 
-	// var networksMoreButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#COMMUNITY_MORE" )
-	// Hud_AddEventHandler( networksMoreButton, UIE_CLICK, OnCommunityButton_Activate )
-	// file.networksMoreButton = networksMoreButton
-
 	headerIndex++
 	buttonIndex = 0
 	file.storeHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_HEADER_STORE" )
@@ -433,52 +302,18 @@ void function SetupComboButtonTest( var menu )
 		var soundButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#VIDEO" )
 		Hud_AddEventHandler( soundButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "VideoMenu" ) ) )
 	#endif
-	//var dataCenterButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#DATA_CENTER" )
-	//Hud_AddEventHandler( dataCenterButton, UIE_CLICK, OpenDataCenterDialog )
 	file.faqButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#KNB_MENU_HEADER" )
 	Hud_AddEventHandler( file.faqButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "KnowledgeBaseMenu" ) ) )
 
-	//comboStruct.navUpButton = file.chatroomMenu_chatroomWidget
 	comboStruct.navUpButtonDisabled = true
 	comboStruct.navDownButton = file.genUpButton
 
 	ComboButtons_Finalize( comboStruct )
 }
 
-
-/*bool function IsGamepadSelectValid()
-{
-	return ( IsPlayerListFocused() && ( GetMenuVarBool( "isPrivateMatch" ) || GetMenuVarBool( "isPartyLeader" ) ) )
-}
-
-bool function IsPlayerListFocused()
-{
-	var focusedItem = GetFocus()
-
-	// The check for GetScriptID existing isn't ideal, but if the text chat text output element has focus it will script error otherwise
-	return ( (focusedItem != null) && ("GetScriptID" in focusedItem) && (Hud_GetScriptID( focusedItem ) == "PlayerListButton") )
-}*/
-
 bool function MatchResultsExist()
 {
 	return true // TODO
-}
-
-bool function CanSwitchTeams()
-{
-	return ( GetMenuVarBool( "isPrivateMatch" ) && ( level.ui.privatematch_starting != ePrivateMatchStartState.STARTING ) )
-}
-
-void function LeaveParty()
-{
-	ClientCommand( "party_leave" )
-	Signal( uiGlobal.signalDummy, "LeaveParty" )
-}
-
-void function LeaveMatchAndParty()
-{
-	LeaveParty()
-	LeaveMatch()
 }
 
 void function DoRoomInviteIfAllowed( var button )
@@ -541,22 +376,6 @@ bool function CanInvite()
 	#endif
 }
 
-void function CreatePartyAndStartPrivateMatch()
-{
-	while ( !PartyHasMembers() && !AmIPartyLeader() )
-	{
-		ClientCommand( "createparty" )
-		WaitFrameOrUntilLevelLoaded()
-	}
-	ClientCommand( "StartPrivateMatchSearch" )
-	OpenConnectingDialog()
-}
-
-void function StartPrivateMatch()
-{
-	thread CreatePartyAndStartPrivateMatch()
-}
-
 void function OnLobbyMenu_Open()
 {
 	Assert( IsConnected() )
@@ -578,11 +397,6 @@ void function OnLobbyMenu_Open()
 	if ( uiGlobal.activeMenu == GetMenu( "LobbyMenu" ) )
 		UI_SetPresentationType( ePresentationType.DEFAULT )
 
-/*
-	if ( GetLobbyTypeScript() == eLobbyType.MATCH )
-		Hud_Hide( file.chatroomMenu )
-	else
-*/
 		Hud_Show( file.chatroomMenu )
 
 	if ( IsFullyConnected() )
@@ -597,6 +411,16 @@ void function OnLobbyMenu_Open()
 		}
 		if ( !IsPersistenceAvailable() )
 			return
+
+		// Clear hidden boosts
+		array<ItemData> boosts = GetAllItemsOfType( eItemTypes.BURN_METER_REWARD )
+		foreach ( boost in boosts )
+		{
+			if ( boost.hidden )
+			{
+				ClearNewStatus( null, boost.ref )
+			}
+		}
 
 		UpdateCallsignElement( file.callsignCard )
 		RefreshCreditsAvailable()
@@ -728,10 +552,11 @@ void function PutPlayerInMatchmakingAfterDelay()
 		return
 	}
 
-	// Start auto-matchmaking UI for leaders and members
+	// Need to know if you were a party member before the countdown starts in case you leave
+	bool wasAPartyMemberThatIsNotLeader = AmIPartyMember()
 	waitthread WaitBeforeRestartingMatchmaking()
 	// Only the leader should proceed to start matchmaking
-	if ( AmIPartyMember() )
+	if ( wasAPartyMemberThatIsNotLeader )
 		return
 
 	if ( !Console_HasPermissionToPlayMultiplayer() )
@@ -756,6 +581,7 @@ void function WaitBeforeRestartingMatchmaking()
 	float timeToWait
 
 	bool isPartyMemberThatIsNotLeader = AmIPartyMember()
+	SetPutPlayerInMatchmakingAfterDelay( !isPartyMemberThatIsNotLeader )
 
 	if ( isPartyMemberThatIsNotLeader )
 		timeToWait = 99999 //HACK, JFS
@@ -794,21 +620,9 @@ void function WaitBeforeRestartingMatchmaking()
 	}
 }
 
-function SCB_RefreshLobby()
-{
-	if ( uiGlobal.activeMenu != GetMenu( "LobbyMenu" ) )
-		return
-
-	OnLobbyMenu_Open()
-}
-
 void function OnLobbyMenu_Close()
 {
 	Signal( uiGlobal.signalDummy, "OnCloseLobbyMenu" )
-
-	//RegisterButtonPressedCallback( BUTTON_SHOULDER_LEFT, ButtonCallback_RotateNodeCounterClockwise )
-
-	// Hud_Hide( file.chatroomMenu )
 }
 
 void function OnLobbyMenu_NavigateBack()
@@ -851,31 +665,6 @@ function UpdateGameStartTimeCounter()
 	MatchmakingSetCountdownTimer( expect float( level.ui.gameStartTime + 0.0 ), true )
 
 	HideMatchmakingStatusIcons()
-}
-
-function UpdateDebugStatus()
-{
-	EndSignal( uiGlobal.signalDummy, "CleanupInGameMenus" )
-
-	OnThreadEnd(
-		function() : ()
-		{
-			foreach ( elem in file.MMDevStringElems )
-				Hud_Hide( elem )
-		}
-	)
-
-	foreach ( elem in file.MMDevStringElems )
-		Hud_Show( elem )
-
-	while ( true )
-	{
-		local strstr = GetLobbyDevString()
-		foreach ( elem in file.MMDevStringElems )
-			Hud_SetText( elem, strstr )
-
-		WaitFrameOrUntilLevelLoaded()
-	}
 }
 
 bool function MatchmakingStatusShouldShowAsActiveSearch( string matchmakingStatus )
@@ -1150,34 +939,6 @@ void function UpdateAnnouncementDialog()
 	}
 }
 
-function UpdateLobbyTitle()
-{
-	EndSignal( uiGlobal.signalDummy, "OnCloseLobbyMenu" )
-	EndSignal( uiGlobal.signalDummy, "CleanupInGameMenus" )
-
-	local lobbyMenuTitleEl = GetMenu( "LobbyMenu" ).GetChild( "MenuTitle" )
-	string title
-	string lastTitle
-
-	while ( true )
-	{
-		/*if ( GetLobbyTypeScript() == eLobbyType.MATCH )
-			title = expect string( GetCurrentPlaylistVar( "lobbytitle" ) )
-		else*/ if ( GetLobbyTypeScript() == eLobbyType.PRIVATE_MATCH )
-			title = "#PRIVATE_MATCH"
-		else
-			title = "#MULTIPLAYER"
-
-		if ( title != lastTitle )
-		{
-			lobbyMenuTitleEl.SetText( title )
-			lastTitle = title
-		}
-
-		WaitFrameOrUntilLevelLoaded()
-	}
-}
-
 bool function CurrentMenuIsPVEMenu()
 {
 	var topMenu = GetTopNonDialogMenu()
@@ -1264,60 +1025,6 @@ void function BigPlayButton1_Activate( var button )
 	AdvanceMenu( GetMenu( playlistMenuName ) )
 }
 
-void function CoopMatchButton_Activate( var button )
-{
-}
-
-// Handles turning on/off buttons when we switch lobby types
-// Also, Any button we disable needs to set a new focus if they are focused when we disable them
-void function UpdateLobbyTypeButtons( var menu, int lobbyType )
-{
-/*
-	var bigPlayButton1 = Hud_GetChild( menu, "BigPlayButton1" )
-	var coopMatchButton = Hud_GetChild( menu, "CoopMatchButton" )
-	var privateMatchButton = Hud_GetChild( menu, "PrivateMatchButton" )
-	var startMatchButton = Hud_GetChild( menu, "StartMatchButton" )
-	var mapsButton = Hud_GetChild( menu, "MapsButton" )
-	var modesButton = Hud_GetChild( menu, "ModesButton" )
-	var settingsButton = Hud_GetChild( menu, "OldSettingsButton" )
-
-	array< var > lobbyTypeButtons = [ bigPlayButton1, privateMatchButton, startMatchButton, mapsButton, modesButton, settingsButton ]
-
-	table< int, array< var > > enableList = {}
-	enableList[eLobbyType.SOLO] <- [ bigPlayButton1, privateMatchButton ]
-	enableList[eLobbyType.PARTY_LEADER] <- [ bigPlayButton1, privateMatchButton ]
-	enableList[eLobbyType.MATCH] <- []
-	enableList[eLobbyType.PARTY_MEMBER] <- []
-	enableList[eLobbyType.PRIVATE_MATCH] <- [ startMatchButton, mapsButton, modesButton, settingsButton ]
-
-	array< var > disableList = []
-
-	int partySize = GetPartySize()
-	foreach ( button in lobbyTypeButtons )
-	{
-		if ( enableList[lobbyType].contains( button ) )
-		{
-			EnableButton( button )
-
-			if ( partySize > 4 && button == coopMatchButton )
-				Hud_SetEnabled( button, false )
-		}
-		else
-		{
-			disableList.append( button )
-		}
-	}
-
-	foreach ( button in disableList )
-	{
-		if ( enableList[lobbyType].len() && Hud_IsFocused( button ) )
-			Hud_SetFocused( enableList[lobbyType][0] )
-
-		DisableButton( button )
-	}
-*/
-}
-
 function EnableButton( button )
 {
 	Hud_SetEnabled( button, true )
@@ -1338,10 +1045,6 @@ function UpdateLobbyUI()
 
 	thread UpdateLobbyType()
 	thread UpdateMatchmakingStatus()
-	thread UpdateDebugStatus()
-	thread UpdateLobbyTitle()
-	//thread MonitorTeamChange()
-	thread MonitorPlaylistChange()
 	thread UpdateChatroomThread()
 	thread UpdateInviteJoinButton()
 	thread UpdateInviteFriendsToNetworkButton()
@@ -1352,16 +1055,6 @@ function UpdateLobbyUI()
 
 	WaitSignal( uiGlobal.signalDummy, "CleanupInGameMenus" )
 	uiGlobal.updatingLobbyUI = false
-}
-
-function UpdateNetworksMoreButton( bool newStuff )
-{
-	// if ( newStuff )
-	// 	ComboButton_SetText( file.networksMoreButton, "#COMMUNITY_MORE_NEW" )
-	// else
-	// 	ComboButton_SetText( file.networksMoreButton, "#COMMUNITY_MORE" )
-
-	// Search_UpdateNetworksMoreButton( newStuff )
 }
 
 void function UpdateInviteJoinButton()
@@ -1422,8 +1115,6 @@ function UpdateLobbyType()
 			else
 				printt( "Lobby lobbyType changing from:", debugArray[lastType], "to:", debugArray[lobbyType] )
 
-			UpdateLobbyTypeButtons( menu, lobbyType )
-
 			local animation = null
 
 			switch ( lobbyType )
@@ -1465,30 +1156,6 @@ function UpdateLobbyType()
 	}
 }
 
-function MonitorTeamChange()
-{
-	EndSignal( uiGlobal.signalDummy, "CleanupInGameMenus" )
-
-	local myTeam
-	local lastMyTeam = 0
-	local showBalanced
-	local lastShowBalanced
-
-	while ( true )
-	{
-		myTeam = GetTeam()
-		showBalanced = GetLobbyTeamsShowAsBalanced()
-
-		if ( (myTeam != lastMyTeam) || (showBalanced != lastShowBalanced) || IsPrivateMatch() )
-		{
-			lastMyTeam = myTeam
-			lastShowBalanced = showBalanced
-		}
-
-		WaitFrameOrUntilLevelLoaded()
-	}
-}
-
 void function UICodeCallback_CommunityUpdated()
 {
 	Community_CommunityUpdated()
@@ -1498,112 +1165,6 @@ void function UICodeCallback_CommunityUpdated()
 void function UICodeCallback_FactionUpdated()
 {
 	printt( "Faction changed! to " + GetCurrentFaction() );
-}
-
-
-function UpdateLobbyBadRepPresentMessage()
-{
-	var menu = GetMenu( "LobbyMenu" )
-	var message = Hud_GetChild( menu, "LobbyBadRepPresentMessage" )
-
-	if ( level.ui.badRepPresent )
-	{
-		#if PC_PROG
-			Hud_SetText( message, "#ASTERISK_FAIRFIGHT_CHEATER" )
-		#elseif DURANGO_PROG // #if PC_PROG
-			Hud_SetText( message, "#ASTERISK_BAD_REPUTATION" )
-		#elseif PS4_PROG // #elseif DURANGO_PROG // #if PC_PROG
-			// TODO: cheat protection on PS4?
-		#endif // #elseif PS4_PROG // #elseif DURANGO_PROG // #if PC_PROG
-		Hud_Show( message )
-	}
-	else
-	{
-		Hud_Hide( message )
-	}
-}
-
-void function OnMapsButton_Activate( var button )
-{
-	if ( level.ui.privatematch_starting == ePrivateMatchStartState.STARTING )
-		return
-
-	AdvanceMenu( GetMenu( "MapsMenu" ) )
-}
-
-void function OnModesButton_Activate( var button )
-{
-	if ( level.ui.privatematch_starting == ePrivateMatchStartState.STARTING )
-		return
-
-	AdvanceMenu( GetMenu( "ModesMenu" ) )
-}
-
-void function OnSettingsButton_Activate( var button )
-{
-	if ( level.ui.privatematch_starting == ePrivateMatchStartState.STARTING )
-		return
-
-	AdvanceMenu( GetMenu( "MatchSettingsMenu" ) )
-}
-
-
-void function OnPrivateMatchButton_Activate( var button )
-{
-	ShowPrivateMatchConnectDialog()
-	ClientCommand( "match_playlist private_match" )
-	StartPrivateMatch()
-}
-
-void function OnCommunityButton_Activate( var button )
-{
-	void functionref( var ) handlerFunc = AdvanceMenuEventHandler( GetMenu( "CommunitiesMenu" ) )
-	handlerFunc( button )
-	Hud_SetFocused( file.firstNetworkSubButton )
-}
-
-void function OnStartMatchButton_Activate( var button )
-{
-	ClientCommand( "PrivateMatchLaunch" )
-}
-
-void function OnStartMatchButton_GetFocus( var button )
-{
-	var menu = GetMenu( "LobbyMenu" )
-	Hud_Show( file.chatroomMenu )
-
-	//HandleLockedCustomMenuItem( menu, button, ["#FOO"] )
-}
-
-void function OnPrivateMatchButton_GetFocus( var button )
-{
-	Hud_Show( file.chatroomMenu )
-}
-
-void function OnStartMatchButton_LoseFocus( var button )
-{
-	var menu = GetMenu( "LobbyMenu" )
-	//HandleLockedCustomMenuItem( menu, button, [], true )
-}
-
-function MonitorPlaylistChange()
-{
-	EndSignal( uiGlobal.signalDummy, "CleanupInGameMenus" )
-
-	string playlist
-	string lastPlaylist
-
-	while ( true )
-	{
-		playlist = GetCurrentPlaylistName()
-
-		if ( playlist != lastPlaylist )
-		{
-			lastPlaylist = playlist
-		}
-
-		WaitFrameOrUntilLevelLoaded()
-	}
 }
 
 void function UICodeCallback_SetupPlayerListGenElements( table params, int gen, int rank, bool isPlayingRanked, int pilotClassIndex )

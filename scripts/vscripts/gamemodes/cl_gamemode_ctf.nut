@@ -65,8 +65,10 @@ void function ClCaptureTheFlag_Init()
 	file.imcFlagRui = CreateCockpitRui( $"ui/ctf_flag_marker.rpak", 200 )
 	file.milFlagRui = CreateCockpitRui( $"ui/ctf_flag_marker.rpak", 200 )
 	AddCallback_GameStateEnter( eGameState.Postmatch, DisplayPostMatchTop3 )
+	AddCallback_GameStateEnter( eGameState.Playing, OnGameStatePlaying )
+	AddCallback_GameStateEnter( eGameState.WinnerDetermined, OnGameStateWinnerDetermined )
 
-	ClGameState_RegisterGameStateAsset( $"ui/gamestate_info_ctf.rpak" )
+	ClGameState_RegisterGameStateAsset( $"ui/gamestate_info_ctf_alt.rpak" )
 	SetGameModeScoreBarUpdateRules( GameModeScoreBarRules_CTF )
 }
 
@@ -206,7 +208,6 @@ function CTFHudThink( entity player )
 		}
 
 		UpdateFriendlyFlag( player, flagEnt, newFlagState, newEnemyFlagState )
-
 		UpdateEnemyFlag( player, enemyFlagEnt, newEnemyFlagState )
 
 		WaitFrame()
@@ -227,10 +228,9 @@ function UpdateFriendlyFlag( entity player, entity flagEnt, newFlagState, newEne
 			return
 	}
 	var rui = ClGameState_GetRui()
-	RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags & ~CTFF_ENEMY_HAS_FLAG )
-	RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags & ~CTFF_ENEMY_DROPPED_FLAG )
 
-
+	file.ctfFlags = file.ctfFlags & ~CTFF_ENEMY_HAS_FLAG
+	file.ctfFlags = file.ctfFlags & ~CTFF_ENEMY_DROPPED_FLAG
 
 	switch ( newFlagState )
 	{
@@ -243,20 +243,15 @@ function UpdateFriendlyFlag( entity player, entity flagEnt, newFlagState, newEne
 			break
 		case eFlagState.Held:
 			player.s.friendlyFlagCarrierName = flagEnt.GetParent().GetPlayerName()
-			RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags | CTFF_ENEMY_HAS_FLAG )
-
-			if ( PlayerHasEnemyFlag( player ) )
-			{
-			}
+			file.ctfFlags = file.ctfFlags | CTFF_ENEMY_HAS_FLAG
+			RuiSetString( ClGameState_GetRui(), "enemyCarrierName", flagEnt.GetParent().GetPlayerName() )
 			break
 		case eFlagState.Away:
-			RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags | CTFF_ENEMY_DROPPED_FLAG )
-			if ( PlayerHasEnemyFlag( player ) )
-			{
-			}
+			file.ctfFlags = file.ctfFlags | CTFF_ENEMY_DROPPED_FLAG
 			break
 	}
 
+	RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags )
 	player.s.friendlyFlagState = newFlagState
 
 	clGlobal.levelEnt.Signal( "FlagUpdate" )
@@ -274,9 +269,10 @@ function UpdateEnemyFlag( entity player, entity flagEnt, newFlagState )
 			return
 	}
 	var rui = ClGameState_GetRui()
-	RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags & ~CTFF_FRIENDLY_HAS_FLAG )
-	RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags & ~CTFF_FRIENDLY_DROPPED_FLAG )
-	RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags & ~CTFF_PLAYER_HAS_FLAG )
+
+	file.ctfFlags = file.ctfFlags & ~CTFF_FRIENDLY_HAS_FLAG
+	file.ctfFlags = file.ctfFlags & ~CTFF_FRIENDLY_DROPPED_FLAG
+	file.ctfFlags = file.ctfFlags & ~CTFF_PLAYER_HAS_FLAG
 
 	switch ( newFlagState )
 	{
@@ -287,22 +283,20 @@ function UpdateEnemyFlag( entity player, entity flagEnt, newFlagState )
 			break
 
 		case eFlagState.Away:
-			RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags | CTFF_FRIENDLY_DROPPED_FLAG )
+			file.ctfFlags = file.ctfFlags | CTFF_FRIENDLY_DROPPED_FLAG
 			break
 
 		case eFlagState.Held:
-			if ( flagEnt.GetParent() == player )
-			{
-				RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags | CTFF_PLAYER_HAS_FLAG )
-			}
-			else
-			{
-				RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags | CTFF_FRIENDLY_HAS_FLAG )
-			}
 			player.s.enemyFlagCarrierName = flagEnt.GetParent().GetPlayerName()
+			if ( flagEnt.GetParent() == player )
+				file.ctfFlags = file.ctfFlags | CTFF_PLAYER_HAS_FLAG
+
+			file.ctfFlags = file.ctfFlags | CTFF_FRIENDLY_HAS_FLAG
+			RuiSetString( ClGameState_GetRui(), "friendlyCarrierName", flagEnt.GetParent().GetPlayerName() )
 			break
 	}
 
+	RuiSetInt( ClGameState_GetRui(), "ctfFlags", file.ctfFlags )
 	player.s.enemyFlagState = newFlagState
 
 	clGlobal.levelEnt.Signal( "FlagUpdate" )
@@ -538,4 +532,15 @@ void function ServerCallback_CTF_PlayMatchNearEndMusic()
 
 	PlayMusic( eMusicPieceID.GAMEMODE_1 )
 	file.matchEndingMusicPlayed = true
+}
+
+
+void function OnGameStatePlaying()
+{
+	RuiSetBool( ClGameState_GetRui(), "flagsVisible", true )
+}
+
+void function OnGameStateWinnerDetermined()
+{
+	RuiSetBool( ClGameState_GetRui(), "flagsVisible", false )
 }

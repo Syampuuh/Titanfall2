@@ -366,7 +366,10 @@ WeaponData
 
 	Mods
 	{
-
+		fd_salvo_core
+		{
+			"burst_fire_count"								"25"
+		}
 	}
 
 	active_crosshair_count				"1"

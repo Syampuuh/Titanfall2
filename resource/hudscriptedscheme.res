@@ -1134,7 +1134,7 @@ Scheme
 		{
 			ypos				2
 			zpos				1010
-			wide				570
+			wide				780
 			tall				35
 			visible				0
 			scaleImage			1

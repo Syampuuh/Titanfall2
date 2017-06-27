@@ -89,5 +89,17 @@ WeaponData
             "readymessage"              "#HUD_BURNMETER_READY_AT_TURRET"
             "readyhint"                 "#HUD_BURNMETER_READY_AT_TURRET_HINT"
 		}
+		burnmeter_ap_turret_weapon_inf
+		{
+			"hud_icon"				   "rui/menu/boosts/boost_icon_personel_sentry"
+            "readymessage"              "#BURNMETER_AP_TURRETWEAPON_READY"
+            "readyhint"                 "#BURNMETER_AP_TURRETWEAPON_HINT"
+		}
+		burnmeter_at_turret_weapon_inf
+		{
+			"hud_icon"				    "rui/menu/boosts/boost_icon_titan_sentry"
+            "readymessage"              "#BURNMETER_AT_TURRETWEAPON_READY"
+            "readyhint"                 "#BURNMETER_AT_TURRETWEAPON_HINT"
+		}
 	}
 }

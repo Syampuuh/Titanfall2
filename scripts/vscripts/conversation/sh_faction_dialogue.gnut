@@ -6,6 +6,7 @@ global function GetEnemyFaction
 global function FactionUsesWaveform
 global function ConversationEnabledForFaction
 global function GetFactionCharacterName
+global function ConvertPlayerFactionToIMCOrMilitiaTeam
 #if SERVER
 global function AssignEnemyFaction
 #endif // SERVER
@@ -32,6 +33,7 @@ struct {
 
 global const asset FD_MODEL_DAVIS	= $"models/humans/pilots/sp_medium_stalker_m.mdl" //Copied from SP. Ideally should be made a global const, but not touching SP files unless absolutely needed
 global const asset FD_MODEL_DROZ 	= $"models/humans/pilots/sp_medium_reaper_m.mdl" //Copied from SP. Ideally should be made a global const, but not touching SP files unless absolutely needed
+global const asset FD_MODEL_DROZ_TABLET_PROP = $"models/props/tablet/tablet_mini.mdl"
 
 global table<string, FactionLeaderDataStruct > factionLeaderData
 
@@ -50,6 +52,10 @@ void function ShFactionDialogue_Init()
 	PrecacheModel( FD_MODEL_DROZ ) //Precaching in here instead of FD specific script since we don't do game mode specific precaching...
 
 	PrecacheModel( $"models/props/flask/prop_flask_animated.mdl" ) //Barker's prop
+	PrecacheModel( $"models/Weapons/p2011/w_p2011.mdl" ) //Gates' prop
+
+	PrecacheModel( FD_MODEL_DROZ_TABLET_PROP ) //Droz's prop
+	PrecacheModel( DATA_KNIFE_MODEL ) //Droz uses this too in a single animation
 
 	var factionLeaderDataTable = GetDataTable( $"datatable/faction_leaders.rpak" )
 	int numOfRows = GetDatatableRowCount( factionLeaderDataTable )
@@ -100,8 +106,11 @@ void function ShFactionDialogue_Init()
 		int priority = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, FACTION_DIALOGUE_PRIORITY_COLUMN_NAME ) )
 		float debounce = GetDataTableFloat( dataTable, i, GetDataTableColumnByName( dataTable, FACTION_DIALOGUE_DEBOUNCE_COLUMN_NAME ) )
 
-		Assert( !(conversationName in level.Conversations ), "Already tried to register conversation: " + conversationName )
-		RegisterConversation( conversationName, priority, debounce )
+		string inheritedDebounceConversationsAsOneString = GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable,"inheritedDebounceConversations" ) )
+		array<string> inheritedDebounceConversations = split( inheritedDebounceConversationsAsOneString, " " )
+
+		Assert( !(DoesConversationExist( conversationName ) ), "Already tried to register conversation: " + conversationName )
+		RegisterConversation( conversationName, priority, debounce, inheritedDebounceConversations )
 
 		string waveforms = GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, FACTION_DIALOGUE_DISABLED_LIST_NAME ) )
 		array<string> factions = split( waveforms, " " )
@@ -156,9 +165,49 @@ bool function ShouldPlayFactionDialogue( string conversationType, entity listeni
 			//printt( "lastPlayedTime: " + lastPlayedTime + " debounce time: " + debounceTime + ", not playing Battle Chatter:"  + conversationType )
 			return false
 		}
+
+		array<string> inheritedDebounceConversations = GetInheritedDebounceConversations( conversationType )
+		/*if ( inheritedDebounceConversations.len() > 0 )
+			printt( "ConvType: " + conversationType + " has "  + inheritedDebounceConversations.len() + " inheritedDebounceConversations")*/
+		foreach( conv in inheritedDebounceConversations )
+		{
+			lastPlayedTime = GetConversationLastPlayedTime( conv )
+			if ( lastPlayedTime > 0 && lastPlayedTime + debounceTime > Time() )
+			{
+				//printt( "inheritedDebounceConv: " + conv + " lastPlayedTime: " + lastPlayedTime + " debounce time: " + debounceTime + ", not playing Battle Chatter:"  + conversationType )
+				return false
+			}
+		}
 	#endif
 
 	return true
+}
+
+int function ConvertPlayerFactionToIMCOrMilitiaTeam( entity player )
+{
+	string factionChoice = GetFactionChoice( player )
+
+	switch( factionChoice )
+	{
+		case "faction_apex":
+		case "faction_vinson":
+		case "faction_ares":
+			return TEAM_IMC
+
+		case "faction_64":
+		case "faction_marauder":
+		case "faction_aces":
+		case "faction_marvin":
+			return TEAM_MILITIA
+
+		default:
+			printt( "******" )
+			printt( "Warning, faction choice of: " + factionChoice + "has neither IMC or Militia associated with it, returning TEAM_IMC as default")
+			return TEAM_IMC //Just default
+	}
+
+	unreachable
+
 }
 
 #if SERVER

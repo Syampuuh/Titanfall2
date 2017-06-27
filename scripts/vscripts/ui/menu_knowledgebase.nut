@@ -124,13 +124,7 @@ void function OnOpenKnowledgeBaseMenu()
 	SetNamedRuiBool( file.subjectButtons[0], "isNew", HaveNewCommunityNotes() )
 	SetNamedRuiBool( file.subjectButtons[1], "isNew", HaveNewPatchNotes() )
 
-	thread DelayedSetFocusThread( file.subjectButtons[file.lastSelectedIndex] )
-}
-
-void function DelayedSetFocusThread( var item )
-{
-	WaitEndFrame()
-	Hud_SetFocused( item )
+	thread HACK_DelayedSetFocus_BecauseWhy( file.subjectButtons[file.lastSelectedIndex] )
 }
 
 void function OnKBNSubjectButtonClick( var button )

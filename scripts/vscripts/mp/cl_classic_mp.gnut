@@ -1,17 +1,19 @@
-untyped
-
 global function ClClassicMp_Init
 
 global function ServerCallback_SetClassicSkyScale
 global function ServerCallback_ResetClassicSkyScale
 global function ClassicMP_AddClient
-global function ClassicMP_Client_CallGameStateThinkFunc_PickLoadOut
-global function ClassicMP_Client_CallGameStateEnterFunc_PickLoadOut
+global function ClassicMP_Client_GetGameStateThinkFunc_PickLoadOut
+global function ClassicMP_Client_GetGameStateEnterFunc_PickLoadOut
 global function ClassicMP_Client_SetGameStateThinkFunc_PickLoadOut
 global function ClassicMP_Client_SetGameStateEnterFunc_PickLoadOut
-global function ClassicMP_Client_CallGameStateEnterFunc_WaitingForPlayers
+global function ClassicMP_Client_GetGameStateEnterFunc_WaitingForPlayers
 global function ClassicMP_Client_SetGameStateEnterFunc_WaitingForPlayers
 global function RefreshIntroLoadoutDisplay
+
+global function ClassicMP_DefaultCreateJumpInRui
+global function ClassicMP_SetJumpInRuiText
+
 const DROPSHIP_HERO_MODEL = $"models/vehicle/goblin_dropship/goblin_dropship_hero.mdl"
 const CROW_HERO_MODEL = $"models/vehicle/crow_dropship/crow_dropship_hero.mdl"
 
@@ -22,20 +24,19 @@ struct
 	var introJumpingRUI = null
 	var countdownRUI = null
 	var loadoutsRUI = null
+
+	void functionref( entity ) classicMP_Client_GameStateEnterFunc_PickLoadOut = null
+	void functionref( entity ) classicMP_Client_GameStateThinkFunc_PickLoadOut = null
+	void functionref( entity ) classicMP_Client_GameStateEnterFunc_WaitingForPlayers = null
 } file
 
-function ClClassicMp_Init()
+void function ClClassicMp_Init()
 {
-	level.classicMP_doCustomIntro <- false
-	level.classicMP_Client_GameStateThinkFunc_PickLoadOut <- null
-	level.classicMP_Client_GameStateEnterFunc_PickLoadOut <- null
-	level.classicMP_Client_GameStateEnterFunc_WaitingForPlayers <- null
-
 	RegisterServerVarChangeCallback( "gameStartTime", StartPlayerCountdown )
 	RegisterSignal( "DropShipStream" )
 }
 
-function ClassicMP_AddClient()
+void function ClassicMP_AddClient()
 {
 	if ( !IsMultiplayerPlaylist() )
 		return
@@ -51,7 +52,6 @@ function ClassicMP_AddClient()
 	if ( ClassicMP_ShouldDoDefaultIntro() )
 		ClassicMP_Client_DropshipIntroSetup()
 }
-
 
 void function DropShipStream()
 {
@@ -74,50 +74,53 @@ void function DropShipStream()
 		}
 	)
 
-
 	while ( true )
 	{
-		entity player = GetLocalClientPlayer()
+		player = GetLocalClientPlayer()
 		dropshipModel.SetOrigin( player.GetOrigin() )
 		WaitFrame()
 	}
 }
 
-
-function ClassicMP_Client_DropshipIntroSetup()
+void function ClassicMP_Client_DropshipIntroSetup()
 {
-	// check if both of these are null, if so, we should fall back to default
-	ClassicMP_Client_SetGameStateEnterFunc_WaitingForPlayers( ClassicMP_JumpingToLocation_GameStateEnterFunc_WaitingForPlayers )
+	ClassicMP_Client_SetGameStateEnterFunc_WaitingForPlayers( ClassicMP_DefaultCreateJumpInRui )
 	ClassicMP_Client_SetGameStateEnterFunc_PickLoadOut( ClassicMP_Dropship_GameStateEnterFunc_PickLoadOut )
 }
 
 // gamestate ENTER
-function ClassicMP_JumpingToLocation_GameStateEnterFunc_WaitingForPlayers( players )
+void function ClassicMP_Dropship_GameStateEnterFunc_PickLoadOut( entity player )
 {
-	file.introJumpingRUI = RuiCreate( $"ui/dropship_intro_jumping.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 1001 )
-	RuiSetResolutionToScreenSize( file.introJumpingRUI )
+	ClassicMP_DefaultCreateJumpInRui( player )
+	HidePermanentCockpitRui()
+
+	if ( GameRules_GetGameMode() != LAST_TITAN_STANDING ||
+		GameRules_GetGameMode() != TITAN_BRAWL ||
+		GameRules_GetGameMode() != WINGMAN_LAST_TITAN_STANDING ||
+		GameRules_GetGameMode() != LTS_BOMB )  						// sounds weird to play the dropship SFX before seeing the Titan drop in
+		thread ClassicMP_Dropship_GameStateEnter_PickLoadOutSFX()
 }
 
-function ClassicMP_Dropship_GameStateEnterFunc_PickLoadOut( player )
+void function ClassicMP_DefaultCreateJumpInRui( entity player ) //Takes a player argument it doesn't do anything with just so it can be used as a gamestate enter function
 {
 	if ( file.introJumpingRUI == null )
 	{
 		file.introJumpingRUI = RuiCreate( $"ui/dropship_intro_jumping.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 1001 )
 		RuiSetResolutionToScreenSize( file.introJumpingRUI )
 	}
-	HidePermanentCockpitRui()
-
-	if ( GameRules_GetGameMode() != LAST_TITAN_STANDING ||
-		GameRules_GetGameMode() != WINGMAN_LAST_TITAN_STANDING ||
-		GameRules_GetGameMode() != LTS_BOMB )  						// sounds weird to play the dropship SFX before seeing the Titan drop in
-		thread ClassicMP_Dropship_GameStateEnter_PickLoadOutSFX()
 }
 
-function ClassicMP_Dropship_GameStateEnter_PickLoadOutSFX()
+void function ClassicMP_SetJumpInRuiText( string value )
+{
+	if ( file.introJumpingRUI != null )
+		RuiSetString( file.introJumpingRUI, "introMessage", value )
+}
+
+void function ClassicMP_Dropship_GameStateEnter_PickLoadOutSFX()
 {
 	thread DropShipStream()
 
-	while( level.nv.minPickLoadOutTime == null )
+	while ( level.nv.minPickLoadOutTime == null )
 	{
 		WaitFrame()
 
@@ -129,15 +132,25 @@ function ClassicMP_Dropship_GameStateEnter_PickLoadOutSFX()
 		}
 	}
 
-	local seekTime = MIN_PICK_LOADOUT_TIME - ( level.nv.minPickLoadOutTime - Time() )
+	float startTime = expect float( level.nv.minPickLoadOutTime )
+	float soundStartTime = startTime - PICK_LOADOUT_SOUND_TIME
+
+	while ( Time() < soundStartTime )
+	{
+		wait soundStartTime - Time()
+		startTime = expect float( level.nv.minPickLoadOutTime )
+		soundStartTime = startTime - PICK_LOADOUT_SOUND_TIME
+	}
+
+	float seekTime = PICK_LOADOUT_SOUND_TIME - ( startTime - Time() )
 
 	if ( seekTime < 0.2 )
 		seekTime = 0.0
-	else if ( seekTime > MIN_PICK_LOADOUT_TIME )
-		seekTime = MIN_PICK_LOADOUT_TIME
+	else if ( seekTime > PICK_LOADOUT_SOUND_TIME )
+		seekTime = PICK_LOADOUT_SOUND_TIME
 
 	entity player = GetLocalClientPlayer()
-	local warpJumpSeek = 3.0
+	float warpJumpSeek = 3.0
 
 	string warpSoundEffect
 	if ( player.GetTeam() == TEAM_IMC ) //i.e. bound to the dropship model. We can't actually check the dropship model here since it's not created yet.
@@ -147,19 +160,7 @@ function ClassicMP_Dropship_GameStateEnter_PickLoadOutSFX()
 
 	EmitSoundOnEntityWithSeek( player, warpSoundEffect, warpJumpSeek + seekTime )
 
-	//Removing for E3 because we can't use R1 dialogue. Do we need faction equivalents for this?
-	/*switch( player.GetTeam() )
-	{
-		case TEAM_IMC:
-			EmitSoundOnEntityWithSeek( player, "ClassicMP_Jump_Countdown_IMC", seekTime )
-			break
-
-		case TEAM_MILITIA:
-			EmitSoundOnEntityWithSeek( player, "ClassicMP_Jump_Countdown_MCOR", seekTime )
-			break
-	}*/
-
-	local delay = MIN_PICK_LOADOUT_TIME - seekTime
+	float delay = PICK_LOADOUT_SOUND_TIME - seekTime
 	if ( delay > 0.0 )
 		wait delay
 
@@ -169,7 +170,7 @@ function ClassicMP_Dropship_GameStateEnter_PickLoadOutSFX()
 	FadeOutSoundOnEntity( player, warpSoundEffect, 2.0 )
 }
 
-void function StartPlayerCountdown()
+void function StartPlayerCountdown() //TODO: Note that this runs by default regardless of whether or not we use dropship intro. Should split this out better: right now it also does  "Use double XP" prompt, the faction leader hud elements, etc.
 {
 	if ( !IsMultiplayerPlaylist() )
 		return
@@ -202,7 +203,6 @@ void function StartPlayerCountdown()
 				OverrideFactionLeaderStruct overriddenFactionLeaderData = GetOverrideFactionLeader()
 				factionLogo = overriddenFactionLeaderData.factionLogo
 				factionTitle = overriddenFactionLeaderData.factionName
-
 			}
 			else
 			{
@@ -210,7 +210,7 @@ void function StartPlayerCountdown()
 				ItemDisplayData displayData = GetItemDisplayData( factionChoice )
 				factionLogo = displayData.image
 				factionTitle = displayData.name
-			}			
+			}
 
 			RuiSetGameTime( file.introJumpingRUI, "fadeStartTime", Time() )
 			RuiSetGameTime( file.introJumpingRUI, "gameStartTime", gameStartTime )
@@ -377,8 +377,11 @@ void function RefreshIntroLoadoutDisplay( entity player, int pilotLoadoutIndex, 
 	if ( file.loadoutsRUI == null )
 		return
 
-	RuiSetString( file.loadoutsRUI, "pilotLoadoutName", player.GetPersistentVar( "pilotLoadouts[" + pilotLoadoutIndex + "].name" ) )
-	RuiSetString( file.loadoutsRUI, "titanLoadoutName", player.GetPersistentVar( "titanLoadouts[" + titanLoadoutIndex + "].name" ) )
+	string pilotLoadoutName = expect string ( player.GetPersistentVar( "pilotLoadouts[" + pilotLoadoutIndex + "].name" ) )
+	string titanLoadoutName = expect string ( player.GetPersistentVar( "titanLoadouts[" + titanLoadoutIndex + "].name" ) )
+
+	RuiSetString( file.loadoutsRUI, "pilotLoadoutName", pilotLoadoutName )
+	RuiSetString( file.loadoutsRUI, "titanLoadoutName", titanLoadoutName  )
 	if ( BurnMeterEnabled() )
 	{
 		RuiSetFloat( file.loadoutsRUI, "burnCardAlpha", 1.0 )
@@ -418,7 +421,7 @@ void function RefreshIntroLoadoutDisplay( entity player, int pilotLoadoutIndex, 
 	RuiSetInt( file.loadoutsRUI, "doubleXPCount", Player_GetDoubleXPCount( player ) )
 }
 
-function ServerCallback_SetClassicSkyScale( handle, scale )
+void function ServerCallback_SetClassicSkyScale( int handle, float scale )
 {
 	entity ref = GetEntityFromEncodedEHandle( handle )
 	if ( !IsValid( ref ) )
@@ -426,7 +429,7 @@ function ServerCallback_SetClassicSkyScale( handle, scale )
 	ref.LerpSkyScale( scale, 0.1 )
 }
 
-function ServerCallback_ResetClassicSkyScale( handle )
+void function ServerCallback_ResetClassicSkyScale( int handle )
 {
 	entity ref = GetEntityFromEncodedEHandle( handle )
 	if ( !IsValid( ref ) )
@@ -436,62 +439,58 @@ function ServerCallback_ResetClassicSkyScale( handle )
 
 // ========== CLASSIC MP INTRO CALLBACKS ==========
 // "think" funcs happen every tick during the game state
-function ClassicMP_Client_CallGameStateThinkFunc_PickLoadOut( player )
+void functionref( entity ) function ClassicMP_Client_GetGameStateThinkFunc_PickLoadOut()
 {
 	Assert( IsMultiplayerPlaylist() )
 
-	return level.classicMP_Client_GameStateThinkFunc_PickLoadOut( player  )
+	return file.classicMP_Client_GameStateThinkFunc_PickLoadOut
 }
-
 
 //"enter" funcs only happen once upon entering that gamestate
-function ClassicMP_Client_CallGameStateEnterFunc_PickLoadOut( player )
+void functionref( entity ) function ClassicMP_Client_GetGameStateEnterFunc_PickLoadOut()
 {
 	Assert( IsMultiplayerPlaylist() )
 
-	return level.classicMP_Client_GameStateEnterFunc_PickLoadOut( player  )
+	return file.classicMP_Client_GameStateEnterFunc_PickLoadOut
 }
 
-
-function ClassicMP_Client_SetGameStateThinkFunc_PickLoadOut( func )
+void function ClassicMP_Client_SetGameStateThinkFunc_PickLoadOut( void functionref( entity )func )
 {
 	Assert( IsMultiplayerPlaylist() )
 
-	level.classicMP_Client_GameStateThinkFunc_PickLoadOut = func
+	file.classicMP_Client_GameStateThinkFunc_PickLoadOut = func
 }
 
-
-function ClassicMP_Client_SetGameStateEnterFunc_PickLoadOut( func )
+void function ClassicMP_Client_SetGameStateEnterFunc_PickLoadOut( void functionref( entity ) func )
 {
 	Assert( IsMultiplayerPlaylist() )
 
-	level.classicMP_Client_GameStateEnterFunc_PickLoadOut = func
+	file.classicMP_Client_GameStateEnterFunc_PickLoadOut = func
 }
 
-
-function ClassicMP_ShouldDoDefaultIntro()
+bool function ClassicMP_ShouldDoDefaultIntro()
 {
-	if ( level.classicMP_Client_GameStateThinkFunc_PickLoadOut )
+	if ( file.classicMP_Client_GameStateThinkFunc_PickLoadOut != null )
 		return false
 
-	if ( level.classicMP_Client_GameStateEnterFunc_PickLoadOut )
+	if ( file.classicMP_Client_GameStateEnterFunc_PickLoadOut != null )
 		return false
 
 	return true
 }
 
-function ClassicMP_Client_SetGameStateEnterFunc_WaitingForPlayers( func )
+void function ClassicMP_Client_SetGameStateEnterFunc_WaitingForPlayers( void functionref( entity ) func )
 {
 	Assert( IsMultiplayerPlaylist() )
 
-	level.classicMP_Client_GameStateEnterFunc_WaitingForPlayers = func
+	file.classicMP_Client_GameStateEnterFunc_WaitingForPlayers = func
 }
 
-function ClassicMP_Client_CallGameStateEnterFunc_WaitingForPlayers( player )
+void functionref( entity ) function ClassicMP_Client_GetGameStateEnterFunc_WaitingForPlayers()
 {
 	Assert( IsMultiplayerPlaylist() )
 
-	return level.classicMP_Client_GameStateEnterFunc_WaitingForPlayers( player  )
+	return file.classicMP_Client_GameStateEnterFunc_WaitingForPlayers
 }
 
 

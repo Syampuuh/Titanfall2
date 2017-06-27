@@ -479,6 +479,9 @@ void function RodeoAlertThink( entity cockpit, entity player )
 	file.rodeoRUI = rui
 	RuiSetDrawGroup( rui, RUI_DRAW_NONE )
 	RuiSetBool( rui, "isCockpit", true )
+	#if MP
+	RuiSetBool( rui, "isUsingLargeMinimap", Minimap_IsUsingLargeMinimap() )
+	#endif
 
 	OnThreadEnd(
 		function() : ( rui )

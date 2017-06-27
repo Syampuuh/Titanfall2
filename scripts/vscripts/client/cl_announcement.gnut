@@ -18,6 +18,7 @@ global const int ANNOUNCEMENT_STYLE_RESULTS = 6
 const int ANNOUNCEMENT_STYLE_DEFAULT = ANNOUNCEMENT_STYLE_BIG
 #endif
 
+
 #if SP
 global const int ANNOUNCEMENT_STYLE_CENTER = 100
 global const int ANNOUNCEMENT_STYLE_QUICK = 101
@@ -491,6 +492,7 @@ void function AnnouncementMessage_DisplayOnHud( AnnouncementData announcement )
 			rui = Display_WeaponLeveledUp( levelUpData.itemIndex, levelUpData.gen, levelUpData.level )
 			break
 #endif
+
 
 #if SP
 		case ANNOUNCEMENT_STYLE_CENTER:

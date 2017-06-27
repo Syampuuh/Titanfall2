@@ -498,6 +498,11 @@ WeaponData
 		}
 		fd_mortar_mode
 		{
+
+			"fire_sound_1_npc"								"weapon_spectremortar_fire"
+
+			"impact_effect_table" 							"exp_rocket_spectremortar"
+
 			"spread_stand_hip"  							"0"
         	"spread_stand_ads"   							"0"
         	"damage_near_value"         					"*0.0"
@@ -508,7 +513,11 @@ WeaponData
             "explosion_damage_heavy_armor"					"*0.15"
             "explosion_inner_radius"  						"*0"
             "explosionradius" 								"*0"
+
+            "npc_rest_time_between_bursts_min"				"*1.25"
+			"npc_rest_time_between_bursts_max"				"*2.0"
 		}
+
 		at_unlimited_ammo
         {
             "ammo_no_remove_from_stockpile"					"1"

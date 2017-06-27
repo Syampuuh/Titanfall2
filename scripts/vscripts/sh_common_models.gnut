@@ -19,6 +19,12 @@ global const asset CONTROL_PANEL_MODEL = $"models/communication/terminal_usable_
 global const asset RODEO_BATTERY_MODEL = $"models/titans/medium/titan_medium_battery_static.mdl"
 global const asset MODEL_GENERATOR = $"models/beacon/charge_generator_01_glass.mdl"
 
+#if MP
+global const asset FD_SANDBAGS_1 = $"models/barriers/sandbags_large_01.mdl"
+global const asset FD_SANDBAGS_2 = $"models/barriers/sandbags_curved_01.mdl"
+global const asset FD_SANDBAGS_3 = $"models/barriers/sandbags_double_01.mdl"
+#endif
+
 #if SERVER || CLIENT
 global function ShCommonModels_Init
 
@@ -26,6 +32,12 @@ void function ShCommonModels_Init()
 {
 	PrecacheModel( $"models/weapons/sentry_frag/sentry_frag.mdl" ) // need to derive this from weapon
 	PrecacheModel( $"models/robots/drone_frag/drone_frag.mdl" ) // need to derive this from weapon
+
+	#if MP
+	PrecacheModel( FD_SANDBAGS_1 )
+	PrecacheModel( FD_SANDBAGS_2 )
+	PrecacheModel( FD_SANDBAGS_3 )
+	#endif
 
 	if ( !IsLobby() )
 	{

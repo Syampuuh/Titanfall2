@@ -5,6 +5,7 @@ global function ClRodeoTitan_RegisterNetworkFunctions
 
 global function Pressed_OfferRodeoBattery
 global function Pressed_RequestRodeoBattery
+
 global function TryOfferRodeoBatteryHint
 
 global function PlayBatteryScreenFX
@@ -31,6 +32,7 @@ struct
 	array<entity> batteries
 	var batteryTrackerRui
 	float lastObitTime
+	bool useButtonDown = false
 } file
 
 void function ClRodeoTitan_Init()
@@ -59,6 +61,7 @@ void function ClRodeoTitan_Init()
 	AddEventNotificationCallback( eEventNotifications.BATT_Full, DisplayBattFull )
 	AddCinematicEventFlagChangedCallback( CE_FLAG_HIDE_MAIN_HUD, BatteryTracker_UpdateVisibility )
 	#endif
+
 }
 
 void function ClRodeoTitan_RegisterNetworkFunctions()
@@ -785,3 +788,4 @@ void function DisplayBattFull( entity ent, var info )
 	file.lastObitTime = Time()
 }
 #endif
+

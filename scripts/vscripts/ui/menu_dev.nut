@@ -38,7 +38,10 @@ void function OnOpenDevMenu()
 	file.devMenuFunc = null
 	file.devMenuFuncWithOpParm = null
 	file.devMenuOpParm = null
-	SetDevMenu_Default()
+	if ( IsMultiplayer() )
+		SetDevMenu_MP()
+	else
+		SetDevMenu_Default()
 }
 
 void function InitDevMenu()
@@ -96,6 +99,13 @@ void function SetDevMenu_Default()
 	UpdateDevMenuButtons()
 }
 
+
+void function SetDevMenu_MP()
+{
+	file.devMenuFunc = SetupDefaultDevCommandsMP
+	UpdateDevMenuButtons()
+}
+
 void function ChangeToThisMenu( void functionref() menuFunc )
 {
 	file.devMenuFunc = menuFunc
@@ -120,6 +130,7 @@ void function SetDevMenu_SinglePlayer( var _ )
 
 void function SetupDefaultDevCommands()
 {
+	SetupDevFunc( "Frontier Defense", SetDevMenu_FrontierDefense )
 	// SetupDevFunc( "Difficulty", SetDevMenu_Difficulty )
 	SetupDevFunc( "Single Player", SetDevMenu_SinglePlayer )
 	if ( GetStartPointsForMap( GetActiveLevel() ).len() )
@@ -232,6 +243,76 @@ void function SetupDefaultDevCommands()
 	SetupDevCommand( "Toggle Pain Death sound debug", "script TogglePainDeathDebug()" )
 	SetupDevCommand( "Jump Randomly Forever", "script_client thread JumpRandomlyForever()" )
 }
+
+
+void function SetupDefaultDevCommandsMP()
+{
+	SetupRepeatLastDevCommand()
+
+	SetupDevFunc( "Frontier Defense", SetDevMenu_FrontierDefense )
+
+	SetupDevFunc( "Spawn IMC NPC", SetDevMenu_AISpawn, 2 )
+	SetupDevFunc( "Spawn IMC Boss Titan", SetDevMenu_BossTitans )
+	SetupDevFunc( "Spawn Militia NPC", SetDevMenu_AISpawn, 3 )
+	SetupDevFunc( "Spawn Team 4 NPC", SetDevMenu_AISpawn, 4 )
+
+	SetupDevFunc( "Spawn Titan Weapon", SetDevMenu_TitanWeapons )
+	SetupDevFunc( "Spawn Pilot Weapons", SetDevMenu_PilotWeapons )
+	SetupDevFunc( "Spawn Pilot Offhands", SetDevMenu_PilotOffhands )
+
+	SetupDevFunc( "AI Commands", SetDevMenu_AICommands )
+	SetupDevCommand( "Toggle Model Viewer", "script thread ToggleModelViewer()" )
+	SetupDevCommand( "AI Titan Duel", "script DEV_AITitanDuel()" )
+	SetupDevCommand( "Free Titans for everybody", "script GiveAllTitans()" )
+
+	SetupDevCommand( "Disable NPCs", "script disable_npcs()" )
+	// SetupDevCommand( "Disable New NPCs", "script disable_new_npcs()" )
+
+	SetupDevCommand( "Swap the teams", "script teamswap()" )
+	SetupDevCommand( "Force time limit", "script ForceTimeLimitDone()" )
+	SetupDevCommand( "Force My Team Win", "script_client GetLocalClientPlayer().ClientCommand(\"ForceMyTeamWin\")" )
+	SetupDevCommand( "Force My Team Lose", "script_client GetLocalClientPlayer().ClientCommand(\"ForceMyTeamLose\")" )
+	SetupDevCommand( "Force Match End", "script ForceMatchEnd()" )
+	SetupDevCommand( "Force Draw", "script ForceDraw()" )
+
+	SetupDevCommand( "Toggle Friendly Highlights", "script DEV_ToggleFriendlyHighlight()" )
+	SetupDevCommand( "Export precache script", "script_ui Dev_CommandLineAddParm( \"-autoprecache\", \"\" ); script_ui Dev_CommandLineRemoveParm( \"" + STARTPOINT_DEV_STRING + "\" ); reload" )
+
+	SetupDevCommand( "Doom my titan", "script_client GetLocalViewPlayer().ClientCommand( \"DoomTitan\" )" )
+	SetupDevCommand( "DoF debug (ads)", "script_client ToggleDofDebug()" )
+
+	SetupDevCommand( "ToggleTitanCallInEffects", "script FlagToggle( \"EnableIncomingTitanDropEffects\" )" )
+
+	SetupDevCommand( "Spawn IMC grunt", "SpawnViewGrunt " + TEAM_IMC )
+	SetupDevCommand( "Spawn Militia grunt", "SpawnViewGrunt " + TEAM_MILITIA )
+
+	SetupDevCommand( "Enable titan-always-executes-titan", "script FlagSet( \"ForceSyncedMelee\" )" )
+
+	SetupDevCommand( "Kill All Titans", "script killtitans()" )
+	SetupDevCommand( "Kill All Minions", "script killminions()" )
+
+	SetupDevCommand( "Export leveled_weapons.def / r2_weapons.fgd", "script thread LeveledWeaponDump()" )
+
+	SetupDevCommand( "Summon Players to player 0", "script summonplayers()" )
+	SetupDevCommand( "Display Titanfall spots", "script thread ShowAllTitanFallSpots()" )
+	SetupDevCommand( "Toggle check inside Titanfall Blocker", "script thread DevCheckInTitanfallBlocker()" )
+	SetupDevCommand( "Simulate Game Scoring", "script thread SimulateGameScore()" )
+	SetupDevCommand( "Test Dropship Intro Spawns with Bots", "script thread DebugTestDropshipStartSpawnsForAll()" )
+	SetupDevCommand( "Preview Dropship Spawn at this location", "script SetCustomPlayerDropshipSpawn()" )
+	SetupDevCommand( "Test Dropship Spawn at this location", "script thread DebugTestCustomDropshipSpawn()" )
+	SetupDevCommand( "Max Activity (Pilots)", "script SetMaxActivityMode(1)" )
+	SetupDevCommand( "Max Activity (Titans)", "script SetMaxActivityMode(2)" )
+	SetupDevCommand( "Max Activity (Conger Mode)", "script SetMaxActivityMode(4)" )
+	SetupDevCommand( "Max Activity (Disabled)", "script SetMaxActivityMode(0)" )
+
+	SetupDevCommand( "Toggle Skybox View", "script thread ToggleSkyboxView()" )
+	SetupDevCommand( "Toggle HUD", "ToggleHUD" )
+	SetupDevCommand( "Toggle Offhand Low Recharge", "ToggleOffhandLowRecharge" )
+	SetupDevCommand( "Map Metrics Toggle", "script_client GetLocalClientPlayer().ClientCommand( \"toggle map_metrics 0 1 2 3\" )" )
+	SetupDevCommand( "Toggle Pain Death sound debug", "script TogglePainDeathDebug()" )
+	SetupDevCommand( "Jump Randomly Forever", "script_client thread JumpRandomlyForever()" )
+}
+
 
 void function SetupRepeatLastDevCommand()
 {
@@ -427,6 +508,13 @@ void function SetDevMenu_BossTitans( var _ )
 	InitNpcSettingsFileNamesForDevMenu()
 	ChangeToThisMenu( SetupSpawnBossTitans )
 #endif
+}
+
+void function SetDevMenu_FrontierDefense( var _ )
+{
+	#if DEV
+		thread ChangeToThisMenu( SetupFrontierDefense )
+	#endif
 }
 
 void function SetDevMenu_TitanWeapons( var _ )

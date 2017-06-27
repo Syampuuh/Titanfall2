@@ -8,6 +8,7 @@ global function Obituary
 global function Obituary_GetEntityInfo
 global function Obituary_Print_Localized
 global function Obituary_SetEnabled
+global function Obituary_SetIndexOffset
 
 const NUM_OBITUARY_LINES = 4		// cant change arbitrarily, need to have matching entries in the .res file
 const obituaryTextBoxWidth = 500
@@ -25,6 +26,7 @@ struct
 {
 	array<ObituaryData>		obituaryQueue = []
 	bool obituariesEnabled = true
+	int indexOffest = 0
 } file
 
 struct ObitEntityInfo
@@ -395,7 +397,7 @@ void function UpdateObituaryQueue()
 			continue
 		}
 
-		RuiSetInt( obitData.rui, "offset", index )
+		RuiSetInt( obitData.rui, "offset", index + file.indexOffest )
 		RuiSetGameTime( obitData.rui, "updateTime", Time() )
 	}
 }
@@ -514,4 +516,9 @@ function Obituary_Display( obituaryData )
 void function Obituary_SetEnabled( bool state )
 {
 	file.obituariesEnabled = state
+}
+
+void function Obituary_SetIndexOffset( int offset )
+{
+	file.indexOffest = offset
 }

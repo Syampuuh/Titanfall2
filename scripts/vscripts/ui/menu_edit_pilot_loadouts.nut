@@ -19,6 +19,7 @@ void function InitEditPilotLoadoutsMenu()
 
 	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnPilotLoadoutsMenu_Open )
 	AddMenuEventHandler( menu, eUIEvent.MENU_CLOSE, OnPilotLoadoutsMenu_Close )
+	AddMenuEventHandler( menu, eUIEvent.MENU_INPUT_MODE_CHANGED, OnPilotLoadoutsMenu_InputModeChanged )
 
 	for ( int i = 0; i < NUM_PERSISTENT_PILOT_LOADOUTS; i++ )
 	{
@@ -40,7 +41,6 @@ void function InitEditPilotLoadoutsMenu()
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 }
 
-
 void function OnPilotLoadoutsMenu_Open()
 {
 	entity player = GetUIPlayer()
@@ -56,7 +56,6 @@ void function OnPilotLoadoutsMenu_Open()
 
 	RefreshCreditsAvailable()
 }
-
 
 void function OnPilotLoadoutsMenu_Close()
 {
@@ -74,6 +73,10 @@ void function OnPilotLoadoutsMenu_Close()
 	}
 }
 
+void function OnPilotLoadoutsMenu_InputModeChanged()
+{
+	UpdatePilotLoadoutPanelBinds( file.loadoutPanel )
+}
 
 void function OnLoadoutButton_Focused( var button )
 {
@@ -86,7 +89,6 @@ void function OnLoadoutButton_Focused( var button )
 	RHud_SetText( file.unlockReq, unlockReq )
 }
 
-
 void function UpdatePilotLoadout( int loadoutIndex )
 {
 	PilotLoadoutDef loadout = GetCachedPilotLoadout( loadoutIndex )
@@ -94,7 +96,6 @@ void function UpdatePilotLoadout( int loadoutIndex )
 	UpdatePilotLoadoutPanel( file.loadoutPanel, loadout )
 	RunMenuClientFunction( "UpdatePilotModel", loadoutIndex )
 }
-
 
 void function OnLoadoutButton_Activate( var button )
 {
@@ -145,7 +146,6 @@ void function OnLoadoutButton_Activate( var button )
 	AdvanceMenu( GetMenu( "EditPilotLoadoutMenu" ) )
 }
 
-
 void function OnLoadoutButton_LostFocus( var button )
 {
 	entity player = GetUIPlayer()
@@ -160,6 +160,6 @@ void function OnLoadoutButton_LostFocus( var button )
 		return
 
 	PilotLoadoutDef loadout = GetCachedPilotLoadout( loadoutIndex )
-	if ( (RefHasAnyNewSubitem( player, loadout.primary ) || RefHasAnyNewSubitem( player, loadout.secondary )) )
+	if ( (RefHasAnyNewSubitem( player, loadout.primary ) || RefHasAnyNewSubitem( player, loadout.secondary ) || RefHasAnyNewSubitem( player, loadout.weapon3 )) )
 		Hud_SetNew( button, true )
 }

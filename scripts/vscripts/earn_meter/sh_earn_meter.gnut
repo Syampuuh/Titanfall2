@@ -215,19 +215,14 @@ bool function EarnMeterMP_IsTitanEarnGametype()
 	if ( GAMETYPE == COLISEUM )
 		return false
 
-	if ( GAMETYPE == FREE_AGENCY )
-		return false
+	//if ( GAMETYPE == FREE_AGENCY )
+	//	return false
 
 	if ( GAMETYPE == LAST_TITAN_STANDING )
 		return false
 
 	if ( GAMETYPE == LTS_BOMB )
 		return false
-
-	#if DEVSCRIPTS
-	if ( GAMETYPE == PVE_SANDBOX )
-		return false
-	#endif
 
 	return true
 }

@@ -395,9 +395,63 @@ WeaponData
     "clip_bodygroup_show_for_milestone_2"	"1"
     "clip_bodygroup_show_for_milestone_3"	"1"
 
+	"reload_alt_anim"								"1"
+
 	Mods
 	{
 		pas_scorch_weapon
+		{
+
+		}
+		fd_wpn_upgrade_1
+		{
+			"ammo_clip_size"   								"2"
+			"ammo_default_total"							"40"
+			"ammo_stockpile_max"							"40"
+			"ammo_no_remove_from_stockpile"					"1"
+			"ammo_min_to_fire"								"1"
+
+			"anim_alt_idleAttack"							"1"
+
+			"fire_rate"   									"1.2"
+			"reload_alt_anim"								"0"
+
+			"reload_is_segmented"							"1"
+			"reload_time" 									"1.6"
+			"reloadempty_time"								"1.6"
+			"reloadsegment_time_loop"						"1.2"
+			"reloadsegment_time_end"						"0.8"
+
+			"ammo_size_segmented_reload"					"1"
+			"ammo_display_as_clips"							"0"
+		}
+		fd_wpn_upgrade_2
+		{
+			"ammo_clip_size"   								"3"
+			"ammo_default_total"							"40"
+			"ammo_stockpile_max"							"40"
+			"ammo_no_remove_from_stockpile"					"1"
+			"ammo_min_to_fire"								"1"
+
+			"anim_alt_idleAttack"							"1"
+
+			"fire_rate"   									"1.2"
+			"reload_alt_anim"								"0"
+
+			"reload_is_segmented"							"1"
+			"reload_time" 									"1.6"
+			"reloadempty_time"								"1.6"
+			"reloadsegment_time_loop"						"1.2"
+			"reloadsegment_time_end"						"0.8"
+
+			"ammo_size_segmented_reload"					"1"
+			"ammo_display_as_clips"							"0"
+		}
+		fd_fire_damage_upgrade
+		{
+
+		}
+		fd_hot_streak
 		{
 
 		}

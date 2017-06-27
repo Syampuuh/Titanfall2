@@ -48,7 +48,11 @@
 
 			core_health_upgrade
 			{
-				health			15000	[$mp]
+				health			5000++	[$mp]
+			}
+			fd_health_upgrade
+			{
+				health			2500++	[$mp]
 			}
 		}
 	}

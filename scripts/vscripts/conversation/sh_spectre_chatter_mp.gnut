@@ -14,7 +14,7 @@ void function ShSpectreChatter_MP_Init()
 		int priority = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "priority" ) )
 		float debounce = GetDataTableFloat( dataTable, i, GetDataTableColumnByName( dataTable, "debounce" ) )
 
-		Assert( !(conversationName in level.Conversations ), "Already tried to register conversation: " + conversationName )
+		Assert( !( DoesConversationExist( conversationName) ), "Already tried to register conversation: " + conversationName )
 
 		RegisterConversation( conversationName, priority, debounce )
 	}

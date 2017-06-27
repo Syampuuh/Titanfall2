@@ -5,8 +5,8 @@ vgui_titan_emp.res
 		ControlName			ImagePanel
 		xpos				0
 		ypos				0
-		wide				1920
-		tall				1080
+		wide				%100
+		tall				%100
 		visible				1
 		image				vgui/HUD/white
 		scaleImage			1

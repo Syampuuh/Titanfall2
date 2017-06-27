@@ -212,7 +212,7 @@ resource/ui/menus/controls.menu
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					SldMouseSensitivity
 			navDown					SwchMouseAcceleration
-			minValue				1.0
+			minValue				0.0
 			maxValue				20.0
 			stepSize				0.2
 			conCommand				"mouse_sensitivity_zoomed"

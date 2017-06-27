@@ -93,7 +93,7 @@
 		xpos					0
 		ypos					0
 		tall					135
-		wide					570
+		wide					780
 		rui						"ui/score_header.rpak"
 		zpos					2000
 	}
@@ -106,7 +106,7 @@
 		pin_to_sibling			ScoreboardMyTeamLogo
 		pin_corner_to_sibling	TOP_LEFT
 		pin_to_sibling_corner	BOTTOM_LEFT
-		xpos					-57
+		xpos					153
 		ypos					12
 	}
 	ScoreboardTeammateBackground1
@@ -238,7 +238,7 @@
 		pin_to_sibling			ScoreboardEnemyTeamLogo
 		pin_corner_to_sibling	TOP_LEFT
 		pin_to_sibling_corner	BOTTOM_LEFT
-		xpos					-57
+		xpos					153
 		ypos					12
 	}
 	ScoreboardOpponentBackground1

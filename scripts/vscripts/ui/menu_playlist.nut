@@ -261,6 +261,22 @@ void function UpdatePlaylistButtons()
 	}
 }
 
+void function CreatePartyAndStartPrivateMatch()
+{
+	while ( !PartyHasMembers() && !AmIPartyLeader() )
+	{
+		ClientCommand( "createparty" )
+		WaitFrameOrUntilLevelLoaded()
+	}
+	ClientCommand( "StartPrivateMatchSearch" )
+	OpenConnectingDialog()
+}
+
+void function StartPrivateMatch()
+{
+	thread CreatePartyAndStartPrivateMatch()
+}
+
 bool function PlaylistButton_Click_Internal( var button, string playlistName, array<var> refreshButtons )
 {
 	if ( playlistName == "private_match" )
@@ -311,12 +327,6 @@ bool function PlaylistButton_Click_Internal( var button, string playlistName, ar
 			ColiseumPlaylist_OfferToBuyTickets( refreshButtons, button, 1 )
 			return false
 		}
-	}
-
-	if ( playlistName == "fd" )
-	{
-		AdvanceMenu( GetMenu( "FDMenu" ) )
-		return false
 	}
 
 	CloseActiveMenu() // playlist selection menu

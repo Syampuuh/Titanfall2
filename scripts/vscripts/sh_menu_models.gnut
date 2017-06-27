@@ -57,6 +57,8 @@
 		bool showCallsign
 		bool showStoreBackground
 		bool showStorePrimeBg
+		bool showMiscModel
+
 		void functionref() activateFunc
 	}
 
@@ -69,7 +71,7 @@
 		CharacterData menuPilot
 		CharacterData menuTitan
 		CharacterData menuFaction
-		CharacterData menuBoost
+		CharacterData menuMiscModel
 		CharacterData ornull activeCharacter = null
 		var menuCallsignRui
 		var menuCallsignTopo
@@ -118,13 +120,14 @@
 	global function PreviewPilotWeapon
 	global function SavePilotWeaponPreview
 	global function PreviewPilotWeaponCamoChange
+	global function PreviewPilotWeaponSkinChange
 	global function ClearAllPilotPreview
 
     global function PreviewPilotWeaponMod
     global function SavePilotWeaponModPreview
 
 	global function PreviewPilotCamoChange
-	global function SavePilotCamoPreview
+	//global function SavePilotCamoPreview
 
 	global function PreviewTitanCamoChange
 	global function SaveTitanCamoPreview
@@ -153,7 +156,11 @@
 	global function GetFactionModel
 	global function GetFactionModelSkin
 
+	global function UpdateStoreWeaponModelSkin
+
 	global function UpdateMouseRotateDelta
+
+	global function GetMenuMiscModel // TODO: Remove when done testing
 #endif // CLIENT && MP
 
 #if UI
@@ -239,39 +246,41 @@
 #if CLIENT && MP
 	void function InitPresentationData()
 	{
+		// TODO: Rework so scenes can be defined in a more flexible way (what entities get created, shown, hidden, animated)
 		// TODO: Need anims happening a bit differently for transition support
 		// Interruptable function that plays intro anim and then idle if intro completes uninterrupted
 		// Outro anims should work the same
 
-		SetPresentationData( ePresentationType.INACTIVE, 			null,				false,	false,	false, 360, "camera_menu_main_idle_01", 		DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 1.0,  1.0,  0.0,   "main_idle",				"background_idle",	UpdateBothModels )
-		SetPresentationData( ePresentationType.DEFAULT, 			null,				true,	false,	false, 360, "camera_menu_main_idle_01", 			DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "main_idle",				"background_idle",	UpdateBothModels ) // Show spawn models
-		SetPresentationData( ePresentationType.STORE_CAMO_PACKS, 	null,				false,	false,	false, 360, "camera_menu_main_idle_01", 		DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 200.0, 1000.0, 		  					   0.22, 0.55, 70.0,  "main_idle",				"background_idle",	UpdateBothModels ) // Show spawn models
-		SetPresentationData( ePresentationType.STORE_FRONT, 		null,				false,	true,	false, 360, "camera_menu_settings_idle", 		DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 2300.0, 3000.0, 1.0,  1.0,  0.0,   "main_idle",				"background_idle",	UpdateBothModels ) // Animation change
-		SetPresentationData( ePresentationType.STORE_PRIME_TITANS, 	file.menuTitan,		false,	false,	true, 360, "camera_titan_menu_loadout_idle", 	DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 4000.0, 5000.0, 1.0,  1.0,  200.0, "background_idle",		"focused_idle",		UpdateBothModels ) // Animation change
+		SetPresentationData( ePresentationType.INACTIVE, 			null,				false,	false,	false, false, 360, "camera_menu_main_idle_01", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 1.0,  1.0,  0.0,   "main_idle",			"background_idle",	UpdateBothModels )
+		SetPresentationData( ePresentationType.DEFAULT, 			null,				true,	false,	false, false, 360, "camera_menu_main_idle_01", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "main_idle",			"background_idle",	UpdateBothModels ) // Show spawn models
+		SetPresentationData( ePresentationType.STORE_CAMO_PACKS, 	null,				false,	false,	false, false, 360, "camera_menu_main_idle_01", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 200.0, 				 1000.0, 		  	  0.22, 0.55, 70.0,  "main_idle",			"background_idle",	UpdateBothModels ) // Show spawn models
+		SetPresentationData( ePresentationType.STORE_FRONT, 		null,				false,	true,	false, false, 360, "camera_menu_settings_idle", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 2300.0, 				 3000.0, 			  1.0,  1.0,  0.0,   "main_idle",			"background_idle",	UpdateBothModels ) // Animation change
+		SetPresentationData( ePresentationType.STORE_PRIME_TITANS, 	file.menuTitan,		false,	false,	true, false,  360, "camera_titan_menu_loadout_idle", 	DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 4000.0, 				 5000.0, 			  1.0,  1.0,  200.0, "background_idle",		"focused_idle",		UpdateBothModels ) // Animation change
+		SetPresentationData( ePresentationType.STORE_GENERIC_ITEM,	file.menuMiscModel,	false,	false,	false, false, 360, "camera_menu_burncard_idle", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 1.0,  1.0,  0.0,   "main_idle",			"background_idle" )
 
-		SetPresentationData( ePresentationType.SEARCH, 				null,				true,	false,	false, 360, "camera_menu_main_idle_01", 			DEFAULT_FOV + 10, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "main_idle",			"background_idle",	UpdateBothModels ) // Show spawn models
-		SetPresentationData( ePresentationType.CALLSIGN, 			null,				false,	false,	false, 360, "camera_menu_main_idle_01", 		DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "main_idle",				"background_idle",	UpdateBothModels ) // Show spawn models
-		SetPresentationData( ePresentationType.KNOWLEDGEBASE_MAIN, 	null,				false,	false,	false, 360, "camera_menu_loadout_idle_01", 		DEFAULT_FOV - 25, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 30.0, 			  DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "weapon_inspect_idle",	"background_idle",	UpdateBothModels )
-		SetPresentationData( ePresentationType.KNOWLEDGEBASE_SUB, 	null,				false,	false,	false, 360, "camera_menu_loadout_idle_01", 		DEFAULT_FOV - 28, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 30.0, 			  DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "weapon_inspect_idle",	"background_idle",	UpdateBothModels )
+		SetPresentationData( ePresentationType.SEARCH, 				null,				true,	false,	false,	false, 360, "camera_menu_main_idle_01", 		DEFAULT_FOV + 10, 	DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "main_idle",			"background_idle",	UpdateBothModels ) // Show spawn models
+		SetPresentationData( ePresentationType.CALLSIGN, 			null,				false,	false,	false,	false, 360, "camera_menu_main_idle_01", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "main_idle",			"background_idle",	UpdateBothModels ) // Show spawn models
+		SetPresentationData( ePresentationType.KNOWLEDGEBASE_MAIN, 	null,				false,	false,	false,	false, 360, "camera_menu_loadout_idle_01", 		DEFAULT_FOV - 25,	DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 30.0, 			  	 DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "weapon_inspect_idle",	"background_idle",	UpdateBothModels )
+		SetPresentationData( ePresentationType.KNOWLEDGEBASE_SUB, 	null,				false,	false,	false,	false, 360, "camera_menu_loadout_idle_01", 		DEFAULT_FOV - 28, 	DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 30.0, 			  	 DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "weapon_inspect_idle",	"background_idle",	UpdateBothModels )
 
-		SetPresentationData( ePresentationType.PVE_MAIN, 			null,				false,	false,	false, 360, "camera_menu_loadout_idle_01", 		DEFAULT_FOV - 25, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 30.0, 			  DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "weapon_inspect_idle",	"background_idle",	UpdateBothModels )
+		SetPresentationData( ePresentationType.PVE_MAIN, 			null,				false,	false,	false,	false, 360, "camera_menu_loadout_idle_01", 		DEFAULT_FOV - 25, 	DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 30.0, 			  	 DEFAULT_DOF_FAR_END, 0.22, 0.55, 70.0,  "weapon_inspect_idle",	"background_idle",	UpdateBothModels )
 
-		SetPresentationData( ePresentationType.PILOT, 				file.menuPilot,		false,	false,	false, 360, "camera_menu_loadout_idle_01", 		DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 200.0, 				  300.0, 		       0.4,  0.55, 70.0,  "focused_idle",			"background_idle",	UpdateBothModels ) // Animation change
-		SetPresentationData( ePresentationType.PILOT_LOADOUT_EDIT, 	file.menuPilot,		false,	false,	false, 360, "camera_menu_loadout_idle_01",		DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 200.0, 				  300.0, 		       0.4,  0.55, 70.0,  "focused_idle",			"background_idle", 	UpdateBothModels )
-		SetPresentationData( ePresentationType.PILOT_CHARACTER, 	file.menuPilot,		false,	false,	false, 360, "camera_menu_loadout_idle_01", 		DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 200.0, 				  300.0, 		       0.4,  0.55, 70.0,  "focused_idle",			"background_idle",	UpdateBothModels ) // Animation change
-		SetPresentationData( ePresentationType.PILOT_WEAPON,		file.menuPilot,		false,	false,	false, 360, "camera_menu_loadout_edit_idle_01", DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 0.22, 0.55, 40.0,  "weapon_inspect_idle",	"background_idle",	UpdateBothModels ) // Animation change
+		SetPresentationData( ePresentationType.PILOT, 				file.menuPilot,		false,	false,	false,	false, 360, "camera_menu_loadout_idle_01", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 200.0, 				 300.0, 		      0.4,  0.55, 70.0,  "focused_idle",		"background_idle",	UpdateBothModels ) // Animation change
+		SetPresentationData( ePresentationType.PILOT_LOADOUT_EDIT, 	file.menuPilot,		false,	false,	false,	false, 360, "camera_menu_loadout_idle_01",		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 200.0, 				 300.0, 		      0.4,  0.55, 70.0,  "focused_idle",		"background_idle", 	UpdateBothModels )
+		SetPresentationData( ePresentationType.PILOT_CHARACTER, 	file.menuPilot,		false,	false,	false,	false, 360, "camera_menu_loadout_idle_01", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 200.0, 				 300.0, 		      0.4,  0.55, 70.0,  "focused_idle",		"background_idle",	UpdateBothModels ) // Animation change
+		SetPresentationData( ePresentationType.PILOT_WEAPON,		file.menuPilot,		false,	false,	false,	false, 360, "camera_menu_loadout_edit_idle_01", DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 0.22, 0.55, 40.0,  "weapon_inspect_idle",	"background_idle",	UpdateBothModels ) // Animation change
 
-		SetPresentationData( ePresentationType.TITAN, 				file.menuTitan,		false,	false,	false, 360, "camera_titan_menu_loadout_idle", 	DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 500.0, 				  1000.0, 			   1.0,  1.0,  200.0, "background_idle",		"focused_idle",		UpdateBothModels ) // Animation change
-		SetPresentationData( ePresentationType.TITAN_LOADOUT_EDIT, 	file.menuTitan,		false,	false,	false, 360, "camera_titan_menu_loadout_edit", 	DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 500.0, 				  1000.0, 			   1.0,  1.0,  200.0, "background_idle",		"editing_idle", 	UpdateBothModels )
-		SetPresentationData( ePresentationType.TITAN_WEAPON,	 	file.menuTitan,		false,	false,	false, 360, "camera_titan_menu_loadout_idle", 	DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 500.0, 				  1000.0, 			   1.0,  1.0,  200.0, "background_idle",		"editing_idle", 	UpdateBothModels )
-		SetPresentationData( ePresentationType.TITAN_NOSE_ART, 		file.menuTitan,		false,	false,	false, 100, "camera_menu_noseart_idle", 		DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 500.0, 				  1000.0, 			   1.0,  1.0,  200.0, "background_idle",		"nose_art_idle", 	UpdateBothModels ) // Titan animation change
+		SetPresentationData( ePresentationType.TITAN, 				file.menuTitan,		false,	false,	false,	false, 360, "camera_titan_menu_loadout_idle", 	DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 500.0, 				 1000.0, 			  1.0,  1.0,  200.0, "background_idle",		"focused_idle",		UpdateBothModels ) // Animation change
+		SetPresentationData( ePresentationType.TITAN_LOADOUT_EDIT, 	file.menuTitan,		false,	false,	false,	false, 360, "camera_titan_menu_loadout_edit", 	DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 500.0, 				 1000.0, 			  1.0,  1.0,  200.0, "background_idle",		"editing_idle", 	UpdateBothModels )
+		SetPresentationData( ePresentationType.TITAN_WEAPON,	 	file.menuTitan,		false,	false,	false,	false, 360, "camera_titan_menu_loadout_idle", 	DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 500.0, 				 1000.0, 			  1.0,  1.0,  200.0, "background_idle",		"editing_idle", 	UpdateBothModels )
+		SetPresentationData( ePresentationType.TITAN_NOSE_ART, 		file.menuTitan,		false,	false,	false,	false, 100, "camera_menu_noseart_idle", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, 500.0, 				 1000.0, 			  1.0,  1.0,  200.0, "background_idle",		"nose_art_idle", 	UpdateBothModels ) // Titan animation change
 
-		SetPresentationData( ePresentationType.NO_MODELS, 			null,				false,	false,	false, 360, "camera_menu_settings_idle", 		DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 1.0,  1.0,  0.0,   "main_idle",				"background_idle",	UpdateBothModels ) // Animation change
-		SetPresentationData( ePresentationType.FACTIONS,			file.menuFaction,	false,	false,	false, 360, "camera_menu_faction_idle", 		DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 0.4,  0.55, 70.0,  "main_idle",				"background_idle" )
-		SetPresentationData( ePresentationType.BOOSTS, 				file.menuBoost,		false,	false,	false, 360, "camera_menu_burncard_idle", 		DEFAULT_FOV, DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 1.0,  1.0,  0.0,   "main_idle",				"background_idle" )
+		SetPresentationData( ePresentationType.NO_MODELS, 			null,				false,	false,	false, false, 360, "camera_menu_settings_idle", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 1.0,  1.0,  0.0,   "main_idle",			"background_idle",	UpdateBothModels ) // Animation change
+		SetPresentationData( ePresentationType.FACTIONS,			file.menuFaction,	false,	false,	false, false, 360, "camera_menu_faction_idle", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 0.4,  0.55, 70.0,  "main_idle",			"background_idle" )
+		SetPresentationData( ePresentationType.BOOSTS, 				file.menuMiscModel,	false,	false,	false, true, 360, "camera_menu_burncard_idle", 		DEFAULT_FOV, 		DEFAULT_DOF_NEAR_START, DEFAULT_DOF_NEAR_END, DEFAULT_DOF_FAR_START, DEFAULT_DOF_FAR_END, 1.0,  1.0,  0.0,   "main_idle",			"background_idle" )
 	}
 
-	void function SetPresentationData( int presentationType, CharacterData ornull characterData, bool showCallsign, bool showStoreBackground, bool showStorePrimeBg, float maxTurnDegrees, string sceneAnim, float fov, float dofNearStart, float dofNearEnd, float dofFarStart, float dofFarEnd, float csmTexelScale1, float csmTexelScale2, float csmStartDistance, string pilotAnimType, string titanAnimType, void functionref() activateFunc = null )
+	void function SetPresentationData( int presentationType, CharacterData ornull characterData, bool showCallsign, bool showStoreBackground, bool showStorePrimeBg, bool showMiscModel, float maxTurnDegrees, string sceneAnim, float fov, float dofNearStart, float dofNearEnd, float dofFarStart, float dofFarEnd, float csmTexelScale1, float csmTexelScale2, float csmStartDistance, string pilotAnimType, string titanAnimType, void functionref() activateFunc = null )
 	{
 		file.presentationData[ presentationType ].characterData = characterData
 		file.presentationData[ presentationType ].maxTurnDegrees = maxTurnDegrees
@@ -290,6 +299,7 @@
 		file.presentationData[ presentationType ].showCallsign = showCallsign
 		file.presentationData[ presentationType ].showStoreBackground = showStoreBackground
 		file.presentationData[ presentationType ].showStorePrimeBg = showStorePrimeBg
+		file.presentationData[ presentationType ].showMiscModel = showMiscModel
 	}
 
 	void function UpdateBothModels()
@@ -658,7 +668,7 @@
 		CreateMover( file.menuPilot, "ORIGIN", PILOT_MAX_TURN_SPEED )
 		CreateMover( file.menuTitan, "PROPGUN", TITAN_MAX_TURN_SPEED )
 		CreateMover( file.menuFaction, "CHESTFOCUS" )
-		CreateMover( file.menuBoost, "HEADFOCUS" )
+		CreateMover( file.menuMiscModel, "HEADFOCUS" )
 
 		//thread DrawTag( clGlobal.menuSceneModel, "ORIGIN" )
 		//thread DrawTag( clGlobal.menuSceneModel, "PROPGUN" )
@@ -668,14 +678,14 @@
 		//thread DrawOrg( file.menuPilot.mover )
 		//thread DrawOrg( file.menuTitan.mover )
 		//thread DrawOrg( file.menuFaction.mover )
-		//thread DrawOrg( file.menuBoost.mover )
+		//thread DrawOrg( file.menuMiscModel.mover )
 
 		WaitSignal( level, "CachedLoadoutsReady" )
 
 		CreatePilotModel( player, file.menuPilot.mover )
 		CreateTitanModel( player, file.menuTitan.mover )
 		CreateFactionModel( player, file.menuFaction.mover )
-		CreateBoostModel( player, file.menuBoost.mover )
+		CreateMiscModel( player, file.menuMiscModel.mover )
 		#if HAS_WORLD_CALLSIGN
 			CreateCallsign( player, clGlobal.menuSceneModel )
 		#endif
@@ -946,20 +956,14 @@
 		return propEnt
 	}
 
-	void function CreateBoostModel( entity player, entity mover )
+	void function CreateMiscModel( entity player, entity mover )
 	{
-		string ref = GetSelectedBurnCardRef( player )
-		asset model = GetBoostModel( ref )
-
-		vector refOrigin = mover.GetOrigin()
-		vector refAngles = mover.GetAngles() + <0, 0, 90>
-
-		entity modelEnt = CreateClientSidePropDynamic( refOrigin, refAngles, model )
+		entity modelEnt = CreateClientSidePropDynamic( mover.GetOrigin(), mover.GetAngles(), $"models/dev/empty_model.mdl" )
 		modelEnt.SetParent( mover )
 		modelEnt.SetVisibleForLocalPlayer( 0 )
 		modelEnt.MakeSafeForUIScriptHack()
 
-		file.menuBoost.body = modelEnt
+		file.menuMiscModel.body = modelEnt
 	}
 
 	entity function CreateAttachedModel( entity baseEnt, asset model, string attachName )
@@ -1156,12 +1160,18 @@
 		SetBodyGroupsForWeaponConfig( file.menuPilot.weapon, weapon, mods )
 
 		int weaponCamoIndex
+		int weaponSkinIndex
 		if ( isPreviewingWeaponNotMatchingCurrent )
 		{
 			weaponCamoIndex = 0
+			weaponSkinIndex = 0
 		}
 		else
 		{
+			weaponSkinIndex = clGlobal.previewMenuPilotModels.weaponSkinIndex
+			if ( weaponSkinIndex == 0 )
+				weaponSkinIndex = clGlobal.currentMenuPilotModels.weaponSkinIndex
+
 			weaponCamoIndex = clGlobal.previewMenuPilotModels.weaponCamoIndex
 			if ( weaponCamoIndex == -1 )
 				weaponCamoIndex = clGlobal.currentMenuPilotModels.weaponCamoIndex
@@ -1179,7 +1189,8 @@
 		}
 		else
 		{
-			file.menuPilot.weapon.SetSkin( 0 )
+//			file.menuPilot.weapon.SetSkin( 0 )
+			file.menuPilot.weapon.SetSkin( weaponSkinIndex )
 			//printt( "Set pilot weapon skin to:", 0 )
 			file.menuPilot.weapon.SetCamo( -1 )
 			//printt( "Set pilot weapon camo to:", -1 )
@@ -1377,9 +1388,17 @@
 		UpdatePilotModelDisplay( player )
 	}
 
-	void function PreviewPilotWeaponCamoChange( entity player, int itemType, int camoIndex )
+	void function PreviewPilotWeaponCamoChange( entity player, int camoIndex )
 	{
 		clGlobal.previewMenuPilotModels.weaponCamoIndex = camoIndex
+		UpdatePilotModelDisplay( player )
+	}
+
+	void function PreviewPilotWeaponSkinChange( entity player, int skinIndex )
+	{
+		clGlobal.previewMenuPilotModels.weaponSkinIndex = skinIndex
+		clGlobal.previewMenuPilotModels.weaponCamoIndex = 0
+		printt( "PreviewPilotWeaponSkinChange", clGlobal.previewMenuPilotModels.weaponSkinIndex, clGlobal.previewMenuPilotModels.weaponCamoIndex )
 		UpdatePilotModelDisplay( player )
 	}
 
@@ -1405,7 +1424,7 @@
 		UpdateTitanModelDisplay( player )
 	}
 
-	void function PreviewTitanWeaponCamoChange( entity player, int itemType, int camoIndex )
+	void function PreviewTitanWeaponCamoChange( entity player, int camoIndex )
 	{
 		clGlobal.previewMenuTitanModels.weaponCamoIndex = camoIndex
 		UpdateTitanModelDisplay( player )
@@ -1449,26 +1468,49 @@
 		if ( !clGlobal.initializedMenuModels ) // Handle early calls that UI script can trigger before client is ready
 			return
 
+		vector parentAngles = file.menuMiscModel.body.GetParent().GetAngles()
 		array<ItemDisplayData> items = GetVisibleItemsOfType( eItemTypes.BURN_METER_REWARD )
 		string ref = items[ itemIndex ].ref
 		asset model = GetBoostModel( ref )
-		//string idleAnim = "pt_menu_faction_idle_01"
-		//if ( itemIndex == 0 )
-		//	idleAnim = "dp_idle_C"
-
-		//bool playIdle = false
-		//if ( file.menuBoost.body.GetModelName() != model || idleAnim != file.menuBoost.bodyAnim ) // Model has changed or anim has changed
-		//	playIdle = true
-
-		//file.menuBoost.body.SetModel( model )
 		int skinIndex = GetBoostSkin( ref )
-		file.menuBoost.body.SetSkin( skinIndex )
 
-		//if ( playIdle )
-		//{
-			//PlayMenuAnim( file.menuBoost.body, idleAnim )
-			//file.menuBoost.bodyAnim = idleAnim
-		//}
+		file.menuMiscModel.body.SetAngles( parentAngles + <0, 0, 90> )
+		file.menuMiscModel.body.SetModel( model )
+		file.menuMiscModel.body.SetSkin( skinIndex )
+	}
+
+	void function UpdateStoreWeaponModelSkin( entity player, string weaponRef, int skinIndex )
+	{
+		if ( !clGlobal.initializedMenuModels ) // Handle early calls that UI script can trigger before client is ready
+			return
+
+		printt( "skinIndex:", skinIndex )
+
+		vector parentAngles = file.menuMiscModel.body.GetParent().GetAngles()
+		asset model = GetWeaponViewmodel( weaponRef )
+		//asset model = GetWeaponModel( weaponRef )
+
+		// TODO: positional offset using based on weapon attachment point l_hand_ik
+		// Waiting on SetLocalOrigin() and SetLocalAngles() from code
+
+		//vector originOffset = <0, 0, 0>
+		vector angleOffset = < -90, 0, 0>
+
+		//file.menuMiscModel.body.SetOrigin( parentAngles + originOffset )
+		file.menuMiscModel.body.SetAngles( parentAngles + angleOffset )
+		file.menuMiscModel.body.SetModel( model )
+
+		//file.menuMiscModel.body.SetPlaybackRate( 0.0 )
+
+		//file.menuMiscModel.body.Anim_Play( "ref" )
+		file.menuMiscModel.body.Anim_SetPaused( true )
+
+		file.menuMiscModel.body.SetSkin( skinIndex )
+	}
+
+	entity function GetMenuMiscModel()
+	{
+		return file.menuMiscModel.body
 	}
 
 	void function UpdateCallsignCard( entity player, int itemIndex )
@@ -1524,6 +1566,8 @@
 			ref = GetCachedPilotLoadout( loadoutIndex ).primary
 		else if ( weaponItemType == eItemTypes.PILOT_SECONDARY )
 			ref = GetCachedPilotLoadout( loadoutIndex ).secondary
+		else if ( weaponItemType == eItemTypes.PILOT_WEAPON3 )
+			ref = GetCachedPilotLoadout( loadoutIndex ).weapon3
 		else
 			Assert( false )
 
@@ -1547,6 +1591,12 @@
 			mods.append( GetCachedPilotLoadout( loadoutIndex ).secondaryMod2 )
 			mods.append( GetCachedPilotLoadout( loadoutIndex ).secondaryMod3 )
 		}
+		else if ( weaponItemType == eItemTypes.PILOT_WEAPON3 )
+		{
+			mods.append( GetCachedPilotLoadout( loadoutIndex ).weapon3Mod1 )
+			mods.append( GetCachedPilotLoadout( loadoutIndex ).weapon3Mod2 )
+			mods.append( GetCachedPilotLoadout( loadoutIndex ).weapon3Mod3 )
+		}
 		else
 		{
 			Assert( false )
@@ -1563,6 +1613,8 @@
 			camoIndex = GetCachedPilotLoadout( loadoutIndex ).primaryCamoIndex
 		else if ( weaponItemType == eItemTypes.PILOT_SECONDARY )
 			camoIndex = GetCachedPilotLoadout( loadoutIndex ).secondaryCamoIndex
+		else if ( weaponItemType == eItemTypes.PILOT_WEAPON3 )
+			camoIndex = GetCachedPilotLoadout( loadoutIndex ).weapon3CamoIndex
 		else
 			Assert( false )
 
@@ -1683,12 +1735,12 @@
 		UpdatePilotModelDisplay( player )
 	}
 
-	void function SavePilotCamoPreview( entity player )
-	{
-		clGlobal.currentMenuPilotModels.camoIndex = clGlobal.previewMenuPilotModels.camoIndex
-		clGlobal.previewMenuPilotModels.camoIndex = -1
-		UpdatePilotModelDisplay( player )
-	}
+	//void function SavePilotCamoPreview( entity player )
+	//{
+	//	clGlobal.currentMenuPilotModels.camoIndex = clGlobal.previewMenuPilotModels.camoIndex
+	//	clGlobal.previewMenuPilotModels.camoIndex = -1
+	//	UpdatePilotModelDisplay( player )
+	//}
 
 	void function ClearAllPilotPreview( entity player )
 	{
@@ -1829,6 +1881,11 @@
 			file.menuStorePrimeBg = RuiTopology_CreatePlane( < -91.6658, 453.079, 463.765>, <399.802, -12.5803, 0.000155184>, <3.28334, 104.34, -386.138>, false )
 			file.menuStorePrimeBgRui = RuiCreate( $"ui/prime_titan_bg.rpak", file.menuStorePrimeBg, RUI_DRAW_WORLD, 0 )
 		}
+
+		if ( file.presentationData[ presentationType ].showMiscModel )
+			file.menuMiscModel.body.Show()
+		else
+			file.menuMiscModel.body.Hide()
 
 		if ( lastActiveCharacter != null )
 			ResetCharacterRotation( expect CharacterData( lastActiveCharacter ) )

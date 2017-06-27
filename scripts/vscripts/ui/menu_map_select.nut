@@ -5,7 +5,7 @@ global function MenuMapSelect_Init
 
 global function InitMapsMenu
 
-const MAP_LIST_VISIBLE_ROWS = 16
+const MAP_LIST_VISIBLE_ROWS = 22
 const MAP_LIST_SCROLL_SPEED = 0
 
 struct {

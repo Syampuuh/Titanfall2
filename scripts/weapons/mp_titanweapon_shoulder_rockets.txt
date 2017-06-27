@@ -264,7 +264,7 @@ WeaponData
 	"smart_ammo_search_players"						"1"
 	"smart_ammo_search_projectiles"					"0"
 	"smart_ammo_titans_block_los"					"1"
-	"smart_ammo_new_target_delay"					"0.1"
+	"smart_ammo_new_target_delay"					"0"
 	"smart_ammo_max_targets"						"8"
 	"smart_ammo_alt_lock_style"						"1"
 	"smart_ammo_max_targeted_burst"					"12"
@@ -332,6 +332,8 @@ WeaponData
 			"smart_ammo_target_max_locks_heavy"				"6"
 			"smart_ammo_search_angle" 						"30"
 			"smart_ammo_unlock_debounce_time"				"0.2"
+			"smart_ammo_new_target_delay"					"0.3"
+			"smart_ammo_apply_new_target_delay_to_first_target" "1"
 			"projectile_trail_effect_0"						"Rocket_Smoke_SMALL_Titan_mod"
 			"hud_icon"										"rui/titan_loadout/passive/monarch_core_multi_target"
 			"smart_ammo_lock_type"							"large"
@@ -348,7 +350,8 @@ WeaponData
 		{
 			"smart_ammo_search_angle" 						"30"
 			"smart_ammo_unlock_debounce_time"				"0.2"
-
+			"smart_ammo_new_target_delay"					"0.3"
+			"smart_ammo_apply_new_target_delay_to_first_target" "1"
 			"projectile_trail_effect_0"						"Rocket_Smoke_SMALL_Titan_mod"
 			"hud_icon"										"rui/titan_loadout/passive/monarch_core_multi_target"
 			"smart_ammo_lock_type"							"large"

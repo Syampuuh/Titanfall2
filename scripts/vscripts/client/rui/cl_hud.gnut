@@ -16,7 +16,6 @@ global function ScoreEvents_SetEnabled
 global function AddGenericQueueMessage
 
 #if DEV
-global function Repro
 global function RUI
 global function AddScoreCallingCardEvent
 global function AddYouCallsignEvent
@@ -226,18 +225,6 @@ var function TEMP_CreateRUITopology( vector org, vector ang, float width, float 
 
 	var topo = RuiTopology_CreatePlane( org, right, down, true )
 	return topo
-}
-
-void function Repro()
-{
-	OnThreadEnd(
-		function() : (  )
-		{
-			printt( GetGlobalNetBool( "titanOSDialogueEnabled" ) )
-		}
-	)
-
-	wait 1000
 }
 
 void function RUI()

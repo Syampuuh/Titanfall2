@@ -27,7 +27,7 @@ resource/ui/menus/private_lobby.menu
 		{
 			ControlName				Label
 			InheritProperties		MenuTitle
-			labelText				"#MULTIPLAYER"
+			labelText				"#PRIVATE_LOBBY"
 		}
 
 		ImgTopBar
@@ -183,17 +183,6 @@ resource/ui/menus/private_lobby.menu
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//		MatchDetails
-//		{
-//			ControlName				CNestedPanel
-//			xpos					r1485
-//			ypos					r900
-//			wide					780
-//			tall					470
-//			visible					0
-//			controlSettingsFile			"resource/ui/menus/panels/match_info.res"
-//		}
-
 		SpectatorLabel
 		{
 			ControlName				Label
@@ -208,7 +197,6 @@ resource/ui/menus/private_lobby.menu
 
             wide                    520
             tall                    40
-			visible					0
 			labelText				"#LOBBY_SPECTATOR"
 			font					Default_26
 			allcaps					1
@@ -223,7 +211,6 @@ resource/ui/menus/private_lobby.menu
 
 			wide					520
 			tall					396
-			visible					0
 			controlSettingsFile			"resource/ui/menus/panels/match_friendlies.res"
 
 			pin_to_sibling			NextMapImage
@@ -239,7 +226,6 @@ resource/ui/menus/private_lobby.menu
 
 			wide					520
 			tall					396
-			visible					0
 			controlSettingsFile			"resource/ui/menus/panels/match_enemies.res"
 
 			pin_to_sibling			MatchFriendliesPanel

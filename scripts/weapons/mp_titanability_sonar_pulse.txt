@@ -272,5 +272,13 @@ WeaponData
 		{
 
 		}
+		fd_sonar_duration
+		{
+
+		}
+		fd_sonar_damage_amp
+		{
+
+		}
 	}
 }

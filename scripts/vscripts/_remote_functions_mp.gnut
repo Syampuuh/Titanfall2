@@ -13,10 +13,17 @@ function RemoteFunctions_Init()
 			RegisterServerVar( "ClientTiming", 0 )
 			Remote_RegisterFunction( "ServerCallback_CreateSpectrePaletteLighting" )
 			break
+
+		case "mp_wargames":
+			Remote_RegisterFunction( "ServerCallback_StopWargamesPodAmbienceSound" )
+			Remote_RegisterFunction( "ServerCallback_SpawnIMCFactionLeaderForIntro" )
+			Remote_RegisterFunction( "ServerCallback_SpawnMilitiaFactionLeaderForIntro" )
+			Remote_RegisterFunction( "ServerCallback_ClearFactionLeaderIntro" )
+			Remote_RegisterFunction( "ServerCallback_PlayPodTransitionScreenFX" )
+			break
 	}
 
 	Remote_RegisterFunction( "ServerCallback_DpadCommSay" )
-	RegisterNetworkedVariable( "DpadCommAllowTime", SNDC_PLAYER_EXCLUSIVE, SNVT_TIME, 0.0 )
 
 	Remote_RegisterFunction( "ServerCallback_CaptialShips" )
 
@@ -73,8 +80,6 @@ function RemoteFunctions_Init()
 	Remote_RegisterFunction( "ServerCallback_AddShieldedPlayer" )
 	Remote_RegisterFunction( "ServerCallback_RemoveShieldedPlayer" )
 
-	RegisterNetworkedVariable( "AT_shieldHealth", SNDC_PLAYER_GLOBAL, SNVT_FLOAT_RANGE, PLAYER_SHIELD_WALL_HEALTH, 0.0, TITAN_GUN_SHIELD_HEALTH )
-
 	//HACK: these nv's should eventually be code driven concepts
 	RegisterEntityVar_AllSynced( "player", "empEndTime", 0 )
 	RegisterEntityVar_AllSynced( "titan_soul", "PROTO_stickyExplosiveCount", 0 )
@@ -84,6 +89,8 @@ function RemoteFunctions_Init()
 	RegisterNetworkedVariable( "playerAllowedToLeech", SNDC_PLAYER_EXCLUSIVE, SNVT_BOOL, true )
 	RegisterNetworkedVariable( "playerAllowedToSyncedMelee", SNDC_PLAYER_EXCLUSIVE, SNVT_BOOL, true )
 	RegisterNetworkedVariable( "rodeoBatteryCount", SNDC_TITAN_SOUL, SNVT_INT, 3 )
+
+	RegisterNetworkedVariable( "coreMeterModifier", SNDC_PLAYER_GLOBAL, SNVT_FLOAT_RANGE_OVER_TIME, 0.0, 0.0, 1.0 )
 
 	Remote_RegisterFunction( "SCB_SmartAmmoForceLockedOntoHudDraw" )
 
@@ -170,7 +177,6 @@ function RemoteFunctions_Init()
 	RegisterServerVar( "boostAvailability", 0 )
 	RegisterServerVar( "teamShareCoreMeter", 0 )
 	RegisterNetworkedVariable( "titanEjectEnabled", SNDC_GLOBAL, SNVT_BOOL, true )
-	RegisterNetworkedVariable( "titanfallEnabled", SNDC_GLOBAL, SNVT_BOOL, true )
 
 	// MFD
 	RegisterServerVar( "mfdOverheadPingDelay", 0 )
@@ -377,18 +383,14 @@ function RemoteFunctions_Init()
 	Dev_RemoteFunctions_Init()
 	#endif
 
+	RegisterNetworkedVariable( "playerHardpointID", SNDC_PLAYER_EXCLUSIVE, SNVT_UNSIGNED_INT, 255 )
+
+
 	//Bleedout mechanic
 	Remote_RegisterFunction( "ServerCallback_BLEEDOUT_StartFirstAidProgressBar" )
 	Remote_RegisterFunction( "ServerCallback_BLEEDOUT_StopFirstAidProgressBar" )
 	Remote_RegisterFunction( "ServerCallback_BLEEDOUT_ShowWoundedMarker" )
 	Remote_RegisterFunction( "ServerCallback_BLEEDOUT_HideWoundedMarker" )
-
-	RegisterNetworkedVariable( "playerHardpointID", SNDC_PLAYER_EXCLUSIVE, SNVT_UNSIGNED_INT, 255 )
-
-	//TDAY
-	RegisterNetworkedVariable( "tdayUseHardPoints", SNDC_GLOBAL, SNVT_BOOL, true )
-	RegisterNetworkedVariable( "currentTDayPhase", SNDC_GLOBAL, SNVT_INT, 0 )
-	Remote_RegisterFunction( "ServerCallback_TDay_RegisterPod" )
 
 	// NEW INTRO SYSTEM ( _cl_spawnslot_system.nut )
 	Remote_RegisterFunction( "ServerCallback_ResetEntSkyScale" )
@@ -466,7 +468,6 @@ function RemoteFunctions_Init()
 	RegisterNetworkedVariable( "batteryOnBack", SNDC_PLAYER_EXCLUSIVE, SNVT_ENTITY )
 	RegisterNetworkedVariable( "offerRodeoBatteryLastUsedTime", SNDC_PLAYER_EXCLUSIVE, SNVT_TIME )
 	RegisterNetworkedVariable( "requestRodeoBatteryLastUsedTime", SNDC_PLAYER_EXCLUSIVE, SNVT_TIME )
-	RegisterNetworkedVariable( "antiRodeoCharges", SNDC_TITAN_SOUL, SNVT_INT, 1 )
 
 	Remote_RegisterFunction( "ServerCallback_UpdateRodeoRiderHud" )
 
@@ -508,7 +509,6 @@ function RemoteFunctions_Init()
 
 	Remote_RegisterFunction( "ServerCallback_PlayConversation" )
 	Remote_RegisterFunction( "ServerCallback_PlayTitanConversation" )
-	Remote_RegisterFunction( "ServerCallback_CancelScene" )
 	Remote_RegisterFunction( "ServerCallback_PlaySquadConversation" )
 	Remote_RegisterFunction( "ServerCallback_CreateDropShipIntLighting" )
 	Remote_RegisterFunction( "ServerCallback_EvacObit" )
@@ -555,8 +555,8 @@ function RemoteFunctions_Init()
 	// SHOULD PROBABLY BE CODE
 	Remote_RegisterFunction( "ServerCallback_ClientInitComplete" )
 	RegisterServerVar( "forcedDialogueOnly", false )
-	RegisterNetworkedVariable( "squadConversationEnabled", SNDC_GLOBAL, SNVT_BOOL, true ) //TEMP, remove when we do Miles meta data conversation controls
-	RegisterNetworkedVariable( "titanOSDialogueEnabled", SNDC_GLOBAL, SNVT_BOOL, true ) //TEMP, remove when we do Miles meta data conversation controls
+	//RegisterNetworkedVariable( "squadConversationEnabled", SNDC_GLOBAL, SNVT_BOOL, true ) //TEMP, remove when we do Miles meta data conversation controls
+	//RegisterNetworkedVariable( "titanOSDialogueEnabled", SNDC_GLOBAL, SNVT_BOOL, true ) //TEMP, remove when we do Miles meta data conversation controls
 	Remote_RegisterFunction( "SCB_LockCapturePointForTeam" )
 	Remote_RegisterFunction( "SCB_UnlockCapturePointForTeam" )
 
@@ -606,6 +606,7 @@ function RemoteFunctions_Init()
 	Remote_RegisterFunction( "SCB_SetMeritCount" )
 	Remote_RegisterFunction( "SCB_SetWeaponMeritCount" )
 	Remote_RegisterFunction( "SCB_SetTitanMeritCount" )
+	Remote_RegisterFunction( "SCB_UpdateTitanLoadouts" )
 
 	Remote_RegisterFunction( "SCB_SetHighlightFlagDisableDeathFade" ) //Hack, just for PulseBladeExecution
 
@@ -617,7 +618,6 @@ function RemoteFunctions_Init()
 		Remote_RegisterFunction( "ServerCallback_ShopOpenBurnCardPack" )
 		Remote_RegisterFunction( "ServerCallback_ShopOpenGenericItem" )
 		Remote_RegisterFunction( "SCB_RefreshCards" )
-		Remote_RegisterFunction( "SCB_RefreshLobby" )
 		Remote_RegisterFunction( "SCB_UpdateEmptySlots" )
 		Remote_RegisterFunction( "SCB_UpdateBCFooter" )
 	}
@@ -829,7 +829,7 @@ function RemoteFunctions_Init()
 
 	//Boosts
 	RegisterNetworkedVariable( "boostTimedEffectLastsTill", SNDC_PLAYER_EXCLUSIVE, SNVT_TIME )
-	RegisterNetworkedVariable( "burn_numTurrets", SNDC_PLAYER_EXCLUSIVE, SNVT_INT )
+	RegisterNetworkedVariable( "burn_numTurrets", SNDC_PLAYER_GLOBAL, SNVT_INT )
 	RegisterNetworkedVariable( "burn_turretLimit", SNDC_GLOBAL, SNVT_INT, 5 )
 
 	#if CLIENT

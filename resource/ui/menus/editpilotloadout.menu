@@ -64,8 +64,8 @@ resource/ui/menus/editpilotloadout.menu
         {
             ControlName				RuiPanel
             InheritProperties		ItemDetails
-	        xpos					660
-    	    ypos                    782
+	        xpos					860
+    	    ypos                    796
 		    zpos					10
         }
 

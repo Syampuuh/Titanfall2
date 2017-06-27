@@ -9,7 +9,7 @@ npc_drone_cloaked
 	MoveYawSpeed			30
 	AimAngularSpeed			30
 
-	maxFlyingSpeed			2000
-	maxFlyingSpeedNonCombat	2000
+	maxFlyingSpeed			1500
+	maxFlyingSpeedNonCombat	1500
 	hoverHeight			300	// if has target, offset above target's height
 }

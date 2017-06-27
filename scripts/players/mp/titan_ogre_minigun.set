@@ -41,6 +41,10 @@
 				dodgePowerDrain		100
 				powerregenrate 		16.66
 			}
+			fd_health_upgrade
+			{
+				health			2500++	[$mp]
+			}
 		}
 	}
 }

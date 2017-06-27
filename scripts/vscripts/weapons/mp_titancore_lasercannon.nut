@@ -5,6 +5,10 @@ global function OnAbilityEnd_LaserCannon
 global function OnAbilityCharge_LaserCannon
 global function OnAbilityChargeEnd_LaserCannon
 
+#if SERVER
+global function LaserCore_OnPlayedOrNPCKilled
+#endif
+
 const SEVERITY_SLOWTURN_LASERCORE = 0.25
 const SEVERITY_SLOWMOVE_LASERCORE = 0.25
 
@@ -30,8 +34,52 @@ void function LaserCannon_Init()
 
 	#if SERVER
 		AddDamageCallbackSourceID( eDamageSourceId.mp_titancore_laser_cannon, Laser_DamagedTarget )
+		AddCallback_OnPlayerKilled( LaserCore_OnPlayedOrNPCKilled )//Move to FD game mode script
+		AddCallback_OnNPCKilled( LaserCore_OnPlayedOrNPCKilled )//Move to FD game mode script
 	#endif
 }
+
+#if SERVER
+void function LaserCore_OnPlayedOrNPCKilled( entity victim, entity attacker, var damageInfo )
+{
+	if ( !attacker.IsPlayer() || !attacker.IsTitan() )//|| !PlayerHasPassive( attacker, ePassives.PAS_SHIFT_CORE ) )
+		return
+
+	int damageSource = DamageInfo_GetDamageSourceIdentifier( damageInfo )
+	if ( damageSource != eDamageSourceId.mp_titancore_laser_cannon )
+		return
+
+	entity soul = attacker.GetTitanSoul()
+	if ( !IsValid( soul ) )
+		return
+
+	entity weapon = attacker.GetOffhandWeapon( OFFHAND_EQUIPMENT )
+	array<string> mods = weapon.GetMods()
+	if ( !mods.contains( "fd_laser_cannon" ) )
+		return
+
+	float curTime = Time()
+	float laserCoreBonus
+	if ( victim.IsTitan() )
+		laserCoreBonus = 2.0
+	else if ( IsSuperSpectre( victim ) )
+		laserCoreBonus = 1.0
+	else
+		laserCoreBonus = 0.3
+
+	float remainingTime = laserCoreBonus + soul.GetCoreChargeExpireTime() - curTime
+	float duration = soul.GetCoreUseDuration()
+	float coreFrac = min( 1.0, remainingTime / duration )
+	//Defensive fix for this sometimes resulting in a negative value.
+	if ( coreFrac > 0.0 )
+	{
+		soul.SetTitanSoulNetFloat( "coreExpireFrac", coreFrac )
+		soul.SetTitanSoulNetFloatOverTime( "coreExpireFrac", 0.0, remainingTime )
+		soul.SetCoreChargeExpireTime( remainingTime + curTime )
+		weapon.SetSustainedDischargeFractionForced( 1 - max( 0.0, weapon.GetSustainedDischargeFraction() - laserCoreBonus / weapon.GetCoreDuration() ) ) //Seems there is an unexpected 1 - value in code.
+	}
+}
+#endif
 
 bool function OnAbilityCharge_LaserCannon( entity weapon )
 {

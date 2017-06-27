@@ -1,8 +1,6 @@
 global function InitSummaryPanel
 global function GetPGPanels
 global function PGDisplay
-global function PostGame_ClearDisplay
-global function InitSummaryRuis
 global function IsPostGameDataModePVE
 #if DEV
 global function PostGame_FakeLevel
@@ -11,9 +9,8 @@ global function PostGame_FakeLevelUp
 global function GetNumWeaponsLeveled
 global function GetNumTitansLeveled
 global function GetNumFactionsLeveled
-
+global function ReloadScripts
 #endif
-global function GetProgressDataForUnlockType
 
 const int MERIT_TYPE_NONE = 0
 const int MERIT_TYPE_SCORE = 1
@@ -36,6 +33,7 @@ struct UnlockFullRef
 {
 	string ref
 	string parentRef
+	int count
 }
 
 struct PostGameUnlockData
@@ -43,6 +41,7 @@ struct PostGameUnlockData
 	array<string> unlockTriggers
 	array<UnlockFullRef> rewardRefs
 	string ref
+	asset refImage
 	string sideText
 	int meritType = MERIT_TYPE_NONE
 	int meritCount = 1
@@ -87,9 +86,6 @@ struct
 	var menu
 	var panel
 	array<var> progressDisplays
-
-	int previousPlayerXP
-	int playerXP
 
 	array<var> unlockBlocks
 	var earnedMerit
@@ -550,11 +546,10 @@ void function PostGame_DisplayFaction( int unlockIndex, PostGameUnlockData postG
 
 		if ( !IsSkippableWaitSkipAll() )
 			DisplayGenericLevelUp( postGameUnlockData, "#FACTION_LEVEL_UP", "UI_PostGame_Level_Up_Titan" )
+
 		GiveMerit( unlockIndex, postGameUnlockData )
 	}
 }
-
-
 
 void function DisplayGenericLevelUp( PostGameUnlockData postGameUnlockData, string titleText, string uiSound )
 {
@@ -727,15 +722,6 @@ bool function IsPostGameDataModePVE( entity player )
 	return false
 }
 
-void function PGDisplay_PVE( entity player )
-{
-	int pveCredits = player.GetPersistentVarAsInt( "pve.currency" )
-	int pveCreditsLastMatch = player.GetPersistentVarAsInt( "pve.currencyInLatestMatch" )
-	RuiSetBool( file.meritBar, "isPVE", true )
-	RuiSetInt( file.meritBar, "pveCredits", pveCredits )
-	RuiSetInt( file.meritBar, "pveCreditsLastMatch", pveCreditsLastMatch )
-}
-
 var function PGDisplay()
 {
 	file.postGameUnlocks = []
@@ -757,8 +743,8 @@ var function PGDisplay()
 
 	RuiSetBool( file.meritBar, "isPVE", false )
 
-	file.previousPlayerXP = player.GetPersistentVarAsInt( "previousXP" )
-	file.playerXP = player.GetPersistentVarAsInt( "xp" )
+	int previousXP = player.GetPersistentVarAsInt( "previousXP" )
+	int currentXP = player.GetPersistentVarAsInt( "xp" )
 
 	#if DEV
 	for ( int i = 0; i < XP_TYPE._NUM_TYPES; i++ )
@@ -779,11 +765,11 @@ var function PGDisplay()
 			file.totalRandomUnlocks++
 	}
 
-	int totalEarnedXP = file.playerXP - file.previousPlayerXP
+	int totalEarnedXP = currentXP - previousXP
 
-	int startingLevel = GetLevelForXP( file.previousPlayerXP )
-	int endingLevel = GetLevelForXP( file.playerXP )
-	int startingCredits = GetAvailableCredits( GetLocalClientPlayer() ) - (file.playerXP - file.previousPlayerXP)
+	int startingLevel = GetLevelForXP( previousXP )
+	int endingLevel = GetLevelForXP( currentXP )
+	int startingCredits = GetAvailableCredits( GetLocalClientPlayer() ) - (currentXP - previousXP)
 
 	array<UnlockFullRef> unlockRefs
 	array<string> unlocks = GetUnlockItemsForPlayerLevel( GetRawLevelForLevelAndGen( startingLevel + 1, player.GetGen() ) )
@@ -797,7 +783,7 @@ var function PGDisplay()
 	if ( startingLevel > GetMaxPlayerLevel() )
 		PostGame_AddLevel( startingLevel, player.GetGen(), unlockRefs, GetXPPipsForLevel( startingLevel - 1 ), GetXPPipsForLevel( startingLevel - 1 ) )
 	else
-		PostGame_AddLevel( startingLevel, player.GetGen(), unlockRefs, GetXPPipsForLevel( startingLevel ), GetXPFilledPipsForXP( file.previousPlayerXP ) )
+		PostGame_AddLevel( startingLevel, player.GetGen(), unlockRefs, GetXPPipsForLevel( startingLevel ), GetXPFilledPipsForXP( previousXP ) )
 
 	// add postgame unlocks for lower display
 	if ( endingLevel > startingLevel )
@@ -1050,11 +1036,11 @@ void function PostGame_AddUnlocks( array<UnlockFullRef> unlockRefs )
 			continue
 		}
 
-		PostGame_AddUnlock( ul.ref, ul.parentRef )
+		PostGame_AddUnlock( ul.ref, ul.parentRef, ul.count )
 	}
 }
 
-void function PostGame_AddUnlock( string unlockRef, string parentRef = "" )
+void function PostGame_AddUnlock( string unlockRef, string parentRef = "", int count = 0 )
 {
 	UnlockFullRef fullRef
 	fullRef.ref = unlockRef
@@ -1062,6 +1048,8 @@ void function PostGame_AddUnlock( string unlockRef, string parentRef = "" )
 		fullRef.parentRef = parentRef
 	else
 		fullRef.parentRef = ""
+
+	fullRef.count = count
 
 	file.allUnlockRefs.append( fullRef )
 }
@@ -1100,8 +1088,10 @@ void function PostGame_PopulateUnlockDisplay( array<UnlockFullRef> unlockRefs, b
 		{
 			//string title = Localize( "#POSTGAME_CREDITS_EARNED", file.totalEarnedMerits )
 			string title = Localize( "#POSTGAME_CREDITS" )
-			RuiSetString( file.unlockItems, "unlockTitle" + offsetIndex, title )
-			RuiSetString( file.unlockItems, "unlockCategory" + offsetIndex, "+" + file.totalEarnedMerits )
+			//RuiSetString( file.unlockItems, "unlockTitle" + offsetIndex, title )
+			//RuiSetString( file.unlockItems, "unlockCategory" + offsetIndex, "+" + file.totalEarnedMerits )
+			RuiSetString( file.unlockItems, "unlockTitle" + offsetIndex, Localize( "#CREDITS_N", file.totalEarnedMerits ) )
+			RuiSetString( file.unlockItems, "unlockCategory" + offsetIndex, Localize( "#ITEM_TYPE_REWARD" ) )
 			RuiSetImage( file.unlockItems, "unlockImage" + offsetIndex, $"rui/menu/common/credit_symbol_large_color" )
 			RuiSetFloat2( file.unlockItems, "unlockImageRatio" + offsetIndex, <1, 1, 0> )
 			RuiSetInt( file.unlockItems, "unlockImageLayer" + offsetIndex, IMAGE_ATLAS_MENU )
@@ -1130,8 +1120,10 @@ void function PostGame_PopulateUnlockDisplay( array<UnlockFullRef> unlockRefs, b
 
 			if ( unlockRefs[unlockIndex].ref == "advocate_gift" )
 			{
-				RuiSetString( file.unlockItems, "unlockTitle" + offsetIndex, category )
-				RuiSetString( file.unlockItems, "unlockCategory" + offsetIndex, "+" + file.totalRandomUnlocks )
+				//RuiSetString( file.unlockItems, "unlockTitle" + offsetIndex, category )
+				//RuiSetString( file.unlockItems, "unlockCategory" + offsetIndex, "+" + file.totalRandomUnlocks )
+				RuiSetString( file.unlockItems, "unlockTitle" + offsetIndex, Localize( "#ADVOCATE_GIFTS_N", file.totalRandomUnlocks ) )
+				RuiSetString( file.unlockItems, "unlockCategory" + offsetIndex, Localize( "#ITEM_TYPE_REWARD" ) )
 			}
 			else
 			{
@@ -1156,13 +1148,17 @@ void function PostGame_InitLevelDisplay( PostGamePlayerLevelData playerLevelData
 
 	if ( playerLevelData.rewardRefs.len() )
 	{
-		ItemDisplayData itemDisplayData = GetItemDisplayData( playerLevelData.rewardRefs[0].ref )
+		ItemDisplayData itemDisplayData = GetItemDisplayData( playerLevelData.rewardRefs[0].ref, playerLevelData.rewardRefs[0].parentRef )
 		RuiSetImage( file.meritBar, "unlockImage", itemDisplayData.image )
 		RuiSetFloat2( file.meritBar, "imageRatio", GetItemImageAspect( playerLevelData.rewardRefs[0].ref ) )
 		RuiSetString( file.meritBar, "unlockItem1", itemDisplayData.name )
 		RuiSetString( file.meritBar, "unlockCategory", GetItemRefTypeName( itemDisplayData.ref ) )
+
 		RuiSetInt( file.meritBar, "unlockImageLayer", itemDisplayData.imageAtlas )
-		RuiSetBool( file.meritBar, "unlockItemOwned", IsItemOwned( GetUIPlayer(), playerLevelData.rewardRefs[0].ref ) )
+		if ( IsSubItemType( itemDisplayData.itemType ) )
+			RuiSetBool( file.meritBar, "unlockItemOwned", IsSubItemOwned( GetUIPlayer(), playerLevelData.rewardRefs[0].ref, playerLevelData.rewardRefs[0].parentRef ) )
+		else
+			RuiSetBool( file.meritBar, "unlockItemOwned", IsItemOwned( GetUIPlayer(), playerLevelData.rewardRefs[0].ref ) )
 
 		printt( playerLevelData.rewardRefs[0].ref )
 
@@ -1172,7 +1168,7 @@ void function PostGame_InitLevelDisplay( PostGamePlayerLevelData playerLevelData
 			if ( index < playerLevelData.rewardRefs.len() )
 			{
 				printt( "player level unlock", playerLevelData.rewardRefs[index].ref )
-				ItemDisplayData itemDisplayData = GetItemDisplayData( playerLevelData.rewardRefs[index].ref )
+				ItemDisplayData itemDisplayData = GetItemDisplayData( playerLevelData.rewardRefs[index].ref, playerLevelData.rewardRefs[index].parentRef )
 				RuiSetString( file.meritBar, "unlockItem" + (index + 1), itemDisplayData.name )
 			}
 			else
@@ -1201,7 +1197,7 @@ void function PostGame_InitLevelDisplay( PostGamePlayerLevelData playerLevelData
 	RuiSetInt( file.meritBar, "totalPips", playerLevelData.totalSegments )
 
 	//var creditsPanel = Hud_GetChild( GetMenu( "PostGameMenu" ), "CreditsAvailable" )
-	//SetUIPlayerCreditsInfo( creditsPanel, file.totalEarnedMerits, file.previousPlayerXP + file.totalEarnedMerits, playerLevelData.gen, playerLevelData.level, minint( playerLevelData.level + 1, GetMaxPlayerLevel() ) )
+	//SetUIPlayerCreditsInfo( creditsPanel, file.totalEarnedMerits, previousXP + file.totalEarnedMerits, playerLevelData.gen, playerLevelData.level, minint( playerLevelData.level + 1, GetMaxPlayerLevel() ) )
 }
 
 void function GiveMerit( int unlockIndex, PostGameUnlockData postGameUnlockData )
@@ -1213,6 +1209,8 @@ void function GiveMerit( int unlockIndex, PostGameUnlockData postGameUnlockData 
 	RuiSetInt( file.earnedMerit, "posOffset", unlockIndex )
 	RuiSetInt( file.earnedMerit, "meritType", meritType )
 	RuiSetInt( file.earnedMerit, "meritCount", 1 )
+	RuiSetBool( file.earnedMerit, "isPVE", false )
+	RuiSetFloat( file.earnedMerit, "heightOffset", 0.5 )
 
 	float holdTime = file.skippableWaitSkipped || IsSkippableWaitSkipAll() ? 0.1 : 0.4
 	float moveTime = file.skippableWaitSkipped || IsSkippableWaitSkipAll() ? 0.1 : 0.30
@@ -1728,4 +1726,18 @@ void function PostGame_FakeLevelUp( int level, int gen = 0 )
 
 	DisplayPlayerLevelUp( gen, level )
 }
+
+
+void function ReloadScripts()
+{
+	//reloadingScripts = true
+	//reloadedScripts = true
+
+	ReloadingScriptsBegin()
+
+	//reloadingScripts = false
+
+	ReloadingScriptsEnd()
+}
 #endif
+

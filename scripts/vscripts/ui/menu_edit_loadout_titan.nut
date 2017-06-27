@@ -15,7 +15,6 @@ struct {
 	var camoSkinButton
 	var noseArtButton
 	var primeTitanButton
-	var fdTitanUpgradeButton
 	bool menuClosing = false
 } file
 
@@ -60,16 +59,6 @@ void function InitEditTitanLoadoutMenu()
 	AddButtonEventHandler( file.noseArtButton, UIE_GET_FOCUS, OnEditTitanNoseArtButton_Focus )
 	AddButtonEventHandler( file.noseArtButton, UIE_LOSE_FOCUS, OnEditTitanCamoSkinButton_LoseFocus )
 	AddButtonEventHandler( file.noseArtButton, UIE_CLICK, OnEditTitanNoseArtButton_Activate )
-
-	file.fdTitanUpgradeButton = Hud_GetChild( file.loadoutPanel, "ButtonFDTitanUpgrades" )
-	RuiSetImage( Hud_GetRui( file.fdTitanUpgradeButton ), "buttonImage", $"rui/menu/common/fd_titan_upgrades" )
-	Hud_AddEventHandler( file.fdTitanUpgradeButton, UIE_CLICK, OnEditTitanSlotButton_Activate )
-	#if DEVSCRIPTS
-		Hud_SetEnabled( file.fdTitanUpgradeButton, true )
-	#else
-		Hud_SetEnabled( file.fdTitanUpgradeButton, false )
-		Hud_Hide( file.fdTitanUpgradeButton )
-	#endif
 
 	file.primeTitanButton = Hud_GetChild( file.loadoutPanel, "ButtonPrimeTitan" )
 	RuiSetImage( Hud_GetRui( file.primeTitanButton ), "buttonImage",  $"rui/menu/common/prime_toggle_off" )

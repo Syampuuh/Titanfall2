@@ -1,6 +1,44 @@
+global function ClPlayer_Common_Precache
+
 global function PlayHeadshotConfirmSound
 global function PlayKillshotConfirmSound
 
+global const AUTO_TITAN_GUARD_MODE_DIAG_SUFFIX = "guard"
+global const AUTO_TITAN_GUARD_MODE_SOUND = "Menu_TitanAIMode_Guard"
+global const AUTO_TITAN_FOLLOW_MODE_DIAG_SUFFIX = "follow"
+global const AUTO_TITAN_FOLLOW_MODE_SOUND = "Menu_TitanAIMode_Follow"
+
+global const SCREENFX_WARPJUMP = $"P_warpjump_FP"
+global const SCREENFX_WARPJUMPDLIGHT = $"warpjump_CH_dlight"
+global const FX_KILLSHOT_BLOODSPRAY = $"P_deathfx_human"
+global const FX_BLOODSPRAY_DECAL_SML = $"P_deathfx_human_decal_SML"
+global const FX_BLOODSPRAY_DECAL_MED = $"P_deathfx_human_decal_MED"
+global const FX_BLOODSPRAY_DECAL_LRG = $"P_deathfx_human_decal_LRG"
+global const SHIELD_BODY_FX = $"P_xo_armor_body_CP"
+global const SHIELD_BREAK_FX = $"P_xo_armor_break_CP"
+
+void function ClPlayer_Common_Precache()
+{
+	PrecacheParticleSystem( $"death_pinkmist_LG" )
+	PrecacheParticleSystem( $"death_pinkmist_LG_nochunk" )
+
+	PrecacheParticleSystem( $"P_ar_impact_pilot" )
+	PrecacheParticleSystem( $"P_ar_impact_pilot_headshot" )
+	PrecacheParticleSystem( $"P_ar_impact_pilot_kill" )
+	PrecacheParticleSystem( $"xo_spark_bolt" )
+
+	PrecacheParticleSystem( $"xo_damage_exp_1" )
+	PrecacheParticleSystem( $"P_burn_player" )
+
+	PrecacheParticleSystem( SCREENFX_WARPJUMP )
+	PrecacheParticleSystem( SCREENFX_WARPJUMPDLIGHT )
+	PrecacheParticleSystem( FX_KILLSHOT_BLOODSPRAY )
+	PrecacheParticleSystem( FX_BLOODSPRAY_DECAL_SML )
+	PrecacheParticleSystem( FX_BLOODSPRAY_DECAL_MED )
+	PrecacheParticleSystem( FX_BLOODSPRAY_DECAL_LRG )
+	PrecacheParticleSystem( SHIELD_BODY_FX )
+	PrecacheParticleSystem( SHIELD_BREAK_FX )
+}
 
 bool function PlayHeadshotConfirmSound( entity attacker, entity victim, bool isKillShot )
 {

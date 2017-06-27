@@ -52,16 +52,6 @@ bool function IsSuddenDeathGameMode()
 	return GameMode_GetSuddenDeathEnabled( GameRules_GetGameMode() )
 }
 
-bool function IsAttritionMode()
-{
-	return GameRules_GetGameMode() == ATTRITION
-}
-
-bool function IsTDMMode()
-{
-	return ( GameRules_GetGameMode() == TEAM_DEATHMATCH || GameRules_GetGameMode() == HARDCORE_TDM )
-}
-
 bool function IsCaptureMode()
 {
 	return GameRules_GetGameMode() == CAPTURE_POINT

@@ -471,7 +471,7 @@ WeaponData
 
 			"spread_stand_ads"								"0.4"
 			"spread_crouch_ads"   							"0.4"
-			"spread_air_ads"  								"1.4"
+			"spread_air_ads"  								"0.4"
 			"zoom_fov"										"40"
 
 			"viewkick_pitch_base" 							"0.0"
@@ -570,6 +570,21 @@ WeaponData
 			"npc_accuracy_multiplier_heavy_armor"			"3"
 			"npc_accuracy_multiplier_npc"					"3"
 		}
+		fd_closerange_helper
+		{
+
+		}
+		fd_CloseRangePowerShot
+		{
+			"spread_stand_hip"								"*1.5"
+			"spread_stand_hip_run"							"*1.5"
+			"spread_stand_hip_sprint"                       "*1.5"
+			"spread_crouch_hip"   							"*1.5"
+			"spread_air_hip"  								"*1.5"
+			"spread_stand_ads"								"*1.5"
+			"spread_crouch_ads"   							"*1.5"
+			"spread_air_ads"  								"*1.5"
+		}
 		LongRangePowerShot
 		{
 			"fire_rumble"									"rumble_titan_40mm"
@@ -633,7 +648,14 @@ WeaponData
 			"npc_accuracy_multiplier_heavy_armor"			"2"
 			"npc_accuracy_multiplier_npc"					"2"
 		}
+		fd_longrange_helper
+		{
 
+		}
+		fd_LongRangePowerShot
+		{
+			"pass_through_damage_preserved_scale"			"1.5"
+		}
 		SiegeMode
 		{
 			"zoom_time_in"									"*0.9"
@@ -643,10 +665,30 @@ WeaponData
 		{
 			"ammo_clip_size"   								"140"
 		}
-
+		fd_pas_legion_weapon
+		{
+			"ammo_clip_size"   								"180"
+		}
 		pas_legion_spinup
 		{
 			"ads_move_speed_scale"							"0.75"
+		}
+		fd_pas_legion_spinup
+		{
+			"ads_move_speed_scale"							"1.00"
+		}
+		fd_piercing_shots
+		{
+			"pass_through_depth"							"++500"
+		}
+		fd_reload_speed
+		{
+			//"reload_time" 									"*0.7"
+			//"reload_time_late1"								"*0.7"
+			//"reload_time_late2"								"*0.7"
+			//"reloadempty_time"								"*0.7"
+			//"reloadempty_time_late1"						"*0.7"
+			//"reloadempty_time_late2"						"*0.7"
 		}
 	}
 

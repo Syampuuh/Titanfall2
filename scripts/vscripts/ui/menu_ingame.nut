@@ -1,5 +1,3 @@
-untyped
-
 //global function InitLobbyStartMenu
 global function InitInGameMPMenu
 global function InitInGameSPMenu
@@ -30,205 +28,16 @@ struct
 	bool SP_displayObjectiveOnClose
 	var settingsHeader
 	var faqButton
+	int titanHeaderIndex
+	var titanHeader
+	var titanSelectButton
+	var titanEditButton
+
+	ComboStruct &comboStruct
 
 	array<var> loadoutButtons
 	array<var> loadoutHeaders
 } file
-
-/*void function InitLobbyStartMenu()
-{
-	var menu = GetMenu( "LobbyStartMenu" )
-	file.menu = menu
-
-	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnOpenLobbyStartMenu )
-
-	AddEventHandlerToButton( menu, "BtnEditBurnCards", UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "BurnCards_InGame" ) ) )
-	AddEventHandlerToButton( menu, "BtnBlackMarket", UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "BlackMarketMainMenu" ) ) )
-	AddEventHandlerToButton( menu, "BtnGameSummary", UIE_CLICK, OnGameSummary_Activate )
-	AddEventHandlerToButton( menu, "BtnStats", UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ViewStatsMenu" ) ) )
-	AddEventHandlerToButton( menu, "BtnChallenges", UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ChallengesMenu" ) ) )
-	AddEventHandlerToButton( menu, "BtnChallenges", UIE_GET_FOCUS, LockedButtonGetFocusHandler )
-	AddEventHandlerToButton( menu, "BtnChallenges", UIE_LOSE_FOCUS, LockedButtonLoseFocusHandler )
-	AddEventHandlerToButton( menu, "BtnRegen", UIE_CLICK, OnRegenButton_Activate )
-}
-
-void function LockedButtonGetFocusHandler( var button )
-{
-	if ( !IsFullyConnected() )
-		return
-
-	Assert( "ref" in button.s )
-	HandleLockedMenuItem( GetMenu( "LobbyStartMenu" ), button )
-}
-
-void function LockedButtonLoseFocusHandler( var button )
-{
-	if ( !IsFullyConnected() )
-		return
-
-	Assert( "ref" in button.s )
-	//UpdateEditLoadoutButtons()
-	UpdateGameSummaryButton()
-	UpdateChallengesButton()
-	HandleLockedMenuItem( GetMenu( "LobbyStartMenu" ), button, true )
-}
-
-void function OnGameSummary_Activate( var button )
-{
-	AdvanceMenu( GetMenu( "EOG_XP" ) )
-}
-
-void function OnRegenButton_Activate( var button )
-{
-	if ( Hud_IsLocked( button ) )
-		return
-
-	ClientCommand( "RegenMenuViewed" )
-	UpdateRegenButton()
-
-	int challengesRemaining = GetRegenChallengesRemainingCount()
-	if ( challengesRemaining > 0 )
-	{
-		DialogData dialogData
-		dialogData.header = "#REGEN_DIALOG_CHALLENGES_REMAINING_TITLE"
-		dialogData.message = "#REGEN_DIALOG_CHALLENGES_REMAINING"
-
-		AddDialogButton( dialogData, "#REGEN_DIALOG_VIEW_CHALLENGES", DialogChoice_Regen_ViewChallenges )
-		AddDialogButton( dialogData, "#REGEN_DIALOG_CLOSE" )
-
-		AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
-		AddDialogFooter( dialogData, "#B_BUTTON_CLOSE" )
-
-		OpenDialog( dialogData )
-
-		// TODO: Handle variables in dialog headers and messages
-		//OpenDialog( {
-		//		header = [ "#REGEN_DIALOG_CHALLENGES_REMAINING_TITLE", challengesRemaining ],
-		//		detailsMessage = [ "#REGEN_DIALOG_CHALLENGES_REMAINING", challengesRemaining ],
-		//		} )
-		return
-	}
-
-	entity player = GetUIPlayer()
-	Assert( CanGenUp( player ) )
-	AdvanceMenu( GetMenu( "Generation_Respawn" ) )
-}
-
-void function DialogChoice_Regen_ViewChallenges()
-{
-	Assert( !uiGlobal.goToRegenChallengeMenu )
-	uiGlobal.goToRegenChallengeMenu = true
-	AdvanceMenu( GetMenu( "ChallengesMenu" ) )
-}
-
-void function UpdateRegenButton()
-{
-	entity player = GetUIPlayer()
-	var button = Hud_GetChild( GetMenu( "LobbyStartMenu" ), "BtnRegen" )
-	if ( CanGenUp( player ) && GetLobbyTypeScript() != eLobbyType.PRIVATE_MATCH )
-	{
-		Hud_Show( button )
-		Hud_SetEnabled( button, true )
-		Hud_SetNew( button, player.GetPersistentVar( "regenShowNew" ) )
-	}
-	else
-	{
-		Hud_Hide( button )
-		Hud_SetEnabled( button, false )
-		Hud_SetNew( button, false )
-	}
-}
-
-void function OnOpenLobbyStartMenu()
-{
-	//UpdateEditLoadoutButtons()
-	UpdateGameSummaryButton()
-	UpdateChallengesButton()
-	UpdateBlackMarketButtonText()
-	UpdateEditBurnCardButtonText()
-	UpdateRegenButton()
-}*/
-
-void function UpdateEditLoadoutButtons()
-{
-	entity player = GetUIPlayer()
-	if ( player == null )
-		return
-
-	var menu = GetMenu( "LobbyStartMenu" )
-	var button = Hud_GetChild( menu, "BtnEditPilotLoadouts" )
-	Hud_SetText( button, "#LOBBY_PILOT_LOADOUT_CLASS_0" )
-	Hud_SetLocked( button, false )
-	if ( IsItemLocked( player, "edit_pilots" ) )
-	{
-		button.s.ref <- null
-	}
-	else
-	{
-		button.s.ref <- "edit_pilots"
-	}
-
-	button = Hud_GetChild( GetMenu( "LobbyStartMenu" ), "BtnEditTitanLoadouts" )
-	Hud_SetLocked( button, false )
-	if ( IsItemLocked( player, "edit_titans" ) )
-	{
-		button.s.ref <- null
-	}
-	else
-	{
-		button.s.ref <- "edit_titans"
-	}
-}
-
-void function UpdateGameSummaryButton()
-{
-	entity player = GetUIPlayer()
-	if ( player == null )
-		return
-
-	var button = Hud_GetChild( GetMenu( "LobbyStartMenu" ), "BtnGameSummary" )
-	if ( player.GetXP() > 0 )
-	{
-		Hud_SetEnabled( button, true )
-		Hud_Show( button )
-	}
-	else
-	{
-		Hud_SetEnabled( button, false )
-		Hud_Hide( button )
-	}
-}
-
-function UpdateChallengesButton()
-{
-	entity player = GetUIPlayer()
-	if ( player == null )
-		return
-
-	var button = Hud_GetChild( GetMenu( "LobbyStartMenu" ), "BtnChallenges" )
-	button.s.ref <- "challenges"
-	bool isLocked = IsItemLocked( player, expect string( button.s.ref ) )
-	Hud_SetLocked( button, isLocked )
-	Hud_SetText( button, "#MENU_CHALLENGES" )
-
-	if ( !isLocked )
-	{
-		bool newChallenges = false
-
-		if ( player.GetPersistentVar( "newDailyChallenges" ) )
-		{
-			Hud_SetText( button, "#MENU_CHALLENGES_NEW_DAILIES" )
-			if ( !newChallenges )
-				newChallenges = true
-		}
-
-		Hud_SetNew( button, newChallenges )
-	}
-	else
-	{
-		Hud_SetNew( button, false )
-	}
-}
 
 void function InitInGameMPMenu()
 {
@@ -259,12 +68,16 @@ void function InitInGameMPMenu()
 	headerIndex++
 	buttonIndex = 0
 	var titanHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_HEADER_TITAN" )
+	file.titanHeader = titanHeader
+	file.titanHeaderIndex = headerIndex
 	file.loadoutHeaders.append( titanHeader )
 	var titanSelectButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#SELECT" )
+	file.titanSelectButton = titanSelectButton
 	file.loadoutButtons.append( titanSelectButton )
-	Hud_AddEventHandler( titanSelectButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "TitanLoadoutsMenu" ) ) )
-	var titanEditButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Edit" )
+	Hud_AddEventHandler( titanSelectButton, UIE_CLICK, TitanSelectButtonHandler )
+	var titanEditButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#EDIT" )
 	Hud_AddEventHandler( titanEditButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "EditTitanLoadoutsMenu" ) ) )
+	file.titanEditButton = titanEditButton
 	file.loadoutButtons.append( titanEditButton )
 
 	headerIndex++
@@ -307,6 +120,8 @@ void function InitInGameMPMenu()
 
 	ComboButtons_Finalize( comboStruct )
 
+	file.comboStruct = comboStruct
+
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_CLOSE", "#CLOSE" )
 }
@@ -345,24 +160,11 @@ void function OnInGameMPMenu_Close()
 	}
 }
 
-function GetNumberOfTrackedChallenges()
-{
-	entity player = GetUIPlayer()
-	if ( player == null )
-		return
-
-	local numberOfTrackedChallenges = 0
-	for ( int i = 0; i < MAX_TRACKED_CHALLENGES; i++ )
-	{
-		if ( player.GetPersistentVar( "trackedChallengeRefs[" + i + "]" ) != "" )
-			numberOfTrackedChallenges++
-	}
-	return numberOfTrackedChallenges
-}
-
 void function UpdateLoadoutButtons()
 {
 	bool loadoutSelectionEnabled = (GetCurrentPlaylistVarInt( "loadout_selection_enabled", 1 ) == 1)
+
+	SetTitanSelectButtonVisibleState( true )
 
 	foreach ( button in file.loadoutButtons )
 	{
@@ -375,6 +177,29 @@ void function UpdateLoadoutButtons()
 			Hud_Show( header )
 		else
 			Hud_Hide( header )
+	}
+
+	entity player = GetUIPlayer()
+
+	if ( GetAvailableTitanRefs( player ).len() > 1 )
+	{
+		SetComboButtonHeaderTitle( file.menuMP, file.titanHeaderIndex, "#MENU_HEADER_TITAN" )
+		ComboButton_SetText( file.titanSelectButton, "#SELECT" )
+		Hud_Show( file.titanEditButton )
+	}
+	else if ( GetAvailableTitanRefs( player ).len() == 1 )
+	{
+		TitanLoadoutDef loadout = GetCachedTitanLoadout( uiGlobal.titanSpawnLoadoutIndex )
+
+		SetComboButtonHeaderTitle( file.menuMP, file.titanHeaderIndex, GetTitanLoadoutName( loadout ) )
+		ComboButton_SetText( file.titanSelectButton, "#EDIT" )
+
+		Hud_Hide( file.titanEditButton )
+		ComboButtons_ResetColumnFocus( file.comboStruct )
+	}
+	else
+	{
+		SetTitanSelectButtonVisibleState( true )
 	}
 }
 
@@ -558,13 +383,6 @@ void function OnCloseInGameSPMenu()
 {
 	if ( file.SP_displayObjectiveOnClose )
 		ClientCommand( "ShowObjective closedSPMenu" )
-}
-
-
-void function DelayedSetFocus_BecauseWhy( var item )
-{
-	WaitEndFrame()
-	Hud_SetFocused( item )
 }
 
 void function SPMenu_UpdateReloadCheckpointButton()
@@ -827,4 +645,45 @@ void function SCB_SetTitanMeritCount( int meritCount )
 	var rui = Hud_GetRui( doubleXPWidget )
 
 	RuiSetInt( rui, "titanMeritCount", meritCount )
+}
+
+void function TitanSelectButtonHandler( var button )
+{
+	if ( !IsFullyConnected() )
+		return
+
+	entity player = GetUIPlayer()
+	if ( GetAvailableTitanRefs( player ).len() > 1 )
+	{
+		AdvanceMenu( GetMenu( "TitanLoadoutsMenu" ) )
+	}
+	else if ( GetAvailableTitanRefs( player ).len() == 1 )
+	{
+		uiGlobal.updateTitanSpawnLoadout = false
+		SetEditLoadout( "titan", uiGlobal.titanSpawnLoadoutIndex )
+
+		RunMenuClientFunction( "SetEditingTitanLoadoutIndex", uiGlobal.titanSpawnLoadoutIndex )
+		AdvanceMenu( GetMenu( "EditTitanLoadoutMenu" ) )
+	}
+	else
+	{
+		// HIDE
+	}
+}
+
+void function SetTitanSelectButtonVisibleState( bool state )
+{
+	if ( state )
+	{
+		Hud_Show( file.titanHeader )
+		Hud_Show( file.titanEditButton )
+		Hud_Show( file.titanSelectButton )
+	}
+	else
+	{
+		ComboButtons_ResetColumnFocus( file.comboStruct )
+		Hud_Hide( file.titanHeader )
+		Hud_Hide( file.titanEditButton )
+		Hud_Hide( file.titanSelectButton )
+	}
 }

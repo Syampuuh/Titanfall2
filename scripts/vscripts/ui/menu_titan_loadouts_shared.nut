@@ -65,9 +65,16 @@ void function UpdateTitanLoadoutButtons( int selectedIndex, var[NUM_PERSISTENT_T
 		Hud_SetEnabled( button, true )
 		Hud_SetVisible( button, true )
 
-		Hud_SetLocked( button, IsItemLocked( player, loadout.titanClass ) )
-
-		RefreshButtonCost( button, loadout.titanClass )
+		if ( !IsTitanLoadoutAvailable( player, loadout.titanClass ) )
+		{
+			Hud_SetLocked( button, true )
+			RefreshButtonCost( button, loadout.titanClass, "", 0, 0 )
+		}
+		else
+		{
+			Hud_SetLocked( button, IsItemLocked( player, loadout.titanClass ) )
+			RefreshButtonCost( button, loadout.titanClass )
+		}
 	}
 
 	if ( focusSelected )

@@ -89,6 +89,8 @@ global function DevPrintAllStatusEffectsOnEnt
 	global function GetTTK
 	global function GetWeaponModsFromDamageInfo
 	global function Thermite_DamagePlayerOrNPCSounds
+	global function AddThreatScopeColorStatusEffect
+	global function RemoveThreatScopeColorStatusEffect
 #endif //SERVER
 #if CLIENT
 	global function GlobalClientEventHandler
@@ -139,12 +141,19 @@ global struct PopcornInfo
 	bool hasBase
 }
 
+struct ColorSwapStruct
+{
+	int statusEffectId
+	entity weaponOwner
+}
+
 struct
 {
 	float titanRocketLauncherTitanDamageRadius
 	float titanRocketLauncherOtherDamageRadius
 
 	int activeThermiteBurnsManagedEnts
+	array<ColorSwapStruct> colorSwapStatusEffects
 } file
 
 global int HOLO_PILOT_TRAIL_FX
@@ -3566,7 +3575,10 @@ void function OnPlayerGetsNewPilotLoadout( entity player, PilotLoadoutDef loadou
 		foreach( weapon in weapons )
 		{
 			if ( weapon.HasMod( "silencer" ) )
+			{
 				weapon.RemoveMod( "silencer" )
+				weapon.AddMod( "silencer_low_ttk")
+			}
 		}
 		player.GiveExtraWeaponMod( "low_ttk" )
 	}
@@ -3891,5 +3903,33 @@ void function Thermite_DamagePlayerOrNPCSounds( entity ent )
 		 	EmitSoundOnEntity( ent, "flesh_thermiteburn_1p_vs_3p" )
 		}
 	}
+}
+#endif
+
+#if SERVER
+void function RemoveThreatScopeColorStatusEffect( entity player )
+{
+	for ( int i = file.colorSwapStatusEffects.len() - 1; i >= 0; i-- )
+	{
+		entity owner = file.colorSwapStatusEffects[i].weaponOwner
+		if ( !IsValid( owner ) )
+		{
+			file.colorSwapStatusEffects.remove( i )
+			continue
+		}
+		if ( owner == player )
+		{
+			StatusEffect_Stop( player, file.colorSwapStatusEffects[i].statusEffectId )
+			file.colorSwapStatusEffects.remove( i )
+		}
+	}
+}
+
+void function AddThreatScopeColorStatusEffect( entity player )
+{
+	ColorSwapStruct info
+	info.weaponOwner = player
+	info.statusEffectId = StatusEffect_AddTimed( player, eStatusEffect.cockpitColor, COCKPIT_COLOR_THREAT, 100000, 0 )
+	file.colorSwapStatusEffects.append( info )
 }
 #endif

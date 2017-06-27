@@ -3,6 +3,8 @@ global function InitTabs
 global function AddTab
 global function ClearTabs
 global function ActivateTab
+global function GetMenuActiveTabIndex
+global function GetMenuNumTabs
 global function UpdateMenuTabs
 global function RegisterTabNavigationInput
 global function DeregisterTabNavigationInput
@@ -84,6 +86,16 @@ void function ActivateTab( var menu, int tabIndex, string animPrefix = "" )
 
 	if ( animPrefix != "" )
 		AnimatePanelChange( panel, animPrefix )
+}
+
+int function GetMenuActiveTabIndex( var menu )
+{
+	return uiGlobal.menuData[ menu ].tabIndex
+}
+
+int function GetMenuNumTabs( var menu )
+{
+	return uiGlobal.menuData[ menu ].tabsData.len()
 }
 
 void function ShowPanel( var panel )

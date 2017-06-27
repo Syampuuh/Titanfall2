@@ -39,9 +39,6 @@ void function OpenBuyItemDialog( array<var> buttons, var button, string itemName
 
 	file.itemToBuy.availableCredits = GetAvailableCredits( GetUIPlayer() )
 
-	if ( file.itemToBuy.type == eItemTypes.TITAN_FD_UPGRADE )
-		file.itemToBuy.availableFDUnlockPoints = GetAvailableFDUnlockPoints( GetUIPlayer(), parentRef )
-
 	DialogData dialogData
 	if ( GetItemRequiresPrime( file.itemToBuy.ref ) )
 	{
@@ -71,22 +68,7 @@ void function OpenBuyItemDialog( array<var> buttons, var button, string itemName
 
 		AddDialogButton( dialogData, "#OK" )
 	}
-	else if ( file.itemToBuy.availableFDUnlockPoints >= file.itemToBuy.cost && file.itemToBuy.type == eItemTypes.TITAN_FD_UPGRADE )
-	{
-		string unlockReqText = Localize( GetItemUnlockReqText( ref, parentRef ) )
-		string itemTypeName = Localize( GetItemRefTypeName( ref, parentRef ) )
-		dialogData.header = Localize( "#BUY_HEADER", Localize( itemName ), file.itemToBuy.cost, unlockReqText )
-//		dialogData.message = unlockReqText
-
-		DialogMessageRuiData ruiMessage
-		ruiMessage.message = unlockReqText
-		dialogData.ruiMessage = ruiMessage
-		dialogData.noChoiceWithNavigateBack = true
-
-		AddDialogButton( dialogData, "#BUY", BuyItem )
-		AddDialogButton( dialogData, "#CANCEL" )
-	}
-	else if ( file.itemToBuy.availableCredits >= file.itemToBuy.cost && file.itemToBuy.type != eItemTypes.TITAN_FD_UPGRADE )
+	else if ( file.itemToBuy.availableCredits >= file.itemToBuy.cost )
 	{
 		string unlockReqText = Localize( GetItemUnlockReqText( ref, parentRef ) )
 		string itemTypeName = Localize( GetItemRefTypeName( ref, parentRef ) )
@@ -106,10 +88,7 @@ void function OpenBuyItemDialog( array<var> buttons, var button, string itemName
 		EmitUISound( "blackmarket_purchase_fail" )
 		string unlockReqText = Localize( GetItemUnlockReqText( ref, parentRef ) )
 		string message
-		if ( file.itemToBuy.type == eItemTypes.TITAN_FD_UPGRADE )
-			message = Localize( "#BUY_HEADER_INSUFFICIENT_CREDITS", file.itemToBuy.cost - file.itemToBuy.availableFDUnlockPoints, Localize( itemName ) )
-		else
-			message = Localize( "#BUY_HEADER_INSUFFICIENT_CREDITS", file.itemToBuy.cost - file.itemToBuy.availableCredits, Localize( itemName ) )
+		message = Localize( "#BUY_HEADER_INSUFFICIENT_CREDITS", file.itemToBuy.cost - file.itemToBuy.availableCredits, Localize( itemName ) )
 
 		dialogData.header = "#BUY_HEADER_INSUFFICIENT_CREDITS_TITLE"
 		dialogData.message = message// + "\n\n^CCCCCC00" + unlockReqText
@@ -135,7 +114,6 @@ void function BuyItem()
 {
 	EmitUISound( "UI_Menu_Item_Purchased_Stinger" )
 	Hud_SetLocked( file.itemToBuy.button, false )
-	if ( file.itemToBuy.type != eItemTypes.TITAN_FD_UPGRADE )
 	{
 		int creditsAvailable = file.itemToBuy.availableCredits - file.itemToBuy.cost
 		RefreshCreditsAvailable( creditsAvailable )

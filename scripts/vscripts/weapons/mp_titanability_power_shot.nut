@@ -52,12 +52,16 @@ var function OnWeaponPrimaryAttack_power_shot( entity weapon, WeaponPrimaryAttac
 		array<string> mods = primaryWeapon.GetMods()
 		mods.fastremovebyvalue( "LongRangeAmmo" )
 		mods.append( "LongRangePowerShot" )
+		if ( mods.contains( "fd_longrange_helper" ) )
+			mods.append( "fd_LongRangePowerShot" )
 		primaryWeapon.SetMods( mods )
 	}
 	else
 	{
 		array<string> mods = primaryWeapon.GetMods()
 		mods.append( "CloseRangePowerShot" )
+		if ( mods.contains( "fd_closerange_helper" ) )
+			mods.append( "fd_CloseRangePowerShot" )
 		primaryWeapon.SetMods( mods )
 	}
 
@@ -79,7 +83,7 @@ void function MonitorEjectStatus( entity weaponOwner )
 }
 #endif
 
-void function PowerShotCleanup( entity owner, entity weapon, string modName, array<string> modsToAdd )
+void function PowerShotCleanup( entity owner, entity weapon, array<string> modNames, array<string> modsToAdd )
 {
 	if ( IsValid( owner ) && owner.IsPlayer() )
 	{
@@ -99,7 +103,8 @@ void function PowerShotCleanup( entity owner, entity weapon, string modName, arr
 
 		#if SERVER
 		array<string> mods = weapon.GetMods()
-		mods.fastremovebyvalue( modName )
+		foreach( modName in modNames )
+			mods.fastremovebyvalue( modName )
 		foreach( mod in modsToAdd )
 			mods.append( mod )
 		weapon.SetMods( mods )

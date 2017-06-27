@@ -109,7 +109,7 @@ void function StunLaser_DamagedTarget( entity target, var damageInfo )
 			}
 		}
 	}
-	else
+	else if ( target.IsNPC() || target.IsPlayer() )
 	{
 		int shieldRestoreAmount = target.GetArmorType() == ARMOR_TYPE_HEAVY ? 750 : 250
 		entity soul = attacker.GetTitanSoul()

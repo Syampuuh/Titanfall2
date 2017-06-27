@@ -27,17 +27,20 @@ void function CaptureTheFlagShared_Init()
 	RegisterSignal( "CTF_ReturnedFlag")
 
 	SetWaveSpawnInterval( 12.0 )
-	table<string,int> ctfScoreLimits
-	ctfScoreLimits["mp_box"] <- 3
-	ctfScoreLimits["mp_crashsite3"] <- 3
-	ctfScoreLimits["mp_black_water_canal"] <- 3
-	ctfScoreLimits["mp_lf_stacks"] <- 5
-	ctfScoreLimits["mp_lf_mout"] <- 5
-	ctfScoreLimits["mp_lf_traffic"] <- 5
-	ctfScoreLimits["mp_lf_deck"] <- 5
-	ctfScoreLimits["mp_lf_uma"] <- 5
-	ctfScoreLimits["mp_lf_township"] <- 5
-	GameMode_SetMapSpecificScoreLimit( ctfScoreLimits, GAMETYPE )
+	if ( !IsPrivateMatch() )
+	{
+		table<string,int> ctfScoreLimits
+		ctfScoreLimits["mp_box"] <- 3
+		ctfScoreLimits["mp_crashsite3"] <- 3
+		ctfScoreLimits["mp_black_water_canal"] <- 3
+		ctfScoreLimits["mp_lf_stacks"] <- 5
+		ctfScoreLimits["mp_lf_mout"] <- 5
+		ctfScoreLimits["mp_lf_traffic"] <- 5
+		ctfScoreLimits["mp_lf_deck"] <- 5
+		ctfScoreLimits["mp_lf_uma"] <- 5
+		ctfScoreLimits["mp_lf_township"] <- 5
+		GameMode_SetMapSpecificScoreLimit( ctfScoreLimits, GAMETYPE )
+	}
 }
 
 

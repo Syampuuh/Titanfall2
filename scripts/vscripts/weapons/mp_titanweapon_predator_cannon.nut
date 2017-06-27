@@ -152,7 +152,7 @@ var function OnWeaponPrimaryAttack_titanweapon_predator_cannon( entity weapon, W
 
 			ShotgunBlast( weapon, attackParams.pos, attackParams.dir, 16, DF_GIB | DF_EXPLOSION | DF_KNOCK_BACK, 1.0, 10.0 )
 
-			PowerShotCleanup( owner, weapon, "CloseRangePowerShot", [] )
+			PowerShotCleanup( owner, weapon, ["CloseRangePowerShot","fd_CloseRangePowerShot"] , [] )
 
 			return 1
 		}
@@ -174,7 +174,7 @@ var function OnWeaponPrimaryAttack_titanweapon_predator_cannon( entity weapon, W
 			}
 		}
 
-		PowerShotCleanup( owner, weapon, "LongRangePowerShot", [ "LongRangeAmmo" ] )
+		PowerShotCleanup( owner, weapon, ["LongRangePowerShot","fd_LongRangePowerShot"], [ "LongRangeAmmo" ] )
 
 		return 1
 	}

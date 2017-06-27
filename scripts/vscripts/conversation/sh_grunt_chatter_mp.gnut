@@ -26,7 +26,7 @@ void function ShGruntChatter_MP_Init()
 		int priority = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "priority" ) )
 		float debounce = GetDataTableFloat( dataTable, i, GetDataTableColumnByName( dataTable, "debounce" ) )
 
-		if ( !(conversationName in level.Conversations ) )
+		if ( !( DoesConversationExist( conversationName ) ) )
 		{
 			RegisterConversation( conversationName, priority, debounce )
 		}

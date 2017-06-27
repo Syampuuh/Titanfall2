@@ -185,9 +185,16 @@ WeaponData
 
             burnmeter_harvester_shield
             {
-                "hud_icon"				    "rui/menu/boosts/boost_icon_harvester"
+                "hud_icon"				    "rui/menu/boosts/boost_icon_harvester_shield"
                 "readymessage"              "#BURNMETER_HARVESTER_SHIELD"
-                "readyhint"                 "#BURNMETER_HARVESTER_SHIELD_DESC"
+                "readyhint"                 "#BURNMETER_HARVESTER_SHIELD_HINT"
+            }
+
+            burnmeter_rodeo_grenade
+            {
+                "hud_icon"				    "rui/menu/boosts/boost_icon_core_overload"
+                "readymessage"              "#HUD_BURNMETER_READY_SUPER_RODEO"
+                "readyhint"                 "#HUD_BURNMETER_READY_SUPER_RODEO_DESC"
             }
 		}
 

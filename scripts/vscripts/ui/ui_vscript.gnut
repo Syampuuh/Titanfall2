@@ -61,6 +61,7 @@ global struct DialogData
 	DialogMessageRuiData &ruiMessage
 	array messageColor = [161, 161, 161, 255]
 	asset image
+	asset rightImage = $""
 	bool forceChoice = false
 	bool noChoice = false
 	bool noChoiceWithNavigateBack = false
@@ -83,6 +84,7 @@ global struct MenuDef
 	void functionref() thinkFunc
 	void functionref() navBackFunc
 	void functionref() tabChangedFunc
+	void functionref() inputModeChangedFunc
 
 	array<InputDef> footerData
 	table<int, void functionref( var )> registeredInput
@@ -140,6 +142,7 @@ global struct UIGlobals
 	string	previousLevel = ""
 	string	previousPlaylist = ""
 	var		activeMenu = null
+	bool	lastMenuNavDirection = MENU_NAV_FORWARD
 	bool 	lobbyFromLoadingScreen = false
 	bool	eventHandlersAdded = false
 	bool	loadoutsInitialized = false
@@ -171,6 +174,7 @@ global struct UIGlobals
 	int 	editingWeaponCategory = -1
 
 	int		entitlementId = -1
+	string	testStoreWeaponRef // TODO: Remove when done testing
 
 	bool	EOGAutoAdvance = true
 	bool	EOGOpenInLobby = false
@@ -204,8 +208,6 @@ global struct UIGlobals
 
 	bool	playingVideo = false
 	bool	playingCredits = false
-
-	bool	matchSettingsChanged = false
 
 	bool	mapSupportsMenuModels = false
 	bool	mapSupportsMenuModelsUpdated = false
@@ -261,10 +263,6 @@ void function UICodeCallback_UIInit()
 	ChallengesShared_Init()
 	ChallengesContent_Init()
 	XP_Init()
-	#if DEVSCRIPTS
-	ShDpadComms_Init()
-	PVETactical_SharedInit()
-	#endif
 
 	MenuLobby_Init()
 	MenuPrivateMatch_Init()
@@ -276,7 +274,6 @@ void function UICodeCallback_UIInit()
 	MenuAdvocateLetter_Init()
 	MenuCredits_Init()
 	MenuMapSelect_Init()
-	MenuModeSelect_Init()
 
 	RegisterSignal( "LevelShutdown" )
 	RegisterSignal( "CleanupInGameMenus" )
@@ -301,6 +298,12 @@ void function UICodeCallback_UIInit()
 void function UICodeCallback_ControllerModeChanged( bool controllerModeEnabled )
 {
 	//printt( "CONTROLLER! " + controllerModeEnabled + ", " + IsControllerModeActive() )
+
+	if ( uiGlobal.activeMenu == null )
+		return
+
+	if ( uiGlobal.menuData[ uiGlobal.activeMenu ].inputModeChangedFunc != null )
+		thread uiGlobal.menuData[ uiGlobal.activeMenu ].inputModeChangedFunc()
 
 	UpdateFooterOptions()
 

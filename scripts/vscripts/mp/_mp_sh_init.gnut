@@ -17,11 +17,6 @@ void function SPMP_Shared_Init()
 	else
 		Shared_MP_Init()
 
-#if DEVSCRIPTS
-	ShDpadComms_Init()
-	PVETactical_SharedInit()
-	ShInitBoostStore()
-#endif
 }
 
 void function Shared_Lobby_Init()
@@ -164,8 +159,6 @@ void function Server_MP_Init()
 	PainDeathSounds_Init()
 	Store_Init()
 
-	Harvester_GlobalInit()
-	//FW_Harvester_GlobalInit()
 	Evac_Init()
 	InitChallenges()
 	Revive_Init()
@@ -209,7 +202,6 @@ void function Server_MP_Init()
 	SpectreRack_Init()
 	LoadoutCrate_Init()
 	TitanCommands_Init()
-	MortarTitans_Init()
 
 	ClassTitan_Init()
 	ClassWallrun_Init()
@@ -278,11 +270,6 @@ void function Server_MP_Init()
 	Decoy_Init()
 
 	PIN_Init()
-
-	#if DEVSCRIPTS
-		AbilityChooser_Init()
-		InitBatteryPort()
-	#endif
 
 	// NOTE this should run after level scripts get a chance to override default behavior
 	if ( IsMultiplayerPlaylist() )
@@ -382,10 +369,6 @@ void function Client_MP_Init()
 	ClGruntChatter_MP_Init()
 	ClSpectatorModeAudio_Init()
 	//ClPilotSpeedometer_Init()
-	#if DEVSCRIPTS
-	ClDpadComms_Init()
-	#endif
-
 	if ( !IsLobby() && GetCurrentPlaylistVarInt( "riff_floorislava", eFloorIsLava.Default ) )
 		ClRiffFloorIsLava_Init()
 

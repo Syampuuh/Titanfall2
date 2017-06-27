@@ -72,6 +72,7 @@ global function GetAllItemRefsOfType
 global function GetVisibleItemsOfType
 global function GetVisibleItemsOfTypeForCategory
 global function GetVisibleItemsOfTypeWithoutEntitlements
+global function GetVisibleItemsOfTypeMatchingEntitlementID
 global function GetIndexForUnlockItem
 global function GetAllItemRefs
 global function GetAllSubitemRefs
@@ -142,6 +143,7 @@ global function PersistenceCleanup
 global function GetNoseArtRefFromTitanClassAndPersistenceValue
 global function GetSkinRefFromTitanClassAndPersistenceValue
 #endif
+global function GetSkinRefFromWeaponRefAndPersistenceValue
 global function GetUnlockItemsForPlayerLevels
 global function GetUnlockItemsForTitanLevels
 global function GetNextUnlockForTitanLevel
@@ -193,7 +195,6 @@ global function Player_GiveColiseumTickets
 global function Player_GiveDoubleXP
 global function Player_GiveCredits
 global function Player_ActivateDoubleXP
-global function Player_GiveFDUnlockPoints
 
 global function AwardCredits
 #endif
@@ -210,6 +211,7 @@ global function RefreshSortedElems
 global function GetSortedIndex
 
 global function SortItemsAlphabetically
+global function ItemsInSameMenuCategory
 
 #if DEV
 global function GenerateValidateDataTableCRCText
@@ -229,7 +231,6 @@ global enum eUnlockType
 	PERSISTENT_ITEM,
 	STAT,
 	RANDOM,
-	FD_UNLOCK_POINTS,
 }
 
 global struct ChildUnlock
@@ -367,6 +368,7 @@ struct
 
 	table<string, table<int, string> > titanClassAndPersistenceValueToNoseArtRefTable //Primarily used to speed up validation of persistence data
 	table<string, table<int, string> > titanClassAndPersistenceValueToSkinRefTable //Primarily used to speed up validation of persistence data
+	table<string, table<int, string> > weaponRefAndPersistenceValueToSkinRefTable //Primarily used to speed up validation of persistence data
 } file
 
 void function InitItems()
@@ -395,8 +397,6 @@ void function InitItems()
 		AddClientCommandCallback( "BuyTicket", ClientCommand_BuyTicket )
 		AddClientCommandCallback( "ClearNewStatus", ClientCommand_ClearNewStatus )
 		AddClientCommandCallback( "UseDoubleXP", ClientCommand_UseDoubleXP )
-		AddClientCommandCallback( "DEV_GiveFDUnlockPoint", ClientCommand_DEV_GiveFDUnlockPoint )
-		AddClientCommandCallback( "DEV_ResetTitanProgression", ClientCommand_DEV_ResetTitanProgression )
 	#endif
 
 	#if UI
@@ -917,7 +917,6 @@ void function InitItems()
 
 		CreateTitanData( i, titanRef, cost, image, coreIcon )
 
-
 		ItemData itemData = GetItemData( titanRef )
 		int passive1Type = expect int( itemData.i.passive1Type )
 		int passive2Type = expect int( itemData.i.passive2Type )
@@ -1125,28 +1124,6 @@ void function InitItems()
 		}
 	}
 
-	#if DEVSCRIPTS
-	if ( EmotesEnabled() )
-	{
-		var dataTable = GetDataTable( $"datatable/dpad_comm_custom_phrases.rpak" )
-		for ( int row = 0; row < GetDatatableRowCount( dataTable ); row++ )
-		{
-			string iconRef = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "phrase" ) )
-			string name = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "displayName" ) )
-			asset image = GetDataTableAsset( dataTable, row, GetDataTableColumnByName( dataTable, "icon" ) )
-			int cost = GetDataTableInt( dataTable, row, GetDataTableColumnByName( dataTable, "cost" ) )
-
-			string desc = ""
-			string longdesc = ""
-
-			int datatableIndex = row
-
-			ItemData item = CreateGenericItem( datatableIndex, eItemTypes.COMMS_ICON, iconRef, name, desc, longdesc, image, cost, false )
-			item.imageAtlas = IMAGE_ATLAS_COMMS
-		}
-	}
-	#endif
-
 	/////////////////////
 	// NON-LOADOUT WEAPONS
 	/////////////////////
@@ -1205,14 +1182,11 @@ void function InitItems()
 
 		bool hidden 		= !GetDataTableBool( dataTable, row, GetDataTableColumnByName( dataTable, "selectable" ) )
 		CreateGenericItem( row, eItemTypes.BURN_METER_REWARD, itemRef, name, description, description, image, cost, hidden )
-		if ( hidden )
-			InitUnlock( itemRef, "", eUnlockType.PLAYER_LEVEL, 1 )
 	}
 
 	InitRandomUnlocks()
-	InitUnlocks()
 
-	SetupFrontierDefenseItems()
+	InitUnlocks()
 
 	foreach ( item in file.itemData )
 	{
@@ -1462,6 +1436,10 @@ void function InitUnlocks()
 		loadout.secondaryMod1 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "secondaryMod1" ) )
 		loadout.secondaryMod2 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "secondaryMod2" ) )
 		loadout.secondaryMod3 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "secondaryMod3" ) )
+		loadout.weapon3				= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "weapon3" ) )
+		loadout.weapon3Mod1 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "weapon3Mod1" ) )
+		loadout.weapon3Mod2 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "weapon3Mod2" ) )
+		loadout.weapon3Mod3 		= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "weapon3Mod3" ) )
 		loadout.ordnance 			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "ordnance" ) )
 		loadout.passive1 			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "passive1" ) )
 		loadout.passive2 			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "passive2" ) )
@@ -1600,6 +1578,16 @@ void function InitUnlocks()
 	InitUnlock( "callsign_65_col_gold", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_14_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_14_col_fire", "", eUnlockType.PERSISTENT_ITEM, 0 )
+
+	#if !DEVSCRIPTS
+	InitUnlock( "callsign_24_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
+	InitUnlock( "callsign_47_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
+	InitUnlock( "callsign_36_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
+	InitUnlock( "callsign_45_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
+	InitUnlock( "callsign_68_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
+	InitUnlock( "callsign_26_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
+	InitUnlock( "callsign_165_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
+	#endif
 
 	InitUnlock( "callsign_126_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_127_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
@@ -1783,9 +1771,7 @@ void function InitUnlocks()
 	InitUnlockForStatInt( "execution_pulseblade", "", 10, "weapon_kill_stats", "pilots" , "mp_weapon_grenade_sonar" )
 	InitUnlockForStatInt( "execution_random", "", 0, "kills_stats", "pilotExecutePilot" )
 	InitUnlockForStatInt( "execution_cloak", "", 10, "kills_stats", "pilotExecutePilotWhileCloaked" )
-	#if DEVSCRIPTS
 	InitUnlockForStatInt( "execution_holopilot", "", 20, "kills_stats", "pilotKillsWithHoloPilotActive" )
-	#endif
 
 	//Distance
 	InitUnlockForStatFloat( "pilot_camo_skin56", "", 100.0, "distance_stats", "asPilot" )
@@ -3300,110 +3286,14 @@ void function InitUnlocks()
 	InitUnlockAsEntitlement( "callsign_184_col", "", ET_DLC5_CALLSIGN )
 	InitUnlockAsEntitlement( "callsign_185_col", "", ET_DLC5_CALLSIGN )
 
-	#if DEV
-	#if SERVER
-		array<string> ignoreList = [ "titanos_ronin",
-									 "mp_titanweapon_vortex_shield",
-									 "mp_titanweapon_rocketeer_rocketstream",
-									 "melee_pilot_arena",
-									 "mp_titanweapon_shoulder_rockets",
-									 "mp_titancore_dash_core",
-									 "mp_titanability_smoke",
-									 "melee_pilot_sword",
-									 "mp_titanweapon_salvo_rockets",
-									 "mp_titancore_amp_core",
-									 "advocate_gift",
-									 "default",
-									 "mp_titanability_rocketeer_ammo_swap",
-									 "titanos_scorch",
-									 "double_xp",
-									 "titanos_ion",
-									 "fnf",
-									 "melee_pilot_emptyhanded",
-									 "mp_titanweapon_homing_rockets",
-									 "private_match",
-									 "credit_award_5x",
-									 "titanos_bt",
-									 "mp_titanweapon_xo16_shorty",
-									 "titanos_northstar",
-									 "titanos_tone",
-									 "titanos_legion",
-									 "titanos_vanguard",
-									 "varietypack",
-									 "mp_titanweapon_stun_laser",
-									 "mp_titanability_rearm",
-									 "mp_titancore_upgrade",
-			"ronin.pas_vanguard_core8",
-			"ronin.pas_vanguard_core9",
-			"ronin.pas_vanguard_core2",
-			"ronin.pas_vanguard_core5",
-			"ronin.pas_vanguard_core3",
-			"ronin.pas_vanguard_core6",
-			"ion.pas_vanguard_core8",
-			"ion.pas_vanguard_core6",
-			"ion.pas_vanguard_core9",
-			"ion.pas_vanguard_core2",
-			"ion.pas_vanguard_core5",
-			"ion.pas_vanguard_core3",
-			"legion.pas_vanguard_core8",
-			"legion.pas_vanguard_core9",
-			"legion.pas_vanguard_core2",
-			"legion.pas_vanguard_core5",
-			"legion.pas_vanguard_core6",
-			"legion.pas_vanguard_core3",
-			"scorch.pas_vanguard_core8",
-			"scorch.pas_vanguard_core6",
-			"scorch.pas_vanguard_core9",
-			"scorch.pas_vanguard_core2",
-			"scorch.pas_vanguard_core5",
-			"scorch.pas_vanguard_core3",
-			"tone.pas_vanguard_core8",
-			"tone.pas_vanguard_core9",
-			"tone.pas_vanguard_core2",
-			"tone.pas_vanguard_core5",
-			"tone.pas_vanguard_core6",
-			"tone.pas_vanguard_core3",
-			"northstar.pas_vanguard_core8",
-			"northstar.pas_vanguard_core9",
-			"northstar.pas_vanguard_core2",
-			"northstar.pas_vanguard_core5",
-			"northstar.pas_vanguard_core3",
-			"northstar.pas_vanguard_core6",		]
 
-		foreach ( item in file.itemData )
-		{
-			if ( ignoreList.contains( item.ref ) )
-				continue
+	array<ItemData> burnMeterRewards = GetAllItemsOfType( eItemTypes.BURN_METER_REWARD )
+	foreach ( ItemData item in burnMeterRewards )
+	{
+		if ( !IsUnlockValid( item.ref ) )
+			InitUnlock( item.ref, "", eUnlockType.PLAYER_LEVEL, 1 )
+	}
 
-			if ( IsSubItemType( GetItemType( item.ref ) ) )
-				continue
-
-			if ( item.ref in file.entitlementUnlocks )
-				continue
-
-			if ( IsDisabledRef( item.ref  ) )
-				continue
-
-			if ( ( item.ref in file.unlocks ) || IsItemInRandomUnlocks( item.ref ) )
-			{
-				foreach ( subItem in item.subitems )
-				{
-					if ( subItem.ref in file.unlocks[ item.ref ].child || IsItemInRandomUnlocks( subItem.ref, item.ref ) || IsItemInEntitlementUnlock( subItem.ref, item.ref ) )
-						continue
-
-					if ( ignoreList.contains( item.ref + "." + subItem.ref ) )
-						continue
-
-					CodeWarning( "Not in unlocks " + item.ref + "." + subItem.ref )
-				}
-			}
-			else
-			{
-				CodeWarning( "Not in unlocks " + item.ref )
-			}
-		}
-	#endif
-	#endif
 }
 
 #if SERVER
@@ -3668,7 +3558,7 @@ void function InitUnlock( string ref, string parentRef, int unlockType, int unlo
 	if ( parentRef == "" )
 	{
 		Assert( !(ref in file.unlocks), "Duplicate unlock entry " + ref )
-		Assert( unlockType == eUnlockType.PLAYER_LEVEL || unlockType == eUnlockType.DISABLED || unlockType == eUnlockType.ENTITLEMENT || unlockType == eUnlockType.PERSISTENT_ITEM || unlockType == eUnlockType.FACTION_LEVEL || unlockType == eUnlockType.FD_UNLOCK_POINTS, "Cannot specify a parentRef for an item that unlocks with player level" )
+		Assert( unlockType == eUnlockType.PLAYER_LEVEL || unlockType == eUnlockType.DISABLED || unlockType == eUnlockType.ENTITLEMENT || unlockType == eUnlockType.PERSISTENT_ITEM || unlockType == eUnlockType.FACTION_LEVEL, "Cannot specify a parentRef for an item that unlocks with player level" )
 
 		Unlock unlock
 		unlock.unlockType = unlockType
@@ -4160,18 +4050,6 @@ string function GetItemUnlockReqText( string ref, string parentRef = "", bool al
 			}
 
 			break
-
-		case eUnlockType.FD_UNLOCK_POINTS:
-			if ( parentRef == "" )
-			{
-				Assert( ref in file.unlocks )
-				Assert( file.unlocks[ ref ].parentRef != "" )
-				parentRef = file.unlocks[ ref ].parentRef
-			}
-
-			unlockReq = Localize( "FD_UNLOCK_POINT UNLOCK REQ", Localize( GetItemName( parentRef ) ) )
-			break
-
 
 		case eUnlockType.WEAPON_LEVEL:
 			if ( parentRef == "" )
@@ -4887,6 +4765,25 @@ array<ItemDisplayData> function GetVisibleItemsOfTypeForCategory( int itemType, 
 	return filteredItems
 }
 
+array<ItemDisplayData> function GetVisibleItemsOfTypeMatchingEntitlementID( int itemType, int entitlementID, string parentRef = "" )
+{
+	array<ItemDisplayData> items = GetVisibleItemsOfType( itemType, parentRef )
+	array<ItemDisplayData> filteredItems
+
+	foreach ( item in items )
+	{
+		array<int> ids = GetEntitlementIds( item.ref, parentRef )
+
+		foreach ( id in ids )
+		{
+			if ( id == entitlementID )
+				filteredItems.append( item )
+		}
+	}
+
+	return filteredItems
+}
+
 int function GetIndexForUnlockItem( int itemType, string ref )
 {
 	Assert( itemType >= 0 && itemType < eItemTypes.COUNT, "Unknown item itemType " + itemType )
@@ -5098,60 +4995,6 @@ void function CreateTitanData( int dataTableIndex, string titanRef, int cost, as
 	item.persistenceId          = dataTableIndex
 }
 
-void function SetupFrontierDefenseItems()
-{
-	var dataTable = GetDataTable( $"datatable/titan_fd_upgrades.rpak" )
-	var numRows = GetDatatableRowCount( dataTable )
-	for ( int i = 0; i < numRows; i++ )
-	{
-		bool hidden	= false
-
-		string ref			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "ref" ) )
-		string parentRef	= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "parentref" ) )
-		int itemType		= eItemTypes[ GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "type" ) ) ]
-		string name			= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "name" ) )
-		string description	= GetDataTableString( dataTable, i, GetDataTableColumnByName( dataTable, "description" ) )
-		asset image			= GetDataTableAsset( dataTable, i, GetDataTableColumnByName( dataTable, "image" ) )
-		int slot			= GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "slot" ) )
-		int cost			= GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "cost" ) )
-
-		if ( IsDisabledRef( ref ) )
-			continue
-
-		CreateFDTitanUpgradeData( i, itemType, hidden, ref, parentRef, name, description, image, slot, cost )
-		InitUnlock( ref, parentRef, eUnlockType.FD_UNLOCK_POINTS, cost )
-	}
-}
-
-
-void function CreateFDTitanUpgradeData( int dataTableIndex, int itemType, bool hidden, string ref, string parentRef, string name, string desc, asset image, int slot, int cost = 0 )
-{
-	Assert( IsSubItemType( itemType ) )
-	Assert( parentRef in file.itemData )
-
-	ItemData item		= CreateBaseItemData( itemType, ref, hidden )
-	item.name			= name
-	item.longname		= name
-	item.desc			= desc
-	item.image			= image
-	item.persistenceId	= dataTableIndex
-	item.cost			= cost
-	item.slot 			= slot
-	item.parentRef      = parentRef
-	item.imageAtlas		= IMAGE_ATLAS_MENU
-
-	SubItemData subItemRef
-	subItemRef.itemType = itemType
-	subItemRef.ref = ref
-	subItemRef.parentRef = parentRef
-	subItemRef.cost = cost
-	subItemRef.i = {}
-	subItemRef.slot = slot
-
-	ItemData parentItem = GetItemData( parentRef )
-	Assert( !(ref in parentItem.subitems), "childRef " + ref + " being redefined!" )
-	parentItem.subitems[ref] <- subItemRef
-}
 
 void function CreateTitanExecutionData( int dataTableIndex, int itemType, bool hidden, string ref, string name, string desc, string longdesc, asset image, int cost = 0, bool reqPrime = false )
 {
@@ -5390,10 +5233,6 @@ bool function IsSubItemLocked( entity player, string ref, string parentRef )
 				return false
 
 			return !IsSubItemOwned( player, ref, parentRef )
-
-		case eItemTypes.TITAN_FD_UPGRADE:
-			return !IsSubItemOwned( player, ref, parentRef )
-
 		case eItemTypes.PRIME_TITAN_NOSE_ART:
 			unreachable //Show have been caught IsItemInEntitlementUnlock() check earlier
 
@@ -5458,11 +5297,6 @@ bool function IsItemLocked( entity player, string ref )
 
 		case eUnlockType.STAT:
 			if ( !IsItemLockedForStat( player, ref ) )
-				return false
-			break
-
-		case eUnlockType.FD_UNLOCK_POINTS:
-			if ( !IsItemLockedForFrontierDefense( player, ref ) )
 				return false
 			break
 	}
@@ -5561,10 +5395,6 @@ bool function IsSubItemOwned( entity player, string ref, string parentRef )
 		case eItemTypes.PRIME_TITAN_NOSE_ART:
 			string parentStruct = GetItemPersistenceStruct( parentRef )
 			return IsPersistenceBitSet( player, parentStruct + ".unlockedPrimeTitanDecals", bitIndex )
-
-		case eItemTypes.TITAN_FD_UPGRADE:
-			string parentStruct = GetItemPersistenceStruct( parentRef )
-			return IsPersistenceBitSet( player, parentStruct + ".unlockedFDUpgrades", bitIndex )
 
 		default:
 			CodeWarning( "Unhandled owned type (subitem): " + DEV_GetEnumStringFromIndex( "eItemTypes", refType ) + " " + ref + " " + parentRef )
@@ -5761,12 +5591,6 @@ bool function IsItemLockedForPlayerLevel( int playerLevel, string ref )
 }
 
 
-bool function IsItemLockedForFrontierDefense( entity player, string ref )
-{
-	return player.GetPersistentVarAsInt( ref ) == 0
-}
-
-
 bool function IsItemLockedForTitan( entity player, string ref, string parentRef )
 {
 	return IsItemLockedForTitanLevel( TitanGetRawLevel( player, parentRef ), ref, parentRef )
@@ -5850,7 +5674,6 @@ bool function ItemLockedShouldUseRawLevel( string ref )
 		case eItemTypes.SUB_PILOT_WEAPON_ATTACHMENT:
 		case eItemTypes.FACTION:
 		case eItemTypes.PILOT_EXECUTION:
-		case eItemTypes.TITAN_FD_UPGRADE:
 			shouldUseRawLevel = false
 	}
 
@@ -6079,10 +5902,6 @@ bool function IsItemNew( entity player, string ref, string parentRef = "" )
 					persistenceVar = GetItemPersistenceStruct( parentRef ) + ".newPrimeTitanDecals"
 				break
 
-			case eItemTypes.TITAN_FD_UPGRADE:
-					persistenceVar = GetItemPersistenceStruct( parentRef ) + ".newFDUpgrades"
-				break
-
 			default:
 				CodeWarning( "Unhandled new type (subitem) 1: " + DEV_GetEnumStringFromIndex( "eItemTypes", refType ) + " " + ref + " " + parentRef )
 		}
@@ -6116,7 +5935,6 @@ void function UpdateCachedNewItems()
 	UpdateCachedNewItemsStruct( "titanChassis", "newWeaponSkins" )
 	UpdateCachedNewItemsStruct( "titanChassis", "newTitanDecals" )
 	UpdateCachedNewItemsStruct( "titanChassis", "newPrimeTitanDecals" )
-	UpdateCachedNewItemsStruct( "titanChassis", "newFDUpgrades" )
 	UpdateCachedNewItemsArray( "newPilotSkins" )
 	UpdateCachedNewItemsArray( "newPilotWeapons" )
 	UpdateCachedNewItemsArray( "newPilotOffhands" )
@@ -6362,11 +6180,6 @@ void function ClearNewStatus( var button, string ref, string parentRef = "" )
 				SetCachedPersistenceBitfield( parentStruct + ".newPrimeTitanDecals", bitIndex, 0 )
 				break
 
-			case eItemTypes.TITAN_FD_UPGRADE:
-				string parentStruct = GetItemPersistenceStruct( parentRef )
-				SetCachedPersistenceBitfield( parentStruct + ".newFDUpgrades", bitIndex, 0 )
-				break
-
 			default:
 				CodeWarning( "Unhandled ClearNewStatus type (subitem): " + DEV_GetEnumStringFromIndex( "eItemTypes", refType ) + " " + ref + " " + parentRef )
 		}
@@ -6387,6 +6200,9 @@ bool function HasAnyNewPilotLoadout( entity player )
 			return true
 
 		if ( loadout.secondary != "" && RefHasAnyNewSubitem( player, loadout.secondary ) )
+			return true
+
+		if ( loadout.weapon3 != "" && RefHasAnyNewSubitem( player, loadout.weapon3 ) )
 			return true
 	}
 
@@ -6548,7 +6364,6 @@ bool function ButtonShouldShowNew( int itemType, string ref = "", string parentR
 
 		case eItemTypes.RACE:
 		case eItemTypes.PILOT_MELEE:
-		case eItemTypes.TITAN_FD_UPGRADE:
 			return false
 	}
 
@@ -6648,10 +6463,6 @@ bool function HasAnyNewSubItemOfType( entity player, string parentRef, int refTy
 		case eItemTypes.PRIME_TITAN_NOSE_ART:
 			string parentStruct = GetItemPersistenceStruct( parentRef )
 			return IsAnyPersistenceBitSet( player, parentStruct + ".newPrimeTitanDecals" )
-
-		case eItemTypes.TITAN_FD_UPGRADE:
-			string parentStruct = GetItemPersistenceStruct( parentRef )
-			return IsAnyPersistenceBitSet( player, parentStruct + ".newFDUpgrades" )
 
 		default:
 			CodeWarning( "Unhandled HasAnyNewSubItemOfType type (subitem): " + DEV_GetEnumStringFromIndex( "eItemTypes", refType ) + " " + parentRef )
@@ -6763,11 +6574,6 @@ bool function HasAnyNewItemOfType( entity player, int refType, int parentRefType
 			case eItemTypes.PRIME_TITAN_NOSE_ART:
 				persistenceArray = "titanChassis"
 				persistenceVar = "newPrimeTitanDecals"
-				break
-
-			case eItemTypes.TITAN_FD_UPGRADE:
-				persistenceArray = "titanChassis"
-				persistenceVar = "newFDUpgrades"
 				break
 
 			default:
@@ -6952,11 +6758,6 @@ void function SetItemOwnedStatus( entity player, string ref, string parentRef, b
 				SetPersistenceBitfield( player, parentStruct + ".unlockedPrimeTitanDecals", bitIndex, unlockBitVal )
 				return
 
-			case eItemTypes.TITAN_FD_UPGRADE:
-				string parentStruct = GetItemPersistenceStruct( parentRef )
-				SetPersistenceBitfield( player, parentStruct + ".unlockedFDUpgrades", bitIndex, unlockBitVal )
-				return
-
 			default:
 				CodeWarning( "Unhandled unlock type (subitem): " + DEV_GetEnumStringFromIndex( "eItemTypes", refType ) + " " + ref + " " + parentRef )
 		}
@@ -7113,11 +6914,6 @@ void function SetItemNewStatus( entity player, string ref, string parentRef, boo
 			case eItemTypes.PRIME_TITAN_NOSE_ART:
 				string parentStruct = GetItemPersistenceStruct( parentRef )
 				SetPersistenceBitfield( player, parentStruct + ".newPrimeTitanDecals", bitIndex, newBitVal )
-				return
-
-			case eItemTypes.TITAN_FD_UPGRADE:
-				string parentStruct = GetItemPersistenceStruct( parentRef )
-				SetPersistenceBitfield( player, parentStruct + ".newFDUpgrades", bitIndex, newBitVal )
 				return
 
 			default:
@@ -7294,11 +7090,6 @@ bool function ClientCommand_ClearNewStatus( entity player, array<string> args )
 				SetPersistenceBitfield( player, parentStruct + ".newPrimeTitanDecals", bitIndex, 0 )
 				return true
 
-			case eItemTypes.TITAN_FD_UPGRADE:
-				string parentStruct = GetItemPersistenceStruct( parentRef )
-				SetPersistenceBitfield( player, parentStruct + ".newFDUpgrades", bitIndex, 0 )
-				return true
-
 			default:
 				CodeWarning( "Unhandled ClearNewStatus type (subitem): " + DEV_GetEnumStringFromIndex( "eItemTypes", refType ) + " " + ref + " " + parentRef )
 		}
@@ -7318,42 +7109,6 @@ void function ClearItemOwned( entity player, string ref, string parentRef = "" )
 	SetItemOwnedStatus( player, ref, parentRef, false )
 }
 
-bool function ClientCommand_DEV_GiveFDUnlockPoint( entity player, array<string> args )
-{
-	if ( args.len() == 0 )
-		return false
-
-	if ( !IsValid( player ) )
-		return false
-
-	string parentRef = args[0]
-	printt( "GIVE PLAYER UNLOCK POINT ", parentRef  )
-	Player_GiveFDUnlockPoints( player, 1 )
-	return true
-}
-
-bool function ClientCommand_DEV_ResetTitanProgression( entity player, array<string> args )
-{
-	if ( args.len() == 0 )
-		return false
-
-	if ( !IsValid( player ) )
-		return false
-
-	string titanRef = args[0]
-	printt( "RESET PLAYER TITAN PROGRESSION ", titanRef  )
-	SetAvailableFDUnlockPoints( player, titanRef, 0 )
-
-	array<ItemData> fdUpgrades = GetAllItemsOfType( eItemTypes.TITAN_FD_UPGRADE )
-	foreach ( upgrade in fdUpgrades )
-	{
-		if ( upgrade.parentRef == titanRef )
-		{
-			ClearItemOwned( player, upgrade.ref, upgrade.parentRef )
-		}
-	}
-	return true
-}
 
 bool function ClientCommand_BuyItem( entity player, array<string> args )
 {
@@ -7399,26 +7154,13 @@ bool function ClientCommand_BuyItem( entity player, array<string> args )
 		return false
 
 	int creditsAvailable
-	bool isFDUpgrade = GetItemType( ref ) == eItemTypes.TITAN_FD_UPGRADE
-	if ( isFDUpgrade )
-	{
-		creditsAvailable = GetAvailableFDUnlockPoints( player, parentRef )
-	}
-	else
-	{
-		creditsAvailable = GetAvailableCredits( player )
-	}
+	creditsAvailable = GetAvailableCredits( player )
 
 	if ( cost > creditsAvailable )
 		return false
 
 	SetItemOwned( player, ref, parentRef, false )
 
-	if ( isFDUpgrade )
-	{
-		SetAvailableFDUnlockPoints( player, parentRef, creditsAvailable - cost )
-	}
-	else
 	{
 		SetAvailableCredits( player, creditsAvailable - cost )
 		PIN_BuyItem( player, false, fullItemName, cost )
@@ -7723,13 +7465,6 @@ void function Player_GiveColiseumTickets( entity player, int count )
 	Player_SetColiseumTicketCount( player, newTicketCount )
 }
 
-void function Player_GiveFDUnlockPoints( entity player, int count )
-{
-	TitanLoadoutDef loadout = GetTitanLoadoutForPlayer( player )
-
-	int currentPoints = GetAvailableFDUnlockPoints( player, loadout.titanClass )
-	SetAvailableFDUnlockPoints( player, loadout.titanClass, currentPoints + count )
-}
 #endif
 
 int function Player_GetColiseumTicketCount( entity player )
@@ -8100,6 +7835,7 @@ array<ItemDisplayData> function GetUnlockItemsForFactionLevel( string factionRef
 	return unlockedItems
 }
 
+
 bool function DidPlayerBuyItemFromBlackMarket( player, ref )
 {
 	bool doesRefExist =  PersistenceEnumValueIsValid( "BlackMarketUnlocks", ref )
@@ -8167,6 +7903,10 @@ string function GetDisplayNameFromItemType( int itemType )
 
 		case eItemTypes.PILOT_SECONDARY:
 			displayName = "#PILOT_SECONDARY"
+			break
+
+		case eItemTypes.PILOT_WEAPON3:
+			displayName = "#PILOT_WEAPON3"
 			break
 
 		case eItemTypes.PILOT_SPECIAL:
@@ -8630,14 +8370,17 @@ string function GetWeaponBasedDefaultMod( string weapon, string propertyName )
 					propertyName == "primaryMod3" ||
 					propertyName == "secondaryMod1" ||
 					propertyName == "secondaryMod2" ||
-					propertyName == "secondaryMod3" )
+					propertyName == "secondaryMod3" ||
+					propertyName == "weapon3Mod1" ||
+					propertyName == "weapon3Mod2" ||
+					propertyName == "weapon3Mod3" )
 
 	string columnName
 	if ( propertyName == "primaryAttachment" )
 		columnName = "defaultAttachment"
-	else if ( propertyName == "primaryMod1" || propertyName == "secondaryMod1" )
+	else if ( propertyName == "primaryMod1" || propertyName == "secondaryMod1" || propertyName == "weapon3Mod1" )
 		columnName = "defaultMod1"
-	else if ( propertyName == "primaryMod2" || propertyName == "secondaryMod2" )
+	else if ( propertyName == "primaryMod2" || propertyName == "secondaryMod2" || propertyName == "weapon3Mod2" )
 		columnName = "defaultMod2"
 	else
 		columnName = "defaultMod3"
@@ -8988,9 +8731,6 @@ string function GetItemTypeName( int itemType, int parentItemType = -1 )
 		case eItemTypes.COMMS_ICON:
 			return "#ITEM_TYPE_COMMS_ICON"
 
-		case eItemTypes.TITAN_FD_UPGRADE:
-			return "#ITEM_TYPE_FD_UPGRADES"
-
 		default:
 		#if DEV
 			Assert( false, "Invalid item type: " + DEV_GetEnumStringFromIndex( "eItemTypes", itemType) )
@@ -9298,7 +9038,6 @@ bool function IsSubItemType( int itemType )
 		case eItemTypes.CAMO_SKIN_TITAN:
 		case eItemTypes.TITAN_WARPAINT:
 		case eItemTypes.WEAPON_FEATURE:
-		case eItemTypes.TITAN_FD_UPGRADE:
 			return true
 	}
 
@@ -9313,7 +9052,7 @@ ItemDisplayData function GetItemDisplayData( string itemRef, string parentRef = 
 	ItemData itemData = GetItemData( itemRef )
 	ItemDisplayData displayData
 
-	if ( parentRef != "" )
+	if ( parentRef != "" && !IsItemRandom( itemRef ) )
 	{
 		Assert( IsSubItemType( itemData.itemType ) )
 		ItemData parentItem = GetItemData( parentRef )
@@ -9341,6 +9080,18 @@ ItemDisplayData function GetItemDisplayData( string itemRef, string parentRef = 
 	file.displayDataCache[parentRef + itemRef] <- displayData
 
 	return displayData
+}
+
+
+bool function IsItemRandom( string itemRef )
+{
+	if ( itemRef == "random" )
+		return true
+
+	if ( itemRef == "advocate_gift" )
+		return true
+
+	return false
 }
 
 string function DEV_GetEnumStringFromIndex( string enumName, int enumIndex )
@@ -9661,6 +9412,7 @@ int function CheckItemUnlockType( string ref, string parentRef = "" )
 
 	unreachable
 }
+
 #if SERVER
 void function PersistenceCleanup( entity player )
 {
@@ -9688,21 +9440,27 @@ string function GetSkinRefFromTitanClassAndPersistenceValue( string titanClass, 
 		return INVALID_REF
 
 	return file.titanClassAndPersistenceValueToSkinRefTable[ titanClass ][ persistenceValue ]
-
 }
-#endif
+#endif // SERVER
 
-const array<string> liveDisabledRefs = [ "vanguard_skin_01", "vanguard_skin_02", "vanguard_skin_03", "vanguard_skin_07", "vanguard_skin_08" , "execution_holopilot"]
+string function GetSkinRefFromWeaponRefAndPersistenceValue( string weaponRef, int persistenceValue )
+{
+	if ( !( weaponRef in file.weaponRefAndPersistenceValueToSkinRefTable ) )
+		return INVALID_REF
+
+	if ( !( persistenceValue in file.weaponRefAndPersistenceValueToSkinRefTable[ weaponRef ] ) )
+		return INVALID_REF
+
+	return file.weaponRefAndPersistenceValueToSkinRefTable[ weaponRef ][ persistenceValue ]
+}
+
+const array<string> liveDisabledRefs = [ "vanguard_skin_01", "vanguard_skin_02", "vanguard_skin_03", "vanguard_skin_07", "vanguard_skin_08" ]
 const array<string> disabledRefs = [ "mp_ability_pathchooser", "burnmeter_arc_trap", "mp_weapon_arc_trap" ]
 
 bool function IsDisabledRef( string ref )
 {
 	if ( liveDisabledRefs.contains( ref ) )
 		return true
-
-    #if DEVSCRIPTS
-        return false
-    #endif
 
     return ( disabledRefs.contains( ref ) )
 }
@@ -9784,4 +9542,16 @@ bool function GetItemRequiresPrime( string ref, string parentRef = "" )
 {
 	Assert( ref in file.itemData )
 	return file.itemData[ref].reqPrime
+}
+
+
+bool function ItemsInSameMenuCategory( string itemRef1, string itemRef2 )
+{
+	int category1 = expect int( GetItemDisplayData( itemRef1 ).i.menuCategory )
+	int category2 = expect int( GetItemDisplayData( itemRef2 ).i.menuCategory )
+
+	if ( category1 == category2 )
+		return true
+
+	return false
 }

@@ -1,7 +1,7 @@
 #base "npc_super_spectre.txt"
 npc_super_spectre_fd
 {
-	enable_frag_drones				1
+	enable_frag_drones				0
 	assaultHarvester                0
 
 	minGoalRadius                   64

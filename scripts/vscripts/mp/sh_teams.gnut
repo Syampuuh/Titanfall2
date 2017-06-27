@@ -3,12 +3,22 @@ global function Teams_Init
 global function GetPlayerTitansOnTeam
 global function GetPlayerTitansReadyOnTeam
 
+#if CLIENT
+global function GetMaxTeamSize
+#endif
+
 void function Teams_Init()
 {
 	level.minTeamSize <- GetCurrentPlaylistVarInt( "min_players", 2 ) / 2
 	level.maxTeamSize <- GetCurrentPlaylistVarInt( "max_players", 12 ) / 2
 }
 
+#if CLIENT
+int function GetMaxTeamSize()
+{
+	return expect int( level.maxTeamSize )
+}
+#endif
 
 // Counts all alive player piloted titans and pet titans
 array<entity> function GetPlayerTitansOnTeam( int team )

@@ -3,6 +3,7 @@ global function ClStalker_Init
 struct
 {
 	bool fxInitialized
+	float nextStalkerWarningTime
 } file
 
 
@@ -17,6 +18,12 @@ void function ClStalker_Init()
 	PrecacheParticleSystem( $"P_spectre_dmg_smk" )
 	PrecacheParticleSystem( $"P_stalker_eye_foe" )
 	PrecacheParticleSystem( $"P_stalker_eye_friend" )
+
+	#if MP
+		AddCreateCallback( "npc_stalker", OnNPCStalkerCreated )
+		AddCreateTitanCockpitCallback( OnTitanCockpitCreated_AddStalkers )
+		AddLocalPlayerTookDamageCallback( eDamageSourceId.damagedef_stalker_powersupply_explosion_large_at, StalkerWarningMessage )
+	#endif
 }
 
 void function CreateCallback_Stalker( entity npc )
@@ -66,3 +73,35 @@ void function CreateCallback_Stalker( entity npc )
 	ModelFX_EndData()
 
 }
+
+#if MP
+void function OnNPCStalkerCreated( entity stalker )
+{
+	entity player = GetLocalViewPlayer()
+
+	if ( stalker.GetTeam() == player.GetTeam() )
+		return
+
+	if ( IsAlive( stalker ) )
+		thread GrenadeArrowThink( player, stalker, 500, 0, true, "titan" )
+}
+
+void function StalkerWarningMessage( float damage, vector damageOrigin, int damageType, int damageSourceId, entity attacker )
+{
+	if ( !GetLocalViewPlayer().IsTitan() )
+		return
+
+	if ( Time() > file.nextStalkerWarningTime )
+	{
+		file.nextStalkerWarningTime = Time() +  5.0
+		AddPlayerHint( 3.5, 0.5, $"", "#HINT_STALKER_EXPLODE" )
+	}
+}
+
+void function OnTitanCockpitCreated_AddStalkers( entity cockpit, entity player )
+{
+	array<entity> stalkers = GetNPCArrayByClass( "npc_stalker" )
+	foreach ( stalker in stalkers )
+		OnNPCStalkerCreated( stalker ) // recreate grenade arrows since they would have gotten destroyed when the pilot cockpit was destroyed
+}
+#endif

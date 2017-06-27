@@ -44,7 +44,7 @@ function UpdateVoiceHUD()
 		return
 
 	int index = 0
-	if ( !level.showingScoreboard && !clGlobal.isMenuOpen )
+	if ( !clGlobal.showingScoreboard && !clGlobal.isMenuOpen )
 	{
 		array<entity> teamPlayers = GetPlayerArrayOfTeam( localPlayer.GetTeam() )
 		if ( teamPlayers.len() > 1 )

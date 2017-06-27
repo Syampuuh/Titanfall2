@@ -157,6 +157,25 @@ DamageDefs
 		"damage_flags"				"DF_EXPLOSION | DF_GIB"
 	}
 
+	damagedef_frag_drone_explode_FD
+	{
+		"damage" 					"200"	[$mp]
+		"damage" 					"130"	[$sp]
+		"damage_heavy_armor"		"600"
+		"inner_radius"				"200"	[$mp]
+		"inner_radius"				"180"	[$sp]
+		"radius"					"350"	[$mp]
+		"radius"					"300"	[$sp]
+		"impulse_force"				"2000" [$sp]
+		"impulse_force"				"2000" [$mp]
+		"impulse_force_explosions"	"50000" [$mp]
+		"impulse_force_explosions"	"2000" [$sp]
+		"explosion_flags"			"SF_ENVEXPLOSION_MASK_BRUSHONLY"
+
+		"obituary"					"#DEATH_SUICIDE_SPECTRE"
+		"damage_flags"				"DF_EXPLOSION | DF_GIB"
+	}
+
 	damagedef_frag_drone_throwable_PLAYER
 	{
 		"damage" 					"200"	[$mp]
@@ -246,4 +265,19 @@ DamageDefs
 		"obituary"					"#DEATH_ARC_BLAST"
 		"damage_flags"				"DF_RAGDOLL | DF_EXPLOSION | DF_ELECTRICAL"
 	}
+
+	damagedef_fd_explosive_barrel
+	{
+		"damage" 					"100"
+		"damage_heavy_armor"		"500"
+		"inner_radius"				"350"
+		"radius"					"350"
+		"impulse_force"				"100"
+		"death_protection"			"0"
+
+		"obituary"					"#DEATH_SLOW_TRAP"
+		"damage_flags"				"DF_RAGDOLL | DF_EXPLOSION"
+		"impact_effect_table"		"exp_xlarge"
+	}
+
 }

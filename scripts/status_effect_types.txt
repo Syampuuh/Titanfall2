@@ -52,6 +52,7 @@
     bleedoutDOF
 
     lockon_detected_titan
+    damage_received_multiplier
 
 /////////////////////////////
 //}

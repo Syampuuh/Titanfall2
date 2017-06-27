@@ -197,9 +197,8 @@
     InstallProgress
     {
         ControlName RuiPanel
-        xpos					50
-        wide					300
-        tall					157
+        wide					500
+        tall					100
         rui                     "ui/main_menu_install_progress.rpak"
         visible					1
 

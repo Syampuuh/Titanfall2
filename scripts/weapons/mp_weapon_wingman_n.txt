@@ -411,6 +411,24 @@ WeaponData
 			"fx_muzzle_flash_world"				"wpn_muzzleflash_pistol_sup"
 			"fx_muzzle_flash_attach"			"muzzle_flash_suppressor_sq"
 		}
+		silencer_low_ttk //HACK JFS: Doesn't get applied on amped weapons. See bug 170460
+		{
+			"silenced"							"1"
+			"fire_sound_2_player_1p"			"Weapon_Wingman_FireSuppressed_1P"
+			"fire_sound_2_player_3p"			"Weapon_Wingman_FireSuppressed_3P"
+			"fire_sound_2_npc"					"Weapon_Wingman_FireSuppressed_NPC"
+			"damage_near_value"   				"--5" // 50 -> 45
+			"damage_far_value"					"--5" // 50 -> 45
+			"bodygroup2_set"					"1"
+
+			//"rumble"  						"4"
+			"tracer_effect"   					"P_wpn_tracer_pistol"
+			"minimap_reveal_distance"			"1"
+
+			"fx_muzzle_flash_view"				"wpn_muzzleflash_pistol_sup_FP"
+			"fx_muzzle_flash_world"				"wpn_muzzleflash_pistol_sup"
+			"fx_muzzle_flash_attach"			"muzzle_flash_suppressor_sq"
+		}
 		hcog
 		{
 			"bodygroup3_set"	"1"

@@ -623,7 +623,6 @@ WeaponData
 			"fx_muzzle_flash_world"							"P_wpn_mflash_dbltake_burn"
 			"projectile_trail_effect_0" 					"P_doubletake_proj_burn"
 			"impact_effect_table" 							"doubletake_bullet_elec"
-
 		}
 	}
 

@@ -102,6 +102,19 @@ void function MeteorThermite_DamagedTarget( entity target, var damageInfo )
 
 	Thermite_DamagePlayerOrNPCSounds( target )
 	Scorch_SelfDamageReduction( target, damageInfo )
+
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	if ( !IsValid( attacker ) || attacker.GetTeam() == target.GetTeam() )
+		return
+
+	array<entity> weapons = attacker.GetMainWeapons()
+	if ( weapons.len() > 0 )
+	{
+		if ( weapons[0].HasMod( "fd_fire_damage_upgrade" )  )
+			DamageInfo_ScaleDamage( damageInfo, FD_FIRE_DAMAGE_SCALE )
+		if ( weapons[0].HasMod( "fd_hot_streak" ) )
+			UpdateScorchHotStreakCoreMeter( attacker, DamageInfo_GetDamage( damageInfo ) )
+	}
 }
 
 void function Scorch_SelfDamageReduction( entity target, var damageInfo )
@@ -178,7 +191,6 @@ function Proto_MeteorCreatesThermite( entity projectile, entity hitEnt = null )
 			thermiteLifetimeMax *= SP_THERMITE_DURATION_SCALE
 		}
 	}
-
 	entity inflictor = CreateOncePerTickDamageInflictorHelper( thermiteLifetimeMax )
 	entity base = CreatePhysicsThermiteTrail( origin, owner, inflictor, projectile, velocity, thermiteLifetimeMax, METEOR_FX_BASE, eDamageSourceId.mp_titanweapon_meteor_thermite )
 
@@ -189,6 +201,7 @@ function Proto_MeteorCreatesThermite( entity projectile, entity hitEnt = null )
 
 	int fireCount
 	float fireSpeed
+
 	array<string> mods = projectile.ProjectileGetMods()
 	if ( mods.contains( "pas_scorch_weapon" ) )
 	{

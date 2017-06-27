@@ -40,6 +40,19 @@ global enum XP_TYPE
 	_NUM_TYPES,
 }
 
+global enum eFDXPType
+{
+	// CANT ADD TO THIS ENUM WITHOUT UPDATING PERSISTENT DATA AND ALSO THE MENUS
+	NORMAL_VICTORY,
+	HARD_VICTORY,
+	MASTER_VICTORY,
+	INSANE_VICTORY,
+	RETRIES_REMAINING,
+	WAVES_COMPLETED,
+
+	_NUM_TYPES,
+}
+
 global function GetNextLevel
 global function GetXPForLevel
 global function CanGenUp

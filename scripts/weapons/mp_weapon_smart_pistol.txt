@@ -463,6 +463,27 @@ WeaponData
 			"fire_sound_1_player_1p"						"Weapon_SmartPistol_FireSuppressed_1P"
 			"fire_sound_1_player_3p"						"Weapon_SmartPistol_FireSuppressed_3P"
 		}
+		silencer_low_ttk //HACK JFS: Doesn't get applied on amped weapons. See bug 170460
+		{
+			"silenced"										"1"
+			"bodygroup2_set"								"1"
+			"damage_near_value"   							"20"
+			"damage_far_value"								"12"
+			//"rumble"  									"4"
+			"tracer_effect"   								"P_wpn_tracer_pistol"
+			"minimap_reveal_distance"						"1"
+			"smart_ammo_targeting_time_min"					"0.45"
+			"smart_ammo_targeting_time_max"					"0.8"
+			"smart_ammo_targeting_time_min_npc"				"0.1"
+			"smart_ammo_targeting_time_max_npc"				"0.25"
+			"smart_ammo_new_target_delay"					"0.22"
+
+			"fx_muzzle_flash_view"							"wpn_muzzleflash_pistol_sup_FP"
+			"fx_muzzle_flash_world"							"wpn_muzzleflash_pistol_sup"
+			"fx_muzzle_flash_attach"						"muzzle_flash_suppressor_sq"
+			"fire_sound_1_player_1p"						"Weapon_SmartPistol_FireSuppressed_1P"
+			"fire_sound_1_player_3p"						"Weapon_SmartPistol_FireSuppressed_3P"
+		}
 		enhanced_targeting
 		{
 			"smart_ammo_search_angle" 				"36"

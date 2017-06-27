@@ -145,26 +145,6 @@ void function InitPersistentData( entity player )
 		}
 	}
 
-	#if DEVSCRIPTS
-	// PVE Economy:
-	{
-		const int PVE_ECON_VERSION = 1
-		const int PVE_ECON_STARTER_MONEY = 500
-
-		int version = player.GetPersistentVarAsInt( "pve.version" )
-		if ( version < PVE_ECON_VERSION )
-		{
-			player.SetPersistentVar( "pve.currency", PVE_ECON_STARTER_MONEY )
-			player.SetPersistentVar( "pve.currencyInLatestMatch", 0 )
-
-			for( int index = 0; index < ePVETactical._count; ++index )
-				player.SetPersistentVar( "pve.tacticalUnlocks[" + index + "]", 0 )
-
-			player.SetPersistentVar( "pve.version", PVE_ECON_VERSION )
-		}
-	}
-	#endif
-
 	// Handle updating NETWORTH_VAR ("netWorth") having a correct value based on previously used TEMP_NETWORTH_VAR ("activeBCID")
 	if ( player.GetPersistentVarAsInt( TEMP_NETWORTH_VAR ) > 0 )
 	{
@@ -202,11 +182,13 @@ void function InitPersistentData( entity player )
 			player.SetPersistentVar( "previousTitanXP[" + enumName + "]", 0 )
 		}
 	}
+
 	if ( initializedVersion < 223 )
 	{
 		if ( GetPersistentSpawnLoadoutIndex( player, "titan" ) > (NUM_PERSISTENT_TITAN_LOADOUTS - 1) )
 			SetPersistentSpawnLoadoutIndex( player, "titan", 0 )
 	}
+
 	if ( initializedVersion < 224 )
 	{
 		for ( int i = 0; i < NUM_PERSISTENT_TITAN_LOADOUTS; i++ )
@@ -222,6 +204,7 @@ void function InitPersistentData( entity player )
 			player.SetPersistentVar( "titanLoadouts[" + i + "].titanExecution", "execution_random_" + i )
 		}
 	}
+
 	//Dev only script error fix.
 	if ( initializedVersion < 226 )
 	{
@@ -258,14 +241,44 @@ void function InitPersistentData( entity player )
 		ResetLoadoutPropertyToDefault( player, "titan", 6, "titanExecution" )
 	}
 
+	if ( initializedVersion < 229 )
+	{
+		for ( int i = 0; i < NUM_PERSISTENT_PILOT_LOADOUTS; i++ )
+		{
+			string resetValue = GetCategoryRestrictedResetValue( player, i, "weapon3", "secondary" )
+			SetPlayerPersistentVarWithoutValidation( player, "pilot", i, "weapon3", resetValue )
+		}
+	}
+
+	player.SetPersistentVar( "isACheater", false )
+
 	player.SetPersistentVar( "initializedVersion", PERSISTENCE_INIT_VERSION )
 	player.SetPersistentVar( "spawnAsTitan", false )
 
-	int loadoutIndex = 5
-	printt( player.GetPersistentVar( "titanLoadouts[" + loadoutIndex + "].skinIndex" ) )
-	printt( player.GetPersistentVar( "titanLoadouts[" + loadoutIndex + "].camoIndex" ) )
-	printt( player.GetPersistentVar( "titanLoadouts[" + loadoutIndex + "].primarySkinIndex" ) )
-	printt( player.GetPersistentVar( "titanLoadouts[" + loadoutIndex + "].primaryCamoIndex" ) )
+	int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+	for ( int i = 0; i < enumCount; i++ )
+	{
+		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
+		if ( enumName != "" )
+			player.SetPersistentVar( "titanClassLockState[" + enumName + "]", 0 )
+
+	}
+
+	int titanChassisCount = PersistenceGetArrayCount( "titanChassis" )
+	for ( int chassisIndex = 0; chassisIndex < titanChassisCount; chassisIndex++ )
+	{
+		int unlockedFDCount = PersistenceGetArrayCount( "titanChassis[" + chassisIndex + "].unlockedFDUpgrades" )
+		for ( int index = 0; index < unlockedFDCount; index++ )
+		{
+			player.SetPersistentVar( "titanChassis[" + chassisIndex + "].unlockedFDUpgrades[" + index + "]", 0 )
+		}
+
+		int newFDCount = PersistenceGetArrayCount( "titanChassis[" + chassisIndex + "].newFDUpgrades" )
+		for ( int index = 0; index < newFDCount; index++ )
+		{
+			player.SetPersistentVar( "titanChassis[" + chassisIndex + "].newFDUpgrades[" + index + "]", 0 )
+		}
+	}
 
 #endif // MP
 }
@@ -304,45 +317,55 @@ void function SetPersistentLoadoutsToDefaults( entity player )
 
 void function RegenPersistentLoadouts( entity player )
 {
+	string loadoutType = "pilot"
+
 	for ( int loadoutIndex = NUM_PERSISTENT_PILOT_LOADOUTS-1; loadoutIndex >= 0; loadoutIndex-- )
 	{
 		PilotLoadoutDef loadout = GetDefaultPilotLoadout( loadoutIndex )
 
-		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "suit" ) ) )
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "suit" ) ) )
 		{
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "suit",				loadout.suit )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "suit",					loadout.suit )
 		}
 
-		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "race" ) ) )
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "race" ) ) )
 		{
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "race",				loadout.race )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "race",					loadout.race )
 		}
 
-		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primary" ) ) )
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "primary" ) ) )
 		{
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primary",			loadout.primary )
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryAttachment",	loadout.primaryAttachment )
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod1",		loadout.primaryMod1 )
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod2",		loadout.primaryMod2 )
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "primaryMod3",		loadout.primaryMod3 )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "primary",				loadout.primary )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "primaryAttachment",		loadout.primaryAttachment )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "primaryMod1",			loadout.primaryMod1 )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "primaryMod2",			loadout.primaryMod2 )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "primaryMod3",			loadout.primaryMod3 )
 		}
 
-		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondary" ) ) )
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "secondary" ) ) )
 		{
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondary",			loadout.secondary )
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod1",		loadout.secondaryMod1 )
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod2",		loadout.secondaryMod2 )
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "secondaryMod3",		loadout.secondaryMod3 )
+			SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, "secondary", GetCategoryRestrictedResetValue( player, loadoutIndex, "secondary", "weapon3" ) ) // Skip validation or the change could fail due to weapon3 slot conflict
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "secondaryMod1",			loadout.secondaryMod1 )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "secondaryMod2",			loadout.secondaryMod2 )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "secondaryMod3",			loadout.secondaryMod3 )
 		}
 
-		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "ordnance" ) ) )
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "ordnance",			loadout.ordnance )
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "weapon3" ) ) )
+		{
+			SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, "weapon3", 	GetCategoryRestrictedResetValue( player, loadoutIndex, "weapon3", "secondary" ) ) // Skip validation or the change could fail due to secondary slot conflict
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "weapon3Mod1",			loadout.weapon3Mod1 )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "weapon3Mod2",			loadout.weapon3Mod2 )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "weapon3Mod3",			loadout.weapon3Mod3 )
+		}
 
-		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive1" ) ) )
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive1",			loadout.passive1 )
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "ordnance" ) ) )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "ordnance",				loadout.ordnance )
 
-		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive2" ) ) )
-			SetPersistentLoadoutValue( player, "pilot", loadoutIndex, "passive2",			loadout.passive2 )
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "passive1" ) ) )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "passive1",				loadout.passive1 )
+
+		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "passive2" ) ) )
+			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "passive2",				loadout.passive2 )
 	}
 
 	//for ( int loadoutIndex = NUM_PERSISTENT_TITAN_LOADOUTS-1; loadoutIndex >= 0; loadoutIndex-- )

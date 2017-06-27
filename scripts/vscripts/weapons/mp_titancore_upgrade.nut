@@ -49,7 +49,9 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 					entity primaryWeapon = weapons[0]
 					if ( IsValid( primaryWeapon ) )
 					{
-						primaryWeapon.SetMods( [ "arc_rounds" ] )
+						array<string> mods = primaryWeapon.GetMods()
+						mods.append( "arc_rounds" )
+						primaryWeapon.SetMods( mods )
 						primaryWeapon.SetWeaponPrimaryClipCount( primaryWeapon.GetWeaponPrimaryClipCount() + 10 )
 					}
 				}
@@ -64,7 +66,11 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 			{
 				entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_RIGHT )
 				if ( IsValid( offhandWeapon ) )
-					offhandWeapon.SetMods( [ "missile_racks" ] )
+				{
+					array<string> mods = offhandWeapon.GetMods()
+					mods.append( "missile_racks" )
+					offhandWeapon.SetMods( mods )
+				}
 				if ( owner.IsPlayer() )
 				{
 					int conversationID = GetConversationIndex( "upgradeTo1" )
@@ -76,7 +82,11 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 			{
 				entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_LEFT )
 				if ( IsValid( offhandWeapon ) )
-					offhandWeapon.SetMods( [ "energy_transfer" ] )
+				{
+					array<string> mods = offhandWeapon.GetMods()
+					mods.append( "energy_transfer" )
+					offhandWeapon.SetMods( mods )
+				}
 				if ( owner.IsPlayer() )
 				{
 					int conversationID = GetConversationIndex( "upgradeTo1" )
@@ -118,7 +128,11 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 			{
 				entity offhandWeapon = owner.GetOffhandWeapon( OFFHAND_INVENTORY )
 				if ( IsValid( offhandWeapon ) )
-					offhandWeapon.SetMods( [ "maelstrom" ] )
+				{
+					array<string> mods = offhandWeapon.GetMods()
+					mods.append( "maelstrom" )
+					offhandWeapon.SetMods( mods )
+				}
 				if ( owner.IsPlayer() )
 				{
 					int conversationID = GetConversationIndex( "upgradeTo2" )
@@ -133,9 +147,18 @@ var function OnWeaponPrimaryAttack_UpgradeCore( entity weapon, WeaponPrimaryAtta
 				{
 					array<string> mods = offhandWeapon.GetMods()
 					if ( mods.contains( "energy_transfer" ) )
-						offhandWeapon.SetMods( [ "energy_field_energy_transfer" ] )
+					{
+						array<string> mods = offhandWeapon.GetMods()
+						mods.fastremovebyvalue( "energy_transfer" )
+						mods.append( "energy_field_energy_transfer" )
+						offhandWeapon.SetMods( mods )
+					}
 					else
-						offhandWeapon.SetMods( [ "energy_field" ] )
+					{
+						array<string> mods = offhandWeapon.GetMods()
+						mods.append( "energy_field" )
+						offhandWeapon.SetMods( mods )
+					}
 				}
 				if ( owner.IsPlayer() )
 				{
@@ -291,10 +314,6 @@ void function UpgradeCoreThink( entity weapon, float coreDuration )
 
 			if ( IsValid( weapon ) )
 			{
-				if ( IsValid( owner ) )
-				{
-					CoreDeactivate( owner, weapon )
-				}
 				OnAbilityChargeEnd_TitanCore( weapon )
 				OnAbilityEnd_TitanCore( weapon )
 			}

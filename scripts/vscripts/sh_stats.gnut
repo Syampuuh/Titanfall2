@@ -328,6 +328,21 @@ void function InitStatsTables()
 	AddPersistentStat( "misc_stats", "killingSprees",				"",		"miscStats.killingSprees", "#UNLOCK_MISC_KILLING_SPREES" )
 	AddPersistentStat( "misc_stats", "coopChallengesCompleted",		"",		"miscStats.coopChallengesCompleted", "#" )
 
+	//##############################################
+	//			  	  FD STATS
+	//##############################################
+
+	AddPersistentStatCategory( "fd_stats" )
+
+	AddPersistentStat( "fd_stats", "arcMinesPlaced",			"",		"fdStats.arcMinesPlaced", "#UNLOCK_MISC_ARC_MINE_PLACE" )
+	AddPersistentStat( "fd_stats", "turretsPlaced",				"",		"fdStats.turretsPlaced", "#UNLOCK_MISC_TURRET_PLACE" )
+	AddPersistentStat( "fd_stats", "rodeos",					"",		"fdStats.rodeos", "#UNLOCK_FD_RODEOS" )
+	AddPersistentStat( "fd_stats", "rodeoNukes",				"",		"fdStats.rodeoNukes", "#UNLOCK_MISC_RODEO_NUKES" )
+	AddPersistentStat( "fd_stats", "arcMineZaps",				"",		"fdStats.arcMineZaps", "#UNLOCK_MISC_ARC_MINE_ZAPS" )
+	AddPersistentStat( "fd_stats", "turretKills",				"",		"fdStats.turretKills", "#UNLOCK_MISC_TURRET_KILLS" )
+	AddPersistentStat( "fd_stats", "harvesterBoosts",			"",		"fdStats.harvesterBoosts", "#UNLOCK_MISC_HARVESTER_BOOSTS" )
+	AddPersistentStat( "fd_stats", "wavesComplete",				"",		"fdStats.wavesComplete", "#UNLOCK_MISC_WAVES_COMPLETE" )
+
 	//#############################################################
 	//	DEV ONLY STATS (NOT TRACKED IN RETAIL FOR PLAYER DISPLAY)
 	//#############################################################

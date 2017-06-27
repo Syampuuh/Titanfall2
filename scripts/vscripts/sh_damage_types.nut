@@ -31,12 +31,14 @@ global enum eDamageSourceId
 	damagedef_reaper_groundslam
 	damagedef_reaper_nuke
 	damagedef_frag_drone_explode
+	damagedef_frag_drone_explode_FD
 	damagedef_frag_drone_throwable_PLAYER
 	damagedef_frag_drone_throwable_NPC
 	damagedef_stalker_powersupply_explosion_small
 	damagedef_stalker_powersupply_explosion_large
 	damagedef_stalker_powersupply_explosion_large_at
 	damagedef_shield_captain_arc_shield
+	damagedef_fd_explosive_barrel
 
 	//---------------------------
 
@@ -93,6 +95,7 @@ global enum eDamageSourceId
 	mp_titancore_amp_core
 	mp_titancore_emp
 	mp_titancore_flame_wave
+	mp_titancore_flame_wave_secondary
 	mp_titancore_laser_cannon
 	mp_titancore_nuke_core
 	mp_titancore_nuke_missile
@@ -285,6 +288,7 @@ global enum eDamageSourceId
 	mp_titancore_upgrade
 	mp_titanweapon_xo16_vanguard
 	mp_weapon_arc_trap
+	core_overload
 
 	bombardment
 	bleedout
@@ -508,6 +512,7 @@ void function DamageTypes_Init()
 		[ eDamageSourceId.mp_titancore_emp ] 						= "#TITANCORE_EMP",
 		[ eDamageSourceId.mp_titancore_siege_mode ]					= "#TITANCORE_SIEGE_MODE",
 		[ eDamageSourceId.mp_titancore_flame_wave ]					= "#TITANCORE_FLAME_WAVE",
+		[ eDamageSourceId.mp_titancore_flame_wave_secondary ]		= "#TITANCORE_FLAME_WAVE",
 		[ eDamageSourceId.mp_titancore_nuke_core ] 					= "#TITANCORE_NUKE",
 		[ eDamageSourceId.mp_titancore_nuke_missile ]				= "#TITANCORE_NUKE_MISSILE",
 		[ eDamageSourceId.mp_titancore_shift_core ]					= "#TITANCORE_SWORD",
@@ -538,6 +543,7 @@ void function DamageTypes_Init()
 		[ eDamageSourceId.mind_crime ]								= "Mind Crime",
 		[ eDamageSourceId.charge_ball ]								= "Charge Ball",
 		[ eDamageSourceId.mp_titanweapon_rocketeer_missile ]		= "Rocketeer Missile",
+		[ eDamageSourceId.core_overload ]							= "#DEATH_CORE_OVERLOAD",
 
 		[ eDamageSourceId.mp_turretweapon_sentry ] 					= "#WPN_SENTRY_TURRET",
 		[ eDamageSourceId.mp_turretweapon_blaster ] 				= "#WPN_BLASTER_TURRET",

@@ -57,6 +57,18 @@
 				health			5000
 				healthDoomed	1250
 			}
+			fd_health_upgrade
+			{
+				health			2500++	[$mp]
+			}
+			fd_energy_regen
+			{
+				sharedEnergyRegenRate						100.0 	[$mp]
+			}
+			fd_energy_max
+			{
+				sharedEnergyTotal 1250
+			}
 		}
 	}
 }

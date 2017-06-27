@@ -527,6 +527,56 @@ WeaponData
 		{
 			"shared_energy_cost"							"*1.15" //Amped Shots
 		}
+		fd_split_shot_cost
+		{
+			"shared_energy_cost"							"20" //Amped Shots
+		}
+		fd_split_shot_damage
+		{
+		}
+		fd_upgraded_proto_particle_accelerator
+		{
+			"fire_rate"							"*1"
+
+			//Sounds
+			"burst_or_looping_fire_sound_start_1p"			"Weapon_Particle_Accelerator_AltFire_FirstShot_1P"
+			"burst_or_looping_fire_sound_middle_1p"			"Weapon_Particle_Accelerator_AltFire_Loop_1P"
+			"burst_or_looping_fire_sound_end_1p"			"Weapon_Particle_Accelerator_AltFire_LoopEnd_1P"
+
+			"burst_or_looping_fire_sound_start_3p"			""
+			"burst_or_looping_fire_sound_middle_3p"			"Weapon_Particle_Accelerator_Loop_3P"
+			"burst_or_looping_fire_sound_end_3p"			""
+
+			"burst_or_looping_fire_sound_start_npc"			""
+			"burst_or_looping_fire_sound_middle_npc"		"Weapon_Particle_Accelerator_Loop_3P"
+			"burst_or_looping_fire_sound_end_npc"			""
+		}
+		fd_upgraded_proto_particle_accelerator_pas
+		{
+			"fire_rate"							"*1"
+
+			//Sounds
+			"burst_or_looping_fire_sound_start_1p"			"Weapon_Particle_Accelerator_AltFire_FirstShot_1P"
+			"burst_or_looping_fire_sound_middle_1p"			"Weapon_Particle_Accelerator_AltFire_Loop_1P"
+			"burst_or_looping_fire_sound_end_1p"			"Weapon_Particle_Accelerator_AltFire_LoopEnd_1P"
+
+			"burst_or_looping_fire_sound_start_3p"			""
+			"burst_or_looping_fire_sound_middle_3p"			"Weapon_Particle_Accelerator_Loop_3P"
+			"burst_or_looping_fire_sound_end_3p"			""
+
+			"burst_or_looping_fire_sound_start_npc"			""
+			"burst_or_looping_fire_sound_middle_npc"		"Weapon_Particle_Accelerator_Loop_3P"
+			"burst_or_looping_fire_sound_end_npc"			""
+
+			"damage_near_value"   							"*0.7"
+			"damage_far_value"								"*0.7"
+			"npc_damage_near_value"   						"*0.7"
+			"npc_damage_far_value"							"*0.7"
+			"damage_near_value_titanarmor"					"*0.7"
+			"damage_far_value_titanarmor" 					"*0.7"
+			"npc_damage_near_value_titanarmor"				"*0.7"
+			"npc_damage_far_value_titanarmor" 				"*0.7"
+		}
 	}
 
 

@@ -3,6 +3,9 @@ global function MpTitanweaponXo16_Init
 
 global function OnWeaponActivate_titanweapon_xo16
 global function OnWeaponPrimaryAttack_titanweapon_xo16
+global function OnWeaponStartZoomIn_titanweapon_xo16
+global function OnWeaponStartZoomOut_titanweapon_xo16
+global function OnWeaponOwnerChanged_titanweapon_xo16
 
 #if SERVER
 global function OnWeaponNpcPrimaryAttack_titanweapon_xo16
@@ -161,4 +164,38 @@ vector function ApplySpread( entity player, vector forward, float spread )
 
 	vector result = Normalize( forward + x * sigmaComponent * right + y * sigmaComponent * up )
 	return result
+}
+
+void function OnWeaponStartZoomIn_titanweapon_xo16( entity weapon )
+{
+	#if SERVER
+	if ( weapon.HasMod( "fd_vanguard_weapon_2" ) )
+	{
+		entity weaponOwner = weapon.GetWeaponOwner()
+		if ( !IsValid( weaponOwner ) )
+			return
+		AddThreatScopeColorStatusEffect( weaponOwner )
+	}
+	#endif
+}
+
+void function OnWeaponStartZoomOut_titanweapon_xo16( entity weapon )
+{
+	#if SERVER
+	if ( weapon.HasMod( "fd_vanguard_weapon_2" ) )
+	{
+		entity weaponOwner = weapon.GetWeaponOwner()
+		if ( !IsValid( weaponOwner ) )
+			return
+		RemoveThreatScopeColorStatusEffect( weaponOwner )
+	}
+	#endif
+}
+
+void function OnWeaponOwnerChanged_titanweapon_xo16( entity weapon, WeaponOwnerChangedParams changeParams )
+{
+	#if SERVER
+	if ( IsValid( changeParams.oldOwner ) && changeParams.oldOwner.IsPlayer() )
+		RemoveThreatScopeColorStatusEffect( changeParams.oldOwner )
+	#endif
 }

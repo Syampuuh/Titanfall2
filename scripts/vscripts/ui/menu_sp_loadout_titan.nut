@@ -132,7 +132,7 @@ void function OnOpenSPTitanLoadoutMenu()
 
 	string buttonName = format( "BtnTitanLoadout%02d", file.sp_titanLoadoutSelection )
 	var item = Hud_GetChild( file.menu, buttonName )
-	thread DelayedSetFocus_BecauseWhy( item )
+	thread HACK_DelayedSetFocus_BecauseWhy( item )
 
 	file.newLoadoutAcquired = false
 }
@@ -346,11 +346,4 @@ void function UpdateButtonWeapons( string primaryName, var menu )
 		return
 
 	expect TitanLoadoutDef( loadout )
-}
-
-
-void function DelayedSetFocus_BecauseWhy( var item )
-{
-	WaitEndFrame()
-	Hud_SetFocused( item )
 }

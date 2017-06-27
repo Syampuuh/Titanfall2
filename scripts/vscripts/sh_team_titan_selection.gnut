@@ -1,9 +1,13 @@
 #if CLIENT
 global function CLTeamTitanSelection_Init
+global function Menu_CreateTeamTitanSelectionScreen_NoScore
+global function Menu_CreateTeamTitanSelectionScreen
 global function LTS_CreateTeamTitanSelectionScreen
 global function DestroyTeamTitanSelectionScreen
 global function ServerCallback_UpdateTeamTitanSelection
 
+global function ShowTTSPanel
+global function HideTTSPanel
 const LTS_MAX_PLAYERS = 5
 #endif
 
@@ -39,6 +43,7 @@ const array<array<float> > XOFFSETS = [
 struct
 {
 	table< entity, TitanSelectionInfo > teamInfo
+	array<var> TTSruis
 }file
 
 void function CLTeamTitanSelection_Init()
@@ -46,9 +51,19 @@ void function CLTeamTitanSelection_Init()
 	RegisterSignal( "DestroyTTS" )
 }
 
+void function Menu_CreateTeamTitanSelectionScreen_NoScore()
+{
+	thread CreateTTSRui( true, false )
+}
+
+void function Menu_CreateTeamTitanSelectionScreen()
+{
+	thread CreateTTSRui( true )
+}
+
 void function LTS_CreateTeamTitanSelectionScreen()
 {
-	thread CreateTTSRui()
+	thread CreateTTSRui( false )
 }
 
 void function DestroyTeamTitanSelectionScreen()
@@ -57,7 +72,23 @@ void function DestroyTeamTitanSelectionScreen()
 	player.Signal( "DestroyTTS" )
 }
 
-void function CreateTTSRui()
+void function ShowTTSPanel( entity player )
+{
+	foreach ( rui in file.TTSruis )
+	{
+		RuiSetBool( rui, "isVisible", true )
+	}
+}
+
+void function HideTTSPanel( entity player )
+{
+	foreach ( rui in file.TTSruis )
+	{
+		RuiSetBool( rui, "isVisible", false )
+	}
+}
+
+void function CreateTTSRui( bool showOverMenu, bool showScore = true )
 {
 	entity player = GetLocalClientPlayer()
 	player.EndSignal( "OnDeath" )
@@ -66,16 +97,25 @@ void function CreateTTSRui()
 
 	array<var> teammateTemplates
 	for( int i = 0; i < LTS_MAX_PLAYERS; i++ )
-		teammateTemplates.append( CreateFullscreenRui( $"ui/team_titan_template.rpak", 1 ) )
+	{
+		var rui = CreateFullscreenRui( $"ui/team_titan_template.rpak", 1 )
+		teammateTemplates.append( rui )
+		file.TTSruis.append( rui )
+	}
 	var background = CreateFullscreenRui( $"ui/team_titan_selection.rpak", 0 )
 
 	int friendlyTeam = player.GetTeam()
 	RuiSetFloat( background, "leftTeamScore", float( GameRules_GetTeamScore( friendlyTeam ) ) )
 	RuiSetFloat( background, "rightTeamScore", float( GameRules_GetTeamScore( GetOtherTeam( friendlyTeam ) ) ) )
+	RuiSetBool( background, "showOverMenu", showOverMenu )
+	RuiSetBool( background, "showScore", showScore )
+	file.TTSruis.append( background )
 
 	OnThreadEnd(
 	function() : ( teammateTemplates, background )
 		{
+			file.TTSruis.clear()
+
 			foreach( rui in teammateTemplates )
 				RuiDestroy( rui )
 
@@ -118,6 +158,7 @@ void function CreateTTSRui()
 				RuiSetFloat3( rui, "textColor", <1.0,1.0,1.0>)
 			}
 
+			RuiSetBool( rui, "showOverMenu", showOverMenu )
 			RuiSetString( rui, "playerName", memberInfo.playerName )
 			RuiSetString( rui, "titanName", GetLocalizedTitanName( memberInfo.titanName ) )
 			RuiSetImage( rui, "kitImage", memberInfo.kitImage )
@@ -275,6 +316,7 @@ void function PlayerUpdateTeamTitanSelectionThink( entity player )
 			int kitIndex2 = GetItemIndexOfTypeByRef( GetItemType( loadout.passive2 ), loadout.passive2 )
 			Remote_CallFunction_NonReplay( player, "ServerCallback_UpdateTeamTitanSelection", entityHandle, suitIndex, weaponIndex, kitIndex, kitIndex2 )
 		}
+
 		wait 0.1
 	}
 }

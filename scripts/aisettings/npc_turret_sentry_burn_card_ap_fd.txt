@@ -3,15 +3,21 @@ npc_turret_sentry_burn_card_ap_fd
 {
 	DefaultModelName		"models/Robots/turret_hitscan/turret_hitscan.mdl"
 	DefaultWeapon			"mp_weapon_yh803_bullet"
-	title 					"#NPC_TURRET_SENTRY_AP"
+	title 					"#NPC_TURRET_SENTRY"
 
-	maxEnemyDistHeavyArmor	0
+	maxEnemyDist					2000
+	maxEnemyDistHeavyArmor			1200
+	maxEnemyDistForAttacker 			8000
+	maxEnemyDistHeavyArmorForAttacker	2000
+
+	YawSpeed						35
+	AimAngularSpeed					35
 
 	Health							600 [$sp]
-	Health							150 [$mp]
+	Health							300 [$mp]
 
-	turret_lifetime			999999999999999.0
+	turret_lifetime			0.0
 	cleanup_between_rounds	0
 
-	//MaxTurretYaw        	360
+	MaxTurretYaw        	360
 }

@@ -32,6 +32,7 @@ void function MpTitanAbilitySlowTrap_Init()
 	PrecacheParticleSystem( TOXIC_FUMES_FX )
 	PrecacheParticleSystem( FIRE_CENTER_FX )
 	PrecacheParticleSystem( FIRE_LINES_FX )
+	PrecacheImpactEffectTable( "exp_xlarge" )
 
 	if ( GetMapName() == "sp_s2s" )
 	{
@@ -79,6 +80,11 @@ function DeploySlowTrap( entity projectile )
 	entity _parent = projectile.GetParent()
 	if ( !IsValid( owner ) )
 		return
+
+	array<string> projectileMods = projectile.ProjectileGetMods()
+	bool isExplosiveBarrel = false
+	if ( projectileMods.contains( "fd_explosive_barrel" ) )
+		isExplosiveBarrel = true
 
 	owner.EndSignal( "OnDestroy" )
 	if ( IsValid( projectile ) )
@@ -135,6 +141,8 @@ function DeploySlowTrap( entity projectile )
 	if ( IsValid( _parent ) )
 		damageArea.SetParent( _parent, "", true, 0 )
 	damageArea.LinkToEnt( tower )
+	if ( isExplosiveBarrel )
+		damageArea.SetScriptName( "explosive_barrel" )
 	SetTeam( damageArea, TEAM_UNASSIGNED )
 	SetObjectCanBeMeleed( damageArea, false )
 	SetVisibleEntitiesInConeQueriableEnabled( damageArea, false )
@@ -193,6 +201,8 @@ void function OnSlowTrapDamaged( entity damageArea, var damageInfo )
 	}
 	if ( shouldExplode )
 	{
+		if ( damageArea.GetScriptName() == "explosive_barrel" )
+			CreateExplosiveBarrelExplosion( damageArea )
 		IgniteTrap( damageArea, damageInfo )
 		DamageInfo_SetDamage( damageInfo, 1001 )
 	}
@@ -200,6 +210,15 @@ void function OnSlowTrapDamaged( entity damageArea, var damageInfo )
 	{
 		DamageInfo_SetDamage( damageInfo, 0 )
 	}
+}
+
+function CreateExplosiveBarrelExplosion( entity damageArea )
+{
+	entity owner = damageArea.GetOwner()
+	if ( !IsValid( owner ) )
+		return
+
+	Explosion_DamageDefSimple( damagedef_fd_explosive_barrel, damageArea.GetOrigin(),owner, owner, damageArea.GetOrigin() )
 }
 
 function IgniteTrap( entity damageArea, var damageInfo )
@@ -527,6 +546,19 @@ void function FireTrap_DamagedPlayerOrNPC( entity ent, var damageInfo )
 		DamageInfo_SetDamage( damageInfo, 0 )
 	else
 		Scorch_SelfDamageReduction( ent, damageInfo )
+
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	if ( !IsValid( attacker ) || attacker.GetTeam() == ent.GetTeam() )
+		return
+
+	array<entity> weapons = attacker.GetMainWeapons()
+	if ( weapons.len() > 0 )
+	{
+		if ( weapons[0].HasMod( "fd_fire_damage_upgrade" )  )
+			DamageInfo_ScaleDamage( damageInfo, FD_FIRE_DAMAGE_SCALE )
+		if ( weapons[0].HasMod( "fd_hot_streak" ) )
+			UpdateScorchHotStreakCoreMeter( attacker, DamageInfo_GetDamage( damageInfo ) )
+	}
 }
 #endif
 

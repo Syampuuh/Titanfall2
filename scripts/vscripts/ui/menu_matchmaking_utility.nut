@@ -1,4 +1,19 @@
+global function LeaveParty
+global function LeaveMatchAndParty
+
 global function StartMatchmakingPlaylists
+
+void function LeaveParty()
+{
+	ClientCommand( "party_leave" )
+	Signal( uiGlobal.signalDummy, "LeaveParty" )
+}
+
+void function LeaveMatchAndParty()
+{
+	LeaveParty()
+	LeaveMatch()
+}
 
 void function StartMatchmakingPlaylists( string playlists )
 {

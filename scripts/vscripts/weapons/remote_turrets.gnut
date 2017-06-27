@@ -263,7 +263,7 @@ entity function CreateRemoteTurretAndControlPanel( RemoteTurretSettings info )
 	entity panel = CreateControlPanelEnt( info.panelOrigin, info.panelAngles, null, PANEL_MODEL )
 	panel.s.remoteTurretStartFunc = TurretPanelActivateThread
 	panel.s.remoteTurret = turret
-	panel.SetScriptPropFlags( 0x01 )
+	panel.SetScriptPropFlags( SPF_CUSTOM_SCRIPT_1 )
 	panel.kv.CollisionGroup = TRACE_COLLISION_GROUP_NONE
 	panel.kv.solid = SOLID_VPHYSICS
 	panel.Solid()
@@ -361,7 +361,7 @@ void function Turret_PowerDown( entity turret, asset effect, float downTime )
 	fxArray.append( fx )
 
 	entity panel = turret.remoteturret.controlPanel
-	panel.SetScriptPropFlags( 0x11 )
+	panel.SetScriptPropFlags( SPF_CUSTOM_SCRIPT_1 | SPF_CUSTOM_SCRIPT_2 )
 	int panelEHandle = panel.GetEncodedEHandle()
 	array<entity> players = GetPlayerArray()
 	foreach( player in players )

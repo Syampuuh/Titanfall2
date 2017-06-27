@@ -35,9 +35,13 @@ npc_stalker
 	traverseCostFactor				5.0	// need to take into account slow move speed
 	minGoalRadius					1600
 
-	DefaultModelName				"models/robots/stalker/robot_stalker.mdl"
-	DefaultModelName_IMC			"models/robots/stalker/robot_stalker.mdl"
-	DefaultModelName_MIL			"models/robots/stalker/robot_stalker.mdl"
+	DefaultModelName				"models/robots/stalker/robot_stalker.mdl" [$sp]
+	DefaultModelName_IMC			"models/robots/stalker/robot_stalker.mdl" [$sp]
+	DefaultModelName_MIL			"models/robots/stalker/robot_stalker.mdl" [$sp]
+
+	DefaultModelName				"models/robots/stalker/robot_stalker_red.mdl" [$mp]
+	DefaultModelName_IMC			"models/robots/stalker/robot_stalker_red.mdl" [$mp]
+	DefaultModelName_MIL			"models/robots/stalker/robot_stalker_red.mdl" [$mp]
 
 	DefaultWeapon					"mp_weapon_lstar"
 	WeaponCapacity					"PilotMainWeapons"

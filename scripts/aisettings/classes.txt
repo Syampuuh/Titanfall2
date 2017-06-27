@@ -7,6 +7,7 @@ classes
 	import npc_drone_beam.txt
 	import npc_drone_cloaked.txt
 	import npc_drone_plasma.txt
+	import npc_drone_plasma_fd.txt
 	import npc_drone_plasma_fast.txt
 	import npc_drone_rocket.txt
 	import npc_drone_rocket_fast.txt
@@ -66,6 +67,7 @@ classes
 	import npc_titan_atlas_tracker_boss_fd.txt
 	import npc_titan_atlas_tracker_mortar.txt
 	import npc_titan_atlas_vanguard.txt
+	import npc_titan_atlas_vanguard_boss_fd.txt
 	import npc_titan_auto.txt
 	import npc_titan_auto_atlas.txt
 	import npc_titan_auto_atlas_rocketeer.txt

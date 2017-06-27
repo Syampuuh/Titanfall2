@@ -6,6 +6,7 @@ global function SetupSpawnBossTitans
 global function SetupTitanWeapon
 global function SetupPilotWeaponsFromFields
 global function SetupSpawnArmedNPC
+global function SetupFrontierDefense
 
 
 struct NpcDevMenuSpawn
@@ -107,6 +108,33 @@ void function SetupSpawnAIButtons( var team )
 	SetupDevCommand( "All NPCs", cmd )
 	#endif
 
+}
+
+void function SetupFrontierDefense()
+{
+	#if UI
+		SetupDevCommand( "Toggle Harvester God Mode", "script DEV_FD_ToggleHarvesterGodMode()" )
+		SetupDevCommand( "Advance to Next Stage", "script DEV_FD_NextStage()" )
+		SetupDevCommand( "Win", "script FD_Win()" )
+		SetupDevCommand( "Kill All Enemies", "script FD_KillAllEnemies()" )
+		SetupDevCommand( "Kill Harvester", "script DEV_FD_KillHarvester()" )
+		SetupDevCommand( "Simulate Scrubs", "script DEV_FD_SimulateScrubs()" )
+		SetupDevCommand( "Dump Wave Prints", "script DEV_FD_DumpWavePrintsToConsole()" )
+		SetupDevCommand( "Dump Wave Group Data", "script DEV_FD_DumpWaveGroupDataToConsole()" )
+		SetupDevCommand( "Dump Full Wave Comp", "script DEV_FD_DumpFullWaveCompToConsole()" )
+		SetupDevCommand( "Dump Wave Comp", "script DEV_FD_DumpWaveCompToConsole()" )
+		SetupDevCommand( "Dump Full Wave Report", "script DEV_FD_DumpFullWaveReport()" )
+		SetupDevCommand( "Dump Wave Report", "script DEV_FD_DumpCurrentWaveReport()" )
+		SetupDevCommand( "Print FD Stats", "script DEV_PrintFDStats()" )
+		SetupDevCommand( "Titan Meta: Reset", "script DEV_FD_ResetTitanMeta()" )
+		SetupDevCommand( "Titan Meta: MAX", "script DEV_FD_MaxTitanMeta()" )
+		SetupDevCommand( "Titan Meta: Rank 2", "script DEV_FD_SetTitanMeta( 2 )" )
+		SetupDevCommand( "Titan Meta: Rank 4", "script DEV_FD_SetTitanMeta( 4 )" )
+		SetupDevCommand( "Titan Meta: Rank 6", "script DEV_FD_SetTitanMeta( 6 )" )
+		SetupDevCommand( "Titan Meta: Rank 8", "script DEV_FD_SetTitanMeta( 8 )" )
+		SetupDevCommand( "Titan Meta: Rank 10", "script DEV_FD_SetTitanMeta( 10 )" )
+		SetupDevCommand( "Titan Meta: Rank 12", "script DEV_FD_SetTitanMeta( 12 )" )
+	#endif
 }
 
 void function SetupTitanWeapon()

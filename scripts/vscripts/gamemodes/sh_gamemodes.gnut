@@ -57,6 +57,8 @@ global function GameMode_GetGameModeId
 
 global function GameMode_SetEvacEnabled
 
+global function GameMode_GetLoadoutSelectTime
+
 global struct GamemodeSettings
 {
 	string name = ""
@@ -108,13 +110,13 @@ global enum eGameModes
 	MARKED_FOR_DEATH_PRO_ID =			8,
 	COOPERATIVE_ID =					9,
 	GAMEMODE_SP_ID =					10,
-	PROTOTYPE1 =						11,
+	TITAN_BRAWL_ID =					11,
 	FFA_ID =							12,
 	PROTOTYPE2 =						13,
 	WINGMAN_PILOT_SKIRMISH_ID =			14,
 	PROTOTYPE3 = 						15,
 	PROTOTYPE4 = 						16,
-	PROTOTYPE5 = 						17,
+	FREE_AGENCY_ID = 					17,
 	PROTOTYPE6 =						18,
 	COLISEUM_ID =						19,
 	PROTOTYPE7 =						20,
@@ -142,6 +144,8 @@ const table<string, int> gameModesStringToIdMap = {
 	[ AI_TDM ]								= eGameModes.AI_TDM_ID,
 	[ SPEEDBALL ]							= eGameModes.SPEEDBALL_ID,
 	[ MARKED_FOR_DEATH ]					= eGameModes.MARKED_FOR_DEATH_ID,
+	[ TITAN_BRAWL ]							= eGameModes.TITAN_BRAWL_ID,
+	[ FREE_AGENCY ]				 			= eGameModes.FREE_AGENCY_ID,
 }
 
 struct
@@ -314,6 +318,23 @@ void function GameModes_Init()
 	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_TITAN_KILLS", PGS_TITAN_KILLS, 2 )
 	GameMode_SetColor( gameMode, [147, 204, 57, 255] )
 
+	gameMode = FREE_AGENCY
+	GameMode_Create( gameMode )
+	GameMode_SetName( gameMode, "#PL_free_agents" )
+	#if FACTION_DIALOGUE_ENABLED
+		GameMode_SetGameModeAnnouncement( gameMode, "freea_modeDesc" )
+	#else
+		GameMode_SetGameModeAnnouncement( gameMode, "GameModeAnnounce_FREE_AGENCY" )
+	#endif
+	GameMode_SetDesc( gameMode, "#PL_free_agents_hint" )
+	GameMode_SetIcon( gameMode, FFA_MODE_ICON )
+	GameMode_SetDefaultScoreLimits( gameMode, 10, 0 )
+	GameMode_SetDefaultTimeLimits( gameMode, 15, 0.0 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_SCORE", PGS_ASSAULT_SCORE, 2 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_PILOT_KILLS", PGS_PILOT_KILLS, 2 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_TITAN_KILLS", PGS_TITAN_KILLS, 2 )
+	GameMode_SetColor( gameMode, [127, 127, 127, 255] )
+
 	gameMode = SPEEDBALL
 	GameMode_Create( gameMode )
 	GameMode_SetName( gameMode, "#PL_speedball" )
@@ -347,6 +368,23 @@ void function GameModes_Init()
 	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_MFD_MARKS_OUTLASTED", PGS_DEFENSE_SCORE, 2 )
 	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_KILLS", PGS_KILLS, 2 )
 	GameMode_SetColor( gameMode, [127, 127, 127, 255] )
+
+	gameMode = TITAN_BRAWL
+	GameMode_Create( gameMode )
+	GameMode_SetName( gameMode, "#PL_titan_brawl" )
+	#if FACTION_DIALOGUE_ENABLED
+		GameMode_SetGameModeAnnouncement( gameMode, "lts_modeDesc" )
+	#else
+		GameMode_SetGameModeAnnouncement( gameMode, "GameModeAnnounce_TTDM" )
+	#endif
+	GameMode_SetDesc( gameMode, "#PL_titan_brawl_hint" )
+	GameMode_SetIcon( gameMode, $"ui/menu/playlist/lts" )
+	GameMode_SetDefaultScoreLimits( gameMode, 30, 0 )
+	GameMode_SetDefaultTimeLimits( gameMode, 15, 0.0 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_KILLS", PGS_PILOT_KILLS, 2 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_DEATHS", PGS_DEATHS, 2 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_TITAN_DAMAGE", PGS_ASSAULT_SCORE, 6 )
+	GameMode_SetColor( gameMode, [83, 212, 152, 255] )
 
 
 	#if DEVSCRIPTS
@@ -746,4 +784,9 @@ int function GameMode_GetGameModeId( string gameModeName )
 bool function GameMode_IsDefined( string gameModeName )
 {
 	return (gameModeName in file.gameModeDefs)
+}
+
+float function GameMode_GetLoadoutSelectTime()
+{
+	return GetCurrentPlaylistVarFloat( "pick_loadout_time", 5.0 )
 }

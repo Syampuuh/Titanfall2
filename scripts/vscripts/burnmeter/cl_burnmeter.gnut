@@ -100,12 +100,12 @@ void function PlayBoostMusic( entity player ) //Copy Paste of PlayMarkedForDeath
 	OnThreadEnd(
 		function() : (  )
 		{
-			StopLoopMusic()
+			StopLoopMusic_DEPRECATED()
 			PlayActionMusic()
 		}
 	)
 
-	waitthread ForceLoopMusic( eMusicPieceID.BOOST_TIMED_EFFECT ) //Is looping music, so doesn't return from this until the end signals kick in
+	waitthread ForceLoopMusic_DEPRECATED( eMusicPieceID.BOOST_TIMED_EFFECT ) //Is looping music, so doesn't return from this until the end signals kick in
 }
 
 void function ServerCallback_RewardUsed( int rewardId )

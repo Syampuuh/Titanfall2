@@ -17,37 +17,45 @@ void function InitStoreMenu()
 
 	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnOpenStoreMenu )
 
-	var button = Hud_GetChild( menu, "Button0" )
+	int index = 0
+	var button = Hud_GetChild( menu, "Button" + index )
 	SetButtonRuiText( button, "#STORE_BUNDLES" )
 	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Bundles" ) ) )
 
-	button = Hud_GetChild( menu, "Button1" )
+	index++
+	button = Hud_GetChild( menu, "Button" + index )
 	SetButtonRuiText( button, "#STORE_PRIME_TITANS" )
 	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_PrimeTitans" ) ) )
 	var rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_prime" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_prime_hl" )
 
-	button = Hud_GetChild( menu, "Button2" )
+	index++
+	button = Hud_GetChild( menu, "Button" + index )
 	SetButtonRuiText( button, "#STORE_CUSTOMIZATION" )
 	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Customization" ) ) )
 	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_art" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_art_hl" )
 
-	button = Hud_GetChild( menu, "Button3" )
+	index++
+	button = Hud_GetChild( menu, "Button" + index )
 	SetButtonRuiText( button, "#STORE_CAMO" )
 	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Camo" ) ) )
 	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_camo" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_camo_hl" )
 
-	button = Hud_GetChild( menu, "ButtonLast" )
+	index++
+	button = Hud_GetChild( menu, "Button" + index )
 	SetButtonRuiText( button, "#STORE_CALLSIGN" )
 	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Callsign" ) ) )
 	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_callsigns" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_callsigns_hl" )
+
+	button = Hud_GetChild( menu, "ButtonLast" )
+	Hud_Hide( button )
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )

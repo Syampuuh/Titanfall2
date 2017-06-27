@@ -62,4 +62,13 @@ WeaponData
 
 	"npc_rest_time_between_bursts_min"				"20"
 	"npc_rest_time_between_bursts_max"				"20"
+
+	Mods
+	{
+		fd_duration
+		{
+			"core_duration"								"24.0" //Needs to match charge_cooldown_delay
+			"charge_cooldown_delay"   					"24.0"
+		}
+	}
 }

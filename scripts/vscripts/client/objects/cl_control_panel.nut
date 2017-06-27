@@ -88,7 +88,7 @@ function ControlPanelInit( entity panel )
 	panel.useFunction = ControlPanel_CanUseFunction
 
 	int flags = panel.GetScriptPropFlags()
-	if ( flags & 0x01 )
+	if ( flags & SPF_CUSTOM_SCRIPT_1 )
 	{
 		panel.s.VGUIFunc = VGUIUpdateForRemoteTurret
 		panel.s.VGUISetupFunc <- VGUISetupForRemoteTurret
@@ -249,7 +249,7 @@ function VGUIUpdateForRemoteTurret( panel )
 	var bottomLine = panel.s.HudVGUI.s.state
 
 	int flags = panel.GetScriptPropFlags()
-	if ( flags & 0x10 )
+	if ( flags & SPF_CUSTOM_SCRIPT_2 )
 	{
 		topLine.SetText( "Rebooting..." )
 		bottomLine.SetText( "[ TURRET DAMAGED ]" )
