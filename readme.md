@@ -1,4 +1,4 @@
-## Table of Contents
+# Table of Contents
 
  * [The War Games](#27-june-2017---the-war-games)
     * [Content and Feature Additions](#content-and-feature-additions)
@@ -55,7 +55,7 @@
 #### Amped Weapons
 
 * Amped Weapons is a now temporary boost, applying its effect for only 30 seconds after activation.
-* As far as I can tell, the effect is also completely removed when a weapon is dropped and picked back up, so no more Amped robbery.
+* Dropped Amped weapons will keep on ticking down the timer and can expire on their own, so while mugging Pilots for their Amped weapons can still work it won't be as effective.
 * Respawn's patch notes claim that Amped damage has also been decreased, but there's nothing in the client to actually back that up. It might have been (another) last second change that had to be put out server-side or something?
 
 #### R-97
@@ -80,7 +80,7 @@
 * A new status effect has been added for "damage_received_multiplier". Jarate, anyone?
 * Frontier Defense:
   * Plasma Drones have been added. You might remember them as the flying drones that fired small plasma shots in SP.
-  * Titans class has been given FD-exclusive upgrades, but it's not clear if these will be optional equipment, tied to boosts, or automatically applied in the mode:
+  * Titans class has been given **Frontier Defense-exclusive** upgrades, but it's not clear if these will be optional equipment, tied to boosts, or automatically applied in the mode:
     * All Titans
 	  * 2500 extra HP
     * Ion
@@ -108,6 +108,7 @@
 	* Northstar
 	  * Railgun critical hit scale increase from 1.5x to 2.0x
 	  * Railgun charges 1.7x faster
+	  * "Attack Tethers", which are presumably tethers that will do damage somehow, but there's not any code for more details yet
 	* Legion
 	  * Gunshield health increase from 2500 to 7500 (Bulwark puts it at 5000)
 	  * Two Power Shots and 1.15x recharge rate
@@ -129,6 +130,8 @@
   * A sandbag prop has also been added. Probably just to be spawned around the map as extra cover, but it would be cool if they were a deployable or something.
   * Tablet and knife props has been added for Droz, while Gates has been given a P2016. For the intro animations, presumably.
 * Prism versions of each of the Titan Regeneration callsigns have been added in devmode, but there are currently no associated unlock conditions.
+
+[↵Top](#table-of-contents)
 
 ---
 
@@ -257,6 +260,8 @@
 * Code to track executions while a Holo Pilot is active has been added, and the item datablock for the Holo execution has been added, requiring 20 kills with a Holo active to unlock it. Seems this one *should* begin tracking now, but it might require you to run the game in dev mode first?
 * Datablocks do *exist* for warpaints for Monarch, but the actual items in the arrays (which aren't in the VPKs) are disabled so I can't get a look at them. No clue why they're disabled to start with.
 
+[↵Top](#table-of-contents)
+
 ## 25 April 2017 - A Glitch in the Frontier
 
 ### Content and Feature Additions:
@@ -381,6 +386,8 @@
   * Some new unique assets now, rather than recycling Tone's animations.
 * More support for minimap resizing and zooming added. Implementation to live when!?
 * Some stuff discussing a "Boost Store". Burn Cards for Frontier Defense or something, maybe?
+
+[↵Top](#table-of-contents)
 
 ## 30 March 2017 - Colony Reborn
 
@@ -574,6 +581,8 @@
   * Seems it'll be a simple quick chat menu to point out objectives, commend teammates, and send emoji? No clue if it'll be voiced or anything
 * Some support added for the minimap to be zoomed in or out by the player, surprised this isn't already implemented
 * Seems like it'll be possible to invite friends to a network from within the game rather than having to mess with the official website
+
+[↵Top](#table-of-contents)
 
 ## 23 February 2017 - The Live Fire Patch
 
@@ -827,6 +836,8 @@
 
 #### Prime Titan: Legion
 
+[↵Top](#table-of-contents)
+
 ---
 
 ## 29 November 2016 - The Angel City Patch
@@ -940,3 +951,5 @@
 * Assists will not give any XP now
 * Unknown players in a Network Invite queue will now display as the smiley face callsign rather than the question mark
 * Sonar effects will no longer parent themselves to another player if the owner disconnects while a shot is active
+
+[↵Top](#table-of-contents)
