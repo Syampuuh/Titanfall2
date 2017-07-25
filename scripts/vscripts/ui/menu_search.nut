@@ -116,6 +116,35 @@ void function OnSearchMenu_Open()
 		if ( !IsPersistenceAvailable() )
 			return
 
+		// if not in FD mode, try to see if we should be in FD mode
+		if ( !Lobby_IsFDMode() )
+		{
+			string playlistList = GetMyMatchmakingStatusParam( 5 )
+			array< string > searchingPlaylists = split( playlistList, "," )
+			bool isFDMode = false
+			int searchingCount = searchingPlaylists.len()
+			for( int idx = 0; idx < searchingCount; ++idx )
+			{
+				isFDMode = isFDMode || (GetPlaylistVarOrUseValue( searchingPlaylists[idx], "ingame_menu_fd_mode", "0" ) == "1")
+			}
+			Lobby_SetFDMode( isFDMode )
+			Lobby_RefreshButtons()
+		}
+
+		if ( Lobby_IsFDMode() )
+			UI_SetPresentationType( ePresentationType.FD_SEARCH )
+
+		string buttonString = Lobby_IsFDMode() ? "" : "#MENU_TITLE_BOOSTS"
+		Hud_SetEnabled( file.boostsButton, !Lobby_IsFDMode() )
+		ComboButton_SetText( file.boostsButton, buttonString )
+
+		buttonString = Lobby_IsFDMode() ? "#MENU_TITLE_STATS" : "#MENU_TITLE_FACTION"
+		ComboButton_SetText( file.factionButton, buttonString )
+
+		buttonString = Lobby_IsFDMode() ? "" : "#MENU_TITLE_STATS"
+		Hud_SetEnabled( file.statsButton, !Lobby_IsFDMode() )
+		ComboButton_SetText( file.statsButton, buttonString )
+
 		UpdateCallsignElement( file.callsignCard )
 		RefreshCreditsAvailable()
 
@@ -263,7 +292,7 @@ void function CreateButtons( var menu )
 	file.patchButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_PATCH" )
 	Hud_AddEventHandler( file.patchButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "CallsignIconSelectMenu" ) ) )
 	file.factionButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_FACTION" )
-	Hud_AddEventHandler( file.factionButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "FactionChoiceMenu" ) ) )
+	Hud_AddEventHandler( file.factionButton, UIE_CLICK, Lobby_CallsignButton3EventHandler )
 	file.statsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STATS" )
 	Hud_AddEventHandler( file.statsButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ViewStatsMenu" ) ) )
 
@@ -288,6 +317,10 @@ void function CreateButtons( var menu )
 	file.storeHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_HEADER_STORE" )
 	file.storeButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_BROWSE" )
 	Hud_AddEventHandler( file.storeButton, UIE_CLICK, OnStoreButton_Activate )
+	var storeNewReleasesButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_NEW_RELEASES" )
+	Hud_AddEventHandler( storeNewReleasesButton, UIE_CLICK, OnStoreNewReleasesButton_Activate )
+	var storeBundlesButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_BUNDLES" )
+	Hud_AddEventHandler( storeBundlesButton, UIE_CLICK, OnStoreBundlesButton_Activate )
 
 	headerIndex++
 	buttonIndex = 0
@@ -329,9 +362,4 @@ bool function IsWaitingBeforeMatchMaking()
 		return false
 
 	return GetTimeToRestartMatchMaking() > 0.0
-}
-
-void function OnStoreButton_Activate( var button )
-{
-	LaunchGamePurchaseOrDLCStore()
 }

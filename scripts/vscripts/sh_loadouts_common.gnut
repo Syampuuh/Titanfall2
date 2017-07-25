@@ -306,6 +306,84 @@ int function GetTitanDecalIndexFromLoadoutAndPrimeStatus( TitanLoadoutDef titanL
 	#endif
 }
 
+asset function GetTitanArmBadgeFromLoadoutAndPrimeStatus( TitanLoadoutDef titanLoadout )
+{
+	#if SP
+		return $""
+	#else
+		return GetTitanArmBadgeFromLoadoutAndSkinIndex( titanLoadout, titanLoadout.skinIndex )
+	#endif
+}
+
+asset function GetTitanArmBadgeFromLoadoutAndSkinIndex( TitanLoadoutDef titanLoadout, int skinIndex )
+{
+	#if SP
+		return $""
+	#else
+		if ( IsTitanLoadoutPrime( titanLoadout ) )
+			return $""
+
+		array<ItemDisplayData> warpaintItems = GetDisplaySubItemsOfType( titanLoadout.titanClass, eItemTypes.TITAN_WARPAINT )
+		asset armBadge = $""
+		foreach ( warpaintItem in warpaintItems )
+		{
+			if ( warpaintItem.i.skinIndex != skinIndex )
+				continue
+
+			// HACK HACK
+			if ( warpaintItem.ref.find( "skin_fd" ) == null )
+				continue
+
+			armBadge = $""
+			switch ( titanLoadout.titanClass )
+			{
+				case "ion":
+					armBadge = $"models/titans_r2/titan_insignia/ion_shoulder_pad.mdl"
+					break
+				case "tone":
+					armBadge = $"models/titans_r2/titan_insignia/tone_shoulder_pad.mdl"
+					break
+				case "scorch":
+					armBadge = $"models/titans_r2/titan_insignia/scorch_shoulder_pad.mdl"
+					break
+				case "legion":
+					armBadge = $"models/titans_r2/titan_insignia/legion_shoulder_pad.mdl"
+					break
+				case "ronin":
+					armBadge = $"models/titans_r2/titan_insignia/ronin_shoulder_pad.mdl"
+					break
+				case "northstar":
+					armBadge = $"models/titans_r2/titan_insignia/northstar_shoulder_pad.mdl"
+					break
+				case "vanguard":
+					armBadge = $"models/titans_r2/titan_insignia/vanguard_shoulder_pad.mdl"
+					break
+			}
+			//$"models/weapons/titan_sword/w_titan_sword.mdl"
+		}
+
+		return armBadge
+	#endif
+}
+
+string ornull function GetTitanWarpaintRefForSkinIndex( string titanClass, int skinIndex )
+{
+	#if MP
+	array<ItemDisplayData> warpaintItems = GetDisplaySubItemsOfType( titanClass, eItemTypes.TITAN_WARPAINT )
+
+	foreach ( warpaintItem in warpaintItems )
+	{
+		if ( warpaintItem.i.skinIndex != skinIndex )
+			continue
+
+		return warpaintItem.ref
+	}
+
+	#endif
+
+	return null
+}
+
 
 #if SERVER
 void function GiveTitanLoadout( entity titan, TitanLoadoutDef loadout )
@@ -382,7 +460,7 @@ void function GiveTitanLoadout( entity titan, TitanLoadoutDef loadout )
 				SoulTitanCore_SetNextAvailableTime( soul, 0.0 )
 				if ( SoulHasPassive( soul, ePassives.PAS_HYPER_CORE ) )
 				{
-					SoulTitanCore_SetNextAvailableTime( soul, 0.3 )
+					SoulTitanCore_SetNextAvailableTime( soul, 0.2 )
 					GiveOffhandElectricSmoke( titan )
 				}
 			}
@@ -509,7 +587,7 @@ void function ReplaceTitanLoadoutWhereDifferent( entity titan, TitanLoadoutDef l
 				SoulTitanCore_SetNextAvailableTime( soul, 0.0 )
 				if ( SoulHasPassive( soul, ePassives.PAS_HYPER_CORE ) )
 				{
-					SoulTitanCore_SetNextAvailableTime( soul, 0.3 )
+					SoulTitanCore_SetNextAvailableTime( soul, 0.2 )
 					GiveOffhandElectricSmoke( titan )
 				}
 			}

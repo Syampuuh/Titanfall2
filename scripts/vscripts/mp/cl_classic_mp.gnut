@@ -14,6 +14,8 @@ global function RefreshIntroLoadoutDisplay
 global function ClassicMP_DefaultCreateJumpInRui
 global function ClassicMP_SetJumpInRuiText
 
+global function UseDoubleXP
+
 const DROPSHIP_HERO_MODEL = $"models/vehicle/goblin_dropship/goblin_dropship_hero.mdl"
 const CROW_HERO_MODEL = $"models/vehicle/crow_dropship/crow_dropship_hero.mdl"
 
@@ -120,6 +122,13 @@ void function ClassicMP_Dropship_GameStateEnter_PickLoadOutSFX()
 {
 	thread DropShipStream()
 
+	OnThreadEnd(
+	function() : (  )
+		{
+			GetLocalClientPlayer().Signal( "DropShipStream" )
+		}
+	)
+
 	while ( level.nv.minPickLoadOutTime == null )
 	{
 		WaitFrame()
@@ -127,10 +136,12 @@ void function ClassicMP_Dropship_GameStateEnter_PickLoadOutSFX()
 		//defensive check recommended by mackey
 		if ( GetGameState() != eGameState.PickLoadout )
 		{
-			GetLocalClientPlayer().Signal( "DropShipStream" )
 			return
 		}
 	}
+
+	if ( !DoPrematchWarpSound() )
+		return
 
 	float startTime = expect float( level.nv.minPickLoadOutTime )
 	float soundStartTime = startTime - PICK_LOADOUT_SOUND_TIME
@@ -165,7 +176,6 @@ void function ClassicMP_Dropship_GameStateEnter_PickLoadOutSFX()
 		wait delay
 
 	player = GetLocalClientPlayer() //Need to update the handle since time could have passed
-	player.Signal( "DropShipStream" )
 
 	FadeOutSoundOnEntity( player, warpSoundEffect, 2.0 )
 }
@@ -282,8 +292,12 @@ void function CreateCountdown( entity player, float gameStartTime )
 		return
 	}
 
-	RegisterButtonPressedCallback( BUTTON_Y, UseDoubleXP )
-	RegisterButtonPressedCallback( KEY_ENTER, UseDoubleXP )
+	if ( GetRoundsPlayed() == 0 )
+	{
+		RegisterButtonPressedCallback( BUTTON_Y, UseDoubleXP )
+		RegisterButtonPressedCallback( KEY_ENTER, UseDoubleXP )
+	}
+
 	if ( BurnMeterEnabled() )
 	{
 		RegisterButtonPressedCallback( BUTTON_X, OpenBoostMenu )
@@ -304,7 +318,6 @@ void function CreateCountdown( entity player, float gameStartTime )
 	else if ( Riff_TitanAvailability() == eTitanAvailability.Once )
 	{
 		file.loadoutsRUI = RuiCreate( $"ui/dropship_intro_titan_loadouts.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 1 )
-		LTS_CreateTeamTitanSelectionScreen()
 	}
 	else
 	{
@@ -356,8 +369,12 @@ void function CreateCountdown( entity player, float gameStartTime )
 	if ( file.loadoutsRUI != null )
 		RuiDestroy( file.loadoutsRUI )
 
-	DeregisterButtonPressedCallback( BUTTON_Y, UseDoubleXP )
-	DeregisterButtonPressedCallback( KEY_ENTER, UseDoubleXP )
+	if ( GetRoundsPlayed() == 0 )
+	{
+		DeregisterButtonPressedCallback( BUTTON_Y, UseDoubleXP )
+		DeregisterButtonPressedCallback( KEY_ENTER, UseDoubleXP )
+	}
+
 	if ( BurnMeterEnabled() )
 	{
 		DeregisterButtonPressedCallback( BUTTON_X, OpenBoostMenu )
@@ -415,7 +432,9 @@ void function RefreshIntroLoadoutDisplay( entity player, int pilotLoadoutIndex, 
 
 	asset burnCard1Image = GetWeaponInfoFileKeyFieldAsset_Global( "mp_ability_burncardweapon", "hud_icon" )
 
-	RuiSetBool( file.loadoutsRUI, "doubleXPAvailable", (Player_GetDoubleXPCount( player ) > 0 || player.GetPlayerNetInt( "xpMultiplier" ) > 0) && !IsPrivateMatch() )
+	bool firstRound = ( GetRoundsPlayed() == 0 )
+
+	RuiSetBool( file.loadoutsRUI, "doubleXPAvailable", (Player_GetDoubleXPCount( player ) > 0 || player.GetPlayerNetInt( "xpMultiplier" ) > 0) && !IsPrivateMatch() && firstRound )
 	RuiTrackInt( file.loadoutsRUI, "doubleXPStatus", player, RUI_TRACK_SCRIPT_NETWORK_VAR_INT, GetNetworkedVariableIndex( "xpMultiplier" ) )
 
 	RuiSetInt( file.loadoutsRUI, "doubleXPCount", Player_GetDoubleXPCount( player ) )

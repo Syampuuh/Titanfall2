@@ -144,7 +144,7 @@ resource/ui/menus/mode_select.menu
 			InheritProperties		RuiSmallButton
 			classname 				ModeButton
 			scriptID				0
-			navUp					BtnMode8
+			navUp					BtnMode15
 			navDown					BtnMode2
 
 			pin_to_sibling				ButtonRowAnchor

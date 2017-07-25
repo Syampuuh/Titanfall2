@@ -305,21 +305,17 @@ Resource/UI/HudScripted_mp.res
 	IngameTextChat [$WINDOWS]
 	{
 		ControlName				CBaseHudChat
+		InheritProperties		ChatBox
+
+		destination				"match"
+
+		visible 				0
+
 		pin_to_sibling			Screen
 		pin_corner_to_sibling	TOP_LEFT
 		pin_to_sibling_corner	TOP_LEFT
 		xpos					-45
 		ypos					-616
-		wide					630
-		tall					135
-		visible 				0
-		bgcolor_override 		"0 0 0 180"
-		destination				"match"
-
-		chatBorderThickness		3
-		chatHistoryBgColor		"24 27 30 200"
-		chatEntryBgColor		"24 27 30 200"
-		chatEntryBgColorFocused	"24 27 30 200"
 	}
 
 	HudCheaterMessage

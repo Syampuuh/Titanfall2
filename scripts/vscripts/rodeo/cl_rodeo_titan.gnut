@@ -6,6 +6,13 @@ global function ClRodeoTitan_RegisterNetworkFunctions
 global function Pressed_OfferRodeoBattery
 global function Pressed_RequestRodeoBattery
 
+#if MP
+global function Pressed_TryNukeGrenade
+global function Released_TryNukeGrenade
+global function ServerCallback_NukeGrenadeWindowOpen
+global function ServerCallback_NukeGrenadeWindowClosed
+#endif
+
 global function TryOfferRodeoBatteryHint
 
 global function PlayBatteryScreenFX
@@ -13,6 +20,7 @@ global function PlayBatteryScreenFX
 global function ShowBatteryHint
 
 const BATTERY_FX_SCREEN = $"P_battery_screen"
+const BATTERY_FX_SCREEN_AMPED = $"P_battery_screen_amped"
 const int NUMBER_OF_BATTERY_ICONS = 3
 const int NO_BATTERY_HUD_ELEM_AVAILABLE = -1
 const RODEO_BATTERY_SHOW_HINT_TIME = 10.0
@@ -39,6 +47,7 @@ void function ClRodeoTitan_Init()
 {
 	Rodeo_BatteryRemoval_EventNotificationInit()
 	PrecacheParticleSystem( BATTERY_FX_SCREEN )
+	PrecacheParticleSystem( BATTERY_FX_SCREEN_AMPED )
 
 	AddCreateCallback( "item_titan_battery", OnBatteryCreated )
 
@@ -62,6 +71,9 @@ void function ClRodeoTitan_Init()
 	AddCinematicEventFlagChangedCallback( CE_FLAG_HIDE_MAIN_HUD, BatteryTracker_UpdateVisibility )
 	#endif
 
+	#if MP
+	AddEventNotificationCallback( eEventNotifications.FD_SuperRodeoUsed, FD_SuperRodeoUsed )
+	#endif
 }
 
 void function ClRodeoTitan_RegisterNetworkFunctions()
@@ -144,41 +156,34 @@ void function Rodeo_YouStoleBattery( entity player, var eventVal )
 
 void function Rodeo_TitanPickedUpBattery( entity ent, var eventVal )
 {
-	PlayBatteryScreenFX( GetLocalClientPlayer() )
+	PlayBatteryScreenFX( GetLocalClientPlayer(), expect bool( eventVal ) )
 }
 
 void function Rodeo_YouEmbarkedWithABattery( entity ent, var eventVal )
 {
-	thread PlayBatteryScreenFXWithDelay( GetLocalClientPlayer() )
+	PlayBatteryScreenFX( GetLocalClientPlayer(), expect bool( eventVal ) )
 }
 
-void function PlayBatteryScreenFX( entity player, string healthRestoredSound = TITAN_PICKS_UP_BATTERY_HEALTH_RESTORED_SOUND )
+void function PlayBatteryScreenFX( entity player, bool amped, string healthRestoredSound = TITAN_PICKS_UP_BATTERY_HEALTH_RESTORED_SOUND )
 {
-	FlashCockpitHealthGreen()
+	asset fx = amped ? BATTERY_FX_SCREEN_AMPED : BATTERY_FX_SCREEN
+	vector ampedColor = < 246.0, 134.0, 40.0 > - < 0, 110, 255 > // adjust to compensate for blue in health bar
+	vector color = amped ? ampedColor / 255.0 : <0.0,1.0,0.0>
+	FlashCockpitHealth( color )
 	EmitSoundOnEntity( player, healthRestoredSound  )
 	entity cockpit = player.GetCockpit()
 	if ( IsValid( cockpit ) )
-		StartParticleEffectOnEntity( cockpit, GetParticleSystemIndex( BATTERY_FX_SCREEN ), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
+		StartParticleEffectOnEntity( cockpit, GetParticleSystemIndex( fx ), FX_PATTACH_ABSORIGIN_FOLLOW, -1 )
 	Rumble_Play( "rumble_titan_battery_pickup", { position = player.GetOrigin() } )
 }
 
-void function PlayBatteryScreenFXWithDelay( entity player )
+void function PlayBatteryScreenFXWithDelay( entity player, bool amped )
 {
 	player.EndSignal( "OnDeath" )
 
 	wait 0.75
 
-	PlayBatteryScreenFX( player )
-}
-
-void function Rodeo_TitanPickedUpBatteryGaveShields( entity ent, var eventVal )
-{
-	PlayBatteryScreenFX( GetLocalClientPlayer() )
-}
-
-void function Rodeo_TitanPickedUpBatteryGaveCore( entity ent, var eventVal )
-{
-	PlayBatteryScreenFX( GetLocalClientPlayer() )
+	PlayBatteryScreenFX( player, amped )
 }
 
 void function Rodeo_PilotPickedUpBattery( entity ent, var eventVal )
@@ -222,7 +227,7 @@ void function Rodeo_PilotAppliedBatteryToYou( entity friendlyPilot, var eventVal
 		return
 
 	entity localClientPlayer = GetLocalClientPlayer()
-	PlayBatteryScreenFX( localClientPlayer )
+	PlayBatteryScreenFX( localClientPlayer, expect bool( eventVal ) )
 	RodeoAlert_FriendlyGaveBattery()
 }
 
@@ -430,6 +435,16 @@ void function ShowFriendlyTitanWantsBattery( entity friendlyTitan )
 	wait REQUEST_RODEO_BATTERY_SHOW_ICON_TIME
 }
 
+void function UpdateBatteryOnBack()
+{
+	if ( !PlayerHasBattery( GetLocalViewPlayer() ) )
+		return
+
+	entity battery = GetBatteryOnBack( GetLocalViewPlayer() )
+	if ( battery != null )
+		RuiSetBool( file.batteryHintRui, "amped", IsAmpedBattery( battery ) )
+}
+
 void function BatteryOnBackChanged( entity player, entity oldValue, entity newValue, bool actuallyChanged )
 {
 	Assert( IsValid( player ) )
@@ -452,6 +467,8 @@ void function BatteryOnBackChanged( entity player, entity oldValue, entity newVa
 		if ( IsValid( newValue ) && newValue.GetBossPlayer() == player )
 			newValue.Signal( "HideStolenBatteryIcons" )
 		RuiTrackInt( file.batteryHintRui, "batteryCount", player, RUI_TRACK_SCRIPT_NETWORK_VAR_INT, GetNetworkedVariableIndex( "batteryCount" ) )
+
+		UpdateBatteryOnBack()
 	}
 
 }
@@ -789,3 +806,45 @@ void function DisplayBattFull( entity ent, var info )
 }
 #endif
 
+#if MP
+void function Pressed_TryNukeGrenade( entity player )
+{
+	if ( file.useButtonDown )
+		return
+
+	file.useButtonDown = true
+
+	player.ClientCommand( "TryNukeGrenade" )
+}
+
+void function Released_TryNukeGrenade( entity player )
+{
+	if ( !file.useButtonDown )
+		return
+
+	file.useButtonDown = false
+}
+
+void function ServerCallback_NukeGrenadeWindowOpen()
+{
+	AddPlayerHint( 4.0, 0.1, $"", "#NUKE_GRENADE_HOLD_USE" )
+}
+
+void function ServerCallback_NukeGrenadeWindowClosed()
+{
+	HidePlayerHint( "#NUKE_GRENADE_HOLD_USE" )
+}
+
+void function FD_SuperRodeoUsed( entity ent, var info )
+{
+	AnnouncementData announcement = Announcement_Create( "#HUD_SUPER_RODEO_USED" )
+	Announcement_SetStyle( announcement, ANNOUNCEMENT_STYLE_FD_ITEM )
+	Announcement_SetSoundAlias( announcement,  "ui_ctf_1p_playerscore" )
+	Announcement_SetPurge( announcement, true )
+	Announcement_SetIcon( announcement, $"rui/menu/boosts/boost_icon_core_overload_256" )
+	Announcement_SetPriority( announcement, 200 ) //Be higher priority than Titanfall ready indicator etc
+	Announcement_SetOptionalTextArgsArray( announcement, [ "true" ] )
+	announcement.duration = 1.0
+	AnnouncementFromClass( GetLocalViewPlayer(), announcement )
+}
+#endif

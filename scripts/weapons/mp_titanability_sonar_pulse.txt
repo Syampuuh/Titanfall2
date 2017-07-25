@@ -278,7 +278,9 @@ WeaponData
 		}
 		fd_sonar_damage_amp
 		{
-
+			"hud_icon"										"rui/menu/fd_menu/upgrade_tone_weak_points_hud"
+			"impact_effect_table" 							"exp_sonar_pulse_AMP"
+			"projectile_trail_effect_0" 					"wpn_grenade_sonar_titan_AMP"
 		}
 	}
 }

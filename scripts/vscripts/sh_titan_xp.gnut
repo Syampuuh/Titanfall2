@@ -22,6 +22,22 @@ global function TitanGetMaxRawLevel
 
 global function GetAllTitanXPItemRefs
 
+global function FD_TitanGetPreviousXP
+global function FD_TitanGetXP
+global function FD_TitanGetLevelForXP
+global function FD_TitanGetRawLevelForXP
+global function FD_TitanGetNumPipsForXP
+global function FD_TitanGetFilledPipsForXP
+global function FD_TitanGetGenForXP
+global function FD_TitanGetDisplayGenAndLevel
+global function FD_TitanGetMaxXP
+global function FD_TitanGetXPPipsForLevel
+global function FD_TitanGetMaxLevel
+global function FD_TitanGetMaxRawLevel
+global function FD_TitanGetRawLevel
+global function FD_TitanGetXPForLevel
+global function FD_TitanGetLevel
+
 global struct ShTitanXP
 {
 	array<string> titanClasses
@@ -76,6 +92,26 @@ void function ShTitanXP_Init()
 			string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
 			if ( enumName != "" )
 				shTitanXP.titanClasses.append( enumName )
+		}
+	}
+
+	{
+		var dataTable = GetDataTable( $"datatable/xp_per_fd_titan_level.rpak" )
+		int numRows = GetDatatableRowCount( dataTable )
+
+		file.fdMaxLevelPerGen = numRows
+
+		file.fdTitanXPPipsPerLevel.resize( file.fdMaxLevelPerGen + 1 )
+		file.fdTitanXPForLevel.resize( file.fdMaxLevelPerGen + 2 )
+
+		file.fdTitanXPPipsPerLevel[ 0 ] = 0
+		file.fdTitanXPForLevel[ 0 ] = 0
+		file.fdTitanXPForLevel[ 1 ] = 0
+		for ( int i = 0; i < numRows; i++ )
+		{
+			int xpPerLevel = GetDataTableInt( dataTable, i, GetDataTableColumnByName( dataTable, "xpPerLevel" ) )
+			file.fdTitanXPPipsPerLevel[ i + 1 ] = xpPerLevel
+			file.fdTitanXPForLevel[ i + 2 ] = file.fdTitanXPForLevel[ i + 1 ] + xpPerLevel
 		}
 	}
 }
@@ -251,3 +287,159 @@ int function TitanGetMaxRawLevel( string titanRef )
 	return TitanGetRawLevelForXP( titanRef, TitanGetMaxXP( titanRef ) )
 }
 
+int function FD_TitanGetMaxLevel( string titanRef )
+{
+	return file.fdMaxLevelPerGen
+}
+
+int function FD_TitanGetMaxRawLevel( string titanRef )
+{
+	return FD_TitanGetRawLevelForXP( titanRef, TitanGetMaxXP( titanRef ) )
+}
+
+int function FD_TitanGetRawLevel( entity player, string titanClass )
+{
+	return FD_TitanGetRawLevelForXP( titanClass, FD_TitanGetXP( player, titanClass ) )
+}
+
+int function FD_TitanGetLevel( entity player, string titanClass )
+{
+	return FD_TitanGetLevelForXP( titanClass, FD_TitanGetXP( player, titanClass ) )
+}
+
+int function FD_TitanGetGen( entity player, string titanClass )
+{
+	return FD_TitanGetGenForXP( titanClass, FD_TitanGetXP( player, titanClass ) )
+}
+
+int function FD_TitanGetPreviousLevel( entity player, string titanClass )
+{
+	return FD_TitanGetLevelForXP( titanClass, FD_TitanGetPreviousXP( player, titanClass ) )
+}
+
+int function FD_TitanGetXPForLevel( string titanRef, int titanLevel )
+{
+	Assert( titanLevel > 0 && titanLevel <= file.fdMaxLevelPerGen )
+
+	return file.fdTitanXPForLevel[ titanLevel ]
+}
+
+
+int function FD_TitanGetXP( entity player, string titanClass )
+{
+	return player.GetPersistentVarAsInt( "fdTitanXP[" + titanClass + "]" )
+}
+
+int function FD_TitanGetPreviousXP( entity player, string titanClass )
+{
+	string persistenceVar = "fdPreviousTitanXP[" + titanClass + "]"
+	return player.GetPersistentVarAsInt( persistenceVar )
+}
+
+int function FD_TitanGetMaxXP( string titanRef )
+{
+	return FD_TitanGetMaxXPPerGen( titanRef ) * FD_TITAN_MAX_GEN
+}
+
+int function FD_TitanGetMaxXPPerGen( string titanRef )
+{
+	return file.fdTitanXPForLevel[ file.fdMaxLevelPerGen ] + file.fdTitanXPPipsPerLevel[ file.fdMaxLevelPerGen ]
+}
+
+int function FD_TitanGetXPPipsForLevel( string titanRef, int level )
+{
+	return file.fdTitanXPPipsPerLevel[level]
+}
+
+int function FD_TitanGetNumPipsForXP( string titanRef, int titanXP )
+{
+	//int maxXP = FD_TitanGetMaxXP( titanRef )
+	//if ( titanXP >= maxXP )
+	//	return 10
+
+	int titanLevel = FD_TitanGetLevelForXP( titanRef, titanXP )
+
+	return file.fdTitanXPPipsPerLevel[ titanLevel ]
+}
+
+int function FD_TitanGetFilledPipsForXP( string titanRef, int titanXP )
+{
+	int maxXP = FD_TitanGetMaxXP( titanRef )
+	if ( titanXP >= maxXP )
+		return FD_TitanGetNumPipsForXP( titanRef, maxXP )
+
+	int startingLevel = FD_TitanGetLevelForXP( titanRef, titanXP )
+	int baseXp = FD_TitanGetXPForLevel( titanRef, startingLevel )
+
+	int maxXPPerGen = FD_TitanGetMaxXPPerGen( titanRef )
+	return ( titanXP % maxXPPerGen ) - baseXp
+}
+
+
+int function FD_TitanGetGenForXP( string titanRef, int titanXP )
+{
+	int maxXPPerGen = FD_TitanGetMaxXPPerGen( titanRef )
+	return int( floor( float( titanXP ) / float( maxXPPerGen ) ) ) + 1
+}
+
+int function FD_TitanGetRawLevelForXP( string titanRef, int titanXP )
+{
+	int maxXP = FD_TitanGetMaxXP( titanRef )
+	if ( titanXP >= maxXP )
+		return file.fdMaxLevelPerGen * FD_TITAN_MAX_GEN + 1
+
+	int genLevels = ( FD_TitanGetGenForXP( titanRef, titanXP ) - 1 ) * file.fdMaxLevelPerGen
+	int maxXPPerGen = FD_TitanGetMaxXPPerGen( titanRef )
+	int xpIntoCurrentGen = titanXP % maxXPPerGen
+
+	foreach ( i, xpVal in file.fdTitanXPForLevel )
+	{
+		if ( xpIntoCurrentGen < xpVal )
+			return genLevels + i - 1
+	}
+
+	unreachable
+}
+
+int function FD_TitanGetLevelForXP( string titanRef, int titanXP )
+{
+	int maxXP = FD_TitanGetMaxXP( titanRef )
+	if ( titanXP >= maxXP )
+		return file.fdMaxLevelPerGen
+
+	int maxXPPerGen = FD_TitanGetMaxXPPerGen( titanRef )
+	int xpIntoCurrentGen = titanXP % maxXPPerGen
+
+	foreach ( i, xpVal in file.fdTitanXPForLevel )
+	{
+		if ( xpIntoCurrentGen < xpVal )
+			return i - 1
+	}
+
+	unreachable
+}
+
+
+string function FD_TitanGetDisplayGenAndLevel( int gen, int level )
+{
+	if ( gen == 1 )
+	{
+		#if SERVER
+			return string( level )
+		#else
+			return Localize( "#HUD_FD_LEVEL_N", level )
+		#endif
+	}
+	else
+	{
+		string levelText = string( level - 1 )
+
+		#if SERVER
+			return string( gen ) + "." + levelText
+		#else
+			return Localize( "#HUD_FD_GEN_LEVEL_N_N", gen, levelText )
+		#endif
+	}
+
+	unreachable
+}

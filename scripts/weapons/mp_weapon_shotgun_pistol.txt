@@ -210,7 +210,7 @@ WeaponData
 	"bolt_gravity_enabled"							"1"
 
 	// Behavior
-	"fire_rate"   									"3"
+	"fire_rate"   									"2.5"
 	"zoom_time_in"									"0.2"
 	"zoom_time_out"   								"0.15"
 	"zoom_fov"										"55"
@@ -441,24 +441,6 @@ WeaponData
 			"fx_muzzle_flash_world"				"wpn_muzzleflash_pistol_sup"
 			//"fx_muzzle_flash_attach"			"muzzle_flash_suppressor_sq"
 		}
-        silencer_low_ttk //HACK JFS: Doesn't get applied on amped weapons. See bug 170460
-		{
-			"bodygroup2_set"	"1"
-			"silenced"							"1"
-			"fire_sound_1_player_1p"			"weapon_shotgunpistol_fire_suppressed_1p"
-			"fire_sound_1_player_3p"			"weapon_shotgunpistol_fire_suppressed_3p"
-			"damage_near_value"   				"--10"
-			"damage_far_value"					"--4"
-			//"bodygroup2_set"					"1"
-
-			//"rumble"  						"4"
-			//"tracer_effect"   					"P_wpn_tracer_pistol"
-			"minimap_reveal_distance"			"1"
-
-			"fx_muzzle_flash_view"				"wpn_muzzleflash_pistol_sup_FP"
-			"fx_muzzle_flash_world"				"wpn_muzzleflash_pistol_sup"
-			//"fx_muzzle_flash_attach"			"muzzle_flash_suppressor_sq"
-		}
 		pas_run_and_gun
 		{
 			"primary_fire_does_not_block_sprint"			"1"
@@ -530,10 +512,6 @@ WeaponData
 			"impact_effect_table" 							"titan_bullet_elec"
 		}
 
-		low_ttk
-		{
-			"fire_rate"   									"2.5"
-		}
 	}
 
 

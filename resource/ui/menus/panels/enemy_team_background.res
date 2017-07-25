@@ -3,8 +3,7 @@
     TeamBackground
     {
         ControlName				RuiPanel
-        wide					520
-		tall					396
+		InheritProperties		LobbyPlayerListBackground
         labelText				""
         bgcolor_override        "0 0 0 0"
         paintbackground         1
@@ -14,7 +13,7 @@
 	EnemySlot0
 	{
 		ControlName				ImagePanel
-		classname 				LobbyTeamSlotBackgroundClass
+		classname				LobbyTeamSlotBackgroundClass
 		InheritProperties 		LobbyEnemySlot
 		pin_to_sibling			TeamBackground
 		pin_corner_to_sibling	TOP_LEFT

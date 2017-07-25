@@ -72,6 +72,8 @@
 
         navUp                 	ButtonPassive1
         navDown                	ButtonPassive3
+        navLeft           	    ButtonFDTitanUpgrades
+        navRight           	    ButtonFDTitanUpgrades
 
         pin_to_sibling			ButtonPassive1
         pin_corner_to_sibling	TOP_RIGHT
@@ -262,6 +264,24 @@
         pin_to_sibling_corner	TOP_RIGHT
     }
 
+    ButtonFDTitanUpgrades
+    {
+		ControlName				RuiButton
+		InheritProperties		LoadoutButtonSmall
+        xpos					0
+        scriptID				"fdTitanUpgrades"
+        ypos					10
+
+		navLeft                 ButtonPassive2
+        navRight                ButtonPassive2
+        navDown               	ButtonTitanExecutions
+        navUp               	ButtonPassive4
+
+        pin_to_sibling			ButtonTitanExecutions
+        pin_corner_to_sibling	TOP_LEFT
+        pin_to_sibling_corner	BOTTOM_LEFT
+    }
+
     LabelAppearance
 	{
 		ControlName				Label
@@ -293,6 +313,39 @@
 		rui 					"ui/dialog_titan_properties.rpak"
 		wrap					1
 		visible					1
+		zpos					1
+	}
+
+	HintBackground
+	{
+		ControlName				RuiPanel
+		xpos					-400
+		ypos 					-20
+		wide					400
+		tall					150
+		visible					0
+		rui 					"ui/basic_image.rpak"
+		drawColor				"0 0 0 120"
+		scaleImage				1
+		zpos					0
+
+		pin_to_sibling			ButtonPassive2
+        pin_corner_to_sibling	TOP_LEFT
+        pin_to_sibling_corner	TOP_LEFT
+	}
+
+	HintIcon
+	{
+		ControlName 			RuiPanel
+		xpos					-4
+		wide					80
+		tall					80
+		pin_to_sibling				HintBackground
+		pin_corner_to_sibling			LEFT
+		pin_to_sibling_corner			LEFT
+		visible					0
+		rui 					"ui/basic_image.rpak"
+		scaleImage				1
 		zpos					1
 	}
 
@@ -399,6 +452,22 @@
 	    controlSettingsFile		"resource/ui/menus/panels/titanproperties.res"
 
 		pin_to_sibling			ButtonPassive2
+		pin_corner_to_sibling	TOP_LEFT
+		pin_to_sibling_corner	BOTTOM_LEFT
+	}
+
+	TitanLoadoutFD
+	{
+	    ControlName				CNestedPanel
+		xpos					0
+		ypos					36
+	    zpos					10
+		wide					800
+		tall					480
+	    visible					1
+		controlSettingsFile		"resource/ui/menus/panels/titanproperties_fd.res"
+
+		pin_to_sibling			ButtonPassive3
 		pin_corner_to_sibling	TOP_LEFT
 		pin_to_sibling_corner	BOTTOM_LEFT
 	}

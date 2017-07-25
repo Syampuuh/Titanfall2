@@ -15,6 +15,8 @@ global const int ANNOUNCEMENT_STYLE_WEAPON_LEVEL = 3
 global const int ANNOUNCEMENT_STYLE_TITAN_LEVEL = 4
 global const int ANNOUNCEMENT_STYLE_SWEEP = 5
 global const int ANNOUNCEMENT_STYLE_RESULTS = 6
+global const int ANNOUNCEMENT_STYLE_FD_WAVE_INTRO = 7
+global const int ANNOUNCEMENT_STYLE_FD_ITEM = 8
 const int ANNOUNCEMENT_STYLE_DEFAULT = ANNOUNCEMENT_STYLE_BIG
 #endif
 
@@ -52,6 +54,7 @@ global struct AnnouncementData
 	array<string> optionalSubTextArgs = ["", "", "", "", ""]
 	int priority = 0
 	asset icon = $""
+	vector iconAspect = <2, 1, 0>
 	asset leftIcon = $""
 	asset rightIcon = $""
 	float subText2AndIconDelay = 0.0
@@ -464,6 +467,7 @@ void function AnnouncementMessage_DisplayOnHud( AnnouncementData announcement )
 			else
 				rui = CreatePermanentCockpitRui( $"ui/announcement_center_sweep.rpak", announcement.sortKey )
 			EmitSoundOnEntity( player, announcement.soundAlias )
+			RuiSetFloat2( rui, "iconAspect", announcement.iconAspect )
 			break
 
 		case ANNOUNCEMENT_STYLE_RESULTS:
@@ -493,6 +497,36 @@ void function AnnouncementMessage_DisplayOnHud( AnnouncementData announcement )
 			break
 #endif
 
+#if MP
+		case ANNOUNCEMENT_STYLE_FD_WAVE_INTRO:
+			customAnnouncement = true
+			rui = CreatePermanentCockpitRui( $"ui/wave_announcement.rpak", announcement.sortKey )
+			int currentWave = int( optionalTextArgs[0] )
+			int totalWaves = int( optionalTextArgs[1] )
+			RuiSetGameTime( rui, "startTime", Time() )
+			RuiSetGameTime( rui, "endTime", Time() + announcement.duration )
+			RuiSetString( rui, "subTitle", announcement.subText )
+			RuiSetString( rui, "waveTitle", announcement.messageText )
+			RuiSetInt( rui, "numPips", totalWaves )
+			RuiSetInt( rui, "numFilledPips", currentWave )
+			EmitSoundOnEntity( player, announcement.soundAlias )
+			break
+		case ANNOUNCEMENT_STYLE_FD_ITEM:
+			customAnnouncement = true
+			bool isSmall = false
+			if ( optionalTextArgs.len() > 0 )
+				isSmall = optionalTextArgs[0] == "true"
+			printt( isSmall )
+			var rui = RuiCreate( $"ui/harvester_shield_use.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 0 )
+			RuiSetGameTime( rui, "startTime", Time() )
+			RuiSetFloat( rui, "duration", announcement.duration )
+			RuiSetString( rui, "title", announcement.messageText )
+			RuiSetImage( rui, "icon", announcement.icon )
+			RuiSetBool( rui, "small", isSmall )
+			EmitSoundOnEntity( player, announcement.soundAlias )
+
+			break
+#endif
 
 #if SP
 		case ANNOUNCEMENT_STYLE_CENTER:

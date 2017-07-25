@@ -29,6 +29,17 @@ global function OnDpadCommsButton_Activate
 
 global function GetActiveSearchingPlaylist
 
+global function Lobby_IsFDMode
+global function Lobby_SetAutoFDOpen
+global function Lobby_SetFDMode
+global function Lobby_ToggleFDMode
+global function Lobby_CallsignButton3EventHandler
+global function Lobby_RefreshButtons
+
+global function OnStoreButton_Activate
+global function OnStoreBundlesButton_Activate
+global function OnStoreNewReleasesButton_Activate
+
 const string MATCHMAKING_AUDIO_CONNECTING = "menu_campaignsummary_titanunlocked"
 
 struct
@@ -53,6 +64,7 @@ struct
 	var inviteRoomButton
 	var inviteFriendsButton
 	var inviteFriendsToNetworkButton
+	var toggleMenuModeButton
 
 	var networksMoreButton
 
@@ -64,6 +76,8 @@ struct
 	var titanButton
 	var boostsButton
 	var storeButton
+	var storeNewReleasesButton
+	var storeBundlesButton
 	var factionButton
 	var bannerButton
 	var patchButton
@@ -95,6 +109,9 @@ struct
 	string lastMixtapeMatchmakingStatus
 
 	ComboStruct &lobbyComboStruct
+
+	bool isFDMode = false
+	bool shouldAutoOpenFDMenu = false
 } file
 
 void function MenuLobby_Init()
@@ -226,6 +243,9 @@ void function SetupComboButtonTest( var menu )
 	file.inviteFriendsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_INVITE_FRIENDS" )
 	Hud_AddEventHandler( file.inviteFriendsButton, UIE_CLICK, InviteFriendsIfAllowed )
 
+	// file.toggleMenuModeButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_LOBBY_SWITCH_FD" )
+	// Hud_AddEventHandler( file.toggleMenuModeButton, UIE_CLICK, ToggleLobbyMode )
+
 	headerIndex++
 	buttonIndex = 0
 	file.customizeHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_HEADER_LOADOUTS" )
@@ -240,11 +260,6 @@ void function SetupComboButtonTest( var menu )
 	file.boostsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_BOOSTS" )
 	Hud_AddEventHandler( file.boostsButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "BurnCardMenu" ) ) )
 
-	#if DEVSCRIPTS
-	file.dpadCommsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_COMMS" )
-	Hud_AddEventHandler( file.dpadCommsButton, UIE_CLICK, OnDpadCommsButton_Activate )
-	#endif
-
 	headerIndex++
 	buttonIndex = 0
 	file.callsignHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_HEADER_CALLSIGN" )
@@ -254,7 +269,7 @@ void function SetupComboButtonTest( var menu )
 	file.patchButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_PATCH" )
 	Hud_AddEventHandler( file.patchButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "CallsignIconSelectMenu" ) ) )
 	file.factionButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_FACTION" )
-	Hud_AddEventHandler( file.factionButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "FactionChoiceMenu" ) ) )
+	Hud_AddEventHandler( file.factionButton, UIE_CLICK, Lobby_CallsignButton3EventHandler )
 	file.statsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STATS" )
 	Hud_AddEventHandler( file.statsButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ViewStatsMenu" ) ) )
 
@@ -286,6 +301,10 @@ void function SetupComboButtonTest( var menu )
 	SetComboButtonHeaderTint( GetMenu( "LobbyMenu" ), headerIndex, true )
 	file.storeButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_BROWSE" )
 	Hud_AddEventHandler( file.storeButton, UIE_CLICK, OnStoreButton_Activate )
+	file.storeNewReleasesButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_NEW_RELEASES" )
+	Hud_AddEventHandler( file.storeNewReleasesButton, UIE_CLICK, OnStoreNewReleasesButton_Activate )
+	file.storeBundlesButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_BUNDLES" )
+	Hud_AddEventHandler( file.storeBundlesButton, UIE_CLICK, OnStoreBundlesButton_Activate )
 
 	headerIndex++
 	buttonIndex = 0
@@ -328,8 +347,7 @@ void function DoRoomInviteIfAllowed( var button )
 	}
 
 	SendOpenInvite( true )
-	string playlistMenuName = GetPlaylistMenuName()
-	AdvanceMenu( GetMenu( playlistMenuName ) )
+	OpenSelectedPlaylistMenu()
 }
 
 void function CreatePartyAndInviteFriends()
@@ -346,6 +364,31 @@ void function CreatePartyAndInviteFriends()
 	else
 	{
 		printt( "Not inviting friends - CanInvite() returned false" );
+	}
+}
+
+void function ToggleLobbyMode( var button )
+{
+	Lobby_ToggleFDMode()
+}
+
+void function Lobby_ToggleFDMode()
+{
+	Hud_SetFocused( file.findGameButton )
+	ComboButtons_ResetColumnFocus( file.lobbyComboStruct )
+	file.isFDMode = !file.isFDMode
+	Lobby_RefreshButtons()
+}
+
+void function Lobby_CallsignButton3EventHandler( var button )
+{
+	if ( Lobby_IsFDMode() )
+	{
+		AdvanceMenu( GetMenu( "ViewStatsMenu" ) )
+	}
+	else
+	{
+		AdvanceMenu( GetMenu( "FactionChoiceMenu" ) )
 	}
 }
 
@@ -376,12 +419,62 @@ bool function CanInvite()
 	#endif
 }
 
+void function Lobby_RefreshButtons()
+{
+	bool fdMode = Lobby_IsFDMode()
+	var menu = GetMenu( "LobbyMenu" )
+
+	if ( uiGlobal.activeMenu == GetMenu( "LobbyMenu" ) )
+	{
+		if ( fdMode )
+			UI_SetPresentationType( ePresentationType.FD_MAIN )
+		else
+			UI_SetPresentationType( ePresentationType.DEFAULT )
+	}
+
+	string buttonString = fdMode ? "#MENU_LOBBY_SWITCH_DEFAULT" : "#MENU_LOBBY_SWITCH_FD"
+	// ComboButton_SetText( file.toggleMenuModeButton, buttonString )
+
+	buttonString = fdMode ? "" : "#MENU_TITLE_BOOSTS"
+	Hud_SetEnabled( file.boostsButton, !fdMode )
+	ComboButton_SetText( file.boostsButton, buttonString )
+
+	buttonString = fdMode ? "#MENU_TITLE_STATS" : "#MENU_TITLE_FACTION"
+	ComboButton_SetText( file.factionButton, buttonString )
+
+	buttonString = fdMode ? "" : "#MENU_TITLE_STATS"
+	Hud_SetEnabled( file.statsButton, !fdMode )
+	ComboButton_SetText( file.statsButton, buttonString )
+
+	buttonString = fdMode ? "#MENU_HEADER_PLAY_FD" : "#MENU_HEADER_PLAY"
+	SetComboButtonHeaderTitle( menu, 0, buttonString )
+
+	if ( fdMode )
+		Hud_Hide( Hud_GetChild( menu, "ImgTopBar" ) )
+	else
+		Hud_Show( Hud_GetChild( menu, "ImgTopBar" ) )
+
+	ComboButtons_ResetColumnFocus( file.lobbyComboStruct )
+
+	if ( fdMode )
+	{
+		Hud_SetText( Hud_GetChild( menu, "MenuTitle" ), "" )
+	}
+	else
+	{
+		Hud_SetText( Hud_GetChild( menu, "MenuTitle" ), "#MULTIPLAYER" )
+	}
+}
+
 void function OnLobbyMenu_Open()
 {
 	Assert( IsConnected() )
 
 	// code will start loading DLC info from first party unless already done
 	InitDLCStore()
+
+	if ( uiGlobal.activeMenu == GetMenu( "LobbyMenu" ) )
+		Lobby_SetFDMode( false )
 
 	thread UpdateCachedNewItems()
 	if ( file.putPlayerInMatchmakingAfterDelay )
@@ -394,10 +487,9 @@ void function OnLobbyMenu_Open()
 	thread UpdateLobbyUI()
 	thread LobbyMenuUpdate( GetMenu( "LobbyMenu" ) )
 
-	if ( uiGlobal.activeMenu == GetMenu( "LobbyMenu" ) )
-		UI_SetPresentationType( ePresentationType.DEFAULT )
+	Hud_Show( file.chatroomMenu )
 
-		Hud_Show( file.chatroomMenu )
+	Lobby_RefreshButtons()
 
 	if ( IsFullyConnected() )
 	{
@@ -438,18 +530,6 @@ void function OnLobbyMenu_Open()
 			ComboButton_SetNew( file.pilotButton, anyNewPilotItems )
 			ComboButton_SetNew( file.titanButton, anyNewTitanItems )
 			ComboButton_SetNew( file.boostsButton, anyNewBoosts )
-			#if DEVSCRIPTS
-			ComboButton_SetNew( file.dpadCommsButton, anyNewCommsIcons )
-			if ( !emotesAreEnabled )
-			{
-				Hud_Hide( file.dpadCommsButton )
-				ComboButtons_ResetColumnFocus( file.lobbyComboStruct )
-			}
-			else
-			{
-				Hud_Show( file.dpadCommsButton )
-			}
-			#endif
 		}
 
 		// "Store"
@@ -463,7 +543,7 @@ void function OnLobbyMenu_Open()
 		{
 			bool anyNewBanners = HasAnyNewCallsignBanners( player )
 			bool anyNewPatches = HasAnyNewCallsignPatches( player )
-			bool anyNewFactions = HasAnyNewFactions( player )
+			bool anyNewFactions = HasAnyNewFactions( player ) && Lobby_IsFDMode()
 			bool anyNewCallsignHeader = (anyNewBanners || anyNewPatches || anyNewFactions)
 
 			RuiSetBool( Hud_GetRui( file.callsignHeader ), "isNew", anyNewCallsignHeader )
@@ -479,6 +559,13 @@ void function OnLobbyMenu_Open()
 		TryUnlockSRSCallsign()
 
 		Lobby_UpdateInboxButtons()
+
+		if ( file.shouldAutoOpenFDMenu )
+		{
+			file.shouldAutoOpenFDMenu = false
+			AdvanceMenu( GetMenu( GetPlaylistMenuName() ) )
+			AdvanceMenu( GetMenu( "FDMenu" ) )
+		}
 	}
 }
 
@@ -960,14 +1047,12 @@ void function RefreshCreditsAvailable( int creditsOverride = -1 )
 	string pveTitle = ""
 	int pveCredits = 0
 	bool isPVE = CurrentMenuIsPVEMenu()
-	#if DEVSCRIPTS
 	if ( isPVE )
 	{
 		TitanLoadoutDef loadout = GetCachedTitanLoadout( uiGlobal.editingLoadoutIndex )
 		pveCredits = GetAvailableFDUnlockPoints( player, loadout.titanClass )
 		pveTitle = GetTitanLoadoutName( loadout )
 	}
-	#endif
 
 	foreach ( elem in file.creditsAvailableElems )
 	{
@@ -1021,8 +1106,7 @@ void function BigPlayButton1_Activate( var button )
 		return
 
 	SendOpenInvite( false )
-	string playlistMenuName = GetPlaylistMenuName()
-	AdvanceMenu( GetMenu( playlistMenuName ) )
+	OpenSelectedPlaylistMenu()
 }
 
 function EnableButton( button )
@@ -1035,6 +1119,19 @@ function DisableButton( button )
 {
 	Hud_SetEnabled( button, false )
 	Hud_Hide( button )
+}
+
+void function OpenSelectedPlaylistMenu()
+{
+	if ( Lobby_IsFDMode() )
+	{
+		AdvanceMenu( GetMenu( "FDMenu" ) )
+	}
+	else
+	{
+		string playlistMenuName = GetPlaylistMenuName()
+		AdvanceMenu( GetMenu( playlistMenuName ) )
+	}
 }
 
 function UpdateLobbyUI()
@@ -1050,8 +1147,15 @@ function UpdateLobbyUI()
 	thread UpdateInviteFriendsToNetworkButton()
 	thread UpdatePlayerInfo()
 
-	if ( uiGlobal.EOGOpenInLobby )
+	if ( uiGlobal.menuToOpenFromPromoButton != null )
+	{
+		AdvanceMenu( uiGlobal.menuToOpenFromPromoButton )
+		uiGlobal.menuToOpenFromPromoButton = null
+	}
+	else if ( uiGlobal.EOGOpenInLobby )
+	{
 		EOGOpen()
+	}
 
 	WaitSignal( uiGlobal.signalDummy, "CleanupInGameMenus" )
 	uiGlobal.updatingLobbyUI = false
@@ -1320,6 +1424,16 @@ void function OnStoreButton_Activate( var button )
 	LaunchGamePurchaseOrDLCStore()
 }
 
+void function OnStoreNewReleasesButton_Activate( var button )
+{
+	LaunchGamePurchaseOrDLCStore( [ "StoreMenu", "StoreMenu_NewReleases" ] )
+}
+
+void function OnStoreBundlesButton_Activate( var button )
+{
+	LaunchGamePurchaseOrDLCStore( [ "StoreMenu", "StoreMenu_Sales" ] )
+}
+
 void function OnDpadCommsButton_Activate( var button )
 {
 	AdvanceMenu( GetMenu( "EditDpadCommsMenu" ) )
@@ -1367,4 +1481,20 @@ bool function ShouldShowEmotesAnnouncement( entity player )
 	#endif
 
 	return true
+}
+
+void function Lobby_SetFDMode( bool mode )
+{
+	file.isFDMode = mode
+}
+
+bool function Lobby_IsFDMode()
+{
+	return file.isFDMode
+}
+
+void function Lobby_SetAutoFDOpen( bool autoFD )
+{
+	Lobby_SetFDMode( autoFD )
+	file.shouldAutoOpenFDMenu = autoFD
 }

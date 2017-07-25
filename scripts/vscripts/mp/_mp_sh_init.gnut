@@ -7,6 +7,15 @@ void function SPMP_Shared_Init()
 	PrecacheModel( $"models/robots/stalker/robot_stalker.mdl" )
 	PrecacheModel( $"models/robots/super_spectre/super_spectre_v1.mdl" )
 	PrecacheModel( $"models/vehicle/widow/widow.mdl" )
+
+	PrecacheModel( $"models/titans_r2/titan_insignia/ion_shoulder_pad.mdl" )
+	PrecacheModel( $"models/titans_r2/titan_insignia/tone_shoulder_pad.mdl" )
+	PrecacheModel( $"models/titans_r2/titan_insignia/scorch_shoulder_pad.mdl" )
+	PrecacheModel( $"models/titans_r2/titan_insignia/legion_shoulder_pad.mdl" )
+	PrecacheModel( $"models/titans_r2/titan_insignia/ronin_shoulder_pad.mdl" )
+	PrecacheModel( $"models/titans_r2/titan_insignia/northstar_shoulder_pad.mdl" )
+	PrecacheModel( $"models/titans_r2/titan_insignia/vanguard_shoulder_pad.mdl" )
+
 	PrecacheParticleSystem( $"P_harvester_beam_air" )
 
 	GameModes_Init()
@@ -17,6 +26,8 @@ void function SPMP_Shared_Init()
 	else
 		Shared_MP_Init()
 
+	ShHarvester_GlobalInit()
+	ShInitBoostStore()
 }
 
 void function Shared_Lobby_Init()
@@ -202,6 +213,7 @@ void function Server_MP_Init()
 	SpectreRack_Init()
 	LoadoutCrate_Init()
 	TitanCommands_Init()
+	MortarTitans_Init()
 
 	ClassTitan_Init()
 	ClassWallrun_Init()
@@ -270,6 +282,10 @@ void function Server_MP_Init()
 	Decoy_Init()
 
 	PIN_Init()
+
+	#if DEVSCRIPTS
+		InitBatteryPort()
+	#endif
 
 	// NOTE this should run after level scripts get a chance to override default behavior
 	if ( IsMultiplayerPlaylist() )
@@ -369,6 +385,7 @@ void function Client_MP_Init()
 	ClGruntChatter_MP_Init()
 	ClSpectatorModeAudio_Init()
 	//ClPilotSpeedometer_Init()
+
 	if ( !IsLobby() && GetCurrentPlaylistVarInt( "riff_floorislava", eFloorIsLava.Default ) )
 		ClRiffFloorIsLava_Init()
 

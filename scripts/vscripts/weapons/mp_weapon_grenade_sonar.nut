@@ -14,6 +14,7 @@ global function SonarEnd
 global function IncrementSonarPerTeam
 global function DecrementSonarPerTeam
 global function OnSonarTriggerLeaveInternal
+global function AddSonarStartCallback
 #endif
 
 global function OnProjectileCollision_weapon_grenade_sonar
@@ -78,8 +79,13 @@ struct
 {
 	table< entity, array<int> > entitySonarHandles
 	table< int, int > teamSonarCount
+	array< void functionref( entity, vector, int, entity ) > sonarStartCallbacks = []
 } file
 
+void function AddSonarStartCallback( void functionref( entity, vector, int, entity ) callback )
+{
+	file.sonarStartCallbacks.append( callback )
+}
 
 void function SonarGrenadeThink( entity projectile )
 {
@@ -199,6 +205,7 @@ void function OnSonarTriggerLeaveInternal( entity trigger, entity ent )
 
 void function SonarStart( entity ent, vector position, int sonarTeam, entity sonarOwner )
 {
+
 	if ( !("inSonarTriggerCount" in ent.s) )
 		ent.s.inSonarTriggerCount <- 0
 
@@ -213,11 +220,21 @@ void function SonarStart( entity ent, vector position, int sonarTeam, entity son
 
 	if ( ent.s.inSonarTriggerCount == 1 )
 	{
+
+		//Run callbacks for sonar pulse start
+		foreach ( callback in file.sonarStartCallbacks )
+		{
+			callback( ent, position, sonarTeam, sonarOwner )
+		}
+
 		if ( isVisible )
 		{
 			if ( !ent.IsPlayer() )
 			{
-				Highlight_SetSonarHighlightWithParam1( ent, "enemy_sonar", position )
+				if ( StatusEffect_Get( ent, eStatusEffect.damage_received_multiplier ) > 0 )
+					Highlight_SetSonarHighlightWithParam0( ent, "enemy_sonar", <1,0,0> )
+				else
+					Highlight_SetSonarHighlightWithParam1( ent, "enemy_sonar", position )
 			}
 			else
 			{

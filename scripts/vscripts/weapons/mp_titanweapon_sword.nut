@@ -15,6 +15,10 @@ void function MpTitanWeaponSword_Init()
 
 	PrecacheParticleSystem( SWORD_GLOW_PRIME_FP )
 	PrecacheParticleSystem( SWORD_GLOW_PRIME )
+
+	#if SERVER
+		AddDamageCallbackSourceID( eDamageSourceId.mp_titancore_shift_core, Sword_DamagedTarget )
+	#endif
 }
 
 void function OnWeaponActivate_titanweapon_sword( entity weapon )
@@ -47,3 +51,20 @@ void function OnWeaponDeactivate_titanweapon_sword( entity weapon )
 	else
 		weapon.StopWeaponEffect( SWORD_GLOW_FP, SWORD_GLOW )
 }
+
+#if SERVER
+void function Sword_DamagedTarget( entity target, var damageInfo )
+{
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	entity soul = attacker.GetTitanSoul()
+	entity coreWeapon = attacker.GetOffhandWeapon( OFFHAND_EQUIPMENT )
+	if ( !IsValid( coreWeapon ) )
+		return
+
+	if ( coreWeapon.HasMod( "fd_duration" ) && IsValid( soul ) )
+	{
+		int shieldRestoreAmount = target.GetArmorType() == ARMOR_TYPE_HEAVY ? 500 : 250
+		soul.SetShieldHealth( min( soul.GetShieldHealth() + shieldRestoreAmount, soul.GetShieldHealthMax() ) )
+	}
+}
+#endif

@@ -36,6 +36,7 @@ global enum XP_TYPE
 	TITAN_LEVELED,
 	FACTION_LEVELED,
 	EVAC,
+	ELITE_WEAPON,
 
 	_NUM_TYPES,
 }
@@ -43,12 +44,17 @@ global enum XP_TYPE
 global enum eFDXPType
 {
 	// CANT ADD TO THIS ENUM WITHOUT UPDATING PERSISTENT DATA AND ALSO THE MENUS
+	EASY_VICTORY,
 	NORMAL_VICTORY,
 	HARD_VICTORY,
 	MASTER_VICTORY,
 	INSANE_VICTORY,
-	RETRIES_REMAINING,
 	WAVES_COMPLETED,
+	DIFFICULTY_BONUS,
+	RETRIES_REMAINING,
+	WAVES_ATTEMPTED,
+	PERFECT_COMPOSITION,
+	WARPAINT_BONUS,
 
 	_NUM_TYPES,
 }
@@ -131,11 +137,13 @@ void function InitXP( entity player )
 	for ( int i = 0; i < XP_TYPE._NUM_TYPES; i++ )
 	{
 		player.SetPersistentVar( "xp_match[" + i + "]", 0 )
+		player.SetPersistentVar( "xp_count[" + i + "]", 0 )
 	}
 
 	player.SetPersistentVar( "matchWin", false )
 	player.SetPersistentVar( "matchScoreEvent", false )
 	player.SetPersistentVar( "matchComplete", false )
+	player.SetPersistentVar( "matchSquadBonus", false )
 }
 #endif
 

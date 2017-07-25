@@ -555,12 +555,6 @@ WeaponData
 			"reloadempty_time"					"*0.7"
 			"reloadempty_time_late1"			"*0.7"
 		}
-
-		low_ttk
-		{
-			"explosion_inner_radius"  		"25"
-			"explosionradius"				"125"
-		}
 	}
 
 	"ui1_enable"		"1"

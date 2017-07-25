@@ -724,6 +724,9 @@ global const SMOKESCREEN_SFX_POPCORN_EXPLOSION = "Weapon_ElectricSmokescreen.Exp
 
 global const FX_ELECTRIC_SMOKESCREEN = $"P_wpn_smk_electric"
 global const FX_ELECTRIC_SMOKESCREEN_BURN = $"P_wpn_smk_electric_burn_mod"
+#if MP
+	global const FX_ELECTRIC_SMOKESCREEN_HEAL = $"P_wpn_smk_electric_heal"
+#endif
 global const FX_GRENADE_SMOKESCREEN = $"P_smkscreen_test"
 
 //--------------------------------------------------

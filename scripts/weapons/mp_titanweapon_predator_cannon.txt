@@ -570,20 +570,18 @@ WeaponData
 			"npc_accuracy_multiplier_heavy_armor"			"3"
 			"npc_accuracy_multiplier_npc"					"3"
 		}
+		pas_CloseRangePowerShot
+		{
+			"damage_near_value_titanarmor"					"*0.85"
+			"damage_far_value_titanarmor"					"*0.85"
+		}
 		fd_closerange_helper
 		{
 
 		}
 		fd_CloseRangePowerShot
 		{
-			"spread_stand_hip"								"*1.5"
-			"spread_stand_hip_run"							"*1.5"
-			"spread_stand_hip_sprint"                       "*1.5"
-			"spread_crouch_hip"   							"*1.5"
-			"spread_air_hip"  								"*1.5"
-			"spread_stand_ads"								"*1.5"
-			"spread_crouch_ads"   							"*1.5"
-			"spread_air_ads"  								"*1.5"
+			//crosshair update
 		}
 		LongRangePowerShot
 		{
@@ -648,6 +646,11 @@ WeaponData
 			"npc_accuracy_multiplier_heavy_armor"			"2"
 			"npc_accuracy_multiplier_npc"					"2"
 		}
+		pas_LongRangePowerShot
+		{
+			"damage_near_value_titanarmor"					"*0.85"
+			"damage_far_value_titanarmor"					"*0.85"
+		}
 		fd_longrange_helper
 		{
 
@@ -665,30 +668,17 @@ WeaponData
 		{
 			"ammo_clip_size"   								"140"
 		}
-		fd_pas_legion_weapon
-		{
-			"ammo_clip_size"   								"180"
-		}
 		pas_legion_spinup
 		{
 			"ads_move_speed_scale"							"0.75"
-		}
-		fd_pas_legion_spinup
-		{
-			"ads_move_speed_scale"							"1.00"
 		}
 		fd_piercing_shots
 		{
 			"pass_through_depth"							"++500"
 		}
-		fd_reload_speed
+		fd_gun_shield_redirect
 		{
-			//"reload_time" 									"*0.7"
-			//"reload_time_late1"								"*0.7"
-			//"reload_time_late2"								"*0.7"
-			//"reloadempty_time"								"*0.7"
-			//"reloadempty_time_late1"						"*0.7"
-			//"reloadempty_time_late2"						"*0.7"
+
 		}
 	}
 

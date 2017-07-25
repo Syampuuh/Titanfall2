@@ -49,6 +49,7 @@ classes
 	import npc_stalker.txt
 	import npc_stalker_fd.txt
 	import npc_stalker_crawling.txt
+	import npc_stalker_crawling_fd.txt
 	import npc_stalker_crawling_mossy.txt
 	import npc_stalker_zombie.txt
 	import npc_stalker_zombie_mossy.txt

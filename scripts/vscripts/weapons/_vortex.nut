@@ -1547,6 +1547,22 @@ function VortexSphereDrainHealthForDamage( entity vortexSphere, damage )
 	// JFS to fix phone home bug; we never hit the assert above locally...
 	damage = max( damage, 0 )
 	vortexSphere.SetHealth( currentHealth - damage )
+
+	entity vortexWeapon = vortexSphere.GetOwnerWeapon()
+	if ( IsValid( vortexWeapon ) && vortexWeapon.HasMod( "fd_gun_shield_redirect" ) )
+	{
+		entity owner = vortexWeapon.GetWeaponOwner()
+		if ( IsValid( owner ) && owner.IsTitan() )
+		{
+			entity soul = owner.GetTitanSoul()
+			if ( IsValid( soul ) )
+			{
+				int shieldRestoreAmount = int( damage ) //Might need tuning
+				soul.SetShieldHealth( min( soul.GetShieldHealth() + shieldRestoreAmount, soul.GetShieldHealthMax() ) )
+			}
+		}
+	}
+
 	UpdateShieldWallColorForFrac( vortexSphere.e.shieldWallFX, GetHealthFrac( vortexSphere ) )
 }
 #endif

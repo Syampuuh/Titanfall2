@@ -282,6 +282,13 @@ WeaponData
 			"burst_fire_count"								"12"
 			"hud_icon"										"rui/titan_loadout/passive/monarch_core_missile_racks"
 		}
+		fd_balance
+		{
+			"explosion_damage"							"*0.8"
+			"explosion_damage_heavy_armor"				"*0.8"
+			"damage_near_value"   						"*0.8"
+			"damage_far_value"							"*0.8"
+		}
 	}
 
 	active_crosshair_count				"1"

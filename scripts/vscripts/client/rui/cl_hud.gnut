@@ -489,12 +489,17 @@ void function MedalThink( MessageData messageData )
 }
 
 
-void function AddMedal( ScoreEvent scoreEvent, int pointValue, float earnedValue, float ownedValue, bool isChallenge, bool showCrosshairMedal = false )
+void function AddMedal( ScoreEvent scoreEvent, int pointValue, float earnedValue, float ownedValue, int displayType )
 {
-	if ( GetConVarInt( "hud_setting_showMedals" ) == 0 )
+	bool showCrosshairMedal = (displayType & eEventDisplayType.GAMEMODE) != 0
+	bool isChallenge = (displayType & eEventDisplayType.CHALLENGE) != 0
+	bool forced = (displayType & eEventDisplayType.MEDAL_FORCED) > 0
+	bool showScore = ( displayType & eEventDisplayType.SHOW_SCORE ) > 0
+
+	if ( GetConVarInt( "hud_setting_showMedals" ) == 0 && !forced )
 		return
 
-	pointValue = int( (earnedValue + ownedValue) * 100 )
+	int earnedOwnedValue = int( (earnedValue + ownedValue) * 100 )
 	asset medalIcon = ScoreEvent_GetMedalIcon( scoreEvent )
 
 	if ( showCrosshairMedal )
@@ -510,7 +515,13 @@ void function AddMedal( ScoreEvent scoreEvent, int pointValue, float earnedValue
 		}
 
 		//string medalText = ScoreEvent_GetMedalText( scoreEvent )
-		string medalText = GetFormattedMedalText( scoreEvent, 0 )
+
+		string medalText = ""
+
+		if ( showScore )
+			medalText = GetFormattedMedalText_ShowPoints( scoreEvent, pointValue )
+		else
+			medalText = GetFormattedMedalText( scoreEvent, 0 )
 
 		file.lastCrosshairMedalTime = Time()
 
@@ -524,11 +535,15 @@ void function AddMedal( ScoreEvent scoreEvent, int pointValue, float earnedValue
 	}
 	else
 	{
-		string medalText = GetFormattedMedalText( scoreEvent, pointValue )//ScoreEvent_GetMedalText( scoreEvent )
+		string medalText = ""
+		if ( showScore )
+			medalText = GetFormattedMedalText_ShowPoints( scoreEvent, pointValue )
+		else
+			medalText = GetFormattedMedalText( scoreEvent, earnedOwnedValue )//ScoreEvent_GetMedalText( scoreEvent )
 
 		MessageData messageData
 		messageData.messageText = medalText
-		messageData.scoreEventValue = pointValue
+		messageData.scoreEventValue = earnedOwnedValue
 		messageData.icon = medalIcon
 
 		if ( scoreEvent.xpValueWeapon || scoreEvent.xpValue || scoreEvent.xpValueFaction || scoreEvent.xpValueTitan )
@@ -933,16 +948,16 @@ void function ServerCallback_ScoreEvent( int scoreEventId, int pointValue, int d
 	if ( associatedEntityHandle != 0 )
 		associatedEntity = GetEntityFromEncodedEHandle( associatedEntityHandle )
 
-	if ( displayType & eEventDisplayType.MEDAL )
+	if ( displayType & eEventDisplayType.MEDAL || displayType & eEventDisplayType.MEDAL_FORCED )
 	{
-		bool showCrosshairMedal = (displayType & eEventDisplayType.GAMEMODE) != 0
-		bool isChallenge = (displayType & eEventDisplayType.CHALLENGE) != 0
-
-		AddMedal( scoreEvent, pointValue, earnedValue, ownedValue, isChallenge, showCrosshairMedal )
+		AddMedal( scoreEvent, pointValue, earnedValue, ownedValue, displayType )
 	}
 
 	if ( displayType & eEventDisplayType.CENTER )
-		AddScoreEventMessage( scoreEvent, associatedEntity, displayType, pointValue, earnedValue, ownedValue )
+	{
+		int earnedOwnedValue = int( ((earnedValue + ownedValue) * 100) )
+		AddScoreEventMessage( scoreEvent, associatedEntity, displayType, earnedOwnedValue, earnedValue, ownedValue )
+	}
 
 	if ( displayType & eEventDisplayType.CALLINGCARD && IsValid( associatedEntity ) )
 		AddScoreCallingCardEvent( scoreEvent, associatedEntity )
@@ -1059,6 +1074,13 @@ string function GetFormattedMedalText( ScoreEvent scoreEvent, int pointValue )
 			eventText = eventText + " `2+" + pointValue + "`3%%"
 	}
 
+	return eventText
+}
+
+string function GetFormattedMedalText_ShowPoints( ScoreEvent scoreEvent, int pointValue )
+{
+	string eventText = Localize( ScoreEvent_GetMedalText( scoreEvent ) )
+	eventText = eventText + " `2+" + pointValue + "`3"
 	return eventText
 }
 

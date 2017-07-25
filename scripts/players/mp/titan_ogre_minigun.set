@@ -28,8 +28,9 @@
 
 		armsmodel			"models/weapons/arms/pov_titan_heavy_deadbolt.mdl"
 
-		dodge 0
-		dodgePowerDrain 101
+		dodge  1
+		dodgePowerDrain		100
+		powerregenrate 10
 
 		    footstep_type			"legion"
 
@@ -37,9 +38,7 @@
 		{
 			pas_mobility_dash_capacity
 			{
-				dodge  1
-				dodgePowerDrain		100
-				powerregenrate 		16.66
+				powerregenrate 		20
 			}
 			fd_health_upgrade
 			{

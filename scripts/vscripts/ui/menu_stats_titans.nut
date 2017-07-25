@@ -23,7 +23,7 @@ void function InitViewStatsTitansMenu()
 	{
 		var button = Hud_GetChild( menu, "Button" + i )
 		//button.s.rowIndex <- i
-		Hud_AddEventHandler( button, UIE_CLICK, OnButton_Activate )
+		//Hud_AddEventHandler( button, UIE_CLICK, OnButton_Activate )
 		Hud_AddEventHandler( button, UIE_GET_FOCUS, OnButton_Focused )
 		file.buttons[i] = button
 	}
@@ -33,7 +33,8 @@ void function InitViewStatsTitansMenu()
 
 void function OnViewStatsTitans_Open()
 {
-	UI_SetPresentationType( ePresentationType.NO_MODELS )
+	UI_SetPresentationType( ePresentationType.STORE_PRIME_TITANS )
+	RunMenuClientFunction( "UpdateTitanModel", 0 )
 
 	// Get Titan list
 	file.allTitans = GetVisibleItemsOfType( eItemTypes.TITAN )
@@ -53,7 +54,7 @@ void function OnViewStatsTitans_Open()
 	}
 
 	UpdateButtons( 0, file.buttons )
-	UpdateStatsForTitan( file.allTitans[ 0 ].ref )
+	UpdateStatsForTitan( file.allTitans[ 0 ].ref, 0 )
 }
 
 void function UpdateButtons( int selectedIndex, var[NUM_PERSISTENT_TITAN_LOADOUTS] buttons )
@@ -68,46 +69,42 @@ void function UpdateButtons( int selectedIndex, var[NUM_PERSISTENT_TITAN_LOADOUT
 	}
 }
 
-void function OnButton_Activate( var button )
-{
-	int id = int( Hud_GetScriptID( button ) )
-	if ( !IsControllerModeActive() )
-		UpdateStatsForTitan( file.allTitans[ id ].ref )
-}
+//void function OnButton_Activate( var button )
+//{
+//	int id = int( Hud_GetScriptID( button ) )
+//	if ( !IsControllerModeActive() )
+//		UpdateStatsForTitan( file.allTitans[ id ].ref, id )
+//}
 
 void function OnButton_Focused( var button )
 {
 	int id = int( Hud_GetScriptID( button ) )
-	if ( IsControllerModeActive() )
-		UpdateStatsForTitan( file.allTitans[ id ].ref )
+	//if ( IsControllerModeActive() )
+		UpdateStatsForTitan( file.allTitans[ id ].ref, id )
 }
 
-void function UpdateStatsForTitan( string titanRef )
+void function UpdateStatsForTitan( string titanRef, int loadoutIndex )
 {
 	entity player = GetUIPlayer()
 	if ( player == null )
 		return
 
+	RunMenuClientFunction( "UpdateTitanModel", loadoutIndex )
+	RunMenuClientFunction( "UpdateStorePrimeBg", loadoutIndex )
+
 	// Name
 	Hud_SetText( Hud_GetChild( file.menu, "TitanName" ), GetItemName( titanRef ) )
-
-	// Image
-	asset image = GetTitanStatImage( titanRef ) //GetItemImage( titanRef )
-	var imageElem = Hud_GetChild( file.menu, "TitanImageLarge" )
-	Hud_SetImage( imageElem, image )
 
 	// Locked info
 	var lockLabel = GetElementsByClassname( file.menu, "LblTitanLocked" )[0]
 
 	if ( IsItemLocked( player, titanRef ) )
 	{
-		Hud_SetAlpha( imageElem, 200 )
 		Hud_SetText( lockLabel, "#LOUADOUT_UNLOCK_REQUIREMENT_LEVEL", GetUnlockLevelReq( titanRef ) )
 		Hud_Show( lockLabel )
 	}
 	else
 	{
-		Hud_SetAlpha( imageElem, 255 )
 		Hud_Hide( lockLabel )
 	}
 

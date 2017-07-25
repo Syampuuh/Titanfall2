@@ -18,7 +18,8 @@ const float SLOW_TRAP_BUILD_TIME = 1.0
 const float SLOW_TRAP_RADIUS = 240
 const asset TOXIC_FUMES_FX 	= $"P_meteor_trap_gas"
 const asset TOXIC_FUMES_S2S_FX 	= $"P_meteor_trap_gas_s2s"
-const asset FIRE_CENTER_FX = $"P_meteor_trap_EXP"
+const asset FIRE_CENTER_FX = $"P_meteor_trap_center"
+const asset BARREL_EXP_FX = $"P_meteor_trap_EXP"
 const asset FIRE_LINES_FX = $"P_meteor_trap_burn"
 const asset FIRE_LINES_S2S_FX = $"P_meteor_trap_burn_s2s"
 const float FIRE_TRAP_MINI_EXPLOSION_RADIUS = 75
@@ -32,7 +33,7 @@ void function MpTitanAbilitySlowTrap_Init()
 	PrecacheParticleSystem( TOXIC_FUMES_FX )
 	PrecacheParticleSystem( FIRE_CENTER_FX )
 	PrecacheParticleSystem( FIRE_LINES_FX )
-	PrecacheImpactEffectTable( "exp_xlarge" )
+	PrecacheParticleSystem( BARREL_EXP_FX )
 
 	if ( GetMapName() == "sp_s2s" )
 	{
@@ -193,6 +194,7 @@ void function OnSlowTrapDamaged( entity damageArea, var damageInfo )
 		case eDamageSourceId.mp_titanweapon_meteor_thermite:
 		case eDamageSourceId.mp_weapon_thermite_grenade:
 		case eDamageSourceId.mp_titancore_flame_wave:
+		case eDamageSourceId.mp_titancore_flame_wave_secondary:
 		case eDamageSourceId.mp_titanweapon_flame_wall:
 		case eDamageSourceId.mp_titanweapon_heat_shield:
 		case eDamageSourceId.mp_titanability_slow_trap:
@@ -201,9 +203,10 @@ void function OnSlowTrapDamaged( entity damageArea, var damageInfo )
 	}
 	if ( shouldExplode )
 	{
-		if ( damageArea.GetScriptName() == "explosive_barrel" )
+		bool isExplosiveBarrel = damageArea.GetScriptName() == "explosive_barrel"
+		if ( isExplosiveBarrel )
 			CreateExplosiveBarrelExplosion( damageArea )
-		IgniteTrap( damageArea, damageInfo )
+		IgniteTrap( damageArea, damageInfo, isExplosiveBarrel )
 		DamageInfo_SetDamage( damageInfo, 1001 )
 	}
 	else
@@ -221,7 +224,7 @@ function CreateExplosiveBarrelExplosion( entity damageArea )
 	Explosion_DamageDefSimple( damagedef_fd_explosive_barrel, damageArea.GetOrigin(),owner, owner, damageArea.GetOrigin() )
 }
 
-function IgniteTrap( entity damageArea, var damageInfo )
+function IgniteTrap( entity damageArea, var damageInfo, bool isExplosiveBarrel = false )
 {
 	entity owner = damageArea.GetOwner()
 	Assert( IsValid( owner ) )
@@ -237,9 +240,19 @@ function IgniteTrap( entity damageArea, var damageInfo )
 	float range = SLOW_TRAP_RADIUS
 
 	//DebugDrawTrigger( origin, range, 255, 0, 0 )
-	entity initialExplosion = StartParticleEffectInWorld_ReturnEntity( GetParticleSystemIndex( FIRE_CENTER_FX ), origin, <0,0,0> )
-	EntFireByHandle( initialExplosion, "Kill", "", 3.0, null, null )
-	EmitSoundAtPosition( TEAM_UNASSIGNED, origin, "incendiary_trap_explode" )
+	if ( isExplosiveBarrel )
+	{
+		entity initialExplosion = StartParticleEffectInWorld_ReturnEntity( GetParticleSystemIndex( BARREL_EXP_FX ), origin, <0,0,0> )
+		EntFireByHandle( initialExplosion, "Kill", "", 3.0, null, null )
+		EmitSoundAtPosition( TEAM_UNASSIGNED, origin, "incendiary_trap_explode_large" )
+	}
+	else
+	{
+		entity initialExplosion = StartParticleEffectInWorld_ReturnEntity( GetParticleSystemIndex( FIRE_CENTER_FX ), origin, <0,0,0> )
+		EntFireByHandle( initialExplosion, "Kill", "", 3.0, null, null )
+		EmitSoundAtPosition( TEAM_UNASSIGNED, origin, "incendiary_trap_explode" )
+
+	}
 
 	float duration = FLAME_WALL_THERMITE_DURATION
 	if ( GAMETYPE == GAMEMODE_SP )

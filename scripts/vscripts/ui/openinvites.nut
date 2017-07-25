@@ -33,6 +33,10 @@ void function LeaveOpenInvite()
 {
 	EmitUISound( "UI_Networks_Invitation_Canceled" )
 	ClientCommand( "leaveopeninvite" )
+
+	// sort of HACK: revert lobby to non-FD mode when you cancel out of open invite
+	Lobby_SetFDMode( false )
+	Lobby_RefreshButtons()
 }
 
 void function JoinOpenInvite( var button )
@@ -95,6 +99,11 @@ void function UpdateOpenInvite()
 		{
 			CloseAllToTargetMenu( GetMenu( "LobbyMenu" ) )
 			AdvanceMenu( GetMenu( "SearchMenu" ) )
+		}
+		else
+		{
+			Lobby_SetFDMode( false )
+			Lobby_RefreshButtons()
 		}
 		file.openInviteVisible = false
 		file.openInviteJoinable = false

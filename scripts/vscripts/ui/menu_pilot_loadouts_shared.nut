@@ -78,15 +78,36 @@ void function UpdatePilotLoadoutPanel( var loadoutPanel, PilotLoadoutDef loadout
 
 	var renameEditBox = Hud_GetChild( loadoutPanel, "RenameEditBox" )
 
-	asset pilotCamoImage = loadout.camoIndex > 0 ? CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.camoIndex ) ) : $"rui/menu/common/appearance_button_swatch"
-	asset primaryCamoImage = loadout.primaryCamoIndex > 0 ? CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.primaryCamoIndex ) ) : $"rui/menu/common/appearance_button_swatch"
-	asset secondaryCamoImage = loadout.secondaryCamoIndex > 0 ? CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.secondaryCamoIndex ) ) : $"rui/menu/common/appearance_button_swatch"
-	asset weapon3CamoImage = loadout.weapon3CamoIndex > 0 ? CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.weapon3CamoIndex ) ) : $"rui/menu/common/appearance_button_swatch"
+	asset pilotAppearanceImage = loadout.camoIndex > 0 ? CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.camoIndex ) ) : $"rui/menu/common/appearance_button_swatch"
 
-	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonPilotCamo" ) ), "camoImage", pilotCamoImage )
-	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonPrimarySkin" ) ), "camoImage", primaryCamoImage )
-	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonSecondarySkin" ) ), "camoImage", secondaryCamoImage )
-	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonWeapon3Skin" ) ), "camoImage", weapon3CamoImage )
+	asset primaryAppearanceImage
+	if ( loadout.primarySkinIndex == 0 ) // default skin
+		primaryAppearanceImage = $"rui/menu/common/appearance_button_swatch"
+	else if ( loadout.primarySkinIndex == 1 ) // camo
+		primaryAppearanceImage = CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.primaryCamoIndex ) )
+	else // warpaint skin
+		primaryAppearanceImage = GetItemImage( GetSkinRefFromWeaponRefAndPersistenceValue( loadout.primary, loadout.primarySkinIndex ) )
+
+	asset secondaryAppearanceImage
+	if ( loadout.secondarySkinIndex == 0 ) // default skin
+		secondaryAppearanceImage = $"rui/menu/common/appearance_button_swatch"
+	else if ( loadout.secondarySkinIndex == 1 ) // camo
+		secondaryAppearanceImage = CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.secondaryCamoIndex ) )
+	else // warpaint skin
+		secondaryAppearanceImage = GetItemImage( GetSkinRefFromWeaponRefAndPersistenceValue( loadout.secondary, loadout.secondarySkinIndex ) )
+
+	asset weapon3AppearanceImage
+	if ( loadout.weapon3SkinIndex == 0 ) // default skin
+		weapon3AppearanceImage = $"rui/menu/common/appearance_button_swatch"
+	else if ( loadout.weapon3SkinIndex == 1 ) // camo
+		weapon3AppearanceImage = CamoSkin_GetImage( CamoSkins_GetByIndex( loadout.weapon3CamoIndex ) )
+	else // warpaint skin
+		weapon3AppearanceImage = GetItemImage( GetSkinRefFromWeaponRefAndPersistenceValue( loadout.weapon3, loadout.weapon3SkinIndex ) )
+
+	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonPilotCamo" ) ), "camoImage", pilotAppearanceImage )
+	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonPrimarySkin" ) ), "camoImage", primaryAppearanceImage )
+	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonSecondarySkin" ) ), "camoImage", secondaryAppearanceImage )
+	RuiSetImage( Hud_GetRui( Hud_GetChild( loadoutPanel, "ButtonWeapon3Skin" ) ), "camoImage", weapon3AppearanceImage )
 
 	array<var> nonItemElements
 	nonItemElements.append( Hud_GetChild( loadoutPanel, "ButtonPilotCamo" ) )

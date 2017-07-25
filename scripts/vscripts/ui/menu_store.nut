@@ -7,6 +7,7 @@ global function StoreMenuClosedThread
 struct
 {
 	array<var> storeMenus
+	var limitedButton
 } file
 
 global const int MAX_STORE_PRIME_TITANS = 6
@@ -14,29 +15,56 @@ global const int MAX_STORE_PRIME_TITANS = 6
 void function InitStoreMenu()
 {
 	var menu = GetMenu( "StoreMenu" )
+	var button
+	var rui
 
 	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnOpenStoreMenu )
 
 	int index = 0
-	var button = Hud_GetChild( menu, "Button" + index )
-	SetButtonRuiText( button, "#STORE_BUNDLES" )
-	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Bundles" ) ) )
+	button = Hud_GetChild( menu, "Button" + index )
+	SetButtonRuiText( button, "#STORE_NEW_RELEASES" )
+	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_NewReleases" ) ) )
+	rui = Hud_GetRui( button )
+	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_new" )
+	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_new_hl" )
+	Hud_Show( button )
 
 	index++
 	button = Hud_GetChild( menu, "Button" + index )
-	SetButtonRuiText( button, "#STORE_PRIME_TITANS" )
-	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_PrimeTitans" ) ) )
-	var rui = Hud_GetRui( button )
+	SetButtonRuiText( button, "#STORE_LIMITED" )
+	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Limited" ) ) )
+	rui = Hud_GetRui( button )
+	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_limited" )
+	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_limited_hl" )
+	file.limitedButton = button
+	Hud_Show( file.limitedButton )
+
+	index++
+	button = Hud_GetChild( menu, "Button" + index )
+	SetButtonRuiText( button, "#STORE_BUNDLES" )
+	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Sales" ) ) )
+	rui = Hud_GetRui( button )
+	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_bundles" )
+	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_bundles_hl" )
+	Hud_Show( button )
+
+	index++
+	button = Hud_GetChild( menu, "Button" + index )
+	SetButtonRuiText( button, "#STORE_TITANS" )
+	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Titans" ) ) )
+	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_prime" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_prime_hl" )
+	Hud_Show( button )
 
 	index++
 	button = Hud_GetChild( menu, "Button" + index )
-	SetButtonRuiText( button, "#STORE_CUSTOMIZATION" )
-	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Customization" ) ) )
+	SetButtonRuiText( button, "#STORE_WEAPON_WARPAINT" )
+	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_WeaponSkins" ) ) )
 	rui = Hud_GetRui( button )
-	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_art" )
-	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_art_hl" )
+	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_weaponskin" )
+	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_weaponskin_hl" )
+	Hud_Show( button )
 
 	index++
 	button = Hud_GetChild( menu, "Button" + index )
@@ -45,6 +73,7 @@ void function InitStoreMenu()
 	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_camo" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_camo_hl" )
+	Hud_Show( button )
 
 	index++
 	button = Hud_GetChild( menu, "Button" + index )
@@ -53,16 +82,20 @@ void function InitStoreMenu()
 	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_callsigns" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_callsigns_hl" )
+	Hud_Show( button )
 
-	button = Hud_GetChild( menu, "ButtonLast" )
-	Hud_Hide( button )
+	Hud_Hide( Hud_GetChild( menu, "ButtonLast" ) )
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 
 	file.storeMenus.append( GetMenu( "StoreMenu" ) )
-	file.storeMenus.append( GetMenu( "StoreMenu_Bundles" ) )
+	file.storeMenus.append( GetMenu( "StoreMenu_NewReleases" ) )
+	file.storeMenus.append( GetMenu( "StoreMenu_Limited" ) )
+	file.storeMenus.append( GetMenu( "StoreMenu_Sales" ) )
+	file.storeMenus.append( GetMenu( "StoreMenu_Titans" ) )
 	file.storeMenus.append( GetMenu( "StoreMenu_PrimeTitans" ) )
+	file.storeMenus.append( GetMenu( "StoreMenu_WeaponSkins" ) )
 	file.storeMenus.append( GetMenu( "StoreMenu_Customization" ) )
 	file.storeMenus.append( GetMenu( "StoreMenu_CustomizationPreview" ) )
 	file.storeMenus.append( GetMenu( "StoreMenu_Camo" ) )
@@ -71,7 +104,7 @@ void function InitStoreMenu()
 	file.storeMenus.append( GetMenu( "StoreMenu_CallsignPreview" ) )
 }
 
-void function OpenStoreMenu( string menuName )
+void function OpenStoreMenu( array<string> menuNames )
 {
 	if ( IsDLCStoreUnavailable() )
 	{
@@ -82,7 +115,12 @@ void function OpenStoreMenu( string menuName )
 	if ( IsDLCStoreInitialized() )
 	{
 		OnOpenDLCStore()
-	 	AdvanceMenu( GetMenu( menuName ) )
+		foreach ( menuName in menuNames )
+		{
+			printt( "MENUNAME", menuName )
+			AdvanceMenu( GetMenu( menuName ) )
+		}
+
 		thread StoreMenuClosedThread()
 	 	return
 	}
@@ -164,6 +202,11 @@ void function WaitForDLCStoreInitialization()
 	{
 		WaitFrame()
 	}
+
+	if ( GetCurrentPlaylistVarInt( "limited_editions_available", 0 ) > 0 )
+		Hud_Show( file.limitedButton )
+	else
+		Hud_Hide( file.limitedButton )
 
 	if ( IsDialogActive( dialogData ) )
 	{

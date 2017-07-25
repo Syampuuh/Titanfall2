@@ -111,8 +111,8 @@ WeaponData
 		"aimassist_adspull_weaponclass"					"broad"
 
 		// Damage - When Used by Players
-		"damage_near_value"   							"23"
-		"damage_far_value"								"18"
+		"damage_near_value"   							"20"
+		"damage_far_value"								"12"
 		"damage_near_value_titanarmor"					"65"
 		"damage_far_value_titanarmor" 					"35"
 		"damage_rodeo" 									"110"
@@ -569,31 +569,9 @@ WeaponData
 			"fx_muzzle_flash_view"							"wpn_muzzleflash_pistol_elec_FP"
 			"fx_muzzle_flash_world"							"wpn_muzzleflash_pistol_elec"
 
-			"damage_near_value"   							"33"
-			"damage_far_value"								"33"
-   	 		"damage_very_far_value"							"24"
-			"damage_near_value_titanarmor"					"165"
-			"damage_far_value_titanarmor" 					"135"
-		}
-		low_ttk
-		{
-			"damage_near_value"   							"--5"//23 5 -> 6
-			"damage_far_value"								"--2"//18 6 -> 7
-	   	 	"damage_very_far_value"							"--0"//14 8 -> 10
-		}
-		amped_ttk
-		{
-			"is_burn_mod"		"1"
-
-			//FX
-			"tracer_effect"   								"P_wpn_tracer_BC"
-			"tracer_effect_first_person"                    "P_wpn_tracer_BC"
-			"fx_muzzle_flash_view"							"wpn_muzzleflash_pistol_elec_FP"
-			"fx_muzzle_flash_world"							"wpn_muzzleflash_pistol_elec"
-
-			"damage_near_value"   							"++4" // 4 -> 5
-			"damage_far_value"								"++2" // 4 -> 6
-   	 		"damage_very_far_value"							"++2" // 5 -> 7
+			"damage_near_value"   							"++5"
+			"damage_far_value"								"++3"
+   	 		"damage_very_far_value"							"++3"
 			"damage_near_value_titanarmor"					"165"
 			"damage_far_value_titanarmor" 					"135"
 		}

@@ -194,6 +194,9 @@ WeaponData
 
 	"scripted_projectile_max_timestep"				"0.2"
 
+	"burst_fire_delay"								"0.1"
+	"burst_fire_count"								"1"
+
 	Mods
 	{
 		clustermissile_fast_recharge
@@ -240,6 +243,23 @@ WeaponData
 		pas_northstar_cluster
 		{
 
+		}
+		fd_twin_cluster
+		{
+			"viewmodel"   									"models/weapons/titan_raptor_rocket_pod/atpov_titan_raptor_rocket_pod_core.mdl"
+			"alt_fire_anim_count"							"1"
+			"burst_fire_count"								"2"
+			"hud_icon"										"rui/menu/fd_menu/upgrade_northstar_twin_cluster_hud"
+
+			"fx_muzzle_flash_view"							"wpn_mflash_xo_rocket_shoulder_FP"
+			"fx_muzzle_flash_world"							"P_muzzleflash_predator"
+			"fx_muzzle_flash_attach"						"muzzle_flash_2"
+
+			"fx_muzzle_flash2_view"							"wpn_mflash_xo_rocket_shoulder_FP"
+			"fx_muzzle_flash2_world"						"P_muzzleflash_predator"
+			"fx_muzzle_flash2_attach"						"muzzle_flash"
+
+			"activitymodifier"								"twin_cluster"
 		}
 	}
 

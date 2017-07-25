@@ -1,7 +1,6 @@
 untyped
 
 global function InitStoreMenuCallsignPreview
-global function EntitlementsChanged_Callsign
 
 struct
 {
@@ -29,8 +28,9 @@ void function InitStoreMenuCallsignPreview()
 
 	file.title = Hud_GetChild( file.menu, "Title" )
 
-	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnOpenStoreMenuCallsignPreview )
+	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnStoreMenuCallsignPreview_Open )
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_NAVIGATE_BACK, OnStoreMenuCallsignPreview_NavigateBack )
+	AddMenuEventHandler( file.menu, eUIEvent.MENU_ENTITLEMENTS_CHANGED, OnStoreMenuCallsignPreview_EntitlementsChanged )
 
 	AddMenuFooterOption( file.menu, BUTTON_X, "#SWITCH_FOCUS", "", StoreSwitchFocus, null )
 
@@ -49,7 +49,6 @@ void function InitStoreMenuCallsignPreview()
 			Hud_AddEventHandler( button, UIE_GET_FOCUS, StoreIconButton_GetFocus )
 		}
 	}
-
 }
 
 void function StoreSwitchFocus( var list )
@@ -83,7 +82,7 @@ void function OnStoreMenuCallsignPreview_NavigateBack()
 	CloseActiveMenu()
 }
 
-void function OnOpenStoreMenuCallsignPreview()
+void function OnStoreMenuCallsignPreview_Open()
 {
 	UI_SetPresentationType( ePresentationType.NO_MODELS )
 
@@ -211,9 +210,10 @@ void function OnBuyButton_Activate( var button )
 	}
 }
 
-void function EntitlementsChanged_Callsign()
+void function OnStoreMenuCallsignPreview_EntitlementsChanged()
 {
 	RefreshEntitlements()
+	EmitUISound( PURCHASE_SUCCESS_SOUND )
 }
 
 void function RefreshEntitlements()

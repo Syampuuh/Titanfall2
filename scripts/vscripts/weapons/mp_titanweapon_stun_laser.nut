@@ -5,6 +5,7 @@ global function OnWeaponPrimaryAttack_titanweapon_stun_laser
 
 #if SERVER
 global function OnWeaponNPCPrimaryAttack_titanweapon_stun_laser
+global function AddStunLaserHealCallback
 #endif
 
 const FX_EMP_BODY_HUMAN			= $"P_emp_body_human"
@@ -12,6 +13,10 @@ const FX_EMP_BODY_TITAN			= $"P_emp_body_titan"
 const FX_SHIELD_GAIN_SCREEN		= $"P_xo_shield_up"
 const SHIELD_BODY_FX			= $"P_xo_armor_body_CP"
 
+struct
+{
+	void functionref(entity,entity,int) stunHealCallback
+} file
 
 void function MpTitanWeaponStunLaser_Init()
 {
@@ -65,9 +70,7 @@ var function OnWeaponNPCPrimaryAttack_titanweapon_stun_laser( entity weapon, Wea
 
 void function StunLaser_DamagedTarget( entity target, var damageInfo )
 {
-	entity weapon = DamageInfo_GetWeapon( damageInfo )
 	entity attacker = DamageInfo_GetAttacker( damageInfo )
-
 	if ( attacker == target )
 	{
 		DamageInfo_SetDamage( damageInfo, 0 )
@@ -78,7 +81,11 @@ void function StunLaser_DamagedTarget( entity target, var damageInfo )
 	{
 		DamageInfo_SetDamage( damageInfo, 0 )
 		entity attackerSoul = attacker.GetTitanSoul()
-		if ( target.IsTitan() && IsValid( attackerSoul ) && attackerSoul.GetTitanSoulNetInt( "upgradeCount" ) >= 1 && SoulHasPassive( attackerSoul, ePassives.PAS_VANGUARD_CORE3 ) )
+		entity weapon = attacker.GetOffhandWeapon( OFFHAND_LEFT )
+		if ( !IsValid( weapon ) )
+			return
+		bool hasEnergyTransfer = weapon.HasMod( "energy_transfer" ) || weapon.HasMod( "energy_field_energy_transfer" )
+		if ( target.IsTitan() && IsValid( attackerSoul ) && hasEnergyTransfer )
 		{
 			entity soul = target.GetTitanSoul()
 			if ( IsValid( soul ) )
@@ -86,7 +93,14 @@ void function StunLaser_DamagedTarget( entity target, var damageInfo )
 				int shieldRestoreAmount = 750
 				if ( SoulHasPassive( soul, ePassives.PAS_VANGUARD_SHIELD ) )
 					shieldRestoreAmount = int( 1.25 * shieldRestoreAmount )
-				soul.SetShieldHealth( min( soul.GetShieldHealth() + shieldRestoreAmount, soul.GetShieldHealthMax() ) )
+
+				float shieldAmount = min( soul.GetShieldHealth() + shieldRestoreAmount, soul.GetShieldHealthMax() )
+				shieldRestoreAmount = soul.GetShieldHealthMax() - int( shieldAmount )
+
+				soul.SetShieldHealth( shieldAmount )
+
+				if ( file.stunHealCallback != null && shieldRestoreAmount > 0 )
+					file.stunHealCallback( attacker, target, shieldRestoreAmount )
 			}
 			if ( target.IsPlayer() )
 				MessageToPlayer( target, eEventNotifications.VANGUARD_ShieldGain, target )
@@ -122,6 +136,11 @@ void function StunLaser_DamagedTarget( entity target, var damageInfo )
 		if ( attacker.IsPlayer() )
 			MessageToPlayer( attacker, eEventNotifications.VANGUARD_ShieldGain, attacker )
 	}
+}
+
+void function AddStunLaserHealCallback( void functionref(entity,entity,int) func )
+{
+	file.stunHealCallback = func
 }
 #endif
 

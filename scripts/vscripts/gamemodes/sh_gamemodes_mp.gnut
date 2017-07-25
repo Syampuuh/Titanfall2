@@ -23,13 +23,13 @@ void function GameModes_Init_SV_CL()
 	gameMode = LAST_TITAN_STANDING
 	#if SERVER
 		GameMode_AddServerInit( gameMode, GamemodeLts_Init )
-		GameMode_AddServerInit( gameMode, TeamTitanSelection_Init )
+		GameMode_AddServerInit( gameMode, TeamTitanSelectMenu_Init )
 		GameMode_SetPilotSpawnpointsRatingFunc( gameMode, RateSpawnpoints_Generic )
 		GameMode_SetTitanSpawnpointsRatingFunc( gameMode, RateSpawnpoints_Generic )
 		GameMode_SetEvacEnabled( gameMode, false )
 	#elseif CLIENT
 		GameMode_AddClientInit( gameMode, ClGamemodeLTS_Init )
-		GameMode_AddClientInit( gameMode, CLTeamTitanSelection_Init )
+		GameMode_AddClientInit( gameMode, ClTeamTitanSelectMenu_Init )
 	#endif
 	#if !UI
 		GameMode_SetScoreCompareFunc( gameMode, CompareLTS )
@@ -179,9 +179,25 @@ void function GameModes_Init_SV_CL()
 		GameMode_SetPilotSpawnpointsRatingFunc( gameMode, RateSpawnpoints_Directional )
 		GameMode_SetTitanSpawnpointsRatingFunc( gameMode, RateSpawnpoints_Directional )
 		GameMode_SetEvacEnabled( gameMode, false )
+	#elseif CLIENT
+		GameMode_AddClientInit( gameMode, ClGamemodeTTDM_Init )
 	#endif
 	#if !UI
 		GameMode_SetScoreCompareFunc( gameMode, CompareLTS )
+	#endif
+
+	gameMode = FD
+	#if SERVER
+		GameMode_AddServerInit( gameMode, GamemodeFD_Init )
+		GameMode_SetPilotSpawnpointsRatingFunc( gameMode, RateSpawnpoints_FD )
+		GameMode_SetTitanSpawnpointsRatingFunc( gameMode, RateSpawnpoints_FD )
+	#endif
+	#if CLIENT
+		GameMode_AddClientInit( gameMode, ClGamemodeFD_Init )
+	#endif
+	#if !UI
+		GameMode_SetScoreCompareFunc( gameMode, CompareFD )
+		GameMode_AddSharedInit( gameMode, GamemodeFDShared_Init )
 	#endif
 
 	#if DEVSCRIPTS

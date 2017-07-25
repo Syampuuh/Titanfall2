@@ -1,0 +1,498 @@
+resource/ui/menus/team_titan_select.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+            zpos					-2
+        }
+
+		BG
+		{
+			ControlName				ImagePanel
+			xpos					0
+			ypos					0
+			wide					%100
+			tall					%100
+			visible					0
+			scaleImage				1
+			image					"vgui/HUD/white"
+			drawColor				"0 0 0 0"
+			zpos 					-1
+		}
+
+		CreditsAvailable
+	    {
+	        ControlName             RuiPanel
+	        InheritProperties       CreditsAvailableProperties
+	    }
+
+		ModelRotateMouseCapture
+        {
+            ControlName				CMouseMovementCapturePanel
+            xpos                    0
+            ypos                    0
+            zpos					-1
+            wide                    500
+            tall                    800
+			pin_to_sibling			BG
+			pin_corner_to_sibling	CENTER
+			pin_to_sibling_corner	CENTER
+        }
+
+		TitanName
+		{
+			ControlName				RuiPanel
+			rui                     "ui/titan_select_text.rpak"
+			labelText				"ION"
+			xpos 					-25
+			ypos					-200
+			zpos 					-1
+			wide					550
+			tall 					300
+			auto_tall_tocontents 	0
+			auto_wide_tocontents 	0
+			pin_to_sibling			BG
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+
+     	NextMapImageFrame
+        {
+            ControlName				RuiPanel
+			xpos 					-75
+			ypos					-200
+			zpos 					-1
+			wide					550
+			tall					350
+            labelText				""
+            visible				    0
+            bgcolor_override        "0 0 0 0"
+            paintbackground         1
+            rui                     "ui/basic_border_box.rpak"
+
+			pin_to_sibling			BG
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_LEFT
+        }
+
+		NextMapImage
+		{
+			ControlName				RuiPanel
+			ypos                    -75
+			zpos 					-1
+			wide					432
+			tall					243
+			visible					1
+			scaleImage				1
+			image					""
+            rui                     "ui/basic_menu_image.rpak"
+
+			pin_to_sibling			NextMapImageFrame
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			font					Default_38
+			labelText				"#MENU_MISSION_SELECT"
+			xpos					-5 // include n pixels for the combo button inset
+			ypos					10
+			auto_tall_tocontents 	1
+			pin_to_sibling			NextMapImage
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		MenuSubTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			font 					Default_28
+			labelText				"#MENU_STARTS_IN"
+			xpos					0 // include n pixels for the combo button inset
+			ypos					0
+			auto_tall_tocontents 	1
+			allcaps					0
+			pin_to_sibling			MenuTitle
+			pin_corner_to_sibling	TOP_LEFT
+	        pin_to_sibling_corner	BOTTOM_LEFT
+		}
+
+		NextMapName
+		{
+			ControlName				Label
+			pin_to_sibling			NextMapImage
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			xpos					-10
+			ypos					-1
+			wide                    480
+			zpos 					-1
+			auto_tall_tocontents	1
+			visible					1
+			labelText				""
+			textAlignment           west
+			font 					Default_28
+			allcaps					0
+			fgcolor_override		"255 255 255 255"
+		}
+
+		TitanSelectTitle
+		{
+			ControlName				RuiPanel
+			InheritProperties		MenuTitle
+			font					Default_34
+			labelText				"#MENU_TITAN_SELECT_HINT"
+			xpos					0 // include n pixels for the combo button inset
+			ypos					340
+			wide                    600
+			tall                    40
+			pin_to_sibling			BG
+			pin_corner_to_sibling	CENTER
+	        pin_to_sibling_corner	CENTER
+			rui 					"ui/select_titan_label.rpak"
+		}
+
+		BtnSub0
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui 					"ui/titan_upgrade_button_small.rpak"
+			pin_to_sibling			TitanName
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			ypos 					30
+			xpos 					-50
+			visible					1
+			scriptID				0
+			zpos					-1
+			wide					48
+			tall					48
+			navDown					TitanButton0
+		}
+
+		BtnSub1
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui 					"ui/titan_upgrade_button_small.rpak"
+			pin_to_sibling			BtnSub0
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
+			xpos 					5
+			visible					1
+			scriptID				1
+			zpos					-1
+			wide					48
+			tall					48
+			navDown					TitanButton1
+		}
+
+		BtnSub2
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui 					"ui/titan_upgrade_button_small.rpak"
+			pin_to_sibling			BtnSub1
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
+			xpos 					5
+			visible					1
+			scriptID				2
+			zpos					-1
+			wide					48
+			tall					48
+			navDown					TitanButton2
+		}
+
+		BtnSub3
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui 					"ui/titan_upgrade_button_small.rpak"
+			pin_to_sibling			BtnSub2
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
+			xpos 					5
+			visible					1
+			scriptID				3
+			zpos					-1
+			wide					48
+			tall					48
+			navDown					TitanButton3
+		}
+
+		BtnSub4
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui 					"ui/titan_upgrade_button_small.rpak"
+			pin_to_sibling			BtnSub3
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
+			xpos 					5
+			visible					1
+			scriptID				4
+			zpos					-1
+			wide					48
+			tall					48
+			navDown					TitanButton4
+		}
+
+		BtnSub5
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui 					"ui/titan_upgrade_button_small.rpak"
+			pin_to_sibling			BtnSub4
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
+			xpos 					5
+			visible					1
+			scriptID				5
+			zpos					-1
+			wide					48
+			tall					48
+			navDown					TitanButton5
+		}
+
+		BtnSub6
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui 					"ui/titan_upgrade_button_small.rpak"
+			pin_to_sibling			BtnSub5
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
+			xpos 					5
+			visible					1
+			scriptID				6
+			zpos					-1
+			wide					48
+			tall					48
+			navDown					TitanButton6
+		}
+
+		UpgradeName
+		{
+			ControlName				RuiPanel
+			pin_to_sibling			BtnSub0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			rui 					"ui/titan_upgrade_display.rpak"
+			xpos					-40
+			ypos					25
+			zpos 					-1
+			wide 					350
+			tall 					300
+			visible					1
+		}
+
+	    TitanButton0
+	    {
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui						"ui/team_titan_select_button.rpak"
+	        ypos					400
+	        xpos 					-25
+	        zpos 					-1
+			tall 					54
+			wide					108
+	        scriptID				0
+	        tabPosition				1
+
+	        pin_to_sibling			BG
+	        pin_corner_to_sibling	LEFT
+	        pin_to_sibling_corner	LEFT
+	    }
+
+	    TitanButton1
+	    {
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui						"ui/team_titan_select_button.rpak"
+	        ypos					400
+	        xpos 					-25
+	        zpos 					-1
+			tall 					54
+			wide					108
+	        scriptID				1
+
+	        pin_to_sibling			BG
+	        pin_corner_to_sibling	LEFT
+	        pin_to_sibling_corner	LEFT
+	    }
+
+	    TitanButton2
+	    {
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui						"ui/team_titan_select_button.rpak"
+	        ypos					400
+	        xpos 					-25
+	        zpos 					-1
+			tall 					54
+			wide					108
+	        scriptID				2
+
+	        pin_to_sibling			BG
+	        pin_corner_to_sibling	LEFT
+	        pin_to_sibling_corner	LEFT
+	    }
+
+	    TitanButton3
+	    {
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui						"ui/team_titan_select_button.rpak"
+	        ypos					400
+	        xpos 					-25
+	        zpos 					-1
+			tall 					54
+			wide					108
+	        scriptID				3
+	        pin_to_sibling			BG
+	        pin_corner_to_sibling	LEFT
+	        pin_to_sibling_corner	LEFT
+	    }
+
+	    TitanButton4
+	    {
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui						"ui/team_titan_select_button.rpak"
+	        ypos					400
+	        xpos 					-25
+	        zpos 					-1
+			tall 					54
+			wide					108
+	        scriptID				4
+
+	        pin_to_sibling			BG
+	        pin_corner_to_sibling	LEFT
+	        pin_to_sibling_corner	LEFT
+	    }
+
+	    TitanButton5
+	    {
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui						"ui/team_titan_select_button.rpak"
+	        ypos					400
+	        xpos 					-25
+	        zpos 					-1
+			tall 					54
+			wide					108
+	        scriptID				5
+
+	        pin_to_sibling			BG
+	        pin_corner_to_sibling	LEFT
+	        pin_to_sibling_corner	LEFT
+	    }
+
+	    TitanButton6
+	    {
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonSmall
+			rui						"ui/team_titan_select_button.rpak"
+	        ypos					400
+	        xpos 					-25
+	        zpos 					-1
+			tall 					54
+			wide					108
+	        scriptID				6
+
+	        pin_to_sibling			BG
+	        pin_corner_to_sibling	LEFT
+	        pin_to_sibling_corner	LEFT
+	    }
+
+//	    EditTitanButton
+//	    {
+//			ControlName				RuiButton
+//			InheritProperties		LoadoutButtonMedium
+//			rui						"ui/team_titan_select_button.rpak"
+//	        ypos					10
+//	        xpos 					0
+//	        zpos 					-1
+//	        visible 				0
+//	        tabPosition				2
+//
+//	        pin_to_sibling			TitanSelectTitle
+//	        pin_corner_to_sibling	TOP
+//	        pin_to_sibling_corner	BOTTOM
+//	    }
+
+		DoubleXP
+		{
+			ControlName				RuiPanel
+			rui						"ui/tts_double_xp.rpak"
+	        ypos					-20
+	        xpos 					-20
+	        zpos 					-1
+			wide					500
+			tall					500
+
+	        pin_to_sibling			BG
+	        pin_corner_to_sibling	BOTTOM_RIGHT
+	        pin_to_sibling_corner	BOTTOM_RIGHT
+	    }
+	    ReadyRui
+	    {
+	    	ControlName 			RuiPanel
+	    	rui 					"ui/team_titan_select_ready.rpak"
+			xpos					0
+			ypos					0
+			wide					%100
+			tall					%100
+			visible					0
+			scaleImage				1
+			zpos 					-10
+			image					"vgui/HUD/white"
+			drawColor				"0 0 0 0"
+	    }
+
+		Cover
+		{
+			ControlName				ImagePanel
+			xpos					0
+			ypos					0
+			wide					%100
+			tall					%100
+			visible					0
+			enabled 				0
+			scaleImage				1
+			image					"vgui/HUD/white"
+			drawColor				"0 0 0 0"
+			zpos 					100
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

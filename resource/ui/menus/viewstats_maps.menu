@@ -1,0 +1,1232 @@
+resource/ui/menus/viewstats_pve.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_overridep	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#STATS_PILOT_WEAPONS"
+		}
+
+		MenuCommon
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/menu_common.res"
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+		}
+
+		WeaponStatsBackground
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			xpos						c-834
+			ypos						c-355
+			zpos						90
+			wide						1670
+			tall						767
+			visible						1
+			scaleImage					1
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		GridPanel
+		{
+			ControlName				CNestedPanel
+			xpos					-54
+            ypos                    -32
+            zpos                    99
+			wide					224
+			tall					702
+			visible					1
+			tabPosition				1
+			controlSettingsFile		"Resource/UI/menus/panels/map_stats_grid.res"
+
+			pin_to_sibling				WeaponStatsBackground
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Stat0
+		{
+			ControlName					RuiPanel
+			rui							"ui/stat_box_d.rpak"
+			xpos						-370
+			ypos						-400
+			zpos						100
+			wide						246
+			tall						106
+			visible						1
+
+			pin_to_sibling				WeaponStatsBackground
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		Stat1
+		{
+			ControlName					RuiPanel
+			rui							"ui/stat_box_d.rpak"
+			xpos						8
+			zpos						100
+			wide						246
+			tall						106
+			visible						1
+
+			pin_to_sibling				Stat0
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		Stat2
+		{
+			ControlName					RuiPanel
+//			classname                   "PveGroup"
+			rui							"ui/stat_box_d.rpak"
+			xpos						64
+			zpos						100
+			wide						246
+			tall						106
+			visible						0
+
+			pin_to_sibling				Stat1
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		Stat3
+		{
+			ControlName					RuiPanel
+//			classname                   "PveGroup"
+			rui							"ui/stat_box_d.rpak"
+			xpos						8
+			zpos						100
+			wide						246
+			tall						106
+			visible						0
+
+			pin_to_sibling				Stat2
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		RIGHT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		WeaponName
+		{
+			ControlName					Label
+			xpos						0
+			ypos						8
+			zpos						101
+			wide						1237
+			tall						45
+			visible						1
+			font						DefaultBold_44
+			labelText					"WEAPON NAME"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				WeaponImageLarge
+			pin_corner_to_sibling		BOTTOM_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		WeaponImageLarge
+		{
+			ControlName				RuiPanel
+			xpos					-370
+			ypos					-100
+			zpos					101
+			wide					500
+			tall					280
+			visible					1
+			scaleImage				1
+			image					""
+            rui                     "ui/basic_menu_image.rpak"
+
+			pin_to_sibling				WeaponStatsBackground
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ModesPieChart
+		{
+			ControlName					CNestedPanel
+			classname					"ModesPieChart"
+			xpos						60
+			ypos						40
+			zpos						300
+			wide						700
+			tall						674
+			visible						1
+			controlSettingsFile			"resource/UI/menus/stats_pie_chart_wide.res"
+
+			pin_to_sibling				WeaponImageLarge
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+
+		KillsHeader
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			xpos						-370
+			ypos						-516
+			zpos						101
+			wide						500
+			tall						228
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				WeaponStatsBackground
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		KillsHeaderLabel
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						-6
+			zpos						102
+			wide						400
+			tall						36
+			visible						1
+			font						Default_31
+			labelText					"#STATS_HEADER_PLAYER_HISTORY"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsHeader
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		KillsLineBackground0
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						-48
+			zpos						101
+			wide						500
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				KillsHeader
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		KillsLabel0
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_HEADER_TOTAL_KILLS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsLineBackground0
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsValue0
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsLineBackground0
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsLineBackground1
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						0
+			scaleImage					1
+
+			pin_to_sibling				KillsLineBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsLabel1
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_PILOTS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsLineBackground1
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsValue1
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsLineBackground1
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsLineBackground2
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				KillsLineBackground1
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsLabel2
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_TITANS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsLineBackground2
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsValue2
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsLineBackground2
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsLineBackground3
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						0
+			scaleImage					1
+
+			pin_to_sibling				KillsLineBackground2
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsLabel3
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_AI"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsLineBackground3
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsValue3
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsLineBackground3
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		KillsLineBackground4
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background_bottom.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						500
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				KillsLineBackground3
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		KillsLabel4
+		{
+			ControlName					Label
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_KILLS_AI"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				KillsLineBackground4
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		KillsValue4
+		{
+			ControlName					Label
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				KillsLineBackground4
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		PvEHeader
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			classname                   "PveGroup"
+			xpos						-934
+			ypos						-516
+			zpos						101
+			wide						650
+			tall						228
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				WeaponStatsBackground
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		PvEHeaderLabel
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-18
+			ypos						-6
+			zpos						102
+			wide						400
+			tall						36
+			visible						1
+			font						Default_31
+			labelText					"#FRONTIER_DEFENSE"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				PvEHeader
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+		PvEHeaderLabelA
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_BEST"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvEHeader
+			pin_corner_to_sibling		TOP_RIGHT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+		PvEHeaderLabelB
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-94
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_WINS"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvEHeader
+			pin_corner_to_sibling		TOP_RIGHT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+
+
+		PvELineBackground0
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_line_background.rpak"
+			classname                   "PveGroup"
+			xpos						0
+			ypos						-48
+			zpos						101
+			wide						650
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				PvEHeader
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		PvEIcon0
+		{
+			ControlName				RuiPanel
+			classname               "PveGroup"
+			xpos					-30
+			ypos					0
+			zpos					102
+			wide					36
+			tall					36
+			visible					1
+			scaleImage				1
+			image					""
+            rui                     "ui/basic_image_additive.rpak"
+
+			pin_to_sibling				PvELineBackground0
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		PvELabel0
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_HEADER_TOTAL_PvE"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				PvELineBackground0
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		PvEValue0
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					""
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvELineBackground0
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+		PvEValueA0
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-94
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvELineBackground0
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		PvELineBackground1
+		{
+			ControlName					RuiPanel
+//			classname                   "PveGroup"
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						650
+			tall						36
+			visible						0
+			scaleImage					1
+
+			pin_to_sibling				PvELineBackground0
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		PvEIcon1
+		{
+			ControlName				RuiPanel
+			classname               "PveGroup"
+			xpos					-30
+			ypos					0
+			zpos					102
+			wide					36
+			tall					36
+			visible					1
+			scaleImage				1
+			image					""
+            rui                     "ui/basic_image_additive.rpak"
+
+			pin_to_sibling				PvELineBackground1
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		PvELabel1
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_PvE_PILOTS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				PvELineBackground1
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		PvEValue1
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					""
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvELineBackground1
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+		PvEValueA1
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-94
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvELineBackground1
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		PvELineBackground2
+		{
+			ControlName					RuiPanel
+			classname                   "PveGroup"
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						650
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				PvELineBackground1
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		PvEIcon2
+		{
+			ControlName				RuiPanel
+			classname               "PveGroup"
+			xpos					-30
+			ypos					0
+			zpos					102
+			wide					36
+			tall					36
+			visible					1
+			scaleImage				1
+			image					""
+            rui                     "ui/basic_image_additive.rpak"
+
+			pin_to_sibling				PvELineBackground2
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		PvELabel2
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_PvE_TITANS"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				PvELineBackground2
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		PvEValue2
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					""
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvELineBackground2
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+		PvEValueA2
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-94
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvELineBackground2
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		PvELineBackground3
+		{
+			ControlName					RuiPanel
+			//classname                   "PveGroup"
+			rui							"ui/stats_line_background.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						650
+			tall						36
+			visible						0
+			scaleImage					1
+
+			pin_to_sibling				PvELineBackground2
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		PvEIcon3
+		{
+			ControlName				RuiPanel
+			classname               "PveGroup"
+			xpos					-30
+			ypos					0
+			zpos					102
+			wide					36
+			tall					36
+			visible					1
+			scaleImage				1
+			image					""
+            rui                     "ui/basic_image_additive.rpak"
+
+			pin_to_sibling				PvELineBackground3
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		PvELabel3
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_PvE_AI"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				PvELineBackground3
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		PvEValue3
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					""
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvELineBackground3
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+		PvEValueA3
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-94
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvELineBackground3
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		PvELineBackground4
+		{
+			ControlName					RuiPanel
+			classname                   "PveGroup"
+			rui							"ui/stats_line_background_bottom.rpak"
+			xpos						0
+			ypos						0
+			zpos						101
+			wide						650
+			tall						36
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				PvELineBackground3
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		BOTTOM_LEFT
+		}
+
+		PvEIcon4
+		{
+			ControlName				RuiPanel
+			classname               "PveGroup"
+			xpos					-30
+			ypos					0
+			zpos					102
+			wide					36
+			tall					36
+			visible					1
+			scaleImage				1
+			image					""
+            rui                     "ui/basic_image_additive.rpak"
+
+			pin_to_sibling				PvELineBackground4
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		PvELabel4
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-18
+			ypos						0
+			zpos						102
+			wide						308
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"#STATS_PvE_AI"
+			allcaps						1
+			textAlignment				west
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				PvELineBackground4
+			pin_corner_to_sibling		LEFT
+			pin_to_sibling_corner		LEFT
+		}
+
+		PvEValue4
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						0
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					""
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvELineBackground4
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+		PvEValueA4
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						-94
+			ypos						0
+			zpos						102
+			wide						94
+			tall						36
+			visible						1
+			font						Default_23
+			labelText					"--"
+			allcaps						1
+			textAlignment				center
+			fgcolor_override 			"255 255 255 255"
+			//bgcolor_override 			"0 255 0 100"
+
+			pin_to_sibling				PvELineBackground4
+			pin_corner_to_sibling		RIGHT
+			pin_to_sibling_corner		RIGHT
+		}
+
+		PvELegend
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_background.rpak"
+			classname                   "PveGroup"
+			xpos						0
+			ypos						10
+			zpos						101
+			wide						650
+			tall						106
+			visible						1
+			scaleImage					1
+
+			pin_to_sibling				PvEHeader
+			pin_corner_to_sibling		BOTTOM_RIGHT
+			pin_to_sibling_corner		TOP_RIGHT
+		}
+
+		PvEIconLegend
+		{
+			ControlName				RuiPanel
+			classname               "PveGroup"
+			xpos					-18
+			ypos					-6
+			zpos					102
+			wide					94
+			tall					94
+			visible					0
+			scaleImage				1
+			image					""
+            rui                     "ui/basic_image_additive.rpak"
+
+			pin_to_sibling				PvELegend
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+		PvELabelLegend
+		{
+			ControlName					Label
+			classname                   "PveGroup"
+			xpos						0
+			ypos						-6
+			zpos						102
+			wide						650
+			tall						106
+			visible						0
+			font						Default_23
+			labelText					"#STATS_FD_PERFECT"
+			allcaps						0
+			//wrap                        1
+			//textAlignment				north-west
+			centerwrap                  1
+			textAlignment				north
+			fgcolor_override 			"160 160 160 255"
+			//bgcolor_override 			"255 255 0 100"
+
+			pin_to_sibling				PvELegend
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		NextUnlock
+		{
+			ControlName					RuiPanel
+			rui							"ui/stats_next_unlock.rpak"
+			xpos						-1078
+			ypos						-528
+			zpos						90
+			wide						356
+			tall						194
+			visible						0
+			scaleImage					1
+
+			pin_to_sibling				WeaponStatsBackground
+			pin_corner_to_sibling		TOP_LEFT
+			pin_to_sibling_corner		TOP_LEFT
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					r119
+			wide					f0
+			tall					36
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+		}
+	}
+}

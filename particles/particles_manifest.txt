@@ -404,6 +404,7 @@ particles_manifest
 	"file"		"particles/player_screen_titan_shield.pcf"
 	"file"		"particles/marvin_fx.pcf"
 	"file"		"particles/wpn_smokescreen_FD.pcf"
+	"file"		"particles/wpn_xo_tether_trap.pcf"
 
 
 	//DEV FX

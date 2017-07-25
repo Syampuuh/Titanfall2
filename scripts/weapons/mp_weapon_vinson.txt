@@ -109,7 +109,7 @@ WeaponData
 		"aimassist_adspull_weaponclass"					"precise"
 
 		"damage_near_value"   							"30"//35
-		"damage_far_value"								"25"//30
+		"damage_far_value"								"20"//30
 		"damage_near_value_titanarmor"					"100"
 		"damage_far_value_titanarmor" 					"80"
 		"damage_rodeo" 									"100"
@@ -544,9 +544,9 @@ WeaponData
 			"fx_muzzle_flash_view"			"wpn_muzzleflash_smg_elec_FP"
 			"fx_muzzle_flash_world"			"wpn_muzzleflash_smg_elec"
 
-			"damage_near_value"   							"45"//35
-			"damage_far_value"								"35"//30
-   	 		"damage_very_far_value"							"20"
+			"damage_near_value"   							"++5"//35
+			"damage_far_value"								"++5"//30
+   	 		"damage_very_far_value"							"++3"
 			"damage_near_value_titanarmor"					"200"
 			"damage_far_value_titanarmor" 					"180"
 
@@ -565,28 +565,6 @@ WeaponData
 			"low_ammo_fraction" 							"0.0"
 		}
 
-		low_ttk
-		{
-			"damage_near_value"   							"--5"// 30 -> 25
-			"damage_far_value"								"--5"// 25 -> 20
-	   	 	"damage_very_far_value"							"--1"// 15 -> 14
-		}
-		amped_ttk
-		{
-			"is_burn_mod"		"1"
-
-			//FX
-			"tracer_effect"   					"P_wpn_tracer_BC"
-			"tracer_effect_first_person"   		"P_wpn_tracer_BC"
-			"fx_muzzle_flash_view"				"wpn_muzzleflash_smg_elec_FP"
-			"fx_muzzle_flash_world"				"wpn_muzzleflash_smg_elec"
-
-			"damage_near_value"   							"++10" // 5 -> 4
-			"damage_far_value"								"++5" // 7 -> 6
-   	 		"damage_very_far_value"							"++4" // 9 -> 8
-			"damage_near_value_titanarmor"					"200"
-			"damage_far_value_titanarmor" 					"180"
-		}
 	}
 
 	"ui1_enable"		"1"

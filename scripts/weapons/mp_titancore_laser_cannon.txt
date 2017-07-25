@@ -313,5 +313,14 @@ WeaponData
 		{
 
 		}
+		fd_balance
+		{
+			"damage_near_value"   							"*1.45"
+			"damage_far_value"								"*1.45"
+			"damage_near_value_titanarmor"					"*1.45"
+			"damage_far_value_titanarmor" 					"*1.45"
+			"explosion_damage"								"*1.45"
+			"explosion_damage_heavy_armor"					"*1.45"
+		}
 	}
 }

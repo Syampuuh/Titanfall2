@@ -1,7 +1,7 @@
-﻿playlists
+playlists
 {
 	version stable
-	versionNum 3237
+	versionNum 3235
 	Gamemodes
 	{
 		defaults
@@ -13,6 +13,13 @@
 				boost_store_mode off
 
 				pick_loadout_extension 0
+ 				pick_loadout_every_round 0
+ 				pick_loadout_warp_sound 1
+ 				tts_menu_join_in_progress 0
+ 				tts_menu_show_score 1
+ 				ingame_menu_fd_mode 0
+ 				limited_editions_available 1
+
 				ai_attack_tethers 1
                 enable_sun_flare_mp_thaw 0
                 enable_sun_flare_mp_forwardbase_kodai 0
@@ -109,8 +116,6 @@
 				fast_tdm 0
 				arena_loadout 0
 				fd_difficulty 0
-				low_ttk	1
-				tactical_balance 1
 
 				// defaults for private_match settings, as all gamemodes don't explicitly set their own
 				boosts_enabled 0
@@ -150,15 +155,15 @@
 				faq_patchnotes_version 7
 				faq_patchnotes_count 6
 
-				faq_community_version 7
-				faq_community_url_00    "https://www.youtube.com/embed/rMeaxj8k_3U?autoplay=1"
-				faq_community_url_01    "http://www.respawn.com/frontier-news-network-05-23-2017-monarch-reigns"
-				faq_community_url_02    "https://forums.titanfall.com/en-us/discussion/12530/monarchs-reign-the-patch-notes/p1#Head"
-				faq_community_url_03	"https://www.youtube.com/embed/-KntBgBOdeU?autoplay=1"
-				faq_community_url_04	"http://www.respawn.com/2249-2"
-				faq_community_url_05	"https://www.youtube.com/embed/AaCqzxMus0A?list=PLD1fk2ODxOaYNyuBsA-V26KB9i7dhCpB?autoplay=1"
-				faq_community_url_06	"https://www.youtube.com/embed/it9m2pzAzcw?autoplay=1"
-				faq_community_url_07	"https://i.redd.it/pndhjl72yozy.png"
+				faq_community_version 8
+				faq_community_url_00    "https://www.youtube.com/embed/RO7QJ5YEa24?autoplay=1"
+				faq_community_url_01    "https://forums.titanfall.com/en-us/discussion/13044/the-war-games-patch-notes#latest"
+				faq_community_url_02    "https://www.youtube.com/embed/5KJmHAxhPNA?autoplay=1"
+				faq_community_url_03	"https://www.youtube.com/embed/l1WGKeGWoP4?autoplay=1"
+				faq_community_url_04	"http://i.imgur.com/e5Hx1Kw.jpg"
+				faq_community_url_05	"https://i.redd.it/ioyjlh97mo1z.jpg"
+				faq_community_url_06	"https://www.youtube.com/embed/eGeZhH-iv-8?autoplay=1"
+				faq_community_url_07	"https://www.youtube.com/embed/rMeaxj8k_3U?autoplay=1"
 				faq_community_url_08	"https://www.youtube.com/embed/JKiuY3Ocwzo?autoplay=1"
 				faq_community_url_09    "https://www.youtube.com/embed/fCCckqclBoA?autoplay=1"
 				faq_community_url_10	"https://www.youtube.com/embed/4MMtDSrcXYU?autoplay=1"
@@ -226,6 +231,11 @@
 			inherit defaults
 			vars
 			{
+				name #PL_attrition
+				lobbytitle #PL_attrition_lobby
+				description #PL_attrition_desc
+				hint #PL_attrition_hint
+				abbreviation #PL_attrition_abbr
 				em_player_fast_kills 12
 				em_player_kills 15
 				max_players 10
@@ -236,6 +246,7 @@
 				titan_build_time 240
 				titan_rebuild_time 240
 				spawn_zone_enabled 1
+				color		"183 60 0 255"
 
 				gamemode_score_hint #GAMEMODE_SCORE_HINT_AT
 				gamemode_bullet_001	#GAMEMODE_BULLET_AT_001
@@ -250,6 +261,11 @@
 			inherit defaults
 			vars
 			{
+				name #PL_coliseum
+				lobbytitle #PL_coliseum_lobby
+				description #PL_coliseum_desc
+				hint #PL_coliseum_hint
+				image coliseum
 				classic_mp 1
 				infinite_doomed_state 0
 				power_ups_enabled 1
@@ -263,6 +279,8 @@
 				waiting_for_players_countdown_seconds 10
 				waiting_for_players_percentage_desired 100
 				waiting_for_players_timeout_seconds 60
+
+				color		"88 151 220 255"
 			}
 			maps
 			{
@@ -275,11 +293,18 @@
 			inherit defaults
 			vars
 			{
+				name #PL_hardpoint
+				lobbytitle #PL_hardpoint_lobby
+				description #PL_hardpoint_desc
+				hint #PL_hardpoint_hint
+				abbreviation #PL_hardpoint_abbr
+				image cp
 				amped_capture_points 1
 				scorelimit 400
 				suddendeath_timelimit 2
 				timelimit 10
 				max_players 12
+				color		"161 204 255 255"
 
 				gamemode_score_hint #GAMEMODE_SCORE_HINT_CP
 				gamemode_bullet_001	#GAMEMODE_BULLET_CP_001
@@ -294,6 +319,12 @@
 			inherit defaults
 			vars
 			{
+				name #PL_capture_the_flag
+				lobbytitle #PL_capture_the_flag_lobby
+				description #PL_capture_the_flag_desc
+				hint #PL_capture_the_flag_hint
+				abbreviation #PL_capture_the_flag_abbr
+				image ctf
 				respawn_delay 8
 				scorelimit 5
 				suddendeath_timelimit 2
@@ -301,6 +332,7 @@
 				max_players 10
 				phase_shift_drop_flag 1
 				ctf_flag_return_time 1
+				color		"0 119 245 255"
 
 				gamemode_score_hint #GAMEMODE_SCORE_HINT_CTF
 				gamemode_bullet_001	#GAMEMODE_BULLET_CTF_001
@@ -315,12 +347,19 @@
 			inherit defaults
 			vars
 			{
+				name #PL_ffa
+				lobbytitle #PL_ffa_lobby
+				description #PL_ffa_desc
+				hint #PL_ffa_hint
+				abbreviation #PL_ffa_abbr
+				image ffa
 				at_turrets_enabled 1
 				max_players 12
 				max_teams 12
 				scorelimit 25
 				waiting_for_players_countdown_seconds 1
 				waiting_for_players_percentage_desired 10
+				color		"246 127 1 255"
 
 				gamemode_score_hint #GAMEMODE_SCORE_HINT_FFA
 				gamemode_bullet_001	#GAMEMODE_BULLET_FFA_001
@@ -335,6 +374,12 @@
 			inherit defaults
 			vars
 			{
+				name #PL_fra
+				lobbytitle #PL_fra_lobby
+				description #PL_fra_desc
+				hint #PL_fra_hint
+				abbreviation #PL_fra_abbr
+				image ffa
 				at_turrets_enabled 1
 				max_players 12
 				max_teams 12
@@ -342,6 +387,7 @@
 				waiting_for_players_countdown_seconds 1
 				waiting_for_players_percentage_desired 10
 				earn_meter_tick_disabled 1
+				color		"254 184 0 255"
 
 				gamemode_score_hint #GAMEMODE_SCORE_HINT_FFA
 				gamemode_bullet_001	#GAMEMODE_BULLET_FFA_001
@@ -356,7 +402,17 @@
 			inherit defaults
 			vars
 			{
-				gamemode_uses_custom_countdown 1
+				name #PL_last_titan_standing
+				lobbytitle #PL_last_titan_standing_lobby
+				description #PL_last_titan_standing_desc
+				hint #PL_last_titan_standing_hint
+				abbreviation #PL_last_titan_standing_abbr
+				image lts
+ 				pick_loadout_extension 20.0
+ 				pick_loadout_every_round 1
+ 				pick_loadout_warp_sound 0
+ 				tts_menu_join_in_progress 0
+ 				tts_menu_show_score 1
 				loadout_grace_period 0.0
 				max_players 10
 				roundscorelimit 3
@@ -366,6 +422,7 @@
 				waiting_for_players_percentage_desired 100
 				waiting_for_players_countdown_seconds 30
 				maxExtraRounds 3
+				color		"128 128 128 255"
 
                 idlekick_minutes 1
 
@@ -382,10 +439,17 @@
 			inherit defaults
 			vars
 			{
+				name #PL_pilot_skirmish
+				lobbytitle #PL_pilot_skirmish_lobby
+				description #PL_pilot_skirmish_desc
+				hint #PL_pilot_skirmish_hint
+				abbreviation #PL_pilot_skirmish_abbr
+				image ps
 				scorelimit 100
 				timelimit 10
 				max_players 16
 				spawn_zone_enabled 1
+				color		"193 23 23 255"
 
 				gamemode_score_hint #GAMEMODE_SCORE_HINT_PS
 				gamemode_bullet_001	#GAMEMODE_BULLET_PS_001
@@ -400,12 +464,19 @@
 			inherit defaults
 			vars
 			{
+				name #PL_pilot_hunter
+				lobbytitle #PL_pilot_hunter_lobby
+				description #PL_pilot_hunter_desc
+				hint #PL_pilot_hunter_hint
+				abbreviation #PL_pilot_hunter_abbr
+				image tdm
 				scorelimit 75
 				suddendeath_timelimit 2
 				timelimit 10
 				max_players 12
 				gm_hardcore_settings 0
 				spawn_zone_enabled 1
+				color		"60 183 0 255"
 
 				gamemode_score_hint #GAMEMODE_SCORE_HINT_TDM
 				gamemode_bullet_001	#GAMEMODE_BULLET_TDM_001
@@ -420,11 +491,18 @@
 			inherit defaults
 			vars
 			{
+				name #PL_titan_brawl
+				lobbytitle #PL_titan_brawl_lobby
+				description #PL_titan_brawl_desc
+				hint #PL_titan_brawl_hint
+				abbreviation #PL_titan_brawl_abbr
+				image lts
 				scorelimit 30
 				suddendeath_timelimit 2
 				timelimit 10
 				max_players 10
 				respawn_delay 10
+				color		"23 193 23 255"
 
 				gamemode_score_hint #GAMEMODE_SCORE_HINT_TTDM
 				gamemode_bullet_001	#GAMEMODE_BULLET_TTDM_001
@@ -439,6 +517,11 @@
 			inherit defaults
 			vars
 			{
+				name "#PL_aitdm"
+				lobbytitle #PL_aitdm_lobby
+				description #PL_aitdm_desc
+				hint #PL_aitdm_hint
+				abbreviation #PL_aitdm_abbr
 				scorelimit 500
 				suddendeath_timelimit 2
 				timelimit 10
@@ -450,6 +533,7 @@
 				skyshow_enabled 1
 				riff_allow_npcs 1
 				enable_spectre_hacking 1
+				color		"88 220 151 255"
 
 				gamemode_score_hint #GAMEMODE_SCORE_HINT_TDM
 				gamemode_bullet_001	#GAMEMODE_BULLET_TDM_001
@@ -464,6 +548,12 @@
 			inherit defaults
 			vars
 			{
+				name #PL_marked_for_death
+				lobbytitle #PL_marked_for_death_lobby
+				description #PL_marked_for_death_desc
+				hint #PL_marked_for_death_hint
+				abbreviation #PL_marked_for_death_abbr
+				image mfd
 				scorelimit 10
 				timelimit 12
 				max_players 12
@@ -471,6 +561,7 @@
 				spawn_zone_enabled 1
 				earn_meter_tick_rate 3.6
 				earn_meter_pilot_multiplier 0.8
+				color		"0 245 119 255"
 
 				gamemode_score_hint #GAMEMODE_SCORE_HINT_MFD
 			}
@@ -480,6 +571,12 @@
 			inherit defaults
 			vars
 			{
+				name #PL_live_fire
+				lobbytitle #PL_live_fire_lobby
+				description #PL_live_fire_desc
+				hint #PL_speedball_hint
+				abbreviation #PL_live_fire_abbr
+				image lf
 				scorelimit 5
 				roundscorelimit 5
 				roundtimelimit 1.0
@@ -489,6 +586,7 @@
 				maxExtraRounds 3
 				phase_shift_drop_flag 1
 				ctf_flag_return_time 1
+				color		"127 246 1 255"
 
                 idlekick_minutes 1
                 idlekick_min_alive_seconds 20
@@ -499,6 +597,215 @@
 				gamemode_bullet_003	#GAMEMODE_BULLET_PS_003
 				gamemode_bullet_004	#GAMEMODE_BULLET_PS_004
 				gamemode_bullet_005	#GAMEMODE_BULLET_PS_005
+			}
+		}
+		fd
+        {
+ 			inherit defaults
+ 			vars
+ 			{
+ 			    hint #PL_fd_desc
+ 				ingame_menu_fd_mode 1
+ 				pick_loadout_extension 30.0
+ 				pick_loadout_every_round 0
+ 				pick_loadout_warp_sound 1
+ 				tts_menu_join_in_progress 1
+ 				tts_menu_show_score 0
+ 				roundscorelimit 3
+				roundtimelimit 60.0
+ 				em_player_fast_kills 12
+ 				em_player_kills 15
+ 				max_players 4
+ 				riff_allow_npcs 1
+ 				scorelimit 2500
+ 				suddendeath_timelimit 2
+ 				titan_build_time 240
+ 				titan_rebuild_time 240
+ 				spawn_zone_enabled 1
+                respawn_delay 4
+                timelimit 30
+                skyshow_enabled 1
+                max_teams 1
+                riff_wave_spawn 4
+                wave_spawn_interval 25
+                boost_store_mode fd
+                titan_loadout_experiment 0
+                use_new_tacticals 0
+                earn_meter_tick_frac 0
+				ai_attack_tethers 0
+				waiting_for_players_percentage_desired 100
+				fd_titan_health_adjust			0
+				fd_reaper_health_adjust 		0
+				fd_mortar_spectre_setup_time	5
+				fd_grunt_at_weapon_users		0
+				fd_grunt_shield_captains		0
+				fd_player_damage_scalar			1.0
+				fd_harvester_health 			25000
+				fd_harvester_shield 			6000
+				fd_harvester_regen_delay		10.0
+				fd_harvester_regen_time			10.0
+				fd_money_per_round				600
+				fd_wave_buy_time				60.0
+				fd_pro_titan_shields			0
+				enable_match_progress_update	0
+				color		"0 184 254 255"
+
+                riff_team_share_earn_meter 2
+                riff_team_share_earn_meter_scale 0.25
+				earn_meter_titan_multiplier 0.5
+				earn_meter_pilot_multiplier	0.5
+
+				override_boost_cost_burnmeter_harvester_shield -1
+				override_boost_cost_burnmeter_arc_trap -1
+				override_boost_cost_burnmeter_ap_turret_weapon_infinite -1
+				override_boost_cost_burnmeter_rodeo_grenade -1
+				override_boost_cost_burnmeter_amped_weapons_permanent -1
+				override_boost_cost_burnmeter_instant_battery -1
+
+ 				gamemode_score_hint #GAMEMODE_SCORE_HINT_FD
+ 				gamemode_bullet_001	#GAMEMODE_BULLET_FD_001
+ 				gamemode_bullet_002	#GAMEMODE_BULLET_FD_002
+ 				gamemode_bullet_003	#GAMEMODE_BULLET_FD_003
+ 				gamemode_bullet_004	#GAMEMODE_BULLET_FD_004
+ 				gamemode_bullet_005	#GAMEMODE_BULLET_FD_005
+ 			}
+ 			maps
+ 			{
+ 				mp_homestead 1
+ 				mp_forwardbase_kodai 1
+ 				mp_black_water_canal 1
+ 				mp_wargames 1
+				mp_rise 1
+ 			}
+ 		}
+		fd_easy
+		{
+			inherit fd
+			vars
+			{
+                name #PL_fd_easy
+                lobbytitle #PL_fd_easy_lobby
+                description #PL_fd_easy_desc
+ 				abbreviation #FD_DIFFICULTY_EASY
+
+                image fd_easy
+				fd_difficulty 0
+				boost_store_team_reserve 1
+				fd_titan_health_adjust			-5000
+				fd_reaper_health_adjust 		-2000
+				fd_mortar_spectre_setup_time	10
+				fd_grunt_at_weapon_users		0
+				fd_grunt_shield_captains		0
+				fd_player_damage_scalar			1.0
+				fd_money_per_round				700
+				fd_pro_titan_shields			0
+				fd_harvester_shield 			6000
+
+				earn_meter_pilot_multiplier		0.7
+			}
+		}
+		fd_normal
+		{
+			inherit fd
+			vars
+			{
+                name #PL_fd_normal
+                lobbytitle #PL_fd_normal_lobby
+                description #PL_fd_normal_desc
+ 				abbreviation #FD_DIFFICULTY_NORMAL
+                image fd_normal
+				fd_difficulty 1
+				boost_store_team_reserve 1
+				fd_titan_health_adjust			-2500
+				fd_reaper_health_adjust 		-1000
+				fd_mortar_spectre_setup_time	10
+				fd_grunt_at_weapon_users		0
+				fd_grunt_shield_captains		0
+				fd_player_damage_scalar			1.0
+				fd_money_per_round				700
+				fd_pro_titan_shields			0
+				fd_harvester_shield 			6000
+
+				earn_meter_pilot_multiplier		0.7
+			}
+		}
+		fd_hard
+		{
+			inherit fd
+			vars
+			{
+                name #PL_fd_hard
+                lobbytitle #PL_fd_hard_lobby
+                description #PL_fd_hard_desc
+ 				abbreviation #FD_DIFFICULTY_HARD
+                image fd_hard
+				fd_difficulty 2
+				boost_store_team_reserve 1
+				fd_titan_health_adjust			0
+				fd_reaper_health_adjust 		0
+				fd_mortar_spectre_setup_time	5
+				fd_grunt_at_weapon_users		2
+				fd_grunt_shield_captains		0
+				fd_player_damage_scalar			1.5
+				fd_money_per_round				600
+				fd_pro_titan_shields			0
+				fd_harvester_shield 			5000
+
+				earn_meter_pilot_multiplier	0.7
+			}
+		}
+		fd_master
+		{
+			inherit fd
+			vars
+			{
+                name #PL_fd_master
+                lobbytitle #PL_fd_master_lobby
+                description #PL_fd_master_desc
+ 				abbreviation #FD_DIFFICULTY_MASTER
+                image fd_master
+				fd_difficulty 3
+				boost_store_team_reserve 1
+
+				fd_titan_health_adjust			0
+				fd_reaper_health_adjust 		0
+				fd_mortar_spectre_setup_time	5
+				fd_grunt_at_weapon_users		4
+				fd_grunt_shield_captains		1
+				fd_player_damage_scalar			2.5
+				fd_money_per_round				600
+				fd_pro_titan_shields			1
+				fd_harvester_shield 			4000
+
+				earn_meter_pilot_multiplier	0.7
+			}
+		}
+		fd_insane
+		{
+			inherit fd
+			vars
+			{
+                name #PL_fd_insane
+                lobbytitle #PL_fd_insane_lobby
+                description #PL_fd_insane_desc
+ 				abbreviation #FD_DIFFICULTY_INSANE
+                image fd_insane
+                fd_difficulty 4
+				boost_store_team_reserve 1
+				riff_minimap_state 1
+                roundscorelimit 1
+
+				fd_titan_health_adjust			0
+				fd_reaper_health_adjust 		0
+				fd_mortar_spectre_setup_time	5
+				fd_grunt_at_weapon_users		4
+				fd_grunt_shield_captains		1
+				fd_player_damage_scalar			2.5
+				fd_money_per_round				600
+				fd_pro_titan_shields			1
+				fd_harvester_shield 			4000
+
+				earn_meter_pilot_multiplier	0.5
 			}
 		}
 // END OF MP GAMEMODES LINE ----------------------------------------------------
@@ -522,6 +829,63 @@
 				description #PL_default_description
 				image default
 				visible 0
+			}
+		}
+		rise_247
+		{
+			inherit defaults
+			vars
+			{
+				name "#PL_rise"
+				lobbytitle #PL_rise_lobby
+				description #PL_rise_desc
+				abbreviation #PL_rise_abbr
+				image aitdm
+				mixtape_promo_slot 0
+				visible 1
+			}
+			gamemodes
+			{
+				ctf
+				{
+					maps
+					{
+						mp_rise 1
+					}
+				}
+				aitdm
+				{
+					maps
+					{
+						mp_rise 1
+					}
+				}
+				cp
+				{
+					vars
+					{
+
+					}
+
+					maps
+					{
+						mp_rise 1
+					}
+				}
+				at
+				{
+					maps
+					{
+						mp_rise 1
+					}
+				}
+				lts
+				{
+					maps
+					{
+						mp_rise 1
+					}
+				}
 			}
 		}
 		aitdm
@@ -710,37 +1074,6 @@
 				}
 			}
 		}
-		ironlts
-		{
-			inherit defaults
-			vars
-			{
-				name #PL_iron_last_titan_standing
-				lobbytitle #PL_iron_last_titan_standing_lobby
-				description #PL_iron_last_titan_standing_desc
-				abbreviation #PL_iron_last_titan_standing_abbr
-				image lts
-				//mixtape_promo_slot 7
-				iron_rules	1
-				boosts_enabled 1
-				visible 0
-			}
-			gamemodes
-			{
-				lts
-				{
-					vars
-					{
-
-					}
-
-					maps
-					{
-						mp_relic02 1
-					}
-				}
-			}
-		}
 		ctf
 		{
 			inherit defaults
@@ -840,7 +1173,7 @@
 				lobbytitle #PL_titan_brawl_lobby
 				description #PL_titan_brawl_desc
 				abbreviation #PL_titan_brawl_abbr
-				image lts
+				image ttdm
 				visible 1
 				max_players 10
 				scorelimit 30
@@ -854,23 +1187,11 @@
 				{
 				    maps
 				    {
-						mp_black_water_canal 1
-						mp_thaw 1
-						mp_homestead 1
-						mp_forwardbase_kodai 1
-						mp_angel_city 1
-
-						mp_black_water_canal 1
-						mp_thaw 1
-						mp_homestead 1
-						mp_forwardbase_kodai 1
-						mp_eden 1
-
-						mp_black_water_canal 1
-						mp_thaw 1
-						mp_homestead 1
-						mp_forwardbase_kodai 1
-						mp_grave 1
+				        mp_glitch 1
+				        mp_colony02 1
+				        mp_wargames 1
+				        mp_eden 1
+				        mp_drydock 1
 				    }
 				}
 			}
@@ -945,8 +1266,8 @@
 				description #PL_fra_desc
 				abbreviation #PL_fra_abbr
 				image ffa
-				mixtape_promo_slot 2
-				visible 1
+				//mixtape_promo_slot 7
+				visible 0
 			}
 			gamemodes
 			{
@@ -1035,6 +1356,7 @@
                         mp_glitch 1
 						mp_relic02 1
 						mp_wargames 1
+						mp_rise 1
 			        }
 			    }
 
@@ -1056,6 +1378,7 @@
                         mp_glitch 1
 						mp_relic02 1
 						mp_wargames 1
+						mp_rise 1
 			        }
 			    }
 
@@ -1079,8 +1402,10 @@
 						mp_lf_deck 1
 						mp_lf_meadow 1
 						mp_lf_traffic 1
+						mp_lf_township 1
 						mp_relic02 1
 						mp_wargames 1
+						mp_rise 1
 			        }
 			    }
 
@@ -1102,6 +1427,7 @@
                         mp_glitch 1
 						mp_relic02 1
 						mp_wargames 1
+						mp_rise 1
 			        }
 			    }
 
@@ -1125,8 +1451,10 @@
 						mp_lf_deck 1
 						mp_lf_meadow 1
 						mp_lf_traffic 1
+						mp_lf_township 1
 						mp_relic02 1
 						mp_wargames 1
+						mp_rise 1
 			        }
 			    }
 
@@ -1148,6 +1476,7 @@
                         mp_glitch 1
 						mp_relic02 1
 						mp_wargames 1
+						mp_rise 1
 			        }
 			    }
 
@@ -1171,8 +1500,10 @@
 						mp_lf_deck 1
 						mp_lf_meadow 1
 						mp_lf_traffic 1
+						mp_lf_township 1
 						mp_relic02 1
 						mp_wargames 1
+						mp_rise 1
 			        }
 			    }
 
@@ -1196,8 +1527,10 @@
 						mp_lf_deck 1
 						mp_lf_meadow 1
 						mp_lf_traffic 1
+						mp_lf_township 1
 						mp_relic02 1
 						mp_wargames 1
+						mp_rise 1
 			        }
 			    }
 
@@ -1221,8 +1554,10 @@
 						mp_lf_deck 1
 						mp_lf_meadow 1
 						mp_lf_traffic 1
+						mp_lf_township 1
 						mp_relic02 1
 						mp_wargames 1
+						mp_rise 1
 			        }
 			    }
 
@@ -1244,6 +1579,7 @@
                         mp_glitch 1
 						mp_relic02 1
 						mp_wargames 1
+						mp_rise 1
 			        }
 			    }
 			}
@@ -1274,6 +1610,7 @@
 						mp_lf_stacks 1
 						mp_lf_deck 1
 						mp_lf_meadow 1
+						mp_lf_township 1
 					}
 				}
 			}
@@ -1298,10 +1635,12 @@
 				{
 					maps
 					{
-						mp_lf_stacks 1
+						//mp_lf_stacks 1
+						mp_lf_township 1
+						mp_lf_uma 1
 						mp_lf_traffic 1
-						mp_lf_deck 1
-						mp_lf_meadow 1
+						//mp_lf_deck 1
+						//mp_lf_meadow 1
 					}
 				}
 			}
@@ -1316,66 +1655,204 @@
 				description #PL_marked_for_death_desc
 				abbreviation #PL_marked_for_death_abbr
 				image mfd
-				visible 1
-				//mixtape_promo_slot 3
+				visible 0
+//				mixtape_promo_slot 5
 			}
 			gamemodes
 			{
 				mfd {}
 			}
 		}
-        wargames_247
-        {
-            inherit defaults
-            vars
-            {
-                name #PL_wargames
-                lobbytitle #PL_wargames
-                description #PL_wargames_desc
-                abbreviation #PL_wargames_abbr
-                image varietypack
-                visible 1
-                mixtape_promo_slot 0
-            }
-            gamemodes
-            {
-				aitdm
+		//DEV
+		fnf
+		{
+			inherit defaults
+			vars
+			{
+				name "Friday Night Fights"
+				lobbytitle "Friday Night Fights Lobby"
+				description "Fights on Friday"
+				image varietypack
+				visible 0
+//				mixtape_promo_slot 4
+			}
+			gamemodes
+			{
+				ctf
 				{
 					maps
 					{
-						mp_wargames 1
+						mp_relic02 1
+
 					}
 				}
-                ctf
-				{
-					maps
-					{
-						mp_wargames 1
-					}
-				}
-                cp
-				{
-					maps
-					{
-						mp_wargames 1
-					}
-				}
-            	ps
-				{
-					maps
-					{
-						mp_wargames 1
-					}
-				}
+
 				lts
 				{
 					maps
 					{
-						mp_wargames 1
+						mp_relic02 1
 					}
 				}
-            }
-        }
+			}
+		}
+		//DEV
+		fd
+		{
+			inherit defaults
+			vars
+			{
+				name #MATCHMAKING_PVE_PLAY_BUTTON
+				lobbytitle #PL_fd_lobby
+				description #PL_fd_desc
+				image ffa
+				visible 1
+				mixtape_promo_slot 9
+                riff_team_share_earn_meter 2
+                riff_team_share_earn_meter_scale 0.25
+				earn_meter_titan_multiplier 0.5
+				ingame_menu_fd_mode 1
+			}
+			gamemodes
+			{
+				fd
+				{}
+			}
+		}
+		//DEV
+		fd_easy
+		{
+			inherit defaults
+			vars
+			{
+                name #PL_fd_easy
+                lobbytitle #PL_fd_easy_lobby
+                description #PL_fd_easy_desc
+                abbreviation #FD_DIFFICULTY_EASY
+                image fd_easy
+		        visible 1
+			}
+			gamemodes
+			{
+				fd
+				{}
+			}
+			gamemodesWithAncestor
+			{
+				fd_easy
+				{}
+			}
+		}
+		//DEV
+		fd_normal
+		{
+			inherit defaults
+			vars
+			{
+                name #PL_fd_normal
+                lobbytitle #PL_fd_normal_lobby
+                description #PL_fd_normal_desc
+                abbreviation #FD_DIFFICULTY_NORMAL
+                image fd_normal
+		        visible 1
+			}
+			gamemodes
+			{
+				fd
+				{}
+			}
+			gamemodesWithAncestor
+			{
+				fd_normal
+				{}
+			}
+		}
+		//DEV
+		fd_hard
+		{
+			inherit defaults
+			vars
+			{
+                name #PL_fd_hard
+                lobbytitle #PL_fd_hard_lobby
+                description #PL_fd_hard_desc
+                abbreviation #FD_DIFFICULTY_HARD
+                image fd_hard
+		        visible 1
+			}
+			gamemodes
+			{
+				fd
+				{}
+			}
+			gamemodesWithAncestor
+			{
+				fd_hard
+				{}
+			}
+		}
+		//DEV
+		fd_master
+		{
+			inherit defaults
+			vars
+			{
+                name #PL_fd_master
+                lobbytitle #PL_fd_master_lobby
+                description #PL_fd_master_desc
+                abbreviation #FD_DIFFICULTY_MASTER
+                image fd_master
+		        visible 1
+			}
+			gamemodes
+			{
+				fd
+				{}
+			}
+			gamemodesWithAncestor
+			{
+				fd_master
+				{}
+			}
+		}
+		fd_insane
+		{
+			inherit fd
+			vars
+			{
+                name #PL_fd_insane
+                lobbytitle #PL_fd_insane_lobby
+                description #PL_fd_insane_desc
+                image fd_insane
+				visible 1
+				mixtape_promo_slot 5
+				promo_note #MP_HOMESTEAD
+			}
+			gamemodes
+			{
+				fd
+				{}
+			}
+			gamemodesWithAncestor
+			{
+				fd_insane
+				{
+					maps
+					{
+						mp_homestead 1
+					}
+				}
+			}
+		}
+		//DEV
+		fd_dev
+		{
+			inherit fd_hard
+			vars
+			{
+				pick_loadout_extension 0
+			}
+		}
 
 // END OF MP PLAYLISTS LINE ----------------------------------------------------
 
@@ -1500,23 +1977,22 @@
 			"Language" "german"
 			"Tokens"
 			{
-				"MP_LF_TRAFFIC_CLASSIC_DESC"							"Live Fire: Kampfsimulation in städtischer Umgebung.\nHinweis: Keine Titans verfügbar"
-				"COMMUNITYUPDATE_00_A"	"Dieser DLC enthält mit dem Monarch den 7. Multiplayer-Titan, eine überarbeitete Version der Relikt-Karte, eine neue Exekution sowie kaufbare Ronin- und Tone-Prime-Titans, mehr Tarnungen, Banner und Nose-Arts. Hier kannst du dir die Action ansehen.\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_00_Q"	"\"Monarch's Reign\" Gameplay-Trailer"
-				"COMMUNITYUPDATE_01_A"	"Die Vorstellung der Inhalte von Monarch's Reign, das am 30.5. erscheint, sowie einige tolle Fan-Arts."
-				"COMMUNITYUPDATE_01_Q"	"FNN - Enthüllung von Monarch's Reign"
-				"COMMUNITYUPDATE_02_A"	"Informiere dich über die Inhalte des Monarch's Reign-DLCs.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_02_Q"	"Monarch's Reign Patch-Notizen"
-				"COMMUNITYUPDATE_03_A"	"Die Jungs, die für eines unserer beliebtesten Singleplayer-Level verantwortlich waren, spielen die Mission und erzählen dabei, wie sie das Level entwickelt haben und geben einige witzige Entwicklergeschichten zum Besten.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_03_Q"	"Respawn spielt: Wirkung und Ursache"
-				"COMMUNITYUPDATE_04_A"	"Lead 3D Artist Ryan Lastimosa erklärt uns den Prozess der Waffenerstellung für Titanfall.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_04_Q"	"Respawn-Entwicklerblog – Der Modelshop"
-				"COMMUNITYUPDATE_05_A"	"Bist du neu in Titanfall 2? Lass dir von Sensei Frothy Omen die Möglichkeiten eines Piloten zeigen – von einfachen Doppelsprüngen bis hin zu Schuss- und Explosionswaffen.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_05_Q"	"Titanfall 2-Pilotenschule"
-				"COMMUNITYUPDATE_06_A"	"Niemand ist vor US Marty sicher, wenn er diesen Feuerstern hat. In dieser Montage kannst du fliehen, aber du kannst dich nicht verstecken\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_06_Q"	"Community-Montage - Feuerkind"
-				"COMMUNITYUPDATE_07_A"	"Wir lieben diesen atemberaubenden Kurzcomic, den laserisma über reddit bereitgestellt hat.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
-				"COMMUNITYUPDATE_07_Q"	"Community-Art: Curb-Check"
+				"COMMUNITYUPDATE_00_A"	"Jetzt verfügbar! Die legendäre Kriegsspiele-Karte kehrt in Titanfall 2 zurück und sieht besser denn je aus. Erlebe außerdem die neue Exekution und die neue Live Fire-Karte \"Verkehr\" in Aktion.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_00_Q"	"\"Die Kriegsspiele\" Gameplay-Trailer"
+				"COMMUNITYUPDATE_01_A"	"Informiere dich über alle im \"Die Kriegsspiele\"-Patch enthaltenen Änderungen.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_01_Q"	"Kriegsspiele-Patch-Notizen"
+				"COMMUNITYUPDATE_02_A"	"Sieh uns zu, wie wir den Piloten-Spießrutenlauf spielen, unterhalte dich mit uns über seine Entwicklung und finde heraus, wer die beste Zeit schafft.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_02_Q"	"Respawn spielt: Der Piloten-Spießrutenlauf"
+				"COMMUNITYUPDATE_03_A"	"Die Jungs, die für die epische Einzelspieler-Mission verantwortlich waren, erzählen, wie sie sie entwickelt haben und geben einige witzige Entwicklergeschichten zum Besten.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_03_Q"	"Respawn spielt: Feuerprobe"
+				"COMMUNITYUPDATE_04_A"	"bman4750 hat über reddit ein tolles Retro-Porträt unseres Lieblingspiloten und -titans aus Titanfall 2 geschaffen.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_04_Q"	"Community-Beiträge: Jack und BT-Pixelkunst"
+				"COMMUNITYUPDATE_05_A"	"Wir lieben den Stil und Ton dieses tollen Beitrags von Archer0506 über reddit.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_05_Q"	"Community-Beiträge: Freelance-Simulakrum"
+				"COMMUNITYUPDATE_06_A"	"Pat L zeigt, wie man mit dem D-2 Double Take zum Scharfschützen wird.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_06_Q"	"Community-Montage - Nimm zwei"
+				"COMMUNITYUPDATE_07_A"	"Dieser DLC enthält mit dem Monarch den 7. Multiplayer-Titan, eine überarbeitete Version der Relikt-Karte, eine neue Exekution sowie kaufbare Ronin- und Tone-Prime-Titans, mehr Tarnungen, Banner und Nose-Arts. Hier kannst du dir die Action ansehen.\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
+				"COMMUNITYUPDATE_07_Q"	"\"Monarch's Reign\" Gameplay-Trailer"
 				"COMMUNITYUPDATE_08_A"	"Im Grenzland ist nicht alles so, wie es scheint – bereite dich auf den neuesten kostenlosen Inhaltspack zum Herunterladen für Titanfall 2 vor: Störimpuls im Grenzland – mit der neuen Karte \"Glitch\". Die Inspiration dafür war Captain Lastimosas Heimatplanet Harmony, wo vertikale Höhenunterschiede und lange, gewundene Pfade das Landschaftsbild dominieren – ideal, um mit Wandlaufkombinationen elegant über die Karte zu gleiten. Eine neue Live Fire-Karte ist ebenfalls am Start: Deck, mit engen Innenräumen, offenen Höfen und wachsamen Drohnen, die über dir kreisen. Falls du dich überfordert fühlst, kannst du auf die hilfreichen M.R.V.N.s zugreifen, die dir jetzt als brandneue Gruppierung ihre fröhliche Roboterhand reichen. Und zu guter Letzt kannst du noch die neue Impulsklingen-Exekution freischalten, wann immer du es für notwendig hältst, dich durchzusetzen.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
 				"COMMUNITYUPDATE_08_Q"	"\"Störimpuls im Grenzland\" Gameplay-Trailer"
 				"COMMUNITYUPDATE_09_A"	"Kehre auf eine der Lieblingskarten der Fans aus Titanfall 1 zurück: Kolonie. Bringe all die neuen Taktiken und Titans aus Titanfall 2 ein, die alle Piloten & Titans nutzen müssen, um an diesem idyllischen Ort voller enger und verwinkelter Gassen und ungeschützter Dächer zu überleben. Ab dem 30. März für alle Spieler kostenlos erhältlich! Der Kolonierückkehr-DLC enthält außerdem klassische Waffen wie das Sturmgewehr R-101, eine neue Haken-Exekution sowie neue kosmetische Optionen, damit du perfekt aussiehst, wenn du die Stadt im Chaos versinken lässt.\n\n\nZum Ansehen `2%[A_BUTTON|MOUSE1]%`0 drücken."
@@ -1535,7 +2011,7 @@
 				"COMMUNITYUPDATE_NAME"	"Community"
 				"KNB_SUBJECT_00_DESC"	"`3Was ist neu in Titanfall?`0\n\nHier erfährst du, was sich in Titanfall 2 geändert hat!"
 				"KNB_SUBJECT_00_NAME"	"Spiel-Updates"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Neue Karte - Kriegsspiele\n\n`2%$rui/bullet_point%`0Neue Karte - Live Fire Verkehr\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution - Schattenboxen\n\n`2%$rui/bullet_point%`03. Waffenslot\n\n`2%$rui/bullet_point%`0Privatspiel-Einstellungen"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Neue Karte - Kriegsspiele\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte - Verkehr\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution - Schattenboxen\n\n`2%$rui/bullet_point%`03. Waffenslot\n\n`2%$rui/bullet_point%`0Privatspiel-Einstellungen"
 				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 27. Juni - Kriegsspiele"
 				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Neuer Titan – Monarch\n\n`2%$rui/bullet_point%`0Neue Karte – Relikt\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution – Jetzt siehst du mich\n\n`2%$rui/bullet_point%`0Neue, käuflich zu erwerbende Store-Inhalte"
 				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 30. Mai – Monarch's Reign"
@@ -1675,23 +2151,22 @@
 			"Language" "portuguese"
 			"Tokens"
 			{
-				"MP_LF_TRAFFIC_CLASSIC_DESC"							"Queima-roupa: Simulação de combate urbano.\nObservação: Titãs indisponíveis"
-				"COMMUNITYUPDATE_00_A"	"Este DLC adiciona o 7º Titã do multiplayer: Monarch, uma versão remasterizada do mapa Relíquia, uma nova execução, além de colocar à venda os Titãs Prime Ronin e Tone, mais camuflagens, fundos de distintivo e decorações. Assista à ação aqui.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_00_Q"	"Trailer de jogabilidade: Reino do Monarca"
-				"COMMUNITYUPDATE_01_A"	"Informações sobre o que vocês vão receber com o lançamento de Reino do Monarca, dia 30/05, além de algumas das nossas ilustrações favoritas dos fãs."
-				"COMMUNITYUPDATE_01_Q"	"RNF - Anúncio de Reino do Monarca"
-				"COMMUNITYUPDATE_02_A"	"Leia sobre todo o conteúdo e mudanças que virão com o DLC Reino do Monarca.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_02_Q"	"Detalhes do patch Reino do Monarca"
-				"COMMUNITYUPDATE_03_A"	"O pessoal responsável pela criação de uma das fases mais discutidas da campanha joga a missão enquanto fala sobre como tudo foi feito e compartilha outras histórias divertidas de desenvolvimento.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_03_Q"	"Respawn Joga: Causa e Efeito"
-				"COMMUNITYUPDATE_04_A"	"Ryan Lastimosa, Artista-chefe 3D, detalha o processo de criação de armas para Titanfall.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_04_Q"	"Blog da Respawn: Oficina de Modelos"
-				"COMMUNITYUPDATE_05_A"	"Chegou agora a Titanfall 2? Deixe o sensei Frothy Omen mostrar o que é ser um Piloto, ensinando como usar o pulo duplo básico, as armas e os explosivos.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_05_Q"	"Escola de Pilotos de Titanfall 2"
-				"COMMUNITYUPDATE_06_A"	"Ninguém está a salvo do US Marty quando ele está com a Estrela de Fogo. Você pode correr, mas não se esconder, pelo menos não nesta montagem.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_06_Q"	"Montagem da comunidade - Incendiário"
-				"COMMUNITYUPDATE_07_A"	"Adoramos esta curta e impressionante história em quadrinhos criada por laserisma via Reddit.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_07_Q"	"Arte da Comunidade: Esmagando"
+				"COMMUNITYUPDATE_00_A"	"Já disponível! O icônico mapa Jogos de Guerra retorna para Titanfall 2 mais bonito do que nunca. Confira também a nova execução e o novo mapa de Queima-roupa, Tráfego, em ação.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_00_Q"	"Trailer de jogabilidade de \"Jogos de Guerra\""
+				"COMMUNITYUPDATE_01_A"	"Leia sobre todas as mudanças trazidas pelo patch Jogos de Guerra, já disponível.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_01_Q"	"Detalhes do patch \"Jogos de Guerra\""
+				"COMMUNITYUPDATE_02_A"	"Assista-nos jogando o Desafio dos Pilotos e falando sobre como ele foi criado, e veja quem consegue o melhor tempo.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_02_Q"	"Respawn Joga: O Desafio dos Pilotos"
+				"COMMUNITYUPDATE_03_A"	"O pessoal responsável pela criação de uma missão épica da campanha fala sobre como tudo foi feito e compartilham outras histórias divertidas de desenvolvimento.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_03_Q"	"Respawn joga: Prova de Fogo"
+				"COMMUNITYUPDATE_04_A"	"bman4750 via Reddit criou um retrato retrô adorável de nossos Piloto e Titã favoritos de Titanfall 2.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_04_Q"	"Criações da comunidade: Pixel Art de Jack e BT"
+				"COMMUNITYUPDATE_05_A"	"Adoramos o estilo e tom desta obra incrível de Archer0506 via Reddit.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_05_Q"	"Criações da comunidade: Simulacro Freelance"
+				"COMMUNITYUPDATE_06_A"	"Pat L mostra como correr e atirar usando a D-2 Dose Dupla.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_06_Q"	"Montagem da comunidade: Tomada Dois"
+				"COMMUNITYUPDATE_07_A"	"Este DLC adiciona o 7º Titã do multiplayer: Monarch, uma versão remasterizada do mapa Relíquia, uma nova execução, além de colocar à venda os Titãs Prime Ronin e Tone, mais camuflagens, fundos de distintivo e decorações. Assista à ação aqui.\n\n\nAperte `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
+				"COMMUNITYUPDATE_07_Q"	"Trailer de jogabilidade: Reino do Monarca"
 				"COMMUNITYUPDATE_08_A"	"Nem tudo é o que parece na Fronteira - prepare-se para entrar no mais novo pacote de DLC gratuito para Titanfall 2: Falha na Fronteira, trazendo o novo mapa \"Falha\". Inspirado no planeta natal do Capitão Lastimosa, Harmony, o ambiente é dominado por quedas verticais e longos caminhos tortuosos, em um cenário perfeito para encadear longas corridas por paredões e pairar por toda parte. E um novo mapa de Queima-roupa se junta ao conjunto: Convés, com seus espaços internos estreitos, pátios expostos e drones vigilantes circulando sobre sua cabeça. Se você se sentir sobrecarregado, os sempre prestativos Marvins agora estão na área como uma facção inteiramente nova, para dar aquela mãozinha robótica. Finalmente, está disponível a nova execução Lâmina Sônica, para ser usada sempre que for preciso marcar presença.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
 				"COMMUNITYUPDATE_08_Q"	"Trailer de jogabilidade: Falha na Fronteira"
 				"COMMUNITYUPDATE_09_A"	"É o retorno de um mapa icônico para multiplayer, favorito dos fãs do primeiro Titanfall: Colônia. Com a adição das novas táticas e Titãs de Titanfall 2, os Pilotos e Titãs terão que redobrar a atenção para sobreviver nesta vila idílica e compacta, cheia de becos estreitos, curvas cegas e telhados expostos. Disponível gratuitamente para todos os jogadores a partir do dia 30 de março. O pacote do DLC \"Colônia Renascida\" inclui o retorno de armas clássicas, como o fuzil de assalto modificado R-101, uma nova execução corpo a corpo e novas opções estéticas para você ter o melhor visual enquanto pinta a cidade de vermelho.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
@@ -1710,7 +2185,7 @@
 				"COMMUNITYUPDATE_NAME"	"Comunidade"
 				"KNB_SUBJECT_00_DESC"	"`3Quais as novidades de Titanfall?`0\n\nConfira aqui o que mudou em Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Atualizações do jogo"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Novo mapa - Jogos de Guerra\n\n`2%$rui/bullet_point%`0Novo mapa - Tráfego de Queima-roupa\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Boxe Simulado\n\n`2%$rui/bullet_point%`03º espaço de arma\n\n`2%$rui/bullet_point%`0Configurações de partida privada"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Novo mapa - Jogos de Guerra\n\n`2%$rui/bullet_point%`0Novo mapa de Queima-roupa - Tráfego\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Boxe Simulado\n\n`2%$rui/bullet_point%`03º espaço de arma\n\n`2%$rui/bullet_point%`0Configurações de partida privada"
 				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 27 de junho - Jogos de Guerra"
 				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Novo Titã - Monarch\n\n`2%$rui/bullet_point%`0Novo mapa - Relíquia\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Agora Você Me Vê\n\n`2%$rui/bullet_point%`0Novo conteúdo à venda na Loja"
 				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 30/05 - Reino do Monarca"
@@ -1850,24 +2325,23 @@
 			"Language" "japanese"
 			"Tokens"
 			{
-				"MP_LF_TRAFFIC_CLASSIC_DESC"							"ライブファイア:都市環境での戦闘シミュレーション。\n注:タイタンは使用できません"
-				"COMMUNITYUPDATE_00_A"	"今回のDLCでは、7体目のマルチプレイヤー用新タイタン「モナーク」とリマスター版マップ「レリック」、新処刑攻撃の配信に加え、販売アイテムにローニン・トーン用のプライムタイタンと新しい迷彩、バナー、ノーズアートが登場します。動画はこちら。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で視聴。"
-				"COMMUNITYUPDATE_00_Q"	"「モナークレイン」ゲームプレイトレーラー"
-				"COMMUNITYUPDATE_01_A"	"5月30日にモナークレインで配信されるコンテンツと、スタッフお気に入りのファンイラストを数点ご紹介します。"
-				"COMMUNITYUPDATE_01_Q"	"FNN - モナークレイン公開"
-				"COMMUNITYUPDATE_02_A"	"DLC「モナークレイン」で登場するコンテンツと変更点をすべてご紹介します。\n\n\n`2%[A_BUTTON|MOUSE1]%`0 で表示。"
-				"COMMUNITYUPDATE_02_Q"	"モナークレインのパッチノート"
-				"COMMUNITYUPDATE_03_A"	"本作で最も話題を呼んだステージの製作者がミッションをプレイしながら、制作の様子や楽しい開発秘話を語ります。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で視聴。"
-				"COMMUNITYUPDATE_03_Q"	"Respawnプレイ:結果と原因"
-				"COMMUNITYUPDATE_04_A"	"リード3Dアーティストのライアン・ラスティモーサが、タイタンフォールにおける武器の制作工程をご案内します。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で表示。"
-				"COMMUNITYUPDATE_04_Q"	"Respawn開発ブログ:モデルショップ"
-				"COMMUNITYUPDATE_05_A"	"タイタンフォール 2を初めてプレイする方のために、Frothy Omen先生が基本のダブルジャンプから、武器や軍需品の使用まで、パイロットのいろはを教えてくれます。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
-				"COMMUNITYUPDATE_05_Q"	"タイタンフォール 2 パイロットスクール"
-				"COMMUNITYUPDATE_06_A"	"コミュニティーのダイジェスト動画:\n\nファイアースターを手にしたUS Marty氏を前に、安全に戦える者は居ません。逃げても隠れられない、恐怖のダイジェスト動画です。\n\n\n`2%[A_BUTTON|MOUSE1]%`0 で視聴。"
-				"COMMUNITYUPDATE_06_Q"	"ダイジェスト動画 - ファイアースターター"
-				"COMMUNITYUPDATE_07_A"	"redditでlaserisma氏にお寄せいただいた、驚きの短編コミックはスタッフの大のお気に入りです。\n\n\n`2%[A_BUTTON|MOUSE1]%`0で表示。"
-				"COMMUNITYUPDATE_07_Q"	"コミュニティーアート:ロードチェックを決めろ"
-				"COMMUNITYUPDATE_08_A"	"フロンティアでは目に映るものがすべてではない。新マップ「グリッチ」を収録したタイタンフォール 2用最新無料DLCパック、「フロンティアのグリッチ」の登場に備えよう。ラスティモーサ大尉の故郷、惑星ハーモニーをモチーフに作成された、垂直にそびえる壁と長く蛇行した道が大半を占めるマップで、長距離のウォールランを繋げ、マップ中を滑らかに疾走するのにぴったりの構成となっています。ライブファイア用新マップ、デッキも登場。タイトな内部空間と開けた中庭、上空を旋回する監視ドローンが特徴です。心が挫けそうになったら、いつでも協力的なマービンたちが新勢力を結成して、元気に力を貸してくれます。そして、パルスブレードを使った新処刑攻撃がアンロック可能となり、敵を刃で貫きたいときに使用できるようになりました。\n\n\n`2%[A_BUTTON|MOUSE1]%`0 で再生。"
+				"COMMUNITYUPDATE_00_A"	"配信開始！シリーズを代表するマップ「ウォーゲームズ」が美しさを増してタイタンフォール 2に戻ってきました。また、新処刑攻撃とライブファイアの新マップ「交通」もご紹介します。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で視聴。"
+				"COMMUNITYUPDATE_00_Q"	"「ウォーゲームズ」ゲームプレイトレーラー"
+				"COMMUNITYUPDATE_01_A"	"配布が始まったパッチ、ウォーゲームズの全変更点を確認しましょう。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で表示。"
+				"COMMUNITYUPDATE_01_Q"	"ウォーゲームズのパッチノート"
+				"COMMUNITYUPDATE_02_A"	"開発スタッフがパイロットのガントレットをプレイしながら、その開発過程について語ります。ベストタイムを記録するのは誰でしょうか？\n\n\n`2%[A_BUTTON|MOUSE1]% `0で視聴。"
+				"COMMUNITYUPDATE_02_Q"	"スタッフプレイ:パイロットのガントレット"
+				"COMMUNITYUPDATE_03_A"	"本作の壮大なシングルプレイヤーミッションの製作者が、制作の様子や楽しい開発秘話を語ります。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で視聴。"
+				"COMMUNITYUPDATE_03_Q"	"スタッフプレイ:炎の試練"
+				"COMMUNITYUPDATE_04_A"	"bman4750氏がreddit経由で発表した作品。タイタンフォール 2のパイロットとタイタンの可愛らしいレトロ風のイラストです。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で表示。"
+				"COMMUNITYUPDATE_04_Q"	"コミュニティー作品:ドット絵で描くジャックとBT"
+				"COMMUNITYUPDATE_05_A"	"Archer0506氏がreddit経由で発表した作品。非常に魅力的なスタイルとトーンを備えた力作です。\n\n\n`2%[A_BUTTON|MOUSE1]%`0 で表示。"
+				"COMMUNITYUPDATE_05_Q"	"コミュニティー作品:フリーランスの人造人間"
+				"COMMUNITYUPDATE_06_A"	"Pat L氏がD-2ダブルテイクを使用し、スナイパースタイルの速攻戦法を披露します。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で視聴。"
+				"COMMUNITYUPDATE_06_Q"	"ダイジェスト動画 - テイクツー"
+				"COMMUNITYUPDATE_07_A"	"今回のDLCでは、7体目のマルチプレイヤー用新タイタン「モナーク」とリマスター版マップ「レリック」、新処刑攻撃の配信に加え、販売アイテムにローニン・トーン用のプライムタイタンと新しい迷彩、バナー、ノーズアートが登場します。動画はこちら。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で視聴。"
+				"COMMUNITYUPDATE_07_Q"	"「モナークレイン」ゲームプレイトレーラー"
+				"COMMUNITYUPDATE_08_A"	"フロンティアでは目に映るものがすべてではない。新マップ「グリッチ」を収録したタイタンフォール 2用最新無料DLCパック、「フロンティアのグリッチ」の登場に備えよう。ラスティモーサ大尉の故郷、惑星ハーモニーをモチーフに作成された、垂直にそびえる壁と長く蛇行した道が大半を占めるマップで、長距離のウォールランを繋げ、マップ中を滑らかに疾走するのにぴったりの構成となっています。ライブファイア用新マップ、デッキも登場。タイトな内部空間と開けた中庭、上空を旋回する監視ドローンが特徴です。心が挫けそうになったら、マービンたちが新勢力を結成して、力を貸してくれます。そして、パルスブレードを使った新処刑攻撃がアンロック可能となり、敵を刃で貫きたいときに使用できるようになりました。\n\n\n`2%[A_BUTTON|MOUSE1]%`0 で再生。"
 				"COMMUNITYUPDATE_08_Q"	"「フロンティアのグリッチ」 トレーラー"
 				"COMMUNITYUPDATE_09_A"	"ファンの間で人気の高い初代の伝説のマルチプレイヤーマップ「植民地」に戻りましょう。「タイタンフォール 2」から登場した新しい戦術アビリティとタイタンの知識を活かさなければ、裏通りや見通しの利かない曲がり角、むき出しの屋上エリアから成る密集度の高い牧歌的な村落で、パイロットとタイタンが生き延びることはできません。マップは3月30日より全プレイヤーに無料配信。DLCパック「コロニーリボーン」には他にも、新デザインのR-101アサルトライフルといった前作でお馴染みの武器に加え、グラップルを使った新しい処刑攻撃、街を最高に格好良く血に染める有料の新装飾アイテムを収録しています。\n\n\n`2%[A_BUTTON|MOUSE1]%`0 で再生。"
 				"COMMUNITYUPDATE_09_Q"	"「コロニーリボーン」ゲームプレイトレーラー"
@@ -1885,8 +2359,8 @@
 				"COMMUNITYUPDATE_NAME"	"コミュニティ"
 				"KNB_SUBJECT_00_DESC"	"`3タイタンフォール更新履歴`0\n\nこちらをチェックして、タイタンフォール 2の変更点を確認しましょう！"
 				"KNB_SUBJECT_00_NAME"	"アップデート一覧"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0New Map - Wargames\n\n`2%$rui/bullet_point%`0New Map - Live Fire Traffic\n\n`2%$rui/bullet_point%`0New Pilot Execution - Shadow Boxing\n\n`2%$rui/bullet_point%`03rd Weapon Slot\n\n`2%$rui/bullet_point%`0Private Match Settings"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% June 27 - Wargames"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0新マップ - ウォーゲーム\n\n`2%$rui/bullet_point%`0ライブファイア用の新マップ - 交通\n\n`2%$rui/bullet_point%`0新パイロット処刑攻撃 - シャドウボクシング\n\n`2%$rui/bullet_point%`0第3の武器スロット\n\n`2%$rui/bullet_point%`0プライベートマッチ設定"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 6月27日 - ウォーゲーム"
 				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point% `0新型タイタン - モナーク\n\n`2%$rui/bullet_point% `0新マップ - レリック\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - 俺が見えるな\n\n`2%$rui/bullet_point% `0ストアに新着商品を追加"
 				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 5月30日 - モナークレイン"
 				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point% `0新マップ - グリッチ\n\n`2%$rui/bullet_point% `0ライブファイア用新マップ - デッキ\n\n`2%$rui/bullet_point% `0新勢力 - M.R.V.N.\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - 敵はそこだ\n\n`2%$rui/bullet_point% `0世代上限を100に上昇"
@@ -1934,7 +2408,7 @@
 				"PL_fd"	"フロンティアディフェンス"
 				"PL_fd_desc"	"残留艦隊の波状攻撃を防ぎきれ"
 				"PL_fd_easy"	"フロンティアディフェンス:イージー"
-				"PL_fd_easy_desc"	"フロンティアの守護者となり、無防備なフロンティアを防衛する。難易度はイージー。[TEMP]"
+				"PL_fd_easy_desc"	"敵軍を打ち砕け"
 				"PL_fd_easy_lobby"	"フロンティアディフェンス:イージー用ロビー"
 				"PL_fd_hard"	"フロンティアディフェンス:ハード"
 				"PL_fd_hard_desc"	"巧みなプレイが必要"
@@ -1947,7 +2421,7 @@
 				"PL_fd_master_desc"	"真の実力者だけが成功をつかむ"
 				"PL_fd_master_lobby"	"フロンティアディフェンス:マスターのロビー"
 				"PL_fd_normal"	"フロンティアディフェンス:レギュラー"
-				"PL_fd_normal_desc"	"敵軍を打ち砕け"
+				"PL_fd_normal_desc"	"熟練プレイヤー向け"
 				"PL_fd_normal_lobby"	"フロンティアディフェンス:レギュラーのロビー"
 				"PL_ffa"	"フリー・フォー・オール"
 				"PL_ffa_abbr"	"FFA"
@@ -2025,24 +2499,23 @@
 			"Language" "russian"
 			"Tokens"
 			{
-				"MP_LF_TRAFFIC_CLASSIC_DESC"							"Перестрелка: симуляция боя в городе.\nПримечание: Титаны недоступны."
-				"COMMUNITYUPDATE_00_A"	"Это DLC добавляет «Монарха» (седьмого Титана для сетевой игры), переделанную карту «Святыня», новую казнь, а также «Ронина Прайм», «Тона Прайм», камуфляжи, фоны и рисунки на корпус в магазин. Ознакомиться с игровым процессом можно здесь.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_00_Q"	"Трейлер «Власть монарха»"
-				"COMMUNITYUPDATE_01_A"	"Узнайте, что ждет вас в новом DLC «Власть монарха», которое выходит 30 июня, и взгляните на лучший фан-арт."
-				"COMMUNITYUPDATE_01_Q"	"НСФ: подробности о «Власти монарха»"
-				"COMMUNITYUPDATE_02_A"	"Подробности о контенте и изменениях, которые привнесет DLC «Власть монарха»!\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_02_Q"	"Изменения «Власти монарха»"
-				"COMMUNITYUPDATE_03_A"	"Создатели одного из самых обсуждаемых уровней проходят свое творение и рассказывают о процессе его создания, а также делятся другими историями из разработки.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_03_Q"	"Respawn в игре: «Следствие и причина»"
-				"COMMUNITYUPDATE_04_A"	"Ведущий художник по 3D Раян Ластимоза рассказывает о процессе создания оружия для Titanfall.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_04_Q"	"Блог Respawn: мастерская моделей"
-				"COMMUNITYUPDATE_05_A"	"Впервые в Titanfall 2? Мастер Frothy Omen научит вас основам игры за пилота: от двойных прыжков до стрельбы и применения спецоружия.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_05_Q"	"Школа пилотов Titanfall 2"
-				"COMMUNITYUPDATE_06_A"	"Никому не спастись от US Marty и его файрстара. Этот монтаж показывает, что вы можете бежать, но спрятаться вам не удастся.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_06_Q"	"Монтаж сообщества: «Поджигатель»"
-				"COMMUNITYUPDATE_07_A"	"Мы просто без ума от этого короткого, но захватывающего комикса за авторством laserisma с reddit.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_07_Q"	"Творчество сообщества: «Твой череподав»"
-				"COMMUNITYUPDATE_08_A"	"На Фронтире снова что-то неладно! Отправляйтесь на новую карту «Разлом» в бесплатном наборе DLC для Titanfall 2 — «Разлом на Фронтире». Вертикальные склоны и длинные запутанные тропы покрывают карту, напоминая пейзажи родной планеты капитана Ластимозы Гармонии. Для умеющего бегать по стенам пилота это место как ровная дорога. Режим «Перестрелка» также пополнился новой картой: на тесной «Палубе» легко потеряться в лабиринте комнат, а выбравшись наружу, остерегайтесь снующих в воздухе дронов. Если вас зажали в угол, позовите на помощь «Марвинов»: новая фракция с удовольствием протянет манипулятор помощи. А если вам нужно поставить финальную точку в отношениях с врагом, воспользуйтесь новой казнью «Пульсирующий клинок».\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_00_A"	"Уже в игре! Знаменитая карта «Военные игры» возвращается — и такой вы ее еще не видели! А еще не пропустите новую казнь и карту для «Перестрелки» — «Траффик».\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_00_Q"	"Трейлер «Военные игры»"
+				"COMMUNITYUPDATE_01_A"	"Узнайте, что ждет вас в обновлении «Военные игры», уже доступном в игре.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_01_Q"	"Изменения «Военных игр»"
+				"COMMUNITYUPDATE_02_A"	"Посмотрите, как мы проходим «Полосу препятствий» и узнайте, как она создавалась и кто покажет на ней лучшее время.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_02_Q"	"Respawn проходит «Полосу препятствий»"
+				"COMMUNITYUPDATE_03_A"	"Создатели эпического уровня рассказывают о процессе его создания, а также делятся другими историями из разработки.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_03_Q"	"Respawn проходит «Испытание огнем»"
+				"COMMUNITYUPDATE_04_A"	"bman4750 с reddit нарисовал милейший ретро-портрет наших любимых пилота и Титана из Titanfall 2.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_04_Q"	"Творения сообщества: пиксельные Джек и БТ"
+				"COMMUNITYUPDATE_05_A"	"Нам очень понравились стиль и настроение этой работы Archer0506 с reddit.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_05_Q"	"Творения сообщества: вольный симулякр"
+				"COMMUNITYUPDATE_06_A"	"Pat L показывает, как нужно бежать и метко стрелять из «D-2 Двойного удара».\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_06_Q"	"Монтаж сообщества: «Дайте два»"
+				"COMMUNITYUPDATE_07_A"	"Это DLC добавляет «Монарха» (седьмого Титана для сетевой игры), переделанную карту «Святыня», новую казнь, а также «Ронина Прайм», «Тона Прайм», камуфляжи, фоны и рисунки на корпус в магазин. Ознакомиться с игровым процессом можно здесь.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
+				"COMMUNITYUPDATE_07_Q"	"Трейлер «Власть монарха»"
+				"COMMUNITYUPDATE_08_A"	"Новое в бесплатном DLC «Разлом на Фронтире»:\nкарта для режима «Перестрелка»: «Палуба»,\nфракция: «Марвины»,\nказнь для пилота: «Пульсирующий клинок».\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
 				"COMMUNITYUPDATE_08_Q"	"Трейлер «Разлом на Фронтире»"
 				"COMMUNITYUPDATE_09_A"	"Ставшая культовой карта для сетевого режима оригинального Titanfall «Колония» теперь доступна и в сиквеле! Пилоты Titanfall 2 могут опробовать свои силы в боях на тихих узких улочках, крышах и закрытых двориках небольшой деревеньки. Переосмыслить старые тактики с новыми Титанами и оружием игроки смогут уже с 30 марта — и совершенно бесплатно! В наборе DLC «Новая колония» вы найдете и новые версии классического оружия (например, осадную винтовку R-101), новую казнь с помощью крюка и улучшения внешнего вида — устраивать резню на улицах города нужно по последней моде!\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
 				"COMMUNITYUPDATE_09_Q"	"Трейлер «Новая колония»"
@@ -2058,9 +2531,9 @@
 				"COMMUNITYUPDATE_14_Q"	"Трейлер сетевой игры «Пилоты»"
 				"COMMUNITYUPDATE_DESC"	"`3Новости сообщества Titanfall`0\n\nНовости и ссылки со всего Интернета.\n\nХотите еще?\n`2%$rui/bullet_point%`0Подпишитесь на нас в Twitter: `1@Respawn`0\n`2%$rui/bullet_point%`0Поставьте «Нравится» на `1facebook.com/RespawnEntertainment`0\n`2%$rui/bullet_point%`0Заходите на `1www.respawn.com`0."
 				"COMMUNITYUPDATE_NAME"	"Сообщество"
-				"KNB_SUBJECT_00_DESC"	"`3Что нового в Titanfall?`0\n\nНажмите сюда и узнайте, что изменилось в Titanfall 2!"
+				"KNB_SUBJECT_00_DESC"	"`3Что нового в Titanfall?`0\n\nНовости обновлений Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Обновления игры"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Новая карта — «Военные игры»\n\n`2%$rui/bullet_point%`0Новая карта — «Траффик (перестрелка)»\n\n`2%$rui/bullet_point%`0Новая казнь пилота — «Бой с тенью»\n\n`2%$rui/bullet_point%`03 ячейка для оружия\n\n`2%$rui/bullet_point%`0Настройки частных матчей"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Новая карта — «Военные игры»\n\n`2%$rui/bullet_point%`0Новая карта для режима «Перестрелка» — «Траффик»\n\n`2%$rui/bullet_point%`0Новая казнь пилота — «Бой с тенью»\n\n`2%$rui/bullet_point%`03 ячейка для оружия\n\n`2%$rui/bullet_point%`0Настройки частных матчей"
 				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 27 июня — «Военные игры»"
 				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Новый Титан: «Монарх»\n\n`2%$rui/bullet_point%`0Новая карта: «Святыня»\n\n`2%$rui/bullet_point%`0Новая казнь пилота: «Иллюзия обмана»\n\n`2%$rui/bullet_point%`0Новый контент в магазине"
 				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 30 мая: Власть монарха"
@@ -2200,23 +2673,22 @@
 			"Language" "spanish"
 			"Tokens"
 			{
-				"MP_LF_TRAFFIC_CLASSIC_DESC"							"Munición real: entorno urbano de simulación de combate.\nNota: no hay titanes disponibles"
-				"COMMUNITYUPDATE_00_A"	"Este DLC marca la llegada del 7.º titán de Multijugador, el Monarch; un mapa remasterizado, Reliquia, y una nueva ejecución, así como artículos adquiribles como los nuevos titanes prime Ronin y Tone, más camuflajes, indicativos y decoraciones. Disfruta de la acción aquí.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
-				"COMMUNITYUPDATE_00_Q"	"Tráiler de juego de «Reino del Monarch»"
-				"COMMUNITYUPDATE_01_A"	"Desvelamos todo lo que te esperará cuando Reino del Monarch se publique el 30/5, así como algunas de nuestras muestras favoritas de «fan art»."
-				"COMMUNITYUPDATE_01_Q"	"RNF: revelación de Reino del Monarch"
-				"COMMUNITYUPDATE_02_A"	"Descubre todo el contenido y los cambios que te esperan en el DLC Reino del Monarch.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
-				"COMMUNITYUPDATE_02_Q"	"Notas de parche de Reino del Monarch"
-				"COMMUNITYUPDATE_03_A"	"Los chicos responsables de crear uno de los niveles más comentados del modo Un jugador juegan la misión mientras hablan de cómo se diseñó y comparten otras anécdotas sobre el desarrollo.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
-				"COMMUNITYUPDATE_03_Q"	"Respawn Plays: Efecto y causa"
-				"COMMUNITYUPDATE_04_A"	"El diseñador 3D jefe Ryan Lastimosa nos muestra el proceso de creación de armas en Titanfall.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
-				"COMMUNITYUPDATE_04_Q"	"Blog de Respawn: taller de modelado"
-				"COMMUNITYUPDATE_05_A"	"¿Acabas de empezar en Titanfall 2? Déjate aconsejar por el senséi Frothy Omen, que te instruirá en el «camino del piloto», desde saltos dobles básicos al uso de armas de fuego y armas explosivas.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_05_Q"	"Escuela de pilotos de Titanfall 2"
-				"COMMUNITYUPDATE_06_A"	"Nadie está a salvo de US Marty cuando tiene la piroestrella. En este montaje puedes correr, pero no podrás esconderte.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
-				"COMMUNITYUPDATE_06_Q"	"Montaje de la comunidad: Pirómano"
-				"COMMUNITYUPDATE_07_A"	"Nos encanta este fantástico y breve cómic creado por laserisma en reddit.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
-				"COMMUNITYUPDATE_07_Q"	"Diseños de la comunidad: Aplastacráneos"
+				"COMMUNITYUPDATE_00_A"	"¡Ya disponible! El icónico mapa Juegos de guerra vuelve a Titanfall 2, con mejores gráficos que nunca. Echa también un vistazo a la nueva ejecución y al nuevo mapa de Munición real.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
+				"COMMUNITYUPDATE_00_Q"	"Tráiler de juego de «Juegos de guerra»"
+				"COMMUNITYUPDATE_01_A"	"Lee acerca de todas las novedades que te trae el parche Juegos de guerra, ya disponible.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
+				"COMMUNITYUPDATE_01_Q"	"Juegos de guerra: notas de parche"
+				"COMMUNITYUPDATE_02_A"	"Podrás vernos atravesar el circuito de pilotos y hablar de cómo se diseñó, así como ver quién de nosotros logra el mejor tiempo.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
+				"COMMUNITYUPDATE_02_Q"	"Respawn Plays: el circuito de pilotos"
+				"COMMUNITYUPDATE_03_A"	"Los chicos responsables de la creación de esta misión de Un jugador épica hablan de cómo se diseñó y comparten otras anécdotas sobre el desarrollo.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
+				"COMMUNITYUPDATE_03_Q"	"Respawn Plays: Prueba de fuego"
+				"COMMUNITYUPDATE_04_A"	"bman4750 en reddit ha creado un fantástico retrato retro de nuestros piloto y titán favoritos de Titanfall 2.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
+				"COMMUNITYUPDATE_04_Q"	"Creaciones de la comunidad: «pixel art» de Jack and BT"
+				"COMMUNITYUPDATE_05_A"	"Nos encantan el estilo y el tono de esta obra de Archer0506 en reddit.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
+				"COMMUNITYUPDATE_05_Q"	"Creaciones de la comunidad: simulacrum mercenario"
+				"COMMUNITYUPDATE_06_A"	"Pat L nos enseña cómo correr y disparar como un francotirador con la D-2 Double Take.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
+				"COMMUNITYUPDATE_06_Q"	"Montaje de la comunidad: Toma dos"
+				"COMMUNITYUPDATE_07_A"	"Este DLC marca la llegada del 7.º titán de Multijugador, el Monarch; un mapa remasterizado, Reliquia, y una nueva ejecución, así como artículos adquiribles como los nuevos titanes prime Ronin y Tone, más camuflajes, indicativos y decoraciones. Disfruta de la acción aquí.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para ver."
+				"COMMUNITYUPDATE_07_Q"	"Tráiler de juego de «Reino del Monarch»"
 				"COMMUNITYUPDATE_08_A"	"En la Frontera no todo es lo que parece. Prepárate para el nuevo DLC gratuito de Titanfall 2, Un glitch en la Frontera, con el nuevo mapa «Glitch». Inspirado en el planeta natal del capitán Lastimosa, Armonía, aquí encontrarás un paisaje dominado por desniveles verticales y rutas largas y serpenteantes, ideal para encadenar carreras por muros y así cruzar ágilmente el mapa. Y, además, un nuevo mapa de Munición real, «Cubierta», con espacios constreñidos, patios expuestos y drones que acechan patrullando desde arriba. Y si te sientes abrumado(a), los siempre serviciales marvins han llegado como una nueva facción para echarte una mano (robótica). Finalmente, ya se puede desbloquear la nueva ejecución con el filo de pulso, para cuando quieras ponerte «incisivo(a)».\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
 				"COMMUNITYUPDATE_08_Q"	"Tráiler de juego «Un glitch en la Frontera»"
 				"COMMUNITYUPDATE_09_A"	"Vuelve uno de los mapas multijugador favoritos del Titanfall original: el icónico Colonia. Añádele a esto las nuevas tácticas y titanes de Titanfall 2, y los pilotos y titanes tendrán que exprimir todas sus habilidades para sobrevivir en este asentamiento idílico y denso lleno de callejones, esquinas traicioneras y tejados expuestos. Disponible el 30 de marzo para todos los jugadores. El pack de DLC «Colony Reborn» incluye el retorno de armas clásicas como el rifle de asalto decorado R-101, una nueva ejecución con el garfio y nuevas opciones cosméticas a la venta para destacar en combate mientras arrasas a tus enemigos.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
@@ -2235,7 +2707,7 @@
 				"COMMUNITYUPDATE_NAME"	"Comunidad"
 				"KNB_SUBJECT_00_DESC"	"`3¿Qué novedades trae Titanfall?`0\n\n¡Consulta aquí qué ha cambiado en Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Actualizaciones"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Juegos de guerra\n\n`2%$rui/bullet_point%`0Nuevo mapa: Tráfico de Munición real\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Lucha con tu sombra\n\n`2%$rui/bullet_point%`03.er espacio de arma\n\n`2%$rui/bullet_point%`0Ajustes de partida privada"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Juegos de guerra\n\n`2%$rui/bullet_point%`0Nuevo mapa de Munición real: Tráfico\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Lucha con tu sombra\n\n`2%$rui/bullet_point%`03.er espacio de arma\n\n`2%$rui/bullet_point%`0Ajustes de partida privada"
 				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 27 de junio: Juegos de guerra"
 				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Nuevo titán: Monarch\n\n`2%$rui/bullet_point%`0Nuevo mapa: Reliquia\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Ahora me ves\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda"
 				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 30 de mayo: Reino del Monarch"
@@ -2284,7 +2756,7 @@
 				"PL_fd"	"Defensa fronteriza"
 				"PL_fd_desc"	"Defiende contra las oleadas de las fuerzas de la Flota Remanente"
 				"PL_fd_easy"	"Defensa fronteriza: fácil"
-				"PL_fd_easy_desc"	"Aplasta a los rivales"
+				"PL_fd_easy_desc"	"Aplasta a los rivales."
 				"PL_fd_easy_lobby"	"Defensa fronteriza: vestíbulo fácil"
 				"PL_fd_hard"	"Defensa fronteriza: difícil"
 				"PL_fd_hard_desc"	"Se requiere mucha habilidad"
@@ -2375,23 +2847,22 @@
 			"Language" "tchinese"
 			"Tokens"
 			{
-				"MP_LF_TRAFFIC_CLASSIC_DESC"							"烈火戰場：都市戰鬥環境模擬。\n注意：不可使用泰坦"
-				"COMMUNITYUPDATE_00_A"	"此 DLC 內含第 7 款多人泰坦遊戲：「帝王」，為「遺跡」的重製地圖，並新增了可購買的浪人、至尊強力泰坦、更多迷彩、旗幟和機頭藝術。於此處觀看影像。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_00_Q"	"「帝王的統治」遊戲玩法預告片"
-				"COMMUNITYUPDATE_01_A"	"搶先看 5 月 30 日於「帝王的統治」內登場的內容與我們精選的粉絲創作。"
-				"COMMUNITYUPDATE_01_Q"	"邊境新聞網 -「帝王的統治」搶先看"
-				"COMMUNITYUPDATE_02_A"	"查看即將於「帝王的統治」DLC 中登場的內容與變更。\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_02_Q"	"「帝王的統治」改版資訊"
-				"COMMUNITYUPDATE_03_A"	"一手打造出熱門單人模式關卡的人員，一面遊玩任務，一面分享他們開發的過程及開發所遇到的趣事。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_03_Q"	"Respawn 一起玩：因果報應"
-				"COMMUNITYUPDATE_04_A"	"資深 3D 美術設計師 Ryan Lastimosa 將帶我們還原為《Titanfall》創作武器的過程。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_04_Q"	"Respawn 開發日誌：模組一覽"
-				"COMMUNITYUPDATE_05_A"	"《Titanfall 2》的新手？讓 Frothy Omen 老師從基本的二連跳到使用武器與火力彈藥教你各種駕馭鐵馭的方式。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_05_Q"	"《Titanfall 2》鐵馭教學"
-				"COMMUNITYUPDATE_06_A"	"當 US Marty 手中握有飛火星時，人人都處在危機之下。您儘管逃跑，但您是躲不過這一則集錦的。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_06_Q"	"社群集錦 - 飛火星手"
-				"COMMUNITYUPDATE_07_A"	"我們非常愛這則由作者 laserisma 張貼於 reddit 的出色短篇漫畫 。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
-				"COMMUNITYUPDATE_07_Q"	"社群創作：迎面猛擊"
+				"COMMUNITYUPDATE_00_A"	"現已開放！經典的戰爭遊戲地圖以全新姿態重返《Titanfall 2》。更別錯過全新處決動畫與烈火戰場地圖 - 交通。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_00_Q"	"「戰爭遊戲」玩法預告片"
+				"COMMUNITYUPDATE_01_A"	"瞭解現已開放的戰爭遊戲修補檔的所有變更內容。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_01_Q"	"戰爭遊戲修補檔資訊"
+				"COMMUNITYUPDATE_02_A"	"觀看我們玩鐵馭試煉，並在討論其製作過程的同時看看誰能獲得最佳紀錄。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_02_Q"	"Respawn 一起玩：鐵馭試煉"
+				"COMMUNITYUPDATE_03_A"	"一手打造出熱門單人模式關卡的人員分享他們開發的過程及開發中所遇到的趣事。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_03_Q"	"Respawn 一起玩：烈火審判"
+				"COMMUNITYUPDATE_04_A"	"Reddit 的 bman4750 製作了一張可愛的復古畫作，上面畫著我們最愛的《Titanfall 2》鐵馭跟泰坦。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_04_Q"	"社群創作：傑克與 BT 像素畫"
+				"COMMUNITYUPDATE_05_A"	"我們超愛 Reddit 的 Archer0506 的畫風與格調。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_05_Q"	"社群創作：自由模擬"
+				"COMMUNITYUPDATE_06_A"	"Pat L 展現他如何使用 D-2 雙重擊來進行機動狙擊戰術。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_06_Q"	"社群集錦 - 第二彈"
+				"COMMUNITYUPDATE_07_A"	"此 DLC 內含第 7 具多人遊戲泰坦：「帝王」，為「遺跡」的重製地圖，並新增了可購買的至尊浪人以及至尊強力泰坦、更多迷彩、旗幟和機頭藝術。於此處觀看影像。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
+				"COMMUNITYUPDATE_07_Q"	"「帝王的統治」遊戲玩法預告片"
 				"COMMUNITYUPDATE_08_A"	"邊境中暗藏危機 - 準備進入《Titanfall 2》最新的免費 DLC：邊境故障，其中將包含全新地圖「異常」。受拉斯提摩沙上尉的家鄉哈墨尼星所啟發的環境設計，其中大多為垂直空間與連綿曲折的道路，非常適合使用連鎖蹬壁來橫跨此地圖。另外還有一張全新烈火戰場地圖即將登場：甲板，其中包含狹窄的室內空間、空曠的廣場和在空中盤旋的機器人。如果本次更新讓您感到壓力太大，您最得力的助手馬文機器人現在將成為全新陣營並助您一臂之力。最後，全新的脈衝刀處決動畫已開放，並在您需要的時候隨時供您使用。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
 				"COMMUNITYUPDATE_08_Q"	"「邊境故障」遊戲玩法預告片"
 				"COMMUNITYUPDATE_09_A"	"重返粉絲們最愛的初代《Titanfall》地圖：殖民地。混合了《Titanfall 2》中所有全新戰術技能與泰坦，泰坦與鐵馭們想在這張充滿狹窄巷弄、死角與開放屋頂的鄉村地圖中存活必須隨時保持警覺。於 3 月 30 日對所有玩家免費開放。「殖民地重生」DLC 組合包中含有酷炫的經典武器 R-101 步槍、全新勾爪處決動畫和全新外觀選項供您購買，讓您能夠在浴血奮戰的同時展現您獨有的魅力。\n\n\n按 `2%[A_BUTTON|MOUSE1]%`0 觀看。"
@@ -2410,7 +2881,7 @@
 				"COMMUNITYUPDATE_NAME"	"社群"
 				"KNB_SUBJECT_00_DESC"	"`3《Titanfall》有什麼新內容？`0\n\n從此處瞭解《Titanfall 2》的改變！"
 				"KNB_SUBJECT_00_NAME"	"遊戲更新"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0新地圖 - 戰爭遊戲\n\n`2%$rui/bullet_point%`0新地圖 - 烈火戰場交通\n\n`2%$rui/bullet_point%`0新鐵馭處決動畫 - 幻影拳腳\n\n`2%$rui/bullet_point%`0第三武器欄\n\n`2%$rui/bullet_point%`0私人比賽設置"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0新地圖 - 戰爭遊戲\n\n`2%$rui/bullet_point%`0新烈火戰場地圖 - 交通\n\n`2%$rui/bullet_point%`0新鐵馭處決動畫 - 幻影拳腳\n\n`2%$rui/bullet_point%`0第三武器欄\n\n`2%$rui/bullet_point%`0私人比賽設置"
 				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 6 月 27 日 - 戰爭遊戲"
 				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0全新泰坦 - 帝王\n\n`2%$rui/bullet_point%`0全新地圖 - 遺跡\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 無影無蹤\n\n`2%$rui/bullet_point%`0全新商城道具供你購買"
 				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 5 月 30 日 - 帝王的統治"
@@ -2550,23 +3021,22 @@
 			"Language" "italian"
 			"Tokens"
 			{
-				"MP_LF_TRAFFIC_CLASSIC_DESC"							"Live Fire: Simulazione ambiente di combattimento urbano.\nNota: Nessun Titan disponibile"
-				"COMMUNITYUPDATE_00_A"	"In questo DLC presentiamo: Monarch, il settimo Titan per multigiocatore; una rivisitazione della mappa Relitto; una nuova esecuzione e i Titan Ronin Prime e Tone Prime acquistabili; altre mimetiche, bandiere e decorazioni. Non perderti l'azione qui.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_00_Q"	"Trailer gameplay “Regno di Monarch”"
-				"COMMUNITYUPDATE_01_A"	"La presentazione dei contenuti disponibili in Regno di Monarch, il cui lancio è previsto il 30 maggio, più alcune delle nostre fanart preferite."
-				"COMMUNITYUPDATE_01_Q"	"NDF - Svelato il Regno di Monarch"
-				"COMMUNITYUPDATE_02_A"	"Scopri i contenuti e le modifiche in arrivo con il DLC Regno di Monarch.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_02_Q"	"Informazioni sulla patch Regno di Monarch"
-				"COMMUNITYUPDATE_03_A"	"I responsabili della creazione di uno dei nostri più popolari livelli per giocatore singolo affrontano la missione, spiegando come l'hanno ideata e raccontando altre storie divertenti sul suo sviluppo.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_03_Q"	"Respawn Plays: Causa ed effetto"
-				"COMMUNITYUPDATE_04_A"	"Il capo grafico 3D Ryan Lastimosa descrive il processo di creazione delle armi per Titanfall.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_04_Q"	"Blog di Respawn - L'officina dei modelli"
-				"COMMUNITYUPDATE_05_A"	"Non conosci Titanfall 2? Lascia che sensei Frothy Omen ti insegni le mosse del pilota, dal doppio salto di base all'uso di armi ed equipaggiamento.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_05_Q"	"Scuola per piloti Titanfall 2"
-				"COMMUNITYUPDATE_06_A"	"Nessuno è al sicuro da US Marty quando ha quel Firestar. Puoi scappare, ma non puoi nasconderti in questo montaggio.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_06_Q"	"Montaggio della community - Fire Starter"
-				"COMMUNITYUPDATE_07_A"	"Adoriamo questo fumetto breve e sorprendente, creato da laserisma via reddit.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_07_Q"	"Community Art: una Spaccatesta per te"
+				"COMMUNITYUPDATE_00_A"	"Disponibile ora! L’apprezzata mappa Giochi di guerra torna in Titanfall 2, più bella che mai. Scopri anche la nuova esecuzione e la nuova mappa Live Fire, Traffico in azione.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_00_Q"	"Trailer gameplay “Giochi di guerra”"
+				"COMMUNITYUPDATE_01_A"	"Leggi tutte le novità introdotte nella patch di Giochi di guerra, ora disponibile.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_01_Q"	"Note sulla patch Giochi di guerra"
+				"COMMUNITYUPDATE_02_A"	"Guardaci mentre giochiamo al Gauntlet del pilota e parliamo della sua realizzazione e scopri chi riesce a ottenere il tempo migliore.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_02_Q"	"Partite Respawn: Il Gauntlet del pilota"
+				"COMMUNITYUPDATE_03_A"	"I responsabili della creazione di una delle missioni per giocatore singolo più popolari spiegano come l'hanno ideata e raccontano altre storie divertenti sul suo sviluppo.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_03_Q"	"Respawn Plays: Prova del fuoco"
+				"COMMUNITYUPDATE_04_A"	"bman4750 via reddit ha creato un fantastico ritratto retrò del nostro pilota e Titan preferito di Titanfall 2.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_04_Q"	"Creazioni della community: Jack e BT Pixel Art"
+				"COMMUNITYUPDATE_05_A"	"Adoriamo lo stile e il tono di quest’opera eccezionale di Archer0506 su reddit.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_05_Q"	"Creazioni della community: Simulacro freelance"
+				"COMMUNITYUPDATE_06_A"	"Pat L mostra come correre e utilizzare lo stile da cecchino con il D-2 Doppio Colpo.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_06_Q"	"Montaggio della community - Take Two"
+				"COMMUNITYUPDATE_07_A"	"In questo DLC presentiamo: Monarch, il settimo Titan per multigiocatore; una rivisitazione della mappa Relitto; una nuova esecuzione e i Titan Ronin Prime e Tone Prime acquistabili; altre mimetiche, bandiere e decorazioni. Non perderti l'azione qui.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
+				"COMMUNITYUPDATE_07_Q"	"Trailer gameplay “Regno di Monarch”"
 				"COMMUNITYUPDATE_08_A"	"Nulla è come sembra nella Frontiera: preparati a entrare nel nuovo pack DLC gratuito per Titanfall 2: Un Glitch nella Frontiera, che contiene la nuova mappa “Glitch”. Ispirato dal pianeta Harmony del capitano Lastimosa, l’ambiente è dominato da cadute verticali e lunghi percorsi tortuosi, perfetti per concatenare lunghe corse sui muri, per poi planare in tutta la mappa. È inoltre inclusa una nuova mappa Live Fire: Ponte, che vanta spazi interni ristretti, cortili esposti e droni vigili che volteggiano sulla testa. Se dovessi sentirti sopraffatto, non preoccuparti: i M.R.V.N., sempre pronti a darti una mano robotica, si uniscono al gioco come una fazione completamente nuova. Infine, è possibile sbloccare l’esecuzione Lama a impulsi, perché possa essere utilizzata tutte le volte che desideri “far arrivare il messaggio”.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
 				"COMMUNITYUPDATE_08_Q"	"Trailer gameplay “Un Glitch nella Frontiera”"
 				"COMMUNITYUPDATE_09_A"	"Torna una delle mappe multigiocatore più apprezzate del Titanfall originale: Colonia. Con tutte le nuove tattiche e i nuovi Titan di Titanfall 2, Piloti e Titan dovranno rimanere sempre all’erta per sopravvivere in questo villaggio idilliaco e molto popolato fatto di vicoli, angoli ciechi e tetti esposti; disponibile gratuitamente il 30 marzo per tutti i giocatori. Il pack DLC “Colonia Rinata” comprende il ritorno di armi classiche come il fucile d’assalto R-101 modificato, una nuova esecuzione rampino e nuove opzioni estetiche da acquistare per apparire sempre al meglio mentre dipingi di rosso la città.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
@@ -2576,7 +3046,7 @@
 				"COMMUNITYUPDATE_11_A"	"Prova una versione rivisitata di una della mappe preferite del Titanfall originale, `1Angel City`0. Tieniti pronto per il primo DLC gratuito per Titanfall 2 con `1Ricercato di Angel City`0 disponibile il 1 dicembre. Questo contenuto comprende nuove opzioni estetiche per aggiungere un po’ di eleganza alla Frontiera. \n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
 				"COMMUNITYUPDATE_11_Q"	"Trailer gameplay “Benvenuti in Angel City”"
 				"COMMUNITYUPDATE_12_A"	"Bentornato.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_12_Q"	"Trailer \"Encore\" Accolades"
+				"COMMUNITYUPDATE_12_Q"	"Trailer \"Encore\""
 				"COMMUNITYUPDATE_13_A"	"Due leggende, una sola eredità.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
 				"COMMUNITYUPDATE_13_Q"	"Trailer “Diventate una cosa sola”"
 				"COMMUNITYUPDATE_14_A"	"Senza limiti.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
@@ -2585,7 +3055,7 @@
 				"COMMUNITYUPDATE_NAME"	"Community"
 				"KNB_SUBJECT_00_DESC"	"`3Quali sono le novità di Titanfall?`0\n\nQui potrai vedere tutte le novità in Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Aggiornamenti"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Nuova mappa - Giochi di guerra\n\n`2%$rui/bullet_point%`0Nuova mappa - Traffico Live Fire\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Scatola ombra\n\n`2%$rui/bullet_point%`03° slot arma\n\n`2%$rui/bullet_point%`0Impostazioni partita privata"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Nuova mappa - Giochi di guerra\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Traffico\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Scatola ombra\n\n`2%$rui/bullet_point%`03° slot arma\n\n`2%$rui/bullet_point%`0Impostazioni partita privata"
 				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 27 giugno - Giochi di guerra"
 				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Nuovo Titan - Monarch\n\n`2%$rui/bullet_point%`0Nuova mappa - Relitto\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Ora mi vedi\n\n`2%$rui/bullet_point%`0Nuovo contenuto acquistabile nello store"
 				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 30 maggio - Regno di Monarch"
@@ -2725,7 +3195,6 @@
 			"Language" "english"
 			"Tokens"
 			{
-				"MP_LF_TRAFFIC_CLASSIC_DESC"				"Live Fire: Urban combat environment simulation.\nNote: No Titans Available"
 				"PL_limited_time_mode" "Limited Time Mode"
 				"PL_speedball" "Live Fire"
 				"PL_speedball_lobby" "Live Fire Lobby"
@@ -2735,19 +3204,22 @@
 				"PL_don" "Double or Nothing"
 				"PL_fd" "Frontier Defense"
 				"PL_fd_lobby" "Frontier Defense Lobby"
-				"PL_fd_desc" "Play frontier defenders defending the defenseless frontier. [TEMP]"
-				"PL_fd_normal" "Frontier Defense: Normal"
-				"PL_fd_normal_lobby" "Frontier Defense: Normal Lobby"
-				"PL_fd_normal_desc" "Play frontier defenders defending the defenseless frontier on normal difficulty . [TEMP]"
+				"PL_fd_desc" "Defend against waves of Remnant Fleet forces"
+				"PL_fd_easy" "Frontier Defense: Easy"
+				"PL_fd_easy_lobby" "Frontier Defense: Easy Lobby"
+				"PL_fd_easy_desc" "Crush the opposition"
+				"PL_fd_normal" "Frontier Defense: Regular"
+				"PL_fd_normal_lobby" "Frontier Defense: Regular Lobby"
+				"PL_fd_normal_desc" "Recommended for experienced players"
 				"PL_fd_hard" "Frontier Defense: Hard"
 				"PL_fd_hard_lobby" "Frontier Defense: Hard Lobby"
-				"PL_fd_hard_desc" "Play frontier defenders defending the defenseless frontier on hard difficulty . [TEMP]"
+				"PL_fd_hard_desc" "Skilled play is required"
 				"PL_fd_master" "Frontier Defense: Master"
 				"PL_fd_master_lobby" "Frontier Defense: Master Lobby"
-				"PL_fd_master_desc" "Play frontier defenders defending the defenseless frontier on master difficulty . [TEMP]"
+				"PL_fd_master_desc" "Only the best of the best will succeed"
 				"PL_fd_insane" "Frontier Defense: Insane"
 				"PL_fd_insane_lobby" "Frontier Defense: Insane Lobby"
-				"PL_fd_insane_desc" "Play frontier defenders defending the defenseless frontier on insane difficulty . [TEMP]"
+				"PL_fd_insane_desc" "You will not survive"
 				"PL_angel_city"			"Angel City 24/7"
 				"PL_angel_city_lobby"	"Angel City 24/7 Lobby"
 				"PL_angel_city_desc"	"All Angel City, all the time.\n^FFC83200*Bounty Hunt                   *Attrition\n*Amped Hardpoint"
@@ -2756,10 +3228,10 @@
 				"PL_colony_lobby"	"Colony 24/7 Lobby"
 				"PL_colony_desc"	"All Colony, all the time. ^CCCCCC00This will search for matches of ^FFC83200Attrition^CCCCCC00, ^FFC83200Pilots vs Pilots^CCCCCC00, and ^FFC83200Last Titan Standing^CCCCCC00."
 				"PL_colony_abbr"	"COL"
-				"PL_relic"			"Relic 24/7"
-				"PL_relic_lobby"	"Relic 24/7 Lobby"
-				"PL_relic_desc"	"All Relic, all the time. ^CCCCCC00This will search for matches of ^FFC83200CTF^CCCCCC00, ^FFC83200Amped Hardpoint^CCCCCC00, ^FFC83200Pilots vs Pilots^CCCCCC00, ^FFC83200Live Fire^CCCCCC00, and ^FFC83200Last Titan Standing^CCCCCC00."
-				"PL_relic_abbr"	"REL"
+				"PL_rise"			"Rise 24/7"
+				"PL_rise_lobby"	"Rise 24/7 Lobby"
+				"PL_rise_desc"	"All Rise, all the time. ^CCCCCC00This will search for matches of ^FFC83200CTF^CCCCCC00, ^FFC83200Amped Hardpoint^CCCCCC00, ^FFC83200Pilots vs Pilots^CCCCCC00, ^FFC83200Live Fire^CCCCCC00, and ^FFC83200Last Titan Standing^CCCCCC00."
+				"PL_rise_abbr"	"RIS"
 				"PL_wargames"			"Wargames 24/7"
 				"PL_wargames_lobby"	"Wargames 24/7 Lobby"
 				"PL_wargames_desc"	"All Wargames, all the time. ^CCCCCC00This will search for matches of ^FFC83200Attrition^CCCCCC00, ^FFC83200CTF^CCCCCC00, ^FFC83200Pilots vs Pilots^CCCCCC00, ^FFC83200Amped Hardpoint^CCCCCC00, and ^FFC83200Last Titan Standing^CCCCCC00."
@@ -2852,29 +3324,29 @@
 				"COMMUNITYUPDATE_NAME"						"Community"
 				"COMMUNITYUPDATE_DESC"						"`3Titanfall Community Updates`0\n\nGet latest info and see stuff we think is rad from around the web.\n\nFor more:\n`2%$rui/bullet_point%`0Follow us on Twitter `1@Respawn`0\n`2%$rui/bullet_point%`0Like us on `1facebook.com/RespawnEntertainment`0\n`2%$rui/bullet_point%`0Join us at `1www.respawn.com`0"
 
-				"COMMUNITYUPDATE_00_Q"						"\"Monarch's Reign\" Gameplay Trailer"
-				"COMMUNITYUPDATE_00_A"						"This DLC features the addition of the 7th multiplayer Titan: Monarch, a remaster of the map, Relic, a new execution as well as purchasable Ronin and Tone Prime Titans, more camos, banners, and nose art. Watch the action here.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_00_Q"						"\"The War Games\" Gameplay Trailer"
+				"COMMUNITYUPDATE_00_A"						"Available now! The iconic War Games map returns to Titanfall 2 looking better than ever. Also check out the new execution and new live fire map, Traffic in action.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_01_Q"                      "FNN - Monarch's Reign Reveal"
-				"COMMUNITYUPDATE_01_A"                      "The reveal of what you'll be getting when Monarch's Reign is released on 5/30 plus some of our favorite fan art."
+				"COMMUNITYUPDATE_01_Q"                      "War Games the Patch Notes"
+				"COMMUNITYUPDATE_01_A"                      "Read all the changes that come with the War Games patch available now.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_02_Q"						"Monarch's Reign Patch Notes"
-				"COMMUNITYUPDATE_02_A"						"Read all the content and changes coming with the Monarch's Reign DLC.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_02_Q"						"Respawn Plays: The Pilot's Gauntlet"
+				"COMMUNITYUPDATE_02_A"						"Watch us play through the Pilot's Gauntlet and talk about how it was made and see who can get the best time.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_03_Q"						"Respawn Plays: Effect and Cause"
-				"COMMUNITYUPDATE_03_A"						"The folks responsible for creating one of our most talked about single player levels plays through the mission while talking about how they made it and sharing other fun development stories.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_03_Q"						"Respawn Plays: Trial by Fire"
+				"COMMUNITYUPDATE_03_A"						"The folks responsible for creating the epic single player mission talks about how they made it and sharing other fun development stories.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_04_Q"						"Respawn Dev Blog: The Modelshop"
-				"COMMUNITYUPDATE_04_A"						"Lead 3D artist Ryan Lastimosa walks us through the process of creating weapons for Titanfall.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_04_Q"						"Community Creations: Jack and BT Pixel Art"
+				"COMMUNITYUPDATE_04_A"						"bman4750 via reddit has created an adorable retro portrait of our favorite Pilot and Titan from Titanfall 2.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_05_Q"						"Titanfall 2 Pilot School"
-				"COMMUNITYUPDATE_05_A"						"New to Titanfall 2? Let sensei Frothy Omen teach you the ways of the Pilot from basic double jumping to using weapons and ordnance.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_05_Q"						"Community Creations: Freelance Simulacrum"
+				"COMMUNITYUPDATE_05_A"						"We are just loving the style and tone of this great piece by Archer0506 via reddit.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_06_Q"						"Community Montage - Fire Starter"
-				"COMMUNITYUPDATE_06_A"						"No one is safe from US Marty when he's got that Firestar. You can run but you can't hide in this montage.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_06_Q"						"Community Montage - Take Two"
+				"COMMUNITYUPDATE_06_A"						"Pat L shows off how to run and gun sniper style with the D-2 Double Take.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
-				"COMMUNITYUPDATE_07_Q"						"Community Art: Curb Check You "
-				"COMMUNITYUPDATE_07_A"						"We love this stunning, brief comic made by laserisma via reddit.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
+				"COMMUNITYUPDATE_07_Q"						"\"Monarch's Reign\" Gameplay Trailer"
+				"COMMUNITYUPDATE_07_A"						"This DLC features the addition of the 7th multiplayer Titan: Monarch, a remaster of the map, Relic, a new execution as well as purchasable Ronin and Tone Prime Titans, more camos, banners, and nose art. Watch the action here.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
 
 				"COMMUNITYUPDATE_08_Q"						"\"A Glitch in the Frontier\" Gameplay Trailer"
 				"COMMUNITYUPDATE_08_A"						"All is not as it appears on the Frontier - prepare to enter the newest free DLC pack for Titanfall 2: A Glitch in the Frontier - featuring the new map “Glitch”. Inspired by Captain Lastimosa’s home planet of Harmony, vertical drops and long, twisting paths dominate the environment, perfect for chaining together long wall runs to seamlessly glide across the map. A new Live Fire map also joins the fold: Deck, which features tight interior spaces, exposed courtyards, and watchful drones circling overhead. If you’re feeling overwhelmed, the ever-helpful M.R.V.N.s are now here as an all-new faction to lend a cheery robotic hand. Finally, the new Pulse Blade execution is available to unlock to use whenever you feel the need to get your point across.\n\n\nPress `2%[A_BUTTON|MOUSE1]%`0 to view."
@@ -2906,8 +3378,8 @@
 				"KNB_SUBJECT_00_DESC"						"`3What's New in Titanfall?`0\n\nCheck here to see what's changed in Titanfall 2!"
 
 				"KNB_SUBJECT_00_SUB_00_A"					"`2%$rui/bullet_point%`0New Map - Wargames\n\n`2%$rui/bullet_point%`0New Live Fire Map - Traffic\n\n`2%$rui/bullet_point%`0New Pilot Execution - Shadow Boxing\n\n`2%$rui/bullet_point%`03rd Weapon Slot\n\n`2%$rui/bullet_point%`0Private Match Settings"
-				"KNB_SUBJECT_00_SUB_00_Q"					"%$rui/hud/scoreboard/status_titan% June 27 - Wargames"
-				
+				"KNB_SUBJECT_00_SUB_00_Q"					"%$rui/hud/scoreboard/status_titan% June 27 - The War Games"
+
 				"KNB_SUBJECT_00_SUB_01_A"					"`2%$rui/bullet_point%`0New Titan - Monarch\n\n`2%$rui/bullet_point%`0New Map - Relic\n\n`2%$rui/bullet_point%`0New Pilot Execution - Now You See Me\n\n`2%$rui/bullet_point%`0New Purchasable Store Content"
 				"KNB_SUBJECT_00_SUB_01_Q"					"%$rui/hud/scoreboard/status_titan% May 30 - Monarch's Reign"
 
@@ -2929,23 +3401,22 @@
 			"Language" "french"
 			"Tokens"
 			{
-				"MP_LF_TRAFFIC_CLASSIC_DESC"							"Live Fire : simulation d'un environnement de combat urbain.\nRemarque : aucun Titan"
-				"COMMUNITYUPDATE_00_A"	"Notre nouveau DLC inclut le Monarch (7e Titan multijoueur du jeu), une version remasterisée de la carte Relique, une exécution inédite, ainsi que du contenu payant incluant les Titans Ronin Prime et Tone Prime avec des nouveaux camouflages, bannières et personnalisations de cockpit. Regardez vite le trailer !\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
-				"COMMUNITYUPDATE_00_Q"	"Trailer gameplay \"Règne du Monarch\""
-				"COMMUNITYUPDATE_01_A"	"Obtenez plus d'informations sur le nouveau DLC Règne du Monarch, disponible le 30 mai, et découvrez de nouveaux fan-arts."
-				"COMMUNITYUPDATE_01_Q"	"AdF - Présentation Règne du Monarch"
-				"COMMUNITYUPDATE_02_A"	"Consultez les changements et les nouveaux contenus inclus au DLC Règne du Monarch.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
-				"COMMUNITYUPDATE_02_Q"	"Notes de patch Règne du Monarch"
-				"COMMUNITYUPDATE_03_A"	"Les créateurs de l’un des niveaux les plus originaux de la campagne solo évoquent sa création manette en main et en profitent pour vous dévoiler plusieurs anecdotes liées à son développement.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
-				"COMMUNITYUPDATE_03_Q"	"Respawn Plays : Effet et cause"
-				"COMMUNITYUPDATE_04_A"	"L'infographiste 3D en chef Ryan Lastimosa nous présente le processus de création des armes de Titanfall.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
-				"COMMUNITYUPDATE_04_Q"	"Blog Respawn : Les modèles d'arme"
-				"COMMUNITYUPDATE_05_A"	"Vous débutez dans Titanfall 2 ? Frothy Omen vous explique comment devenir un pilote d'élite, des mouvements basiques comme le double saut au maniement avancé des armes et des explosifs.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la suite."
-				"COMMUNITYUPDATE_05_Q"	"École de pilotage de Titanfall 2"
-				"COMMUNITYUPDATE_06_A"	"Personne ne peut échapper à US Marty et à ses firestars. Découvrez ses tactiques d'attaque implacables dans ce super montage !\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
-				"COMMUNITYUPDATE_06_Q"	"Montage communautaire - \"Fire Starter\""
-				"COMMUNITYUPDATE_07_A"	"Découvrez vite cette superbe planche de BD publiée par laserisma via reddit.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir le contenu."
-				"COMMUNITYUPDATE_07_Q"	"Création communautaire - \"Curb Check You\""
+				"COMMUNITYUPDATE_00_A"	"Disponible dès maintenant ! La carte à succès Jeux de guerre fait son grand retour dans Titanfall 2. Découvrez également une exécution inédite et Trafic, une toute nouvelle carte Live Fire.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_00_Q"	"Trailer gameplay \"Jeux de guerre\""
+				"COMMUNITYUPDATE_01_A"	"Consultez la liste de changements inclus au patch Jeux de guerre, disponible dès maintenant.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
+				"COMMUNITYUPDATE_01_Q"	"Jeux de guerre - Notes de patch"
+				"COMMUNITYUPDATE_02_A"	"Regardez-nous jouer au parcours de pilote et tenter d'enregistrer le meilleur temps alors que nous évoquons son processus de création.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_02_Q"	"Respawn Plays : Le parcours de pilote"
+				"COMMUNITYUPDATE_03_A"	"Les créateurs de l'une des missions les plus épiques de la campagne solo évoquent sa création et en profitent pour vous dévoiler plusieurs anecdotes liées à son développement.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_03_Q"	"Respawn Plays : À travers les flammes"
+				"COMMUNITYUPDATE_04_A"	"bman4750 a publié sur reddit un magnifique portrait au style rétro du notre duo de choc de Titanfall 2.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
+				"COMMUNITYUPDATE_04_Q"	"Créations communautaires : \"Jack & BT\" Pixel"
+				"COMMUNITYUPDATE_05_A"	"Nous adorons le style de cette superbe création publiée par Archer0506 sur reddit.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour en savoir plus."
+				"COMMUNITYUPDATE_05_Q"	"Créations communautaires : Soldat freelance"
+				"COMMUNITYUPDATE_06_A"	"Équipé de son Fusil D-2 à double tir, le talentueux Pat L nous montre comment combattre comme un véritable tireur d'élite.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_06_Q"	"Montage communautaire - \"Take Two\""
+				"COMMUNITYUPDATE_07_A"	"Notre nouveau DLC inclut le Monarch (7e Titan multijoueur du jeu), une version remasterisée de la carte Relique, une exécution inédite, ainsi que du contenu payant incluant les Titans Ronin Prime et Tone Prime avec des nouveaux camouflages, bannières et personnalisations de cockpit. Regardez vite le trailer !\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
+				"COMMUNITYUPDATE_07_Q"	"Trailer gameplay \"Règne du Monarch\""
 				"COMMUNITYUPDATE_08_A"	"Les apparences sont parfois trompeuses à la Frontière ! Préparez-vous pour Glitch frontalier, le nouveau DLC gratuit de Titanfall 2 qui inclut la carte inédite \"Glitch\". Inspirée par Harmony, la planète natale du capitaine Lastimosa, cette carte regorge de voies verticales et de longs chemins tortueux qui vous permettront d'enchaîner les courses sur les murs. Découvrez également \"Pont\", une toute nouvelle carte Live Fire avec des sections intérieures étroites et des zones exposées survolées par des drones aériens. Vous ne serez pas seuls sur ces nouveaux champs de bataille : les serviables Marvins s'invitent au combat en tant que nouvelle faction pour vous prêter main forte ! Débloquez également la nouvelle exécution Impulsion fatale pour faire passer un message à tous vos ennemis.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
 				"COMMUNITYUPDATE_08_Q"	"Trailer gameplay \"Glitch frontalier\""
 				"COMMUNITYUPDATE_09_A"	"Découvrez la nouvelle version de Colonie, l'une des cartes multijoueurs favorites des fans du premier Titanfall ! Combinez les différentes capacités tactiques et les classes de Titan de Titanfall 2 à compter du 30 mars pour éliminer vos adversaires à travers les ruelles tortueuses, les recoins dangereux et les toitures exposées de ce village idyllique. Le DLC gratuit \"Nouvelle colonie\" inclut des armes mythiques comme la nouvelle version du fusil d'assaut R-101, une exécution au grappin inédite et de nouvelles options cosmétiques payantes pour combattre avec encore plus de style !\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
@@ -3104,23 +3575,22 @@
 			"Language" "polish"
 			"Tokens"
 			{
-				"MP_LF_TRAFFIC_CLASSIC_DESC"							"Szybki szturm: Symulowane środowisko bojowe położone w mieście.\nUwaga: brak Tytanów"
-				"COMMUNITYUPDATE_00_A"	"Ten dodatek obejmuje Monarchę, czyli siódmego Tytana dostępnego w trybie wieloosobowym, odświeżoną mapę „Relikt”, nową egzekucję, a także Tytany Prime: Ronina i Tona oraz więcej kamuflaży, sztandarów i grafik dziobowych do kupienia. Śledź akcję tutaj.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_00_Q"	"Zwiastun - rozgrywka w „Rządach Monarchy”"
-				"COMMUNITYUPDATE_01_A"	"Zapowiedź tego, co otrzymasz 30 maja, kiedy ukażą się „Rządy Monarchy”, plus nasze ulubione prace fanów."
-				"COMMUNITYUPDATE_01_Q"	"DzK – zapowiedź „Rządów Monarchy”"
-				"COMMUNITYUPDATE_02_A"	"Poznaj zawartość i zmiany wprowadzone w dodatku „Rządy Monarchy”.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_02_Q"	"Informacje o aktualizacji „Rządy Monarchy”"
-				"COMMUNITYUPDATE_03_A"	"Autorzy jednego z naszych najpopularniejszych poziomów w trybie jednoosobowym przechodzą misję, opowiadając o pracy nad nim i zdradzając różne ciekawostki.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_03_Q"	"Respawn w akcji - Skutek i przyczyna"
-				"COMMUNITYUPDATE_04_A"	"Główny twórca grafiki trójwymiarowej Ryan Lastimosa opowiada o tworzeniu broni do Titanfall.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_04_Q"	"Blog Respawn - Kącik modelarski"
-				"COMMUNITYUPDATE_05_A"	"To twój pierwszy kontakt z Titanfall 2? Pozwól, że sensei Frothy Omen nauczy cię, jak być dobrym pilotem, zaczynając od takich podstawowych rzeczy jak podwójne skoki, a kończąc na korzystaniu z broni zwykłej i ciężkiej.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_05_Q"	"Szkoła pilotów Titanfall 2"
-				"COMMUNITYUPDATE_06_A"	"Nikt nie jest bezpieczny, kiedy US Marty ma tę gwiazdę ognistą. Możesz uciekać, ale i tak cię znajdzie.\n\n\Wciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć film."
-				"COMMUNITYUPDATE_06_Q"	"Filmy fanów –  „Fire Starter”"
-				"COMMUNITYUPDATE_07_A"	"Uwielbiamy ten kapitalny, krótki komiks opublikowany na Reddicie przez użytkownika laserisma.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
-				"COMMUNITYUPDATE_07_Q"	"Prace fanów - Uziemienie"
+				"COMMUNITYUPDATE_00_A"	"Już dostępne! Słynna mapa „Gry wojenne” powraca do Titanfall 2 w odświeżonej postaci. Oprócz tego gracze będą mogli cieszyć się nową egzekucją i „Ruchem ulicznym”, czyli nową mapą do Szybkiego szturmu.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_00_Q"	"„Gry wojenne” – zwiastun z rozgrywką"
+				"COMMUNITYUPDATE_01_A"	"Zapoznaj się ze wszystkimi zmianami, które wprowadziliśmy w aktualizacji „Gry wojenne”, która jest już dostępna.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_01_Q"	"„Gry wojenne” – informacje o aktualizacji"
+				"COMMUNITYUPDATE_02_A"	"Obejrzyj film, w którym pokonujemy tor przeszkód i mówimy o kulisach jego produkcji oraz o tym, kto może uzyskać na nim najlepszy czas.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_02_Q"	"Respawn w akcji: tor przeszkód"
+				"COMMUNITYUPDATE_03_A"	"Autorzy jednej z najbardziej widowiskowych misji trybu fabularnego opowiadają o kulisach pracy nad nią, zdradzając przy okazji szereg innych ciekawostek.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_03_Q"	"Respawn w akcji: Próba ognia"
+				"COMMUNITYUPDATE_04_A"	"Użytkownik bman4750 z serwisu reddit stworzył słodki portret w stylu retro przedstawiający naszego ulubionego pilota i jego Tytana z Titanfall 2.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_04_Q"	"Prace społeczności – Jack i BT jako pixel art"
+				"COMMUNITYUPDATE_05_A"	"Urzekł nas styl i nastrój tej niezwykłej pracy autorstwa użytkownika Archer0506 z serwisu reddit\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_05_Q"	"Prace społeczności – niezależne symulakrum"
+				"COMMUNITYUPDATE_06_A"	"Pat L pokazuje nam, jak w pięknym stylu eliminować wrogów przy użyciu Dubletu.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_06_Q"	"Filmy fanów –  „Take Two”"
+				"COMMUNITYUPDATE_07_A"	"Ten dodatek obejmuje Monarchę, czyli siódmego Tytana dostępnego w trybie wieloosobowym, odświeżoną mapę „Relikt”, nową egzekucję, a także Tytany Prime: Ronina i Tona oraz więcej kamuflaży, sztandarów i grafik dziobowych do kupienia. Śledź akcję tutaj.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
+				"COMMUNITYUPDATE_07_Q"	"Zwiastun - rozgrywka w „Rządach Monarchy”"
 				"COMMUNITYUPDATE_08_A"	"Nie wszystko jest takie, jak się wydaje na Kresach – przygotujcie się na „Błąd na Kresach”, najnowsze darmowe DLC do Titanfall 2, zawierające nową mapę „Błąd”. Inspiracją dla jej stworzenia była ojczysta planeta kapitana Lastimosy, Harmonia. Mapa obfituje w wysokie urwiska i długie, kręte ścieżki. To idealna przestrzeń dla długich sekwencji skoków po ścianach, które pozwolą błyskawicznie przemieszczać się po mapie. Gra zostanie również wzbogacona o nową mapę do trybu „Szybki szturm”, „Pokład”, która charakteryzuje się ciasnymi pomieszczeniami i otwartymi dziedzińcami. Nie zabraknie tam również dronów, które czujnie śledzą potyczki z góry. Jeśli czujesz, że wróg cię przytłacza, skorzystaj z pomocy nowej frakcji Marvinów, która chętnie wyciągnie do ciebie pomocną, mechaniczną dłoń. Ponadto, piloci, którzy chcą przekazać wrogowi jasny komunikat, mogą odblokować egzekucję „Ostrze pulsacyjne”\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
 				"COMMUNITYUPDATE_08_Q"	"Zwiastun - prezentacja „Błędu na Kresach”"
 				"COMMUNITYUPDATE_09_A"	"Powróć na uwielbianą przez fanów mapę z oryginalnego Titanfall: Kolonia. Dodajmy do niej nowe zdolności taktyczne i Tytany z Titanfall 2, a piloci i Tytany będą musieli mieć oczy dookoła głowy, aby przeżyć w tej wiosce pełnej wąskich uliczek, ślepych zaułków i odkrytych dachów. Mapa będzie dostępna za darmo dla wszystkich graczy 30 marca. Pakiet DLC „Nowa Kolonia” zawiera także klasyczną broń, karabin R-101, nową egzekucję oraz opcje kosmetyczne do kupienia, dzięki którym będziesz wyglądać bardzo stylowo podczas siania zniszczenia.\n\n\nWciśnij `2%[A_BUTTON|MOUSE1]%`0, aby zobaczyć."
@@ -3139,7 +3609,7 @@
 				"COMMUNITYUPDATE_NAME"	"Społeczność"
 				"KNB_SUBJECT_00_DESC"	"`3Co nowego w Titanfall?`0\n\nZajrzyj tutaj, by zobaczyć zmiany w Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Aktualizacje gry"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Nowa mapa – „Gry wojenne”\n\n`2%$rui/bullet_point%`0Nowa mapa – „Szybki szturm: ruch uliczny”\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – walka z cieniem\n\n`2%$rui/bullet_point%`0Trzecie miejsce na broń\n\n`2%$rui/bullet_point%`0Ustawienia gier prywatnych"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Nowa mapa – „Gry wojenne”\n\n`2%$rui/bullet_point%`0Nowa mapa do Szybkiego szturmu – „Ruch uliczny”\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – Walka z cieniem\n\n`2%$rui/bullet_point%`0Trzecie miejsce na broń\n\n`2%$rui/bullet_point%`0Ustawienia gier prywatnych"
 				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 27 czerwca – Gry wojenne"
 				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Nowy Tytan – Monarcha\n\n`2%$rui/bullet_point%`0Nowa mapa – Relikt\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – A kuku\n\n`2%$rui/bullet_point%`0Nowa zawartość dostępna w sklepie"
 				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 30 maja: Rządy Monarchy"
@@ -3279,23 +3749,22 @@
 			"Language" "mspanish"
 			"Tokens"
 			{
-				"MP_LF_TRAFFIC_CLASSIC_DESC"							"Fuego vivo: simulación de combate en ambiente urbano.\nNota: no hay titanes disponibles"
-				"COMMUNITYUPDATE_00_A"	"Este DLC incluye al séptimo titán del multijugador: Monarch, el mapa Reliquia remasterizado y una nueva ejecución. Además podrás comprar los titanes Ronin y Tone Prime, más camuflajes, banderas y decoraciones para el fuselaje. Mira la acción aquí.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_00_Q"	"Tráiler de juego de \"Reino de Monarch\""
-				"COMMUNITYUPDATE_01_A"	"Descubre qué te llevarás cuando se lance Reino de Monarch el 30/05, además de nuestros diseños de los aficionados favoritos."
-				"COMMUNITYUPDATE_01_Q"	"RNF: Lanzamiento del Reino de Monarch"
-				"COMMUNITYUPDATE_02_A"	"Lee todo el contenido y los cambios que llegan con el DLC Reino de Monarch.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_02_Q"	"Notas sobre parches de Reino de Monarch"
-				"COMMUNITYUPDATE_03_A"	"Los responsables de crear uno de los niveles para un jugador más comentados juegan la misión mientras hablamos de cómo lo hicieron y nos cuentan historias divertidas del desarrollo.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_03_Q"	"Partidas de Respawn: causa y efecto"
-				"COMMUNITYUPDATE_04_A"	"Ryan Lastimosa, jefe de gráficos 3D, nos muestra el proceso de creación de armas de Titanfall.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_04_Q"	"Blog de Respawn: El taller de modelado"
-				"COMMUNITYUPDATE_05_A"	"¿Qué novedades hay en Titanfall 2? Dejemos que el maestro Frothy Omen te enseñe cómo hacer saltos dobles de piloto básicos y a usar las armas y la artillería.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_05_Q"	"Escuela de pilotos de Titanfall 2"
-				"COMMUNITYUPDATE_06_A"	"Nadie está a salvo de US Marty cuando tiene la estrella de fuego. En este montaje podrás correr, pero no esconderte.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_06_Q"	"Montaje de la comunidad: Estrellas de fuego"
-				"COMMUNITYUPDATE_07_A"	"Nos encanta este pequeño e increíble cómic que hizo laserisma a través de reddit.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_07_Q"	"Arte de la comunidad: A romper cráneos"
+				"COMMUNITYUPDATE_00_A"	"¡Ya disponible! El icónico mapa Juegos bélicos regresa a Titanfall 2 y se ve mejor que nunca. No te olvides de checar la nueva ejecución y el nuevo mapa Tráfico de Fuego vivo en acción.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_00_Q"	"Tráiler de jugabilidad de \"Juegos bélicos\""
+				"COMMUNITYUPDATE_01_A"	"Lee todos los cambios que llegan con el parche de Juegos bélicos, ya disponible.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_01_Q"	"Notas sobre parches de Juegos bélicos"
+				"COMMUNITYUPDATE_02_A"	"Mira cómo jugamos el circuito del piloto mientras hablamos sobre cómo se hizo y vemos quién hace el mejor tiempo.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_02_Q"	"Partidas de Respawn: el circuito del piloto"
+				"COMMUNITYUPDATE_03_A"	"Los responsables de crear una de las misiones más épicas de un jugador nos hablan de cómo la hicieron y comparten con nosotros más historias divertidas sobre el desarrollo.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_03_Q"	"Partidas de Respawn: Prueba de fuego"
+				"COMMUNITYUPDATE_04_A"	"bman4750 compartió en reddit un retrato adorable y de estilo retro de nuestro piloto y titán favoritos de Titanfall 2.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_04_Q"	"Creaciones de la comunidad: Arte pixelado de Jack y BT"
+				"COMMUNITYUPDATE_05_A"	"Nos encanta el estilo y el tono de esta obra creada por Archer0506 a través de reddit.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_05_Q"	"Creaciones de la comunidad: Simulacro freelance"
+				"COMMUNITYUPDATE_06_A"	"Pat L presume de correr y manejar con estilo un francotirador con el rifle doble D-2.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_06_Q"	"Montaje de la comunidad: Toma dos"
+				"COMMUNITYUPDATE_07_A"	"Este DLC incluye al séptimo titán del multijugador: Monarch, el mapa Reliquia remasterizado y una nueva ejecución. Además podrás comprar los titanes Ronin y Tone Prime, más camuflajes, banderas y decoraciones para el fuselaje. Mira la acción aquí.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
+				"COMMUNITYUPDATE_07_Q"	"Tráiler de juego de \"Reino de Monarch\""
 				"COMMUNITYUPDATE_08_A"	"No todo es lo que parece en la Frontera. Prepárate para el nuevo pack de DLC de Titanfall 2: Un Fallo en la Frontera, que incluye el nuevo mapa “Fallo”. Está inspirado en Harmony, el planeta en el que se crió el capitán Lastimosa, repleto de caídas verticales y senderos eternos y serpenteantes, perfectos para encadenar carreras por las paredes y recorrer todo el mapa sin interrupciones. También se une al pack un nuevo mapa de Fuego vivo: Muelle, que cuenta con espacios internos estrechos, patios desprotegidos y drones de vigilancia que te observan desde las alturas. Si crees que esto te supera, los M.R.V.N. ya están aquí dispuestos a echarte una mano robótica. Por último, puedes desbloquear la ejecución cuchilla de pulso y usarla cuando más la necesites.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
 				"COMMUNITYUPDATE_08_Q"	"Tráiler de juego de \"Un Fallo en la Frontera\""
 				"COMMUNITYUPDATE_09_A"	"Regresa el icónico mapa favorito de los aficionados del multijugador del Titanfall original: Colonia, con las nuevas tácticas y titanes de Titanfall 2, en el que los pilotos y los titanes tendrán que ingeniárselas para sobrevivir a esta ciudad idílica repleta de callejones sin salida, esquinas con poca visibilidad y azoteas expuestas. Este mapa estará disponible el 30 de marzo para todos los jugadores. El pack de DLC “Colonia Renacida” incluye armas clásicas como el rifle de asalto R-101, una nueva ejecución de arpeo y nuevas opciones estéticas que podrás comprar para verte lo mejor posible mientras bañas la ciudad de sangre enemiga.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
@@ -3314,7 +3783,7 @@
 				"COMMUNITYUPDATE_NAME"	"Comunidad"
 				"KNB_SUBJECT_00_DESC"	"`3¿Qué es nuevo en Titanfall?`0\n\n¡Chécalo aquí para ver qué ha cambiado en Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Actualizaciones"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Juegos bélicos\n\n`2%$rui/bullet_point%`0Nuevo mapa: Tráfico de Fuego vivo\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Golpe fantasma\n\n`2%$rui/bullet_point%`0Tercer espacio de arma\n\n`2%$rui/bullet_point%`0Configuración de la partida privada"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Juegos bélicos\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: Tráfico\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Golpe fantasma\n\n`2%$rui/bullet_point%`0Tercer espacio de arma\n\n`2%$rui/bullet_point%`0Configuración de la partida privada"
 				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 27 de junio: Juegos bélicos"
 				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Nuevo titán: Monarch\n\n`2%$rui/bullet_point%`0Nuevo mapa: Reliquia\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Ahora me ves\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar"
 				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 30 de mayo: Reino de Monarch"

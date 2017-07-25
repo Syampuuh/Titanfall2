@@ -9,6 +9,7 @@ global function CancelPhaseShift
 
 #if SERVER
 global function PlayPhaseShiftDisappearFX
+global function UntrackAllToneMarks
 #endif
 
 const SHIFTER_OUTRO_TIME_BEFORE_END = 1.5

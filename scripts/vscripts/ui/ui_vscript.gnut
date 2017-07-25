@@ -69,6 +69,8 @@ global struct DialogData
 	bool showPCBackButton = false
 	float inputDisableTime = 0
 	table<int,bool> coloredButton
+	bool darkenBackground = false
+	bool useFullMessageHeight = false
 
 	array<DialogButtonData> buttonData
 	array<DialogFooterData> footerData
@@ -85,6 +87,7 @@ global struct MenuDef
 	void functionref() navBackFunc
 	void functionref() tabChangedFunc
 	void functionref() inputModeChangedFunc
+	void functionref() entitlementsChangedFunc
 
 	array<InputDef> footerData
 	table<int, void functionref( var )> registeredInput
@@ -237,6 +240,8 @@ global struct UIGlobals
 	int 	consoleSettingMenu = eConsoleSettingsMenu.FALSE
 
 	bool	updateCachedNewItems = true
+
+	var		menuToOpenFromPromoButton = null
 }
 
 global UIGlobals uiGlobal

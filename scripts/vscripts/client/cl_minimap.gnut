@@ -14,6 +14,9 @@ global function Minimap_IsUsingLargeMinimap
 global function Minimap_Ping
 global function ServerCallback_PingMinimap
 
+global function Minimap_EnableDraw
+global function Minimap_DisableDraw
+
 #if DEV
 global function DumpMinimapHandles
 #endif
@@ -31,12 +34,16 @@ struct {
 
 	#if DEV
 	table< int, entity > minimapHandles
-#endif
+	#endif
+
+	array<var> minimapOtherRuis
 
 	float threatMaxDist
 
 	float minimapZoomScale = 1
 	float minimapSizeScale = 1
+
+	bool minimapEnabled = true
 } file
 
 
@@ -144,6 +151,12 @@ void function ClMinimap_Init()
 	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FW_BUILDSITE, $"ui/minimap_fw_build_site.rpak", MinimapPackage_FWBuildSite )
 	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FW_BUILDSITE_TURRET, $"ui/minimap_fw_build_site.rpak", MinimapPackage_FWBuildSite )
 	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FW_BUILDSITE_SHIELDED, $"ui/minimap_fw_build_site.rpak", MinimapPackage_FWBuildSite )
+	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FD_HARVESTER, $"ui/minimap_obj_area.rpak", MinimapPackage_FDHarvester )
+	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FD_LOADOUT_CHEST, $"ui/minimap_obj_area.rpak", MinimapPackage_FDLoadoutChest )
+	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FD_BATTERY_EXCHANGE, $"ui/minimap_obj_area.rpak", MinimapPackage_FDBatteryExchange )
+	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.BOOST_STORE, $"ui/minimap_obj_area.rpak", MinimapPackage_BoostStore )
+	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FD_MORTAR_POSITION, $"ui/minimap_mortar_spectre.rpak", MinimapPackage_MortarPosition )
+	RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.ARC_TRAP, $"ui/minimap_obj_area.rpak", MinimapPackage_ArcTrap )
 
 	//RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FW_CAMP_A, $"ui/minimap_fw_camp.rpak", MinimapPackage_FWCampA )
 	//RegisterMinimapPackage( "prop_script", eMinimapObject_prop_script.FW_CAMP_B, $"ui/minimap_fw_camp.rpak", MinimapPackage_FWCampB )
@@ -243,6 +256,37 @@ void function DumpMinimapHandles()
 #endif
 
 
+void function Minimap_DisableDraw()
+{
+	file.minimapEnabled = false
+
+	RuiSetDrawGroup( file.minimap_base, RUI_DRAW_NONE )
+	RuiSetDrawGroup( file.minimap_wedges, RUI_DRAW_NONE )
+	RuiSetDrawGroup( file.minimap_you, RUI_DRAW_NONE )
+	RuiSetDrawGroup( file.minimap_indicator, RUI_DRAW_NONE )
+
+	foreach ( var rui in file.minimapOtherRuis )
+	{
+		RuiSetDrawGroup( rui, RUI_DRAW_NONE )
+	}
+}
+
+void function Minimap_EnableDraw()
+{
+	file.minimapEnabled = true
+
+	RuiSetDrawGroup( file.minimap_base, RUI_DRAW_COCKPIT )
+	RuiSetDrawGroup( file.minimap_wedges, RUI_DRAW_COCKPIT )
+	RuiSetDrawGroup( file.minimap_you, RUI_DRAW_COCKPIT )
+	RuiSetDrawGroup( file.minimap_indicator, RUI_DRAW_COCKPIT )
+
+	foreach ( var rui in file.minimapOtherRuis )
+	{
+		RuiSetDrawGroup( rui, RUI_DRAW_COCKPIT )
+	}
+}
+
+
 void function ClientCodeCallback_MinimapEntitySpawned( entity ent )
 {
 	foreach ( callbackFunc in clGlobal.onMinimapEntSpawnedCallbacks )
@@ -335,9 +379,13 @@ void function AddMinimapObject( entity ent ) //TODO: If we want radar jammer boo
 
 	minimapAssetMap[className][customState].initFunction( ent, rui )
 
+	file.minimapOtherRuis.append( rui )
+
+	RuiSetDrawGroup( rui, file.minimapEnabled ? RUI_DRAW_COCKPIT : RUI_DRAW_NONE )
 	OnThreadEnd(
 		function() : ( rui )
 		{
+			file.minimapOtherRuis.removebyvalue( rui )
 			RuiDestroy( rui )
 		}
 	)
@@ -376,6 +424,9 @@ void function Minimap_Ping( vector origin, float radius, float duration, vector 
 {
 	entity viewPlayer = GetLocalViewPlayer()
 	int zOrder = viewPlayer.Minimap_GetZOrder()
+
+	if ( !file.minimapEnabled )
+		return
 
 	var rui = CreateCockpitRui( $"ui/minimap_ping.rpak", MINIMAP_Z_BASE + zOrder )
 
@@ -631,7 +682,6 @@ void function MinimapPackage_HardpointC( entity ent, var rui )
 	RuiSetFloat( rui, "objectRadius", 0.001 )
 }
 
-#if DEVSCRIPTS
 void function MinimapPackage_FDHarvester( entity ent, var rui )
 {
 	RuiSetImage( rui, "centerImage", $"rui/hud/gametype_icons/fd/coop_harvester" )
@@ -678,10 +728,9 @@ void function MinimapPackage_MortarPosition( entity ent, var rui )
 
 void function MinimapPackage_ArcTrap( entity ent, var rui )
 {
-	RuiSetImage( rui, "defaultIcon", $"rui/hud/minimap/compass_icon_small_dot" )
-	RuiSetImage( rui, "clampedDefaultIcon", $""  )
+	RuiSetImage( rui, "centerImage", $"rui/hud/minimap/compass_icon_arc_trap" )
+	RuiTrackFloat( rui, "objectRadius", ent, RUI_TRACK_MINIMAP_SCALE )
 }
-#endif
 
 void function MinimapPackage_FWCampA( entity ent, var rui )
 {

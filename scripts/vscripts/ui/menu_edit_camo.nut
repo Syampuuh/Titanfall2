@@ -71,6 +71,7 @@ void function InitCamoForRefs( array<ItemDisplayData> itemDisplayDataList )
 	table< string, int > categoryPageCounts
 
 	array<string> basePageNames = []
+	string lastPageName
 	for ( int skinIndex = 0; skinIndex < itemDisplayDataList.len(); skinIndex += NUM_GRID_PER_PAGE )
 	{
 		ItemDisplayData displayData = itemDisplayDataList[skinIndex]
@@ -78,6 +79,14 @@ void function InitCamoForRefs( array<ItemDisplayData> itemDisplayDataList )
 		if ( displayData.itemType == eItemTypes.TITAN_WARPAINT )
 		{
 			pageName = "#ITEM_TYPE_TITAN_WARPAINT"
+		}
+		else if ( displayData.itemType == eItemTypes.WEAPON_SKIN )
+		{
+			pageName = "#ITEM_TYPE_WEAPON_SKIN"
+		}
+		else if ( !("categoryId" in displayData.i ) )
+		{
+			pageName = lastPageName
 		}
 		else
 		{
@@ -91,6 +100,7 @@ void function InitCamoForRefs( array<ItemDisplayData> itemDisplayDataList )
 		categoryPageCounts[pageName]++
 
 		basePageNames.append( pageName )
+		lastPageName = pageName
 	}
 
 	//int categoryIndex = 0
@@ -178,9 +188,29 @@ void function OnCamoSelectMenu_Open()
 		if ( uiGlobal.editingLoadoutProperty == "camoIndex" || uiGlobal.editingLoadoutProperty == "primeCamoIndex"  )
 		{
 			Hud_SetText( file.menuTitle, "#ITEM_TYPE_CAMO_SKIN_TITAN" )
-			UI_SetPresentationType( ePresentationType.TITAN_LOADOUT_EDIT )
+			UI_SetPresentationType( ePresentationType.TITAN_SKIN_EDIT )
 
-			file.skinItemData = GetCamoItemRefs( eItemTypes.CAMO_SKIN_TITAN, loadout.titanClass )
+			file.skinItemData = []
+
+			if ( !IsTitanLoadoutPrime( loadout ) ) //warpaints are not usable for prime titans
+			{
+				//array<ItemDisplayData> titanSkins = GetVisibleItemsOfType( eItemTypes.TITAN_WARPAINT, loadout.titanClass, false )
+				array<ItemDisplayData> titanSkins = GetVisibleItemsOfTypeWithoutEntitlements( GetUIPlayer(), eItemTypes.TITAN_WARPAINT, loadout.titanClass )
+				file.skinItemData.extend( titanSkins )
+
+				int numPages = (titanSkins.len() / NUM_GRID_PER_PAGE)
+				if ( titanSkins.len() % NUM_GRID_PER_PAGE > 0 )
+					numPages += 1
+				while ( file.skinItemData.len() < numPages*NUM_GRID_PER_PAGE )
+				{
+					ItemDisplayData displayData
+					file.skinItemData.append( displayData )
+				}
+			}
+
+			array<ItemDisplayData> titanCamos = GetCamoItemRefs( eItemTypes.CAMO_SKIN_TITAN, loadout.titanClass )
+
+			file.skinItemData.extend( titanCamos )
 			int numPages = (file.skinItemData.len() / NUM_GRID_PER_PAGE)
 			if ( file.skinItemData.len() % NUM_GRID_PER_PAGE > 0 )
 				numPages += 1
@@ -189,9 +219,6 @@ void function OnCamoSelectMenu_Open()
 				ItemDisplayData displayData
 				file.skinItemData.append( displayData )
 			}
-
-			if ( !IsTitanLoadoutPrime( loadout ) ) //warpaints are not usable for prime titans
-				file.skinItemData.extend( GetVisibleItemsOfTypeWithoutEntitlements( GetUIPlayer(), eItemTypes.TITAN_WARPAINT, loadout.titanClass ) )
 		}
 		else if ( uiGlobal.editingLoadoutProperty == "primaryCamoIndex" )
 		{
@@ -221,21 +248,54 @@ void function OnCamoSelectMenu_Open()
 			Hud_SetText( file.menuTitle, "#ITEM_TYPE_CAMO_SKIN" )
 			UI_SetPresentationType( ePresentationType.PILOT_WEAPON )
 
-			file.skinItemData = GetCamoItemRefs( eItemTypes.CAMO_SKIN, loadout.primary )
+			file.skinItemData = []
+			//int numPages = (file.skinItemData.len() / NUM_GRID_PER_PAGE)
+			//if ( file.skinItemData.len() % NUM_GRID_PER_PAGE > 0 )
+			//	numPages += 1
+			//while ( file.skinItemData.len() < numPages*NUM_GRID_PER_PAGE )
+			//{
+			//	ItemDisplayData displayData
+			//	file.skinItemData.append( displayData )
+			//}
+
+			file.skinItemData.extend( GetCamoItemRefs( eItemTypes.CAMO_SKIN, loadout.primary ) )
+			file.skinItemData.extend( GetVisibleItemsOfTypeWithoutEntitlements( GetUIPlayer(), eItemTypes.WEAPON_SKIN, loadout.primary ) )
 		}
 		else if ( uiGlobal.editingLoadoutProperty == "secondaryCamoIndex" )
 		{
 			Hud_SetText( file.menuTitle, "#ITEM_TYPE_CAMO_SKIN" )
 			UI_SetPresentationType( ePresentationType.PILOT_WEAPON )
 
-			file.skinItemData = GetCamoItemRefs( eItemTypes.CAMO_SKIN, loadout.secondary )
+			file.skinItemData = []
+			//int numPages = (file.skinItemData.len() / NUM_GRID_PER_PAGE)
+			//if ( file.skinItemData.len() % NUM_GRID_PER_PAGE > 0 )
+			//	numPages += 1
+			//while ( file.skinItemData.len() < numPages*NUM_GRID_PER_PAGE )
+			//{
+			//	ItemDisplayData displayData
+			//	file.skinItemData.append( displayData )
+			//}
+
+			file.skinItemData.extend( GetCamoItemRefs( eItemTypes.CAMO_SKIN, loadout.secondary ) )
+			file.skinItemData.extend( GetVisibleItemsOfTypeWithoutEntitlements( GetUIPlayer(), eItemTypes.WEAPON_SKIN, loadout.secondary ) )
 		}
 		else if ( uiGlobal.editingLoadoutProperty == "weapon3CamoIndex" )
 		{
 			Hud_SetText( file.menuTitle, "#ITEM_TYPE_CAMO_SKIN" )
 			UI_SetPresentationType( ePresentationType.PILOT_WEAPON )
 
-			file.skinItemData = GetCamoItemRefs( eItemTypes.CAMO_SKIN, loadout.weapon3 )
+			file.skinItemData = []
+			//int numPages = (file.skinItemData.len() / NUM_GRID_PER_PAGE)
+			//if ( file.skinItemData.len() % NUM_GRID_PER_PAGE > 0 )
+			//	numPages += 1
+			//while ( file.skinItemData.len() < numPages*NUM_GRID_PER_PAGE )
+			//{
+			//	ItemDisplayData displayData
+			//	file.skinItemData.append( displayData )
+			//}
+
+			file.skinItemData.extend( GetCamoItemRefs( eItemTypes.CAMO_SKIN, loadout.weapon3 ) )
+			file.skinItemData.extend( GetVisibleItemsOfTypeWithoutEntitlements( GetUIPlayer(), eItemTypes.WEAPON_SKIN, loadout.weapon3 ) )
 		}
 		else
 		{
@@ -429,42 +489,6 @@ void function CamoButton_GetFocus( var button, int elemNum )
 	file.focusDisplayData = displayData
 
 	printt( "camo: ", ref, parentRef )
-/*
-		if ( uiGlobal.editingLoadoutType == "titan" )
-		{
-			if ( uiGlobal.editingLoadoutProperty == "camoIndex" )
-			{
-				EmitUISound( "Menu_LoadOut_TitanCamo_Select" )
-				RunMenuClientFunction( "SaveTitanCamoPreview" )
-			}
-			else if ( uiGlobal.editingLoadoutProperty == "primaryCamoIndex" )
-			{
-				EmitUISound( "Menu_LoadOut_WeaponCamo_Select" )
-				RunMenuClientFunction( "ClearAllTitanPreview" )
-			}
-			else
-			{
-				Assert( false )
-			}
-		}
-		else if ( uiGlobal.editingLoadoutType == "pilot" )
-		{
-			if ( uiGlobal.editingLoadoutProperty == "camoIndex" )
-			{
-				EmitUISound( "Menu_LoadOut_PilotCamo_Select" )
-				RunMenuClientFunction( "ClearAllPilotPreview" )
-			}
-			else if ( uiGlobal.editingLoadoutProperty == "primaryCamoIndex" || uiGlobal.editingLoadoutProperty == "secondaryCamoIndex" )
-			{
-				EmitUISound( "Menu_LoadOut_WeaponCamo_Select" )
-				RunMenuClientFunction( "ClearAllPilotPreview" )
-			}
-			else
-			{
-				Assert( false )
-			}
-		}
-*/
 
 	if ( uiGlobal.editingLoadoutType == "titan" )
 	{
@@ -474,17 +498,14 @@ void function CamoButton_GetFocus( var button, int elemNum )
 		{
 			if ( itemType == eItemTypes.TITAN_WARPAINT )
 			{
-				//if ( IsSubItemLocked( player, ref, parentRef ) )
-				//	RunMenuClientFunction( "ClearAllTitanPreview" )
-				//else
-					RunMenuClientFunction( "PreviewTitanSkinChange", displayData.i.skinIndex )
+				RunMenuClientFunction( "PreviewTitanCombinedChange", displayData.i.skinIndex, -1, uiGlobal.editingLoadoutIndex )
 			}
 			else
 			{
-				//if ( IsSubItemLocked( player, ref, parentRef ) )
-				//	RunMenuClientFunction( "ClearAllTitanPreview" )
-				//else
-					RunMenuClientFunction( "PreviewTitanCamoChange", GetItemPersistenceId( ref ) )
+				if ( GetItemPersistenceId( ref ) > 0 )
+					RunMenuClientFunction( "PreviewTitanCombinedChange", TITAN_SKIN_INDEX_CAMO, GetItemPersistenceId( ref ), uiGlobal.editingLoadoutIndex )
+				else
+					RunMenuClientFunction( "PreviewTitanCombinedChange", 0, -1, uiGlobal.editingLoadoutIndex )
 			}
 		}
 		else if ( uiGlobal.editingLoadoutProperty == "primaryCamoIndex" )
@@ -514,7 +535,14 @@ void function CamoButton_GetFocus( var button, int elemNum )
 		}
 		else if ( uiGlobal.editingLoadoutProperty == "primaryCamoIndex" || uiGlobal.editingLoadoutProperty == "secondaryCamoIndex" || uiGlobal.editingLoadoutProperty == "weapon3CamoIndex" )
 		{
-			RunMenuClientFunction( "PreviewPilotWeaponCamoChange", GetItemPersistenceId( ref ) )
+			if ( itemType == eItemTypes.WEAPON_SKIN )
+			{
+				RunMenuClientFunction( "PreviewPilotWeaponSkinChange", displayData.i.skinIndex )
+			}
+			else
+			{
+				RunMenuClientFunction( "PreviewPilotWeaponCamoChange", GetItemPersistenceId( ref ) )
+			}
 		}
 		else
 		{
@@ -589,6 +617,12 @@ void function CamoButton_Activate( var button, int elemNum )
 		string ref = displayData.ref
 		string parentRef = displayData.parentRef
 
+		if ( IsItemPurchasableEntitlement( ref, parentRef ) )
+		{
+			OpenStoreMenu( [ GetPurchasableEntitlementMenu( ref, parentRef ) ] )
+			return
+		}
+
 		array<var> buttons = GetElementsByClassname( file.menu, "GridButtonClass" )
 		OpenBuyItemDialog( buttons, button, GetItemName( ref ), ref, parentRef )
 		return
@@ -608,6 +642,11 @@ void function CamoButton_Activate( var button, int elemNum )
 			camoIndex = -1
 			skinIndex = expect int( displayData.i.skinIndex )
 		}
+		else if ( itemType == eItemTypes.WEAPON_SKIN )
+		{
+			camoIndex = 0
+			skinIndex = expect int( displayData.i.skinIndex )
+		}
 		else
 		{
 			camoIndex = GetItemPersistenceId( displayData.ref, displayData.parentRef )
@@ -621,7 +660,7 @@ void function CamoButton_Activate( var button, int elemNum )
 			if ( uiGlobal.editingLoadoutProperty == "camoIndex" || uiGlobal.editingLoadoutProperty == "primeCamoIndex" )
 			{
 				EmitUISound( "Menu_LoadOut_TitanCamo_Select" )
-				RunMenuClientFunction( "SaveTitanCamoPreview" )
+				RunMenuClientFunction( "SaveTitanCombinedPreview" )
 
 				if ( !IsLobby() && uiGlobal.editingLoadoutIndex == uiGlobal.titanSpawnLoadoutIndex )
 					uiGlobal.updateTitanSpawnLoadout = true

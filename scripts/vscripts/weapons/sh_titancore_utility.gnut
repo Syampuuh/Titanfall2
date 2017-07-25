@@ -235,7 +235,7 @@ void function CoreDeactivate( entity player, entity weapon )
 		{
 			if ( SoulHasPassive( soul, ePassives.PAS_HYPER_CORE ) )
 			{
-				SoulTitanCore_SetNextAvailableTime( soul, 0.3 )
+				SoulTitanCore_SetNextAvailableTime( soul, 0.20 )
 				GiveOffhandElectricSmoke( player )
 			}
 		}

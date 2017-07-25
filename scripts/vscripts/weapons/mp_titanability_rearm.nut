@@ -14,15 +14,20 @@ var function OnWeaponPrimaryAttack_titanability_rearm( entity weapon, WeaponPrim
 		PlayerUsedOffhand( weaponOwner, weapon )
 
 	entity ordnance = weaponOwner.GetOffhandWeapon( OFFHAND_RIGHT )
+	if ( IsValid( ordnance ) )
+	{
+		ordnance.SetWeaponPrimaryClipCount( ordnance.GetWeaponPrimaryClipCountMax() )
+		#if SERVER
+		if ( ordnance.IsChargeWeapon() )
+			ordnance.SetWeaponChargeFractionForced( 0 )
+		#endif
+	}
 	entity defensive = weaponOwner.GetOffhandWeapon( OFFHAND_LEFT )
-	ordnance.SetWeaponPrimaryClipCount( ordnance.GetWeaponPrimaryClipCountMax() )
-	defensive.SetWeaponPrimaryClipCount( defensive.GetWeaponPrimaryClipCountMax() )
+	if ( IsValid( defensive ) )
+		defensive.SetWeaponPrimaryClipCount( defensive.GetWeaponPrimaryClipCountMax() )
 	#if SERVER
 	if ( weaponOwner.IsPlayer() )//weapon.HasMod( "rapid_rearm" ) &&  )
 			weaponOwner.Server_SetDodgePower( 100.0 )
-
-	if ( ordnance.IsChargeWeapon() )
-		ordnance.SetWeaponChargeFractionForced( 0 )
 	#endif
 	weapon.SetWeaponPrimaryClipCount( 0 )//used to skip the fire animation
 	return 0

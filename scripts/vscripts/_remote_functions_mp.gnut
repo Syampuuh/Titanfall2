@@ -377,11 +377,87 @@ function RemoteFunctions_Init()
 			CLSPEEDBALL_RegisterNetworkFunctions()
 #endif
 			break
+		case FD:
+			RegisterNetworkedVariable( "FD_waveState", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_waveActive", SNDC_GLOBAL, SNVT_BOOL, false )
+			RegisterNetworkedVariable( "FD_totalWaves", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_currentWave", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_activeHarvester", SNDC_GLOBAL, SNVT_ENTITY )
+			RegisterNetworkedVariable( "FD_restartsRemaining", SNDC_GLOBAL, SNVT_INT )
+
+			//AI Type counts
+			RegisterNetworkedVariable( "FD_AICount_Titan", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Titan_Nuke", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Titan_Mortar", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Titan_Arc", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Grunt", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Spectre", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Spectre_Mortar", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Stalker", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Reaper", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Ticks", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Drone", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Drone_Cloak", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Current", SNDC_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "FD_AICount_Total", SNDC_GLOBAL, SNVT_INT, 0 )
+
+			RegisterNetworkedVariable( "FD_wavePoints", SNDC_GLOBAL, SNVT_UNSIGNED_INT, 0 )
+			RegisterNetworkedVariable( "FD_wavePoints256", SNDC_GLOBAL, SNVT_UNSIGNED_INT, 0 )
+			RegisterNetworkedVariable( "FD_harvesterInvulTime", SNDC_GLOBAL, SNVT_TIME, 0 )
+			RegisterNetworkedVariable( "FD_nextWaveStartTime", SNDC_GLOBAL, SNVT_TIME, 0 )
+
+			RegisterNetworkedVariable( "FD_readyForNextWave", SNDC_PLAYER_GLOBAL, SNVT_BOOL, false )
+
+			Remote_RegisterFunction( "ServerCallback_FD_AnnouncePreParty" )
+			Remote_RegisterFunction( "ServerCallback_FD_ClearPreParty" )
+			Remote_RegisterFunction( "ServerCallback_FD_PingMinimap" )
+			Remote_RegisterFunction( "ServerCallback_FD_MoneyFly" )
+			Remote_RegisterFunction( "ServerCallback_FD_SayThanks" )
+			Remote_RegisterFunction( "ServerCallback_FD_DisplayHarvesterKiller" )
+			Remote_RegisterFunction( "ServerCallback_FD_NotifyStoreOpen" )
+
+			Remote_RegisterFunction( "ServerCallback_ShowCycleHint" )
+			Remote_RegisterFunction( "ServerCallback_OpenBoostStore" )
+			Remote_RegisterFunction( "ServerCallback_UpdateMoney" )
+			Remote_RegisterFunction( "ServerCallback_UpdateTeamReserve" )
+			Remote_RegisterFunction( "ServerCallback_EnableDropshipBoostStore" )
+			Remote_RegisterFunction( "ServerCallback_DisableDropshipBoostStore" )
+			Remote_RegisterFunction( "ServerCallback_UpdateTurretCount" )
+			Remote_RegisterFunction( "ServerCallback_UpdatePlayerHasBattery" )
+			Remote_RegisterFunction( "ServerCallback_UpdateAmpedWeaponState" )
+			Remote_RegisterFunction( "ServerCallback_BoostStoreTitanHint" )
+			Remote_RegisterFunction( "ServerCallback_UpdateGameStats" )
+			Remote_RegisterFunction( "ServerCallback_ShowGameStats" )
+			Remote_RegisterFunction( "ServerCallback_FD_UpdateWaveInfo" )
+			Remote_RegisterFunction( "ServerCallback_FD_NotifyMVP" )
+
+			RegisterNetworkedVariable( "boostStoreOpen", SNDC_GLOBAL, SNVT_BOOL, false )
+			RegisterNetworkedVariable( "playerHasBatteryBoost", SNDC_PLAYER_EXCLUSIVE, SNVT_BOOL, false )
+			RegisterNetworkedVariable( "FD_money", SNDC_PLAYER_GLOBAL, SNVT_UNSIGNED_INT, 0 )
+			RegisterNetworkedVariable( "FD_money256", SNDC_PLAYER_GLOBAL, SNVT_UNSIGNED_INT, 0 )
+
+			RegisterNetworkedVariable( "numSuperRodeoGrenades", SNDC_PLAYER_GLOBAL, SNVT_INT, 0 )
+			RegisterNetworkedVariable( "numHarvesterShieldBoost", SNDC_PLAYER_GLOBAL, SNVT_INT, 0 )
+
+			RegisterNetworkedVariable( "showOverheadIcon", SNDC_TITAN_SOUL, SNVT_BOOL, false )
+
+#if CLIENT
+			CLFD_RegisterNetworkFunctions()
+#endif
+			break
 	}
 
 	#if DEVSCRIPTS
 	Dev_RemoteFunctions_Init()
 	#endif
+	Remote_RegisterFunction( "ServerCallback_NukeGrenadeWindowOpen" )
+	Remote_RegisterFunction( "ServerCallback_NukeGrenadeWindowClosed" )
+
+	Remote_RegisterFunction( "ServerCallback_RegisterTeamTitanMenuButtons" )
+	Remote_RegisterFunction( "ServerCallback_OpenTeamTitanMenu" )
+	Remote_RegisterFunction( "ServerCallback_CloseTeamTitanMenu" )
+	Remote_RegisterFunction( "ServerCallback_UpdateTeamTitanMenuTime" )
+	Remote_RegisterFunction( "ServerCallback_UpdateTeamTitanSelectionMenu" )
 
 	RegisterNetworkedVariable( "playerHardpointID", SNDC_PLAYER_EXCLUSIVE, SNVT_UNSIGNED_INT, 255 )
 
@@ -518,6 +594,8 @@ function RemoteFunctions_Init()
 	Remote_RegisterFunction( "ServerCallback_UpdateBurnCardTitle" )
 	Remote_RegisterFunction( "ServerCallback_UpdateTitanModeHUD" )
 	Remote_RegisterFunction( "ServerCallback_GiveMatchLossProtection" )
+	Remote_RegisterFunction( "ServerCallback_SquadLeaderBonus" )
+	Remote_RegisterFunction( "ServerCallback_SquadLeaderDoubleXP" )
 
 	Remote_RegisterFunction( "ServerCallback_TitanFallWarning" )
 	Remote_RegisterFunction( "SCB_TitanDialogue" )
@@ -764,6 +842,9 @@ function RemoteFunctions_Init()
 	RegisterString( "#SPEEDBALL_OBJECTIVE_ENEMY_FLAG" )
 	RegisterString( "#SPEEDBALL_OBJECTIVE_FRIENDLY_FLAG" )
 	RegisterString( "#SPEEDBALL_OBJECTIVE_PLAYER_FLAG" )
+
+	RegisterString( "#FD_TOTAL_VICTORY_HINT" )
+	RegisterString( "#FD_TOTAL_DEFEAT_HINT" )
 
 #if DEVSCRIPTS
 	Dev_RemoteStrings_Init()

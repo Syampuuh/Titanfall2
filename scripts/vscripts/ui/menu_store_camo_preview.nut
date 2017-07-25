@@ -1,7 +1,6 @@
 untyped
 
 global function InitStoreMenuCamoPreview
-global function EntitlementsChanged_Camo
 
 struct
 {
@@ -19,8 +18,9 @@ void function InitStoreMenuCamoPreview()
 	file.buyButton = Hud_GetChild( file.menu, "BuyButton" )
 	Hud_AddEventHandler( file.buyButton, UIE_CLICK, OnBuyButton_Activate )
 
-	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnOpenStoreMenuCamoPreview )
+	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnStoreMenuCamoPreview_Open )
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_NAVIGATE_BACK, OnStoreMenuCamoPreview_NavigateBack )
+	AddMenuEventHandler( file.menu, eUIEvent.MENU_ENTITLEMENTS_CHANGED, OnStoreMenuCamoPreview_EntitlementsChanged )
 
 	AddMenuFooterOption( file.menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
@@ -34,7 +34,7 @@ void function OnStoreMenuCamoPreview_NavigateBack()
 	CloseActiveMenu()
 }
 
-void function OnOpenStoreMenuCamoPreview()
+void function OnStoreMenuCamoPreview_Open()
 {
 	UI_SetPresentationType( ePresentationType.STORE_CAMO_PACKS )
 
@@ -101,7 +101,7 @@ void function StoreCamoPreviewButton_Activate( var button, int elemNum )
 void function StoreCamoPreviewButton_GetFocus( var button, int elemNum )
 {
 	// titan camo
-	RunMenuClientFunction( "PreviewTitanCamoChange", GetItemPersistenceId( file.camoRefs[ elemNum ].titanRef ) )
+	RunMenuClientFunction( "PreviewTitanCombinedChange", TITAN_SKIN_INDEX_CAMO, GetItemPersistenceId( file.camoRefs[ elemNum ].titanRef ), uiGlobal.titanSpawnLoadoutIndex )
 
 	// titan weapon
 	RunMenuClientFunction( "PreviewTitanWeaponCamoChange", GetItemPersistenceId( file.camoRefs[ elemNum ].ref ) )
@@ -139,9 +139,10 @@ void function OnBuyButton_Activate( var button )
 	}
 }
 
-void function EntitlementsChanged_Camo()
+void function OnStoreMenuCamoPreview_EntitlementsChanged()
 {
 	RefreshEntitlements()
+	EmitUISound( PURCHASE_SUCCESS_SOUND )
 }
 
 void function RefreshEntitlements()

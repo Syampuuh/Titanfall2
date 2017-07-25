@@ -1,5 +1,6 @@
 
 global function InitViewStatsTimeMenu
+global function AddPieChartEntry
 
 const MAX_MODE_ROWS = 8
 

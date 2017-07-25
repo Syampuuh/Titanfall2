@@ -73,7 +73,7 @@ resource/ui/menus/abilityselect.menu
 			scriptID				0
 	        xpos					96
     	    ypos                    160
-			navUp					Button10
+			navUp					Button12
 			navDown					Button2
 			navLeft					Button1
 			navRight				Button1
@@ -89,7 +89,7 @@ resource/ui/menus/abilityselect.menu
 			pin_to_sibling			Button0
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	TOP_RIGHT
-			navUp					Button11
+			navUp					Button13
 			navDown					Button3
 			navLeft					Button0
 			navRight				Button0
@@ -240,7 +240,7 @@ resource/ui/menus/abilityselect.menu
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					Button8
-			navDown					Button0
+			navDown					Button12
 			navLeft					Button11
 			navRight				Button11
 		}
@@ -255,9 +255,42 @@ resource/ui/menus/abilityselect.menu
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	TOP_RIGHT
 			navUp					Button9
-			navDown					Button1
+			navDown					Button13
 			navLeft					Button10
 			navRight				Button10
+		}
+
+// BUTTON ROW 7 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Button12
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				AbilitySelectClass
+			scriptID				10
+			ypos                    6
+			pin_to_sibling			Button10
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button10
+			navDown					Button0
+			navLeft					Button13
+			navRight				Button13
+		}
+		Button13
+		{
+			ControlName				RuiButton
+			InheritProperties		LoadoutButtonMedium
+			classname				AbilitySelectClass
+			scriptID				11
+			xpos					6
+			pin_to_sibling			Button12
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+			navUp					Button11
+			navDown					Button1
+			navLeft					Button12
+			navRight				Button12
 		}
 
 

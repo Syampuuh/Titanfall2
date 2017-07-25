@@ -3081,6 +3081,12 @@ void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType,
 		return GetTitanDecalIndexFromLoadoutAndPrimeStatus( cachedTitanLoadout )
 	}
 
+	asset function GetCachedTitanLoadoutArmBadge( int loadoutIndex )
+	{
+		TitanLoadoutDef cachedTitanLoadout = GetCachedTitanLoadout( loadoutIndex )
+		return GetTitanArmBadgeFromLoadoutAndPrimeStatus( cachedTitanLoadout )
+	}
+
 #endif // UI || CLIENT
 
 #if UI
@@ -3173,6 +3179,9 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		 		return false
 
 			if ( HasCinematicFlag( player, CE_FLAG_CLASSIC_MP_SPAWNING ) )
+		 		return false
+
+		 	if ( HasCinematicFlag( player, CE_FLAG_WAVE_SPAWNING ) )
 		 		return false
 		}
 
@@ -3968,7 +3977,13 @@ bool function HasPrimeToMatchExecutionType( entity player, int itemType )
 
 bool function IsTitanLoadoutAvailable( entity player, string titanClass )
 {
-	return player.GetPersistentVarAsInt( "titanClassLockState[" + titanClass + "]" ) == TITAN_CLASS_LOCK_STATE_AVAILABLE
+	int titanClassLockState = player.GetPersistentVarAsInt( "titanClassLockState[" + titanClass + "]" )
+	return (titanClassLockState == TITAN_CLASS_LOCK_STATE_AVAILABLE || titanClassLockState == TITAN_CLASS_LOCK_STATE_LEVELRECOMMENDED)
+}
+
+int function GetTitanLoadAvailableState(  entity player, string titanClass )
+{
+	return player.GetPersistentVarAsInt( "titanClassLockState[" + titanClass + "]" )
 }
 
 #if UI || CLIENT

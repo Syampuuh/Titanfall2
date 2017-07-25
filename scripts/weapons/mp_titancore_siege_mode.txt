@@ -68,10 +68,6 @@ WeaponData
 		{
 			"core_duration"									"18.0"
 		}
-		fd_pas_legion_smartcore
-		{
-			"core_duration"									"24.0"
-		}
 	}
 }
 

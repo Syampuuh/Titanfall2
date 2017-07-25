@@ -397,7 +397,23 @@ void function FillInRemoteMatchInfoPanel( RemoteMatchInfo info, RemoteMatchInfoP
 
 	Hud_SetText( panel.PlaylistName, GetPlaylistDisplayName( info.playlist ) )
 	Hud_SetText( panel.MapName, Localize( "#" + info.map ) )
-	Hud_SetText( panel.ModeName, GAMETYPE_TEXT[ info.gamemode ] )
+
+	string modeName
+
+	if ( IsFDMode( info.gamemode ) )
+	{
+		modeName = "#GAMEMODE_COOP"
+		// HACK because fd has multiple gamemodes in playlists
+	}
+	else
+	{
+		modeName = GAMETYPE_TEXT[ info.gamemode ]
+	}
+
+	if ( IsFullyConnected() )
+		modeName = GetGameModeDisplayName( info.gamemode )
+
+	Hud_SetText( panel.ModeName, modeName )
 	int minsLeft = info.timeLeftSecs / 60
 	int secsLeft = info.timeLeftSecs % 60
 	string timeLeft = "" + minsLeft
@@ -735,6 +751,10 @@ void function UpdateOpenInvites( OpenInvite openInvite, string message, string p
 		}
 
 		array<string> checklistPlaylists = GetChecklistPlaylistsArray()
+
+		if ( Lobby_IsFDMode() )
+			checklistPlaylists = GetFDDifficultyArray()
+
 		array<string> invitePlaylists = split( openInvite.playlistName, "," )
 		bool shouldShowCheckboxPlaylists = true
 		if ( !MixtapeMatchmakingIsEnabled() )
@@ -749,7 +769,7 @@ void function UpdateOpenInvites( OpenInvite openInvite, string message, string p
 		{
 			var slot = chatroomUI.openInviteUI.openInvitePlaylistSlots[idx]
 
-			string thisPlaylistName = checklistPlaylists[idx]
+			string thisPlaylistName = idx < checklistPlaylists.len() ? checklistPlaylists[idx] : ""
 			if ( (thisPlaylistName == "") || !shouldShowCheckboxPlaylists )
 			{
 				Hud_Hide( slot )

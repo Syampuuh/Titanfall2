@@ -13,6 +13,7 @@ global function ShouldLetPlayerRequestBattery
 global function ShouldShowOfferRodeoBatteryHint
 
 global function PlayerHasAmpedWeapons
+global function IsAmpedBattery
 
 global const OFFER_RODEO_BATTERY_COOLDOWN = 5.0
 global const REQUEST_RODEO_BATTERY_COOLDOWN = 10.0
@@ -384,4 +385,12 @@ bool function ShouldShowOfferRodeoBatteryHint( entity player, entity target )
 		return false
 
 	return true
+}
+
+bool function IsAmpedBattery( entity battery )
+{
+	if ( !IsValid( battery ) ) //Modes like Free Agents allow players to stack multiple batteries. But the player isn't actually carrying 3 valid batteries at that time.
+		return false
+
+	return battery.GetSkin() == 2
 }

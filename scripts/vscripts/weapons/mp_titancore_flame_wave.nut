@@ -202,7 +202,7 @@ bool function CreateFlameWaveSegment( entity projectile, int projectileCount, en
 			0, // distanceFromAttacker
 			0, // explosionForce
 			flags,
-			eDamageSourceId.mp_titancore_flame_wave_secondary )
+			eDamageSourceId.mp_titancore_flame_wave )
 
 	return true
 }
@@ -248,20 +248,17 @@ void function FlameWave_DamagedPlayerOrNPC( entity ent, var damageInfo )
 		Scorch_SelfDamageReduction( ent, damageInfo )
 	}
 
-	if ( DamageInfo_GetDamageSourceIdentifier( damageInfo ) == eDamageSourceId.mp_titancore_flame_wave_secondary )
-	{
-		entity attacker = DamageInfo_GetAttacker( damageInfo )
-		if ( !IsValid( attacker ) || attacker.GetTeam() == ent.GetTeam() )
-			return
+	entity attacker = DamageInfo_GetAttacker( damageInfo )
+	if ( !IsValid( attacker ) || attacker.GetTeam() == ent.GetTeam() )
+		return
 
-		array<entity> weapons = attacker.GetMainWeapons()
-		if ( weapons.len() > 0 )
-		{
-			if ( weapons[0].HasMod( "fd_fire_damage_upgrade" )  )
-				DamageInfo_ScaleDamage( damageInfo, FD_FIRE_DAMAGE_SCALE )
-			if ( weapons[0].HasMod( "fd_hot_streak" ) )
-				UpdateScorchHotStreakCoreMeter( attacker, DamageInfo_GetDamage( damageInfo ) )
-		}
+	array<entity> weapons = attacker.GetMainWeapons()
+	if ( weapons.len() > 0 )
+	{
+		if ( weapons[0].HasMod( "fd_fire_damage_upgrade" )  )
+			DamageInfo_ScaleDamage( damageInfo, FD_FIRE_DAMAGE_SCALE )
+		if ( weapons[0].HasMod( "fd_hot_streak" ) )
+			UpdateScorchHotStreakCoreMeter( attacker, DamageInfo_GetDamage( damageInfo ) )
 	}
 }
 

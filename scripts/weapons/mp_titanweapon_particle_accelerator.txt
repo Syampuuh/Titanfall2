@@ -577,6 +577,13 @@ WeaponData
 			"npc_damage_near_value_titanarmor"				"*0.7"
 			"npc_damage_far_value_titanarmor" 				"*0.7"
 		}
+		fd_balance
+		{
+			"damage_near_value"   							"*1.1"
+			"damage_far_value"								"*1.1"
+			"damage_near_value_titanarmor"					"*1.1"
+			"damage_far_value_titanarmor" 					"*1.1"
+		}
 	}
 
 

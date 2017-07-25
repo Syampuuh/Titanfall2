@@ -17,6 +17,7 @@ struct
 	array<var> promoButtons
 	array<var> checklistIconButtons
 	var playButton
+	var pveButton
 	var pickButton
 
 	var menuTitle
@@ -76,7 +77,7 @@ string function GetPlaylistMenuName()
 	return "PlaylistMenu"
 }
 
-const int PROMO_SLOT_COUNT = 9
+const int PROMO_SLOT_COUNT = 10
 const int CHECKLIST_SLOT_COUNT = 15
 
 void function ParsePlaylistInfos()
@@ -171,6 +172,8 @@ void function InitPlaylistMixtapeMenu()
 	AddButtonEventHandler( file.playButton, UIE_CLICK, OnPlayButtonClick )
 	AddButtonEventHandler( file.playButton, UIE_GET_FOCUS, OnPlayButtonFocus )
 	AddButtonEventHandler( file.playButton, UIE_LOSE_FOCUS, OnPlayButtonFocusLost )
+
+	file.pveButton = Hud_GetChild( file.mixtapeMenu, "PromoButton09" )
 
 	file.pickButton = Hud_GetChild( file.mixtapeMenu, "PickButton" )
 	AddButtonEventHandler( file.pickButton, UIE_CLICK, OnPickButtonClick )
@@ -470,6 +473,7 @@ void function SetupPromoButtons()
 
 		string displayNote = GetPlaylistVarOrUseValue( playlistName, "promo_note", "" )
 		RuiSetString( buttonRui, "playlistNoteName", displayNote )
+		RuiSetBool( buttonRui, "playlistHasPromotText", displayNote != "" )
 	}
 
 	var topBG = Hud_GetChild( file.mixtapeMenu, "BackgroundLeft" )
@@ -552,8 +556,14 @@ void function OnOpenPlaylistMixtapeMenu()
 	bool mixtapeVersionIsNew = IsMixtapeVersionNew()
 	Hud_SetVisible( file.notifyNewTitle, mixtapeVersionIsNew )
 
+
 	SetupPromoButtons()
 	SetupChecklistIconButtons()
+
+	var pveRui = Hud_GetRui( file.pveButton )
+	RuiSetBool( pveRui, "bigPresentation", true )
+	RuiSetImage( pveRui, "itemImage", $"rui/menu/gametype_select/pve_play_image" )
+	//RuiSetString( pveRui, "title", "#MATCHMAKING_PVE_PLAY_BUTTON" )
 
 	// player count:
 	{

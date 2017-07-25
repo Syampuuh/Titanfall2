@@ -58,16 +58,28 @@ bool function OnCoreCharge_Shift_Core( entity weapon )
 
 #if SERVER
 	entity owner = weapon.GetWeaponOwner()
+	string swordCoreSound_1p
+	string swordCoreSound_3p
+	if ( weapon.HasMod( "fd_duration" ) )
+	{
+		swordCoreSound_1p = "Titan_Ronin_Sword_Core_Activated_Upgraded_1P"
+		swordCoreSound_3p = "Titan_Ronin_Sword_Core_Activated_Upgraded_3P"
+	}
+	else
+	{
+		swordCoreSound_1p = "Titan_Ronin_Sword_Core_Activated_1P"
+		swordCoreSound_3p = "Titan_Ronin_Sword_Core_Activated_3P"
+	}
 	if ( owner.IsPlayer() )
 	{
 		owner.HolsterWeapon() //TODO: Look into rewriting this so it works with HolsterAndDisableWeapons()
 		thread RestoreWeapon( owner, weapon )
-		EmitSoundOnEntityOnlyToPlayer( owner, owner, "Titan_Ronin_Sword_Core_Activated_1P" )
-		EmitSoundOnEntityExceptToPlayer( owner, owner, "Titan_Ronin_Sword_Core_Activated_3P" )
+		EmitSoundOnEntityOnlyToPlayer( owner, owner, swordCoreSound_1p )
+		EmitSoundOnEntityExceptToPlayer( owner, owner, swordCoreSound_3p )
 	}
 	else
 	{
-		EmitSoundOnEntity( weapon, "Titan_Ronin_Sword_Core_Activated_3P" )
+		EmitSoundOnEntity( weapon, swordCoreSound_3p )
 	}
 #endif
 

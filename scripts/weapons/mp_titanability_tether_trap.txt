@@ -130,7 +130,21 @@ WeaponData
 
 		pas_northstar_trap
 		{
+			"projectile_max_deployed"					"8"
+		}
 
+		fd_explosive_trap
+		{
+			"hud_icon"										"rui/menu/fd_menu/upgrade_northstar_explosive_trap_hud"
+		}
+
+		fd_trap_charges
+		{
+			"ammo_min_to_fire"								"100"
+			"ammo_per_shot"									"100"
+			"regen_ammo_refill_rate"						"5"
+			"ammo_drains_to_empty_on_fire"					"0"
+			"ammo_no_remove_from_clip"						"0"
 		}
 	}
 }

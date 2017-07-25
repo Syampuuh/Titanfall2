@@ -54,21 +54,24 @@ void function LaserCore_OnPlayedOrNPCKilled( entity victim, entity attacker, var
 		return
 
 	entity weapon = attacker.GetOffhandWeapon( OFFHAND_EQUIPMENT )
-	array<string> mods = weapon.GetMods()
-	if ( !mods.contains( "fd_laser_cannon" ) )
+	if ( !weapon.HasMod( "fd_laser_cannon" ) )
 		return
 
 	float curTime = Time()
 	float laserCoreBonus
 	if ( victim.IsTitan() )
-		laserCoreBonus = 2.0
+		laserCoreBonus = 2.5
 	else if ( IsSuperSpectre( victim ) )
-		laserCoreBonus = 1.0
+		laserCoreBonus = 1.5
 	else
-		laserCoreBonus = 0.3
+		laserCoreBonus = 0.5
 
 	float remainingTime = laserCoreBonus + soul.GetCoreChargeExpireTime() - curTime
-	float duration = soul.GetCoreUseDuration()
+	float duration
+	if ( weapon.HasMod( "pas_ion_lasercannon") )
+		duration = 5.0
+	else
+		duration = 3.0
 	float coreFrac = min( 1.0, remainingTime / duration )
 	//Defensive fix for this sometimes resulting in a negative value.
 	if ( coreFrac > 0.0 )
@@ -76,7 +79,7 @@ void function LaserCore_OnPlayedOrNPCKilled( entity victim, entity attacker, var
 		soul.SetTitanSoulNetFloat( "coreExpireFrac", coreFrac )
 		soul.SetTitanSoulNetFloatOverTime( "coreExpireFrac", 0.0, remainingTime )
 		soul.SetCoreChargeExpireTime( remainingTime + curTime )
-		weapon.SetSustainedDischargeFractionForced( 1 - max( 0.0, weapon.GetSustainedDischargeFraction() - laserCoreBonus / weapon.GetCoreDuration() ) ) //Seems there is an unexpected 1 - value in code.
+		weapon.SetSustainedDischargeFractionForced( coreFrac )
 	}
 }
 #endif

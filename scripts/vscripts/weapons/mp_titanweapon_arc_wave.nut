@@ -10,6 +10,13 @@ global function OnWeaponNpcPrimaryAttack_titanweapon_arc_wave
 global function CreateDamageInflictorHelper
 global function CreateOncePerTickDamageInflictorHelper
 global function ArcWaveOnDamage
+global function AddArcWaveDamageCallback
+
+struct
+{
+	array< void functionref( entity, var ) > arcWaveDamageCallbacks = []
+} file
+
 #endif
 
 const asset ARCWAVE_FX_SCREEN = $"P_elec_screen"
@@ -83,6 +90,11 @@ var function OnWeaponPrimaryAttack_titanweapon_arc_wave( entity weapon, WeaponPr
 }
 
 #if SERVER
+void function AddArcWaveDamageCallback( void functionref( entity, var ) callback )
+{
+	file.arcWaveDamageCallbacks.append( callback )
+}
+
 void function BeginEmpWave( entity projectile, WeaponPrimaryAttackParams attackParams )
 {
 	projectile.EndSignal( "OnDestroy" )
@@ -161,6 +173,12 @@ void function ArcWaveOnDamage( entity ent, var damageInfo )
 
 	if ( ent.IsPlayer() || ent.IsNPC() )
 	{
+		//Run any custom callbacks for arc wave damage.
+		foreach ( callback in file.arcWaveDamageCallbacks )
+		{
+			callback( ent, damageInfo )
+		}
+
 		entity entToSlow = ent
 		entity soul = ent.GetTitanSoul()
 

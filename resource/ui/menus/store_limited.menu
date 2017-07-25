@@ -1,0 +1,201 @@
+resource/ui/menus/store_limited.menu
+{
+	menu
+	{
+		ControlName				Frame
+		xpos					0
+		ypos					0
+		zpos					3
+		wide					f0
+		tall					f0
+		autoResize				0
+		pinCorner				0
+		visible					1
+		enabled					1
+		PaintBackgroundType		0
+		infocus_bgcolor_override	"0 0 0 0"
+		outoffocus_bgcolor_override	"0 0 0 0"
+
+        Vignette
+        {
+            ControlName             ImagePanel
+            InheritProperties       MenuVignette
+        }
+
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			classname				MenuTitle
+			ypos					74
+		}
+
+		StoreHeaderBg
+		{
+			ControlName				RuiPanel
+		    textAlignment           west
+			xpos					256
+            ypos                    10
+            zpos                    17
+		    rui                     "ui/store_title_bg.rpak"
+            wide					1600
+            tall					240
+		}
+
+		MatchmakingStatus
+		{
+			ControlName				CNestedPanel
+			xpos					0
+			ypos					0
+			wide					f0
+			tall					f0
+			visible					1
+			controlSettingsFile		"resource/ui/menus/panels/matchmaking_status.res"
+			zpos                    2
+		}
+
+// BUTTON ROW 1 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Button0
+        {
+            ControlName				RuiButton
+            InheritProperties		RuiStoreButtonPrime
+            scriptID				0
+            xpos					96
+            ypos                    200
+            //tabPosition				1
+            navUp					ButtonBundle
+            navDown					Button1
+        }
+		Button1
+		{
+            ControlName				RuiButton
+            InheritProperties		RuiStoreButtonPrime
+            scriptID				1
+			ypos                    8
+			pin_to_sibling			Button0
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button0
+			navDown					Button2
+		}
+		Button2
+		{
+            ControlName				RuiButton
+            InheritProperties		RuiStoreButtonPrime
+            scriptID				2
+			ypos                    8
+			pin_to_sibling			Button1
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button1
+			navDown					Button3
+		}
+		Button3
+		{
+            ControlName				RuiButton
+            InheritProperties		RuiStoreButtonPrime
+            scriptID				3
+			ypos                    8
+			pin_to_sibling			Button2
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button2
+			navDown					Button4
+		}
+		Button4
+		{
+            ControlName				RuiButton
+            InheritProperties		RuiStoreButtonPrime
+            scriptID				4
+			ypos                    8
+			pin_to_sibling			Button3
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button3
+			navDown					Button5
+		}
+		Button5
+		{
+            ControlName				RuiButton
+            InheritProperties		RuiStoreButtonPrime
+            scriptID				5
+			ypos                    8
+			pin_to_sibling			Button4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button4
+			navDown					Button6
+		}
+		Button6
+		{
+            ControlName				RuiButton
+            InheritProperties		RuiStoreButtonPrime
+            scriptID				6
+			ypos                    8
+			pin_to_sibling			Button5
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button5
+			navDown					ButtonBundle
+		}
+		ButtonBundle
+		{
+            ControlName				RuiButton
+            InheritProperties		RuiStoreButtonBundle
+			ypos                    32
+			pin_to_sibling			Button6
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button6
+			navDown					Button0
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		Description
+		{
+			ControlName				RuiPanel
+			rui                     "ui/prime_titan_description.rpak"
+            xpos					96
+            ypos					784
+			wide                    1500
+			tall                    180
+			visible					1
+			scaleImage				1
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		TitanPreview
+		{
+			ControlName				RuiPanel
+			rui                     "ui/store_hidden_titan.rpak"
+            xpos					0
+            ypos					0
+			wide                    1920
+			tall                    1080
+			visible					1
+			scaleImage				1
+		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ModelRotateMouseCapture
+        {
+            ControlName				CMouseMovementCapturePanel
+            xpos                    580
+            zpos					12
+            wide                    1340
+            tall                    %100
+        }
+
+// FOOTER //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		FooterButtons
+		{
+			ControlName				CNestedPanel
+			InheritProperties       FooterButtons
+		}
+	}
+}

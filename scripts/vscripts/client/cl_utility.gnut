@@ -897,6 +897,16 @@ var function CreateTitanCockpitInstrument1Rui( asset ruiAsset, int sortKey = -1 
 	return rui
 }
 
+var function CreateFixedTitanCockpitRui( asset ruiAsset, int sortKey = 0 )
+{
+	var rui = RuiCreate( ruiAsset, clGlobal.topoCockpitHud, RUI_DRAW_COCKPIT, sortKey )
+	entity player = GetLocalViewPlayer()
+	TitanCockpitRUI tcRUI
+	tcRUI.rui = rui
+	player.p.titanCockpitRUIs.append( tcRUI )
+	return rui
+}
+
 /*
 Moved to code:
 bool function IsWatchingThirdPersonKillReplay()

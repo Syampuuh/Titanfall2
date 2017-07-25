@@ -60,11 +60,17 @@ void function OnProjectileExplode_weapon_frag_drone( entity projectile )
 			SetSpawnOption_AISettings( drone, "npc_frag_drone_throwable" )
 			DispatchSpawn( drone )
 
-			vector ornull clampedPos = NavMesh_ClampPointForAIWithExtents( origin, drone, < 200, 200, 100 > )
+			vector ornull clampedPos = NavMesh_ClampPointForAIWithExtents( origin, drone, < 20, 20, 36 > )
 			if ( clampedPos != null )
 			{
 				expect vector( clampedPos )
 				drone.SetOrigin( clampedPos )
+			}
+			else
+			{
+				projectile.GrenadeExplode( Vector( 0, 0, 0 ) )
+				drone.Signal( "SuicideSpectreExploding" )
+				return
 			}
 
 			int followBehavior = GetDefaultNPCFollowBehavior( drone )

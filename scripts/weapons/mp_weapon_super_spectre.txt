@@ -208,5 +208,14 @@ WeaponData
 			"npc_pre_fire_delay"							"*0.1"
 			"npc_max_range"   								"*0.5"
 		}
+		aggressive_ai_fd
+		{
+			"npc_pre_fire_delay"							"*0.1"
+			"npc_max_range"   								"*0.5"
+			"npc_damage_near_value_titanarmor"				"*0.7"
+			"npc_damage_far_value_titanarmor" 				"*0.7"
+			"npc_damage_near_value"   						"*0.7"
+			"npc_damage_far_value"							"*0.7"
+		}
 	}
 }

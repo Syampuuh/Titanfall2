@@ -3,21 +3,19 @@
 	LobbyEnemyTeamBackground
 	{
 		ControlName				CNestedPanel
-		wide					520
-		tall					396
+		InheritProperties		LobbyPlayerListBackground
 		controlSettingsFile		"resource/ui/menus/panels/enemy_team_background.res"
 	}
 
 	ListEnemies
 	{
 		ControlName				CPlayerList
-		InheritProperties 		LobbyPlayerList
+		InheritProperties		LobbyPlayerList
 		pin_to_sibling			LobbyEnemyTeamBackground
 		pin_corner_to_sibling	TOP_LEFT
 		pin_to_sibling_corner	TOP_LEFT
 		xpos					-12
 		ypos                    -12
-		tall					373
 		navLeft					ListFriendlies
 		navRight			    StartMatchButton
 		teamRelationshipFilter	enemy

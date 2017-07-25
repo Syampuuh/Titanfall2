@@ -1,26 +1,28 @@
 untyped
 
 global function InitStoreMenuPrimeTitans
-global function EntitlementsChanged_PrimeTitans
 
 struct
 {
+	var menu
 	var[MAX_STORE_PRIME_TITANS] primeTitanButtons
 	var titanPreview
 	int entitlementToBuy
+	var descRui
 } file
 
 void function InitStoreMenuPrimeTitans()
 {
-	var menu = GetMenu( "StoreMenu_PrimeTitans" )
+	file.menu = GetMenu( "StoreMenu_PrimeTitans" )
 
-	Hud_SetText( Hud_GetChild( menu, "MenuTitle" ), "#STORE_PRIME_TITANS" )
+	Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), "#STORE_PRIME_TITANS" )
 
-	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnOpenStoreMenuPrimeTitans )
+	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnStoreMenuPrimeTitans_Open )
+	AddMenuEventHandler( file.menu, eUIEvent.MENU_ENTITLEMENTS_CHANGED, OnStoreMenuPrimeTitans_EntitlementsChanged )
 
 	for ( int i = 0; i < MAX_STORE_PRIME_TITANS; i++ )
 	{
-		var button = Hud_GetChild( menu, "Button" + i )
+		var button = Hud_GetChild( file.menu, "Button" + i )
 		Hud_SetVisible( button, true )
 		if ( i < 6 )
 		{
@@ -36,26 +38,37 @@ void function InitStoreMenuPrimeTitans()
 		file.primeTitanButtons[i] = button
 	}
 
-	Hud_GetChild( menu, "Button0" ).s.loadoutIndex <- 0
-	Hud_GetChild( menu, "Button1" ).s.loadoutIndex <- 1
-	Hud_GetChild( menu, "Button2" ).s.loadoutIndex <- 2
-	Hud_GetChild( menu, "Button3" ).s.loadoutIndex <- 3
-	Hud_GetChild( menu, "Button4" ).s.loadoutIndex <- 4
-	Hud_GetChild( menu, "Button5" ).s.loadoutIndex <- 5
+	file.descRui = Hud_GetRui( Hud_GetChild( file.menu, "Description" ) )
 
-	file.titanPreview = Hud_GetChild( menu, "TitanPreview" )
+	Hud_Hide( Hud_GetChild( file.menu, "Button6" ) )
+	Hud_Hide( Hud_GetChild( file.menu, "Button7" ) )
 
-	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
-	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
+	Hud_GetChild( file.menu, "Button0" ).s.loadoutIndex <- 0
+	Hud_GetChild( file.menu, "Button1" ).s.loadoutIndex <- 1
+	Hud_GetChild( file.menu, "Button2" ).s.loadoutIndex <- 2
+	Hud_GetChild( file.menu, "Button3" ).s.loadoutIndex <- 3
+	Hud_GetChild( file.menu, "Button4" ).s.loadoutIndex <- 4
+	Hud_GetChild( file.menu, "Button5" ).s.loadoutIndex <- 5
+
+	file.titanPreview = Hud_GetChild( file.menu, "TitanPreview" )
+
+	AddMenuFooterOption( file.menu, BUTTON_A, "#A_BUTTON_SELECT" )
+	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 }
 
-void function OnOpenStoreMenuPrimeTitans()
+void function OnStoreMenuPrimeTitans_Open()
 {
 	UI_SetPresentationType( ePresentationType.STORE_PRIME_TITANS )
 	RunMenuClientFunction( "UpdateTitanModel", 0, TITANMENU_NO_CUSTOMIZATION  | TITANMENU_FORCE_PRIME )
 	var rui = Hud_GetRui( file.titanPreview )
 	RuiSetImage( rui, "titanPreview", $"" )
 	UpdateStoreMenuPrimeTitanButtons()
+
+	RuiSetString( file.descRui, "headerText", "#STORE_PRIME_TITANS_DESCRIPTION" )
+	RuiSetString( file.descRui, "bulletText1", "" )
+	RuiSetBool( file.descRui, "bulletVisible1", false )
+	RuiSetString( file.descRui, "bulletText2", "" )
+	RuiSetBool( file.descRui, "bulletVisible2", false )
 }
 
 void function UpdateStoreMenuPrimeTitanButtons()
@@ -224,9 +237,10 @@ void function Store_BuyPrimeTitan()
 	StorePurchase( file.entitlementToBuy )
 }
 
-void function EntitlementsChanged_PrimeTitans()
+void function OnStoreMenuPrimeTitans_EntitlementsChanged()
 {
 	RefreshEntitlements()
+	EmitUISound( PURCHASE_SUCCESS_SOUND )
 }
 
 void function RefreshEntitlements()

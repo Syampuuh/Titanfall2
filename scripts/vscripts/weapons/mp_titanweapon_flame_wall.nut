@@ -131,8 +131,8 @@ bool function CreateThermiteWallSegment( entity projectile, int projectileCount,
 		int damageSource
 		if ( mods.contains( "pas_scorch_flamecore" ) )
 		{
-			damageSource = eDamageSourceId.mp_titancore_flame_wave
-			duration = 1.0
+			damageSource = eDamageSourceId.mp_titancore_flame_wave_secondary
+			duration = 1.5
 		}
 		else
 		{

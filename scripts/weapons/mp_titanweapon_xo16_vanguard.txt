@@ -88,7 +88,7 @@ WeaponData
 
 	"fire_rate"   									"12"
 
-	"ammo_clip_size"   								"35"
+	"ammo_clip_size"   								"40"
 
 	"enable_highlight_networking_on_creation"		"1"
 
@@ -394,9 +394,9 @@ WeaponData
 
 			"hud_icon"										"r2_ui/menus/loadout_icons/titan_weapon/titan_weapon_xo16_arc"
 
-			"vortex_drain"									"0.05"
+			"vortex_drain"									"0.033"
 
-			"ammo_clip_size"   								"45"
+			"ammo_clip_size"   								"50"
 
 			"damage_flags"									"DF_STOPS_TITAN_REGEN | DF_BULLET | DF_NO_SELF_DAMAGE | DF_ELECTRICAL"
 		}
@@ -412,7 +412,7 @@ WeaponData
 
 			"vortex_drain"									"0.033"
 
-			"ammo_clip_size"   								"45"
+			"ammo_clip_size"   								"50"
 
 			"damage_flags"									"DF_STOPS_TITAN_REGEN | DF_BULLET | DF_NO_SELF_DAMAGE | DF_ELECTRICAL"
 
@@ -564,10 +564,12 @@ WeaponData
 		}
 		fd_vanguard_weapon_2
 		{
-			"threat_scope_enabled"			"1"
-			"threat_scope_bounds_width"		"1.5"
-			"threat_scope_bounds_height"	"1.1"
-			"threat_scope_fadeWithDistance"	"0"
+			"critical_hit_damage_scale"						"1.75"
+		}
+		fd_balance
+		{
+			"damage_near_value_titanarmor"					"*0.8"
+			"damage_far_value_titanarmor" 					"*0.8"
 		}
 	}
 

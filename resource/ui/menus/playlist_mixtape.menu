@@ -55,7 +55,8 @@ resource/ui/menus/playlist_mixtape.menu
 		ControlName			RuiButton
 		Classname			GridButtonClass
 		InheritProperties	Playlist_Button
-		xpos			150
+//		xpos			96
+		xpos			196
 		ypos			197
 		wide			648
 		tall			324
@@ -70,6 +71,32 @@ resource/ui/menus/playlist_mixtape.menu
 
 		rightClickEvents	1
 		zpos			1
+	}
+
+	PromoButton09
+	{
+		ControlName			RuiButton
+		Classname			GridButtonClass
+		InheritProperties	PvE_Button
+		xpos			30
+		ypos			10
+		wide			358
+		tall			324
+		visible			1
+		scaleImage		1
+		tabPosition		1
+		drawColor		"255 255 255 255"
+
+		navDown				PromoButton05
+		navLeft				PromoButton00
+
+		rightClickEvents	0
+		zpos			    1
+
+		scriptID		9
+		pin_to_sibling			PromoButton00
+		pin_corner_to_sibling	TOP_LEFT
+		pin_to_sibling_corner	TOP_RIGHT
 	}
 
 	PickButton
@@ -105,12 +132,13 @@ resource/ui/menus/playlist_mixtape.menu
 
 		navDown		PromoButton01
 		navLeft		PlayButton
-		navRight	PromoButton02
+		navRight	PromoButton09
 
 		scriptID		0
 		rightClickEvents	1
 		zpos			1
 	}
+
 	PromoButton01
 	{
 		ControlName			RuiButton
@@ -131,7 +159,7 @@ resource/ui/menus/playlist_mixtape.menu
 		navUp		PromoButton00
 		navDown		PromoButton04
 		navLeft		PlayButton
-		navRight	PromoButton03
+		navRight	PromoButton09
 
 		scriptID		1
 		rightClickEvents	1
@@ -146,7 +174,7 @@ resource/ui/menus/playlist_mixtape.menu
 		pin_to_sibling			PromoButton00
 		pin_corner_to_sibling	TOP_LEFT
 		pin_to_sibling_corner	TOP_RIGHT
-		xpos			20
+		xpos			30
 		ypos			0
 		wide			358
 		tall			153
@@ -235,7 +263,7 @@ resource/ui/menus/playlist_mixtape.menu
 		tabPosition		1
 		drawColor		"255 255 255 255"
 
-		navUp		PromoButton03
+		navUp		PromoButton09
 		navLeft		PromoButton04
 	    navRight    PromoButton08
 		navDown		BtnPlaylistIcon00
@@ -356,13 +384,13 @@ resource/ui/menus/playlist_mixtape.menu
 		InheritProperties		R2_ContentDescriptionTitle
 		font					DefaultBold_44
 		labelText				"<ContentDescriptionTitle>"
-		ypos					-14
-		xpos                    -300
+		ypos					-540
+		xpos                    0
 		fgcolor_override		"255 184 0 255"
 		allcaps					0
 		auto_wide_tocontents    1
 
-		pin_to_sibling			DetailsBackground
+		pin_to_sibling			PlayButton
 		pin_corner_to_sibling	TOP_LEFT
 		pin_to_sibling_corner	TOP_LEFT
 	}

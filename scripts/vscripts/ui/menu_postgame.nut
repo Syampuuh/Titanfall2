@@ -112,6 +112,27 @@ bool function IsPostGamePanelValid( var panel )
 			}
 			break
 
+		case GetPanel( "PVEPanel" ):
+			entity player = GetUIPlayer()
+			if ( player )
+			{
+				string lastTitanRef = expect string( player.GetPersistentVar( "lastFDTitanRef" ) )
+				if ( lastTitanRef == "" )
+					return false
+
+				if ( !IsRefValid( lastTitanRef ) || GetItemType( lastTitanRef ) != eItemTypes.TITAN )
+					return false
+
+				return true
+			}
+			break
+
+		case GetPanel( "FDAwardsPanel" ):
+			entity player = GetUIPlayer()
+			if ( player && player.GetPersistentVar( "isFDPostGameScoreboardValid" ) )
+				value = true
+			break
+
 		case GetPanel( "ScoreboardPanel" ):
 			entity player = GetUIPlayer()
 			if ( player && player.GetPersistentVar( "isPostGameScoreboardValid" ) )

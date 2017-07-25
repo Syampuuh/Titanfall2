@@ -32,39 +32,6 @@ void function ClGamemodeCP_Init()
 	AddCallback_GameStateEnter( eGameState.Postmatch, DisplayPostMatchTop3 )
 }
 
-#if DEVSCRIPTS
-DpadCommListItem function SetPopulateDpadCommsToCP( entity player, string menuName, int menuIndex )
-{
-	if ( menuName != "command" || menuIndex == 3 ) // we only replace 0,1,2
-		return GetDefaultDpadCommsItem( player, menuName, menuIndex )
-
-	string networkVar = "objectiveAEnt"
-	switch( menuIndex )
-	{
-		case 0:
-			networkVar = "objectiveAEnt"
-			break
-		case 1:
-			networkVar = "objectiveBEnt"
-			break
-		case 2:
-			networkVar = "objectiveCEnt"
-			break
-	}
-
-	string action = ""
-
-	entity hpEnt = GetGlobalNetEnt( networkVar )
-	if ( hpEnt == null )
-		action = "cp_attack"
-	else
-		action = hpEnt.GetTeam() == player.GetTeam() ? "cp_defend" : "cp_attack"
-
-
-	return GetDefaultDpadCommsItem( player, menuName + "_" + action, menuIndex )
-}
-#endif
-
 void function CLCapturePoint_RegisterNetworkFunctions()
 {
 	RegisterNetworkedVariableChangeCallback_ent( "objectiveAEnt", CP_ObjectiveEntChanged )

@@ -49,12 +49,17 @@ global const RAID = "raid"
 global const ATCOOP = "atcoop"
 global const CONQUEST = "cq"
 global const FD = "fd"
+global const FD_EASY = "fd_easy"
+global const FD_NORMAL = "fd_normal"
+global const FD_HARD = "fd_hard"
+global const FD_MASTER = "fd_master"
+global const FD_INSANE = "fd_insane"
 global const PVE_SANDBOX = "pve_sandbox"
 global const TITAN_BRAWL = "ttdm"
 
 global const VERBOSE_DAMAGE_PRINTOUTS = false
 
-global const SAVEGAME_VERSION = 13 // increment when saves need to be tossed
+global const SAVEGAME_VERSION = 14 // increment when saves need to be tossed
 global const PERSISTENCE_INIT_VERSION = 229
 
 global const TEMP_NETWORTH_VAR = "activeBCID"
@@ -1150,8 +1155,8 @@ global enum eItemTypes
 	TITAN_SCORCH_EXECUTION,
 	TITAN_LEGION_EXECUTION,
 	TITAN_VANGUARD_EXECUTION,
-	AVAIL_FOR_USE_1,
-	AVAIL_FOR_USE_2,
+	TITAN_FD_UPGRADE,
+	WEAPON_SKIN,
 	PILOT_WEAPON3,
 	COUNT
 }
@@ -1474,11 +1479,13 @@ global enum eMaps
 	mp_colony02
 	mp_glitch
 	mp_wargames
+	mp_rise
 	mp_lf_stacks
 	mp_lf_meadow
 	mp_lf_deck
 	mp_coliseum
 	mp_coliseum_column
+	mp_lf_township
 }
 /*
 global enum ePrivateMatchMaps
@@ -1603,6 +1610,21 @@ global enum eEventNotifications
 	DON_Reinforcements,
 	BLEEDOUT_SelfHealPrompt,
 	VANGUARD_ShieldGain,
+	FD_AnnounceWaveStart,
+	FD_AnnounceWaveEnd,
+	FD_WaveLost,
+	FD_WaveRestart,
+	FD_AmmoRefilled,
+	FD_NotifyWaveBonusIncoming,
+	FD_PlayerHealedHarvester,
+	FD_PlayerBoostedHarvesterShield,
+	FD_StoreClosing,
+	FD_StoreOpen,
+	FD_PlayerReady,
+	FD_TurretRepair,
+	FD_GotMoney,
+	FD_BoughtItem,
+	FD_SuperRodeoUsed,
 	BATT_HealthFull,
 	BATT_Full,
 }
@@ -1926,6 +1948,7 @@ global enum eMusicPieceID
 	ROUND_BASED_GAME_WON,
 	ROUND_BASED_GAME_LOST,
 	BOOST_TIMED_EFFECT,
+	TITAN_SELECT,
 	SP_NPCSTATE_IDLE,
 	SP_NPCSTATE_ALERT,
 	SP_NPCSTATE_COMBAT,
@@ -2057,11 +2080,11 @@ global const FD_SCORE_SUPER_SPECTRE 		= 3
 global const FD_SCORE_MEGATURRET			= 0
 global const FD_SCORE_SENTRYTURRET			= 0
 global const FD_SCORE_PILOT   				= 0
-global const FD_SCORE_AIR_DRONE 			= 2
+global const FD_SCORE_AIR_DRONE 			= 1
 global const FD_SCORE_PROWLER  				= 1
 global const FD_SCORE_GRUNT   				= 1
 global const FD_SCORE_SPECTRE 				= 1
-global const FD_SCORE_STALKER 				= 1
+global const FD_SCORE_STALKER 				= 2
 global const FD_SCORE_MARVIN  				= 0
 global const FD_SCORE_ENEMIES  				= 0
 global const FD_SCORE_MVP	  				= 100
@@ -2070,6 +2093,15 @@ global const FD_SCORE_TEAM_WAVE				= 0
 global const FD_SCORE_TEAM_FLAWLESS_WAVE	= 100
 global const FD_SCORE_REPAIR_TURRET			= 25
 global const FD_SCORE_DIDNT_DIE				= 100
+global const FD_SCORE_SHIELD_HARVESTER		= 150
+global const FD_SCORE_SONAR_PULSE			= 0
+global const FD_SCORE_ARC_TRAP_TRIGGERED	= 0
+global const FD_SCORE_TETHER_TRAP_TRIGGERED	= 0
+global const FD_SCORE_ARC_WAVE				= 0
+global const FD_SCORE_TEAM_HEAL				= 0
+global const FD_SCORE_DAMAGE_BONUS			= 0
+global const FD_SCORE_HEALING_BONUS			= 0
+global const FD_SCORE_SUPPORT_BONUS			= 0
 
 global const ZIPLINE_IDLE_ANIM = "pt_zipline_slide_idle"
 
@@ -2170,13 +2202,15 @@ global enum ePresentationType
 	STORE_CAMO_PACKS,
 	STORE_FRONT,
 	STORE_PRIME_TITANS,
-	STORE_GENERIC_ITEM,
+	STORE_WEAPON_SKINS,
 	PILOT,
 	PILOT_LOADOUT_EDIT,
 	PILOT_CHARACTER,
 	PILOT_WEAPON,
 	TITAN,
 	TITAN_LOADOUT_EDIT,
+	TITAN_ARMBADGE,
+	TITAN_SKIN_EDIT,
 	TITAN_WEAPON,
 	TITAN_NOSE_ART,
 	NO_MODELS,
@@ -2187,6 +2221,13 @@ global enum ePresentationType
 	KNOWLEDGEBASE_MAIN,
 	KNOWLEDGEBASE_SUB,
 	PVE_MAIN,
+	TITAN_CENTER,
+	TITAN_CENTER_SELECTED,
+	TITAN_LEFT,
+	TITAN_RIGHT,
+	FD_MAIN,
+	FD_SEARCH,
+	FD_FIND_GAME,
 	COUNT
 }
 
@@ -2284,6 +2325,7 @@ global enum eUIEvent
 	MENU_NAVIGATE_BACK,
 	MENU_TAB_CHANGED,
 	MENU_INPUT_MODE_CHANGED,
+	MENU_ENTITLEMENTS_CHANGED,
 	PANEL_SHOW,
 	PANEL_HIDE
 }
@@ -2403,6 +2445,14 @@ global enum ePowerUps
 global const COLLECTIBLE_PICKUP_EFFECT = $"ar_item_pickup_CP" // "ar_item_pickup"
 
 global const MODEL_HARVESTER_TOWER 			= $"models/props/generator_coop/generator_coop.mdl"
+global const asset FX_HARVESTER_BEAM				= $"P_tw_harvester_beam_endcap"
+global const asset FX_HARVESTER_HEALTH_LOW 		= $"P_tw_harvester_damaged"
+global const asset FX_HARVESTER_OVERSHIELD			= $"P_harvestor_shield_wall"
+global const asset FX_HARVESTER_SHIELD				= $"P_coop_harvester_CP"
+global const asset FX_HARVESTER_SHIELD_BREAK		= $"P_coop_harvester_break_CP"
+global const asset FX_GEN_HARVESTER_BEAM			= $"P_tw_harvester_beam_endcap"
+global const MODEL_HARVESTER_TOWER_COLLISION= $"models/props/generator_coop/generator_coop_blackbox.mdl"
+global const MODEL_HARVESTER_TOWER_RINGS 	= $"models/props/generator_coop/generator_coop_rings_animated.mdl"
 
 //LAST TITAN STANDING
 global const float LTS_TEAM_SELECTION_LENGTH = 15.0
@@ -2527,7 +2577,7 @@ global const int TITAN_SKIN_INDEX_CAMO = 2
 global const int TITAN_WARPAINT_CAMO_INDEX = -1
 global const int WEAPON_SKIN_INDEX_DEFAULT = 0
 global const int WEAPON_SKIN_INDEX_CAMO = 1
-global const int WEAPON_SKIN_INDEX_GHOST = 8
+global const int WEAPON_SKIN_INDEX_GHOST = 9
 
 global const int FWTS_HIDDEN 		= 1 << 0
 global const int FWTS_IMC 			= 1 << 1
@@ -2644,13 +2694,77 @@ global const int MERIT_STATE_HIDDEN = 4
 global const int MAX_MAIL_COUNT = 9
 
 global const int TITAN_CLASS_LOCK_STATE_AVAILABLE = 0
-global const int TITAN_CLASS_LOCK_STATE_UNAVAILABLE = 1
-global const int TITAN_CLASS_LOCK_STATE_INUSE = 2
+global const int TITAN_CLASS_LOCK_STATE_LEVELRECOMMENDED = 1
+global const int TITAN_CLASS_LOCK_STATE_LOCKED = 2
+global const int TITAN_CLASS_LOCK_STATE_LEVELREQUIRED = 3
+global const int TITAN_CLASS_LOCK_STATE_INUSE = 4
 
-global const int FD_XP_NORMAL = 1
-global const int FD_XP_HARD = 2
-global const int FD_XP_MASTER = 3
-global const int FD_XP_INSANE = 4
+global const int FD_XP_EASY_BONUS_SCALE = 1
+global const int FD_XP_NORMAL_BONUS_SCALE = 1
+global const int FD_XP_HARD_BONUS_SCALE = 2
+global const int FD_XP_MASTER_BONUS_SCALE = 3
+global const int FD_XP_INSANE_BONUS_SCALE = 4
+
+global const int FD_XP_VICTORY = 1
+global const int FD_XP_VICTORY_HARD_BONUS = 1
+global const int FD_XP_VICTORY_MASTER_BONUS = 2
+global const int FD_XP_VICTORY_INSANE_BONUS = 3
+
+global const int FD_XP_EASY_WIN = 1
+global const int FD_XP_NORMAL_WIN = 1
+global const int FD_XP_HARD_WIN = 2
+global const int FD_XP_MASTER_WIN = 3
+global const int FD_XP_INSANE_WIN = 4
+
+global const int FD_XP_WAVE = 1
+global const int FD_XP_EASY_WAVE_BONUS = 0
+global const int FD_XP_NORMAL_WAVE_BONUS = 0
+global const int FD_XP_HARD_WAVE_BONUS = 1
+global const int FD_XP_MASTER_WAVE_BONUS = 2
+global const int FD_XP_INSANE_WAVE_BONUS = 3
+
+global const int FD_XP_EASY_MILESTONE = 0
+global const int FD_XP_NORMAL_MILESTONE = 1
+global const int FD_XP_HARD_MILESTONE = 1
+global const int FD_XP_MASTER_MILESTONE = 1
+global const int FD_XP_INSANE_MILESTONE = 1
+
+global enum eFDDifficultyLevel
+{
+	EASY,
+	NORMAL,
+	HARD,
+	MASTER,
+	INSANE,
+}
+
+
+global enum eFDTutorials
+{
+	FRONTIER_DEFENSE,
+	BOOST_STORE,
+	BOOST_STORE_INTRO,
+	TEAM_RESERVE,
+	HARD_DIFFICULTY,
+	MASTER_DIFFICULTY,
+	INSANE_DIFFICULTY,
+	WAVE_BREAK,
+	HARVESTER,
+	ARC_TRAP,
+	SENTRY_TURRET,
+	CORE_OVERLOAD,
+	AI_GRUNT,
+	AI_SPECTRE,
+	AI_DRONE,
+	AI_DRONE_CLOAK,
+	AI_REAPER,
+	AI_TICK,
+	AI_STALKER,
+	AI_TITAN_NUKE,
+	AI_TITAN_ARC,
+	AI_TITAN_MORTAR,
+	AI_SPECTRE_MORTAR,
+}
 
 global enum eLaunching
 {
@@ -2660,6 +2774,7 @@ global enum eLaunching
 	SINGLEPLAYER_MISSION_SELECT,
 	MULTIPLAYER,
 	MULTIPLAYER_INVITE,
+	FRONTIER_DEFENSE,
 	COUNT
 }
 
@@ -2707,3 +2822,7 @@ global const bool MENU_NAV_BACK = false
 #endif
 
 global const int WEAPONFLAG_AMPED	= (1<<0)
+
+global const int PROP_IS_VALID_FOR_TURRET_PLACEMENT = SPF_CUSTOM_SCRIPT_3
+
+global const string TITAN_ARM_BADGE_ATTACHMENT = "exp_L_shoulder"

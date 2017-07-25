@@ -30,7 +30,7 @@ global function IsDisplayingEjectInterface
 global function FlashCockpitLight
 global function PlayCockpitSparkFX
 
-global function FlashCockpitHealthGreen
+global function FlashCockpitHealth
 
 global function UpdateEjectHud_SetButtonPressTime
 global function UpdateEjectHud_SetButtonPressCount
@@ -38,6 +38,7 @@ global function UpdateEjectHud_SetButtonPressCount
 global function SetUnlimitedDash
 #if MP
 global function NetworkedVarChangedCallback_UpdateVanguardRUICoreStatus
+global function DisplayFrontierRank
 #endif
 struct TitanCockpitManagedRUI
 {
@@ -63,9 +64,13 @@ struct
 	var coreHintRui
 	var cockpitRui
 	var cockpitLowerRui
+	var cockpitAdditionalRui
 	array<TitanCockpitManagedRUI> titanCockpitManagedRUIs
 
 	string lastPilotSettings
+
+	bool isFirstBoot = true
+	var scorchHotstreakRui
 } file
 
 function ClTitanCockpit_Init()
@@ -83,6 +88,7 @@ function ClTitanCockpit_Init()
 	RegisterSignal( "TitanEMP_Internal" )
 	RegisterSignal( "TitanUnDoomed" )
 	RegisterSignal( "MonitorPlayerEjectAnimBeingStuck" )
+	RegisterSignal( "DisplayFrontierRank" )
 
 	PrecacheParticleSystem( $"xo_cockpit_spark_01" )
 
@@ -102,6 +108,8 @@ function ClTitanCockpit_Init()
 	AddCinematicEventFlagChangedCallback( CE_FLAG_INTRO, CinematicEventFlagChanged )
 
 	AddCallback_PlayerClassChanged( UpdateLastPlayerSettings )
+
+	AddTitanCockpitManagedRUI( Scorch_CreateHotstreakBar, Scorch_DestroyHotstreakBar, Scorch_ShouldCreateHotstreakBar, RUI_DRAW_COCKPIT ) //RUI_DRAW_HUD
 }
 
 void function UpdateLastPlayerSettings( entity player )
@@ -274,7 +282,15 @@ void function ShowRUIHUD( entity cockpit )
 		RuiSetString( file.cockpitRui, "titanInfo1", GetVanguardCoreString( player, 1 ) )
 		RuiSetString( file.cockpitRui, "titanInfo2", GetVanguardCoreString( player, 2 ) )
 		RuiSetString( file.cockpitRui, "titanInfo3", GetVanguardCoreString( player, 3 ) )
+		RuiSetString( file.cockpitRui, "titanInfo4", GetVanguardCoreString( player, 4 ) )
 	}
+
+	file.cockpitAdditionalRui = CreateTitanCockpitRui( $"ui/ajax_cockpit_fd.rpak" )
+	RuiSetFloat( file.cockpitAdditionalRui, "ejectManualTimeOut", EJECT_FADE_TIME )
+	RuiSetFloat( file.cockpitAdditionalRui, "ejectButtonTimeOut", TITAN_EJECT_MAX_PRESS_DELAY )
+	RuiSetGameTime( file.cockpitAdditionalRui, "ejectManualStartTime", -60.0 )
+
+	RuiSetDrawGroup( file.cockpitAdditionalRui, RUI_DRAW_NONE )
 	#endif
 
 #if SP
@@ -306,10 +322,76 @@ void function ShowRUIHUD( entity cockpit )
 	thread TitanCockpitDestroyRuisOnDeath( cockpit )
 	thread TitanCockpitHealthChangedThink( cockpit, player )
 
+	#if MP
+		if ( GameRules_GetGameMode() == FD )
+			thread DisplayFrontierRank( file.isFirstBoot )
+	#endif
+	file.isFirstBoot = false
+
 	UpdateTitanCockpitVisibility()
 }
 
 #if MP
+void function DisplayFrontierRank( bool isFirstBoot = true )
+{
+	GetLocalClientPlayer().Signal( "DisplayFrontierRank" )
+	GetLocalClientPlayer().EndSignal( "DisplayFrontierRank" )
+
+	wait 2.0
+
+	TitanLoadoutDef titanLoadout = GetTitanLoadoutFromPersistentData( GetLocalClientPlayer(), GetPersistentSpawnLoadoutIndex( GetLocalClientPlayer(), "titan" ) )
+	string titanClass = titanLoadout.titanClass
+
+	array<ItemDisplayData> titanUpgrades = FD_GetUpgradesForTitanClass( titanClass )
+	int maxActiveIndex
+	foreach ( index, item in titanUpgrades )
+	{
+		RuiSetImage( file.cockpitAdditionalRui, "upgradeIcon" + (index + 1), item.image )
+		RuiSetString( file.cockpitAdditionalRui, "upgradeName" + (index + 1), item.name )
+
+		if ( !IsSubItemLocked( GetLocalClientPlayer(), item.ref, item.parentRef ) )
+			maxActiveIndex++
+	}
+
+	RuiSetDrawGroup( file.cockpitAdditionalRui, RUI_DRAW_COCKPIT )
+
+	bool firstBootDisplay = isFirstBoot || !GetGlobalNetBool( "FD_waveActive" )
+
+	RuiSetBool( file.cockpitAdditionalRui, "isFirstBoot", isFirstBoot || !GetGlobalNetBool( "FD_waveActive" ) )
+	RuiSetImage( file.cockpitAdditionalRui, "titanIcon", GetIconForTitanClass( titanClass ) )
+	RuiSetInt( file.cockpitAdditionalRui, "titanRank", FD_TitanGetLevel( GetLocalClientPlayer(), titanClass ) )
+	RuiSetInt( file.cockpitAdditionalRui, "maxActiveIndex", maxActiveIndex )
+	RuiSetGameTime( file.cockpitAdditionalRui, "updateTime", Time() )
+
+	EmitSoundOnEntity( GetLocalClientPlayer(), "UI_InGame_FD_MetaUpgradeAnnouncement" )
+
+	if ( firstBootDisplay )
+	{
+		wait 2.0
+
+		for ( int index = 0; index < maxActiveIndex; index++ )
+		{
+			EmitSoundOnEntity( GetLocalClientPlayer(), "UI_InGame_FD_MetaUpgradeTextAppear" )
+
+			wait 0.85
+
+			EmitSoundOnEntity( GetLocalClientPlayer(), "UI_InGame_FD_MetaUpgradeBarFill" )
+
+			wait 0.15
+		}
+	}
+	else
+	{
+		wait 0.5
+
+		for ( int index = 0; index < maxActiveIndex; index++ )
+		{
+			EmitSoundOnEntity( GetLocalClientPlayer(), "UI_InGame_FD_MetaUpgradeBarFill" )
+			wait 0.05
+		}
+	}
+}
+
 string function GetVanguardCoreString( entity player, int index )
 {
 	Assert( player.IsTitan() )
@@ -365,6 +447,38 @@ string function GetVanguardCoreString( entity player, int index )
 				return  Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE3_TITLE" ), Localize( "#UPGRADE_NOT_INSTALLED" ) )
 		}
 	}
+	if ( index == 4 )
+	{
+		printt( loadout.passive4 )
+		if ( loadout.passive4 == "pas_vanguard_core1" ) // Arc Rounds
+		{
+			entity offhandWeapon = player.GetOffhandWeapon( OFFHAND_RIGHT )
+			if ( IsValid( offhandWeapon ) && ( offhandWeapon.HasMod( "missile_racks" ) || offhandWeapon.HasMod( "upgradeCore_MissileRack_Vanguard" ) ) )
+				return Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE4_TITLE" ), Localize( "#GEAR_VANGUARD_CORE2" ) )
+			offhandWeapon = player.GetOffhandWeapon( OFFHAND_LEFT )
+			if ( IsValid( offhandWeapon ) && ( offhandWeapon.HasMod( "energy_transfer" ) || offhandWeapon.HasMod( "energy_field_energy_transfer" ) ) )
+				return Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE4_TITLE" ), Localize( "#GEAR_VANGUARD_CORE3" ) )
+		}
+		else if ( loadout.passive4 == "pas_vanguard_core2" ) // Missile Racks
+		{
+			entity weapon = player.GetMainWeapons()[0]
+			if ( IsValid( weapon ) && ( weapon.HasMod( "arc_rounds" ) || weapon.HasMod( "arc_rounds_with_battle_rifle" ) ) )
+				return Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE4_TITLE" ), Localize( "#GEAR_VANGUARD_CORE1" ) )
+			entity offhandWeapon = player.GetOffhandWeapon( OFFHAND_LEFT )
+			if ( IsValid( offhandWeapon ) && ( offhandWeapon.HasMod( "energy_transfer" ) || offhandWeapon.HasMod( "energy_field_energy_transfer" ) ) )
+				return Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE4_TITLE" ), Localize( "#GEAR_VANGUARD_CORE3" ) )
+		}
+		else if ( loadout.passive4 == "pas_vanguard_core3" ) // Energy Transfer
+		{
+			entity weapon = player.GetMainWeapons()[0]
+			if ( IsValid( weapon ) && ( weapon.HasMod( "arc_rounds" ) || weapon.HasMod( "arc_rounds_with_battle_rifle" ) ) )
+				return Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE4_TITLE" ), Localize( "#GEAR_VANGUARD_CORE1" ) )
+			entity offhandWeapon = player.GetOffhandWeapon( OFFHAND_RIGHT )
+			if ( IsValid( offhandWeapon ) && ( offhandWeapon.HasMod( "missile_racks" ) || offhandWeapon.HasMod( "upgradeCore_MissileRack_Vanguard" ) ) )
+				return Localize( "#TITAN_UPGRADE_STATUS_N_N", Localize( "#TITAN_UPGRADE4_TITLE" ), Localize( "#GEAR_VANGUARD_CORE2" ) )
+		}
+		return ""
+	}
 
 	unreachable
 }
@@ -385,6 +499,9 @@ void function UpdateEjectHud_SetManualEjectStartTime( entity player )
 
 	if ( file.cockpitRui != null )
 		RuiSetGameTime( file.cockpitRui, "ejectManualStartTime", timeNow )
+
+	if ( file.cockpitAdditionalRui != null )
+		RuiSetGameTime( file.cockpitAdditionalRui, "ejectManualStartTime", timeNow )
 }
 
 void function UpdateEjectHud_SetButtonPressTime( entity player )
@@ -394,6 +511,9 @@ void function UpdateEjectHud_SetButtonPressTime( entity player )
 
 	if ( file.cockpitRui != null )
 		RuiSetGameTime( file.cockpitRui, "ejectButtonPressTime", timeNow )
+
+	//if ( file.cockpitAdditionalRui != null )
+	//	RuiSetGameTime( file.cockpitAdditionalRui, "ejectButtonPressTime", timeNow )
 }
 
 void function UpdateEjectHud_SetButtonPressCount( entity player, int buttonCount )
@@ -402,6 +522,9 @@ void function UpdateEjectHud_SetButtonPressCount( entity player, int buttonCount
 
 	if ( file.cockpitRui != null )
 		RuiSetInt( file.cockpitRui, "ejectButtonCount", buttonCount )
+
+	//if ( file.cockpitAdditionalRui != null )
+	//	RuiSetInt( file.cockpitAdditionalRui, "ejectButtonCount", buttonCount )
 }
 
 void function UpdateTitanCockpitVisibility()
@@ -487,15 +610,40 @@ void function CockpitDoomedThink( entity cockpit )
 		if ( !soul.IsDoomed() )
 			player.WaitSignal( "Doomed" )
 
-		if ( file.cockpitRui != null )
-			RuiSetBool( file.cockpitRui, "isDoomed", true )
+		SetCockpitUIDoomedState( true )
 
 		if ( soul.IsDoomed() )
 			player.WaitSignal( "TitanUnDoomed" )
 
-		if ( file.cockpitRui != null )
-			RuiSetBool( file.cockpitRui, "isDoomed", false )
+		SetCockpitUIDoomedState( false )
 	}
+}
+
+void function SetCockpitUIEjectingState( bool state )
+{
+	if ( file.cockpitRui != null )
+		RuiSetBool( file.cockpitRui, "isEjecting", state )
+
+	if ( file.cockpitAdditionalRui != null )
+		RuiSetBool( file.cockpitAdditionalRui, "isEjecting", state )
+
+	if ( file.cockpitLowerRui != null )
+	{
+		RuiSetBool( file.cockpitLowerRui, "isEjecting", state )
+		if ( state )
+			RuiSetString( file.cockpitLowerRui, "ejectPrompt", Localize( RollRandomEjectString() ) )
+		else
+			RuiSetString( file.cockpitLowerRui, "ejectPrompt", "" )
+	}
+}
+
+void function SetCockpitUIDoomedState( bool state )
+{
+	if ( file.cockpitRui != null )
+		RuiSetBool( file.cockpitRui, "isDoomed", state )
+
+	if ( file.cockpitAdditionalRui != null )
+		RuiSetBool( file.cockpitAdditionalRui, "isDoomed", state )
 }
 
 void function TitanCockpitDestroyRui( var ruiToDestroy )
@@ -539,6 +687,10 @@ void function TitanCockpitDestroyRuisOnDeath( entity cockpit )
 				player.p.titanCockpitRUIs.remove( i )
 			}
 
+			player = GetLocalClientPlayer()
+			if ( IsValid( player ) )
+				player.Signal( "DisplayFrontierRank" )
+			file.cockpitAdditionalRui = null
 			file.cockpitRui = null
 			file.cockpitLowerRui = null
 			file.coreHintRui = null
@@ -874,16 +1026,7 @@ void function PlayerEjects( entity player, entity cockpit ) //Note that this can
 
 	player.Signal( "Ejecting" )
 
-	if ( file.cockpitRui != null )
-		RuiSetBool( file.cockpitRui, "isEjecting", true )
-
-	if ( file.cockpitLowerRui != null )
-	{
-		RuiSetBool( file.cockpitLowerRui, "isEjecting", true )
-
-		string newStr = RollRandomEjectString()
-		RuiSetString( file.cockpitLowerRui, "ejectPrompt", Localize( newStr ) )
-	}
+	SetCockpitUIEjectingState( true )
 
 	local ejectAlarmSound
 	cockpit.s.ejectStartTime = Time()
@@ -932,14 +1075,7 @@ void function MonitorPlayerEjectAnimBeingStuck( entity player, float duration )
 		if ( IsValid( cockpit.e.body ) )
 			cockpit.e.body.Anim_NonScriptedPlay( "atpov_cockpit_hatch_close_idle" )
 
-		if ( file.cockpitRui != null )
-			RuiSetBool( file.cockpitRui, "isEjecting", false )
-
-		if ( file.cockpitLowerRui != null )
-		{
-			RuiSetBool( file.cockpitLowerRui, "isEjecting", false )
-			RuiSetString( file.cockpitLowerRui, "ejectPrompt", "" )
-		}
+		SetCockpitUIEjectingState( false )
 	}
 }
 
@@ -1117,7 +1253,6 @@ function PlayerPressed_QuickDisembark( player )
 
 void function PlayerPressed_EjectEnable( entity player )
 {
-
 	if ( !player.IsTitan() )
 		return
 
@@ -1146,8 +1281,13 @@ void function PlayerPressed_EjectEnable( entity player )
 
 	if ( player.GetHealth() == 1 )
 	{
-		player.ClientCommand( "TitanEject " + 3 )
-		return
+		#if MP
+		if ( !FD_ReadyUpEnabled() )
+		#endif
+		{
+			player.ClientCommand( "TitanEject " + 3 )
+			return
+		}
 	}
 
 	EmitSoundOnEntity( player, "titan_eject_dpad" )
@@ -1377,6 +1517,7 @@ function TitanEMP_Internal( maxValue, duration, fadeTime, doFlash = true, doSoun
 	local empVgui = CreateClientsideVGuiScreen( "vgui_titan_emp", VGUI_SCREEN_PASS_VIEWMODEL, Vector(0,0,0), Vector(0,0,0), wide, tall );
 
 	//empVgui.SetParent( player.GetViewModelEntity(), "CAMERA_BASE" )
+	empVgui.SetRefract( true ) // Force refract resolve before drawing vgui. (This can cost GPU!)
 	empVgui.SetParent( player )
 	empVgui.SetAttachOffsetOrigin( < fovOffset, wide / 2, -tall / 2 > )
 	empVgui.SetAttachOffsetAngles( angles )
@@ -1424,12 +1565,13 @@ void function LinkCoreHint( entity soul )
 }
 
 
-void function FlashCockpitHealthGreen()
+void function FlashCockpitHealth( vector color )
 {
 	if ( file.cockpitRui == null )
 		return
 
-	RuiSetGameTime( file.cockpitRui, "startFlashGreenTime", Time() )
+	RuiSetGameTime( file.cockpitRui, "startFlashTime", Time() )
+	RuiSetFloat3( file.cockpitRui, "flashColor", color )
 }
 
 void function UpdateHealthSegmentCount()
@@ -1464,6 +1606,39 @@ void function NetworkedVarChangedCallback_UpdateVanguardRUICoreStatus( entity so
 		RuiSetString( file.cockpitRui, "titanInfo1", GetVanguardCoreString( player, 1 ) )
 		RuiSetString( file.cockpitRui, "titanInfo2", GetVanguardCoreString( player, 2 ) )
 		RuiSetString( file.cockpitRui, "titanInfo3", GetVanguardCoreString( player, 3 ) )
+		RuiSetString( file.cockpitRui, "titanInfo4", GetVanguardCoreString( player, 4 ) )
 	}
 }
 #endif
+
+var function Scorch_CreateHotstreakBar()
+{
+	Assert( file.scorchHotstreakRui == null )
+
+	file.scorchHotstreakRui = CreateFixedTitanCockpitRui( $"ui/scorch_hotstreak_bar.rpak" )
+
+	RuiTrackFloat( file.scorchHotstreakRui, "coreMeterMultiplier", GetLocalViewPlayer(), RUI_TRACK_SCRIPT_NETWORK_VAR, GetNetworkedVariableIndex( "coreMeterModifier" ) )
+
+	return file.scorchHotstreakRui
+}
+
+void function Scorch_DestroyHotstreakBar()
+{
+	TitanCockpitDestroyRui( file.scorchHotstreakRui )
+	file.scorchHotstreakRui = null
+}
+
+bool function Scorch_ShouldCreateHotstreakBar()
+{
+	entity player = GetLocalViewPlayer()
+
+	if ( !IsAlive( player ) )
+		return false
+
+	array<entity> mainWeapons = player.GetMainWeapons()
+	if ( mainWeapons.len() == 0 )
+		return false
+
+	entity primaryWeapon = mainWeapons[0]
+	return primaryWeapon.HasMod( "fd_hot_streak" )
+}

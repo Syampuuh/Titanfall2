@@ -10,7 +10,7 @@ global struct DisplayTime
 	string s
 }
 
-function GetPlayerTimesPlayedMap( player, string mapName )
+function GetPlayerTimesPlayedMap( entity player, string mapName )
 {
 	Assert( IsUI() || IsValid( player ) )
 
@@ -18,15 +18,13 @@ function GetPlayerTimesPlayedMap( player, string mapName )
 	if ( !MapIsValidForPersistence( mapName ) )
 		return 0
 
-	local statVarName = GetStatVar( "game_stats", "game_completed" )
-	local fixedSaveVar
-	local timesPlayed = 0
+	string statVarName = GetStatVar( "game_stats", "game_completed" )
+	string fixedSaveVar
+	int timesPlayed = 0
 	for ( int modeIndex = 0 ; modeIndex < numModes ; modeIndex++ )
 	{
-		fixedSaveVar = statVarName
-		fixedSaveVar = StringReplace( expect string( fixedSaveVar ), "%mapname%", mapName )
-		fixedSaveVar = StringReplace( expect string( fixedSaveVar ), "%gamemode%", string( modeIndex ) )
-		timesPlayed += player.GetPersistentVar( fixedSaveVar )
+		fixedSaveVar = Stats_GetFixedSaveVar( statVarName, mapName, string( modeIndex ), "0" )
+		timesPlayed += player.GetPersistentVarAsInt( fixedSaveVar )
 	}
 
 	return timesPlayed
@@ -84,14 +82,11 @@ AllModesAndMapsCompleteData function GetPlayerAllModesAndMapsCompleteData( entit
 	#endif
 
 	string statVarName = GetStatVar( "game_stats", "game_completed" )
-	string fixedSaveVar
 	foreach ( mode in modes )
 	{
 		foreach ( map in maps )
 		{
-			fixedSaveVar = statVarName
-			fixedSaveVar = StringReplace( fixedSaveVar, "%mapname%", map )
-			fixedSaveVar = StringReplace( fixedSaveVar, "%gamemode%", mode )
+			string fixedSaveVar = Stats_GetFixedSaveVar( statVarName, map, mode, "0" )
 
 			if ( map == currentMap && mode == currentMode )
 			{

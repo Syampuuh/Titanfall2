@@ -38,6 +38,7 @@ Scripts:
 When: "(SERVER || CLIENT) && MP"
 Scripts:
 [
+	//gamemodes/sh_dev_gamemodes_mp.gnut // DEVSCRIPTS REMOVE
 	gamemodes/sh_gamemodes_mp.gnut
 ]
 
@@ -64,6 +65,7 @@ Scripts:
 	sh_passives.gnut
 	sh_entitystructs.gnut
 	sh_death_hints.gnut
+    _entitlements.gnut
 ]
 
 When: "(SERVER && MP) || UI"
@@ -83,6 +85,7 @@ Scripts:
 	sh_calling_cards.gnut
 	_persistentdata.gnut
 	gamemodes/sh_gamemodes.gnut
+	//gamemodes/sh_dev_gamemodes.gnut // DEVSCRIPTS REMOVE
 	mp/sh_challenges_content.nut
 	sh_loadouts.nut
 	sh_mp_utility_all.gnut
@@ -91,6 +94,7 @@ Scripts:
 	sh_titan_xp.gnut
 	sh_weapon_xp.gnut
 	sh_xp.gnut
+    burnmeter/sh_boost_store.gnut
 ]
 
 When: "SERVER && SP"
@@ -174,6 +178,7 @@ Scripts:
 When: "(SERVER || CLIENT) && MP"
 Scripts:
 [
+    //_dev_remote_functions_mp.gnut // DEVSCRIPTS REMOVE
 	_remote_functions_mp.gnut
 ]
 
@@ -360,6 +365,12 @@ Scripts:
 	sp/_onscreen_hints.gnut
 ]
 
+When: "((SERVER || CLIENT) && MP) || UI"
+Scripts:
+[
+    gamemodes/sh_all_gamemode_fd.nut
+]
+
 When: "(SERVER || CLIENT) && MP"
 Scripts:
 [
@@ -407,6 +418,10 @@ Scripts:
 
 	burnmeter/sh_burnmeter.gnut
 	item_inventory/sh_item_inventory.gnut
+
+	weapons/mp_weapon_arc_trap.nut
+    gamemodes/sh_gamemode_fd.nut
+    mp/sh_team_titan_selection_menu.nut
 ]
 
 When: "SERVER && SP"
@@ -450,6 +465,7 @@ Scripts:
 	_pain_death_sounds.gnut
 	sh_savegame.gnut
 	ai/_ai_chatter.gnut
+	ai/_ai_stationary_firing_positions.gnut
 	ai/_ai_cloak_drone.gnut
 	ai/_ai_drone.gnut
 	ai/_ai_personal_shield.gnut
@@ -459,6 +475,8 @@ Scripts:
 	ai/_ai_marvin_faces.gnut
 	ai/_ai_marvin_jobs.gnut
 	ai/_ai_marvins.gnut
+	ai/_ai_mortar_titans.gnut
+	ai/_ai_nuke_titans.gnut
 	ai/_ai_soldiers.gnut
 	ai/_ai_spawn.gnut
 	ai/_ai_spawn_content.gnut
@@ -560,6 +578,7 @@ Scripts:
 	lobby/_private_lobby.gnut
 	lobby/sh_lobby.gnut
 
+	_harvester.gnut
     sh_loadouts_mp.nut
 	mp/_ai_mp.gnut
 	_ping.gnut
@@ -620,6 +639,12 @@ Scripts:
 	gamemodes/_riff_floor_is_lava.nut
 
 	item_inventory/sv_item_inventory.gnut
+
+    ai/_ai_mortar_spectres.gnut
+    ai/_ai_sniper_titans.gnut
+    mp/_battery_port.gnut
+    gamemodes/_gamemode_fd.nut
+    mp/_lasermesh.gnut
 ]
 
 When: "CLIENT || UI"
@@ -709,6 +734,7 @@ Scripts:
 	gamemodes/cl_gamemode_bomb.nut
 	gamemodes/cl_gamemode_ffa.nut
 	gamemodes/cl_capture_point.gnut
+	gamemodes/cl_gamemode_ttdm.nut
 
 	gamemodes/cl_riff_floor_is_lava.nut
 	gamemodes/cl_riff_floor_is_lava_dialogue.nut
@@ -717,6 +743,9 @@ Scripts:
 	mp/cl_classic_mp.gnut
 
 	item_inventory/cl_item_inventory.gnut
+
+	gamemodes/cl_gamemode_fd.nut
+	mp/cl_lasermesh.gnut
 ]
 
 
@@ -852,6 +881,7 @@ Scripts:
     ui/menu_knowledgebase.nut
     ui/menu_knowledgebase_submenu.nut
     ui/panel_summary.nut
+    ui/panel_pve.nut
     ui/panel_scoreboard.nut
     ui/menu_armory.nut
 	ui/menu_eog.nut
@@ -889,6 +919,8 @@ Scripts:
 	ui/menu_sp_training.gnut
 	ui/menu_stats.nut
 	ui/menu_store.nut
+	ui/menu_store_new_releases.nut
+	ui/menu_store_limited.nut
 	ui/menu_store_bundles.nut
 	ui/menu_store_prime_titans.nut
 	ui/menu_store_customization.nut
@@ -897,6 +929,8 @@ Scripts:
 	ui/menu_store_camo_preview.nut
 	ui/menu_store_callsign.nut
 	ui/menu_store_callsign_preview.nut
+	ui/menu_store_weapons.nut
+	ui/menu_store_titans.nut
 	ui/menu_advanced_hud.nut
 	ui/menu_inbox.nut
 	ui/menu_stats_misc.nut
@@ -905,12 +939,24 @@ Scripts:
 	ui/menu_stats_utility.nut
 	ui/menu_stats_weapons.nut
 	ui/menu_stats_titans.nut
+	ui/menu_stats_maps.nut
+	ui/menu_stats_pve.nut
 	ui/menu_pilot_loadouts_shared.nut
 	ui/menu_pilot_loadouts.nut
 	ui/menu_edit_pilot_loadouts.nut
 	ui/menu_titan_loadouts_shared.nut
 	ui/menu_titan_loadouts.nut
 	ui/menu_edit_titan_loadouts.nut
+	ui/menu_team_titan_select.nut
+	ui/menu_fdplaylist.nut
+    ui/menu_fd_titan_upgrade.nut
+	ui/menu_boost_store.nut
+
+	ui/menu_store_weapon_select.nut
+	ui/menu_store_weapon_skin_preview.nut
+
+	ui/panel_fd_awards.nut
+
 	burnmeter/sh_burnmeter.gnut
 	sp/sh_sp_objective_strings.gnut
 	lobby/sh_lobby.gnut
@@ -950,3 +996,55 @@ Scripts:
 ]
 */
 
+// DEVSCRIPTS CONTENT
+
+/*
+When: "(SERVER || CLIENT) && MP"
+Scripts:
+[
+
+	gamemodes/sh_gamemode_atcoop.nut
+	gamemodes/sh_gamemode_cq.nut
+
+	gamemodes/sh_gamemode_cq_dialogue.nut
+]
+
+When: "MP || UI"
+Scripts:
+[
+	conversation/sh_dpad_comms.gnut
+]
+
+When: "SERVER && MP"
+Scripts:
+[
+
+	gamemodes/_gamemode_atcoop.nut
+	gamemodes/_gamemode_cq.nut
+	gamemodes/_gamemode_mfd_pro.nut
+	gamemodes/_gamemode_lts_bomb.nut
+	gamemodes/_gamemode_wlts.nut
+	gamemodes/_gamemode_bomb.nut
+	gamemodes/_gamemode_wps.nut
+
+]
+
+When: "CLIENT && MP"
+Scripts:
+[
+    gamemodes/cl_gamemode_atcoop.nut
+    gamemodes/cl_gamemode_cq.nut
+
+	conversation/cl_dpad_comms.gnut
+]
+
+When: "UI"
+Scripts:
+[
+
+	ui/menu_edit_dpad_comms.nut
+	ui/menu_select_dpad_comms.nut
+]
+
+// END DEVSCRIPTS CONTENT
+*/

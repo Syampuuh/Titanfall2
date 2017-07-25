@@ -260,7 +260,7 @@ void function InitPersistentData( entity player )
 	{
 		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
 		if ( enumName != "" )
-			player.SetPersistentVar( "titanClassLockState[" + enumName + "]", 0 )
+			player.SetPersistentVar( "titanClassLockState[" + enumName + "]", TITAN_CLASS_LOCK_STATE_AVAILABLE )
 
 	}
 

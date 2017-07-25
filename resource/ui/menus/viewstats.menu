@@ -56,7 +56,7 @@ resource/ui/menus/viewstats.menu
 		{
 			ControlName				RuiButton
 			InheritProperties		RuiLoadoutSelectionButton
-			xpos					100
+			xpos					96
 			ypos					193
 			navUp					BtnMisc
 			navDown					BtnTime
@@ -96,6 +96,18 @@ resource/ui/menus/viewstats.menu
 			pin_to_sibling_corner	BOTTOM_LEFT
 			ypos                    8
 			navUp					BtnPilotWeapons
+			navDown					BtnMaps
+		}
+		BtnMaps
+		{
+			ControlName				RuiButton
+			InheritProperties		RuiLoadoutSelectionButton
+			classname				BtnPvE
+			pin_to_sibling			BtnTitans
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos                    8
+			navUp					BtnTitans
 			navDown					BtnMisc
 		}
 		BtnMisc
@@ -103,12 +115,12 @@ resource/ui/menus/viewstats.menu
 			ControlName				RuiButton
 			InheritProperties		RuiLoadoutSelectionButton
 			classname				BtnMisc
-			pin_to_sibling			BtnTitans
+			pin_to_sibling			BtnMaps
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			ypos                    8
-			navUp					BtnTitans
-			navDown					BtnOverview
+			navUp					BtnMaps
+			navDown					BtnPvE
 		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

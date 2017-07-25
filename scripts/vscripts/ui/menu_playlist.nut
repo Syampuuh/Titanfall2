@@ -172,6 +172,7 @@ bool function CanPlaylistFitMyParty( string playlistName )
 	int maxPlayers = GetMaxPlayersForPlaylistName( playlistName )
 	int maxTeams = GetMaxTeamsForPlaylistName( playlistName )
 	int maxPlayersPerTeam = int( max( maxPlayers / maxTeams, 1 ) )
+	bool partiesAllowed = GetCurrentPlaylistVarInt( "parties_allowed", 1 ) > 0
 
 	if ( playlistName == "coliseum" )
 	{
@@ -184,6 +185,15 @@ bool function CanPlaylistFitMyParty( string playlistName )
 
 	if ( file.sendOpenInvite && maxPlayersPerTeam == 1 )
 		return false
+
+	if ( !partiesAllowed )
+	{
+		if ( partySize > 1 )
+			return false
+
+		if ( file.sendOpenInvite )
+			return false
+	}
 
 	return true
 }
@@ -327,6 +337,12 @@ bool function PlaylistButton_Click_Internal( var button, string playlistName, ar
 			ColiseumPlaylist_OfferToBuyTickets( refreshButtons, button, 1 )
 			return false
 		}
+	}
+
+	if ( playlistName == "fd" )
+	{
+		AdvanceMenu( GetMenu( "FDMenu" ) )
+		return false
 	}
 
 	CloseActiveMenu() // playlist selection menu

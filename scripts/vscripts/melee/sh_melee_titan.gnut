@@ -253,6 +253,9 @@ function TitanAttackHumanSized( entity titan, entity meleeWeapon, entity hitEnt,
 	}
 
 	int damageSource = GetMeleeDamageSourceIDForWeapon( meleeWeapon )
+	bool hasShiftCore = IsNinja( titan )
+	if ( hasShiftCore )
+		damageSource = eDamageSourceId.mp_titancore_shift_core
 	int damageAmount = meleeWeapon.GetDamageAmountForArmorType( hitEnt.GetArmorType() );
 	hitEnt.SetVelocity( hitEnt.GetVelocity() + pushBackVelocity )
 	hitEnt.TakeDamage( damageAmount, titan, titan, { scriptType = damageFlags, damageType = DMG_MELEE_ATTACK, damageSourceId = damageSource, origin = damageOrigin, force = pushBackVelocity } )
@@ -380,6 +383,10 @@ function TitanAttackDefault( entity titan, entity meleeWeapon, entity targetEnt,
 		damageSourceId = GetMeleeDamageSourceIDForWeapon( meleeWeapon )
 		origin = damageOrigin
 	}
+
+	bool hasShiftCore = IsNinja( titan )
+	if ( hasShiftCore )
+		damageTable.damageSourceId = eDamageSourceId.mp_titancore_shift_core
 
 	targetEnt.TakeDamage( damageAmount, titan, titan, damageTable )
 #endif // #if SERVER

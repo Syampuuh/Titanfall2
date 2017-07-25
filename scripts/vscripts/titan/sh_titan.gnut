@@ -58,12 +58,15 @@ function TitanShared_Init()
 
 	#if SERVER
 		AddSoulSettingsChangeFunc( UpdateTitanPanel )
+		AddSoulSettingsChangeFunc( UpdateTitanArmBadge )
 		AddSoulTransferFunc( SmartAmmo_TransferMissileLockons )
 		AddSoulDeathCallback( Titan_RodeoPanelCleanup )
+		AddSoulDeathCallback( Titan_ArmBadgeCleanup )
 	#endif
 
 	#if SERVER
 		AddSoulInitFunc( AddPanelToTitan )
+		AddSoulInitFunc( AddArmBadgeToTitan )
 
 		PrecacheParticleSystem( TITAN_NUCLEAR_CORE_FX_3P )
 		PrecacheParticleSystem( TITAN_NUCLEAR_CORE_FX_1P )
@@ -78,6 +81,12 @@ void function Titan_RodeoPanelCleanup( entity soul, var damageInfo )
 {
 	if ( IsValid( soul.soul.batteryContainer ) )
 		soul.soul.batteryContainer.Kill_Deprecated_UseDestroyInstead()
+}
+
+void function Titan_ArmBadgeCleanup( entity soul, var damageInfo )
+{
+	if ( IsValid( soul.soul.armBadge ) )
+		soul.soul.armBadge.Kill_Deprecated_UseDestroyInstead()
 }
 #endif
 
@@ -201,6 +210,81 @@ void function UpdateTitanPanel( entity soul )
 	string titanType = GetSoulTitanSubClass( soul )
 	batteryContainer.Anim_Play( GetAnimFromAlias( titanType, "hatch_rodeo_up_idle" ) )
 
+}
+
+void function AddArmBadgeToTitan( entity soul )
+{
+	thread AddArmBadgeToTitan_Internal( soul )
+}
+
+void function AddArmBadgeToTitan_Internal( entity soul )
+{
+	soul.EndSignal( "OnDeath" )
+
+	// wait until the end of the frame to allow the soul to become owned by a boss player
+	WaitEndFrame()
+
+	entity titan = soul.GetTitan()
+
+	var model = GetTitanArmBadge( soul )
+	if ( model == $"" )
+		return
+	expect asset( model )
+
+	entity soulOwner = soul.GetBossPlayer()
+	if ( !IsValid( soulOwner ) )
+		return
+
+	entity armBadge = CreatePropDynamic( model )
+
+	//string titanType = GetSoulTitanSubClass( soul )
+
+	armBadge.NotSolid()
+	armBadge.SetParent( titan, TITAN_ARM_BADGE_ATTACHMENT )
+	//armBadge.Anim_Play( GetAnimFromAlias( titanType, "hatch_rodeo_up_idle" ) )
+	SetTeam( armBadge, titan.GetTeam() )
+	armBadge.MarkAsNonMovingAttachment()
+	armBadge.RemoveFromSpatialPartition()
+	#if MP
+	int difficulty = FD_GetHighestDifficultyForTitan( soulOwner, GetActiveTitanLoadout( soulOwner ).titanClass )
+	switch ( difficulty )
+	{
+		case eFDDifficultyLevel.HARD:
+			armBadge.SetBodygroup( 0, 1 )
+			break
+		case eFDDifficultyLevel.MASTER:
+			armBadge.SetBodygroup( 0, 2 )
+			break
+		case eFDDifficultyLevel.INSANE:
+			armBadge.SetBodygroup( 0, 3 )
+			break
+	}
+	#endif
+
+	soul.soul.armBadge = armBadge
+}
+
+void function UpdateTitanArmBadge( entity soul )
+{
+	entity titan = soul.GetTitan()
+	if ( !IsAlive( titan ) )
+		return
+
+	var model = GetTitanArmBadge( soul )//Dev_GetPlayerSettingAssetByKeyField_Global( settings, "hatchmodel" )
+	if ( model == $"" )
+		return
+	expect asset( model )
+
+	entity soulOwner = soul.GetBossPlayer()
+	if ( !IsValid( soulOwner ) )
+		return
+
+	entity armBadge = soul.soul.armBadge
+
+	//armBadge.SetModel( model )
+	//armBadge.SetSkin( titan.GetSkin() )
+	armBadge.ClearParent()
+	armBadge.SetParent( titan, TITAN_ARM_BADGE_ATTACHMENT )
 }
 
 int function NPC_GetNuclearPayload( entity npc )
@@ -1172,4 +1256,19 @@ function DisableTitanExit( entity player )
 
 	printt( player, "Titan exit disabled" )
 }
+
+asset function GetTitanArmBadge( entity soul )
+{
+	#if MP
+		entity soulOwner = soul.GetBossPlayer()
+		if ( !IsValid( soulOwner ) )
+			return $""
+
+		TitanLoadoutDef loadout = GetActiveTitanLoadout( soulOwner )
+		return GetTitanArmBadgeFromLoadoutAndPrimeStatus( loadout )
+	#else
+		return $""
+	#endif
+}
+
 #endif

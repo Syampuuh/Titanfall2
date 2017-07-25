@@ -1,6 +1,7 @@
 untyped
 
 global const bool EDIT_LOADOUT_SELECTS = true
+global const string PURCHASE_SUCCESS_SOUND = "UI_Menu_Store_Purchase_Success"
 
 global function UICodeCallback_CloseAllMenus
 global function UICodeCallback_ActivateMenus
@@ -153,6 +154,17 @@ void function UICodeCallback_ToggleInGameMenu()
 	if ( IsDialog( uiGlobal.activeMenu ) )
 	{
 		// Do nothing if a dialog is showing
+	}
+	else if ( TeamTitanSelectMenuIsOpen() )
+	{
+		if ( uiGlobal.activeMenu == GetMenu( "TeamTitanSelectMenu" ) )
+		{
+			// Do nothing here either
+		}
+		else
+		{
+			CloseActiveMenu()
+		}
 	}
 	else if ( ( isMP && !isLobby ) || !isMP )
 	{
@@ -919,6 +931,8 @@ void function InitMenus()
 	AddMenu( "PlayVideoMenu", $"resource/ui/menus/play_video.menu", InitPlayVideoMenu )
 	AddMenu( "LobbyMenu", $"resource/ui/menus/lobby.menu", InitLobbyMenu, "#LOBBY" )
 
+	AddMenu( "FDMenu", $"resource/ui/menus/playlist_fd.menu", InitFDPlaylistMenu )
+	AddMenu( "TeamTitanSelectMenu", $"resource/ui/menus/team_titan_select.menu", InitTeamTitanSelectMenu )
 	AddMenu( "PlaylistMenu", $"resource/ui/menus/playlist.menu", InitPlaylistMenu )
 	AddMenu( "PlaylistMixtapeMenu", $"resource/ui/menus/playlist_mixtape.menu", InitPlaylistMixtapeMenu )
 	AddMenu( "PlaylistMixtapeChecklistMenu", $"resource/ui/menus/playlist_mixtape_checklist.menu", InitPlaylistMixtapeChecklistMenu )
@@ -988,6 +1002,7 @@ void function InitMenus()
 	AddMenu( "NoseArtSelectMenu", $"resource/ui/menus/noseartselect.menu", InitNoseArtSelectMenu )
 	AddMenu( "CallsignCardSelectMenu", $"resource/ui/menus/callsigncardselect.menu", InitCallsignCardSelectMenu )
 	AddMenu( "CallsignIconSelectMenu", $"resource/ui/menus/callsigniconselect.menu", InitCallsignIconSelectMenu )
+	AddMenu( "BoostStoreMenu", $"resource/ui/menus/booststore.menu", InitBoostStoreMenu )
 
 	AddMenu( "PrivateLobbyMenu", $"resource/ui/menus/private_lobby.menu", InitPrivateMatchMenu, "#PRIVATE_MATCH" )
 	AddMenu( "MapsMenu", $"resource/ui/menus/map_select.menu", InitMapsMenu )
@@ -1006,6 +1021,7 @@ void function InitMenus()
 	AddMenu( "ViewStats_Weapons_Menu", $"resource/ui/menus/viewstats_weapons.menu", InitViewStatsWeaponsMenu )
 	AddMenu( "ViewStats_Titans_Menu", $"resource/ui/menus/viewstats_titans.menu", InitViewStatsTitansMenu )
 	AddMenu( "ViewStats_Misc_Menu", $"resource/ui/menus/viewstats_misc.menu", InitViewStatsMiscMenu )
+	AddMenu( "ViewStats_Maps_Menu", $"resource/ui/menus/viewstats_maps.menu", InitViewStatsMapsMenu )
 
 	AddMenu( "PostGameMenu", $"resource/ui/menus/postgame.menu", InitPostGameMenu )
 	AddMenu( "EOG_XP", $"resource/ui/menus/eog_xp.menu", InitEOG_XPMenu )
@@ -1021,8 +1037,14 @@ void function InitMenus()
 	AddMenu( "ArmoryMenu", $"resource/ui/menus/armory.menu", InitArmoryMenu, "#ARMORY_MENU" )
 
 	AddMenu( "StoreMenu", $"resource/ui/menus/store.menu", InitStoreMenu, "#STORE_MENU" )
-	AddMenu( "StoreMenu_Bundles", $"resource/ui/menus/store_bundles.menu", InitStoreMenuBundles, "#STORE_BUNDLES" )
+	AddMenu( "StoreMenu_NewReleases", $"resource/ui/menus/store_new_releases.menu", InitStoreMenuNewReleases, "#STORE_NEW_RELEASES" )
+	AddMenu( "StoreMenu_Limited", $"resource/ui/menus/store_limited.menu", InitStoreMenuLimited, "#STORE_LIMITED" )
+	AddMenu( "StoreMenu_Sales", $"resource/ui/menus/store_bundles.menu", InitStoreMenuSales, "#STORE_BUNDLES" )
+	AddMenu( "StoreMenu_Titans", $"resource/ui/menus/store_prime_titans.menu", InitStoreMenuTitans, "#STORE_TITANS" ) // reusing store_prime_titans.menu
 	AddMenu( "StoreMenu_PrimeTitans", $"resource/ui/menus/store_prime_titans.menu", InitStoreMenuPrimeTitans, "#STORE_PRIME_TITANS" )
+	//AddMenu( "StoreMenu_WeaponSelect", $"resource/ui/menus/store_weapon_select.menu", InitStoreMenuWeaponSelect )
+	AddMenu( "StoreMenu_WeaponSkins", $"resource/ui/menus/store_weapons.menu", InitStoreMenuWeaponSkins )
+	AddMenu( "StoreMenu_WeaponSkinPreview", $"resource/ui/menus/store_weapon_skin_preview.menu", InitStoreMenuWeaponSkinPreview )
 	AddMenu( "StoreMenu_Customization", $"resource/ui/menus/store_customization.menu", InitStoreMenuCustomization, "#STORE_CUSTOMIZATION_PACKS" )
 	AddMenu( "StoreMenu_CustomizationPreview", $"resource/ui/menus/store_customization_preview.menu", InitStoreMenuCustomizationPreview, "#STORE_CUSTOMIZATION_PACKS" )
 	AddMenu( "StoreMenu_Camo", $"resource/ui/menus/store_camo.menu", InitStoreMenuCamo, "#STORE_CAMO_PACKS" )
@@ -1053,7 +1075,10 @@ void function InitMenus()
 	InitTabs()
 
 	var tabbedMenu = GetMenu( "PostGameMenu" )
+	AddPanel( tabbedMenu, "PVEPanel", InitPVEPanel )
 	AddPanel( tabbedMenu, "SummaryPanel", InitSummaryPanel )
+	AddPanel( tabbedMenu, "FDAwardsPanel", InitFDAwardsPanel )
+
 	AddPanel( tabbedMenu, "ScoreboardPanel", InitScoreboardPanel )
 
 	foreach ( panel in uiGlobal.allPanels )
@@ -1226,6 +1251,11 @@ void function AddMenuEventHandler( var menu, int event, void functionref() func 
 	{
 		Assert( uiGlobal.menuData[ menu ].tabChangedFunc == null )
 		uiGlobal.menuData[ menu ].tabChangedFunc = func
+	}
+	else if ( event == eUIEvent.MENU_ENTITLEMENTS_CHANGED )
+	{
+		Assert( uiGlobal.menuData[ menu ].entitlementsChangedFunc == null )
+		uiGlobal.menuData[ menu ].entitlementsChangedFunc = func
 	}
 	else if ( event == eUIEvent.MENU_INPUT_MODE_CHANGED )
 	{
@@ -1838,40 +1868,12 @@ void function SetNavLeftRight( array<var> buttons, var wrap = true )
 
 void function UICodeCallback_EntitlementsChanged()
 {
-	switch ( uiGlobal.activeMenu )
-	{
-		case GetMenu( "StoreMenu_Bundles" ):
-			EntitlementsChanged_Bundles()
-			EmitUISound( "UI_Menu_Store_Purchase_Success" )
-			break
+	if ( uiGlobal.activeMenu == null )
+		return
 
-		case GetMenu( "StoreMenu_PrimeTitans" ):
-			EntitlementsChanged_PrimeTitans()
-			EmitUISound( "UI_Menu_Store_Purchase_Success" )
-			break
-
-		case GetMenu( "StoreMenu_CustomizationPreview" ):
-			EntitlementsChanged_Customization()
-			EmitUISound( "UI_Menu_Store_Purchase_Success" )
-			break
-
-		case GetMenu( "StoreMenu_CamoPreview" ):
-			EntitlementsChanged_Camo()
-			EmitUISound( "UI_Menu_Store_Purchase_Success" )
-			break
-
-		case GetMenu( "StoreMenu_CallsignPreview" ):
-			EntitlementsChanged_Callsign()
-			EmitUISound( "UI_Menu_Store_Purchase_Success" )
-			break
-
-		case GetMenu( "EditTitanLoadoutMenu" ):
-			RefreshPrimeTitanToggleDisplay()
-			EmitUISound( "UI_Menu_Store_Purchase_Success" )
-			break
-	}
+	if ( uiGlobal.menuData[ uiGlobal.activeMenu ].entitlementsChangedFunc != null )
+		thread uiGlobal.menuData[ uiGlobal.activeMenu ].entitlementsChangedFunc()
 }
-
 
 #if PC_PROG
 void function QuitGame()
@@ -1907,7 +1909,7 @@ bool function IsTrialPeriodActive()
 	return GetConVarBool( "trialPeriodIsActive" )
 }
 
-void function LaunchGamePurchaseOrDLCStore()
+void function LaunchGamePurchaseOrDLCStore( array<string> menuNames = [ "StoreMenu" ] )
 {
 	if ( Script_IsRunningTrialVersion() )
 	{
@@ -1915,7 +1917,7 @@ void function LaunchGamePurchaseOrDLCStore()
 	}
 	else
 	{
-		OpenStoreMenu( "StoreMenu" )
+		OpenStoreMenu( menuNames )
 	}
 }
 
@@ -1941,7 +1943,7 @@ void function UICodeCallback_PartyUpdated()
 
 void function HACK_DelayedSetFocus_BecauseWhy( var item )
 {
-	WaitEndFrame()
+	wait 0.1
 	if ( IsValid( item ) )
 		Hud_SetFocused( item )
 }

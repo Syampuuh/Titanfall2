@@ -17,6 +17,7 @@ const int MERIT_TYPE_SCORE = 1
 const int MERIT_TYPE_WEAPON = 2
 const int MERIT_TYPE_TITAN = 3
 const int MERIT_TYPE_FACTION = 4
+const int MERIT_TYPE_FD = 5
 
 const float MERIT_FADE_IN_DURATION = 0.15
 
@@ -94,6 +95,7 @@ struct
 
 	var playerLevelUp
 	var genericLevelUp
+	var squadLeaderBonusRui
 
 	array<PostGameUnlockData> postGameUnlocks
 
@@ -216,6 +218,20 @@ void function PostGame_AddDoubleXP( int doubleXPCount )
 	postGameUnlockData.startingSegments = 0
 	postGameUnlockData.endingSegments = 1
 	postGameUnlockData.unlockTriggers.append( "#POSTGAME_DOUBLE_XP" )
+	file.postGameUnlocks.append( postGameUnlockData )
+}
+
+void function PostGame_AddSquadBonus( int squadLeaderCount, bool isSquadLeader )
+{
+	PostGameUnlockData postGameUnlockData
+	postGameUnlockData.ref = "double_xp"
+	postGameUnlockData.sideText = isSquadLeader ? "#POSTGAME_SQUAD_LEADER" : "#POSTGAME_SQUAD_MEMBER"
+	postGameUnlockData.meritType = MERIT_TYPE_SCORE
+	postGameUnlockData.meritCount = squadLeaderCount
+	postGameUnlockData.totalSegments = 1
+	postGameUnlockData.startingSegments = 0
+	postGameUnlockData.endingSegments = 1
+	postGameUnlockData.unlockTriggers.append( "#POSTGAME_SQUAD_LEADER" )
 	file.postGameUnlocks.append( postGameUnlockData )
 }
 
@@ -362,6 +378,7 @@ void function PostGame_DisplayScore( int unlockIndex, PostGameUnlockData postGam
 		RuiSetImage( unlockBlockRui, "unlockImage", $"rui/menu/common/dbl_xp_icon" )
 
 	RuiSetImage( unlockBlockRui, "unlockImage", $"" )
+	RuiSetBool( unlockBlockRui, "additiveImage", false )
 	RuiSetString( unlockBlockRui, "unlockTitle", "" )
 	RuiSetString( unlockBlockRui, "unlockSideText", postGameUnlockData.sideText )
 	RuiSetString( unlockBlockRui, "unlockTriggers", postGameUnlockData.unlockTriggers[0] )
@@ -406,6 +423,7 @@ void function PostGame_DisplayTitan( int unlockIndex, PostGameUnlockData postGam
 
 	ItemDisplayData itemDisplayData = GetItemDisplayData( postGameUnlockData.ref )
 	RuiSetImage( unlockBlockRui, "unlockImage", itemDisplayData.image )
+	RuiSetBool( unlockBlockRui, "additiveImage", false )
 	RuiSetString( unlockBlockRui, "unlockSideText", postGameUnlockData.sideText )
 	RuiSetString( unlockBlockRui, "unlockTitle", itemDisplayData.name )
 	RuiSetString( unlockBlockRui, "unlockTriggers", postGameUnlockData.unlockTriggers[0] )
@@ -460,6 +478,7 @@ void function PostGame_DisplayWeapon( int unlockIndex, PostGameUnlockData postGa
 	ItemDisplayData itemDisplayData = GetItemDisplayData( postGameUnlockData.ref )
 	RuiSetImage( unlockBlockRui, "unlockImage", itemDisplayData.image )
 	RuiSetString( unlockBlockRui, "unlockTitle", itemDisplayData.name )
+	RuiSetBool( unlockBlockRui, "additiveImage", false )
 	RuiSetString( unlockBlockRui, "unlockSideText", postGameUnlockData.sideText )
 	RuiSetString( unlockBlockRui, "unlockTriggers", postGameUnlockData.unlockTriggers[0] )
 
@@ -512,6 +531,7 @@ void function PostGame_DisplayFaction( int unlockIndex, PostGameUnlockData postG
 
 	ItemDisplayData itemDisplayData = GetItemDisplayData( postGameUnlockData.ref )
 	RuiSetImage( unlockBlockRui, "unlockImage", itemDisplayData.image )
+	RuiSetBool( unlockBlockRui, "additiveImage", false )
 	RuiSetString( unlockBlockRui, "unlockSideText", postGameUnlockData.sideText )
 	RuiSetString( unlockBlockRui, "unlockTitle", itemDisplayData.name )
 	RuiSetString( unlockBlockRui, "unlockTriggers", postGameUnlockData.unlockTriggers[0] )
@@ -724,6 +744,8 @@ bool function IsPostGameDataModePVE( entity player )
 
 var function PGDisplay()
 {
+	UI_SetPresentationType( ePresentationType.NO_MODELS )
+
 	file.postGameUnlocks = []
 	file.progressData.levelIndex = 0
 	file.progressData.playerLevelData = []
@@ -764,6 +786,8 @@ var function PGDisplay()
 		if ( (lastModeName == "coliseum") && player.GetPersistentVarAsInt( "matchWin" ) )
 			file.totalRandomUnlocks++
 	}
+
+	bool squadLeaderDoubleXP = player.GetPersistentVarAsInt( "matchSquadBonus" ) > 0
 
 	int totalEarnedXP = currentXP - previousXP
 
@@ -814,7 +838,14 @@ var function PGDisplay()
 	int happyHourMerits = player.GetPersistentVarAsInt( "xp_match[" + XP_TYPE.HAPPY_HOUR + "]" )
 	int evacMerits = player.GetPersistentVarAsInt( "xp_match[" + XP_TYPE.EVAC + "]" )
 
+	int squadLeaderMerits = player.GetPersistentVarAsInt( "xp_match[" + XP_TYPE.ELITE_WEAPON + "]" )
+
 	PostGame_AddScore( completedMerits, winMerits, scoreMerits, happyHourMerits, evacMerits )
+	if ( squadLeaderMerits )
+	{
+		int numEliteSkins = GetOwnedEliteWeaponSkins( player ).len()
+		PostGame_AddSquadBonus( squadLeaderMerits, numEliteSkins > 0 )
+	}
 
 	array<ItemProgressData> progressedWeapons = GetProgressDataForUnlockType( player, eUnlockType.WEAPON_LEVEL )
 	for ( int weaponIndex = 0; weaponIndex < progressedWeapons.len(); weaponIndex++ )
@@ -959,6 +990,9 @@ var function PGDisplay()
 			PostGame_AddDoubleXP( totalEarnedXP - file.totalEarnedMerits )
 		}
 	}
+
+	if ( squadLeaderDoubleXP )
+		PostGame_AddUnlock( "double_xp", "", 1 )
 
 	PostGame_PopulateUnlockDisplay( file.allUnlockRefs )
 
@@ -1195,6 +1229,7 @@ void function PostGame_InitLevelDisplay( PostGamePlayerLevelData playerLevelData
 
 	RuiSetInt( file.meritBar, "numPips", playerLevelData.segments )
 	RuiSetInt( file.meritBar, "totalPips", playerLevelData.totalSegments )
+	printt( "pips", playerLevelData.segments, playerLevelData.totalSegments )
 
 	//var creditsPanel = Hud_GetChild( GetMenu( "PostGameMenu" ), "CreditsAvailable" )
 	//SetUIPlayerCreditsInfo( creditsPanel, file.totalEarnedMerits, previousXP + file.totalEarnedMerits, playerLevelData.gen, playerLevelData.level, minint( playerLevelData.level + 1, GetMaxPlayerLevel() ) )
@@ -1310,6 +1345,10 @@ void function InitSummaryPanel()
 	var genericLevelUpRui = Hud_GetRui( Hud_GetChild( file.panel, "GenericLevelUp" ) )
 	RuiSetGameTime( genericLevelUpRui, "initTime", RUI_BADGAMETIME )
 	file.genericLevelUp = genericLevelUpRui
+
+	var squadLeaderBonusRui = Hud_GetRui( Hud_GetChild( file.panel, "SquadLeaderBonus" ) )
+	RuiSetGameTime( squadLeaderBonusRui, "initTime", RUI_BADGAMETIME )
+	file.squadLeaderBonusRui = squadLeaderBonusRui
 }
 
 void function SkipPostGameItem( var button )

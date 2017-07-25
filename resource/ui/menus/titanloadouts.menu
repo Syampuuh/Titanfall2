@@ -75,6 +75,7 @@ resource/ui/menus/titanloadouts.menu
 			tall					1080
 		    visible					1
 		    enabled					0
+            clip 					0
 		    controlSettingsFile		"resource/ui/menus/panels/titanloadoutcompact.res"
 	    }
 

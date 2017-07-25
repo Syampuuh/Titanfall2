@@ -9,9 +9,11 @@ global function PlayMusic
 global function ForcePlayMusic
 global function ForcePlayMusicToCompletion
 global function StopMusic
+global function IsMusicTrackPlaying
 
 global function PlayActionMusic
 global function LoopLobbyMusic
+global function LoopLobbyMusic_Ext
 global function SetForcedMusicOnly
 global function ForceLoopMusic_DEPRECATED
 global function StopLoopMusic_DEPRECATED
@@ -31,6 +33,8 @@ global function ServerCallback_ForcePlayMusic
 
 global function SetMusicEnabled
 global function GetMusicEnabled
+
+global function OnSoundClassicMusicChanged
 
 int function GetTeamForMusic( entity player )
 {
@@ -54,7 +58,6 @@ struct
 	int titanMusicAttemptCount
 	string currentClassMusicType
 	bool gameStateMusicEnabled = true
-
 }
 file
 
@@ -158,6 +161,9 @@ void function InitDefaultMusic()
 
 	file.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.BOOST_TIMED_EFFECT ]  <- "Music_MarkedForDeath_MCOR_YouAreMarked" //Temp: Using for time limited boosts
 	file.musicForTeam[ TEAM_IMC ][ eMusicPieceID.BOOST_TIMED_EFFECT ]  <- "Music_MarkedForDeath_IMC_YouAreMarked" //Temp: Using for time limited boosts
+
+	file.musicForTeam[ TEAM_IMC ][ eMusicPieceID.TITAN_SELECT ] <- "music_mp_fd_titanselect"
+	file.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.TITAN_SELECT ] <- "music_mp_fd_titanselect"
 
 	RegisterCinematicMusic() //Register Cinematic Music by default. Probably not ideal but this late in development minimal changes are probably best
 	RegisterGameModeMusic()
@@ -613,6 +619,10 @@ void function RegisterGameModeMusic()
 		{
 			//Only Team militia in FD
 			//Note that win/loss music is played through FD's gamestatechange callback
+
+			//Also note that for the most part it doesn't matter what music we register here since gamemode fd script will re-register them based on whether we're using classic music or not
+
+
 			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_WIN, "music_mp_fd_victory", TEAM_MILITIA ) //Not using eMusicPieceID.COOP_GAMEWON
 			RegisterLevelMusicForTeam( eMusicPieceID.LEVEL_LOSS, "music_mp_fd_defeat", TEAM_MILITIA ) //Not using eMusicPieceID.COOP_GAMELOST
 			RegisterLevelMusicForTeam( eMusicPieceID.ROUND_BASED_GAME_LOST, "music_mp_fd_wavefailed", TEAM_MILITIA ) //Not using eMusicPieceID.COOP_WAVELOST
@@ -628,6 +638,9 @@ void function RegisterGameModeMusic()
 			file.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.COOP_EARLYWAVE_BEGIN ] <- "music_mp_fd_introwave"
 			file.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.COOP_MIDDLEWAVE_BEGIN ] <- "music_mp_fd_midwave"
 			file.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.COOP_FINALWAVE_BEGIN ] <- "music_mp_fd_finalwave"
+
+			file.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.PVE_OBJECTIVE_START ] <- "music_mp_fd_postgame_win"
+			file.musicForTeam[ TEAM_MILITIA ][ eMusicPieceID.PVE_OBJECTIVE_COMPLETE ] <- "music_mp_fd_postgame_loss"
 
 			break
 		}
@@ -931,6 +944,12 @@ var function PlayMusic_Internal( int musicPieceID, float seek = 0.0 )
 	return handle
 }
 
+bool function IsMusicTrackPlaying( int musicPieceID )
+{
+	string soundAlias = GetSoundAliasFromMusicPieceID( musicPieceID )
+	return ( file.currentMusicPlaying == soundAlias )
+}
+
 void function PlayNextActionMusicWhenDone( float lengthOfMusic )
 {
 	//printt( "Signalling music played" )
@@ -967,15 +986,38 @@ void function PlayNextActionMusicWhenDone( float lengthOfMusic )
 	thread PlayActionMusic()
 }
 
+void function LoopLobbyMusic_Ext() //Separate function so LoopLobbyMusic() is only called in one place, and so LoopLobbyMusic_Ext() is only called in one place
+{
+	thread LoopLobbyMusic()
+}
+
+void function OnSoundClassicMusicChanged()
+{
+	if ( IsLobby() )
+	{
+		thread LoopLobbyMusic_Ext() //Stops and replays appropriate lobby music
+	}
+	else
+	{
+		if ( GameRules_GetGameMode() == FD )
+			FD_InitMusicSet() //Doesn't stop and replay appropriate music. (Too many pieces are timing specific, e.g. supposed to play at the start of a wave and timed specifically)
+	}
+
+}
+
 void function LoopLobbyMusic()
 {
-	string soundAlias = "music_lobby_ambient" //GetSoundAliasFromMusicPieceID( eMusicPieceID.LEVEL_INTRO )
+	string soundAlias
+
+	bool classicMusicAvailable = !IsItemLocked( GetLocalClientPlayer(), "classic_music" )
+
+	if ( GetConVarBool( "sound_classic_music" ) && classicMusicAvailable )
+		soundAlias = "music_lobby_ambient_classic"
+	else
+		soundAlias = "music_lobby_ambient"
 
 	if ( file.currentMusicPlaying == soundAlias )
-	{
-		//printt( "Current music " + file.currentMusicPlaying + " already playing in lobby, returning from StartLobbyMusic" )
 		return
-	}
 
 	clGlobal.levelEnt.Signal( "MusicPlayed" )
 	clGlobal.levelEnt.EndSignal( "MusicPlayed" )
@@ -985,10 +1027,12 @@ void function LoopLobbyMusic()
 	OnThreadEnd(
 	function() : ( player )
 		{
-			if ( IsValid( player ) )
+			if ( IsValid( player ) && file.currentMusicPlaying != "" )
 				FadeOutSoundOnEntity( player, file.currentMusicPlaying, DEFAULT_FADE_TIME )
 		}
 	)
+
+	file.currentMusicPlaying = soundAlias
 
 	while ( true )
 	{

@@ -20,8 +20,9 @@ global function CallsignIcons_GetCount
 global function CallsignIcon_GetByIndex
 global function CallsignIcon_GetByRef
 
+global function PlayerCallingCard_RefOverride
+
 #if SERVER
-	global function PlayerCallingCard_SetActive
 	global function PlayerCallsignIcon_SetActive
 	global function PlayerCallingCard_SetActiveByRef
 	global function PlayerCallsignIcon_SetActiveByRef
@@ -111,7 +112,8 @@ void function ShCallingCards_Init()
 void function OnClientConnecting( entity player )
 {
 	// initialize the persistent network vars
-	PlayerCallingCard_SetActive( player, PlayerCallingCard_GetActive( player ) )
+	string ref = CallingCard_GetRef( PlayerCallingCard_GetActive( player ) )
+	PlayerCallingCard_SetActiveByRef( player, ref )
 
 	CallsignIcon callsignIcon = PlayerCallsignIcon_GetActive( player )
 
@@ -162,6 +164,9 @@ CallingCard function PlayerCallingCard_GetActive( entity player )
 {
 	int index = PlayerCallingCard_GetActiveIndex( player )
 	string ref = file.callingCardRefs[index]
+	#if CLIENT || UI
+		ref = PlayerCallingCard_RefOverride( player, ref )
+	#endif
 	return file.callingCards[ref]
 }
 
@@ -259,7 +264,114 @@ CallsignIcon function CallsignIcon_GetByRef( string ref )
 }
 
 
+const table< string, string > dynamicCardRefMap = {
+	callsign_fd_ion_dynamic = "ion",
+	callsign_fd_tone_dynamic = "tone",
+	callsign_fd_scorch_dynamic = "scorch",
+	callsign_fd_legion_dynamic = "legion",
+	callsign_fd_northstar_dynamic = "northstar",
+	callsign_fd_ronin_dynamic = "ronin",
+	callsign_fd_monarch_dynamic = "vanguard",
+}
+
+const table< string, array<string> > dynamicCardMap = {
+	callsign_fd_ion_dynamic =
+	[
+		"callsign_fd_ion_dynamic",
+		"callsign_fd_ion_dynamic",
+		"callsign_fd_ion_hard",
+		"callsign_fd_ion_master",
+		"callsign_fd_ion_insane",
+	],
+
+	callsign_fd_tone_dynamic =
+	[
+		"callsign_fd_tone_dynamic",
+		"callsign_fd_tone_dynamic",
+		"callsign_fd_tone_hard",
+		"callsign_fd_tone_master",
+		"callsign_fd_tone_insane",
+	],
+
+	callsign_fd_scorch_dynamic =
+	[
+		"callsign_fd_scorch_dynamic",
+		"callsign_fd_scorch_dynamic",
+		"callsign_fd_scorch_hard",
+		"callsign_fd_scorch_master",
+		"callsign_fd_scorch_insane",
+	],
+
+	callsign_fd_legion_dynamic =
+	[
+		"callsign_fd_legion_dynamic",
+		"callsign_fd_legion_dynamic",
+		"callsign_fd_legion_hard",
+		"callsign_fd_legion_master",
+		"callsign_fd_legion_insane",
+	],
+
+	callsign_fd_northstar_dynamic =
+	[
+		"callsign_fd_northstar_dynamic",
+		"callsign_fd_northstar_dynamic",
+		"callsign_fd_northstar_hard",
+		"callsign_fd_northstar_master",
+		"callsign_fd_northstar_insane",
+	],
+
+	callsign_fd_ronin_dynamic =
+	[
+		"callsign_fd_ronin_dynamic",
+		"callsign_fd_ronin_dynamic",
+		"callsign_fd_ronin_hard",
+		"callsign_fd_ronin_master",
+		"callsign_fd_ronin_insane",
+	],
+
+	callsign_fd_monarch_dynamic =
+	[
+		"callsign_fd_monarch_dynamic",
+		"callsign_fd_monarch_dynamic",
+		"callsign_fd_monarch_hard",
+		"callsign_fd_monarch_master",
+		"callsign_fd_monarch_insane",
+	],
+}
+
+string function PlayerCallingCard_RefOverride( entity player, string ref )
+{
+	const string CARD_DYNAMIC = "_dynamic"
+
+	if ( ref.find( CARD_DYNAMIC ) == null )
+		return ref
+
+	if ( ref.find( CARD_DYNAMIC ) != ref.len() - CARD_DYNAMIC.len() )
+		return ref
+
+	if ( ref in dynamicCardRefMap )
+	{
+
+		string titanRef = dynamicCardRefMap[ref]
+		int highestDifficulty = FD_GetHighestDifficultyForTitan( player, titanRef )
+
+		return dynamicCardMap[ref][minint( highestDifficulty, dynamicCardMap[ref].len() - 1 )]
+	}
+
+	return ref
+}
+
 #if SERVER
+/*
+InitUnlockAsEntitlement( "callsign_fd_ion_dynamic", "", ET_DLC7_ION_WARPAINT )
+InitUnlockAsEntitlement( "callsign_fd_tone_dynamic", "", ET_DLC7_TONE_WARPAINT )
+InitUnlockAsEntitlement( "callsign_fd_scorch_dynamic", "", ET_DLC7_SCORCH_WARPAINT )
+InitUnlockAsEntitlement( "callsign_fd_legion_dynamic", "", ET_DLC7_LEGION_WARPAINT )
+InitUnlockAsEntitlement( "callsign_fd_northstar_dynamic", "", ET_DLC7_NORTHSTAR_WARPAINT )
+InitUnlockAsEntitlement( "callsign_fd_ronin_dynamic", "", ET_DLC7_RONIN_WARPAINT )
+InitUnlockAsEntitlement( "callsign_fd_monarch_dynamic", "", ET_DLC7_MONARCH_WARPAINT )
+*/
+
 void function PlayerCallingCard_SetActiveByIndex( entity player, int index )
 {
 	if ( player.GetPersistentVarAsInt( "activeCallingCardIndex" ) != index )
@@ -267,11 +379,6 @@ void function PlayerCallingCard_SetActiveByIndex( entity player, int index )
 
 	player.SetPlayerNetInt( "activeCallingCardIndex", index )
 	player.SetPersistentVar( "activeCallingCardIndex", index )
-}
-
-void function PlayerCallingCard_SetActive( entity player, CallingCard callingCard )
-{
-	PlayerCallingCard_SetActiveByIndex( player, callingCard.index )
 }
 
 void function PlayerCallingCard_SetActiveByRef( entity player, string ref )

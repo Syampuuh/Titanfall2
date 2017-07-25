@@ -11,6 +11,7 @@ const SWORD_MODEL = $"models/weapons/bolo_sword/v_bolo_sword.mdl"
 global const KNIFE_MODEL = $"models/weapons/combat_knife/w_combat_knife.mdl"
 global const PULSE_BLADE_MODEL = $"models/weapons/kunai/w_kunai.mdl"
 global const WINGMAN_MODEL = $"models/weapons/b3wing/w_b3wing.mdl"
+global const AWALL_MODEL = $"models/weapons/sentry_shield/sentry_shield_proj.mdl"
 
 const HUMAN_BLOOD_FX = $"impact_flesh"
 const MECHANICAL_BLOOD_FX = $"P_impact_metal_spectre"
@@ -22,6 +23,7 @@ function MeleeSyncedHumanShared_Init()
 #if SERVER
 	PrecacheModel( DATA_KNIFE_MODEL )
 	PrecacheModel( STEAL_PISTOL_MODEL )
+	PrecacheModel( AWALL_MODEL )
 
 	PrecacheParticleSystem( HUMAN_BLOOD_FX )
 	PrecacheParticleSystem( MECHANICAL_BLOOD_FX )
@@ -404,61 +406,58 @@ function MeleeSyncedHumanShared_Init()
 
 	    }
 
-	    //Holopilot Execution
-    	#if SERVER
-	    	AnimEventData givePistolEvent
-			givePistolEvent.eventName = "attach_pistol"
-			givePistolEvent.callback = AnimEvent_attach_wingman
-
-			AnimEventData takePistolEvent
-			takePistolEvent.eventName = "detach_pistol"
-			takePistolEvent.callback = AnimEvent_detach_pistol
-
-	    	AnimEventData spawnDecoy1Event
-			spawnDecoy1Event.eventName = "spawn_decoy1"
-			spawnDecoy1Event.callback = AnimEvent_spawn_decoy1
-
-	    	AnimEventData spawnDecoy2Event
-			spawnDecoy2Event.eventName = "spawn_decoy2"
-			spawnDecoy2Event.callback = AnimEvent_spawn_decoy2
-
-	    	AnimEventData spawnDecoy3Event
-			spawnDecoy3Event.eventName = "spawn_decoy3"
-			spawnDecoy3Event.callback = AnimEvent_spawn_decoy3
-
-			AnimEventData headshotEvent
-			headshotEvent.eventName = "headshot_death"
-			headshotEvent.callback = AnimEvent_headshot_death
-
-			AnimEventData holopilotHeadshotSFXEvent
-			holopilotHeadshotSFXEvent.eventName = "holopilot_headshot_sfx"
-			holopilotHeadshotSFXEvent.callback = AnimEvent_holopilot_headshot_sfx
-    	#endif
-
-    	SyncedMelee syncedMelee
-    	syncedMelee.ref = "execution_holopilot"
-    	syncedMelee.direction = < -1, 0, 0 >
-    	syncedMelee.distance = HUMAN_EXECUTION_RANGE
-    	syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_holo"
-    	syncedMelee.targetAnimation3p = "pt_mp_execution_victim_holo"
-    	syncedMelee.thirdPersonCameraAttachment = "VDU"
-
-    	#if SERVER
-    		syncedMelee.attacker3pAnimEvents = [ givePistolEvent, takePistolEvent, spawnDecoy1Event, spawnDecoy2Event,spawnDecoy3Event ]
-    		syncedMelee.target3pAnimEvents = [headshotEvent, holopilotHeadshotSFXEvent ]
-    	#endif
-
-	    syncedMelee.minDot = 0.2
-	    syncedMelee.isAttackerRef = false
-	    AddSyncedMelee( meleeChooser, syncedMelee )
-	    #if SERVER
-		    AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
-	    #endif
-
-		#if DEVSCRIPTS
 	    {
-	    }
-		#endif
+		    //Holopilot Execution
+			#if SERVER
+		    	AnimEventData givePistolEvent
+				givePistolEvent.eventName = "attach_pistol"
+				givePistolEvent.callback = AnimEvent_attach_wingman
+
+				AnimEventData takePistolEvent
+				takePistolEvent.eventName = "detach_pistol"
+				takePistolEvent.callback = AnimEvent_detach_pistol
+
+		    	AnimEventData spawnDecoy1Event
+				spawnDecoy1Event.eventName = "spawn_decoy1"
+				spawnDecoy1Event.callback = AnimEvent_spawn_decoy1
+
+		    	AnimEventData spawnDecoy2Event
+				spawnDecoy2Event.eventName = "spawn_decoy2"
+				spawnDecoy2Event.callback = AnimEvent_spawn_decoy2
+
+		    	AnimEventData spawnDecoy3Event
+				spawnDecoy3Event.eventName = "spawn_decoy3"
+				spawnDecoy3Event.callback = AnimEvent_spawn_decoy3
+
+				AnimEventData headshotEvent
+				headshotEvent.eventName = "headshot_death"
+				headshotEvent.callback = AnimEvent_headshot_death
+
+				AnimEventData holopilotHeadshotSFXEvent
+				holopilotHeadshotSFXEvent.eventName = "holopilot_headshot_sfx"
+				holopilotHeadshotSFXEvent.callback = AnimEvent_holopilot_headshot_sfx
+			#endif
+
+			SyncedMelee syncedMelee
+			syncedMelee.ref = "execution_holopilot"
+			syncedMelee.direction = < -1, 0, 0 >
+			syncedMelee.distance = HUMAN_EXECUTION_RANGE
+			syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_holo"
+			syncedMelee.targetAnimation3p = "pt_mp_execution_victim_holo"
+			syncedMelee.thirdPersonCameraAttachment = "VDU"
+
+			#if SERVER
+				syncedMelee.attacker3pAnimEvents = [ givePistolEvent, takePistolEvent, spawnDecoy1Event, spawnDecoy2Event,spawnDecoy3Event ]
+				syncedMelee.target3pAnimEvents = [headshotEvent, holopilotHeadshotSFXEvent ]
+			#endif
+
+		    syncedMelee.minDot = 0.2
+		    syncedMelee.isAttackerRef = false
+		    AddSyncedMelee( meleeChooser, syncedMelee )
+		    #if SERVER
+			    AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+		    #endif
+		}
 
 		{
 			// Placeholder for the Random Execution
@@ -865,7 +864,5 @@ void function HoloPilot_Execution_MuzzleFlash( entity pistol ) //Only real diffe
 
 	EmitSoundOnEntity( pistol, "weapon_wingman_fire_3p" ) // sound above cannot play because it's an asset instead of a string
 }
-
-
 #endif //if server. These are all anim event functions that should be run on the server anyway, no reason for them to be defined on the client.
 

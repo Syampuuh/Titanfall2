@@ -550,11 +550,6 @@ WeaponData
 		{
 			"projectile_launch_speed"						"1750"
 		}
-
-		low_ttk
-		{
-			"explosionradius"				"125"
-		}
 	}
 
 	"ui1_enable"		"1"

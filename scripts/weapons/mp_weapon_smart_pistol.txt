@@ -394,7 +394,7 @@ WeaponData
 	"smart_ammo_search_players"						"1"
 	"smart_ammo_search_projectiles"					"1"
 	"smart_ammo_titans_block_los"					"1"
-	"smart_ammo_track_cloaked_targets"				"1"
+	"smart_ammo_track_cloaked_targets"				"0"
 	"smart_ammo_targeting_time_modifier_projectile_owner"	"0.35"
 	"smart_ammo_target_max_locks_normal"			"-1"	// divide health by damage near
 	"smart_ammo_target_npc_lock_factor"				"2"		// smart pistol does head shots at 2x damage
@@ -443,27 +443,6 @@ WeaponData
 			"ammo_default_total"							"240"
 		}
 		silencer //HACK JFS: Doesn't get applied on amped weapons. See bug 170460
-		{
-			"silenced"										"1"
-			"bodygroup2_set"								"1"
-			"damage_near_value"   							"20"
-			"damage_far_value"								"12"
-			//"rumble"  									"4"
-			"tracer_effect"   								"P_wpn_tracer_pistol"
-			"minimap_reveal_distance"						"1"
-			"smart_ammo_targeting_time_min"					"0.45"
-			"smart_ammo_targeting_time_max"					"0.8"
-			"smart_ammo_targeting_time_min_npc"				"0.1"
-			"smart_ammo_targeting_time_max_npc"				"0.25"
-			"smart_ammo_new_target_delay"					"0.22"
-
-			"fx_muzzle_flash_view"							"wpn_muzzleflash_pistol_sup_FP"
-			"fx_muzzle_flash_world"							"wpn_muzzleflash_pistol_sup"
-			"fx_muzzle_flash_attach"						"muzzle_flash_suppressor_sq"
-			"fire_sound_1_player_1p"						"Weapon_SmartPistol_FireSuppressed_1P"
-			"fire_sound_1_player_3p"						"Weapon_SmartPistol_FireSuppressed_3P"
-		}
-		silencer_low_ttk //HACK JFS: Doesn't get applied on amped weapons. See bug 170460
 		{
 			"silenced"										"1"
 			"bodygroup2_set"								"1"

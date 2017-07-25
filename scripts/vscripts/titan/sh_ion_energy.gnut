@@ -30,9 +30,17 @@ var function Ion_CreateEnergyBar()
 {
 	Assert( file.ionEnergyBarRui == null )
 
-	file.ionEnergyBarRui = CreateTitanCockpitRui( $"ui/ion_energy_bar.rpak" )
+	entity player = GetLocalViewPlayer()
+	float energyMax = float( player.GetSharedEnergyTotal() )
+	var rui
+	if ( energyMax > ION_ENERGY_MAX )
+		rui = CreateTitanCockpitRui( $"ui/ion_energy_bar_Fd.rpak" )
+	else
+		rui = CreateTitanCockpitRui( $"ui/ion_energy_bar.rpak" )
 
-	RuiSetFloat( file.ionEnergyBarRui, "energyMax", float( ION_ENERGY_MAX ) )
+	file.ionEnergyBarRui = rui
+
+	RuiSetFloat( file.ionEnergyBarRui, "energyMax", energyMax )
 	RuiTrackFloat( file.ionEnergyBarRui, "energy", GetLocalViewPlayer(), RUI_TRACK_PLAYER_SHARED_ENERGY )
 
 	return file.ionEnergyBarRui

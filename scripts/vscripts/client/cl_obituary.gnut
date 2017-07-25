@@ -10,6 +10,9 @@ global function Obituary_Print_Localized
 global function Obituary_SetEnabled
 global function Obituary_SetIndexOffset
 
+global function ServerCallback_SquadLeaderBonus
+global function ServerCallback_SquadLeaderDoubleXP
+
 const NUM_OBITUARY_LINES = 4		// cant change arbitrarily, need to have matching entries in the .res file
 const obituaryTextBoxWidth = 500
 const obituaryTextBoxHeight = 20
@@ -55,6 +58,36 @@ function ClObituary_Init()
 
 void function EntitiesDidLoad()
 {
+}
+
+void function ServerCallback_SquadLeaderBonus( int playerEHandle )
+{
+	entity pilot = GetEntityFromEncodedEHandle( playerEHandle )
+
+	if ( !IsValid( pilot ) )
+		return
+
+	if ( !pilot.IsPlayer() )
+		return
+
+	if ( pilot == GetLocalClientPlayer() )
+		Obituary_Print_Generic( "#OBIT_SQUAD_LEADER_BONUS_YOU", pilot.GetPlayerName(), TEAM_COLOR_FRIENDLY, <255, 255, 255> )
+	else
+		Obituary_Print_Generic( "#OBIT_SQUAD_LEADER_BONUS", pilot.GetPlayerName(), TEAM_COLOR_FRIENDLY, <255, 255, 255> )
+}
+
+void function ServerCallback_SquadLeaderDoubleXP()
+{
+	AnnouncementData announcement = Announcement_Create( "#SQUAD_LEADER_BONUS_ANNOUNCE" )
+	bool displayNow = InitializeAnnouncement_ShouldDisplayNow( announcement, "#SQUAD_LEADER_BONUS_ANNOUNCE", "#SQUAD_LEADER_BONUS_ANNOUNCE_DESC", TEAM_COLOR_YOU )
+	announcement.announcementStyle = ANNOUNCEMENT_STYLE_SWEEP
+	announcement.icon = $"rui/menu/common/dbl_xp_icon"
+	announcement.iconAspect = <1, 1, 0>
+	announcement.soundAlias = SFX_HUD_ANNOUNCE_QUICK
+	announcement.duration = 4.0
+
+	if ( displayNow )
+		thread AnnouncementMessage_Display( GetLocalClientPlayer(), announcement )
 }
 
 ObitEntityInfo function Obituary_GetEntityInfo( entity ent, bool victimIsOwnedTitan = false, damageSourceId = null )

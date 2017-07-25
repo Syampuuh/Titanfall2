@@ -386,6 +386,26 @@
 		pin_to_sibling_corner	BOTTOM_LEFT
 	}
 
+	TitanLoadoutFD
+	{
+	    ControlName				CNestedPanel
+		xpos 					238
+		ypos 					-556
+	    zpos					10
+		wide					800
+		tall					480
+	    visible					1
+		controlSettingsFile		"resource/ui/menus/panels/titanproperties_fd.res"
+
+//		pin_to_sibling			TitanLoadout
+//		pin_corner_to_sibling	TOP_LEFT
+//      pin_to_sibling_corner	TOP_RIGHT
+        pin_to_sibling			Anchor
+        pin_corner_to_sibling	TOP_LEFT
+        pin_to_sibling_corner	TOP_LEFT
+
+	}
+
 	TitanXP
 	{
 		ControlName				CNestedPanel

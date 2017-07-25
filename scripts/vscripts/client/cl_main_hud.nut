@@ -559,6 +559,8 @@ void function RodeoAlert_YouGaveBattery()
 
 	RuiSetGameTime( file.rodeoRUI, "batteryGivenStartTime", Time() )
 	RuiSetString( file.rodeoRUI, "youGaveBattery", Localize( "#RODEO_PILOT_APPLIED_BATTERY_TO_YOU_RUI_TEXT" ) )
+
+	Signal( GetLocalViewPlayer(), "UpdateRodeoAlert" )
 }
 
 bool function ShouldHideAntiRodeoHint( entity player )
@@ -659,7 +661,17 @@ function DidUpdateRodeoRideNameAndIcon( entity cockpit, entity player, var rui )
 			if ( IsPetTitan( titan ) )
 				RuiSetString( rui, "statusText", Localize( "#HUD_RODEO_RIDER_ENEMY_AUTO_TITAN" ) )
 			else
-				RuiSetString( rui, "statusText", Localize( "#HUD_RODEO_RIDER_ENEMY_BOUNTY_TITAN" ) )
+			{
+				if ( titan.GetTitleForUI() == "" )
+				{
+					RuiSetString( rui, "statusText", Localize( "#HUD_RODEO_RIDER_ENEMY" ) )
+				}
+				else
+				{
+					RuiSetString( rui, "statusText", Localize( "#HUD_RODEO_RIDER_ENEMY_TITLE", titan.GetTitleForUI() ) )
+				}
+
+			}
 		}
 		else
 			RuiSetString( rui, "statusText", Localize( "#HUD_RODEO_RIDER_ENEMY" ) )
@@ -846,21 +858,21 @@ void function UpdateMinimapVisibility()
 
 	if ( IsWatchingReplay() )
 	{
-		//mainVGUI.s.minimapGroup.Hide()
 		return
 	}
-
+#if MP
 	if ( Riff_MinimapState() != eMinimapState.Default )
 	{
 		if ( Riff_MinimapState() == eMinimapState.Hidden )
 		{
-			//mainVGUI.s.minimapGroup.Hide()
-			return
+			Minimap_DisableDraw()
 		}
 	}
-
-	//mainVGUI.s.minimapGroup.Show()
-	//mainVGUI.s.minimapOverlay.Hide()
+	else
+	{
+		Minimap_EnableDraw()
+	}
+#endif
 }
 
 

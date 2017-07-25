@@ -127,7 +127,7 @@ global enum eGameModes
 	PROTOTYPE10 = 						25,
 	PROTOTYPE11 = 						26,
 	PROTOTYPE12 = 						27,
-	PROTOTYPE13 = 						28,
+	FD_ID = 							28,
 	PROTOTYPE14 =						29,
 }
 
@@ -146,6 +146,12 @@ const table<string, int> gameModesStringToIdMap = {
 	[ MARKED_FOR_DEATH ]					= eGameModes.MARKED_FOR_DEATH_ID,
 	[ TITAN_BRAWL ]							= eGameModes.TITAN_BRAWL_ID,
 	[ FREE_AGENCY ]				 			= eGameModes.FREE_AGENCY_ID,
+	[ FD ]				 					= eGameModes.FD_ID,
+	[ FD_EASY ]								= eGameModes.FD_ID,
+	[ FD_NORMAL ]							= eGameModes.FD_ID,
+	[ FD_HARD ]								= eGameModes.FD_ID,
+	[ FD_MASTER ]							= eGameModes.FD_ID,
+	[ FD_INSANE ]							= eGameModes.FD_ID,
 }
 
 struct
@@ -386,6 +392,23 @@ void function GameModes_Init()
 	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_TITAN_DAMAGE", PGS_ASSAULT_SCORE, 6 )
 	GameMode_SetColor( gameMode, [83, 212, 152, 255] )
 
+	gameMode = FD
+	GameMode_Create( gameMode )
+	GameMode_SetName( gameMode, "#PL_fd" )
+	#if FACTION_DIALOGUE_ENABLED
+		GameMode_SetGameModeAnnouncement( gameMode, "fd_modeDesc" )
+	#else
+		GameMode_SetGameModeAnnouncement( gameMode, "GameModeAnnounce_PS" )
+	#endif
+	GameMode_SetDesc( gameMode, "#PL_fd_hint" )
+	GameMode_SetIcon( gameMode, $"ui/menu/playlist/tdm" )
+	GameMode_SetSuddenDeath( gameMode, true )
+	GameMode_SetDefaultScoreLimits( gameMode, 0, 5 )
+	GameMode_SetDefaultTimeLimits( gameMode, 0, 5.0 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_TOTAL_SCORE", PGS_DETONATION_SCORE, 4 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_COMBAT_SCORE", PGS_ASSAULT_SCORE, 4 )
+	//GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_HEALING_SCORE", PGS_DISTANCE_SCORE, 3 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_SUPPORT_SCORE", PGS_DEFENSE_SCORE, 4 )
 
 	#if DEVSCRIPTS
 	DevGameModes_Init()

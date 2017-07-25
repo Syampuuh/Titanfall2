@@ -208,12 +208,20 @@ bool function AmIPartyMember()
 
 string function GetGameModeDisplayName( string mode )
 {
-	return GAMETYPE_TEXT[ mode ]
+	string displayName = GetGamemodeVarOrUseValue( mode, "name", (mode in GAMETYPE_TEXT) ? GAMETYPE_TEXT[mode] : "" )
+	return displayName
 }
 
 string function GetGameModeDisplayDesc( string mode ) //TODO: Make this support attack/defend descriptions
 {
-	return GAMETYPE_DESC[ mode ]
+	string displayDesc = GetGamemodeVarOrUseValue( mode, "description", (mode in GAMETYPE_DESC) ? GAMETYPE_DESC[mode] : "" )
+	return displayDesc
+}
+
+string function GetGameModeDisplayHint( string mode ) //TODO: Make this support attack/defend descriptions
+{
+	string displayDesc = GetGamemodeVarOrUseValue( mode, "hint", GetGameModeDisplayDesc( mode ) )
+	return displayDesc
 }
 
 asset function GetGameModeDisplayImage( string mode )
@@ -221,9 +229,26 @@ asset function GetGameModeDisplayImage( string mode )
 	return GAMETYPE_ICON[ mode ]
 }
 
+array<int> function ColorStringToArray( string colorString )
+{
+	array<string> tokens = split( colorString, " " )
+
+	Assert( tokens.len() >= 3 && tokens.len() <= 4 )
+
+	array<int> colorArray
+	foreach ( token in tokens )
+		colorArray.append( int( token ) )
+
+	return colorArray
+}
+
 array<int> function GetGameModeDisplayColor( string mode )
 {
-	return GAMETYPE_COLOR[ mode ]
+	array<int> displayColor = ColorStringToArray( GetGamemodeVarOrUseValue( mode, "color", "" ) )
+	if ( displayColor.len() == 0 )
+		displayColor = GameMode_GetColor( mode )
+
+	return displayColor
 }
 
 float function GetCurrentPlaylistVarFloat( val, useVal )
@@ -397,6 +422,12 @@ void function SetNamedRuiBool( var elem, string name, bool state )
 	RuiSetBool( rui, name, state )
 }
 
+void function SetNamedRuiImage( var elem, string name, asset assetName )
+{
+	var rui = Hud_GetRui( elem )
+	RuiSetImage( rui, name, assetName )
+}
+
 // Should be using Hud_GetChild() instead of this
 var function GetMenuChild( var elem, string name )
 {
@@ -560,3 +591,12 @@ void function PlayVideoUsingPanelRect( string video, var panel )
 	PlayVideo( video, xPos, yPos, width, height, false )
 }
 
+void function Hud_SetNavUp( var buttonFrom, var buttonTo )
+{
+	buttonFrom.SetNavUp( buttonTo )
+}
+
+void function Hud_SetNavDown( var buttonFrom, var buttonTo )
+{
+	buttonFrom.SetNavDown( buttonTo )
+}

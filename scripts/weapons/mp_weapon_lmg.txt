@@ -583,9 +583,9 @@ WeaponData
 		{
 			"is_burn_mod"								"1"
 
-			"damage_near_value"   							"45"
-			"damage_far_value"								"35"
-			"damage_very_far_value"							"25"
+			"damage_near_value"   							"++10"
+			"damage_far_value"								"++10"
+			"damage_very_far_value"							"++5"
 			"damage_near_value_titanarmor"					"180"
 			"damage_far_value_titanarmor" 					"160"
 			"tracer_effect_first_person"                    "P_wpn_tracer_BC"
@@ -593,29 +593,6 @@ WeaponData
 
 			"damage_flags"									"DF_BULLET | DF_INSTANT | DF_DISMEMBERMENT | DF_GIB"
 			"impulse_force"									"500"
-		}
-		low_ttk
-		{
-			"damage_near_value"   							"--10" //35 3 -> 4
-			"damage_far_value"								"--5" //25 4 -> 5
-	   	 	"damage_very_far_value"							"--2" //20 5 -> 6
-		}
-		amped_ttk
-		{
-			"is_burn_mod"		"1"
-
-			//FX
-			"tracer_effect_first_person"                    "P_wpn_tracer_BC"
-			"tracer_effect"   								"P_wpn_tracer_BC"
-
-			"damage_flags"									"DF_BULLET | DF_INSTANT | DF_DISMEMBERMENT | DF_GIB"
-			"impulse_force"									"500"
-
-			"damage_near_value"   							"++10" // 4 -> 3
-			"damage_far_value"								"++5" // 5 -> 4
-   	 		"damage_very_far_value"							"++4" // 6 -> 5
-			"damage_near_value_titanarmor"					"180"
-			"damage_far_value_titanarmor" 					"160"
 		}
 	}
 

@@ -54,6 +54,8 @@ var function OnWeaponPrimaryAttack_power_shot( entity weapon, WeaponPrimaryAttac
 		mods.append( "LongRangePowerShot" )
 		if ( mods.contains( "fd_longrange_helper" ) )
 			mods.append( "fd_LongRangePowerShot" )
+		if ( weapon.HasMod( "pas_legion_chargeshot" ) )
+			mods.append( "pas_LongRangePowerShot" )
 		primaryWeapon.SetMods( mods )
 	}
 	else
@@ -62,6 +64,8 @@ var function OnWeaponPrimaryAttack_power_shot( entity weapon, WeaponPrimaryAttac
 		mods.append( "CloseRangePowerShot" )
 		if ( mods.contains( "fd_closerange_helper" ) )
 			mods.append( "fd_CloseRangePowerShot" )
+		if ( weapon.HasMod( "pas_legion_chargeshot" ) )
+			mods.append( "pas_CloseRangePowerShot" )
 		primaryWeapon.SetMods( mods )
 	}
 

@@ -13,7 +13,6 @@ const FX_TITAN_GUN_SHIELD_BREAK = $"P_xo_armor_break_CP"
 global const float TITAN_GUN_SHIELD_RADIUS = 105
 global const int TITAN_GUN_SHIELD_HEALTH = 2500
 global const int PAS_LEGION_SHEILD_HEALTH = 5000
-global const int FD_PAS_LEGION_SHEILD_HEALTH = 7500
 
 #if CLIENT
 struct
@@ -231,10 +230,8 @@ entity function CreateGunShieldVortexSphere( entity player, entity vortexWeapon,
 	vortexSphere.kv.physics_max_size = 6
 	float health
 	entity soul = player.GetTitanSoul()
-	bool hasShieldUpgrade = IsValid( soul ) && SoulHasPassive( soul, ePassives.PAS_LEGION_GUNSHIELD )
-	if ( shieldWeapon.HasMod( "fd_gun_shield" ) && hasShieldUpgrade )
-		health = FD_PAS_LEGION_SHEILD_HEALTH
-	else if ( hasShieldUpgrade )
+	bool hasShieldUpgrade = IsValid( soul ) && SoulHasPassive( soul, ePassives.PAS_LEGION_GUNSHIELD ) || shieldWeapon.HasMod( "fd_gun_shield" )
+	if ( hasShieldUpgrade )
 		health = PAS_LEGION_SHEILD_HEALTH
 	else
 		health = TITAN_GUN_SHIELD_HEALTH

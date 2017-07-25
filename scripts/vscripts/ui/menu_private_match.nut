@@ -1,12 +1,13 @@
 untyped
 
-
 global function MenuPrivateMatch_Init
 
 global function InitPrivateMatchMenu
 
 global function HandleLockedCustomMenuItem
 global function GetMapImageForMapName
+
+global function IsFDMode
 
 struct
 {
@@ -25,7 +26,6 @@ struct
 	var friendlyTeamBackground
 	var enemyPlayersPanel
 	var friendlyPlayersPanel
-	var firstNetworkSubButton
 
 	var listFriendlies
 	var listEnemies
@@ -37,7 +37,6 @@ struct
 	var inviteFriendsButton
 
 	int inboxHeaderIndex
-	var inboxButton
 
 	int customizeHeaderIndex
 	var pilotButton
@@ -48,13 +47,11 @@ struct
 	var bannerButton
 	var patchButton
 	var statsButton
-	var browseNetworkButton
 	var dpadCommsButton
 
 	var playHeader
 	var customizeHeader
 	var callsignHeader
-	var networksHeader
 	var storeHeader
 
 	var startMatchButton
@@ -66,20 +63,10 @@ struct
 
 	var spectatorLabel
 
-	bool putPlayerInMatchmakingAfterDelay = false
+	var matchSettingsPanel
 
 	ComboStruct &lobbyComboStruct
 } file
-
-struct
-{
-	var startButton
-	var mapButton
-	var modeButton
-
-	var enemiesPanel
-	var friendliesPanel
-} privateMatch
 
 const table<asset> mapImages =
 {
@@ -103,6 +90,8 @@ const table<asset> mapImages =
 	mp_coliseum_column = $"loadscreens/mp_coliseum_column_lobby",
 	mp_relic02 = $"loadscreens/mp_relic02_lobby",
 	mp_wargames = $"loadscreens/mp_wargames_lobby",
+	mp_rise = $"loadscreens/mp_rise_lobby",
+	mp_lf_township = $"loadscreens/mp_lf_township_lobby",
 }
 
 void function MenuPrivateMatch_Init()
@@ -143,7 +132,7 @@ void function InitPrivateMatchMenu()
 	var menu = GetMenu( "PrivateLobbyMenu" )
 	file.menu = menu
 
-	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnLobbyMenu_Open )
+	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnPrivateMatchMenu_Open )
 	AddMenuEventHandler( menu, eUIEvent.MENU_CLOSE, OnLobbyMenu_Close )
 	AddMenuEventHandler( menu, eUIEvent.MENU_NAVIGATE_BACK, OnLobbyMenu_NavigateBack )
 
@@ -167,6 +156,11 @@ void function InitPrivateMatchMenu()
 	file.friendlyTeamBackgroundPanel = Hud_GetChild( file.friendlyPlayersPanel, "LobbyFriendlyTeamBackground" )
 	file.enemyTeamBackgroundPanel = Hud_GetChild( file.enemyPlayersPanel, "LobbyEnemyTeamBackground" )
 
+#if PC_PROG
+	var panelSize = Hud_GetSize( file.enemyPlayersPanel )
+	Hud_SetSize( Hud_GetChild( menu, "LobbyChatBox" ), panelSize[0], panelSize[1] )
+#endif // #if PC_PROG
+
 	file.friendlyTeamBackground = Hud_GetChild( file.friendlyTeamBackgroundPanel, "TeamBackground" )
 	file.enemyTeamBackground = Hud_GetChild( file.enemyTeamBackgroundPanel, "TeamBackground" )
 
@@ -176,13 +170,13 @@ void function InitPrivateMatchMenu()
 	file.nextMapNameLabel = Hud_GetChild( menu, "NextMapName" )
 	file.nextGameModeLabel = Hud_GetChild( menu, "NextGameModeName" )
 
-	file.firstNetworkSubButton = Hud_GetChild( GetMenu( "CommunitiesMenu" ), "BtnBrowse" )
-
 	file.callsignCard = Hud_GetChild( menu, "CallsignCard" )
 
 	file.spectatorLabel = Hud_GetChild( menu, "SpectatorLabel" )
 
-	SetupComboButtons( menu, file.startMatchButton, file.startMatchButton )
+	file.matchSettingsPanel = Hud_GetChild( menu, "MatchSettings" )
+
+	SetupComboButtons( menu, file.startMatchButton, file.listFriendlies )
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT", "" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
@@ -243,12 +237,12 @@ void function SetupComboButtons( var menu, var navUpButton, var navDownButton  )
 	int headerIndex = 0
 	int buttonIndex = 0
 	file.playHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_HEADER_PRIVATE_MATCH" )
-	var selectMapButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_SELECT_MAP" )
-	file.selectMapButton = selectMapButton
-	Hud_AddEventHandler( selectMapButton, UIE_CLICK, OnSelectMapButton_Activate )
 	var selectModeButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_SELECT_MODE" )
 	file.selectModeButton = selectModeButton
 	Hud_AddEventHandler( selectModeButton, UIE_CLICK, OnSelectModeButton_Activate )
+	var selectMapButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_SELECT_MAP" )
+	file.selectMapButton = selectMapButton
+	Hud_AddEventHandler( selectMapButton, UIE_CLICK, OnSelectMapButton_Activate )
 
 	file.matchSettingsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_MATCH_SETTINGS" )
 	Hud_AddEventHandler( file.matchSettingsButton, UIE_CLICK, OnSelectMatchSettings_Activate )
@@ -289,22 +283,13 @@ void function SetupComboButtons( var menu, var navUpButton, var navDownButton  )
 
 	headerIndex++
 	buttonIndex = 0
-	file.networksHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_HEADER_NETWORKS" )
-	file.inboxHeaderIndex = headerIndex
-	var networksInbox = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_INBOX" )
-	file.inboxButton = networksInbox
-	Hud_AddEventHandler( networksInbox, UIE_CLICK, OnInboxButton_Activate )
-	var switchButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#COMMUNITY_SWITCHCOMMUNITY" )
-	Hud_AddEventHandler( switchButton, UIE_CLICK, OnSwitchButton_Activate )
-	var browseButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#COMMUNITY_BROWSE_NETWORKS" )
-	Hud_AddEventHandler( browseButton, UIE_CLICK, OnBrowseNetworksButton_Activate )
-	file.browseNetworkButton = browseButton
-
-	headerIndex++
-	buttonIndex = 0
 	file.storeHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_HEADER_STORE" )
 	file.storeButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_BROWSE" )
 	Hud_AddEventHandler( file.storeButton, UIE_CLICK, OnStoreButton_Activate )
+	var storeNewReleasesButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_NEW_RELEASES" )
+	Hud_AddEventHandler( storeNewReleasesButton, UIE_CLICK, OnStoreNewReleasesButton_Activate )
+	var storeBundlesButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_BUNDLES" )
+	Hud_AddEventHandler( storeBundlesButton, UIE_CLICK, OnStoreBundlesButton_Activate )
 
 	headerIndex++
 	buttonIndex = 0
@@ -323,7 +308,6 @@ void function SetupComboButtons( var menu, var navUpButton, var navDownButton  )
 	var knbButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#KNB_MENU_HEADER" )
 	Hud_AddEventHandler( knbButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "KnowledgeBaseMenu" ) ) )
 
-	comboStruct.navDownButtonDisabled = true
 	ComboButtons_Finalize( comboStruct )
 }
 
@@ -422,8 +406,6 @@ void function OnLobbyMenu_Open()
 			ComboButton_SetNew( file.patchButton, anyNewPatches )
 			ComboButton_SetNew( file.factionButton, anyNewFactions )
 		}
-
-		thread PrivateLobby_UpdateInboxButtons()
 	}
 }
 
@@ -504,17 +486,15 @@ void function SetMapInfo( string mapName )
 	Hud_Show( nextMapImage )
 
 	Hud_SetText( file.nextMapNameLabel, GetMapDisplayName( mapName ) )
-	Hud_Show( file.nextMapNameLabel )
 }
 
 void function SetModeInfo( string modeName )
 {
-	var nextModeIcon = Hud_GetChild( file.menu, "NextMapIcon" )
+	var nextModeIcon = Hud_GetChild( file.menu, "NextModeIcon" )
 	RuiSetImage( Hud_GetRui( nextModeIcon ), "basicImage", GetPlaylistThumbnailImage( modeName ) )
 	Hud_Show( nextModeIcon )
 
-	Hud_SetText( file.nextGameModeLabel, GAMETYPE_TEXT[modeName] )
-	Hud_Show( file.nextGameModeLabel )
+	Hud_SetText( file.nextGameModeLabel, GetGameModeDisplayName( modeName ) )
 }
 
 function Privatematch_map_Changed()
@@ -538,6 +518,7 @@ function Privatematch_mode_Changed()
 	string modeName = PrivateMatch_GetSelectedMode()
 	SetModeInfo( modeName )
 
+	UpdatePrivateMatchButtons()
 	UpdateMatchSettingsForGamemode()
 }
 
@@ -564,13 +545,22 @@ function UpdatePrivateMatchButtons()
 		Hud_SetLocked( file.selectMapButton, true )
 		Hud_SetLocked( file.selectModeButton, true )
 		Hud_SetLocked( file.matchSettingsButton, true )
+		Hud_SetLocked( file.inviteFriendsButton, true )
 	}
 	else
 	{
 		RHud_SetText( file.startMatchButton, "#START_MATCH" )
 		Hud_SetLocked( file.selectMapButton, false )
 		Hud_SetLocked( file.selectModeButton, false )
-		Hud_SetLocked( file.matchSettingsButton, false )
+		Hud_SetLocked( file.inviteFriendsButton, false )
+
+		string modeName = PrivateMatch_GetSelectedMode()
+		bool settingsLocked = IsFDMode( modeName )
+
+		if ( settingsLocked && uiGlobal.activeMenu == GetMenu( "MatchSettingsMenu" ) )
+			CloseActiveMenu()
+
+		Hud_SetLocked( file.matchSettingsButton, settingsLocked )
 	}
 }
 
@@ -612,6 +602,32 @@ function UpdateLobby()
 		ForceUpdateHUDAnimations()
 
 		UpdatePrivateMatchButtons()
+
+		int gamemodeIdx = expect int( level.ui.privatematch_mode )
+		int numPlaylistOverrides = GetPlaylistVarOverridesCount()
+		string playlistOverridesDesc = ""
+		for ( int varIdx = 0; varIdx < numPlaylistOverrides; ++varIdx )
+		{
+			string varName = GetPlaylistVarOverrideNameByIndex( varIdx )
+			float varOrigVal = float( GetCurrentPlaylistGamemodeByIndexVar( gamemodeIdx, varName, false ) )
+			float varOverrideVal = float( GetCurrentPlaylistGamemodeByIndexVar( gamemodeIdx, varName, true ) )
+			if ( varOrigVal == varOverrideVal )
+				continue
+
+			string label = Localize( MatchSettings_PlaylistVarLabels[varName] ) + ": "
+			string value = MatchSettings_FormatPlaylistVarValue( varName, varOverrideVal )
+			playlistOverridesDesc = playlistOverridesDesc + label + "`2" + value + " `0\n"
+		}
+
+		if ( playlistOverridesDesc.len() )
+		{
+			RuiSetString( Hud_GetRui( file.matchSettingsPanel ), "description", playlistOverridesDesc )
+			Hud_Show( file.matchSettingsPanel )
+		}
+		else
+		{
+			Hud_Hide( file.matchSettingsPanel )
+		}
 
 		if ( GetUIPlayer() && GetPersistentVar( "privateMatchState" ) == 1 )
 			Hud_SetVisible( file.spectatorLabel, true )
@@ -750,39 +766,24 @@ function UpdatePlayerInfo()
 	}
 }
 
-
-void function PrivateLobby_UpdateInboxButtons()
+void function OnPrivateMatchMenu_Open()
 {
-	var menu = GetMenu( "PrivateLobbyMenu" )
-	if ( GetUIPlayer() == null || !IsPersistenceAvailable() )
-		return
-
-	bool hasNewMail = (Inbox_HasUnreadMessages() && Inbox_GetTotalMessageCount() > 0) || PlayerRandomUnlock_GetTotal( GetUIPlayer() ) > 0
-	if ( hasNewMail )
-	{
-		int messageCount = Inbox_GetTotalMessageCount()
-		int lootCount = PlayerRandomUnlock_GetTotal( GetUIPlayer() )
-		int totalCount = messageCount + lootCount
-
-		string countString
-		if ( totalCount >= MAX_MAIL_COUNT )
-			countString = MAX_MAIL_COUNT + "+"
-		else
-			countString = string( totalCount )
-
-		SetComboButtonHeaderTitle( menu, file.inboxHeaderIndex, Localize( "#MENU_HEADER_NETWORKS_NEW_MSGS", countString )  )
-		ComboButton_SetText( file.inboxButton, Localize( "#MENU_TITLE_INBOX_NEW_MSGS", countString ) )
-	}
-	else
-	{
-		SetComboButtonHeaderTitle( menu, file.inboxHeaderIndex, Localize( "#MENU_HEADER_NETWORKS" )  )
-		ComboButton_SetText( file.inboxButton, Localize( "#MENU_TITLE_READ" ) )
-	}
-
-	ComboButton_SetNewMail( file.inboxButton, hasNewMail )
+	Lobby_SetFDMode( false )
+	OnLobbyMenu_Open()
 }
 
-void function OnStoreButton_Activate( var button )
+bool function IsFDMode( string modeName )
 {
-	LaunchGamePurchaseOrDLCStore()
+	bool isFD = false
+	switch ( modeName )
+	{
+		case "fd_easy":
+		case "fd_normal":
+		case "fd_hard":
+		case "fd_master":
+		case "fd_insane":
+			isFD = true
+	}
+
+	return isFD
 }

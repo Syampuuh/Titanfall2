@@ -7,6 +7,8 @@ global function GetPlayerStat_AllCompetitiveModesAndMapsInt
 global function GetStatVar
 global function GetStatVarType
 global function GetStatVarLocalizedUnlock
+global function Stats_GetFixedSaveVar
+global function FD_GetHighestDifficultyForTitan
 
 /*void function AddItemsToStatsList( array<string> refs )
 {
@@ -37,6 +39,9 @@ void function InitStatsTables()
 	AddPersistentStat( "game_stats", "mvp", 								"",	 	"mapStats[%mapname%].topPlayerOnTeam[%gamemode%]", "#" )
 	AddPersistentStat( "game_stats", "top3OnTeam", 							"",	 	"mapStats[%mapname%].top3OnTeam[%gamemode%]", "#" )
 	AddPersistentStat( "game_stats", "hoursPlayed", 						"",		"mapStats[%mapname%].hoursPlayed[%gamemode%]", "#" )
+	AddPersistentStat( "game_stats", "perfectMatches", 						"",		"mapStats[%mapname%].perfectMatchesByDifficulty[%difficulty%]", "#" )
+	AddPersistentStat( "game_stats", "games_completed_fd", 					"",		"mapStats[%mapname%].matchesByDifficulty[%difficulty%]", "#" )
+	AddPersistentStat( "game_stats", "games_won_fd", 						"",		"mapStats[%mapname%].winsByDifficulty[%difficulty%]", "#" )
 
 	int gameModeCount = PersistenceGetEnumCount( "gameModes" )
 	for ( int modeIndex = 0; modeIndex < gameModeCount; modeIndex++ )
@@ -294,6 +299,8 @@ void function InitStatsTables()
 		AddPersistentStat( "titan_stats", "pilotsAsPrime",		chassis,	"titanStats[" + chassis + "].pilotsAsPrime", "#UNLOCK_TITAN_PRIME_PILOT_KILLS" )
 		AddPersistentStat( "titan_stats", "titansAsPrime",		chassis,	"titanStats[" + chassis + "].titansAsPrime", "#UNLOCK_TITAN_PRIME_TITAN_KILLS" )
 		AddPersistentStat( "titan_stats", "executionsAsPrime",	chassis,	"titanStats[" + chassis + "].executionsAsPrime", "#UNLOCK_TITAN_PRIME_EXECUTIONS" )
+		AddPersistentStat( "titan_stats", "matchesByDifficulty",	chassis,	"titanStats[" + chassis + "].matchesByDifficulty[%difficulty%]", "" )
+		AddPersistentStat( "titan_stats", "perfectMatchesByDifficulty",	chassis,	"titanStats[" + chassis + "].perfectMatchesByDifficulty[%difficulty%]", "" )
 	}
 
 	//##############################################
@@ -342,6 +349,12 @@ void function InitStatsTables()
 	AddPersistentStat( "fd_stats", "turretKills",				"",		"fdStats.turretKills", "#UNLOCK_MISC_TURRET_KILLS" )
 	AddPersistentStat( "fd_stats", "harvesterBoosts",			"",		"fdStats.harvesterBoosts", "#UNLOCK_MISC_HARVESTER_BOOSTS" )
 	AddPersistentStat( "fd_stats", "wavesComplete",				"",		"fdStats.wavesComplete", "#UNLOCK_MISC_WAVES_COMPLETE" )
+	AddPersistentStat( "fd_stats", "easyWins",					"",		"fdStats.easyWins", "#UNLOCK_FD_EASY_WINS" )
+	AddPersistentStat( "fd_stats", "normalWins",				"",		"fdStats.normalWins", "#UNLOCK_FD_NORMAL_WINS" )
+	AddPersistentStat( "fd_stats", "hardWins",					"",		"fdStats.hardWins", "#UNLOCK_FD_HARD_WINS" )
+	AddPersistentStat( "fd_stats", "masterWins",				"",		"fdStats.masterWins", "#UNLOCK_FD_MASTER_WINS" )
+	AddPersistentStat( "fd_stats", "insaneWins",				"",		"fdStats.insaneWins", "#UNLOCK_FD_INSANE_WINS" )
+	AddPersistentStat( "fd_stats", "highestTitanFDLevel",		"",		"fdStats.highestTitanFDLevel", "#UNLOCK_FD_TITAN_LEVEL" )
 
 	//#############################################################
 	//	DEV ONLY STATS (NOT TRACKED IN RETAIL FOR PLAYER DISPLAY)
@@ -455,6 +468,17 @@ float function GetPlayerStatFloat( entity player, string category, string alias,
 	return expect float( player.GetPersistentVar( statString ) )
 }
 
+
+string function Stats_GetFixedSaveVar( string saveVar, string mapName, string modeName, string difficultyLevel )
+{
+	string fixedSaveVar = saveVar
+	fixedSaveVar = StringReplace( fixedSaveVar, "%mapname%", mapName )
+	fixedSaveVar = StringReplace( fixedSaveVar, "%gamemode%", modeName )
+	fixedSaveVar = StringReplace( fixedSaveVar, "%difficulty%", difficultyLevel )
+
+	return fixedSaveVar
+}
+
 int function GetPlayerStat_AllCompetitiveModesAndMapsInt( entity player, string category, string alias, string subAlias = "" )
 {
 	Assert( IsUI() || IsValid( player ) )
@@ -471,12 +495,27 @@ int function GetPlayerStat_AllCompetitiveModesAndMapsInt( entity player, string 
 	{
 		for( int map = 0; map < numMaps; map++ )
 		{
-			fixedSaveVar = statVarName
-			fixedSaveVar = StringReplace( fixedSaveVar, "%mapname%", string( map ) )
-			fixedSaveVar = StringReplace( fixedSaveVar, "%gamemode%", string( mode ) )
+			fixedSaveVar = Stats_GetFixedSaveVar( statVarName, string( map ), string( mode ), "0" )
 			count += expect int( player.GetPersistentVar( fixedSaveVar ) )
 		}
 	}
 
 	return count
 }
+
+
+int function FD_GetHighestDifficultyForTitan( entity player, string titanRef )
+{
+	string statVar = GetStatVar( "titan_stats", "matchesByDifficulty", titanRef )
+
+	int highestDifficulty = 0
+	for ( int difficulty = 0; difficulty < 5; difficulty++ )
+	{
+		string persistentVar = Stats_GetFixedSaveVar( statVar, "", "", string( difficulty ) )
+		if ( player.GetPersistentVarAsInt( persistentVar ) > 0 )
+			highestDifficulty = difficulty
+	}
+
+	return highestDifficulty
+}
+

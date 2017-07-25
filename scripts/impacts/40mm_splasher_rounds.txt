@@ -66,108 +66,108 @@ ImpactTable
 
 	Sound
 	{
-		"C" "Explo_40mm_Impact_3P"
-		"D" "Explo_40mm_Impact_3P"
-		"E" "Explo_40mm_Impact_3P"
+		"C" "explo_40mm_splashed_impact_3p"
+		"D" "explo_40mm_splashed_impact_3p"
+		"E" "explo_40mm_splashed_impact_3p"
 
-		"F" "Explo_40mm_Impact_3P"
-		"G" "Explo_40mm_Impact_3P"
-		"H" "Explo_40mm_Impact_3P"
+		"F" "explo_40mm_splashed_impact_3p"
+		"G" "explo_40mm_splashed_impact_3p"
+		"H" "explo_40mm_splashed_impact_3p"
 
-		"J" "Explo_40mm_Impact_3P"
-		"K" "Explo_40mm_Impact_3P"
-		"L" "Explo_40mm_Impact_3P"
-		"M" "Explo_40mm_Impact_3P"
-		"N" "Explo_40mm_Impact_3P"
-		"O" "Explo_40mm_Impact_3P"
-		"P" "Explo_40mm_Impact_3P"
+		"J" "explo_40mm_splashed_impact_3p"
+		"K" "explo_40mm_splashed_impact_3p"
+		"L" "explo_40mm_splashed_impact_3p"
+		"M" "explo_40mm_splashed_impact_3p"
+		"N" "explo_40mm_splashed_impact_3p"
+		"O" "explo_40mm_splashed_impact_3p"
+		"P" "explo_40mm_splashed_impact_3p"
 
-		"R" "Explo_40mm_Impact_3P"
-		"S" "Explo_40mm_Impact_3P"
-		"T" "Explo_40mm_Impact_3P"
-		"U" "Explo_40mm_Impact_3P"
+		"R" "explo_40mm_splashed_impact_3p"
+		"S" "explo_40mm_splashed_impact_3p"
+		"T" "explo_40mm_splashed_impact_3p"
+		"U" "explo_40mm_splashed_impact_3p"
 
-		"V" "Explo_40mm_Impact_3P"
-		"W" "Explo_40mm_Impact_3P"
+		"V" "explo_40mm_splashed_impact_3p"
+		"W" "explo_40mm_splashed_impact_3p"
 		"X"	"TitanBubbleShield.Explosive.BulletImpact_3P_vs_3P"
-		"Y" "Explo_40mm_Impact_3P"
-		"Z" "Explo_40mm_Impact_3P"  //sand
+		"Y" "explo_40mm_splashed_impact_3p"
+		"Z" "explo_40mm_splashed_impact_3p"  //sand
 		//"splash" "Water.BulletImpact"
 		//"slime_splash" "Water.BulletImpact"
 
-		//"airburst" "Explo_40mm_Impact_3P"
+		//"airburst" "explo_40mm_splashed_impact_3p"
 		"shieldhit" "TitanShield.Explosive.BulletImpact_3P_vs_3P"
 	}
 
 	Sound_attacker
 	{
-		"C" "Explo_40mm_Impact_1P"
-		"D" "Explo_40mm_Impact_1P"
-		"E" "Explo_40mm_Impact_1P"
+		"C" "explo_40mm_splashed_impact_3p"
+		"D" "explo_40mm_splashed_impact_3p"
+		"E" "explo_40mm_splashed_impact_3p"
 
-		"F" "Explo_40mm_Impact_1P"
-		"G" "Explo_40mm_Impact_1P"
-		"H" "Explo_40mm_Impact_1P"
+		"F" "explo_40mm_splashed_impact_3p"
+		"G" "explo_40mm_splashed_impact_3p"
+		"H" "explo_40mm_splashed_impact_3p"
 
-		"J" "Explo_40mm_Impact_1P"
-		"K" "Explo_40mm_Impact_1P"
-		"L" "Explo_40mm_Impact_1P"
-		"M" "Explo_40mm_Impact_1P"
-		"N" "Explo_40mm_Impact_1P"
-		"O" "Explo_40mm_Impact_1P"
-		"P" "Explo_40mm_Impact_1P"
+		"J" "explo_40mm_splashed_impact_3p"
+		"K" "explo_40mm_splashed_impact_3p"
+		"L" "explo_40mm_splashed_impact_3p"
+		"M" "explo_40mm_splashed_impact_3p"
+		"N" "explo_40mm_splashed_impact_3p"
+		"O" "explo_40mm_splashed_impact_3p"
+		"P" "explo_40mm_splashed_impact_3p"
 
-		"R" "Explo_40mm_Impact_1P"
-		"S" "Explo_40mm_Impact_1P"
-		"T" "Explo_40mm_Impact_1P"
-		"U" "Explo_40mm_Impact_1P"
+		"R" "explo_40mm_splashed_impact_3p"
+		"S" "explo_40mm_splashed_impact_3p"
+		"T" "explo_40mm_splashed_impact_3p"
+		"U" "explo_40mm_splashed_impact_3p"
 
-		"V" "Explo_40mm_Impact_1P"
-		"W" "Explo_40mm_Impact_1P"
+		"V" "explo_40mm_splashed_impact_3p"
+		"W" "explo_40mm_splashed_impact_3p"
 		"X"	"TitanBubbleShield.Explosive.BulletImpact_3P_vs_3P"
-		"Y" "Explo_40mm_Impact_1P"
-		"Z" "Explo_40mm_Impact_1P"  //sand
+		"Y" "explo_40mm_splashed_impact_3p"
+		"Z" "explo_40mm_splashed_impact_3p"  //sand
 
 		//"splash" "Water.BulletImpact"
 		//"slime_splash" "Water.BulletImpact"
 
-		//"airburst" "Explo_40mm_Impact_1P"
+		//"airburst" "explo_40mm_splashed_impact_3p"
 		"shieldhit" "TitanShield.Explosive.BulletImpact_1P_vs_3P"
 	}
 
 	Sound_victim
 	{
-		"C" "Explo_40mm_Impact_3P"
-		"D" "Explo_40mm_Impact_3P"
+		"C" "explo_40mm_splashed_impact_3p"
+		"D" "explo_40mm_splashed_impact_3p"
 		"E" "Titan.40mm_Impact_3P_vs_1P"
 
-		"F" "Explo_40mm_Impact_3P"
-		"G" "Explo_40mm_Impact_3P"
-		"H" "Explo_40mm_Impact_3P"
+		"F" "explo_40mm_splashed_impact_3p"
+		"G" "explo_40mm_splashed_impact_3p"
+		"H" "explo_40mm_splashed_impact_3p"
 
-		"J" "Explo_40mm_Impact_3P"
-		"K" "Explo_40mm_Impact_3P"
-		"L" "Explo_40mm_Impact_3P"
-		"M" "Explo_40mm_Impact_3P"
-		"N" "Explo_40mm_Impact_3P"
-		"O" "Explo_40mm_Impact_3P"
-		"P" "Explo_40mm_Impact_3P"
+		"J" "explo_40mm_splashed_impact_3p"
+		"K" "explo_40mm_splashed_impact_3p"
+		"L" "explo_40mm_splashed_impact_3p"
+		"M" "explo_40mm_splashed_impact_3p"
+		"N" "explo_40mm_splashed_impact_3p"
+		"O" "explo_40mm_splashed_impact_3p"
+		"P" "explo_40mm_splashed_impact_3p"
 
-		"R" "Explo_40mm_Impact_3P"
-		"S" "Explo_40mm_Impact_3P"
-		"T" "Explo_40mm_Impact_3P"
-		"U" "Explo_40mm_Impact_3P"
+		"R" "explo_40mm_splashed_impact_3p"
+		"S" "explo_40mm_splashed_impact_3p"
+		"T" "explo_40mm_splashed_impact_3p"
+		"U" "explo_40mm_splashed_impact_3p"
 
-		"V" "Explo_40mm_Impact_3P"
-		"W" "Explo_40mm_Impact_3P"
+		"V" "explo_40mm_splashed_impact_3p"
+		"W" "explo_40mm_splashed_impact_3p"
 		"X"	"TitanBubbleShield.Explosive.BulletImpact_3P_vs_3P"
-		"Y" "Explo_40mm_Impact_3P"
-		"Z" "Explo_40mm_Impact_3P"  //sand
+		"Y" "explo_40mm_splashed_impact_3p"
+		"Z" "explo_40mm_splashed_impact_3p"  //sand
 
 		//"splash" "Water.BulletImpact"
 		//"slime_splash" "Water.BulletImpact"
 
-		//"airburst" "Explo_40mm_Impact_3P"
+		//"airburst" "explo_40mm_splashed_impact_3p"
 		"shieldhit" "TitanShield.Explosive.BulletImpact_3P_vs_1P"
 	}
 

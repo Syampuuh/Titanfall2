@@ -191,6 +191,9 @@ bool function ShouldShowWeaponFlyout( entity player, entity weapon, string weapo
 	if ( GetGameState() < eGameState.Playing )
 		return false
 
+	if ( player.IsTitan() && GameRules_GetGameMode() == FD )
+		return false
+
 	if( !player.GetPlayerNetBool( "shouldShowWeaponFlyout" ) )
 		return false
 

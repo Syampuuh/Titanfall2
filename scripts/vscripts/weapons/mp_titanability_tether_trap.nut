@@ -56,7 +56,7 @@ var function OnWeaponPrimaryAttack_titanweapon_tether_trap( entity weapon, Weapo
 		}
 	}
 
-	return weapon.GetWeaponSettingInt( eWeaponVar.ammo_per_shot )
+	return weapon.GetAmmoPerShot()
 }
 
 #if SERVER

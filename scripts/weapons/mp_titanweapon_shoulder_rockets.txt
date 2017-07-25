@@ -290,6 +290,7 @@ WeaponData
 	"smart_ammo_titan_lock_point3"					"SMART_AMMO_HEAD"
 	"smart_ammo_titan_lock_point4"					"SMART_AMMO_ARM_LEFT"
 	"smart_ammo_titan_lock_point5"					"SMART_AMMO_ARM_RIGHT"
+	"smart_ammo_track_cloaked_targets"				"0"
 
 	// Crosshair
 	"red_crosshair_range" 							"4000"
@@ -362,6 +363,16 @@ WeaponData
 			"npc_rest_time_between_bursts_max"					"4"
 
 			"viewmodel"   									"models/weapons/titan_bt_rocket_pod/atpov_titan_bt_rocket_pod_right.mdl"
+		}
+
+		fd_balance
+		{
+			"damage_near_value_titanarmor"				"*0.8"
+			"damage_far_value_titanarmor"				"*0.8"
+			"explosion_damage"							"*0.8"
+			"explosion_damage_heavy_armor"				"*0.8"
+			"damage_near_value"   						"*0.8"
+			"damage_far_value"							"*0.8"
 		}
 	}
 

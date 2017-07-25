@@ -401,7 +401,8 @@ WeaponData
 	{
 		pas_scorch_weapon
 		{
-
+			"damage_near_value_titanarmor"					"1000"
+	   		"damage_far_value_titanarmor" 					"1000"
 		}
 		fd_wpn_upgrade_1
 		{

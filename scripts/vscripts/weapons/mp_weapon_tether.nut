@@ -13,6 +13,7 @@ global function ProximityTetherThink
 #endif // #if SERVER
 
 const TETHER_MINE_FX = $"wpn_grenade_TT_mag"
+const EXPLOSIVE_MINE_FX = $"P_tether_explosive_light"
 const TETHER_ROPE_MODEL = "cable/tether.vmt"
 const TETHER_3P_MODEL = $"models/weapons/caber_shot/caber_shot_thrown_xl.mdl"
 const TETHER_1P_MODEL = $"models/weapons/caber_shot/caber_shot_tether_xl.mdl"
@@ -26,6 +27,7 @@ function MpWeaponTether_Init()
 	PrecacheModel( TETHER_1P_MODEL )
 
 	PrecacheParticleSystem( TETHER_MINE_FX )
+	PrecacheParticleSystem( EXPLOSIVE_MINE_FX )
 }
 
 #if SERVER
@@ -116,6 +118,11 @@ void function OnProjectileCollision_weapon_tether( entity projectile, vector pos
 	}
 
 	#if SERVER
+		array<string> projectileMods = projectile.ProjectileGetMods()
+		bool isExplosiveTether = false
+		if ( projectileMods.contains( "fd_explosive_trap" ) )
+			isExplosiveTether = true
+
 		if ( hitEnt.IsTitan() && IsAlive( hitEnt ) && !proxMineOnly )
 		{
 			SetForceDrawWhileParented( projectile, true )
@@ -164,7 +171,7 @@ void function OnProjectileCollision_weapon_tether( entity projectile, vector pos
 
 			array<entity> ziplineEnts = [ziplineAnchor, tetherEndEntForOthers, tetherEndEntForPlayer, tetherRopeForPlayer, tetherRopeForOthers]
 
-			AddTitanTether( owner, ziplineAnchor, hitEnt, ziplineEnts, ziplineAnchor, tetherEndEntForPlayer, tetherEndEntForOthers )
+			AddTitanTether( owner, ziplineAnchor, hitEnt, ziplineEnts, ziplineAnchor, tetherEndEntForPlayer, tetherEndEntForOthers, isExplosiveTether )
 
 			if ( hitEnt.IsPlayer() )
 			{
@@ -179,7 +186,7 @@ void function OnProjectileCollision_weapon_tether( entity projectile, vector pos
 		}
 		else
 		{
-			thread ProximityTetherThink( projectile, owner )
+			thread ProximityTetherThink( projectile, owner, isExplosiveTether )
 		}
 	#endif
 }
@@ -195,7 +202,7 @@ void function WiggleTetherRope( entity rope, float length )
 }
 
 #if SERVER
-void function ProximityTetherThink( entity projectile, entity owner )
+void function ProximityTetherThink( entity projectile, entity owner, bool isExplosiveTether )
 {
 	projectile.EndSignal( "OnDestroy" )
 
@@ -239,10 +246,22 @@ void function ProximityTetherThink( entity projectile, entity owner )
 	entity enemyFX = PlayLoopFXOnEntity( TETHER_MINE_FX, projectile, "BLINKER", null, null, ENTITY_VISIBLE_TO_ENEMY )
 	SetTeam( enemyFX, team )
 
+	if ( isExplosiveTether )
+	{
+		int fxid = GetParticleSystemIndex( EXPLOSIVE_MINE_FX )
+		local attachID = projectile.LookupAttachment( "FX_CENTER" )
+		local particleFX = StartParticleEffectOnEntity( projectile, fxid, FX_PATTACH_POINT_FOLLOW, attachID )
+	}
+
 	wait 1.0 // slight delay before activation
 
 	float startTime = Time()
-	float TETHER_MINE_LIFETIME = 60.0
+	float TETHER_MINE_LIFETIME
+	if ( GAMETYPE == "fd" )
+		TETHER_MINE_LIFETIME = 10000.0
+	else
+		TETHER_MINE_LIFETIME = 60.0
+
 	if ( owner.IsNPC() )
 		TETHER_MINE_LIFETIME = 10.0
 
@@ -298,6 +317,7 @@ void function ProximityTetherThink( entity projectile, entity owner )
 
 			entity tetherRopeForPlayer = CreateRope( <0,0,0>, <0,0,0>, ropeLength, tetherEndEntForPlayer, projectile, 0, 0, TETHER_ROPE_MODEL )
 			entity tetherRopeForOthers = CreateRope( <0,0,0>, <0,0,0>, ropeLength, tetherEndEntForOthers, projectile, 0, 0, TETHER_ROPE_MODEL )
+			tetherRopeForOthers.DisableHibernation()
 			WiggleTetherRope( tetherRopeForPlayer, exactLength )
 			WiggleTetherRope( tetherRopeForOthers, exactLength )
 			//SetUpEntitiesForPlayerAndOthers( titan, tetherRopeForPlayer, tetherRopeForOthers )
@@ -306,7 +326,7 @@ void function ProximityTetherThink( entity projectile, entity owner )
 
 			projectile.proj.tetherAttached = true
 
-			AddTitanTether( owner, projectile, titan, tetherEnts, projectile, tetherEndEntForPlayer, tetherEndEntForOthers )
+			AddTitanTether( owner, projectile, titan, tetherEnts, projectile, tetherEndEntForPlayer, tetherEndEntForOthers, isExplosiveTether )
 
 			if ( titan.IsPlayer() )
 				thread TetherFlyIn( projectile, tetherEndEntForPlayer, tetherRopeForPlayer, owner )

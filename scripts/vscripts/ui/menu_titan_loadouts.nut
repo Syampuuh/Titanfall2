@@ -9,9 +9,12 @@ struct
 	var menu
 	var loadoutPanel
 	var xpPanel
+	var titanPropertiesPanel
 	var[NUM_PERSISTENT_TITAN_LOADOUTS] loadoutHeaders
 	var[NUM_PERSISTENT_TITAN_LOADOUTS] activateButtons
 	var unlockReq
+	var fdProperties
+	var fdPropertiesData
 } file
 
 void function InitTitanLoadoutsMenu()
@@ -35,6 +38,7 @@ void function InitTitanLoadoutsMenu()
 
 	file.loadoutPanel = Hud_GetChild( menu, "TitanLoadoutDisplay" )
 	file.xpPanel = Hud_GetChild( file.loadoutPanel, "TitanXP" )
+	file.titanPropertiesPanel = Hud_GetChild( file.loadoutPanel, "TitanLoadout" )
 	array<var> loadoutPanelButtons = GetElementsByClassname( menu, "TitanLoadoutPanelButtonClass" )
 	foreach ( button in loadoutPanelButtons )
 		Hud_SetEnabled( button, false )
@@ -46,6 +50,9 @@ void function InitTitanLoadoutsMenu()
 	AddDefaultTitanElementsToTitanLoadoutMenu( menu )
 
 	file.unlockReq = Hud_GetChild( menu, "UnlockReq" )
+
+	file.fdProperties = Hud_GetChild( file.loadoutPanel, "TitanLoadoutFD" )
+	file.fdPropertiesData = Hud_GetChild( file.fdProperties, "FDProperties" )
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
@@ -61,6 +68,21 @@ void function OnTitanLoadoutsMenu_Open()
 
 	UpdateTitanLoadoutButtons( loadoutIndex, file.activateButtons )
 	UI_SetPresentationType( ePresentationType.TITAN )
+
+	if ( Lobby_IsFDMode() )
+	{
+		Hud_Hide( file.xpPanel )
+		Hud_Hide( file.titanPropertiesPanel )
+
+		Hud_Show( file.fdProperties )
+	}
+	else
+	{
+		Hud_Show( file.xpPanel )
+		Hud_Show( file.titanPropertiesPanel )
+
+		Hud_Hide( file.fdProperties )
+	}
 }
 
 void function OnTitanLoadoutsMenu_Close()
@@ -86,8 +108,33 @@ void function OnTitanLoadoutsMenu_Close()
 
 void function OnLoadoutButton_Focused( var button )
 {
-	UpdateTitanLoadout( expect int( button.s.rowIndex ) )
-	UpdateTitanXP( file.xpPanel, expect int( button.s.rowIndex ) )
+	int index = expect int( button.s.rowIndex )
+
+	TitanLoadoutDef loadout = GetCachedTitanLoadout( index )
+
+	UpdateTitanLoadout( index )
+	UpdateTitanXP( file.xpPanel, index )
+
+	entity player = GetUIPlayer()
+
+	var rui = Hud_GetRui( file.fdPropertiesData )
+	int titanLevel = FD_TitanGetLevelForXP( loadout.titanClass, FD_TitanGetXP( player, loadout.titanClass ) )
+	RuiSetString( rui, "titanName", GetTitanLoadoutName( loadout ) )
+	RuiSetString( rui, "titanLevelString", Localize( "#FD_TITAN_LEVEL", titanLevel ) )
+	int currentXP = FD_TitanGetXP( player, loadout.titanClass )
+	RuiSetInt( rui, "numFilledPips", FD_TitanGetFilledPipsForXP( loadout.titanClass, currentXP ) )
+	RuiSetInt( rui, "numPips", FD_TitanGetNumPipsForXP( loadout.titanClass, currentXP ) )
+
+	array<ItemDisplayData> titanUpgrades = FD_GetUpgradesForTitanClass( loadout.titanClass )
+	foreach ( index, item in titanUpgrades )
+	{
+		var button = Hud_GetChild( file.fdProperties, "BtnSub" + index )
+		var upgradeRui = Hud_GetRui( button )
+		RuiSetImage( upgradeRui, "buttonImage", item.image )
+		Hud_SetLocked( button, IsSubItemLocked( player, item.ref, item.parentRef ) )
+	}
+
+	RuiSetBool( rui, "compactMode", true )
 }
 
 

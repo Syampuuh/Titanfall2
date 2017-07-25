@@ -23,6 +23,10 @@ void function InitViewStatsMenu()
 	SetButtonRuiText( button, Localize( "#STATS_TITANS" ) )
 	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ViewStats_Titans_Menu" ) ) )
 
+	button = Hud_GetChild( menu, "BtnMaps" )
+	SetButtonRuiText( button, Localize( "#STATS_MAPS" ) )
+	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ViewStats_Maps_Menu" ) ) )
+
 	button = Hud_GetChild( menu, "BtnMisc" )
 	SetButtonRuiText( button, Localize( "#STATS_MISC" ) )
 	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ViewStats_Misc_Menu" ) ) )

@@ -128,6 +128,7 @@ void function InitInGameMPMenu()
 
 void function OnInGameMPMenu_Open()
 {
+	Lobby_SetFDMode( GetCurrentPlaylistVarInt( "ingame_menu_fd_mode", 0 ) == 1 )
 	UI_SetPresentationType( ePresentationType.DEFAULT )
 
 	bool faqIsNew = !GetConVarBool( "menu_faq_viewed" ) || HaveNewPatchNotes() || HaveNewCommunityNotes()
@@ -558,6 +559,9 @@ void function SCB_SetDoubleXPStatus( int status )
 {
 	var doubleXPWidget = Hud_GetChild( file.menuMP, "DoubleXP" )
 	RuiSetInt( Hud_GetRui( doubleXPWidget ), "doubleXPStatus", status )
+
+	// update this menu too
+	TTSUpdateDoubleXPStatus( status )
 }
 
 void function OnInGameLevelInit()

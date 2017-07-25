@@ -90,21 +90,8 @@ function ClScoreboardMp_Init()
 
 void function ScoreboardFocus( entity player )
 {
-	#if MP && DEVSCRIPTS
-	if ( IsDisplayingDpadComms( player ) )
-	{
-		ActivateDpadComms( player, 1 ) // right
-		return
-	}
-	#endif
-
 	if ( !clGlobal.showingScoreboard )
 	{
-		#if DEVSCRIPTS
-		// if ( BoostStoreEnabled() )
-		//	 CycleInventory( player )
-		EnableDpadComms( player )
-		#endif
 		return
 	}
 
@@ -310,11 +297,6 @@ function ScoreboardFadeOut()
 void function ShowScoreboardMP()
 {
 	entity localPlayer = GetLocalClientPlayer()
-
-	#if DEVSCRIPTS
-	if ( IsDisplayingDpadComms( localPlayer ) )
-		DisableDpadComms( localPlayer )
-	#endif
 
 	file.scoreboardBg = RuiCreate( $"ui/scoreboard_background.rpak", clGlobal.topoFullScreen, RUI_DRAW_HUD, 0 )
 	file.scoreboardOverlays = CreateScoreboardOverlays()
@@ -700,6 +682,8 @@ void function ShowScoreboardMP()
 				RuiSetString( rui, "playerName", "" )
 				RuiSetInt( rui, "micState", MIC_STATE_NO_MIC )
 				RuiSetImage( rui, "playerStatus", $"" )
+				for( int i=0; i<6; i++ )
+					RuiSetImage( rui, "extraIcon" + i, $"" )
 				RuiSetFloat3( rui, "bgColor", SCOREBOARD_EMPTY_COLOR )
 				RuiSetFloat( rui, "bgAlpha", SCOREBOARD_EMPTY_BG_ALPHA )
 				if ( (UseSingleTeamScoreboard()) && team != myTeam )

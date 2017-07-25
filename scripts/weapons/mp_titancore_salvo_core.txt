@@ -368,7 +368,7 @@ WeaponData
 	{
 		fd_salvo_core
 		{
-			"burst_fire_count"								"25"
+			"burst_fire_count"								"++10"
 		}
 	}
 

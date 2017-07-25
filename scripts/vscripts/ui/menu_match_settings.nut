@@ -3,6 +3,30 @@ untyped
 global function InitMatchSettingsMenu
 
 global function UpdateMatchSettingsForGamemode
+global function MatchSettings_FormatPlaylistVarValue
+
+global const table< string, string > MatchSettings_PlaylistVarLabels = {
+	roundscorelimit = "#PM_SCORE_LIMIT",
+	scorelimit = "#PM_SCORE_LIMIT",
+	roundtimelimit = "#PM_TIME_LIMIT",
+	timelimit = "#PM_TIME_LIMIT",
+	boosts_enabled = "#PM_PILOT_BOOSTS",
+	earn_meter_pilot_overdrive = "#PM_PILOT_OVERDRIVE",
+	earn_meter_pilot_multiplier = "#PM_PILOT_EARN",
+	pilot_health_multiplier = "#PM_PILOT_HEALTH",
+	respawn_delay = "#PM_PILOT_RESPAWN_DELAY",
+	riff_titan_availability = "#PM_TITAN_AVAILABILITY",
+	earn_meter_titan_multiplier = "#PM_TITAN_EARN",
+}
+
+struct PlaylistVarValueFormat
+{
+	string localizeStr
+	string formatStr
+	table< int, string > enumStrs
+}
+
+const string FORMAT_PERCENTAGE = "%d%%"
 
 struct {
 	var menu = null
@@ -25,6 +49,7 @@ struct {
 	var matchSettingDescLabel = null
 	string modeSettingsName
 	bool isModeRoundBased
+	table< string, PlaylistVarValueFormat > playlistVarValueFormats
 } file
 
 struct
@@ -103,53 +128,118 @@ void function InitMatchSettingsMenu()
 
 	file.scoreLimitButton = Hud_GetChild( menu, "BtnScoreLimit" )
 	Hud_AddEventHandler( file.scoreLimitButton, UIE_CHANGE, SetScoreLimitText )
-	SetButtonRuiText( Hud_GetChild( file.scoreLimitButton, "BtnDropButton" ), "#PM_SCORE_LIMIT" )
+	SetButtonRuiText( Hud_GetChild( file.scoreLimitButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["scorelimit"] )
 	file.scoreLimitLabel = Hud_GetChild( menu, "LblScoreLimit" )
+	PlaylistVarValueFormat roundScoreLimitFormat = {
+		localizeStr = "#N_ROUND_WINS",
+		...
+	}
+	file.playlistVarValueFormats["roundscorelimit"] <- roundScoreLimitFormat
+	PlaylistVarValueFormat scoreLimitFormat = {
+		localizeStr = "#N_POINTS",
+		...
+	}
+	file.playlistVarValueFormats["scorelimit"] <- scoreLimitFormat
 
 	file.timeLimitButton = Hud_GetChild( menu, "BtnTimeLimit" )
 	Hud_AddEventHandler( file.timeLimitButton, UIE_CHANGE, SetTimeLimitText )
-	SetButtonRuiText( Hud_GetChild( file.timeLimitButton, "BtnDropButton" ), "#PM_TIME_LIMIT" )
+	SetButtonRuiText( Hud_GetChild( file.timeLimitButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["timelimit"] )
 	file.timeLimitLabel = Hud_GetChild( menu, "LblTimeLimit" )
+	PlaylistVarValueFormat roundTimeLimitFormat = {
+		localizeStr = "#N_MINUTE_ROUNDS",
+		...
+	}
+	file.playlistVarValueFormats["roundtimelimit"] <- roundTimeLimitFormat
+	PlaylistVarValueFormat timeLimitFormat = {
+		localizeStr = "#N_MINUTES",
+		...
+	}
+	file.playlistVarValueFormats["timelimit"] <- timeLimitFormat
 
 	// pilot
 
 	file.pilotBoostsButton = Hud_GetChild( menu, "BtnPilotBoosts" )
-	SetButtonRuiText( file.pilotBoostsButton, "#PM_PILOT_BOOSTS" )
-	Hud_DialogList_AddListItem( file.pilotBoostsButton, "#SETTING_ON", string( eBoostAvailability.Default ) )
-	Hud_DialogList_AddListItem( file.pilotBoostsButton, "#SETTING_OFF", string( eBoostAvailability.Disabled ) )
+	SetButtonRuiText( file.pilotBoostsButton, MatchSettings_PlaylistVarLabels["boosts_enabled"] )
+	PlaylistVarValueFormat pilotBoostsFormat = {
+		enumStrs = {
+			[eBoostAvailability.Default] = "#PILOT_BOOSTS_DEFAULT",
+			[eBoostAvailability.Disabled] = "#PILOT_BOOSTS_DISABLED",
+		},
+		...
+	}
+	file.playlistVarValueFormats["boosts_enabled"] <- pilotBoostsFormat
+	foreach ( int enum_, string val in pilotBoostsFormat.enumStrs )
+		Hud_DialogList_AddListItem( file.pilotBoostsButton, val, string( enum_ ) )
 
 	file.pilotOverdriveButton = Hud_GetChild( menu, "BtnPilotOverdrive" )
-	SetButtonRuiText( file.pilotOverdriveButton, "#PM_PILOT_OVERDRIVE" )
-	Hud_DialogList_AddListItem( file.pilotOverdriveButton, "#PILOT_OVERDRIVE_ON", string( ePilotOverdrive.Enabled ) )
-	Hud_DialogList_AddListItem( file.pilotOverdriveButton, "#PILOT_OVERDRIVE_OFF", string( ePilotOverdrive.Disabled ) )
-	Hud_DialogList_AddListItem( file.pilotOverdriveButton, "#PILOT_OVERDRIVE_ONLY", string( ePilotOverdrive.Only ) )
+	SetButtonRuiText( file.pilotOverdriveButton, MatchSettings_PlaylistVarLabels["earn_meter_pilot_overdrive"] )
+	PlaylistVarValueFormat pilotOverdriveFormat = {
+		enumStrs = {
+			[ePilotOverdrive.Enabled] = "#PILOT_OVERDRIVE_ON",
+			[ePilotOverdrive.Disabled] = "#PILOT_OVERDRIVE_OFF",
+			[ePilotOverdrive.Only] = "#PILOT_OVERDRIVE_ONLY",
+		},
+		...
+	}
+	file.playlistVarValueFormats["earn_meter_pilot_overdrive"] <- pilotOverdriveFormat
+	foreach ( int enum_, string val in pilotOverdriveFormat.enumStrs )
+		Hud_DialogList_AddListItem( file.pilotOverdriveButton, val, string( enum_ ) )
 
 	file.pilotEarnButton = Hud_GetChild( menu, "BtnPilotEarn" )
 	Hud_AddEventHandler( file.pilotEarnButton, UIE_CHANGE, SetPilotEarnText )
-	SetButtonRuiText( Hud_GetChild( file.pilotEarnButton, "BtnDropButton" ), "#PM_PILOT_EARN" )
+	SetButtonRuiText( Hud_GetChild( file.pilotEarnButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["earn_meter_pilot_multiplier"] )
 	file.pilotEarnLabel = Hud_GetChild( menu, "LblPilotEarn" )
+	PlaylistVarValueFormat pilotEarnFormat = {
+		formatStr = FORMAT_PERCENTAGE,
+		...
+	}
+	file.playlistVarValueFormats["earn_meter_pilot_multiplier"] <- pilotEarnFormat
 
 	file.pilotHealthButton = Hud_GetChild( menu, "BtnPilotHealth" )
 	Hud_AddEventHandler( file.pilotHealthButton, UIE_CHANGE, SetPilotHealthText )
-	SetButtonRuiText( Hud_GetChild( file.pilotHealthButton, "BtnDropButton" ), "#PM_PILOT_HEALTH" )
+	SetButtonRuiText( Hud_GetChild( file.pilotHealthButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["pilot_health_multiplier"] )
 	file.pilotHealthLabel = Hud_GetChild( menu, "LblPilotHealth" )
+	PlaylistVarValueFormat pilotHealthFormat = {
+		formatStr = FORMAT_PERCENTAGE,
+		...
+	}
+	file.playlistVarValueFormats["pilot_health_multiplier"] <- pilotHealthFormat
 
 	file.pilotRespawnDelayButton = Hud_GetChild( menu, "BtnPilotRespawnDelay" )
 	Hud_AddEventHandler( file.pilotRespawnDelayButton, UIE_CHANGE, SetPilotRespawnDelayText )
-	SetButtonRuiText( Hud_GetChild( file.pilotRespawnDelayButton, "BtnDropButton" ), "#PM_PILOT_RESPAWN_DELAY" )
+	SetButtonRuiText( Hud_GetChild( file.pilotRespawnDelayButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["respawn_delay"] )
 	file.pilotRespawnDelayLabel = Hud_GetChild( menu, "LblPilotRespawnDelay" )
+	PlaylistVarValueFormat pilotRespawnDelayFormat = {
+		localizeStr = "#N_SECONDS",
+		formatStr = "%2.1f",
+		...
+	}
+	file.playlistVarValueFormats["respawn_delay"] <- pilotRespawnDelayFormat
 
 	// titan
 
 	file.titanAvailabilityButton = Hud_GetChild( menu, "BtnTitanAvailability" )
-	SetButtonRuiText( file.titanAvailabilityButton, "#PM_TITAN_AVAILABILITY" )
-	Hud_DialogList_AddListItem( file.titanAvailabilityButton, "#TITAN_AVAILABILITY_DEFAULT", string( eTitanAvailability.Default ) )
-	Hud_DialogList_AddListItem( file.titanAvailabilityButton, "#TITAN_AVAILABILITY_NEVER", string( eTitanAvailability.Never ) )
+	SetButtonRuiText( file.titanAvailabilityButton, MatchSettings_PlaylistVarLabels["riff_titan_availability"] )
+	PlaylistVarValueFormat titanAvailabilityFormat = {
+		enumStrs = {
+			[eTitanAvailability.Default] = "#TITAN_AVAILABILITY_DEFAULT",
+			[eTitanAvailability.Never] = "#TITAN_AVAILABILITY_NEVER",
+		},
+		...
+	}
+	file.playlistVarValueFormats["riff_titan_availability"] <- titanAvailabilityFormat
+	foreach ( int enum_, string val in titanAvailabilityFormat.enumStrs )
+		Hud_DialogList_AddListItem( file.titanAvailabilityButton, val, string( enum_ ) )
 
 	file.titanEarnButton = Hud_GetChild( menu, "BtnTitanEarn" )
 	Hud_AddEventHandler( file.titanEarnButton, UIE_CHANGE, SetTitanEarnText )
-	SetButtonRuiText( Hud_GetChild( file.titanEarnButton, "BtnDropButton" ), "#PM_TITAN_EARN" )
+	SetButtonRuiText( Hud_GetChild( file.titanEarnButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["earn_meter_titan_multiplier"] )
 	file.titanEarnLabel = Hud_GetChild( menu, "LblTitanEarn" )
+	PlaylistVarValueFormat titanEarnFormat = {
+		formatStr = FORMAT_PERCENTAGE,
+		...
+	}
+	file.playlistVarValueFormats["earn_meter_titan_multiplier"] <- titanEarnFormat
 
 	file.gameModeLabel = Hud_GetChild( menu, "LblModeSubheaderText" )
 
@@ -178,7 +268,7 @@ void function SetControlGamemodeAndPlaylistVar( var button, int gamemodeIdx, str
 void function UpdateMatchSettingsForGamemode()
 {
 	file.modeSettingsName = PrivateMatch_GetSelectedMode()
-	Hud_SetText( file.gameModeLabel, GAMETYPE_TEXT[file.modeSettingsName] )
+	Hud_SetText( file.gameModeLabel, GetGameModeDisplayName( file.modeSettingsName ) )
 
 	SetGameModeSettings()
 
@@ -270,45 +360,68 @@ void function SetGameModeSettings()
 	SetSliderSettings( file.timeLimitButton, timeSettings, gamemodeIdx, timeLimitVar )
 }
 
+string function MatchSettings_FormatPlaylistVarValue( string playlistVar, float value )
+{
+	if ( !(playlistVar in file.playlistVarValueFormats) )
+		return "#" + playlistVar + " unknown"
+
+	PlaylistVarValueFormat fmt = file.playlistVarValueFormats[playlistVar]
+	if ( fmt.formatStr.len() )
+	{
+		if ( fmt.formatStr == FORMAT_PERCENTAGE )
+			return format( fmt.formatStr, int( value * 100 ) )
+		else
+			return Localize( fmt.localizeStr, format( fmt.formatStr, value ) )
+	}
+
+	if ( fmt.enumStrs.len() )
+		return Localize( fmt.enumStrs[int( value )] )
+
+	return Localize( fmt.localizeStr, int( value ) )
+}
+
 void function SetScoreLimitText( var button )
 {
-	string labelText = file.isModeRoundBased ? "#N_ROUND_WINS" : "#N_POINTS"
-	int scoreLimit = int( Hud_SliderControl_GetCurrentValue( button ) )
-	Hud_SetText( file.scoreLimitLabel, labelText, scoreLimit )
+	string playlistVar = file.isModeRoundBased ? "roundscorelimit" : "scorelimit"
+	float scoreLimit = Hud_SliderControl_GetCurrentValue( button )
+	string labelText = MatchSettings_FormatPlaylistVarValue( playlistVar, scoreLimit )
+	Hud_SetText( file.scoreLimitLabel, labelText )
 }
 
 void function SetTimeLimitText( var button )
 {
-	string labelText = file.isModeRoundBased ? "#N_MINUTE_ROUNDS" : "#N_MINUTES"
-	int timeLimit = int( Hud_SliderControl_GetCurrentValue( button ) )
-	Hud_SetText( file.timeLimitLabel, labelText, timeLimit )
+	string playlistVar = file.isModeRoundBased ? "roundtimelimit" : "timelimit"
+	float timeLimit = Hud_SliderControl_GetCurrentValue( button )
+	string labelText = MatchSettings_FormatPlaylistVarValue( playlistVar, timeLimit )
+	Hud_SetText( file.timeLimitLabel, labelText )
 }
 
 void function SetPilotHealthText( var button )
 {
 	float healthMultiplier = Hud_SliderControl_GetCurrentValue( button )
-	int healthPercentage = int( healthMultiplier * 100 )
-	Hud_SetText( file.pilotHealthLabel, healthPercentage + "%" )
+	string labelText = MatchSettings_FormatPlaylistVarValue( "pilot_health_multiplier", healthMultiplier )
+	Hud_SetText( file.pilotHealthLabel, labelText )
 }
 
 void function SetPilotRespawnDelayText( var button )
 {
 	float respawnDelay = Hud_SliderControl_GetCurrentValue( button )
-	Hud_SetText( file.pilotRespawnDelayLabel, "#N_SECONDS", format( "%2.1f", respawnDelay ) )
+	string labelText = MatchSettings_FormatPlaylistVarValue( "respawn_delay", respawnDelay )
+	Hud_SetText( file.pilotRespawnDelayLabel, labelText )
 }
 
 void function SetPilotEarnText( var button )
 {
 	float earnMultiplier = Hud_SliderControl_GetCurrentValue( button )
-	int earnPercentage = int( earnMultiplier * 100 )
-	Hud_SetText( file.pilotEarnLabel, earnPercentage + "%" )
+	string labelText = MatchSettings_FormatPlaylistVarValue( "earn_meter_pilot_multiplier", earnMultiplier )
+	Hud_SetText( file.pilotEarnLabel, labelText )
 }
 
 void function SetTitanEarnText( var button )
 {
 	float earnMultiplier = Hud_SliderControl_GetCurrentValue( button )
-	int earnPercentage = int( earnMultiplier * 100 )
-	Hud_SetText( file.titanEarnLabel, earnPercentage + "%" )
+	string labelText = MatchSettings_FormatPlaylistVarValue( "earn_meter_titan_multiplier", earnMultiplier )
+	Hud_SetText( file.titanEarnLabel, labelText )
 }
 
 void function AddDescFocusHandler( var button, string descText )

@@ -196,8 +196,8 @@ void function IncrementChargeBlockAnim( entity blockingEnt, var damageInfo )
 	weapon.SetChargeAnimIndex( newIdx )
 }
 
-const float TITAN_BLOCK_DAMAGE_REDUCTION = 0.25
-const float SWORD_CORE_BLOCK_DAMAGE_REDUCTION = 0.1
+const float TITAN_BLOCK_DAMAGE_REDUCTION = 0.3
+const float SWORD_CORE_BLOCK_DAMAGE_REDUCTION = 0.15
 
 float function HandleBlockingAndCalcDamageScaleForHit( entity blockingEnt, var damageInfo )
 {
@@ -311,7 +311,7 @@ void function BasicBlock_OnDamage( entity blockingEnt, var damageInfo )
 	entity weapon = blockingEnt.GetOffhandWeapon( OFFHAND_LEFT )
 	if ( blockingEnt.IsPlayer() && weapon.HasMod( "fd_sword_block" ) )
 	{
-		float meterReward = DamageInfo_GetDamage( damageInfo ) * (1.0 - damageScale) * CORE_BUILD_PERCENT_FROM_TITAN_DAMAGE_INFLICTED * 0.01 * file.earn_meter_titan_multiplier
+		float meterReward = DamageInfo_GetDamage( damageInfo ) * (1.0 - damageScale) * CORE_BUILD_PERCENT_FROM_TITAN_DAMAGE_INFLICTED * 0.015 * file.earn_meter_titan_multiplier
 		PlayerEarnMeter_AddEarnedAndOwned( blockingEnt, 0.0, meterReward )
 	}
 

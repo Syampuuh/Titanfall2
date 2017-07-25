@@ -144,6 +144,19 @@
         zpos                    120
     }
 
+    ProgressionBar
+    {
+        ControlName				RuiPanel
+        rui                     "ui/postgame_progression_bar.rpak"
+        xpos                    0
+        ypos                    0
+        wide					1920
+        tall					1080
+        visible					0
+
+        zpos                    120
+    }
+
     ProgressionUnlocks
     {
         ControlName				RuiPanel
@@ -192,6 +205,19 @@
         wide					1920
         tall					1080
         visible					1
+
+        zpos                    500
+    }
+
+    SquadLeaderBonus
+    {
+        ControlName				RuiPanel
+        rui                     "ui/postgame_squad_leader.rpak"
+        xpos                    0
+        ypos                    0
+        wide					1920
+        tall					1080
+        visible					0
 
         zpos                    500
     }

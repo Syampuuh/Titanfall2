@@ -700,6 +700,17 @@ void function RestoreHiddenSubmenuBackgroundElems()
 	}
 }
 
+// TODO: Remove when it's no longer possible for OnClose menu functions to be skipped
+void function RestoreHiddenElemsOnMenuChange()
+{
+	var menu = GetMenu( "ModSelectMenu" )
+
+	while ( uiGlobal.activeMenu == menu )
+		WaitFrame()
+
+	RestoreHiddenSubmenuBackgroundElems()
+}
+
 void function OnModSelectMenu_Open()
 {
 	Assert( uiGlobal.editingLoadoutType == "pilot" )
@@ -719,6 +730,7 @@ void function OnModSelectMenu_Open()
 	var menu = GetMenu( "ModSelectMenu" )
 
 	HideSubmenuBackgroundElems()
+	thread RestoreHiddenElemsOnMenuChange()
 
 	var vguiButtonFrame = Hud_GetChild( menu, "ButtonFrame" )
 	var ruiButtonFrame = Hud_GetRui( vguiButtonFrame )

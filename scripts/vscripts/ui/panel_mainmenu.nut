@@ -13,6 +13,7 @@ struct
 	array<var> spButtons
 	array<void functionref()> spButtonFuncs
 	var mpButton
+	var fdButton
 	void functionref() mpButtonActivateFunc = null
 	var buttonData
 	array<var> menuButtons
@@ -45,7 +46,7 @@ void function InitMainMenuPanel()
 	file.spotlightPanel = Hud_GetChild( file.panel, "SpotlightPanel" )
 	file.spotlightButtons = GetElementsByClassname( file.menu, "SpotlightButtonClass" )
 	foreach ( button in file.spotlightButtons )
-		button.s.url <- ""
+		button.s.link <- ""
 	AddEventHandlerToButtonClass( file.menu, "SpotlightButtonClass", UIE_CLICK, SpotlightButton_Activate )
 
 	file.activeProfile = Hud_GetChild( file.panel, "ActiveProfile" )
@@ -76,6 +77,8 @@ void function InitMainMenuPanel()
 	var multiplayerHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MULTIPLAYER_ALLCAPS" )
 	file.mpButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MULTIPLAYER_LAUNCH" )
 	Hud_AddEventHandler( file.mpButton, UIE_CLICK, OnPlayMPButton_Activate )
+	file.fdButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#GAMEMODE_COOP" )
+	Hud_AddEventHandler( file.fdButton, UIE_CLICK, OnPlayFDButton_Activate )
 
 	headerIndex++
 	buttonIndex = 0
@@ -432,6 +435,17 @@ void function UpdatePlayButton( var button )
 
 		ComboButton_SetText( file.mpButton, buttonText )
 
+		if ( Hud_IsLocked( button ) || buttonText == "#MENU_GET_THE_FULL_GAME" )
+		{
+			ComboButton_SetText( file.fdButton, "" )
+			Hud_SetEnabled( file.fdButton, false )
+		}
+		else
+		{
+			ComboButton_SetText( file.fdButton, "#MULTIPLAYER_LAUNCH_FD" )
+			Hud_SetEnabled( file.fdButton, true )
+		}
+
 		if ( file.installing )
 			message = ""
 		else if ( message == "" )
@@ -479,18 +493,37 @@ void function MainMenuButton_Activate( var button )
 		file.buttonData[buttonID].activateFunc.call( this )
 }
 
+void function OnPlayFDButton_Activate( var button )
+{
+	if ( file.mpButtonActivateFunc == null )
+		printt( "file.mpButtonActivateFunc is null" )
+
+	if ( !Hud_IsLocked( button ) && file.mpButtonActivateFunc != null )
+	{
+		Lobby_SetAutoFDOpen( true )
+		// Lobby_SetFDMode( true )
+		thread file.mpButtonActivateFunc()
+	}
+}
+
 void function OnPlayMPButton_Activate( var button )
 {
 	if ( file.mpButtonActivateFunc == null )
 		printt( "file.mpButtonActivateFunc is null" )
 
 	if ( !Hud_IsLocked( button ) && file.mpButtonActivateFunc != null )
+	{
+		Lobby_SetAutoFDOpen( false )
+		// Lobby_SetFDMode( false )
 		thread file.mpButtonActivateFunc()
+	}
 }
 
 void function UICodeCallback_GetOnPartyServer()
 {
 	uiGlobal.launching = eLaunching.MULTIPLAYER_INVITE
+	Lobby_SetAutoFDOpen( false )
+	// Lobby_SetFDMode( false )
 	LaunchGame()
 }
 
@@ -732,7 +765,7 @@ void function UpdateSpotlightData()
 	SetSpotlightButtonData( file.spotlightButtons[2], file.promoData.smallButton2_Url, file.promoData.smallButton2_ImageIndex, file.promoData.smallButton2_Title )
 }
 
-void function SetSpotlightButtonData( var button, string url, int imageIndex, string title, string details = "skip" )
+void function SetSpotlightButtonData( var button, string link, int imageIndex, string title, string details = "skip" )
 {
 	var rui = Hud_GetRui( button )
 
@@ -745,11 +778,47 @@ void function SetSpotlightButtonData( var button, string url, int imageIndex, st
 	if ( details != "skip" )
 		RuiSetString( rui, "detailsText", details )
 
-	button.s.url = url
+	button.s.link = link
 }
 
 void function SpotlightButton_Activate( var button )
 {
-	if ( button.s.url != "" )
-		LaunchExternalWebBrowser( button.s.url )
+	string link = expect string( button.s.link )
+
+	if ( link == "" )
+		return
+
+	if ( link.find( "menu:" ) == 0 )
+	{
+		var menu
+
+		switch ( link )
+		{
+			case "menu:new":
+				menu = GetMenu( "StoreMenu_NewReleases" )
+				break
+
+			case "menu:weaponskins":
+				menu = GetMenu( "StoreMenu_WeaponSkins" )
+				break
+
+			case "menu:limited":
+				menu = GetMenu( "StoreMenu_Limited" )
+				break
+
+			case "menu:sales":
+				menu = GetMenu( "StoreMenu_Sales" )
+				break
+		}
+
+		if ( menu != null )
+		{
+			uiGlobal.menuToOpenFromPromoButton = menu
+			LaunchMP()
+		}
+	}
+	else
+	{
+		LaunchExternalWebBrowser( link )
+	}
 }

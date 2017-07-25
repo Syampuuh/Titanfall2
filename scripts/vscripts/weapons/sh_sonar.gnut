@@ -8,6 +8,7 @@ global function SonarShared_Init
 
 function SonarShared_Init()
 {
+	PrecacheParticleSystem( $"P_ar_sonar_CP_amp" )
 	PrecacheParticleSystem( $"P_ar_sonar_CP" )
 	//PrecacheParticleSystem( $"P_ar_holopulse_CP" )
 	PrecacheParticleSystem( $"P_holo_screespace" )
@@ -16,16 +17,25 @@ function SonarShared_Init()
 #if CLIENT
 	const float AR_EFFECT_SIZE = 192.0 // coresponds with the size of the sphere model used for the AR effect
 
-	function ServerCallback_SonarPulseFromPosition( x, y, z, float range, float speedScale = 1.0 )
+	function ServerCallback_SonarPulseFromPosition( x, y, z, float range, float speedScale = 1.0, bool hasDamageAmp = false )
 	{
 		entity player = GetLocalViewPlayer()
-		thread SonarPulse( player, SONAR_PULSE_SPACE + (SONAR_PULSE_SPEED * speedScale), < x, y, z >, range )
+		thread SonarPulse( player, SONAR_PULSE_SPACE + (SONAR_PULSE_SPEED * speedScale), < x, y, z >, range, hasDamageAmp )
 	}
 
-	function SonarPulse( entity player, float pulseSpeed, vector pulsePosition, float radius )
+	function SonarPulse( entity player, float pulseSpeed, vector pulsePosition, float radius, bool hasDamageAmp )
 	{
-		int fxHandle = StartParticleEffectInWorldWithHandle( GetParticleSystemIndex( $"P_ar_sonar_CP" ), pulsePosition, <0,0,0> )
-		vector controlPoint = <radius / pulseSpeed, radius / AR_EFFECT_SIZE, 0.0>
-		EffectSetControlPointVector( fxHandle, 1, controlPoint )
+		if ( hasDamageAmp )
+		{
+			int fxHandle = StartParticleEffectInWorldWithHandle( GetParticleSystemIndex( $"P_ar_sonar_CP_amp" ), pulsePosition, <0,0,0> )
+			vector controlPoint = <radius / pulseSpeed, radius / AR_EFFECT_SIZE, 0.0>
+			EffectSetControlPointVector( fxHandle, 1, controlPoint )
+		}
+		else
+		{
+			int fxHandle = StartParticleEffectInWorldWithHandle( GetParticleSystemIndex( $"P_ar_sonar_CP" ), pulsePosition, <0,0,0> )
+			vector controlPoint = <radius / pulseSpeed, radius / AR_EFFECT_SIZE, 0.0>
+			EffectSetControlPointVector( fxHandle, 1, controlPoint )
+		}
 	}
 #endif

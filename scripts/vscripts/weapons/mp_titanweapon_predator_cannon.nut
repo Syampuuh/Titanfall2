@@ -12,6 +12,7 @@ global function IsPredatorCannonActive
 #if SERVER
 global function OnWeaponNpcPrimaryAttack_titanweapon_predator_cannon
 global function OnWeaponNpcPreAttack_titanweapon_predator_cannon
+global function PredatorCannon_DamagedTarget
 #endif
 
 const SPIN_EFFECT_1P = $"P_predator_barrel_blur_FP"
@@ -150,9 +151,15 @@ var function OnWeaponPrimaryAttack_titanweapon_predator_cannon( entity weapon, W
 			else
 				EmitSoundAtPosition( TEAM_UNASSIGNED, attackParams.pos, "Weapon_Predator_Powershot_ShortRange_3P" )
 
-			ShotgunBlast( weapon, attackParams.pos, attackParams.dir, 16, DF_GIB | DF_EXPLOSION | DF_KNOCK_BACK, 1.0, 10.0 )
+			int damageType
+			if ( weapon.HasMod( "fd_CloseRangePowerShot" ) )
+				damageType = DF_GIB | DF_EXPLOSION | DF_KNOCK_BACK | DF_SKIPS_DOOMED_STATE
+			else
+				damageType = DF_GIB | DF_EXPLOSION | DF_KNOCK_BACK
 
-			PowerShotCleanup( owner, weapon, ["CloseRangePowerShot","fd_CloseRangePowerShot"] , [] )
+			ShotgunBlast( weapon, attackParams.pos, attackParams.dir, 16, damageType, 1.0, 10.0 )
+
+			PowerShotCleanup( owner, weapon, ["CloseRangePowerShot","fd_CloseRangePowerShot","pas_CloseRangePowerShot"] , [] )
 
 			return 1
 		}
@@ -174,7 +181,7 @@ var function OnWeaponPrimaryAttack_titanweapon_predator_cannon( entity weapon, W
 			}
 		}
 
-		PowerShotCleanup( owner, weapon, ["LongRangePowerShot","fd_LongRangePowerShot"], [ "LongRangeAmmo" ] )
+		PowerShotCleanup( owner, weapon, ["LongRangePowerShot","fd_LongRangePowerShot","pas_LongRangePowerShot"], [ "LongRangeAmmo" ] )
 
 		return 1
 	}
@@ -276,3 +283,20 @@ bool function IsPredatorCannonActive( entity owner, bool reqZoom = true )
 
 	return true
 }
+
+#if SERVER
+void function PredatorCannon_DamagedTarget( entity target, var damageInfo )
+{
+	if ( !IsValid( target ) )
+		return
+
+	if ( !target.IsTitan() )
+		return
+
+	if ( !( DamageInfo_GetCustomDamageType( damageInfo ) & DF_SKIPS_DOOMED_STATE ) )
+		return
+
+	if ( GetDoomedState( target ) )
+		DamageInfo_SetDamage( damageInfo, target.GetHealth() + 1 )
+}
+#endif

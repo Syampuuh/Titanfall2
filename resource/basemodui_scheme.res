@@ -247,7 +247,7 @@ Scheme
 		SliderControl.MarkColor				"105 118 132 255"
 		SliderControl.MarkFocusColor		"105 118 132 255"
 		SliderControl.ForegroundColor		"232 232 232 255"
-		SliderControl.BackgroundColor		"255 255 255 10"
+		SliderControl.BackgroundColor		"0 0 0 64"
 		SliderControl.ForegroundFocusColor	"255 255 255 255"
 		SliderControl.BackgroundFocusColor	"0 0 0 127"
 
@@ -480,8 +480,8 @@ Scheme
 		LobbyPlayerButton.Style						0
 		LobbyPlayerButton.Font						Default_27
 		LobbyPlayerButton.TextInsetX				48
-		LobbyPlayerButton.TextInsetY				7
-		LobbyPlayerButton.CursorHeight				47
+		LobbyPlayerButton.TextInsetY				2
+		LobbyPlayerButton.CursorHeight				37
 		LobbyPlayerButton.SelectedColor				"210 170 0 255"
 
 		ChatroomPlayerLook.Style					0
@@ -2298,6 +2298,20 @@ Scheme
 
 	InheritableProperties
 	{
+		ChatBox
+		{
+			wide					630
+			tall					135
+
+			bgcolor_override 		"0 0 0 180"
+
+			chatBorderThickness		3
+
+			chatHistoryBgColor		"24 27 30 200"
+			chatEntryBgColor		"24 27 30 200"
+			chatEntryBgColorFocused	"24 27 30 200"
+		}
+
 		CreditsJobTitle
 		{
 			ControlName				Label
@@ -2576,8 +2590,8 @@ Scheme
 
 		RuiStartMatchButton
 		{
-			wide					540
-			tall					40
+			wide					500
+			tall					56
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
@@ -2601,7 +2615,7 @@ Scheme
 		RuiStoreButtonFront
 		{
 			wide					720
-			tall					71
+			tall					60
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
@@ -2614,7 +2628,7 @@ Scheme
 		RuiStoreButtonBundle
 		{
 			wide					800
-			tall					71
+			tall					60
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
@@ -2624,10 +2638,23 @@ Scheme
             clip 					0
 		}
 
+		RuiStoreButtonWeapon
+		{
+			wide					800
+			tall					60
+			zpos					3 // Needed or clicking on the background can hide this
+			visible					1
+			enabled					1
+            rui						"ui/store_button_weapon.rpak"
+			labelText				""
+			style					RuiButton
+            clip 					0
+		}
+
 		RuiStoreButtonPrime
 		{
 			wide					680
-			tall					71
+			tall					60
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
@@ -2662,6 +2689,19 @@ Scheme
 			style					RuiSmallButton
             clip 					0
 			childGroupLocked        SmallButtonLockedGroup
+		}
+
+		StoreMenuButtonSmall
+		{
+			wide					288
+			tall					40
+			zpos					3 // Needed or clicking on the background can hide this
+			visible					1
+			enabled					1
+            rui						"ui/menu_button_small.rpak"
+			labelText				""
+			style					RuiSmallButton
+            clip 					0
 		}
 
 		RuiLoadoutSelectionButton
@@ -3010,10 +3050,16 @@ Scheme
 			clip 					0
 		}
 
+		LobbyPlayerListBackground
+		{
+			wide					500
+			tall					312
+		}
+
 		LobbyPlayerList
 		{
-			wide					496
-			tall					295
+			wide					476
+			tall					288
 			paintborder				0
 			NoWrap					0
 			panelBorder				0
@@ -3023,8 +3069,8 @@ Scheme
 
 		LobbyNeutralSlot
 		{
-			wide					496
-			tall					45
+			wide					476
+			tall					35
 			visible					1
 			scaleImage				1
 			image 					"ui/menu/lobby/neutral_slot"
@@ -3044,8 +3090,8 @@ Scheme
 
 		LobbyFriendlyButton
 		{
-			wide					496
-			tall					47
+			wide					476
+			tall					37
 			visible					1
 			enabled					1
 			style					LobbyPlayerButton
@@ -3064,7 +3110,6 @@ Scheme
 			enabled					1
 			scaleImage				1
 			style					ChatroomPlayerLook
-			// scriptid				PlayerListButton
 			childGroupAlways		ChatroomAlwaysGroup
 			childGroupNormal		ChatroomNormalGroup
 			childGroupFocused		ChatroomFocusGroup
@@ -3073,8 +3118,8 @@ Scheme
 
 		LobbyEnemyButton
 		{
-			wide					496
-			tall					47
+			wide					476
+			tall					37
 			visible					1
 			enabled					1
 			style					LobbyPlayerButton
@@ -3136,7 +3181,7 @@ Scheme
 		TabButton
 		{
 			classname				TabButtonClass
-			wide					240
+			wide					300
 			tall					40
 			visible					1
 			enabled					1
@@ -3303,6 +3348,22 @@ Scheme
             rui						"ui/playlist_button.rpak"
 		}
 
+		PvE_Button
+		{
+			xpos					0
+			ypos					0
+			zpos					2
+			wide					64
+			tall					64
+			visible					1
+			enabled					1
+			style					TitanDecalButton
+			allcaps					0
+			textAlignment			left
+			labelText 				""
+            rui						"ui/pve_button.rpak"
+		}
+
 		GridButton
 		{
 			xpos					0
@@ -3319,7 +3380,7 @@ Scheme
 			childGroupAlways		GridButtonAlwaysGroup
 			childGroupFocused		GridButtonFocusedGroup
 			childGroupSelected		GridButtonSelectedGroup
-			childGroupLocked		GridButtonLockedGroup
+//			childGroupLocked		GridButtonLockedGroup
 			childGroupNew			GridButtonNewGroup
 		}
 
@@ -4215,8 +4276,8 @@ Scheme
 
 		LobbyFriendlyBackground
 		{
-			wide					496
-			tall					45
+			wide					476
+			tall					35
 			image 					"ui/menu/lobby/friendly_player"
 			visible					1
 			scaleImage				1
@@ -4224,8 +4285,8 @@ Scheme
 
 		LobbyEnemyBackground
 		{
-			wide					496
-			tall					45
+			wide					476
+			tall					35
 			image 					"ui/menu/lobby/enemy_player"
 			visible					1
 			scaleImage				1
@@ -4293,8 +4354,8 @@ Scheme
 
 		LobbyNeutralBackground
 		{
-			wide					496
-			tall					45
+			wide					476
+			tall					35
 			image 					"ui/menu/lobby/neutral_player"
 			visible					1
 			scaleImage				1
@@ -4314,7 +4375,7 @@ Scheme
 		{
 			zpos 					4
 			wide					47
-			tall					45
+			tall					35
 			visible					1
 			image					"ui/icon_mic_active"
 			scaleImage				1
@@ -4324,7 +4385,7 @@ Scheme
 		{
 			zpos 					4
 			wide					4
-			tall					45
+			tall					35
 			visible					0
 			image					"vgui/hud/white"
 			drawColor				"179 255 204 255"
@@ -4379,8 +4440,8 @@ Scheme
 		LobbyPlayerFocus
 		{
 			zpos 					5
-			wide					496
-			tall					45
+			wide					476
+			tall					35
 			visible					1
 			image					"ui/menu/lobby/player_hover"
 			scaleImage				1
@@ -4595,7 +4656,7 @@ Scheme
 		{
 			rui						"ui/control_options_description.rpak"
 			tall					370
-			wide 					720
+			wide 					844
 
 			xpos					975
 			ypos					193

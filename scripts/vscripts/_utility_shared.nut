@@ -171,6 +171,9 @@ void function InitWeaponScripts()
 	MpTitanWeaponStunLaser_Init()
 	MpTitanWeaponShoulderRockets_Init()
 	MpTitanAbilitySmoke_Init()
+	#if MP
+	MpWeaponArcTrap_Init()
+	#endif
 
 	#if SERVER
 		BallLightning_Init()
@@ -2126,24 +2129,8 @@ int function CompareATCOOP( entity a, entity b )
 
 int function CompareFD( entity a, entity b )
 {
-	int aVal = a.GetPlayerGameStat( PGS_SCORE )
-	int bVal = b.GetPlayerGameStat( PGS_SCORE )
-
-	if ( aVal < bVal )
-		return 1
-	else if ( aVal > bVal )
-		return -1
-
-	aVal = a.GetPlayerGameStat( PGS_NPC_KILLS )
-	bVal = b.GetPlayerGameStat( PGS_NPC_KILLS )
-
-	if ( aVal > bVal )
-		return 1
-	else if ( aVal < bVal )
-		return -1
-
-	aVal = a.GetPlayerGameStat( PGS_TITAN_KILLS )
-	bVal = b.GetPlayerGameStat( PGS_TITAN_KILLS )
+	int aVal = a.GetPlayerGameStat( PGS_DETONATION_SCORE )
+	int bVal = b.GetPlayerGameStat( PGS_DETONATION_SCORE )
 
 	if ( aVal < bVal )
 		return 1
@@ -3758,20 +3745,6 @@ table function GetTableFromString( string inString )
 		return expect table( getconsttable()[ inString ] )
 
 	return {}
-}
-
-int function GetIntFromString( string inString )
-{
-	if ( inString.len() > 0 )
-	{
-		string firstChar = inString.slice( 0, 1 )
-		if ( ( firstChar >= "0" && firstChar <= "9" ) || firstChar == "." )
-			return int( inString )
-		else
-			return expect int( getconsttable()[ inString ] )
-	}
-
-	return 0
 }
 
 int function GetWeaponDamageNear( entity weapon, entity victim )

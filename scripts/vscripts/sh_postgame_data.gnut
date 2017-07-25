@@ -61,7 +61,7 @@ postGameDataDef function GetPostGameData()
 	{
 		postGameTeamDef teamData
 		teamData.maxTeamSize = maxTeamSize
-		NewPopulateTeamData( teamData, -1, gameModeString )
+		NewPopulateTeamData( teamData, TEAM_MILITIA, gameModeString )
 		postGameData.teamsData[0] <- teamData
 	}
 

@@ -62,9 +62,9 @@ resource/ui/menus/store_bundles.menu
             ControlName				RuiButton
             InheritProperties		RuiStoreButtonBundle
             xpos					96
-            ypos                    300
+            ypos                    260
             tabPosition				1
-            navUp					ButtonLast
+            navUp					Button5
             navDown					Button1
         }
 		Button1
@@ -87,9 +87,9 @@ resource/ui/menus/store_bundles.menu
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					Button1
-			navDown					ButtonLast
+			navDown					Button3
 		}
-		ButtonLast
+		Button3
 		{
             ControlName				RuiButton
             InheritProperties		RuiStoreButtonBundle
@@ -98,12 +98,34 @@ resource/ui/menus/store_bundles.menu
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					Button2
+			navDown					Button4
+		}
+		Button4
+		{
+            ControlName				RuiButton
+            InheritProperties		RuiStoreButtonBundle
+			ypos                    8
+			pin_to_sibling			Button3
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button3
+			navDown					Button5
+		}
+		Button5
+		{
+            ControlName				RuiButton
+            InheritProperties		RuiStoreButtonBundle
+			ypos                    8
+			pin_to_sibling			Button4
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					Button4
 			navDown					Button0
 		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		Description
+		DescriptionTemp
 		{
 			ControlName				RuiPanel
 			rui                     "ui/store_bundle_description.rpak"
@@ -111,6 +133,18 @@ resource/ui/menus/store_bundles.menu
             ypos					638
 			wide                    750
 			tall                    320
+			visible					0
+			scaleImage				1
+		}
+
+		Description
+		{
+			ControlName				RuiPanel
+			rui                     "ui/store_bundle_description_wide.rpak"
+            xpos					96
+            ypos					744
+			wide                    1500
+			tall                    220
 			visible					1
 			scaleImage				1
 		}

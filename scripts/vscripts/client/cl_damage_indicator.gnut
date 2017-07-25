@@ -538,6 +538,7 @@ void function GrenadeArrowThink( entity player, entity grenade, float damageRadi
 		switch ( requiredPlayerState )
 		{
 			case "any":
+				shouldBeVisible = true
 				break
 			case "pilot":
 				shouldBeVisible = !player.IsTitan()

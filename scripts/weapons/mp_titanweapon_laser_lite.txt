@@ -338,6 +338,12 @@ WeaponData
 
 			"is_burn_mod"		"1"
 		}
+		fd_balance
+		{
+			"damage_near_value_titanarmor"					"*1.25"
+			"damage_far_value_titanarmor" 					"*1.25"
+			"explosion_damage_heavy_armor"					"*1.25"
+		}
 	}
 
 	active_crosshair_count				"1"

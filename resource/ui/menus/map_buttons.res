@@ -10,7 +10,7 @@
 		ypos					0
 		tabPosition				0
 
-		navUp					MapButton23
+		navUp					MapButton25
 		navDown					MapButton1
 	}
 
@@ -356,6 +356,36 @@
 		pin_to_sibling_corner	BOTTOM_LEFT
 
 		navUp					MapButton22
+		navDown					MapButton0
+	}
+
+	MapButton24
+	{
+		ControlName				RuiButton
+		InheritProperties		RuiSmallButton
+		classname				MapButtonClass
+		scriptID				24
+
+		pin_to_sibling			MapButton23
+		pin_corner_to_sibling	TOP_LEFT
+		pin_to_sibling_corner	BOTTOM_LEFT
+
+		navUp					MapButton23
+		navDown					MapButton0
+	}
+
+	MapButton25
+	{
+		ControlName				RuiButton
+		InheritProperties		RuiSmallButton
+		classname				MapButtonClass
+		scriptID				25
+
+		pin_to_sibling			MapButton24
+		pin_corner_to_sibling	TOP_LEFT
+		pin_to_sibling_corner	BOTTOM_LEFT
+
+		navUp					MapButton24
 		navDown					MapButton0
 	}
 }

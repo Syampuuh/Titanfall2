@@ -105,9 +105,9 @@ void function OnOpenEditPilotLoadoutMenu()
 
 	UpdatePilotLoadoutPanel( file.loadoutPanel, loadout )
 	Hud_SetNew( file.pilotCamoButton, ButtonShouldShowNew( eItemTypes.CAMO_SKIN_PILOT ) )
-	Hud_SetNew( file.primaryCamoButton, ButtonShouldShowNew( eItemTypes.CAMO_SKIN, "", loadout.primary ) )
-	Hud_SetNew( file.secondaryCamoButton, ButtonShouldShowNew( eItemTypes.CAMO_SKIN, "", loadout.secondary ) )
-	Hud_SetNew( file.weapon3CamoButton, ButtonShouldShowNew( eItemTypes.CAMO_SKIN, "", loadout.weapon3 ) )
+	Hud_SetNew( file.primaryCamoButton, ButtonShouldShowNew( eItemTypes.CAMO_SKIN, "", loadout.primary ) || ButtonShouldShowNew( eItemTypes.WEAPON_SKIN, "", loadout.primary ) )
+	Hud_SetNew( file.secondaryCamoButton, ButtonShouldShowNew( eItemTypes.CAMO_SKIN, "", loadout.secondary ) || ButtonShouldShowNew( eItemTypes.WEAPON_SKIN, "", loadout.secondary ) )
+	Hud_SetNew( file.weapon3CamoButton, ButtonShouldShowNew( eItemTypes.CAMO_SKIN, "", loadout.weapon3 ) || ButtonShouldShowNew( eItemTypes.WEAPON_SKIN, "", loadout.weapon3 ) )
 
 	RunMenuClientFunction( "SetHeldPilotWeaponType", eItemTypes.PILOT_PRIMARY )
 

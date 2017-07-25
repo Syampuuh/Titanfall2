@@ -15,6 +15,7 @@ global function BurnMeterPlayer_CanUseReward
 global function BurnMeterPlayer_GetRewardOrGoal
 global function BurnReward_GetTopInventoryItemBurnCard
 global function OnWeaponPrimaryAttack_nuke_eject
+global function BurnMeter_HarvesterShieldCanUse
 #endif
 
 global function GetAllBoostTurretTypes
@@ -85,7 +86,7 @@ void function ShBurnMeter_Init()
 		//burnMeterCanUseFuncTable[ "burnmeter_random_foil" ] <- BurnMeter_RandomFoilCanUse
 		burnMeterCanUseFuncTable[ "burnmeter_emergency_titan" ] <- BurnMeter_EmergencyTitanCanUse
 		burnMeterCanUseFuncTable[ "burnmeter_nuke_titan" ] <- BurnMeter_NukeTitanCanUse
-		burnMeterCanUseFuncTable[ "burnmeter_harvester_shield" ] <- BurnMeter_HarvesterShieldCanUse
+		// burnMeterCanUseFuncTable[ "burnmeter_harvester_shield" ] <- BurnMeter_HarvesterShieldCanUse
 	#endif
 
 
@@ -348,12 +349,6 @@ bool function OnWeaponAttemptOffhandSwitch_burncardweapon( entity weapon )
 	{
 		bool canUse = BurnMeterPlayer_CanUseEquipped( ownerPlayer )
 
-		#if CLIENT
-		if ( !canUse )
-		{
-		}
-		#endif
-
 		return canUse
 	}
 	else
@@ -376,8 +371,9 @@ bool function BurnMeterPlayer_CanUseSpecial( entity player, BurnReward burnRewar
 
 bool function BurnMeter_HarvesterShieldCanUse( entity player )
 {
-	entity harvester = GetGlobalNetEnt( "FD_activeHarvester" )
-	bool canUse = harvester.GetShieldHealth() < harvester.GetShieldHealthMax()
+//	entity harvester = GetGlobalNetEnt( "FD_activeHarvester" )
+	bool canUse = GetGlobalNetTime( "FD_harvesterInvulTime" ) < Time()
+	// harvester.GetShieldHealth() < harvester.GetShieldHealthMax()
 
 	if ( !canUse )
 	{

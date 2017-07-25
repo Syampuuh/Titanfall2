@@ -26,7 +26,7 @@ global const string EARN_NAME_COLUMN_NAME = "nameText"
 
 global const float EARNMETER_HOLDTIME = 10.0
 
-global const float CORE_SMOKE_FRAC = 0.25
+global const float CORE_SMOKE_FRAC = 0.20
 global const string CORE_SMOKE_WEAPON = "mp_titanability_electric_smoke"
 
 global enum eEarnMeterMode
@@ -223,6 +223,11 @@ bool function EarnMeterMP_IsTitanEarnGametype()
 
 	if ( GAMETYPE == LTS_BOMB )
 		return false
+
+	#if DEVSCRIPTS
+	if ( GAMETYPE == PVE_SANDBOX )
+		return false
+	#endif
 
 	return true
 }

@@ -245,6 +245,8 @@ function Init_ClientScripts( entity player )
 		ReplacementTitanHUD_AddClient( player )
 		InitCrosshair()
 
+		player.ClientCommand( "ClientStatus " + (IsPartyMember( player ) ? "1" : "0") )
+
 		// Added via AddCallback_OnClientScriptInit
 		foreach ( callbackFunc in clGlobal.onClientScriptInitCallback )
 		{

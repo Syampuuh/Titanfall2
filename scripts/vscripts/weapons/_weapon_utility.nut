@@ -106,6 +106,11 @@ global const PROJECTILE_NOT_PREDICTED = false
 global const PROJECTILE_LAG_COMPENSATED = true
 global const PROJECTILE_NOT_LAG_COMPENSATED = false
 
+const float EMP_SEVERITY_SLOWTURN = 0.35
+const float EMP_SEVERITY_SLOWMOVE = 0.50
+const float LASER_STUN_SEVERITY_SLOWTURN = 0.20
+const float LASER_STUN_SEVERITY_SLOWMOVE = 0.30
+
 const asset FX_EMP_BODY_HUMAN			= $"P_emp_body_human"
 const asset FX_EMP_BODY_TITAN			= $"P_emp_body_titan"
 const asset FX_VANGUARD_ENERGY_BODY_HUMAN		= $"P_monarchBeam_body_human"
@@ -1568,6 +1573,11 @@ function ClusterRocket_Detonate( entity rocket, vector normal )
 		range = CLUSTER_ROCKET_BURST_RANGE
 	}
 
+	if ( mods.contains( "fd_twin_cluster" ) )
+	{
+		count = int( count * 0.7 )
+		duration *= 0.7
+	}
 	PopcornInfo popcornInfo
 
 	popcornInfo.weaponName = "mp_titanweapon_dumbfire_rockets"
@@ -2145,16 +2155,8 @@ bool function IsPilotShotgunWeapon( string weaponName )
 array<string> function GetWeaponBurnMods( string weaponClassName )
 {
 	array<string> burnMods = []
-
-	string prefix
-
 	array<string> mods = GetWeaponMods_Global( weaponClassName )
-
-	if ( GetCurrentPlaylistVarInt( "low_ttk", 0 ) >= 1 && mods.contains( "amped_ttk" ) )
-		prefix = "amped_ttk"
-	else
-		prefix = "burn_mod"
-
+	string prefix = "burn_mod"
 	foreach ( mod in mods )
 	{
 		if ( mod.find( prefix ) == 0 )
@@ -2418,14 +2420,11 @@ bool function PROTO_FlakCannon_HasNearbyEnemies( vector origin, int team, float 
 }
 #endif // #if SERVER
 
-void function GiveEMPStunStatusEffects( entity ent, float duration, float fadeoutDuration = 0.5 )
+void function GiveEMPStunStatusEffects( entity ent, float duration, float fadeoutDuration = 0.5, float slowTurn = EMP_SEVERITY_SLOWTURN, float slowMove = EMP_SEVERITY_SLOWMOVE)
 {
-	const float SEVERITY_SLOWTURN = 0.35
-	const float SEVERITY_SLOWMOVE = 0.50
-
 	entity target = ent.IsTitan() ? ent.GetTitanSoul() : ent
-	int slowEffect = StatusEffect_AddTimed( target, eStatusEffect.turn_slow, SEVERITY_SLOWTURN, duration, fadeoutDuration )
-	int turnEffect = StatusEffect_AddTimed( target, eStatusEffect.move_slow, SEVERITY_SLOWMOVE, duration, fadeoutDuration )
+	int slowEffect = StatusEffect_AddTimed( target, eStatusEffect.turn_slow, slowTurn, duration, fadeoutDuration )
+	int turnEffect = StatusEffect_AddTimed( target, eStatusEffect.move_slow, slowMove, duration, fadeoutDuration )
 
 	#if SERVER
 	if ( ent.IsPlayer() )
@@ -2982,7 +2981,7 @@ array<entity> function GetActiveThermiteBurnsWithinRadius( vector origin, float 
 
 void function EMP_DamagedPlayerOrNPC( entity ent, var damageInfo )
 {
-	Elecriticy_DamagedPlayerOrNPC( ent, damageInfo, FX_EMP_BODY_HUMAN, FX_EMP_BODY_TITAN )
+	Elecriticy_DamagedPlayerOrNPC( ent, damageInfo, FX_EMP_BODY_HUMAN, FX_EMP_BODY_TITAN, EMP_SEVERITY_SLOWTURN, EMP_SEVERITY_SLOWMOVE )
 }
 
 void function VanguardEnergySiphon_DamagedPlayerOrNPC( entity ent, var damageInfo )
@@ -2991,10 +2990,10 @@ void function VanguardEnergySiphon_DamagedPlayerOrNPC( entity ent, var damageInf
 	if ( IsValid( attacker ) && attacker.GetTeam() == ent.GetTeam() )
 		return
 
-	Elecriticy_DamagedPlayerOrNPC( ent, damageInfo, FX_VANGUARD_ENERGY_BODY_HUMAN, FX_VANGUARD_ENERGY_BODY_TITAN  )
+	Elecriticy_DamagedPlayerOrNPC( ent, damageInfo, FX_VANGUARD_ENERGY_BODY_HUMAN, FX_VANGUARD_ENERGY_BODY_TITAN, LASER_STUN_SEVERITY_SLOWTURN, LASER_STUN_SEVERITY_SLOWMOVE )
 }
 
-void function Elecriticy_DamagedPlayerOrNPC( entity ent, var damageInfo, asset humanFx, asset titanFx )
+void function Elecriticy_DamagedPlayerOrNPC( entity ent, var damageInfo, asset humanFx, asset titanFx, float slowTurn, float slowMove )
 {
 	if ( !IsValid( ent ) )
 		return
@@ -3100,14 +3099,14 @@ void function Elecriticy_DamagedPlayerOrNPC( entity ent, var damageInfo, asset h
 	{
 		EMPGrenade_AffectsShield( ent, damageInfo )
 		#if MP
-		GiveEMPStunStatusEffects( ent, 2.5, 1.0 )
+		GiveEMPStunStatusEffects( ent, 2.5, 1.0, slowTurn, slowMove )
 		#endif
 		thread EMPGrenade_AffectsAccuracy( ent )
 	}
 	else if ( ent.IsMechanical() )
 	{
 		#if MP
-		GiveEMPStunStatusEffects( ent, 2.5, 1.0 )
+		GiveEMPStunStatusEffects( ent, 2.5, 1.0, slowTurn, slowMove )
 		DamageInfo_ScaleDamage( damageInfo, 2.05 )
 		#endif
 	}
@@ -3569,23 +3568,6 @@ array<string> function GetWeaponModsFromDamageInfo( var damageInfo )
 void function OnPlayerGetsNewPilotLoadout( entity player, PilotLoadoutDef loadout )
 {
 	SetPlayerCooldowns( player )
-	if ( GetCurrentPlaylistVarInt( "low_ttk", 0 ) >= 1 )
-	{
-		array<entity> weapons = player.GetMainWeapons()
-		foreach( weapon in weapons )
-		{
-			if ( weapon.HasMod( "silencer" ) )
-			{
-				weapon.RemoveMod( "silencer" )
-				weapon.AddMod( "silencer_low_ttk")
-			}
-		}
-		player.GiveExtraWeaponMod( "low_ttk" )
-	}
-	if ( GetCurrentPlaylistVarInt( "tactical_balance", 0 ) >= 1 )
-	{
-		player.GiveExtraWeaponMod( "tactical_balance" )
-	}
 }
 
 void function SetPlayerCooldowns( entity player )

@@ -231,6 +231,14 @@ void function OpenDialog( DialogData dialogData )
 			messageHeight = Hud_GetHeight( messageElem )
 	}
 
+	if ( Hud_HasChild( menu, "DarkenBackground" ) )
+	{
+		if ( dialogData.darkenBackground )
+			Hud_Show( Hud_GetChild( menu, "DarkenBackground" ) )
+		else
+			Hud_Hide( Hud_GetChild( menu, "DarkenBackground" ) )
+	}
+
 	var messageRuiElem = GetSingleElementByClassname( menu, "DialogMessageRuiClass" )
 	if ( messageRuiElem )
 	{
@@ -248,6 +256,9 @@ void function OpenDialog( DialogData dialogData )
 		{
 			RuiSetImage( Hud_GetRui( rightImageRuiElem ), "basicImage", dialogData.rightImage )
 		}
+
+		if ( dialogData.useFullMessageHeight )
+			messageHeight = Hud_GetHeight( messageRuiElem )
 	}
 
 	var spinnerElem = GetSingleElementByClassname( menu, "DialogSpinnerClass" )
@@ -458,6 +469,7 @@ void function LeaveDialog()
 	DialogData dialogData
 	dialogData.header = "#ARE_YOU_SURE_YOU_WANT_TO_LEAVE"
 	dialogData.noChoiceWithNavigateBack = true
+	dialogData.image = $"ui/menu/common/dialog_error"
 
 	if ( isMP )
 	{
@@ -493,6 +505,9 @@ void function LeaveDialog()
 				}
 				else
 				{
+					// string swichString = Lobby_IsFDMode() ? "#DIALOG_SWITCH_TO_MP" : "#DIALOG_SWITCH_TO_FD"
+					// AddDialogButton( dialogData, swichString, Lobby_ToggleFDMode )
+
 					AddDialogButton( dialogData, "#YES_RETURN_TO_TITLE_MENU", Disconnect )
 				}
 			}

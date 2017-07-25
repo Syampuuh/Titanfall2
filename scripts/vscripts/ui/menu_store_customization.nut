@@ -14,6 +14,7 @@ void function InitStoreMenuCustomization()
 	Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), "#STORE_CUSTOMIZATION_PACKS" )
 
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnOpenStoreMenuCustomization )
+	AddMenuEventHandler( file.menu, eUIEvent.MENU_NAVIGATE_BACK, OnStoreMenuCustomization_NavigateBack )
 
 	for ( int i = 0; i < MAX_STORE_PRIME_TITANS; i++ )
 	{
@@ -38,6 +39,15 @@ void function InitStoreMenuCustomization()
 	AddMenuFooterOption( file.menu, BUTTON_A, "#A_BUTTON_VIEW_PACK" )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 }
+
+
+void function OnStoreMenuCustomization_NavigateBack()
+{
+	RunMenuClientFunction( "ClearTitanDecalPreview" )
+	RunMenuClientFunction( "ClearAllTitanPreview" )
+	CloseActiveMenu()
+}
+
 
 void function OnOpenStoreMenuCustomization()
 {
@@ -114,18 +124,21 @@ void function OnOpenStoreMenuCustomization()
 		button = Hud_GetChild( file.menu, "Titan" + i + "DLC1" )
 		button.s.entitlementId <- entitlementIdDLC1
 		rui = Hud_GetRui( button )
+		Hud_SetText( button, "" )
 		RuiSetString( rui, "buttonText", "#STORE_CUSTOMIZATION_PACKS_ONE" )
 		RuiSetBool( rui, "isOwned", LocalPlayerHasEntitlement( entitlementIdDLC1 ) )
 
 		button = Hud_GetChild( file.menu, "Titan" + i + "DLC3" )
 		button.s.entitlementId <- entitlementIdDLC3
 		rui = Hud_GetRui( button )
+		Hud_SetText( button, "" )
 		RuiSetString( rui, "buttonText", "#STORE_CUSTOMIZATION_PACKS_TWO" )
 		RuiSetBool( rui, "isOwned", LocalPlayerHasEntitlement( entitlementIdDLC3 ) )
 
 		button = Hud_GetChild( file.menu, "Titan" + i + "DLC5" )
 		button.s.entitlementId <- entitlementIdDLC5
 		rui = Hud_GetRui( button )
+		Hud_SetText( button, "" )
 		RuiSetString( rui, "buttonText", "#STORE_CUSTOMIZATION_PACKS_THREE" )
 		RuiSetBool( rui, "isOwned", LocalPlayerHasEntitlement( entitlementIdDLC5 ) )
 	}
@@ -133,7 +146,7 @@ void function OnOpenStoreMenuCustomization()
 
 void function OnCustomizationButton_Focused( var button )
 {
-	int index = expect int( button.s.rowIndex )
+	int loadoutIndex = expect int( button.s.rowIndex )
 //	int entitlementId = expect int( button.s.entitlementId )
 //
 //	RunMenuClientFunction( "UpdateTitanModel", index, TITANMENU_NO_CUSTOMIZATION | TITANMENU_FORCE_NON_PRIME )
@@ -141,14 +154,33 @@ void function OnCustomizationButton_Focused( var button )
 //	TitanLoadoutDef loadout = GetCachedTitanLoadout( index )
 //	int skinIndex = expect int( GetItemDisplayData( Store_GetCustomizationRefs( entitlementId )[5], loadout.titanClass ).i.skinIndex )
 //	RunMenuClientFunction( "PreviewTitanSkinChange", skinIndex )
-	RunMenuClientFunction( "UpdateTitanModel", index, TITANMENU_NO_CUSTOMIZATION | TITANMENU_FORCE_NON_PRIME )
+	RunMenuClientFunction( "UpdateTitanModel", loadoutIndex, TITANMENU_NO_CUSTOMIZATION | TITANMENU_FORCE_NON_PRIME )
+
+	int entitlementId = expect int( button.s.entitlementId )
+	array<string> customizationRefs = Store_GetCustomizationRefs( entitlementId )
+	TitanLoadoutDef loadout = GetCachedTitanLoadout( loadoutIndex )
+
+	foreach ( customizationRef in customizationRefs )
+	{
+		if ( GetItemType( customizationRef ) != eItemTypes.TITAN_WARPAINT )
+			continue
+
+		RunMenuClientFunction( "UpdateTitanModel", loadoutIndex, TITANMENU_NO_CUSTOMIZATION | TITANMENU_FORCE_NON_PRIME )
+		RunMenuClientFunction( "ClearTitanDecalPreview" )
+		int skinIndex = expect int( GetItemDisplayData( customizationRef, loadout.titanClass ).i.skinIndex )
+		RunMenuClientFunction( "PreviewTitanCombinedChange", skinIndex, -1, loadoutIndex )
+		break
+	}
+
+	//int noseArtIndex = NoseArtRefToIndex( loadout.titanClass, customizationRefs[RandomInt( customizationRefs.len() - 2 )] )
+	//RunMenuClientFunction( "PreviewTitanDecalChange", noseArtIndex )
 
 	for ( int i = 0; i < MAX_STORE_PRIME_TITANS; i++ )
 	{
 		var button = Hud_GetChild( file.menu, "Titan" + i + "Image" )
 		var rui = Hud_GetRui( button )
 
-		if ( i == index )
+		if ( i == loadoutIndex )
 			RuiSetBool( rui, "rowFocused", true )
 		else
 			RuiSetBool( rui, "rowFocused", false )

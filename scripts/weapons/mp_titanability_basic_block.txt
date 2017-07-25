@@ -218,7 +218,7 @@ WeaponData
 
         fd_sword_block
         {
-
+			"hud_icon"										"rui/menu/fd_menu/upgrade_ronin_kinetic_transfer_hud"
         }
 	}
 }

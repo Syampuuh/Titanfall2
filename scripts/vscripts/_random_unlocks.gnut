@@ -8,6 +8,7 @@ global function PlayerLevelHasRandomUnlock
 global function TitanLevelHasRandomUnlock
 global function WeaponLevelHasRandomUnlock
 global function FactionLevelHasRandomUnlock
+global function FDTitanLevelHasRandomUnlock
 
 #if SERVER
 global function AwardRandomItemsForPlayerLevels
@@ -802,6 +803,22 @@ bool function FactionLevelHasRandomUnlock( int rawLevel, string parentRef )
 	}
 
 	foreach ( ru in file.randomUnlocks[ eUnlockType.FACTION_LEVEL ] )
+	{
+		if ( ru.unlockLevel == rawLevel && ru.parentRef == parentRef )
+			return true
+	}
+
+	return false
+}
+
+bool function FDTitanLevelHasRandomUnlock( int rawLevel, string parentRef )
+{
+	//if ( rawLevel > file.unlocksTitanLevelRowCount )
+	//{
+	//	return rawLevel % 2 == 0
+	//}
+	//
+	foreach ( ru in file.randomUnlocks[ eUnlockType.FD_UNLOCK_POINTS ] )
 	{
 		if ( ru.unlockLevel == rawLevel && ru.parentRef == parentRef )
 			return true

@@ -571,9 +571,19 @@ void function UpdatePlayerHighlightsSettings( entity player )
 
 		bool isOffTheGrid = PlayerHasPassive( player, ePassives.PAS_OFF_THE_GRID ) ? true : false
 		if ( player.IsTitan() || !isOffTheGrid )
-			Highlight_SetSonarHighlightWithParam1( player, "enemy_sonar", <0, 0, 0> )
+		{
+			if ( StatusEffect_Get( player, eStatusEffect.damage_received_multiplier ) > 0 )
+				Highlight_SetSonarHighlightWithParam0( player, "enemy_sonar", <1, 0, 0> )
+			else
+				Highlight_SetSonarHighlightWithParam1( player, "enemy_sonar", <0, 0, 0> )
+		}
 		else
-			Highlight_SetSonarHighlightWithParam1( player, "enemy_sonar_movement", <0, 0, 0> )
+		{
+			if ( StatusEffect_Get( player, eStatusEffect.damage_received_multiplier ) > 0 )
+				Highlight_SetSonarHighlightWithParam0( player, "enemy_sonar_movement", <1, 0, 0> )
+			else
+				Highlight_SetSonarHighlightWithParam1( player, "enemy_sonar_movement", <0, 0, 0> )
+		}
 	}
 }
 

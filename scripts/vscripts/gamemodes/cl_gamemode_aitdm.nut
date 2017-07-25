@@ -38,16 +38,9 @@ void function AITDM_NPCHumanSizedInit( entity ent, var rui )
 
 	RuiSetImage( rui, "defaultIcon", $"rui/hud/minimap/compass_icon_small_dot" )
 	RuiSetImage( rui, "clampedDefaultIcon", $""  )
-
-	//if ( ent == GetLocalClientPlayer().GetPetTitan() )
-	//{
-	//	RuiSetBool( rui, "useTeamColor", false )
-	//	RuiSetFloat3( rui, "iconColor", TEAM_COLOR_YOU / 255.0 )
-	//}
 	RuiSetGameTime( rui, "lastFireTime", Time() + ( GetCurrentPlaylistVarFloat( "timelimit", 10 ) * 60.0 ) + 999.0 )
 	RuiSetBool( rui, "showOnMinimapOnFire", true )
-	//if ( !IsFFAGame() )  //JFS: Too much work to get FFA to work correctly with Minimap logic, so disabling it for FFA
-	//	RuiTrackFloat( rui, "sonarDetectedFrac", ent, RUI_TRACK_STATUS_EFFECT_SEVERITY, eStatusEffect.sonar_detected )
+	RuiSetBool( rui, "alwaysShowOnMinimap", true )
 }
 
 void function CLAITDM_RegisterNetworkFunctions()

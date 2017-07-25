@@ -8,12 +8,12 @@ void function ClGamemodeLTS_Init()
 	if ( GAMETYPE == LTS_BOMB )
 		ClGamemodeLTSBomb_Init()
 	AddCallback_GameStateEnter( eGameState.Postmatch, DisplayPostMatchTop3 )
+
+	RunUIScript( "TTSMenuModeDefault" )
 }
 
 void function LTS_GameStateChanged()
 {
-	if( GetGameState() == eGameState.Playing )
-		DestroyTeamTitanSelectionScreen()
 }
 
 void function CreateCallback_BatterySpawner( entity battery )

@@ -196,11 +196,11 @@ WeaponData
 			"ammo_per_shot"									"100"
 			"ammo_drains_to_empty_on_fire"					"0"
 			"ammo_no_remove_from_clip"						"0"
-			"regen_ammo_refill_rate"						"10"
+			"regen_ammo_refill_rate"						"*0.6"
+			"hud_icon"										"rui/menu/fd_menu/upgrade_ronin_ghost_machine_hud"
 		}
 		fd_phase_distance
 		{
-
 		}
 	}
 }

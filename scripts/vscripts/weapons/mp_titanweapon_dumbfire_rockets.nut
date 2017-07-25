@@ -40,22 +40,50 @@ var function OnWeaponPrimaryAttack_titanweapon_dumbfire_rockets( entity weapon, 
 
 	#if CLIENT
 	if ( !shouldPredict )
-		return weapon.GetWeaponPrimaryClipCountMax()
+		return weapon.GetAmmoPerShot()
 	#endif
 	entity owner = weapon.GetWeaponOwner()
 	vector attackDir
+	bool isTwinShot = weapon.HasMod( "fd_twin_cluster" ) //&& RandomIntRange( 1, 100 ) <= 25
+	if ( isTwinShot )
+	{
+		int altFireIndex = weapon.GetBurstFireShotsPending() % 2
+		float horizontalMultiplier
+		if ( altFireIndex == 0 )
+			horizontalMultiplier = RandomFloatRange( 0.25, 0.35 )
+		else
+			horizontalMultiplier = RandomFloatRange( -0.35, -0.25 )
+		vector offset
+		if ( owner.IsPlayer() )
+			offset = AnglesToRight( owner.CameraAngles() ) * horizontalMultiplier
+		#if SERVER
+		else
+			offset = owner.GetPlayerOrNPCViewRight() * horizontalMultiplier
+		#endif
 
-	if ( owner.IsPlayer() )
-		attackDir = GetVectorFromPositionToCrosshair( owner, attackParams.pos )
+		attackDir = attackParams.dir + offset*0.1 // + <0,0,RandomFloatRange(-0.25,0.55)>
+	}
 	else
-		attackDir = attackParams.dir
+	{
+		if ( owner.IsPlayer() )
+			attackDir = GetVectorFromPositionToCrosshair( owner, attackParams.pos )
+		else
+			attackDir = attackParams.dir
+	}
 
 	entity missile = FireClusterRocket( weapon, attackParams.pos, attackDir, shouldPredict )
 
 	if ( owner.IsPlayer() )
 		PlayerUsedOffhand( owner, weapon )
 
-	return weapon.GetWeaponPrimaryClipCountMax()
+	int ammoToSpend = weapon.GetAmmoPerShot()
+
+	if ( isTwinShot && attackParams.burstIndex == 0 )
+	{
+		return 90
+	}
+
+	return ammoToSpend
 }
 
 entity function FireClusterRocket( entity weapon, vector attackPos, vector attackDir, bool shouldPredict )

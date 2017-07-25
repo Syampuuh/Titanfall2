@@ -1,7 +1,6 @@
 untyped
 
 global function InitStoreMenuCustomizationPreview
-global function EntitlementsChanged_Customization
 
 const int NUM_CUSTOMIZATIONS = 6
 
@@ -23,8 +22,9 @@ void function InitStoreMenuCustomizationPreview()
 
 	Hud_AddEventHandler( file.buyButton, UIE_CLICK, OnBuyButton_Activate )
 
-	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnOpenStoreMenuCustomizationPreview )
+	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnStoreMenuCustomizationPreview_Open )
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_NAVIGATE_BACK, OnStoreMenuCustomizationPreview_NavigateBack )
+	AddMenuEventHandler( file.menu, eUIEvent.MENU_ENTITLEMENTS_CHANGED, OnStoreMenuCustomizationPreview_EntitlementsChanged )
 
 	for ( int i = 0; i < NUM_CUSTOMIZATIONS; i++ )
 	{
@@ -45,7 +45,7 @@ void function OnStoreMenuCustomizationPreview_NavigateBack()
 	CloseActiveMenu()
 }
 
-void function OnOpenStoreMenuCustomizationPreview()
+void function OnStoreMenuCustomizationPreview_Open()
 {
 	UI_SetPresentationType( ePresentationType.TITAN_NOSE_ART )
 
@@ -124,7 +124,7 @@ void function OnCustomizationPreviewButton_Focused( var button )
 	rui = Hud_GetRui( file.label )
 	RuiSetString( rui, "itemName", GetItemName( file.customizationRefs[ elemNum ] ) )
 
-	if ( elemNum < 5 )
+	if ( GetItemType( file.customizationRefs[ elemNum ] ) == eItemTypes.TITAN_NOSE_ART )
 	{
 		RuiSetString( rui, "itemType", "#ITEM_TYPE_TITAN_NOSE_ART" )
 		UI_SetPresentationType( ePresentationType.TITAN_NOSE_ART )
@@ -133,14 +133,14 @@ void function OnCustomizationPreviewButton_Focused( var button )
 		int index = NoseArtRefToIndex( loadout.titanClass, file.customizationRefs[ elemNum ] )
 		RunMenuClientFunction( "PreviewTitanDecalChange", index )
 	}
-	else
+	else if ( GetItemType( file.customizationRefs[ elemNum ] ) == eItemTypes.TITAN_WARPAINT )
 	{
 		RuiSetString( rui, "itemType", "#ITEM_TYPE_TITAN_WARPAINT" )
 		UI_SetPresentationType( ePresentationType.TITAN_LOADOUT_EDIT )
 		RunMenuClientFunction( "UpdateTitanModel", file.loadoutIndex, TITANMENU_NO_CUSTOMIZATION | TITANMENU_FORCE_NON_PRIME )
 		RunMenuClientFunction( "ClearTitanDecalPreview" )
-		int index = expect int( GetItemDisplayData( file.customizationRefs[ elemNum ], loadout.titanClass ).i.skinIndex )
-		RunMenuClientFunction( "PreviewTitanSkinChange", index )
+		int skinIndex = expect int( GetItemDisplayData( file.customizationRefs[ elemNum ], loadout.titanClass ).i.skinIndex )
+		RunMenuClientFunction( "PreviewTitanCombinedChange", skinIndex, -1, file.loadoutIndex )
 	}
 }
 
@@ -220,9 +220,10 @@ void function Store_BuyCustomizationPack()
 	StorePurchase( uiGlobal.entitlementId )
 }
 
-void function EntitlementsChanged_Customization()
+void function OnStoreMenuCustomizationPreview_EntitlementsChanged()
 {
 	RefreshEntitlements()
+	EmitUISound( PURCHASE_SUCCESS_SOUND )
 }
 
 void function RefreshEntitlements()

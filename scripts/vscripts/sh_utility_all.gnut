@@ -1272,7 +1272,30 @@ asset function GetWeaponModel( string weaponName )
 asset function GetWeaponViewmodel( string weaponName )
 {
 	asset modelName = GetWeaponInfoFileKeyFieldAsset_Global( weaponName, "viewmodel" )
-	//asset modelName = $"models/weapons/g2/ptpov_g2a4.mdl"
+
+	// TODO: In the future all weapon models should be made in a way that doesn't require this kind of HACK.
+	switch ( modelName )
+	{
+		case $"models/weapons/shoulder_rocket_SRAM/ptpov_law.mdl":
+			modelName = $"models/weapons/shoulder_rocket_SRAM/ptpov_law_menu.mdl"
+			break
+
+		case $"models/weapons/lstar/ptpov_lstar.mdl":
+			modelName = $"models/weapons/lstar/ptpov_lstar_menu.mdl"
+			break
+
+		case $"models/weapons/lstar/ptpov_lstar.mdl":
+			modelName = $"models/weapons/lstar/ptpov_lstar_menu.mdl"
+			break
+
+		case $"models/weapons/softball_at/ptpov_softball_at.mdl":
+			modelName = $"models/weapons/softball_at/ptpov_softball_at_menu.mdl"
+			break
+
+		case $"models/weapons/mastiff_stgn/ptpov_mastiff.mdl":
+			modelName = $"models/weapons/mastiff_stgn/ptpov_mastiff_menu.mdl"
+			break
+	}
 
 	return modelName
 }
@@ -1480,11 +1503,7 @@ bool function CoinFlip()
 
 bool function EmotesEnabled()
 {
-	#if DEVSCRIPTS
-		return ( GetCurrentPlaylistVarInt( "enable_emotes", 0 ) == 1 )
-	#else
-		return false
-	#endif
+	return false
 }
 
 
@@ -1508,36 +1527,30 @@ array<string> function GetAvailableTitanRefs( entity player )
 	return availableTitanRefs
 }
 
-int function GetTitanLoadoutIndexForTitanRef( string titanRef )
+#if MP
+string function GetTitanRefForLoadoutIndex( entity player, int loadoutIndex )
 {
-	int enumCount =	PersistenceGetEnumCount( "titanClasses" )
-	for ( int i = 0; i < enumCount; i++ )
-	{
-		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
-		if ( enumName == "" )
-			continue
+	TitanLoadoutDef loadout = GetTitanLoadoutFromPersistentData( player, loadoutIndex )
+	return loadout.titanClass
+}
+#endif
 
-		if ( enumName == titanRef )
-			return i
-	}
-
-	Assert( false, "Couldn't find titanRef " + titanRef  + " in persistence enum titanClasses" )
-	return -1
+bool function DoPrematchWarpSound()
+{
+	return GetCurrentPlaylistVarInt( "pick_loadout_warp_sound", 1 ) == 1
 }
 
-string function GetTitanRefForLoadoutIndex( int loadoutIndex )
-{
-	int enumCount =	PersistenceGetEnumCount( "titanClasses" )
-	for ( int i = 0; i < enumCount; i++ )
-	{
-		string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
-		if ( enumName == "" )
-			continue
 
-		if ( i == loadoutIndex )
-			return enumName
+int function GetIntFromString( string inString )
+{
+	if ( inString.len() > 0 )
+	{
+		string firstChar = inString.slice( 0, 1 )
+		if ( ( firstChar >= "0" && firstChar <= "9" ) || firstChar == "." )
+			return int( inString )
+		else
+			return expect int( getconsttable()[ inString ] )
 	}
 
-	Assert( false, "Couldn't find titanRef for " + loadoutIndex  + " in persistence enum titanClasses" )
-	return ""
+	return 0
 }

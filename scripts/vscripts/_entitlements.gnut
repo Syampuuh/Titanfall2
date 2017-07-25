@@ -1,0 +1,110 @@
+
+global function GetChildEntitlements
+
+#if UI || CLIENT
+global function GetUnpurchasedChildEntitlements
+#endif // UI || CLIENT
+
+
+array<int> function GetChildEntitlements( int parentEntitlement )
+{
+	array<int> childEntitlements
+
+	switch ( parentEntitlement )
+	{
+		case ET_DLC1_BUNDLE:
+			childEntitlements.append( ET_DLC1_PRIME_ION )
+			childEntitlements.append( ET_DLC1_PRIME_SCORCH )
+			childEntitlements.append( ET_DLC1_ION )
+			childEntitlements.append( ET_DLC1_TONE )
+			childEntitlements.append( ET_DLC1_SCORCH )
+			childEntitlements.append( ET_DLC1_LEGION )
+			childEntitlements.append( ET_DLC1_RONIN )
+			childEntitlements.append( ET_DLC1_NORTHSTAR )
+			childEntitlements.append( ET_DLC1_CAMO )
+			childEntitlements.append( ET_DLC1_CALLSIGN )
+			break
+
+		case ET_DLC3_BUNDLE:
+			childEntitlements.append( ET_DLC3_PRIME_NORTHSTAR )
+			childEntitlements.append( ET_DLC3_PRIME_LEGION )
+			childEntitlements.append( ET_DLC3_ION )
+			childEntitlements.append( ET_DLC3_TONE )
+			childEntitlements.append( ET_DLC3_SCORCH )
+			childEntitlements.append( ET_DLC3_LEGION )
+			childEntitlements.append( ET_DLC3_RONIN )
+			childEntitlements.append( ET_DLC3_NORTHSTAR )
+			childEntitlements.append( ET_DLC3_CAMO )
+			childEntitlements.append( ET_DLC3_CALLSIGN )
+			break
+
+		case ET_DLC5_BUNDLE:
+			childEntitlements.append( ET_DLC5_PRIME_TONE )
+			childEntitlements.append( ET_DLC5_PRIME_RONIN )
+			childEntitlements.append( ET_DLC5_ION )
+			childEntitlements.append( ET_DLC5_TONE )
+			childEntitlements.append( ET_DLC5_SCORCH )
+			childEntitlements.append( ET_DLC5_LEGION )
+			childEntitlements.append( ET_DLC5_RONIN )
+			childEntitlements.append( ET_DLC5_NORTHSTAR )
+			childEntitlements.append( ET_DLC5_CAMO )
+			childEntitlements.append( ET_DLC5_CALLSIGN )
+			break
+
+		case ET_PRIME_TITANS_BUNDLE:
+			childEntitlements.append( ET_DLC1_PRIME_ION )
+			childEntitlements.append( ET_DLC1_PRIME_SCORCH )
+			childEntitlements.append( ET_DLC3_PRIME_NORTHSTAR )
+			childEntitlements.append( ET_DLC3_PRIME_LEGION )
+			childEntitlements.append( ET_DLC5_PRIME_TONE )
+			childEntitlements.append( ET_DLC5_PRIME_RONIN )
+			break
+
+		case ET_DLC7_WEAPON_BUNDLE:
+			childEntitlements.append( ET_DLC7_G2A5_WARPAINT )
+			childEntitlements.append( ET_DLC7_FLATLINE_WARPAINT )
+			childEntitlements.append( ET_DLC7_ALTERNATOR_WARPAINT )
+			childEntitlements.append( ET_DLC7_CAR_WARPAINT )
+			childEntitlements.append( ET_DLC7_EVA8_WARPAINT )
+			childEntitlements.append( ET_DLC7_WINGMAN_WARPAINT )
+			childEntitlements.append( ET_DLC7_ARCHER_WARPAINT )
+			childEntitlements.append( ET_DLC7_R201_WARPAINT )
+			break
+
+		case ET_DLC7_TITAN_WARPAINT_BUNDLE:
+			childEntitlements.append( ET_DLC7_ION_WARPAINT )
+			childEntitlements.append( ET_DLC7_SCORCH_WARPAINT )
+			childEntitlements.append( ET_DLC7_NORTHSTAR_WARPAINT )
+			childEntitlements.append( ET_DLC7_RONIN_WARPAINT )
+			childEntitlements.append( ET_DLC7_TONE_WARPAINT )
+			childEntitlements.append( ET_DLC7_LEGION_WARPAINT )
+			childEntitlements.append( ET_DLC7_MONARCH_WARPAINT )
+			break
+	}
+
+	return childEntitlements
+}
+
+#if UI || CLIENT
+array<int> function GetUnpurchasedChildEntitlements( int parentEntitlement )
+{
+	array<int> all = GetChildEntitlements( parentEntitlement )
+	array<int> filtered
+
+	foreach ( entitlement in all )
+	{
+		// ion and scorch are free with ET_DELUXE_EDITION
+		if ( entitlement == ET_DLC1_PRIME_ION || entitlement == ET_DLC1_PRIME_SCORCH )
+		{
+			if ( LocalPlayerHasEntitlement( ET_DELUXE_EDITION ) )
+				continue
+		}
+
+		if ( !LocalPlayerHasEntitlement( entitlement ) )
+			filtered.append( entitlement )
+	}
+
+	return filtered
+}
+#endif // UI || CLIENT
+

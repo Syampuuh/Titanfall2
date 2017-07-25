@@ -1,41 +1,60 @@
 
 untyped
 
-global function InitStoreMenuBundles
-global function EntitlementsChanged_Bundles
+global function InitStoreMenuSales
+global function RefreshBundleEntitlement
+global function OnBundleButton_Activate
 
 struct
 {
 	var menu
-	var[4] bundleButtons
+	array<var> bundleButtons
 } file
 
-void function InitStoreMenuBundles()
+void function InitStoreMenuSales()
 {
-	file.menu = GetMenu( "StoreMenu_Bundles" )
-	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnOpenStoreMenuBundles )
+	file.menu = GetMenu( "StoreMenu_Sales" )
+	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnStoreMenuSales_Open )
+	AddMenuEventHandler( file.menu, eUIEvent.MENU_ENTITLEMENTS_CHANGED, OnStoreMenuSales_EntitlementsChanged )
 
 	Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), "#STORE_BUNDLES" )
 
-	var button = Hud_GetChild( file.menu, "Button0" )
+	int buttonIndex = 0
+
+	var button = Hud_GetChild( file.menu, "Button" + buttonIndex )
 	button.s.entitlementId <- ET_DLC1_BUNDLE
-	file.bundleButtons[0] = button
+	file.bundleButtons.append( button )
 	SetButtonRuiText( button, "#STORE_BUNDLE_DLC1" )
 
-	button = Hud_GetChild( file.menu, "Button1" )
+	buttonIndex++
+	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
 	button.s.entitlementId <- ET_DLC3_BUNDLE
-	file.bundleButtons[1] = button
+	file.bundleButtons.append( button )
 	SetButtonRuiText( button, "#STORE_BUNDLE_DLC3" )
 
-	button = Hud_GetChild( file.menu, "Button2" )
+	buttonIndex++
+	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
 	button.s.entitlementId <- ET_DLC5_BUNDLE
-	file.bundleButtons[2] = button
+	file.bundleButtons.append( button )
 	SetButtonRuiText( button, "#STORE_BUNDLE_DLC5" )
 
-	button = Hud_GetChild( file.menu, "ButtonLast" )
+	buttonIndex++
+	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
 	button.s.entitlementId <- ET_PRIME_TITANS_BUNDLE
-	file.bundleButtons[3] = button
+	file.bundleButtons.append( button )
 	SetButtonRuiText( button, "#STORE_BUNDLE_PRIME_TITANS" )
+
+	buttonIndex++
+	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
+	button.s.entitlementId <- ET_DLC7_WEAPON_BUNDLE
+	file.bundleButtons.append( button )
+	SetButtonRuiText( button, "#STORE_BUNDLE_WEAPON_WARPAINT_DLC7" )
+
+	buttonIndex++
+	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
+	button.s.entitlementId <- ET_DLC7_TITAN_WARPAINT_BUNDLE
+	file.bundleButtons.append( button )
+	SetButtonRuiText( button, "#STORE_BUNDLE_TITAN_WARPAINT_DLC7" )
 
 	foreach ( bundleButton in file.bundleButtons )
 	{
@@ -48,7 +67,7 @@ void function InitStoreMenuBundles()
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 }
 
-void function OnOpenStoreMenuBundles()
+void function OnStoreMenuSales_Open()
 {
 	UI_SetPresentationType( ePresentationType.STORE_FRONT )
 
@@ -75,43 +94,81 @@ void function OnBundleButton_Focused( var button )
 	var rui = Hud_GetRui( description )
 	int storeBGIndex
 
-	asset primeImage = $"rui/menu/store/store_button_prime_hl"
-	asset customizationImage = $"rui/menu/store/store_button_art_hl"
-	asset camoImage = $"rui/menu/store/store_button_camo_hl"
-	asset callsignImage = $"rui/menu/store/store_button_callsigns_hl"
+	asset topLeftImage = $"rui/menu/store/store_button_prime_hl"
+	asset bottomLeftImage = $"rui/menu/store/store_button_art_hl"
+	asset topRightImage = $"rui/menu/store/store_button_camo_hl"
+	asset bottomRightImage = $"rui/menu/store/store_button_callsigns_hl"
 
-	string primeText = ""
-	string customizationText = Localize( "#STORE_BUNDLE_CUSTOMIZATION" )
-	string camoText = Localize( "#STORE_BUNDLE_CAMO" )
-	string callsignText = Localize( "#STORE_BUNDLE_CALLSIGN" )
+	string topLeftText = ""
+	string bottomLeftText = Localize( "#STORE_BUNDLE_CUSTOMIZATION" )
+	string topRightText = Localize( "#STORE_BUNDLE_CAMO" )
+	string bottomRightText = Localize( "#STORE_BUNDLE_CALLSIGN" )
 
 	if ( button == file.bundleButtons[0] )
 	{
 		storeBGIndex = STORE_BG_BUNDLE1
-		primeText = Localize( "#STORE_BUNDLE1_PRIMES" )
+
+		topLeftImage = $"rui/menu/store/store_button_prime_hl"
+
+		topLeftText = Localize( "#STORE_BUNDLE1_PRIMES" )
 	}
 	else if ( button == file.bundleButtons[1] )
 	{
 		storeBGIndex = STORE_BG_BUNDLE2
-		primeText = Localize( "#STORE_BUNDLE2_PRIMES" )
+
+		topLeftImage = $"rui/menu/store/store_button_prime_hl"
+
+		topLeftText = Localize( "#STORE_BUNDLE2_PRIMES" )
 	}
 	else if ( button == file.bundleButtons[2] )
 	{
 		storeBGIndex = STORE_BG_BUNDLE3
-		primeText = Localize( "#STORE_BUNDLE3_PRIMES" )
+
+		topLeftImage = $"rui/menu/store/store_button_prime_hl"
+
+		topLeftText = Localize( "#STORE_BUNDLE3_PRIMES" )
 	}
 	else if ( button == file.bundleButtons[3] )
 	{
 		storeBGIndex = STORE_BG_BUNDLE4
 
-		customizationImage = $""
-		camoImage = $""
-		callsignImage = $""
+		topLeftImage = $"rui/menu/store/store_button_prime_hl"
+		bottomLeftImage = $""
+		topRightImage = $""
+		bottomRightImage = $""
 
-		primeText = Localize( "#STORE_BUNDLE4_PRIMES" )
-		customizationText = ""
-		camoText = ""
-		callsignText = ""
+		topLeftText = Localize( "#STORE_BUNDLE4_PRIMES" )
+		bottomLeftText = ""
+		topRightText = ""
+		bottomRightText = ""
+	}
+	else if ( button == file.bundleButtons[4] )
+	{
+		storeBGIndex = STORE_BG_BUNDLE5
+
+		topLeftImage = $"rui/menu/store/store_button_art_hl"
+		bottomLeftImage = $""
+		topRightImage = $""
+		bottomRightImage = $""
+
+		topLeftText = Localize( "#STORE_BUNDLE1_WEAPON_WARPAINT" )
+		bottomLeftText = ""
+		topRightText = ""
+		bottomRightText = ""
+	}
+	else if ( button == file.bundleButtons[5] )
+	{
+		storeBGIndex = STORE_BG_BUNDLE6
+
+		topLeftImage = $"rui/menu/store/store_button_art_hl"
+		bottomLeftImage = $""
+		topRightImage = $""
+		bottomRightImage = $""
+
+		topLeftText = Localize( "#STORE_BUNDLE1_TITAN_WARPAINT" )
+		bottomLeftText = ""
+		topRightText = ""
+		bottomRightText = ""
 	}
 	else
 	{
@@ -121,15 +178,15 @@ void function OnBundleButton_Focused( var button )
 	RunMenuClientFunction( "UpdateStoreBackground", storeBGIndex )
 	RuiSetString( rui, "headerText", Localize( "#STORE_BUNDLE_INCLUDES_HEADER" ) )
 
-	RuiSetImage( rui, "primeImage", primeImage )
-	RuiSetImage( rui, "customizationImage", customizationImage )
-	RuiSetImage( rui, "camoImage", camoImage )
-	RuiSetImage( rui, "callsignImage", callsignImage )
+	RuiSetImage( rui, "primeImage", topLeftImage )
+	RuiSetImage( rui, "customizationImage", bottomLeftImage )
+	RuiSetImage( rui, "camoImage", topRightImage )
+	RuiSetImage( rui, "callsignImage", bottomRightImage )
 
-	RuiSetString( rui, "primeText", primeText )
-	RuiSetString( rui, "customizationText", customizationText )
-	RuiSetString( rui, "camoText", camoText )
-	RuiSetString( rui, "callsignText", callsignText )
+	RuiSetString( rui, "primeText", topLeftText )
+	RuiSetString( rui, "customizationText", bottomLeftText )
+	RuiSetString( rui, "camoText", topRightText )
+	RuiSetString( rui, "callsignText", bottomRightText )
 }
 
 void function OnBundleButton_Activate( var button )
@@ -177,6 +234,14 @@ void function OnBundleButton_Activate( var button )
 				dialogData.header = "#STORE_BUY_PRIME_TITANS_BUNDLE"
 				break
 
+			case ET_DLC7_WEAPON_BUNDLE:
+				dialogData.header = "#STORE_BUY_WEAPON_WARPAINT_BUNDLE"
+				break
+
+			case ET_DLC7_TITAN_WARPAINT_BUNDLE:
+				dialogData.header = "#STORE_BUY_TITAN_WARPAINT_BUNDLE"
+				break
+
 			default:
 				Assert( false, "entitlement id not found " + entitlementToBuy )
 		}
@@ -192,23 +257,38 @@ void function OnBundleButton_Activate( var button )
 	}
 }
 
-void function EntitlementsChanged_Bundles()
+void function OnStoreMenuSales_EntitlementsChanged()
 {
 	RefreshEntitlements()
+	EmitUISound( PURCHASE_SUCCESS_SOUND )
 }
 
 void function RefreshEntitlements()
+{
+	foreach ( button in file.bundleButtons )
+		RefreshBundleEntitlement( button )
+}
+
+void function RefreshBundleEntitlement( var button )
 {
 	// do they own this bundle? isOwned == true
 	// do they own every part of this bundle? isOwned == true
 	// do they own pieces, but still cheaper to buy bundle? .s.cheaperToBuyIndividually == false
 	// do they own multiple pieces, cheaper to buy individual? .s.cheaperToBuyIndividually == true
 
-	foreach ( button in file.bundleButtons )
+	int entitlementId = expect int( button.s.entitlementId )
+	bool hasEntitlement = LocalPlayerHasEntitlement( entitlementId )
+	var rui = Hud_GetRui( button )
+
+	string priceStr = GetEntitlementPricesAsStr( [ entitlementId ] )[0]
+	RuiSetString( rui, "price", priceStr )
+	RuiSetBool( rui, "priceAvailable", ( priceStr != "" ) )
+
+	if ( GetChildEntitlements( entitlementId ).len() > 0 )
 	{
-		int entitlementId = expect int( button.s.entitlementId )
-		bool hasEntitlement = LocalPlayerHasEntitlement( entitlementId ) || GetUnpurchasedChildEntitlements( entitlementId ).len() == 0
 		int remainingContentPriceTotal = 0
+
+		hasEntitlement = LocalPlayerHasEntitlement( entitlementId ) || GetUnpurchasedChildEntitlements( entitlementId ).len() == 0
 
 		if ( !hasEntitlement )
 		{
@@ -219,101 +299,41 @@ void function RefreshEntitlements()
 				remainingContentPriceTotal += price
 		}
 
-		// update RUI
-		var rui = Hud_GetRui( button )
-		string priceStr = GetEntitlementPricesAsStr( [ entitlementId ] )[0]
-		RuiSetString( rui, "price", priceStr )
-		RuiSetBool( rui, "priceAvailable", ( priceStr != "" ) )
-
 		int priceInt = GetEntitlementPricesAsInt( [ entitlementId ] )[0]
 		button.s.cheaperToBuyIndividually = ( priceInt > remainingContentPriceTotal )
 
-		RuiSetBool( rui, "isOwned", hasEntitlement )
-
-		if ( !button.s.hasEntitlement && hasEntitlement )
-		{
-			ClientCommand( "StoreSetNewItemStatus " + entitlementId )
-		}
-
-		button.s.hasEntitlement = hasEntitlement
+		string percentOff = Localize( "#STORE_PRICE_PERCENT_OFF", GetPercentOff( entitlementId ) )
+		RuiSetString( rui, "percentOff", percentOff )
 	}
+
+	RuiSetBool( rui, "isOwned", hasEntitlement )
+
+	if ( !button.s.hasEntitlement && hasEntitlement )
+	{
+		ClientCommand( "StoreSetNewItemStatus " + entitlementId )
+	}
+
+	button.s.hasEntitlement = hasEntitlement
 }
 
-array<int> function GetUnpurchasedChildEntitlements( int parentEntitlement )
+int function GetPercentOff( int parentEntitlement )
 {
-	array<int> all = GetChildEntitlements( parentEntitlement )
-	array<int> filtered
+	int bundlePrice = GetEntitlementPricesAsInt( [ parentEntitlement ] )[0]
+	array<int> childEntitlements = GetChildEntitlements( parentEntitlement )
+	int childEntitlementsTotal
+	int percentOff = 0
 
-	foreach ( entitlement in all )
-	{
-		// ion and scorch are free with ET_DELUXE_EDITION
-		if ( entitlement == ET_DLC1_PRIME_ION || entitlement == ET_DLC1_PRIME_SCORCH )
-		{
-			if ( LocalPlayerHasEntitlement( ET_DELUXE_EDITION ) )
-				continue
-		}
+	foreach ( entitlement in childEntitlements )
+		childEntitlementsTotal += GetEntitlementPricesAsInt( [ entitlement ] )[0]
 
-		if ( !LocalPlayerHasEntitlement( entitlement ) )
-			filtered.append( entitlement )
-	}
+	Assert( bundlePrice >= 0 )
+	Assert( childEntitlementsTotal >= 0 )
 
-	return filtered
-}
+	if ( bundlePrice == 0 || childEntitlementsTotal == 0 )
+		return percentOff
 
-array<int> function GetChildEntitlements( int parentEntitlement )
-{
-	array<int> childEntitlements
+	float frac = bundlePrice / float( childEntitlementsTotal )
+	percentOff = int( ( 1 - frac ) * 100 )
 
-	switch ( parentEntitlement )
-	{
-		case ET_DLC1_BUNDLE:
-			childEntitlements.append( ET_DLC1_PRIME_ION )
-			childEntitlements.append( ET_DLC1_PRIME_SCORCH )
-			childEntitlements.append( ET_DLC1_ION )
-			childEntitlements.append( ET_DLC1_TONE )
-			childEntitlements.append( ET_DLC1_SCORCH )
-			childEntitlements.append( ET_DLC1_LEGION )
-			childEntitlements.append( ET_DLC1_RONIN )
-			childEntitlements.append( ET_DLC1_NORTHSTAR )
-			childEntitlements.append( ET_DLC1_CAMO )
-			childEntitlements.append( ET_DLC1_CALLSIGN )
-			break
-
-		case ET_DLC3_BUNDLE:
-			childEntitlements.append( ET_DLC3_PRIME_NORTHSTAR )
-			childEntitlements.append( ET_DLC3_PRIME_LEGION )
-			childEntitlements.append( ET_DLC3_ION )
-			childEntitlements.append( ET_DLC3_TONE )
-			childEntitlements.append( ET_DLC3_SCORCH )
-			childEntitlements.append( ET_DLC3_LEGION )
-			childEntitlements.append( ET_DLC3_RONIN )
-			childEntitlements.append( ET_DLC3_NORTHSTAR )
-			childEntitlements.append( ET_DLC3_CAMO )
-			childEntitlements.append( ET_DLC3_CALLSIGN )
-			break
-
-		case ET_DLC5_BUNDLE:
-			childEntitlements.append( ET_DLC5_PRIME_TONE )
-			childEntitlements.append( ET_DLC5_PRIME_RONIN )
-			childEntitlements.append( ET_DLC5_ION )
-			childEntitlements.append( ET_DLC5_TONE )
-			childEntitlements.append( ET_DLC5_SCORCH )
-			childEntitlements.append( ET_DLC5_LEGION )
-			childEntitlements.append( ET_DLC5_RONIN )
-			childEntitlements.append( ET_DLC5_NORTHSTAR )
-			childEntitlements.append( ET_DLC5_CAMO )
-			childEntitlements.append( ET_DLC5_CALLSIGN )
-			break
-
-		case ET_PRIME_TITANS_BUNDLE:
-			childEntitlements.append( ET_DLC1_PRIME_ION )
-			childEntitlements.append( ET_DLC1_PRIME_SCORCH )
-			childEntitlements.append( ET_DLC3_PRIME_NORTHSTAR )
-			childEntitlements.append( ET_DLC3_PRIME_LEGION )
-			childEntitlements.append( ET_DLC5_PRIME_TONE )
-			childEntitlements.append( ET_DLC5_PRIME_RONIN )
-			break
-	}
-
-	return childEntitlements
+	return percentOff
 }

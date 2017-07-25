@@ -30,7 +30,7 @@ void function InitViewStatsWeaponsMenu()
 
 	file.gridData.initCallback = WeaponButton_Init
 	file.gridData.getFocusCallback = WeaponButton_GetFocus
-	file.gridData.clickCallback = WeaponButton_Activate
+	//file.gridData.clickCallback = WeaponButton_Activate
 
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnViewStatsWeapons_Open )
 
@@ -39,7 +39,8 @@ void function InitViewStatsWeaponsMenu()
 
 void function OnViewStatsWeapons_Open()
 {
-	UI_SetPresentationType( ePresentationType.NO_MODELS )
+	//UI_SetPresentationType( ePresentationType.NO_MODELS )
+	UI_SetPresentationType( ePresentationType.STORE_WEAPON_SKINS )
 
 	// Get Pilot weapon list
 	file.allPilotWeapons = GetVisibleItemsOfType( eItemTypes.PILOT_PRIMARY )
@@ -80,15 +81,15 @@ bool function WeaponButton_Init( var button, int elemNum )
 
 void function WeaponButton_GetFocus( var button, int elemNum )
 {
-	if ( IsControllerModeActive() )
+	//if ( IsControllerModeActive() )
 		UpdateStatsForWeapon( file.allPilotWeapons[ elemNum ].ref )
 }
 
-void function WeaponButton_Activate( var button, int elemNum )
-{
-	if ( !IsControllerModeActive() )
-		UpdateStatsForWeapon( file.allPilotWeapons[ elemNum ].ref )
-}
+//void function WeaponButton_Activate( var button, int elemNum )
+//{
+//	if ( !IsControllerModeActive() )
+//		UpdateStatsForWeapon( file.allPilotWeapons[ elemNum ].ref )
+//}
 
 void function UpdateStatsForWeapon( string weaponRef )
 {
@@ -96,26 +97,21 @@ void function UpdateStatsForWeapon( string weaponRef )
 	if ( player == null )
 		return
 
+	RunMenuClientFunction( "UpdateStoreWeaponModelSkin", weaponRef, 0 )
+
 	// Name
 	Hud_SetText( Hud_GetChild( file.menu, "WeaponName" ), GetItemName( weaponRef ) )
-
-	// Image
-	asset image = GetItemImage( weaponRef )
-	var imageElem = Hud_GetChild( file.menu, "WeaponImageLarge" )
-	Hud_SetImage( imageElem, image )
 
 	// Locked info
 	var lockLabel = GetElementsByClassname( file.menu, "LblWeaponLocked" )[0]
 
 	if ( IsItemLocked( player, weaponRef ) )
 	{
-		Hud_SetAlpha( imageElem, 200 )
 		Hud_SetText( lockLabel, "#LOUADOUT_UNLOCK_REQUIREMENT_LEVEL", GetUnlockLevelReq( weaponRef ) )
 		Hud_Show( lockLabel )
 	}
 	else
 	{
-		Hud_SetAlpha( imageElem, 255 )
 		Hud_Hide( lockLabel )
 	}
 
@@ -183,48 +179,4 @@ void function UpdateStatsForWeapon( string weaponRef )
 	SetStatsLabelValue( file.menu, "KillsValue1", 				GetPlayerStatInt( player, "weapon_kill_stats", "pilots", weaponRef ) )
 	SetStatsLabelValue( file.menu, "KillsValue2", 				GetPlayerStatInt( player, "weapon_kill_stats", "titansTotal", weaponRef ) )
 	SetStatsLabelValue( file.menu, "KillsValue3", 				GetPlayerStatInt( player, "weapon_kill_stats", "ai", weaponRef ) )
-
-	/*{
-		// Titan Kills Stats
-		local kills_ion = GetPlayerStatInt( player, "weapon_kill_stats", "titans_ion", weaponRef )
-		local kills_scorch = GetPlayerStatInt( player, "weapon_kill_stats", "titans_scorch", weaponRef )
-		local kills_northstar = GetPlayerStatInt( player, "weapon_kill_stats", "titans_northstar", weaponRef )
-		local kills_ronin = GetPlayerStatInt( player, "weapon_kill_stats", "titans_ronin", weaponRef )
-		local kills_tone = GetPlayerStatInt( player, "weapon_kill_stats", "titans_tone", weaponRef )
-		local kills_legion = GetPlayerStatInt( player, "weapon_kill_stats", "titans_legion", weaponRef )
-		local kills_titan_total = kills_ion + kills_scorch + kills_northstar + kills_ronin + kills_tone + kills_legion
-
-		SetStatsLabelValue( file.menu, "Column1Value0", 				kills_titan_total )
-		//SetStatsLabelValue( file.menu, "Column1Value1", 				kills_stryder )
-		//SetStatsLabelValue( file.menu, "Column1Value2", 				kills_atlas )
-		//SetStatsLabelValue( file.menu, "Column1Value3", 				kills_ogre )
-	}
-
-	{
-		// NPC Titan Kills Stats
-
-		local kills_ion = GetPlayerStatInt( player, "weapon_kill_stats", "npcTitans_ion", weaponRef )
-		local kills_scorch = GetPlayerStatInt( player, "weapon_kill_stats", "npcTitans_scorch", weaponRef )
-		local kills_northstar = GetPlayerStatInt( player, "weapon_kill_stats", "npcTitans_northstar", weaponRef )
-		local kills_ronin = GetPlayerStatInt( player, "weapon_kill_stats", "npcTitans_ronin", weaponRef )
-		local kills_tone = GetPlayerStatInt( player, "weapon_kill_stats", "npcTitans_tone", weaponRef )
-		local kills_legion = GetPlayerStatInt( player, "weapon_kill_stats", "npcTitans_legion", weaponRef )
-		local kills_titan_total = kills_ion + kills_scorch + kills_northstar + kills_ronin + kills_tone + kills_legion
-
-		SetStatsLabelValue( file.menu, "Column2Value0", 				kills_titan_total )
-		//SetStatsLabelValue( file.menu, "Column2Value1", 				kills_npc_stryder )
-		//SetStatsLabelValue( file.menu, "Column2Value2", 				kills_npc_atlas )
-		//SetStatsLabelValue( file.menu, "Column2Value3", 				kills_npc_ogre )
-	}
-	*/
 }
-
-
-/*
-//local killCount = GetPlayerStatInt( player, "weapon_kill_stats", "total", weaponRef )
-//local killsPerMinute = 0
-//if ( hoursUsed > 0 )
-//	killsPerMinute = format( "%.2f", killCount / ( hoursUsed * 60.0 ) )
-
-UpdateScrollBarPosition( shiftCount, maxShiftCount, instant )
-*/

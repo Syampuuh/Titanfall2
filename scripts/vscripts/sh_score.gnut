@@ -60,7 +60,9 @@ global enum eEventDisplayType
 	ATTRITION	= 1 << 4,
 	BIG			= 1 << 5,
 	GAMEMODE	= 1 << 6,
-	CHALLENGE	= 1 << 7
+	CHALLENGE	= 1 << 7,
+	MEDAL_FORCED= 1 << 8,
+	SHOW_SCORE	= 1 << 9
 }
 
 global struct ScoreEvent

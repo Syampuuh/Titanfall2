@@ -414,6 +414,13 @@ void function Player_AddClient( entity player )
 	RegisterConCommandTriggeredCallback( "+useandreload", Pressed_OfferRodeoBattery )
 	RegisterConCommandTriggeredCallback( "+useandreload", Pressed_RequestRodeoBattery )
 
+	#if MP
+	RegisterConCommandTriggeredCallback( "+use", Pressed_TryNukeGrenade )
+	RegisterConCommandTriggeredCallback( "-use", Released_TryNukeGrenade )
+	RegisterConCommandTriggeredCallback( "+useandreload", Pressed_TryNukeGrenade )
+	RegisterConCommandTriggeredCallback( "-useandreload", Released_TryNukeGrenade )
+	#endif
+
 	Create_DamageIndicatorHUD()
 
 	if ( !IsLobby() )
@@ -551,10 +558,6 @@ void function ClientCodeCallback_HUDThink()
 		entity clientPlayer = GetLocalClientPlayer()
 		if ( !IsWatchingKillReplay() && clientPlayer.classChanged )
 		{
-			#if DEVSCRIPTS
-			if ( IsDisplayingDpadComms( clientPlayer ) )
-				DisableDpadComms( clientPlayer )
-			#endif
 			ClientPlayerClassChanged( clientPlayer, clientPlayer.GetPlayerClass() )
 		}
 

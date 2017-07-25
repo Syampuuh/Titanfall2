@@ -213,6 +213,9 @@ entity function DeployTurret( entity player, vector origin, vector angles, entit
 	SetTeam( turret, team )
 	EmitSoundOnEntity( turret, "Boost_Card_SentryTurret_Deployed_3P" )
 
+	turret.e.burnmeter_wasPreviouslyDeployed = weapon.e.burnmeter_wasPreviouslyDeployed
+	turret.kv.killCount = weapon.w.savedKillCount
+
 	if( weapon.HasMod( "burnmeter_at_turret_weapon" ) || weapon.HasMod( "burnmeter_at_turret_weapon_inf" ) )
 		SetSpawnOption_AISettings( turret, DeployableTurret_GetAISettingsForPlayer_AT( player ) )
 	else if( weapon.HasMod( "burnmeter_ap_turret_weapon" ) || weapon.HasMod( "burnmeter_ap_turret_weapon_inf" ) )
@@ -250,6 +253,9 @@ void function CalculatePlayerTurretCount( entity ownerPlayer )
 	int turrets = GetScriptManagedEntArrayLen( ownerPlayer.p.turretArrayId )
 	int burncards = PlayerInventory_CountTurrets( ownerPlayer )
 	ownerPlayer.SetPlayerNetInt( "burn_numTurrets", turrets + burncards )
+
+	if ( BoostStoreEnabled() )
+		Remote_CallFunction_UI( ownerPlayer, "ServerCallback_UpdateTurretCount", turrets + burncards, GetGlobalNetInt( "burn_turretLimit" ) )
 }
 
 string function DeployableTurret_GetAISettingsForPlayer_AP( entity player )
@@ -397,8 +403,24 @@ SentryTurretPlacementInfo function GetDeployableTurretPlacementInfo( entity play
 	TraceResults fwdResults = TraceHull( eyePos + viewVec * min( DEPLOYABLE_TURRET_PLACEMENT_RANGE_MIN, maxRange ), eyePos + viewVec * maxRange, DEPLOYABLE_TURRET_MINS, <30, 30, 1>, player, TRACE_MASK_SOLID | TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
 	TraceResults downResults = TraceHull( fwdResults.endPos, fwdResults.endPos - DEPLOYABLE_TURRET_PLACEMENT_TRACE_OFFSET, DEPLOYABLE_TURRET_MINS, DEPLOYABLE_TURRET_MAXS, player, TRACE_MASK_SOLID | TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
 
-	bool success = !downResults.startSolid && downResults.fraction < 1.0 && downResults.hitEnt.IsWorld()
-	if ( downResults.startSolid && downResults.fraction < 1.0 && downResults.hitEnt.IsWorld() )
+	bool isScriptedTurretPlaceable = false
+	if ( IsValid( downResults.hitEnt ) )
+	{
+		#if SERVER
+		string hitEntClassname = downResults.hitEnt.GetClassName()
+		#else
+		string hitEntClassname = string ( downResults.hitEnt.GetSignifierName() )
+		#endif
+
+		if ( hitEntClassname == "prop_script" )
+		{
+			if ( downResults.hitEnt.GetScriptPropFlags() == PROP_IS_VALID_FOR_TURRET_PLACEMENT )
+				isScriptedTurretPlaceable = true
+		}
+	}
+
+	bool success = !downResults.startSolid && downResults.fraction < 1.0 && ( downResults.hitEnt.IsWorld() || isScriptedTurretPlaceable )
+	if ( downResults.startSolid && downResults.fraction < 1.0 && ( downResults.hitEnt.IsWorld() || isScriptedTurretPlaceable ) )
 	{
 		TraceResults upResults = TraceHull( downResults.endPos, downResults.endPos, DEPLOYABLE_TURRET_MINS, DEPLOYABLE_TURRET_MAXS, player, TRACE_MASK_SOLID | TRACE_MASK_SHOT, TRACE_COLLISION_GROUP_NONE )
 		if ( !upResults.startSolid )
@@ -466,7 +488,7 @@ SentryTurretPlacementInfo function GetDeployableTurretPlacementInfo( entity play
 	}
 
 
-	if ( viewTraceResults.hitEnt != null && !viewTraceResults.hitEnt.IsWorld() )
+	if ( viewTraceResults.hitEnt != null && ( !viewTraceResults.hitEnt.IsWorld() && !isScriptedTurretPlaceable ) )
 		success = false
 
 	if ( !PlayerCanSeePos( player, downResults.endPos, true, 90 ) ) //Just to stop players from putting turrets through thin walls

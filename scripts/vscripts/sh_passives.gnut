@@ -410,8 +410,5 @@ array<string> function GetSetFileModsForSettingType( string settingType, array<s
 			setFileMods.append( mod )
 	}
 
-	if ( settingType == "pilot" && GetCurrentPlaylistVarInt( "tactical_balance", 0 ) >= 1 )
-		setFileMods.append( "tactical_balance" )
-
 	return setFileMods
 }

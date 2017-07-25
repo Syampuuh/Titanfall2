@@ -545,23 +545,23 @@ int function GetPilotTitanStatusForPlayer( entity teamPlayer )
 		}
 	}
 	else
-		{
+	{
 		if ( IsAlive( teamPlayer ) )
 		{
 			statusIndex = IsTitanAvailable( teamPlayer ) ? ePlayerStatusType.PTS_TYPE_READY : ePlayerStatusType.PTS_TYPE_PILOT
-
-			if ( GetWaveSpawnType() == eWaveSpawnType.DROPSHIP && teamPlayer.GetParent() != null )
-			{
-				entity playerParent = teamPlayer.GetParent()
-				if ( playerParent.IsNPC() && IsDropship( playerParent ) )
-				{
-					statusIndex = ePlayerStatusType.PTS_TYPE_EVAC
-				}
-			}
 		}
 		else
 		{
 			statusIndex = IsTitanAvailable( teamPlayer ) ? ePlayerStatusType.PTS_TYPE_DEAD_READY : ePlayerStatusType.PTS_TYPE_DEAD
+		}
+	}
+
+	if ( ( GetWaveSpawnType() == eWaveSpawnType.DROPSHIP || GetGameState() == eGameState.Epilogue ) && teamPlayer.GetParent() != null )
+	{
+		entity playerParent = teamPlayer.GetParent()
+		if ( playerParent.IsNPC() && IsDropship( playerParent ) )
+		{
+			statusIndex = ePlayerStatusType.PTS_TYPE_EVAC
 		}
 	}
 

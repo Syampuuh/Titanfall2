@@ -102,6 +102,11 @@ void function ClientCodeCallback_DoomedStateChanged( entity soul )
 			}
 		}
 	}
+
+	if ( GetRodeoPilot( titan ) == localPlayer )
+	{
+		localPlayer.Signal( "UpdateRodeoAlert" )
+	}
 }
 
 void function ClientCodeCallback_TitanSoulChanged( entity ent )

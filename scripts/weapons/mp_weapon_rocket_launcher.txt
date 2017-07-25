@@ -410,6 +410,7 @@ WeaponData
     "smart_ammo_lock_type"							"large"
     "smart_ammo_npc_use"							"0"		// npc that use this weapon won't use smart ammo lock on functionality
     "smart_ammo_alert_npc_fraction"					"0.8"	// alert npc of lock when fraction is this much
+	"smart_ammo_track_cloaked_targets"				"0"
 
 	"bodygroup5_name"	"proscreen"
 	"bodygroup5_set"	"0"

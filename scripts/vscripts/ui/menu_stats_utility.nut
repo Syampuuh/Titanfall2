@@ -48,6 +48,25 @@ void function SetPieChartData( var menu, string panelName, string titleString, P
 
 	var noDataLabel = Hud_GetChild( piePanel, "NoData" )
 
+	for ( int index = 0; index < 8; index++ )
+	{
+		var barColorGuide = Hud_GetChild( piePanel, "BarColorGuide" + index )
+		//			Hud_SetColor( barColorGuide, entry.color )
+		Hud_Hide( barColorGuide )
+
+		var barColorGuideFrame = Hud_GetChild( piePanel, "BarColorGuideFrame" + index )
+		Hud_Hide( barColorGuideFrame )
+
+		var barName = Hud_GetChild( piePanel, "BarName" + index )
+		Hud_SetColor( barName, data.labelColor )
+		Hud_SetText( barName, "" )
+
+		var bar = Hud_GetChild( piePanel, "Bar" + index )
+		//Hud_SetBarProgress( bar, combinedFrac )
+		//Hud_SetColor( bar, entry.color )
+		Hud_Hide( bar )
+	}
+
 	if ( data.entries.len() > 0 )
 	{
 		Hud_Hide( noDataLabel )
@@ -93,6 +112,24 @@ void function SetPieChartData( var menu, string panelName, string titleString, P
 	else
 	{
 		Hud_Show( noDataLabel )
+		for ( int index = 0; index < 8; index++ )
+		{
+			var barColorGuide = Hud_GetChild( piePanel, "BarColorGuide" + index )
+//			Hud_SetColor( barColorGuide, entry.color )
+			Hud_Hide( barColorGuide )
+
+			var barColorGuideFrame = Hud_GetChild( piePanel, "BarColorGuideFrame" + index )
+			Hud_Hide( barColorGuideFrame )
+
+			var barName = Hud_GetChild( piePanel, "BarName" + index )
+			Hud_SetColor( barName, data.labelColor )
+			Hud_SetText( barName, "" )
+
+			var bar = Hud_GetChild( piePanel, "Bar" + index )
+			//Hud_SetBarProgress( bar, combinedFrac )
+			//Hud_SetColor( bar, entry.color )
+			Hud_Hide( bar )
+		}
 	}
 }
 

@@ -176,7 +176,7 @@ WeaponData
 	{
 		fd_explosive_barrel
 		{
-
+			"hud_icon"										"rui/menu/fd_menu/upgrade_scorch_explosive_barrells_hud"
 		}
 	}
 }

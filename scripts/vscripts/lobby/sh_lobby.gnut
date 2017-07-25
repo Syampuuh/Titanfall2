@@ -133,32 +133,28 @@ array<string> function GetPrivateMatchMaps()
 		}
 	}
 
-
-	//GetPlaylistGamemodeByIndex
-	//GetPlaylistGamemodeByIndexMapByIndex
-	//GetPlaylistGamemodeByIndexMapsCount
-	//GetPlaylistGamemodeByIndexVar
-	//GetPlaylistGamemodesCount
-	//GetPlaylistMapsCount
+	return mapsArray
+}
 
 
 
-	//foreach ( k, v in getconsttable().ePrivateMatchMaps )
-	//{
-	//	expect string( k )
-	//	expect int( v )
-	//
-	//	if ( GetCurrentPlaylistVarInt( "coliseum_private_match", 0 ) <= 0 && k.find( "coliseum" ) != null )
-	//		continue
-	//
-	//	mapsArray[v] = k
-	//}
-	//
-	//for ( int i = mapsArray.len() - 1; i >= 0; i-- )
-	//{
-	//	if ( mapsArray[i] == "" )
-	//		mapsArray.remove( i )
-	//}
+array<string> function GetPlaylistMaps( string playlistName )
+{
+	array<string> mapsArray
+
+	int numModes = GetPlaylistGamemodesCount( playlistName )
+	for ( int modeIndex = 0; modeIndex < numModes; modeIndex++ )
+	{
+		int numMaps = GetPlaylistGamemodeByIndexMapsCount( playlistName, modeIndex )
+		for ( int mapIndex = 0; mapIndex < numMaps; mapIndex++ )
+		{
+			string mapName = GetPlaylistGamemodeByIndexMapByIndex( playlistName, modeIndex, mapIndex )
+			if ( mapsArray.contains( mapName ) )
+				continue
+
+			mapsArray.append( mapName )
+		}
+	}
 
 	return mapsArray
 }

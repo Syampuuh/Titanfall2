@@ -3,15 +3,19 @@ untyped
 global function InitEditTitanLoadoutsMenu
 global function UpdateTitanXP
 global function UpdateEditTitanLoadoutsMenu
+global function UpdateFDPanel
 
 struct
 {
 	var menu
 	var loadoutPanel
 	var xpPanel
+	var titanPropertiesPanel
 	var[NUM_PERSISTENT_TITAN_LOADOUTS] loadoutHeaders
 	var[NUM_PERSISTENT_TITAN_LOADOUTS] activateButtons
 	var unlockReq
+	var fdProperties
+	var fdPropertiesData
 } file
 
 void function InitEditTitanLoadoutsMenu()
@@ -37,6 +41,7 @@ void function InitEditTitanLoadoutsMenu()
 
 	file.loadoutPanel = Hud_GetChild( menu, "TitanLoadoutDisplay" )
 	file.xpPanel = Hud_GetChild( file.loadoutPanel, "TitanXP" )
+	file.titanPropertiesPanel = Hud_GetChild( file.loadoutPanel, "TitanLoadout" )
 	array<var> loadoutPanelButtons = GetElementsByClassname( menu, "TitanLoadoutPanelButtonClass" )
 	foreach ( button in loadoutPanelButtons )
 		Hud_SetEnabled( button, false )
@@ -48,6 +53,9 @@ void function InitEditTitanLoadoutsMenu()
 	AddDefaultTitanElementsToTitanLoadoutMenu( menu )
 
 	file.unlockReq = Hud_GetChild( menu, "UnlockReq" )
+
+	file.fdProperties = Hud_GetChild( file.loadoutPanel, "TitanLoadoutFD" )
+	file.fdPropertiesData = Hud_GetChild( file.fdProperties, "FDProperties" )
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
@@ -67,6 +75,21 @@ void function OnTitanLoadoutsMenu_Open()
 	UI_SetPresentationType( ePresentationType.TITAN )
 
 	RefreshCreditsAvailable()
+
+	if ( Lobby_IsFDMode() )
+	{
+		Hud_Hide( file.xpPanel )
+		Hud_Hide( file.titanPropertiesPanel )
+
+		Hud_Show( file.fdProperties )
+	}
+	else
+	{
+		Hud_Show( file.xpPanel )
+		Hud_Show( file.titanPropertiesPanel )
+
+		Hud_Hide( file.fdProperties )
+	}
 }
 
 
@@ -96,10 +119,65 @@ void function OnTitanLoadoutsMenu_Close()
 
 void function OnLoadoutButton_Focused( var button )
 {
-	UpdateTitanLoadout( expect int( button.s.rowIndex ) )
-	UpdateTitanXP( file.xpPanel, expect int( button.s.rowIndex ), false )
+	int index = expect int( button.s.rowIndex )
+
+	UpdateTitanLoadout( index )
+	UpdateTitanXP( file.xpPanel, index, false )
+	UpdateFDPanel( file.fdProperties, index, true )
 }
 
+void function UpdateFDPanel( var panel, int index, bool compactMode = true )
+{
+	entity player = GetUIPlayer()
+
+	if ( !IsValid( player ) )
+		return
+
+	TitanLoadoutDef loadout = GetCachedTitanLoadout( index )
+	var fdPropertiesData = Hud_GetChild( panel, "FDProperties" )
+	var rui = Hud_GetRui( fdPropertiesData )
+	int titanLevel = FD_TitanGetLevelForXP( loadout.titanClass, FD_TitanGetXP( player, loadout.titanClass ) )
+	RuiSetString( rui, "titanName", GetTitanLoadoutName( loadout ) )
+	int currentXP = FD_TitanGetXP( player, loadout.titanClass )
+
+	RuiSetInt( rui, "numFilledPips", FD_TitanGetLevelForXP( loadout.titanClass, currentXP ) )
+	RuiSetInt( rui, "numPips", FD_TitanGetMaxLevel( loadout.titanClass ) )
+
+	float frac = float( FD_TitanGetFilledPipsForXP( loadout.titanClass, currentXP ) ) / float( FD_TitanGetNumPipsForXP( loadout.titanClass, currentXP ) )
+
+	var dataTable = GetDataTable( $"datatable/titan_properties.rpak" )
+	int row = GetDataTableRowMatchingStringValue( dataTable, GetDataTableColumnByName( dataTable, "titanRef" ), loadout.titanClass )
+	string role = GetDataTableString( dataTable, row, GetDataTableColumnByName( dataTable, "fdRole" ) )
+
+	RuiSetFloat( rui, "lastPipFrac", frac )
+	RuiSetString( rui, "role", role )
+
+	if ( IsItemLocked( player, loadout.titanClass ) )
+	{
+		RuiSetString( rui, "titanLevelString", GetItemUnlockReqText( loadout.titanClass ) )
+	}
+	else
+	{
+		RuiSetString( rui, "titanLevelString", Localize( "#FD_TITAN_LEVEL", titanLevel ) )
+	}
+
+	array<ItemDisplayData> titanUpgrades = FD_GetUpgradesForTitanClass( loadout.titanClass )
+	foreach ( index, item in titanUpgrades )
+	{
+		var button = Hud_GetChild( panel, "BtnSub" + index )
+		var upgradeRui = Hud_GetRui( button )
+		RuiSetImage( upgradeRui, "buttonImage", item.image )
+		Hud_SetLocked( button, IsSubItemLocked( player, item.ref, item.parentRef ) )
+		Hud_SetEnabled( button, !compactMode )
+
+		if ( IsSubItemLocked( player, item.ref, item.parentRef ) )
+			RuiSetImage( upgradeRui, "buttonImage", expect asset( item.i.lockedImage ) )
+		else
+			RuiSetImage( upgradeRui, "buttonImage", item.image )
+	}
+
+	RuiSetBool( rui, "compactMode", compactMode )
+}
 
 void function UpdateTitanLoadout( int loadoutIndex )
 {

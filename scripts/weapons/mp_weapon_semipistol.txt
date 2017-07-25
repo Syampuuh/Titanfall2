@@ -95,14 +95,14 @@ WeaponData
 		"aimassist_adspull_weaponclass"					"precise"
 
 		// Damage - When Used by Players
-		"damage_near_value"   							"40"
-		"damage_far_value"								"30"
+		"damage_near_value"   							"30"
+		"damage_far_value"								"20"
 		"damage_near_value_titanarmor"					"100"
 		"damage_far_value_titanarmor" 					"70"
 		"damage_rodeo" 									"190"
 		"damage_near_distance"							"750"  // match to search distance and red crosshair range
 		"damage_far_distance" 							"1000"
-   	 	"damage_very_far_value"							"20"
+   	 	"damage_very_far_value"							"15"
    		"damage_very_far_distance"						"2000"
 
 		"damage_headshot_scale"							"2"
@@ -429,28 +429,9 @@ WeaponData
 			"fire_sound_2_player_1p"						"Weapon_p2011_FireSuppressed_1P"
 			"fire_sound_2_player_3p"						"Weapon_p2011_FireSuppressed_3P"
 			"fire_sound_2_npc"							"Weapon_p2011_FireSuppressed_3P"
-			"damage_near_value"   				"--8"//Need to update if low_ttk changes feel good.
-			"damage_far_value"					"--5"//Need to update if low_ttk changes feel good.
-	   	 	"damage_very_far_value"				"--5"//Need to update if low_ttk changes feel good.
-			"bodygroup2_set"					"1"
-
-			//"rumble"  						"4"
-			"tracer_effect"   					"P_wpn_tracer_pistol"
-			"minimap_reveal_distance"			"1"
-
-			"fx_muzzle_flash_view"				"wpn_muzzleflash_pistol_sup_FP"
-			"fx_muzzle_flash_world"				"wpn_muzzleflash_pistol_sup"
-			"fx_muzzle_flash_attach"			"muzzle_flash_suppressor_sq"
-		}
-		silencer_low_ttk //HACK JFS: Doesn't get applied on amped weapons. See bug 170460
-		{
-			"silenced"							"1"
-			"fire_sound_2_player_1p"			"Weapon_p2011_FireSuppressed_1P"
-			"fire_sound_2_player_3p"			"Weapon_p2011_FireSuppressed_3P"
-			"fire_sound_2_npc"					"Weapon_p2011_FireSuppressed_3P"
-			"damage_near_value"   				"--10" // 40 -> 30
-			"damage_far_value"					"--5" // 30 -> 25
-	   	 	"damage_very_far_value"				"--2" // 20 -> 18
+			"damage_near_value"   				"--10"
+			"damage_far_value"					"--2"
+	   	 	"damage_very_far_value"				"--2"
 			"bodygroup2_set"					"1"
 
 			//"rumble"  						"4"
@@ -505,7 +486,7 @@ WeaponData
 
 			"damage_near_value"   							"++5"
 			"damage_far_value"								"++5"
-	   	 	"damage_very_far_value"							"++5"
+	   	 	"damage_very_far_value"							"++2"
 			"damage_near_value_titanarmor"					"++100"
 			"damage_far_value_titanarmor" 					"++100"
 		}
@@ -519,28 +500,6 @@ WeaponData
 		training_low_ammo_disable
 		{
 			"low_ammo_fraction" 							"0.0"
-		}
-		low_ttk
-		{
-			"damage_near_value"   							"--15" //40 5 -> 6
-			"damage_far_value"								"--10" //30 6 -> 7
-	   	 	"damage_very_far_value"							"--6" //20 7 -> 8
-		}
-		amped_ttk
-		{
-			"is_burn_mod"		"1"
-
-			//FX
-			"tracer_effect"   								"P_wpn_tracer_BC"
-			"tracer_effect_first_person"                    "P_wpn_tracer_BC"
-			"fx_muzzle_flash_view"							"wpn_muzzleflash_pistol_elec_FP"
-			"fx_muzzle_flash_world"							"wpn_muzzleflash_pistol_elec"
-
-			"damage_near_value"   							"++10" // 4 -> 5
-			"damage_far_value"								"++5" // 4 -> 6
-   	 		"damage_very_far_value"							"++4" // 5 -> 7
-			"damage_near_value_titanarmor"					"++100"
-			"damage_far_value_titanarmor" 					"++100"
 		}
 	}
 

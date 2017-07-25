@@ -149,11 +149,15 @@ bool function CallsignCardButton_Init( var button, int elemNum )
 
 void function CallsignCardButton_GetFocus( var button, int elemNum )
 {
+	entity player = GetUIPlayer()
+
 	elemNum = GetSortedIndex( "CallsignCardSelectMenu", elemNum )
 	ItemDisplayData item = GetCallsignItem( elemNum )
-	CallingCard callsignCard = CallingCard_GetByRef( item.ref )
 
-	entity player = GetUIPlayer()
+	string ref = PlayerCallingCard_RefOverride( player, item.ref )
+
+	CallingCard callsignCard = CallingCard_GetByRef( ref )
+
 	/*if ( IsItemLocked( player, item.ref ) && IsItemInRandomUnlocks( item.ref ) )
 		Reset2DCallsignCardElement( file.callsignCard, player )
 	else*/

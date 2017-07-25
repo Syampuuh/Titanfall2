@@ -129,7 +129,7 @@ resource/ui/menus/map_select.menu
 			ControlName				CNestedPanel
 			zpos					200
 			wide					674
-			tall					688
+			tall					828
 			visible					1
 			controlSettingsFile		"resource/UI/menus/map_buttons.res"
 

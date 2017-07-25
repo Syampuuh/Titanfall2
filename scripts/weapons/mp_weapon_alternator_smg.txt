@@ -131,12 +131,12 @@ WeaponData
 
 		// Damage - When Used by Players
 		"damage_near_value"   							"35"
-		"damage_far_value"								"25"
+		"damage_far_value"								"18"
 		"damage_near_value_titanarmor"					"100"
 		"damage_far_value_titanarmor" 					"60"
 		"damage_rodeo" 									"90"
 
-   	 	"damage_very_far_value"							"15"
+   	 	"damage_very_far_value"							"14"
    		"damage_very_far_distance"						"3000"
 
 		"damage_headshot_scale"							"1.5"
@@ -626,37 +626,9 @@ WeaponData
 			"tracer_effect_first_person"                "P_wpn_tracer_BC"
 			"tracer_effect"   							"P_wpn_tracer_BC"
 
-			"damage_near_value"   							"50"
-			"damage_far_value"								"35"
-			"damage_very_far_value"							"25"
-			"damage_near_value_titanarmor"					"200"
-			"damage_far_value_titanarmor" 					"160"
-		}
-		low_ttk
-		{
-			"damage_near_value"   							"--10" //35 3 -> 4
-			"damage_far_value"								"--5" //25 4 -> 5
-	   	 	"damage_very_far_value"							"--1" //15 7 -> 8
-		}
-		amped_ttk
-		{
-			"is_burn_mod"		"1"
-
-			//FX
-			"fx_muzzle_flash_view"							"P_wpn_muzzleflash_alternator_FP_burn"
-			"fx_muzzle_flash_world"							"P_wpn_muzzleflash_alternator_burn"
-			"fx_muzzle_flash_attach"						"muzzle_flash"
-
-			"fx_muzzle_flash2_view"							"P_wpn_muzzleflash_alternator_FP_burn"
-			"fx_muzzle_flash2_world"						"P_wpn_muzzleflash_alternator_burn"
-			"fx_muzzle_flash2_attach"						"muzzle_flash_l"
-
-			"tracer_effect_first_person"               		"P_wpn_tracer_BC"
-			"tracer_effect"   								"P_wpn_tracer_BC"
-
-			"damage_near_value"   							"++8" //50 2 -> 3
-			"damage_far_value"								"++5" //35 3 -> 4
-   	 		"damage_very_far_value"							"++4" //25 4 -> 6
+			"damage_near_value"   							"++10"
+			"damage_far_value"								"++2"
+			"damage_very_far_value"							"++3"
 			"damage_near_value_titanarmor"					"200"
 			"damage_far_value_titanarmor" 					"160"
 		}

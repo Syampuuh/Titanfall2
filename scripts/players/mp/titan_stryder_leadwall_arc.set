@@ -3,15 +3,15 @@
 {
 	"global"
 	{
-        healthPerSegment 1500	[$sp]
-        health			7500	[$sp]
-        healthDoomed	4000	[$sp]
+                healthPerSegment 1500	[$sp]
+                health			7500	[$sp]
+                healthDoomed	4000	[$sp]
 
-        healthPerSegment 2500	[$mp]
-        health			5000	[$mp]
-        healthDoomed	2500	[$mp]
+                healthPerSegment 2500	[$mp]
+                health			7500	[$mp]
+                healthDoomed	2500	[$mp]
 
-        healthShield	2500	[$mp]
-        healthShield	2500	[$sp]
+                healthShield	0	[$mp]
+                healthShield	2500	[$sp]
 	}
 }

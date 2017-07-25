@@ -42,6 +42,7 @@ global const METEOR_FX_BASE = $"P_wpn_meteor_exp"
 const FLAME_WALL_SPLIT = false
 const METEOR_LIFE_TIME = 1.2
 global const METEOR_THERMITE_DAMAGE_RADIUS_DEF = 45
+const FLAME_WALL_DAMAGE_RADIUS_DEF = 60
 
 const METEOR_SHELL_EJECT		= $"models/Weapons/shellejects/shelleject_40mm.mdl"
 const METEOR_FX_LOOP		= "Weapon_Sidwinder_Projectile"
@@ -133,7 +134,7 @@ void function Scorch_SelfDamageReduction( entity target, var damageInfo )
 	{
 		entity soul = attacker.GetTitanSoul()
 		if ( IsValid( soul ) && SoulHasPassive( soul, ePassives.PAS_SCORCH_SELFDMG ) )
-			DamageInfo_ScaleDamage( damageInfo, 0.20 )
+			DamageInfo_ScaleDamage( damageInfo, 0.0 )
 	}
 	else
 	{
@@ -320,6 +321,10 @@ void function PROTO_ThermiteCausesDamage( entity trail, entity owner, entity inf
 		}
 	)
 
+	float radius = METEOR_THERMITE_DAMAGE_RADIUS_DEF
+	if ( damageSourceId == eDamageSourceId.mp_titanweapon_flame_wall )
+		radius = FLAME_WALL_DAMAGE_RADIUS_DEF
+
 	for ( ;; )
 	{
 		RadiusDamage(
@@ -328,8 +333,8 @@ void function PROTO_ThermiteCausesDamage( entity trail, entity owner, entity inf
 			inflictor,		 									// inflictor
 			METEOR_DAMAGE_TICK_PILOT,							// pilot damage
 			METEOR_DAMAGE_TICK,									// heavy armor damage
-			METEOR_THERMITE_DAMAGE_RADIUS_DEF,					// inner radius
-			METEOR_THERMITE_DAMAGE_RADIUS_DEF,					// outer radius
+			radius,												// inner radius
+			radius,												// outer radius
 			SF_ENVEXPLOSION_NO_NPC_SOUND_EVENT,					// explosion flags
 			0, 													// distanceFromAttacker
 			0, 													// explosionForce

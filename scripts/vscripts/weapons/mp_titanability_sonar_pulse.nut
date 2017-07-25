@@ -103,7 +103,7 @@ void function PulseLocation( entity owner, int team, vector pos, bool hasIncreas
 	array<entity> players = GetPlayerArray()
 	foreach ( player in players )
 	{
-		Remote_CallFunction_Replay( player, "ServerCallback_SonarPulseFromPosition", pos.x, pos.y, pos.z, SONAR_PULSE_RADIUS )
+		Remote_CallFunction_Replay( player, "ServerCallback_SonarPulseFromPosition", pos.x, pos.y, pos.z, SONAR_PULSE_RADIUS, 1.0, hasDamageAmp )
 	}
 }
 
@@ -112,10 +112,10 @@ void function SonarPulseThink( entity enemy, vector position, int team, entity s
 	enemy.EndSignal( "OnDeath" )
 	enemy.EndSignal( "OnDestroy" )
 
-	SonarStart( enemy, position, team, sonarOwner )
 	int statusEffect = 0
 	if ( hasDamageAmp )
 		statusEffect = StatusEffect_AddEndless( enemy, eStatusEffect.damage_received_multiplier, 0.25 )
+	SonarStart( enemy, position, team, sonarOwner )
 
 	int sonarTeam = sonarOwner.GetTeam()
 	IncrementSonarPerTeam( sonarTeam )

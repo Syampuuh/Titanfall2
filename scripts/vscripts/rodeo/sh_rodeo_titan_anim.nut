@@ -188,6 +188,13 @@ function RodeoSharedTitanAnim_Init()
 	AddAnimAlias( "stryder", "hatch_rodeo_down_idle", 					"hatch_rodeo_light_down_idle" )
 	AddAnimAlias( "stryder", "hatch_rodeo_down", 						"hatch_rodeo_light_down" )
 
+	AddAnimAlias( "atlas", "pt_nuke_rodeo_back_right_apply_battery", 		"pt_nuke_rodeo_ride_R_return_battery" )
+	AddAnimAlias( "atlas", "ptpov_nuke_rodeo_back_right_apply_battery", 		"ptpov_nuke_rodeo_ride_R_return_battery" )
+	AddAnimAlias( "ogre", "pt_nuke_rodeo_back_right_apply_battery", 			"pt_nuke_rodeo_ogre_return_battery" )
+	AddAnimAlias( "ogre", "ptpov_nuke_rodeo_back_right_apply_battery", 		"ptpov_nuke_rodeo_ogre_R_return_battery" )
+	AddAnimAlias( "stryder", "pt_nuke_rodeo_back_right_apply_battery", 		"pt_nuke_rodeo_stryder_ride_R_return_battery" )
+	AddAnimAlias( "stryder", "ptpov_nuke_rodeo_back_right_apply_battery", 	"ptpov_nuke_rodeo_stryder_R_return_battery" )
+
 	//Adding audio aliases in here even though the file is called sh_rodeo_titan_anim. Not a huge deal I don't think.
 
 	AddAudioAlias( "atlas", "rodeo_battery_steal_3p", "rodeo_medium_battery_steal_ext" )
@@ -211,6 +218,12 @@ function RodeoSharedTitanAnim_Init()
 	AddAudioAlias( "stryder", "rodeo_grenade_3p", "rodeo_light_grenade_ext" )
 	AddAudioAlias( "stryder", "rodeo_grenade_1p", "rodeo_light_grenade_int" )
 
+	AddAudioAlias( "atlas", "nuke_rodeo_battery_return_3p", "rodeo_medium_battery_return_ext" )
+	AddAudioAlias( "atlas", "nuke_rodeo_battery_return_1p", "rodeo_medium_battery_return_int" )
+	AddAudioAlias( "ogre", "nuke_rodeo_battery_return_3p", "rodeo_heavy_battery_return_ext" )
+	AddAudioAlias( "ogre", "nuke_rodeo_battery_return_1p", "rodeo_heavy_battery_return_int" )
+	AddAudioAlias( "stryder", "nuke_rodeo_battery_return_3p", "rodeo_light_battery_return_ext" )
+	AddAudioAlias( "stryder", "nuke_rodeo_battery_return_1p", "rodeo_light_battery_return_int" )
 }
 
 

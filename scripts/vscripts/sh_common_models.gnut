@@ -27,6 +27,7 @@ global const asset FD_SANDBAGS_3 = $"models/barriers/sandbags_double_01.mdl"
 
 #if SERVER || CLIENT
 global function ShCommonModels_Init
+global function ShHarvester_GlobalInit
 
 void function ShCommonModels_Init()
 {
@@ -43,5 +44,20 @@ void function ShCommonModels_Init()
 	{
 		PrecacheModel( CONTROL_PANEL_MODEL )
 	}
+}
+
+void function ShHarvester_GlobalInit()
+{
+	#if MP
+	PrecacheModel( MODEL_HARVESTER_TOWER )
+	PrecacheModel( MODEL_HARVESTER_TOWER_COLLISION )
+	PrecacheModel( MODEL_HARVESTER_TOWER_RINGS )
+	PrecacheParticleSystem( FX_HARVESTER_BEAM )
+	PrecacheParticleSystem( FX_HARVESTER_HEALTH_LOW )
+	PrecacheParticleSystem( FX_HARVESTER_OVERSHIELD )
+	PrecacheParticleSystem( FX_HARVESTER_SHIELD )
+	PrecacheParticleSystem( FX_HARVESTER_SHIELD_BREAK )
+	PrecacheParticleSystem( FX_GEN_HARVESTER_BEAM )
+	#endif
 }
 #endif

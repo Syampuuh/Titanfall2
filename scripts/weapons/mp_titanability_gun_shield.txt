@@ -71,7 +71,8 @@ WeaponData
 		}
 		npc_infinite_shield
 		{
-			"fire_duration"									"999.0"
+			"npc_rest_time_between_bursts_min"				"*0.5"
+			"npc_rest_time_between_bursts_max"				"*0.5"
 		}
 		npc_more_shield
 		{
@@ -82,6 +83,10 @@ WeaponData
 			"npc_rest_time_between_bursts_max"				"10"
 		}
 		fd_gun_shield
+		{
+
+		}
+		fd_gun_shield_redirect
 		{
 
 		}

@@ -39,6 +39,7 @@ global enum eDamageSourceId
 	damagedef_stalker_powersupply_explosion_large_at
 	damagedef_shield_captain_arc_shield
 	damagedef_fd_explosive_barrel
+	damagedef_fd_tether_trap
 
 	//---------------------------
 
@@ -91,6 +92,7 @@ global enum eDamageSourceId
 	mp_titanweapon_arc_minefield
 	mp_titanability_hover
 	mp_titanability_cloak
+	mp_titanability_tether_trap
 
 	mp_titancore_amp_core
 	mp_titancore_emp
@@ -502,6 +504,7 @@ void function DamageTypes_Init()
 		[ eDamageSourceId.mp_titanability_smoke ]					= "#DEATH_ELECTRIC_SMOKE_SCREEN",
 		[ eDamageSourceId.mp_titanability_laser_trip ]				= "#DEATH_LASER_TRIPWIRE",
 		[ eDamageSourceId.mp_titanability_slow_trap ]				= "#DEATH_SLOW_TRAP",
+		[ eDamageSourceId.mp_titanability_tether_trap ]				= "#DEATH_TETHER_TRAP",
 
 		[ eDamageSourceId.rodeo ] 									= "#DEATH_TITAN_RODEO",
 		[ eDamageSourceId.rodeo_forced_titan_eject ] 				= "#DEATH_TITAN_RODEO",
@@ -512,7 +515,7 @@ void function DamageTypes_Init()
 		[ eDamageSourceId.mp_titancore_emp ] 						= "#TITANCORE_EMP",
 		[ eDamageSourceId.mp_titancore_siege_mode ]					= "#TITANCORE_SIEGE_MODE",
 		[ eDamageSourceId.mp_titancore_flame_wave ]					= "#TITANCORE_FLAME_WAVE",
-		[ eDamageSourceId.mp_titancore_flame_wave_secondary ]		= "#TITANCORE_FLAME_WAVE",
+		[ eDamageSourceId.mp_titancore_flame_wave_secondary ]		= "#GEAR_SCORCH_FLAMECORE",
 		[ eDamageSourceId.mp_titancore_nuke_core ] 					= "#TITANCORE_NUKE",
 		[ eDamageSourceId.mp_titancore_nuke_missile ]				= "#TITANCORE_NUKE_MISSILE",
 		[ eDamageSourceId.mp_titancore_shift_core ]					= "#TITANCORE_SWORD",
@@ -544,6 +547,8 @@ void function DamageTypes_Init()
 		[ eDamageSourceId.charge_ball ]								= "Charge Ball",
 		[ eDamageSourceId.mp_titanweapon_rocketeer_missile ]		= "Rocketeer Missile",
 		[ eDamageSourceId.core_overload ]							= "#DEATH_CORE_OVERLOAD",
+		[ eDamageSourceId.mp_weapon_arc_trap ]						= "#WPN_ARC_TRAP",
+
 
 		[ eDamageSourceId.mp_turretweapon_sentry ] 					= "#WPN_SENTRY_TURRET",
 		[ eDamageSourceId.mp_turretweapon_blaster ] 				= "#WPN_BLASTER_TURRET",

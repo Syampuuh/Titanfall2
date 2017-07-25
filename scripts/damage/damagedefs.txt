@@ -159,7 +159,7 @@ DamageDefs
 
 	damagedef_frag_drone_explode_FD
 	{
-		"damage" 					"200"	[$mp]
+		"damage" 					"130"	[$mp]
 		"damage" 					"130"	[$sp]
 		"damage_heavy_armor"		"600"
 		"inner_radius"				"200"	[$mp]
@@ -241,7 +241,7 @@ DamageDefs
 	damagedef_stalker_powersupply_explosion_large_at
 	{
 		"damage" 					"50"
-		"damage_heavy_armor"		"1250"
+		"damage_heavy_armor"		"500"
 		"inner_radius"				"200"
 		"radius"					"350"
 		"impulse_force"				"25000"
@@ -277,7 +277,20 @@ DamageDefs
 
 		"obituary"					"#DEATH_SLOW_TRAP"
 		"damage_flags"				"DF_RAGDOLL | DF_EXPLOSION"
-		"impact_effect_table"		"exp_xlarge"
+	}
+
+	damagedef_fd_tether_trap
+	{
+		"damage" 					"1000"
+		"damage_heavy_armor"		"1000"
+		"inner_radius"				"350"
+		"radius"					"350"
+		"impulse_force"				"100"
+		"death_protection"			"0"
+
+		"obituary"					"#DEATH_TETHER_TRAP"
+		"damage_flags"				"DF_RAGDOLL | DF_EXPLOSION"
+		"impact_effect_table"		"exp_tether_trap"
 	}
 
 }
