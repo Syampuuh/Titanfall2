@@ -181,12 +181,17 @@
 #### Ion
 
 * Critical Hits with Entangled Energy now restore 30 damage, or 8 when split, increased from 20 and 5.
-* **Frontier Defense only:** Splitter Cannon damage increased from 20-25 against infantry and 60-80 against Titans to 22-27.5 and 66-88.
+* **Frontier Defense only:** Splitter Cannon globally increased by 10%.
+* **Frontier Defense only:** Laser Shot damage against Titans increased by 25%.
+* **Frontier Defense only:** Laser Core damage globally increased by 45%.
 
 #### Monarch
 
 * Energy Siphon now decreases your movement speed to 70% base speed and turning speed to 80%, less severe than the original 50% movement speed and 65% turn speed (which are still the case with any other EMP such as Arc Grenades).
 * Arc Rounds shield drain against Vortex and Flame Shields decreased fromn 5% per round to 3.3%.
+* **Frontier Defense only:** XO-16 damage against Titans decreased by 20%.
+* **Frontier Defense only:** Salvo Rocket damage against infantry decreased by 20%.
+* **Frontier Defense only:** MTMS damage damage globally decreased by 20%.
 
 ### Fixes and Other Changes
 
