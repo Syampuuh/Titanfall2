@@ -118,7 +118,7 @@
 
 #### Mastiff
 
-* Amped close range damage decreased from 30 � 8 to 25 � 8. Amped medium and longest range damages decreased from 17 � 8 to 16 � 8.
+* Amped close range damage decreased from 30 × 8 to 25 × 8. Amped medium and longest range damages decreased from 17 × 8 to 16 × 8.
 
 #### Hammond P2016
 
@@ -196,7 +196,7 @@
 ### Fixes and Other Changes
 
 * Grenade indicators will be constantly visible again.
-* Fixed Scorch being unable to ignite his gas with the Flame Core. You're welcome! 😉
+* Fixed Scorch being unable to ignite his gas with the Flame Core. You're welcome! :wink:
 * The transitions between menus for your Titan and Pilot loadouts have comfy and smooth camera movement now.
 * Improvements to the Pilot Weapons and Titan stats screens, with the models in-engine so you can kiss them. [Comparisons here.](https://my.mixtape.moe/spzpna.jpg)
 
@@ -311,7 +311,7 @@
   * Tablet and knife props has been added for Droz, while Gates has been given a P2016. For the intro animations, presumably.
 * Prism versions of each of the Titan Regeneration callsigns have been added in devmode, but there are currently no associated unlock conditions.
 
-[↵Top](#table-of-contents)
+[âµTop](#table-of-contents)
 
 ## 30 May 2017 - Monarch's Reign
 
@@ -360,8 +360,8 @@
 
 * Near damage increased from 23 to 25.
 * Amped near damage increased from 25 to 35.
-* Vertical recoil widened from -0.01°-0.1° per shot to -0.15°-0.35° per shot.
-* Horizontal recoil increased from 0.0°-0.3° per shot to 0.1°-0.4° per shot.
+* Vertical recoil widened from -0.01Â°-0.1Â° per shot to -0.15Â°-0.35Â° per shot.
+* Horizontal recoil increased from 0.0Â°-0.3Â° per shot to 0.1Â°-0.4Â° per shot.
 
 #### X55-Devotion
 
@@ -436,7 +436,7 @@
 * Code to track executions while a Holo Pilot is active has been added, and the item datablock for the Holo execution has been added, requiring 20 kills with a Holo active to unlock it. Seems this one *should* begin tracking now, but it might require you to run the game in dev mode first?
 * Datablocks do *exist* for warpaints for Monarch, but the actual items in the arrays (which aren't in the VPKs) are disabled so I can't get a look at them. No clue why they're disabled to start with.
 
-[↵Top](#table-of-contents)
+[âµTop](#table-of-contents)
 
 ## 25 April 2017 - A Glitch in the Frontier
 
@@ -444,7 +444,7 @@
 
 * New Map: **Glitch**
   * "Pilot Simulator"
-  * "A medium-sized map designed for objective modes and inspired by Captain Lastimosa’s home planet of Harmony. Vertical drops and long, twisting paths dominate the environment, perfect for chaining together long wall runs to seamlessly glide across the map."
+  * "A medium-sized map designed for objective modes and inspired by Captain Lastimosaâs home planet of Harmony. Vertical drops and long, twisting paths dominate the environment, perfect for chaining together long wall runs to seamlessly glide across the map."
 * New Live Fire Map: **Deck**
   * "MRVN run facility for Pilot combat simulation and observation."
   * "Tight interior spaces, exposed courtyards, and watchful drones circling overhead. You may see a M.R.V.N. or two puttering around in the background."
@@ -460,7 +460,7 @@
   * **Iron Last Titan Standing**
     * "It's the Last Titan Standing you know and love with a few new rules. 5v5 with no ejecting and no batteries."
   * **Marked for Death**
-    * "6v6. One member of each team is Marked as targets and both teams must defend their target while trying to kill the other team’s target. Once one of the marked players are killed, the surviving Mark’s team is rewarded a point. After a few seconds, new Marks are chosen. First team to 10 kills wins."
+    * "6v6. One member of each team is Marked as targets and both teams must defend their target while trying to kill the other teamâs target. Once one of the marked players are killed, the surviving Markâs team is rewarded a point. After a few seconds, new Marks are chosen. First team to 10 kills wins."
     * Titanfall 1 returnee
   * Each mode will be rotated around as featured modes
 * Main menu spruced up with a new background video and some featured content highlights from Respawn.
@@ -563,7 +563,7 @@
 * More support for minimap resizing and zooming added. Implementation to live when!?
 * Some stuff discussing a "Boost Store". Burn Cards for Frontier Defense or something, maybe?
 
-[↵Top](#table-of-contents)
+[âµTop](#table-of-contents)
 
 ## 30 March 2017 - Colony Reborn
 
@@ -758,7 +758,7 @@
 * Some support added for the minimap to be zoomed in or out by the player, surprised this isn't already implemented
 * Seems like it'll be possible to invite friends to a network from within the game rather than having to mess with the official website
 
-[↵Top](#table-of-contents)
+[âµTop](#table-of-contents)
 
 ## 23 February 2017 - The Live Fire Patch
 
@@ -1012,7 +1012,7 @@
 
 #### Prime Titan: Legion
 
-[↵Top](#table-of-contents)
+[âµTop](#table-of-contents)
 
 ---
 
@@ -1128,4 +1128,4 @@
 * Unknown players in a Network Invite queue will now display as the smiley face callsign rather than the question mark
 * Sonar effects will no longer parent themselves to another player if the owner disconnects while a shot is active
 
-[↵Top](#table-of-contents)
+[âµTop](#table-of-contents)
