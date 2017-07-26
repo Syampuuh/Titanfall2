@@ -181,7 +181,7 @@
 #### Ion
 
 * Critical Hits with Entangled Energy now restore 30 damage, or 8 when split, increased from 20 and 5.
-* **Frontier Defense only:** Splitter Cannon globally increased by 10%.
+* **Frontier Defense only:** Splitter Cannon damage globally increased by 10%.
 * **Frontier Defense only:** Laser Shot damage against Titans increased by 25%.
 * **Frontier Defense only:** Laser Core damage globally increased by 45%.
 
