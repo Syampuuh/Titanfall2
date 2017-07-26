@@ -1,36 +1,211 @@
 # Table of Contents
 
- * [The War Games](#27-june-2017---the-war-games)
+ * [Operation Frontier Shield](#25-july-2017---operation-frontier-shield)
     * [Content and Feature Additions](#content-and-feature-additions)
     * [Rebalancing](#rebalancing)
     * [Fixes and Other Changes](#fixes-and-other-changes)
     * [Future Content](#future-content)
- * [Monarch's Reign](#30-may-2017---monarchs-reign)
+  * [The War Games](#27-june-2017---the-war-games)
     * [Content and Feature Additions](#content-and-feature-additions-1)
     * [Rebalancing](#rebalancing-1)
     * [Fixes and Other Changes](#fixes-and-other-changes-1)
     * [Future Content](#future-content-1)
- * [A Glitch in the Frontier](#25-april-2017---a-glitch-in-the-frontier)
+ * [Monarch's Reign](#30-may-2017---monarchs-reign)
     * [Content and Feature Additions](#content-and-feature-additions-2)
     * [Rebalancing](#rebalancing-2)
     * [Fixes and Other Changes](#fixes-and-other-changes-2)
     * [Future Content](#future-content-2)
- * [Colony Reborn](#30-march-2017---colony-reborn)
+ * [A Glitch in the Frontier](#25-april-2017---a-glitch-in-the-frontier)
     * [Content and Feature Additions](#content-and-feature-additions-3)
     * [Rebalancing](#rebalancing-3)
     * [Fixes and Other Changes](#fixes-and-other-changes-3)
     * [Future Content](#future-content-3)
- * [Live Fire](#23-february-2017---the-live-fire-patch)
+ * [Colony Reborn](#30-march-2017---colony-reborn)
     * [Content and Feature Additions](#content-and-feature-additions-4)
     * [Rebalancing](#rebalancing-4)
     * [Fixes and Other Changes](#fixes-and-other-changes-4)
     * [Future Content](#future-content-4)
- * [Angel City](#29-november-2016---the-angel-city-patch)
+ * [Live Fire](#23-february-2017---the-live-fire-patch)
     * [Content and Feature Additions](#content-and-feature-additions-5)
     * [Rebalancing](#rebalancing-5)
     * [Fixes and Other Changes](#fixes-and-other-changes-5)
+    * [Future Content](#future-content-5)
+ * [Angel City](#29-november-2016---the-angel-city-patch)
+    * [Content and Feature Additions](#content-and-feature-additions-6)
+    * [Rebalancing](#rebalancing-6)
+    * [Fixes and Other Changes](#fixes-and-other-changes-6)
 
 # Latest Client Changes
+
+## 25 July 2017 - Operation Frontier Shield
+
+### Content and Feature Additions
+
+* New Mode: **Frontier Defense**
+  * "Protect the Harvester. Survive."
+  * 4 player co-op PVE.
+  * Not everything that has been reported in this doc has made it into the final version of the mode, namely Pilot Tactical upgrades and some NPC classes.
+  * Each Titan has received a new set of unlocks that are currently exclusive to Frontier Defense. It's quite a bit of content, [so I've detailed them in a separate sheet here.](https://github.com/Syampuuh/Titanfall2/blob/master/aegisRanks.md)
+* New Map: **Rise**
+* New Live Fire Map: **Township**
+* New warpaints for Titans and select Pilot weapons
+  * Press your eyeballs against them: http://www.respawn.com/warpaints
+* Private Match lobbies on PC will have a chat box, for real this time!
+  
+### Rebalancing
+
+#### Pilot Melee
+
+* Punch range increased from 2.5 feet to 3.75 feet.
+* Lunge range decreased from 8.13 feet to 6.89 feet.
+* Lunge animation time increased from 0.2 sec to 0.3 sec.
+
+#### Phase Shift
+
+* Now carries only 1 charge instead of 2.
+* Cooldown per-charge decreased from 20 sec to 15 sec.
+
+#### R201/R101 Carbines
+
+* Amped medium range damage decreased from 35 to 21. Amped longest range damage decreased from 25 to 16.
+
+#### Hemlok BF-R
+
+* Amped close range damage decreased from 45 to 43.	Amped longest range damage decreased from 30 to 25.
+
+#### G2A5
+
+* Close range damage decreased from 45 to 40.
+* Firerate decreased from 7 r/s to 5.5 r/s (420 RPM to 330 RPS).
+
+#### V-47 Flatline
+
+* Medium range damage decreased from 25 to 20.
+* Amped close range damage decreased from 45 to 35. Amped medium range damage decreased from 35 to 25. Amped longest range damage decreased from 20 to 18.
+
+#### CAR
+
+* Medium range damage decreased from 17 to 13.
+* Amped medium range damage decreased from 25 to 16. Amped longest range damage decreased from 20 to 13.
+
+#### Alternator
+
+* Medium range damage decreased from 25 to 18. Longest range damage decreased from 15 to 14.
+* Amped close range damage decreased from 50 to 45. Amped medium range damage decreased from 35 to 20. Amped longest range damage decreased from 25 to 17.
+
+#### Volt
+
+* Mediumn range damage decreased from 18 to 15. Longest range damage decreased from 14 to 12.
+* Amped medium range damage decreased from 25 to 18. Amped longest range damage decreased from 20 to 15.
+
+#### R-97
+
+* Close range damage decreased from 23 to 20. Medium range damage decreased from 18 to 12.
+* Amped close range damage decreased from 33 to 25. Amped medium range damage decreased from 33 to 15. Amped longest range damage decreased from 24 to 13.
+
+#### Spitfire
+
+* Amped longest range damage decreased from 25 to 23.
+
+#### X-55 Devotion
+
+* Amped longest range damage decreased from 20 to 17.
+
+#### Longbow DMR
+
+* Firerate decreased from 3.5 r/s to 3 r/s (210 RPM to 180 RPM).
+* Amped damage decreased from 80 at all ranges to 75 at all ranges.
+
+#### Mastiff
+
+* Amped close range damage decreased from 30 × 8 to 25 × 8. Amped medium and longest range damages decreased from 17 × 8 to 16 × 8.
+
+#### Hammond P2016
+
+* Close range damage decreased from 40 to 30. Medium range damage decreased from 30 to 20. Longest range damage decreased from 20 to 15.
+* Consequently, suppressed close range damage decreased from 32 to 20. Suppressed medium range damage decreased from 25 to 18. Suppressed longest range damage decreased from 15 to 13.
+* Amped close range damage decreased from 45 to 35. Amped medium range damage decreased from 35 to 25.  Amped longest range damage decreased from 25 to 17.
+
+#### Wingman Elite
+
+* Base ammo capacity decreased from 6 rounds to 4 rounds. Extended ammo capacity decreased from 8 rounds to 6 rounds.
+  * Entertainingly, the model was not updated to reflect this.
+* Close range damage decreased from 75 to 50.
+* Amped close range damage increased from 90 to 95. Amped medium range damage decreased from 75 to 70. Amped longest range damage increased from 45 to 55.
+
+#### SA-3 Mozambique
+
+* Firerate decreased from 3 r/s to 2.5 r/s (180 RPM to 150 RPM).
+
+#### B3 Wingman
+
+* Close range damage decreased from 55 to 40. Medium range damage decreased from 45 to 40.
+* Amped close range damage decreased from 90 to 50. Amped medium range damage increased from 50 to 55? Amped longest range damage increased from 35 to 40.
+
+#### Archer
+
+* Can no longer lock onto cloaked targets, regardless of Pilot or NPC.
+
+#### Smart Pistol
+
+* Can no longer lock onto cloaked targets, regardless of Pilot or NPC.
+
+#### Stalkers
+  
+* Damage dealt from running over a Stalker in your Titan has been decreased from 1250 to just 500 (1/2 a bar to 1/5 a bar).
+* HP has been decreased from 250 to 150.
+
+#### All Titans
+
+* Overcore will now deploy your Titan with 20% core charge instead of 30%.
+* Electric Smoke is mow earned at 20% core charge instead of 25%.
+
+#### Ronin
+
+* Sword Block's effectiveness has been decreased by 5%, meaning that it will now block 70% of damage and 85% in Sword Core, decreased from 75% and 90%.
+
+#### Scorch
+
+* Now has 1 base dash, with a cooldown of 10 seconds. Equipping Turbo Engine will cut that cooldown to 5 seconds (an improvement to its original cooldown of 6 seconds).
+* Tempered Plating now provides complete immunity to your own thermite, and also removes Scorch's critical hit zones.
+* Wildfire Launcher now increases the impact damage of the Thermite Launcher from 800 to 1000.
+* The trails from Flame Core when using the Scorched Earth kit have an increased duration, from 1 second to 1.5 seconds.
+
+#### Legion
+
+* Now has 1 base dash, with a cooldown of 10 seconds. Equipping Turbo Engine will cut that cooldown to 5 seconds (an improvement to its original cooldown of 6 seconds).
+* Power Shots with Hidden Compartment equipped do 15% less damage to Titans, meaning 1800 damage decreased from 2000.
+  * With Close Range mode, this means each pellet will be doing 112.5 damage instead of 125.
+  * With Long Range mode, this only affects the impact damage. The explosion will still do its full 1800 damage to Titans.
+
+#### Ion
+
+* Critical Hits with Entangled Energy now restore 30 damage, or 8 when split, increased from 20 and 5.
+* **Frontier Defense only:** Splitter Cannon damage increased from 20-25 against infantry and 60-80 against Titans to 22-27.5 and 66-88.
+
+#### Monarch
+
+* Energy Siphon now decreases your movement speed to 70% base speed and turning speed to 80%, less severe than the original 50% movement speed and 65% turn speed (which are still the case with any other EMP such as Arc Grenades).
+* Arc Rounds shield drain against Vortex and Flame Shields decreased fromn 5% per round to 3.3%.
+
+### Fixes and Other Changes
+
+* Grenade indicators will be constantly visible again.
+* Fixed Scorch being unable to ignite his gas with the Flame Core. You're welcome! ðŸ˜‰
+* The transitions between menus for your Titan and Pilot loadouts have comfy and smooth camera movement now.
+* Improvements to the Pilot Weapons and Titan stats screens, with the models in-engine so you can kiss them. [Comparisons here.](https://my.mixtape.moe/spzpna.jpg)
+
+### Future Content
+
+* Decent chance that the next Frontier Defense maps are Angel City and Eden, judging by them already having (temporary) names for their waves.
+* There's some stuff in the backend for Private Match settings that suggest you might be able to play Frontier Defense in there some time.
+* Entitlement entries for a "Titanfall 2 Ultimate Edition" and "Titanfall 2 Jumpstarter Kit" have been released, presumably being the game bundled with some quantity of DLC.
+* The next Pilot Execution will be for the Amped Wall. Who'da thunk. [I actually found the animations a while ago,](https://www.youtube.com/watch?v=K71SrKbiRx4) but there is now code in the execution script that is loading the AWall disc a prop, so it's extra confirmed.
+  * No indication of what the unlock condition will be yet.
+
+---
+
+# Older Changes
 
 ## 27 June 2017 - The War Games
 
@@ -132,10 +307,6 @@
 * Prism versions of each of the Titan Regeneration callsigns have been added in devmode, but there are currently no associated unlock conditions.
 
 [â†µTop](#table-of-contents)
-
----
-
-# Older Changes
 
 ## 30 May 2017 - Monarch's Reign
 
