@@ -187,6 +187,8 @@
 
 #### Monarch
 
+* XO-16 capacity increased from 35 to 40 rounds.
+* Consequently, XO-16 capacity with Arc Rounds installed raised from 45 to 50 rounds.
 * Energy Siphon now decreases your movement speed to 70% base speed and turning speed to 80%, less severe than the original 50% movement speed and 65% turn speed (which are still the case with any other EMP such as Arc Grenades).
 * Arc Rounds shield drain against Vortex and Flame Shields decreased from 5% per round to 3.3%.
 * **Frontier Defense only:** XO-16 damage against Titans decreased by 20%.
