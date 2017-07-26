@@ -71,12 +71,12 @@
 
 #### Hemlok BF-R
 
-* Amped close range damage decreased from 45 to 43.	Amped longest range damage decreased from 30 to 25.
+* Amped close range damage decreased from 45 to 43. Amped longest range damage decreased from 30 to 25.
 
 #### G2A5
 
 * Close range damage decreased from 45 to 40.
-* Firerate decreased from 7 r/s to 5.5 r/s (420 RPM to 330 RPS).
+* Firerate decreased from 7 r/s to 5.5 r/s (420 RPM to 330 RPM).
 
 #### V-47 Flatline
 
@@ -95,7 +95,7 @@
 
 #### Volt
 
-* Mediumn range damage decreased from 18 to 15. Longest range damage decreased from 14 to 12.
+* Medium range damage decreased from 18 to 15. Longest range damage decreased from 14 to 12.
 * Amped medium range damage decreased from 25 to 18. Amped longest range damage decreased from 20 to 15.
 
 #### R-97
@@ -188,7 +188,7 @@
 #### Monarch
 
 * Energy Siphon now decreases your movement speed to 70% base speed and turning speed to 80%, less severe than the original 50% movement speed and 65% turn speed (which are still the case with any other EMP such as Arc Grenades).
-* Arc Rounds shield drain against Vortex and Flame Shields decreased fromn 5% per round to 3.3%.
+* Arc Rounds shield drain against Vortex and Flame Shields decreased from 5% per round to 3.3%.
 * **Frontier Defense only:** XO-16 damage against Titans decreased by 20%.
 * **Frontier Defense only:** Salvo Rocket damage against infantry decreased by 20%.
 * **Frontier Defense only:** MTMS damage damage globally decreased by 20%.
