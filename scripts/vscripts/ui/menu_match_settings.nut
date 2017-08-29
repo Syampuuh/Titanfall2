@@ -6,6 +6,7 @@ global function UpdateMatchSettingsForGamemode
 global function MatchSettings_FormatPlaylistVarValue
 
 global const table< string, string > MatchSettings_PlaylistVarLabels = {
+	match_visibility = "#PM_MATCH_VISIBILITY",
 	roundscorelimit = "#PM_SCORE_LIMIT",
 	scorelimit = "#PM_SCORE_LIMIT",
 	roundtimelimit = "#PM_TIME_LIMIT",
@@ -30,6 +31,7 @@ const string FORMAT_PERCENTAGE = "%d%%"
 
 struct {
 	var menu = null
+	var matchVisibilityButton = null
 	var scoreLimitButton = null
 	var scoreLimitLabel = null
 	var timeLimitButton = null
@@ -125,6 +127,19 @@ void function InitMatchSettingsMenu()
 
 	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnOpenMatchSettingsMenu )
 	AddMenuEventHandler( menu, eUIEvent.MENU_NAVIGATE_BACK, OnMatchSettingsMenu_NavigateBack )
+
+	file.matchVisibilityButton = Hud_GetChild( menu, "BtnMatchVisibility" )
+	SetButtonRuiText( file.matchVisibilityButton, MatchSettings_PlaylistVarLabels["match_visibility"] )
+	PlaylistVarValueFormat matchVisibilityFormat = {
+		enumStrs = {
+			[MATCHVISIBILITY_PRIVATE] = "#MATCH_VISIBILITY_PRIVATE",
+			[MATCHVISIBILITY_LOCKED] = "#MATCH_VISIBILITY_LOCKED",
+		},
+		...
+	}
+	file.playlistVarValueFormats["match_visibility"] <- matchVisibilityFormat
+	foreach ( int enum_, string val in matchVisibilityFormat.enumStrs )
+		Hud_DialogList_AddListItem( file.matchVisibilityButton, val, string( enum_ ) )
 
 	file.scoreLimitButton = Hud_GetChild( menu, "BtnScoreLimit" )
 	Hud_AddEventHandler( file.scoreLimitButton, UIE_CHANGE, SetScoreLimitText )
@@ -245,6 +260,7 @@ void function InitMatchSettingsMenu()
 
 	file.matchSettingDescLabel = Hud_GetChild( menu, "LblMenuItemDescription" )
 
+	AddDescFocusHandler( file.matchVisibilityButton, "#PM_DESC_MATCH_VISIBILITY" )
 	AddDescFocusHandler( file.scoreLimitButton, "#PM_DESC_SCORE_LIMIT" )
 	AddDescFocusHandler( file.timeLimitButton, "#PM_DESC_TIME_LIMIT" )
 	AddDescFocusHandler( file.pilotBoostsButton, "#PM_DESC_PILOT_BOOSTS" )
@@ -270,6 +286,7 @@ void function UpdateMatchSettingsForGamemode()
 	file.modeSettingsName = PrivateMatch_GetSelectedMode()
 	Hud_SetText( file.gameModeLabel, GetGameModeDisplayName( file.modeSettingsName ) )
 
+	Hud_SetPlaylistVarName( file.matchVisibilityButton, "match_visibility" )
 	SetGameModeSettings()
 
 	int gamemodeIdx = expect int( level.ui.privatematch_mode )
@@ -291,7 +308,7 @@ void function UpdateMatchSettingsForGamemode()
 void function OnOpenMatchSettingsMenu()
 {
 	UpdateMatchSettingsForGamemode()
-	Hud_SetFocused( file.scoreLimitButton )
+	Hud_SetFocused( file.matchVisibilityButton )
 }
 
 void function OnMatchSettingsMenu_NavigateBack()

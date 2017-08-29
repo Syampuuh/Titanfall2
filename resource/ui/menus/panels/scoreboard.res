@@ -51,7 +51,7 @@
     ColumnTitles
     {
         ControlName				RuiPanel
-        wide				    772
+        wide				    852
         tall				    60
         visible				    1
         rui					    "ui/postgame_scoreboard_column_titles.rpak"
@@ -63,7 +63,7 @@
 //    ColumnTitlesDEBUG
 //    {
 //        ControlName				RuiPanel
-//        wide				    772
+//        wide				    852
 //        tall				    60
 //        visible				    1
 //		bgcolor_override		"70 70 70 100"
@@ -195,7 +195,7 @@
     TeamSpacer
     {
         ControlName				Label
-		wide					772
+		wide					852
 		tall					2
 		visible					0
 
@@ -384,7 +384,7 @@
 	ModeAndMap
 	{
 		ControlName				RuiPanel
-        wide				    772
+        wide				    852
         tall				    60
 		visible					1
 		rui					    "ui/postgame_scoreboard_mode_and_map.rpak"
@@ -396,7 +396,7 @@
 //    ModeAndMapDEBUG
 //    {
 //        ControlName				RuiPanel
-//        wide				    772
+//        wide				    852
 //        tall				    60
 //        visible				    1
 //		bgcolor_override		"70 0 0 100"

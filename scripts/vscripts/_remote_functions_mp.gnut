@@ -463,10 +463,10 @@ function RemoteFunctions_Init()
 
 
 	//Bleedout mechanic
-	Remote_RegisterFunction( "ServerCallback_BLEEDOUT_StartFirstAidProgressBar" )
-	Remote_RegisterFunction( "ServerCallback_BLEEDOUT_StopFirstAidProgressBar" )
-	Remote_RegisterFunction( "ServerCallback_BLEEDOUT_ShowWoundedMarker" )
-	Remote_RegisterFunction( "ServerCallback_BLEEDOUT_HideWoundedMarker" )
+	//Remote_RegisterFunction( "ServerCallback_BLEEDOUT_StartFirstAidProgressBar" )
+	//Remote_RegisterFunction( "ServerCallback_BLEEDOUT_StopFirstAidProgressBar" )
+	//Remote_RegisterFunction( "ServerCallback_BLEEDOUT_ShowWoundedMarker" )
+	//Remote_RegisterFunction( "ServerCallback_BLEEDOUT_HideWoundedMarker" )
 
 	// NEW INTRO SYSTEM ( _cl_spawnslot_system.nut )
 	Remote_RegisterFunction( "ServerCallback_ResetEntSkyScale" )
@@ -487,7 +487,7 @@ function RemoteFunctions_Init()
 	Remote_RegisterFunction( "ServerCallback_AnnounceWinner" )
 	Remote_RegisterFunction( "ServerCallback_AnnounceRoundWinner" )
 
-	Remote_RegisterFunction( "ServerCallback_ToggleRankedInGame" )
+	//Remote_RegisterFunction( "ServerCallback_ToggleRankedInGame" )
 	Remote_RegisterFunction( "ServerCallback_GuidedMissileDestroyed" )
 	Remote_RegisterFunction( "ServerCallback_DoClientSideCinematicMPMoment" ) // hard to say if this is safe as fire and forget
 	Remote_RegisterFunction( "ServerCallback_SetAssistInformation" )
@@ -518,9 +518,9 @@ function RemoteFunctions_Init()
 	Remote_RegisterFunction( "ServerCallback_MinimapPulse" ) // if burn card moves to weapon then we dont need this
 	Remote_RegisterFunction( "ServerCallback_UpdateOverheadIconForNPC" )
 	Remote_RegisterFunction( "ServerCallback_SetFlagHomeOrigin" )
-	Remote_RegisterFunction( "ServerCallback_OpenBurnCardMenu" )
-	Remote_RegisterFunction( "ServerCallback_OpenDifficultyMenu" )
-	Remote_RegisterFunction( "ServerCallback_ExitBurnCardMenu" )
+	//Remote_RegisterFunction( "ServerCallback_OpenBurnCardMenu" )
+	//Remote_RegisterFunction( "ServerCallback_OpenDifficultyMenu" )
+	//Remote_RegisterFunction( "ServerCallback_ExitBurnCardMenu" )
 
 	// TITAN SHIELD BATTERY
 	Remote_RegisterFunction( "ServerCallback_StartBatteryTimer" )
@@ -556,13 +556,13 @@ function RemoteFunctions_Init()
 	Remote_RegisterFunction( "ServerCallback_FFASuddenDeathAnnouncement" )
 
 	// Bomb Mode
-	Remote_RegisterFunction( "ServerCallback_AnnounceBombPickup" )
-	Remote_RegisterFunction( "ServerCallback_AnnounceBombDropped" )
-	Remote_RegisterFunction( "ServerCallback_AnnounceBombArmed" )
-	Remote_RegisterFunction( "ServerCallback_AnnounceBombDisarmed" )
-	Remote_RegisterFunction( "ServerCallback_AnnounceBombRespawned" )
-	Remote_RegisterFunction( "ServerCallback_AnnounceBombExploded" )
-	Remote_RegisterFunction( "ServerCallback_IncomingBombSpawnpoint" )
+	//Remote_RegisterFunction( "ServerCallback_AnnounceBombPickup" )
+	//Remote_RegisterFunction( "ServerCallback_AnnounceBombDropped" )
+	//Remote_RegisterFunction( "ServerCallback_AnnounceBombArmed" )
+	//Remote_RegisterFunction( "ServerCallback_AnnounceBombDisarmed" )
+	//Remote_RegisterFunction( "ServerCallback_AnnounceBombRespawned" )
+	//Remote_RegisterFunction( "ServerCallback_AnnounceBombExploded" )
+	//Remote_RegisterFunction( "ServerCallback_IncomingBombSpawnpoint" )
 
 	//Air Drops
 	Remote_RegisterFunction( "ServerCallback_IncomingAirdrop" )
@@ -655,6 +655,7 @@ function RemoteFunctions_Init()
 	Remote_RegisterFunction( "ServerCallback_SetUIVar" )
 	Remote_RegisterFunction( "ServerCallback_ShopPurchaseStatus" )
 	Remote_RegisterFunction( "ServerCallback_OpenPilotLoadoutMenu" )
+	Remote_RegisterFunction( "ServerCallback_GenericDialog" )
 
 	// Ghost Recorder
 	RegisterEntityVar( "player", "mobilityGhostAnalyzed", false )

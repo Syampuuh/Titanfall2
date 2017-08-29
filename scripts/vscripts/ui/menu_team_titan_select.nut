@@ -33,10 +33,13 @@ struct
 	var readyPanel
 	var cover
 	var doubleXPButton
+	var chatBox
 
 	bool buttonsRegistered = false
 
 	int menuMode
+
+	float nextAllowSoundTime = 0.0
 } file
 
 void function InitTeamTitanSelectMenu()
@@ -91,11 +94,16 @@ void function InitTeamTitanSelectMenu()
 	file.readyPanel = Hud_GetChild( file.menu, "ReadyRui" )
 	file.cover = Hud_GetChild( file.menu, "Cover" )
 
+	#if PC_PROG
+	file.chatBox = Hud_GetChild( file.menu, "LobbyChatBox" )
+	#endif // PC_PROG
+
 	file.doubleXPButton = Hud_GetChild( file.menu, "DoubleXP" )
 
 	AddMenuFooterOption( file.menu, BUTTON_A, "#A_BUTTON_SELECT", "", null, TeamTitanSelect_IsNotReady )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.menu, BUTTON_X, "#MENU_X_BUTTON_EDIT_TITAN", "#MENU_EDIT_TITAN", EditTitanButton_OnClick, TeamTitanSelect_IsReady )
+	AddMenuFooterOption( file.menu, BUTTON_Y, "#MENU_Y_BUTTON_EDIT_PILOT", "#MENU_EDIT_PILOT", EditPilotButton_OnClick, CoverIsOff )
 }
 
 void function TTSUpdateDoubleXP( int count, bool avialable, float status )
@@ -117,7 +125,12 @@ void function ServerCallback_UpdateTeamTitanMenuTime( float endTime )
 	Signal( uiGlobal.signalDummy, "TTSMenuClosed" )
 
 	file.allowSelection = true
-	EmitUISound( "ui_ctf_1p_playerscore" )
+
+	if ( file.nextAllowSoundTime < Time() )
+	{
+		EmitUISound( "ui_ctf_1p_playerscore" )
+		file.nextAllowSoundTime = Time() + 5.0
+	}
 
 	Hud_SetEnabled( file.cover, false )
 	Hud_Hide( file.cover )
@@ -259,7 +272,7 @@ void function RegisterButtonCallbacks()
 		return
 
 	file.buttonsRegistered = true
-	RegisterButtonPressedCallback( BUTTON_Y, EnableDoubleXP )
+	RegisterButtonPressedCallback( BUTTON_BACK, EnableDoubleXP )
 	RegisterButtonPressedCallback( KEY_RSHIFT, EnableDoubleXP )
 }
 
@@ -354,8 +367,16 @@ void function OnTeamTitanSelectMenu_Open()
 
 void function EnableDoubleXP( var button )
 {
+	#if PC_PROG
+	if ( Hud_IsFocused( file.chatBox ) )
+		return
+	#endif // PC_PROG
+
 	if ( CanRunClientScript() )
+	{
+		EmitUISound( "Menu_Email_Sent" )
 		RunClientScript( "UseDoubleXP" )
+	}
 }
 
 void function OnTeamTitanSelectMenu_Hide()
@@ -372,12 +393,13 @@ void function DeregisterButtonCallbacks()
 
 	file.buttonsRegistered = false
 
-	DeregisterButtonPressedCallback( BUTTON_Y, EnableDoubleXP )
+	DeregisterButtonPressedCallback( BUTTON_BACK, EnableDoubleXP )
 	DeregisterButtonPressedCallback( KEY_RSHIFT, EnableDoubleXP )
 }
 
 void function OnTeamTitanSelectMenu_Close()
 {
+	RunMenuClientFunction( "ClearAllPilotPreview" )
 	Signal( uiGlobal.signalDummy, "TTSMenuClosed" )
 	file.menuOpened = false
 	UI_SetPresentationType( ePresentationType.INACTIVE )
@@ -581,7 +603,9 @@ void function BeginEditMode( var button )
 	string modifiedAlias = "diag_gs_titan" + loadout.titanClass + primeTitanString + "_embark"
 	EmitUISound( modifiedAlias )
 
-	UI_SetPresentationType( ePresentationType.TITAN_CENTER_SELECTED )
+	if ( uiGlobal.activeMenu == file.menu )
+		UI_SetPresentationType( ePresentationType.TITAN_CENTER_SELECTED )
+
 	Signal( uiGlobal.signalDummy, "Delayed_RequestTitanLoadout" )
 	ClientCommand( "RequestTitanLoadout " + uiGlobal.titanSpawnLoadoutIndex )
 	RunMenuClientFunction( "UpdateTitanModel", uiGlobal.titanSpawnLoadoutIndex )
@@ -625,12 +649,25 @@ void function BeginSelectionMode()
 	// Hud_Show( subText )
 }
 
+void function EditPilotButton_OnClick( var button )
+{
+	// SetEditLoadout( "pilot", uiGlobal.pilotSpawnLoadoutIndex )
+	// RunMenuClientFunction( "SetEditingPilotLoadoutIndex", uiGlobal.pilotSpawnLoadoutIndex )
+	AdvanceMenu( GetMenu( "EditPilotLoadoutsMenu" ) )
+	RunMenuClientFunction( "HideTTSPanel" )
+}
+
 void function EditTitanButton_OnClick( var button )
 {
 	SetEditLoadout( "titan", uiGlobal.titanSpawnLoadoutIndex )
 	RunMenuClientFunction( "SetEditingTitanLoadoutIndex", uiGlobal.titanSpawnLoadoutIndex )
 	AdvanceMenu( GetMenu( "EditTitanLoadoutMenu" ) )
 	RunMenuClientFunction( "HideTTSPanel" )
+}
+
+bool function CoverIsOff()
+{
+	return !Hud_IsEnabled( file.cover )
 }
 
 bool function TeamTitanSelectMenuIsOpen()

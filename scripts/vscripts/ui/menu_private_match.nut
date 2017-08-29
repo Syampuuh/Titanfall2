@@ -7,8 +7,6 @@ global function InitPrivateMatchMenu
 global function HandleLockedCustomMenuItem
 global function GetMapImageForMapName
 
-global function IsFDMode
-
 struct
 {
 	var menu
@@ -92,6 +90,7 @@ const table<asset> mapImages =
 	mp_wargames = $"loadscreens/mp_wargames_lobby",
 	mp_rise = $"loadscreens/mp_rise_lobby",
 	mp_lf_township = $"loadscreens/mp_lf_township_lobby",
+	mp_lf_uma = $"loadscreens/mp_lf_uma_lobby",
 }
 
 void function MenuPrivateMatch_Init()
@@ -770,20 +769,4 @@ void function OnPrivateMatchMenu_Open()
 {
 	Lobby_SetFDMode( false )
 	OnLobbyMenu_Open()
-}
-
-bool function IsFDMode( string modeName )
-{
-	bool isFD = false
-	switch ( modeName )
-	{
-		case "fd_easy":
-		case "fd_normal":
-		case "fd_hard":
-		case "fd_master":
-		case "fd_insane":
-			isFD = true
-	}
-
-	return isFD
 }

@@ -182,7 +182,7 @@ void function BurnCardButton_GetFocus( var button, int elemNum )
 	UpdateItemDetails( file.menu, name, description, unlockReq, unlockProgressText, unlockProgressFrac )
 
 	var activationCostTextRui = Hud_GetRui( Hud_GetChild( file.menu, "ActivationCosts" ) )
-	int cost = availableBoostData[elemNum].cost
+	int cost = GetPlaylistBoostCost( ref, availableBoostData[elemNum].cost )
 
 	string labelText = ""
 	if ( IsItemLocked( GetUIPlayer(), availableBoostData[elemNum].itemRef ) )
@@ -314,7 +314,7 @@ void function OnOpenBoostStoreMenu()
 
 void function DepositButton_Activate( var button )
 {
-	if ( GetCurrentPlaylistVarInt( "fd_difficulty", 0 ) <= 0 )
+	if ( GetCurrentPlaylistVarInt( "boost_store_team_reserve", 0 ) <= 0 )
 		return
 
 	if ( GetActiveMenu() != file.menu )
@@ -347,7 +347,7 @@ void function DepositButton_Activate( var button )
 
 void function WithdrawButton_Activate( var button )
 {
-	if ( GetCurrentPlaylistVarInt( "fd_difficulty", 0 ) <= 0 )
+	if ( GetCurrentPlaylistVarInt( "boost_store_team_reserve", 0 ) <= 0 )
 		return
 
 	if ( GetTeamReserve() <= 0 )

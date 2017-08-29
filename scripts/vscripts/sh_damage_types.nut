@@ -2,6 +2,7 @@ global function DamageTypes_Init
 global function RegisterWeaponDamageSourceName
 global function GetObitFromDamageSourceID
 global function DamageSourceIDToString
+global function DamageSourceIDHasString
 
 struct
 {
@@ -627,6 +628,11 @@ void function RegisterWeaponDamageSourceName( string weaponRef, string damageSou
 {
 	int sourceID = eDamageSourceId[weaponRef]
 	file.damageSourceIDToName[ sourceID ] <- damageSourceName
+}
+
+bool function DamageSourceIDHasString( int index )
+{
+	return (index in file.damageSourceIDToString)
 }
 
 string function DamageSourceIDToString( int index )

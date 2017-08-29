@@ -889,9 +889,14 @@ void function OnModSelectMenu_Close()
 		parentRef = editLoadout.primary
 		items = GetDisplaySubItemsOfType( parentRef, eItemTypes.PILOT_PRIMARY_MOD )
 	}
-	else
+	else if ( uiGlobal.editingLoadoutProperty == "secondaryMod1" || uiGlobal.editingLoadoutProperty == "secondaryMod2" )
 	{
 		parentRef = editLoadout.secondary
+		items = GetDisplaySubItemsOfType( parentRef, eItemTypes.PILOT_SECONDARY_MOD )
+	}
+	else if ( uiGlobal.editingLoadoutProperty == "weapon3Mod1" || uiGlobal.editingLoadoutProperty == "weapon3Mod2" )
+	{
+		parentRef = editLoadout.weapon3
 		items = GetDisplaySubItemsOfType( parentRef, eItemTypes.PILOT_SECONDARY_MOD )
 	}
 

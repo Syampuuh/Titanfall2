@@ -5,6 +5,7 @@ global function InitConnectingDialog
 global function InitDataCenterDialogMenu
 global function InitAnnouncementDialog
 global function ServerCallback_OpenPilotLoadoutMenu
+global function ServerCallback_GenericDialog
 global function SCBUI_PlayerConnectedOrDisconnected
 global function LeaveMatch
 global function CancelPrivateMatchSearch
@@ -378,20 +379,6 @@ void function OpenDialog( DialogData dialogData )
 	AdvanceMenu( menu )
 }
 
-// No way to test a named element exists so this is a workaround
-var function GetSingleElementByClassname( var menu, string classname )
-{
-	array<var> elems = GetElementsByClassname( menu, classname )
-
-	if ( elems.len() )
-	{
-		Assert( elems.len() == 1 )
-		return elems[0]
-	}
-
-	return null
-}
-
 const int BOTTOM_BUTTON_AREA_HEIGHT = 56
 const int BOTTOM_BUTTON_AREA_HEIGHT_WHENDISABLED = 20
 
@@ -438,6 +425,32 @@ function ServerCallback_OpenPilotLoadoutMenu()
 	{
 		AdvanceMenu( GetMenu( "PilotLoadoutsMenu" ) )
 	}
+}
+
+function ServerCallback_GenericDialog( int headerId, int messageId, bool isError )
+{
+	var header = GetCurrentPlaylistVar( "generic_dialog_header_" + headerId )
+	if ( type( header ) != "string" )
+		return
+
+	var message = GetCurrentPlaylistVar( "generic_dialog_message_" + messageId )
+	if ( type( message ) != "string" )
+		return
+
+	DialogData dialogData
+	dialogData.header = string( header )
+	dialogData.message = string( message )
+	if ( isError )
+		dialogData.image = $"ui/menu/common/dialog_error"
+
+	#if PC_PROG
+		AddDialogButton( dialogData, "#DISMISS" )
+	#endif // PC_PROG
+
+	AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
+	AddDialogFooter( dialogData, "#B_BUTTON_DISMISS_RUI" )
+
+	OpenDialog( dialogData )
 }
 
 function SCBUI_PlayerConnectedOrDisconnected( joinSound )

@@ -48,20 +48,6 @@
         pin_corner_to_sibling	TOP_LEFT
         pin_to_sibling_corner	BOTTOM_LEFT
 	}
-//	Passive1Desc
-//	{
-//		ControlName				Label
-//		InheritProperties		AbilityDesc
-//		classname				"Passive1Desc HideWhenLocked"
-//		xpos 					10
-//		ypos 					-29
-//		font					Default_26
-//		fgcolor_override        "200 200 200 255"
-//
-//		pin_to_sibling			ButtonPassive1
-//		pin_corner_to_sibling	TOP_LEFT
-//		pin_to_sibling_corner	TOP_RIGHT
-//	}
     ButtonPassive2
     {
 		ControlName				RuiButton
@@ -73,7 +59,7 @@
         navUp                 	ButtonPassive1
         navDown                	ButtonPassive3
         navLeft           	    ButtonFDTitanUpgrades
-        navRight           	    ButtonFDTitanUpgrades
+        navRight           	    ButtonShoulderBadge
 
         pin_to_sibling			ButtonPassive1
         pin_corner_to_sibling	TOP_RIGHT
@@ -194,13 +180,37 @@
 
 		navLeft                 ButtonPassive1
         navRight                ButtonCamoSkin
-        navDown               	ButtonPassive4
+        navDown               	ButtonShoulderBadge
         navUp               	ButtonPassive4
 
         pin_to_sibling			ButtonPassive1
         pin_corner_to_sibling	TOP_LEFT
         pin_to_sibling_corner	TOP_LEFT
     }
+
+    ButtonShoulderBadge
+    {
+		ControlName				RuiButton
+		ypos                    16
+
+		wide					318
+		tall					40
+		visible					0
+		enabled					1
+		style					RuiButton
+        rui						"ui/badge_button.rpak"
+		labelText 				""
+
+        navLeft                 ButtonPassive2
+        navRight               	ButtonTitanExecutions
+        navDown               	ButtonPassive2
+        navUp               	ButtonTitanExecutions
+
+        pin_to_sibling			ButtonTitanExecutions
+        pin_corner_to_sibling	TOP_LEFT
+        pin_to_sibling_corner	BOTTOM_LEFT
+    }
+
     ButtonCamoSkin
     {
 		ControlName				RuiButton
@@ -209,13 +219,14 @@
 
 		navLeft                 ButtonTitanExecutions
         navRight                ButtonNoseArt
-        navDown               	ButtonPassive5
+        navDown               	ButtonShoulderBadge
         navUp               	ButtonPassive5
 
         pin_to_sibling			ButtonTitanExecutions
         pin_corner_to_sibling	TOP_LEFT
         pin_to_sibling_corner	TOP_RIGHT
     }
+
     ButtonNoseArt
     {
 		ControlName				RuiButton
@@ -224,7 +235,7 @@
 
         navRight                ButtonWeaponCamo
         navLeft                	ButtonCamoSkin
-        navDown               	ButtonPassive6
+        navDown               	ButtonShoulderBadge
         navUp               	ButtonPassive6
 
         pin_to_sibling			ButtonCamoSkin
@@ -240,7 +251,7 @@
 
         navLeft                 ButtonNoseArt
         navRight               	ButtonPrimeTitan
-        navDown               	ButtonPassive6
+        navDown               	ButtonShoulderBadge
         navUp               	ButtonPassive6
 
         pin_to_sibling			ButtonNoseArt
@@ -256,7 +267,7 @@
 
         navLeft                 ButtonWeaponCamo
         navRight                ButtonPassive1
-        navDown               	ButtonPassive6
+        navDown               	ButtonShoulderBadge
         navUp               	ButtonPassive6
 
         pin_to_sibling			ButtonWeaponCamo
@@ -305,9 +316,9 @@
 	{
 		ControlName				RuiPanel
 		xpos 					10
-		pin_to_sibling				HintIcon
-		pin_corner_to_sibling			LEFT
-		pin_to_sibling_corner			RIGHT
+		pin_to_sibling			HintIcon
+		pin_corner_to_sibling	LEFT
+		pin_to_sibling_corner	RIGHT
 		wide					290
 		tall					140
 		rui 					"ui/dialog_titan_properties.rpak"
@@ -320,7 +331,7 @@
 	{
 		ControlName				RuiPanel
 		xpos					-400
-		ypos 					-20
+		ypos 					-40
 		wide					400
 		tall					150
 		visible					0

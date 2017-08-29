@@ -231,3 +231,35 @@ bool function PrivateMatch_IsValidMapModeCombo( string mapName, string modeName 
 
 	return mapsForMode.contains( mapName )
 }
+
+
+int function Player_GetMaxMatchmakingDelay( entity player )
+{
+	//	return GetCurrentPlaylistVarInt( "matchmaking_delay", 0 )
+	return 300
+}
+
+int function Player_GetRemainingMatchmakingDelay( entity player )
+{
+	int lastLeaveTime = player.GetPersistentVarAsInt( PERSISTENCE_LAST_LEAVE_TIME )
+
+	return Player_GetMaxMatchmakingDelay( player ) - (GetCurrentTimeForPersistence() - lastLeaveTime)
+}
+
+int function Player_NextAvailableMatchmakingTime( entity player )
+{
+	int lastLeaveTime = player.GetPersistentVarAsInt( PERSISTENCE_LAST_LEAVE_TIME )
+	if ( GetCurrentTimeForPersistence() - lastLeaveTime < Player_GetMaxMatchmakingDelay( player ) )
+	{
+		return Player_GetRemainingMatchmakingDelay(	player )
+	}
+
+	return 0
+}
+
+int function GetCurrentTimeForPersistence()
+{
+	// Returns the unix timestap offset to the timezone we want to use
+	return GetUnixTimestamp() + DAILY_RESET_TIME_ZONE_OFFSET * SECONDS_PER_HOUR
+}
+

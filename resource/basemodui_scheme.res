@@ -2627,12 +2627,25 @@ Scheme
 
 		RuiStoreButtonBundle
 		{
-			wide					800
+			wide					900
 			tall					60
 			zpos					3 // Needed or clicking on the background can hide this
 			visible					1
 			enabled					1
             rui						"ui/store_button_bundle.rpak"
+			labelText				""
+			style					RuiButton
+            clip 					0
+		}
+
+		RuiStoreButtonWeaponSkinSet
+		{
+			wide					900
+			tall					60
+			zpos					3 // Needed or clicking on the background can hide this
+			visible					1
+			enabled					1
+            rui						"ui/store_button_weapon_skin_set.rpak"
 			labelText				""
 			style					RuiButton
             clip 					0
@@ -4779,7 +4792,7 @@ Scheme
         PostGameScoreboardRow
         {
             classname               PostGameScoreboardRowClass
-            wide				    772
+            wide				    852
             tall				    35
             visible				    1
             enabled					1

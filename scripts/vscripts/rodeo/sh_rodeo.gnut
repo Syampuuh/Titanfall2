@@ -50,7 +50,7 @@ global enum eRodeoDirection
 
 struct
 {
-	table< entity, bool > holdToRodeoState
+	table< entity, int > holdToRodeoState
 } file
 
 global const RODEO_DRAIN_TIME = 10.0
@@ -98,6 +98,10 @@ var function CodeCallback_OnRodeoAttach( entity rider, entity rodeoTarget )
 }
 
 
+const int HOLD_RODEO_DISABLED = 0
+const int HOLD_RODEO_ALL = 1
+const int HOLD_RODEO_FRIENDLY = 2
+
 bool function CodeCallback_IsValidRodeoTarget( entity player, entity rodeoTarget )
 {
 	if ( IsPlayerDisembarking( player ) )
@@ -106,16 +110,23 @@ bool function CodeCallback_IsValidRodeoTarget( entity player, entity rodeoTarget
 	if ( !rodeoTarget.IsTitan() )
 		return false
 
-	if ( HoldToRodeoEnabled( player ) )
-	{
-		#if CLIENT
-			if ( IsValidTitanRodeoTarget( player, rodeoTarget ) )
-				HoldToRodeoUpdate( player )
-		#endif
+	#if MP
+	int holdToRodeoState = HoldToRodeoState( player )
 
-		if( !player.IsInputCommandHeld( IN_USE ) )
-			return false
+	if ( holdToRodeoState != HOLD_RODEO_DISABLED )
+	{
+		if ( holdToRodeoState != HOLD_RODEO_FRIENDLY || rodeoTarget.GetTeam() == player.GetTeam() )
+		{
+			#if CLIENT
+				if ( IsValidTitanRodeoTarget( player, rodeoTarget ) )
+					HoldToRodeoUpdate( player )
+			#endif
+
+			if( !player.IsInputCommandHeld( IN_USE ) )
+				return false
+		}
 	}
+	#endif
 
 	return IsValidTitanRodeoTarget( player, rodeoTarget )
 }
@@ -426,12 +437,21 @@ bool function HoldToRodeoEnabled( entity player )
 {
 	#if HAS_RODEO_HOLD_OPTION
 		#if SERVER
-			return file.holdToRodeoState[player]
+			return file.holdToRodeoState[player] > 0
 		#else
-			return GetConVarBool( "cl_hold_to_rodeo_enable" )
+			return GetConVarInt( "cl_hold_to_rodeo_enable" ) > 0
 		#endif
 	#else
 		return false
+	#endif
+}
+
+int function HoldToRodeoState( entity player )
+{
+	#if SERVER
+		return file.holdToRodeoState[player]
+	#else
+		return GetConVarInt( "cl_hold_to_rodeo_enable" )
 	#endif
 }
 
@@ -445,14 +465,14 @@ void function HoldToRodeoUpdate( entity player )
 
 void function ClRodeo_OnClientScriptInit( entity player )
 {
-	player.ClientCommand( "HoldToRodeo " + (HoldToRodeoEnabled( player ) ? 1 : 0) )
+	player.ClientCommand( "HoldToRodeo " + HoldToRodeoState( player ) )
 }
 #endif
 
 #if SERVER
 void function Rodeo_OnClientConnected( entity player )
 {
-	file.holdToRodeoState[player] <- false
+	file.holdToRodeoState[player] <- 0
 }
 
 
@@ -461,7 +481,10 @@ bool function ClientCommand_HoldToRodeo( entity player, array<string> args )
 	if ( args.len() != 1 )
 		return true
 
-	bool holdToRodeoState = (args[0].tointeger() > 0)
+	int holdToRodeoState = args[0].tointeger()
+	if ( holdToRodeoState < 0 || holdToRodeoState > 2)
+		return true
+
 	file.holdToRodeoState[player] = holdToRodeoState
 
 	return true

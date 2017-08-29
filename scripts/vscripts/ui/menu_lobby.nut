@@ -29,6 +29,7 @@ global function OnDpadCommsButton_Activate
 
 global function GetActiveSearchingPlaylist
 
+global function Lobby_SetFDModeBasedOnSearching
 global function Lobby_IsFDMode
 global function Lobby_SetAutoFDOpen
 global function Lobby_SetFDMode
@@ -346,8 +347,33 @@ void function DoRoomInviteIfAllowed( var button )
 		return
 	}
 
+	entity player = GetUIPlayer()
+
+	if ( IsValid( player ) && Player_NextAvailableMatchmakingTime( player ) > 0 )
+	{
+		DisplayMatchmakingPenaltyDialog( player )
+		return
+	}
+
 	SendOpenInvite( true )
 	OpenSelectedPlaylistMenu()
+}
+
+void function DisplayMatchmakingPenaltyDialog( entity player )
+{
+	int minutesRemaining = int( ceil( Player_GetRemainingMatchmakingDelay( player ) / 60) )
+	if ( minutesRemaining <= 1 )
+		ServerCallback_GenericDialog( 30, 31, true )
+	else if ( minutesRemaining == 2 )
+		ServerCallback_GenericDialog( 30, 32, true )
+	else if ( minutesRemaining == 3 )
+		ServerCallback_GenericDialog( 30, 33, true )
+	else if ( minutesRemaining == 4 )
+		ServerCallback_GenericDialog( 30, 34, true )
+	else if ( minutesRemaining == 5 )
+		ServerCallback_GenericDialog( 30, 35, true )
+	else
+		ServerCallback_GenericDialog( 30, 36, true )
 }
 
 void function CreatePartyAndInviteFriends()
@@ -397,6 +423,13 @@ void function InviteFriendsIfAllowed( var button )
 	if ( Hud_IsLocked( button ) )
 		return
 
+	entity player = GetUIPlayer()
+	if ( IsValid( player ) && Player_NextAvailableMatchmakingTime( player ) > 0 )
+	{
+		DisplayMatchmakingPenaltyDialog( player )
+		return
+	}
+
 	#if PC_PROG
 		if ( !Origin_IsOverlayAvailable() )
 		{
@@ -410,7 +443,10 @@ void function InviteFriendsIfAllowed( var button )
 
 bool function CanInvite()
 {
-	#if DURANGO_PROG
+	if ( Player_NextAvailableMatchmakingTime( GetUIPlayer() ) > 0 )
+		return false
+
+#if DURANGO_PROG
 		return ( GetMenuVarBool( "isFullyConnected" ) && GetMenuVarBool( "DURANGO_canInviteFriends" ) && GetMenuVarBool( "DURANGO_isJoinable" ) && GetMenuVarBool( "DURANGO_isGameFullyInstalled" ) )
 	#elseif PS4_PROG
 		return GetMenuVarBool( "PS4_canInviteFriends" )
@@ -424,7 +460,7 @@ void function Lobby_RefreshButtons()
 	bool fdMode = Lobby_IsFDMode()
 	var menu = GetMenu( "LobbyMenu" )
 
-	if ( uiGlobal.activeMenu == GetMenu( "LobbyMenu" ) )
+	if ( GetTopNonDialogMenu() == GetMenu( "LobbyMenu" ) )
 	{
 		if ( fdMode )
 			UI_SetPresentationType( ePresentationType.FD_MAIN )
@@ -473,16 +509,25 @@ void function OnLobbyMenu_Open()
 	// code will start loading DLC info from first party unless already done
 	InitDLCStore()
 
-	if ( uiGlobal.activeMenu == GetMenu( "LobbyMenu" ) )
-		Lobby_SetFDMode( false )
-
 	thread UpdateCachedNewItems()
 	if ( file.putPlayerInMatchmakingAfterDelay )
 	{
+		entity player = GetUIPlayer()
+		if (IsValid( player ))
+		{
+			string playlistToSearch = expect string( player.GetPersistentVar( "lastPlaylist" ) )
+			string nextAutoPlaylist = GetNextAutoMatchmakingPlaylist()
+			if ( nextAutoPlaylist.len() > 0 )
+				playlistToSearch = nextAutoPlaylist
+
+			Lobby_SetFDModeBasedOnSearching( playlistToSearch )
+		}
 		AdvanceMenu( GetMenu( "SearchMenu" ) )
 		thread PutPlayerInMatchmakingAfterDelay()
 		file.putPlayerInMatchmakingAfterDelay = false
 	}
+	else if ( uiGlobal.activeMenu == GetMenu( "LobbyMenu" ) )
+		Lobby_SetFDMode( false )
 
 	thread UpdateLobbyUI()
 	thread LobbyMenuUpdate( GetMenu( "LobbyMenu" ) )
@@ -832,6 +877,7 @@ void function UpdateMatchmakingStatus()
 	MatchmakingSetSearchVisible( true )
 	MatchmakingSetCountdownVisible( true )
 
+	var lobbyMenu = GetMenu( "LobbyMenu" )
 	var searchMenu = GetMenu( "SearchMenu" )
 	var postGameMenu = GetMenu( "PostGameMenu" )
 
@@ -904,7 +950,7 @@ void function UpdateMatchmakingStatus()
 			{
 				ShowMatchmakingStatusIcons()
 
-				if ( !IsMenuInMenuStack( searchMenu ) && !IsMenuInMenuStack( postGameMenu ) )
+				if ( GetActiveMenu() == lobbyMenu && !IsMenuInMenuStack( searchMenu ) )
 				{
 					CloseAllDialogs()
 					AdvanceMenu( searchMenu )
@@ -1149,7 +1195,23 @@ function UpdateLobbyUI()
 
 	if ( uiGlobal.menuToOpenFromPromoButton != null )
 	{
-		AdvanceMenu( uiGlobal.menuToOpenFromPromoButton )
+		// Special case because this menu needs a few properties set before opening
+
+		if ( IsStoreMenu( uiGlobal.menuToOpenFromPromoButton ) )
+		{
+			string menuName = expect string( uiGlobal.menuToOpenFromPromoButton._name )
+			
+			void functionref() preOpenfunc = null
+			if ( uiGlobal.menuToOpenFromPromoButton == GetMenu( "StoreMenu_WeaponSkins" ) ) // Hardcoded special case for now
+				preOpenfunc = DefaultToDLC8WeaponWarpaintBundle
+
+			OpenStoreMenu( [ menuName ], preOpenfunc )
+		}
+		else
+		{
+			AdvanceMenu( uiGlobal.menuToOpenFromPromoButton )
+		}
+
 		uiGlobal.menuToOpenFromPromoButton = null
 	}
 	else if ( uiGlobal.EOGOpenInLobby )
@@ -1426,7 +1488,8 @@ void function OnStoreButton_Activate( var button )
 
 void function OnStoreNewReleasesButton_Activate( var button )
 {
-	LaunchGamePurchaseOrDLCStore( [ "StoreMenu", "StoreMenu_NewReleases" ] )
+	//LaunchGamePurchaseOrDLCStore( [ "StoreMenu", "StoreMenu_NewReleases" ] )
+	LaunchGamePurchaseOrDLCStore( [ "StoreMenu", "StoreMenu_WeaponSkins" ] )
 }
 
 void function OnStoreBundlesButton_Activate( var button )
@@ -1488,6 +1551,7 @@ void function Lobby_SetFDMode( bool mode )
 	file.isFDMode = mode
 }
 
+//Function returns whether lobby is currently in "Frontier Defense" lobby mode.
 bool function Lobby_IsFDMode()
 {
 	return file.isFDMode
@@ -1497,4 +1561,20 @@ void function Lobby_SetAutoFDOpen( bool autoFD )
 {
 	Lobby_SetFDMode( autoFD )
 	file.shouldAutoOpenFDMenu = autoFD
+}
+
+void function Lobby_SetFDModeBasedOnSearching( string playlistToSearch )
+{
+	array< string > searchingPlaylists = split( playlistToSearch, "," )
+
+	bool isFDMode = false
+	int searchingCount = searchingPlaylists.len()
+	for( int idx = 0; idx < searchingCount; ++idx )
+	{
+		isFDMode = isFDMode || IsFDMode( searchingPlaylists[idx] )
+		if ( isFDMode )
+			break
+	}
+
+	Lobby_SetFDMode( isFDMode )
 }

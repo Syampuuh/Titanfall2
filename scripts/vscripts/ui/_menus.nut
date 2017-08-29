@@ -24,6 +24,7 @@ global function UICodeCallback_EntitlementsChanged
 global function UICodeCallback_StoreTransactionCompleted
 global function UICodeCallback_GamePurchased
 global function UICodeCallback_PartyUpdated
+global function UICodeCallback_KeyBindOverwritten
 
 global function AdvanceMenu
 global function OpenSubmenu // REMOVE
@@ -95,6 +96,8 @@ global function HACK_DelayedSetFocus_BecauseWhy
 #endif // DURANGO_PROG
 
 global function OpenReviewTermsDialog
+global function ClassicMusic_OnChange
+global function IsClassicMusicAvailable
 
 
 void function UICodeCallback_CloseAllMenus()
@@ -1043,8 +1046,9 @@ void function InitMenus()
 	AddMenu( "StoreMenu_Titans", $"resource/ui/menus/store_prime_titans.menu", InitStoreMenuTitans, "#STORE_TITANS" ) // reusing store_prime_titans.menu
 	AddMenu( "StoreMenu_PrimeTitans", $"resource/ui/menus/store_prime_titans.menu", InitStoreMenuPrimeTitans, "#STORE_PRIME_TITANS" )
 	//AddMenu( "StoreMenu_WeaponSelect", $"resource/ui/menus/store_weapon_select.menu", InitStoreMenuWeaponSelect )
+	//AddMenu( "StoreMenu_WeaponSkinPreview", $"resource/ui/menus/store_weapon_skin_preview.menu", InitStoreMenuWeaponSkinPreview )
+	AddMenu( "StoreMenu_WeaponSkinBundles", $"resource/ui/menus/store_weapon_skin_bundles.menu", InitStoreMenuWeaponSkinBundles )
 	AddMenu( "StoreMenu_WeaponSkins", $"resource/ui/menus/store_weapons.menu", InitStoreMenuWeaponSkins )
-	AddMenu( "StoreMenu_WeaponSkinPreview", $"resource/ui/menus/store_weapon_skin_preview.menu", InitStoreMenuWeaponSkinPreview )
 	AddMenu( "StoreMenu_Customization", $"resource/ui/menus/store_customization.menu", InitStoreMenuCustomization, "#STORE_CUSTOMIZATION_PACKS" )
 	AddMenu( "StoreMenu_CustomizationPreview", $"resource/ui/menus/store_customization_preview.menu", InitStoreMenuCustomizationPreview, "#STORE_CUSTOMIZATION_PACKS" )
 	AddMenu( "StoreMenu_Camo", $"resource/ui/menus/store_camo.menu", InitStoreMenuCamo, "#STORE_CAMO_PACKS" )
@@ -1917,7 +1921,19 @@ void function LaunchGamePurchaseOrDLCStore( array<string> menuNames = [ "StoreMe
 	}
 	else
 	{
-		OpenStoreMenu( menuNames )
+		void functionref() preOpenFunc = null
+
+		foreach ( menuName in menuNames )
+		{
+			// Special case because this menu needs a few properties set before opening
+			if ( menuName == "StoreMenu_WeaponSkins" )
+			{
+				preOpenFunc = DefaultToDLC8WeaponWarpaintBundle
+				break
+			}
+		}
+
+		OpenStoreMenu( menuNames, preOpenFunc )
 	}
 }
 
@@ -1946,4 +1962,38 @@ void function HACK_DelayedSetFocus_BecauseWhy( var item )
 	wait 0.1
 	if ( IsValid( item ) )
 		Hud_SetFocused( item )
+}
+
+void function ClassicMusic_OnChange( var button )
+{
+	bool isEnabled = GetConVarBool( "sound_classic_music" )
+
+	if ( IsFullyConnected() && IsMultiplayer() && GetUIPlayer() )
+	{
+		if ( IsItemLocked( GetUIPlayer(), "classic_music" ) )
+			SetConVarBool( "sound_classic_music", false )
+
+		if ( IsLobby() )
+			thread RunClientScript( "OnSoundClassicMusicChanged" )
+	}
+}
+
+bool function IsClassicMusicAvailable()
+{
+	bool classicMusicAvailable = false
+	if ( IsFullyConnected() && IsMultiplayer() && GetUIPlayer() )
+		classicMusicAvailable = !IsItemLocked( GetUIPlayer(), "classic_music" )
+
+	return classicMusicAvailable
+}
+
+void function UICodeCallback_KeyBindOverwritten( string key, string oldbinding, string newbinding )
+{
+	DialogData dialogData
+	dialogData.header = Localize( "#MENU_KEYBIND_WAS_BEING_USED", key )
+	dialogData.message = Localize( "#MENU_KEYBIND_WAS_BEING_USED_SUB", key, Localize( oldbinding ) )
+
+	AddDialogButton( dialogData, "#OK" )
+
+	OpenDialog( dialogData )
 }

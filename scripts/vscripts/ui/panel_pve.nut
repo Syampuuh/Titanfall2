@@ -306,6 +306,8 @@ var function PostGameDisplayPVE()
 {
 //	UI_SetPresentationType( ePresentationType.TITAN_CENTER )
 
+	printt( "PostGameDisplayPVE" )
+
 	// temp
 	file.skippableWaitSkipAll = false
 
@@ -335,10 +337,17 @@ var function PostGameDisplayPVE()
 	int previousXP = FD_TitanGetPreviousXP( player, titanRef )
 	int currentXP = FD_TitanGetXP( player, titanRef )
 
+	printt( "previousXP: " + previousXP )
+	printt( "currentXP: " + currentXP )
+
 	int totalEarnedXP = currentXP - previousXP
 
 	int startingLevel = FD_TitanGetLevelForXP( titanRef, previousXP )
 	int endingLevel = FD_TitanGetLevelForXP( titanRef, currentXP )
+
+	printt( "startingLevel: " + startingLevel )
+	printt( "endingLevel: " + endingLevel )
+	printt( "totalEarnedXP: " + totalEarnedXP )
 
 	int addLevel = startingLevel
 	while ( addLevel <= endingLevel )
@@ -426,6 +435,7 @@ var function PostGameDisplayPVE()
 				break
 		}
 	}
+	printt( "totalFDXP: " + totalFDXP )
 	#if DEV
 		//Assert( totalFDXP == totalEarnedXP ) // commented out since this is a legit condition when you hit max level
 	#endif

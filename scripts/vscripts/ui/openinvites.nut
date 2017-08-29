@@ -219,6 +219,15 @@ void function UICodeCallback_OpenInviteUpdated()
 		file.openInviteVisible = false
 		return
 	}
+
+	entity player = GetUIPlayer()
+	if ( IsValid( player ) && Player_NextAvailableMatchmakingTime( player ) > 0 )
+	{
+		HideOpenInvite()
+		file.openInviteVisible = false
+		return
+	}
+
 	OpenInvite openInvite = GetOpenInvite()
 	ShowOpenInvite()
 	file.openInviteVisible = true

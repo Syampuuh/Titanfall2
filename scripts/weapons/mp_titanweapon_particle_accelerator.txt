@@ -531,9 +531,6 @@ WeaponData
 		{
 			"shared_energy_cost"							"20" //Amped Shots
 		}
-		fd_split_shot_damage
-		{
-		}
 		fd_upgraded_proto_particle_accelerator
 		{
 			"fire_rate"							"*1"

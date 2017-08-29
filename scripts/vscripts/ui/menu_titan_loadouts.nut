@@ -117,24 +117,7 @@ void function OnLoadoutButton_Focused( var button )
 
 	entity player = GetUIPlayer()
 
-	var rui = Hud_GetRui( file.fdPropertiesData )
-	int titanLevel = FD_TitanGetLevelForXP( loadout.titanClass, FD_TitanGetXP( player, loadout.titanClass ) )
-	RuiSetString( rui, "titanName", GetTitanLoadoutName( loadout ) )
-	RuiSetString( rui, "titanLevelString", Localize( "#FD_TITAN_LEVEL", titanLevel ) )
-	int currentXP = FD_TitanGetXP( player, loadout.titanClass )
-	RuiSetInt( rui, "numFilledPips", FD_TitanGetFilledPipsForXP( loadout.titanClass, currentXP ) )
-	RuiSetInt( rui, "numPips", FD_TitanGetNumPipsForXP( loadout.titanClass, currentXP ) )
-
-	array<ItemDisplayData> titanUpgrades = FD_GetUpgradesForTitanClass( loadout.titanClass )
-	foreach ( index, item in titanUpgrades )
-	{
-		var button = Hud_GetChild( file.fdProperties, "BtnSub" + index )
-		var upgradeRui = Hud_GetRui( button )
-		RuiSetImage( upgradeRui, "buttonImage", item.image )
-		Hud_SetLocked( button, IsSubItemLocked( player, item.ref, item.parentRef ) )
-	}
-
-	RuiSetBool( rui, "compactMode", true )
+	UpdateFDPanel( file.fdProperties, index, true )
 }
 
 

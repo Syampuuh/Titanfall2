@@ -1554,3 +1554,20 @@ int function GetIntFromString( string inString )
 
 	return 0
 }
+
+//Function returns whether the given mode name is a Frontier Defense mode.
+bool function IsFDMode( string modeName )
+{
+	bool isFD = false
+	switch ( modeName )
+	{
+		case "fd_easy":
+		case "fd_normal":
+		case "fd_hard":
+		case "fd_master":
+		case "fd_insane":
+			isFD = true
+	}
+
+	return isFD
+}

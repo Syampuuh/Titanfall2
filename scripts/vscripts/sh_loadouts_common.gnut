@@ -320,19 +320,19 @@ asset function GetTitanArmBadgeFromLoadoutAndSkinIndex( TitanLoadoutDef titanLoa
 	#if SP
 		return $""
 	#else
-		if ( IsTitanLoadoutPrime( titanLoadout ) )
+		if ( !titanLoadout.showArmBadge )
 			return $""
 
 		array<ItemDisplayData> warpaintItems = GetDisplaySubItemsOfType( titanLoadout.titanClass, eItemTypes.TITAN_WARPAINT )
 		asset armBadge = $""
 		foreach ( warpaintItem in warpaintItems )
 		{
-			if ( warpaintItem.i.skinIndex != skinIndex )
-				continue
-
-			// HACK HACK
-			if ( warpaintItem.ref.find( "skin_fd" ) == null )
-				continue
+			//if ( warpaintItem.i.skinIndex != skinIndex )
+			//	continue
+			//
+			//// HACK HACK
+			//if ( warpaintItem.ref.find( "skin_fd" ) == null )
+			//	continue
 
 			armBadge = $""
 			switch ( titanLoadout.titanClass )
@@ -359,7 +359,6 @@ asset function GetTitanArmBadgeFromLoadoutAndSkinIndex( TitanLoadoutDef titanLoa
 					armBadge = $"models/titans_r2/titan_insignia/vanguard_shoulder_pad.mdl"
 					break
 			}
-			//$"models/weapons/titan_sword/w_titan_sword.mdl"
 		}
 
 		return armBadge

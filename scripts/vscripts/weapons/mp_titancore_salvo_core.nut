@@ -362,6 +362,8 @@ void function CalculateGuidancePoint( entity weapon, entity weaponOwner )
 			#if SERVER
 			foreach ( missile in weapon.w.salvoMissileArray )
 			{
+				if ( !IsValid( missile ) )
+					continue
 				missile.SetMissileTarget( info_target, < 0, 0, 0 > )
 			}
 			#endif

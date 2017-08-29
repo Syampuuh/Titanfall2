@@ -113,8 +113,9 @@ resource/ui/menus/controls.menu
 			ConVar					"cl_hold_to_rodeo_enable"
 			list
 			{
-				"#SETTING_OFF"		0
-				"#SETTING_ON"		1
+				"#SETTING_OFF"		    0
+				"#SETTING_ON"		    1
+				"#SETTING_FRIENDLY"		2
 			}
 		}
 

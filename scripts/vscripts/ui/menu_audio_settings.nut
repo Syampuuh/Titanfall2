@@ -5,6 +5,7 @@ struct
 {
 	var menu
 	table<var,string> buttonDescriptions
+	var classicMusicSwitch
 } file
 
 void function InitAudioMenu()
@@ -25,9 +26,10 @@ void function InitAudioMenu()
 	SetupButton( Hud_GetChild( menu, "SwchSubtitles" ), "#SUBTITLES", "#OPTIONS_MENU_SUBTITLES_DESC" )
 	SetupButton( Hud_GetChild( menu, "SwchCalculateOcclusion" ), "#CALCULATE_OCCLUSION", "#OPTIONS_MENU_CALCULATE_OCCLUSION_DESC" )
 	SetupButton( Hud_GetChild( menu, "SwchSoundWithoutFocus" ), "#SOUND_WITHOUT_FOCUS", "#OPTIONS_MENU_SOUND_WITHOUT_FOCUS" )
-	SetupButton( Hud_GetChild( menu, "SwchSoundClassicMusic" ), "#SOUND_CLASSIC_MUSIC", "#OPTIONS_MENU_SOUND_CLASSIC_MUSIC" )
 
-	AddEventHandlerToButton( file.menu, "SwchSoundClassicMusic", UIE_CHANGE, ClassicMusic_OnChange )
+	file.classicMusicSwitch = Hud_GetChild( menu, "SwchSoundClassicMusic" )
+	SetupButton( file.classicMusicSwitch, "#SOUND_CLASSIC_MUSIC", "#OPTIONS_MENU_SOUND_CLASSIC_MUSIC" )
+	Hud_AddEventHandler( file.classicMusicSwitch, UIE_CHANGE, ClassicMusic_OnChange )
 
 	AddEventHandlerToButtonClass( menu, "RuiFooterButtonClass", UIE_GET_FOCUS, FooterButton_Focused )
 
@@ -39,38 +41,19 @@ void function OnOpenAudioMenu()
 {
 	UI_SetPresentationType( ePresentationType.NO_MODELS )
 
-	bool classicMusicAvailable = false
-	if ( IsFullyConnected() && IsMultiplayer() && GetUIPlayer() )
-	{
-		classicMusicAvailable = !IsItemLocked( GetUIPlayer(), "classic_music" )
-	}
-
+	bool classicMusicAvailable = IsClassicMusicAvailable()
 	if ( classicMusicAvailable )
-		file.buttonDescriptions[ Hud_GetChild( file.menu, "SwchSoundClassicMusic" ) ] <- "#OPTIONS_MENU_SOUND_CLASSIC_MUSIC"
+		file.buttonDescriptions[ file.classicMusicSwitch ] <- "#OPTIONS_MENU_SOUND_CLASSIC_MUSIC"
 	else
-		file.buttonDescriptions[ Hud_GetChild( file.menu, "SwchSoundClassicMusic" ) ] <- "#OPTIONS_MENU_SOUND_CLASSIC_MUSIC_LOCKED"
+		file.buttonDescriptions[ file.classicMusicSwitch ] <- "#OPTIONS_MENU_SOUND_CLASSIC_MUSIC_LOCKED"
 
-	Hud_SetLocked( Hud_GetChild( file.menu, "SwchSoundClassicMusic" ), !classicMusicAvailable )
-	//Hud_SetEnabled( Hud_GetChild( file.menu, "SwchSoundClassicMusic" ), classicMusicAvailable )
+	Hud_SetLocked( file.classicMusicSwitch, !classicMusicAvailable )
+	//Hud_SetEnabled( file.classicMusicSwitch, classicMusicAvailable )
 }
 
 void function OnCloseAudioMenu()
 {
 	SavePlayerSettings()
-}
-
-void function ClassicMusic_OnChange( var button )
-{
-	bool isEnabled = GetConVarBool( "sound_classic_music" )
-
-	if ( IsFullyConnected() && IsMultiplayer() && GetUIPlayer() )
-	{
-		if ( IsItemLocked( GetUIPlayer(), "classic_music" ) )
-			SetConVarBool( "sound_classic_music", false )
-
-		if ( IsLobby() )
-			thread RunClientScript( "OnSoundClassicMusicChanged" )
-	}
 }
 
 void function SetupButton( var button, string buttonText, string description )

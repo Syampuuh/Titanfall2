@@ -12,7 +12,6 @@ global function IsPredatorCannonActive
 #if SERVER
 global function OnWeaponNpcPrimaryAttack_titanweapon_predator_cannon
 global function OnWeaponNpcPreAttack_titanweapon_predator_cannon
-global function PredatorCannon_DamagedTarget
 #endif
 
 const SPIN_EFFECT_1P = $"P_predator_barrel_blur_FP"
@@ -22,7 +21,14 @@ void function MpTitanWeaponpredatorcannon_Init()
 {
 	PrecacheParticleSystem( SPIN_EFFECT_1P )
 	PrecacheParticleSystem( SPIN_EFFECT_3P )
+
+	#if SERVER
+	if ( GetCurrentPlaylistVarInt( "aegis_upgrades", 0 ) == 1 )
+		AddDamageCallbackSourceID( eDamageSourceId.mp_titanweapon_predator_cannon, PredatorCannon_DamagedTarget )
+	#endif
 }
+
+
 
 void function OnWeaponStartZoomIn_titanweapon_predator_cannon( entity weapon )
 {
@@ -178,6 +184,9 @@ var function OnWeaponPrimaryAttack_titanweapon_predator_cannon( entity weapon, W
 			if ( bolt )
 			{
 				bolt.kv.gravity = -0.1
+				#if SERVER
+				bolt.e.onlyDamageEntitiesOnce = true
+				#endif
 			}
 		}
 

@@ -500,7 +500,14 @@ int function GetPilotTitanStatusForPlayer( entity teamPlayer )
 	else if ( teamPlayer.IsTitan() )
 		titan = teamPlayer
 
-	if ( titan && titan.GetTitanSoul() )
+	entity playerParent = teamPlayer.GetParent()
+	bool playerIsInDropship = playerParent != null && IsDropship( playerParent )
+
+	if ( playerIsInDropship && ( GetWaveSpawnType() == eWaveSpawnType.DROPSHIP || GetGameState() == eGameState.Epilogue ) )
+	{
+		statusIndex = ePlayerStatusType.PTS_TYPE_EVAC
+	}
+	else if ( titan && titan.GetTitanSoul() )
 	{
 		if ( !teamPlayer.IsTitan() )
 		{
@@ -547,22 +554,9 @@ int function GetPilotTitanStatusForPlayer( entity teamPlayer )
 	else
 	{
 		if ( IsAlive( teamPlayer ) )
-		{
 			statusIndex = IsTitanAvailable( teamPlayer ) ? ePlayerStatusType.PTS_TYPE_READY : ePlayerStatusType.PTS_TYPE_PILOT
-		}
 		else
-		{
 			statusIndex = IsTitanAvailable( teamPlayer ) ? ePlayerStatusType.PTS_TYPE_DEAD_READY : ePlayerStatusType.PTS_TYPE_DEAD
-		}
-	}
-
-	if ( ( GetWaveSpawnType() == eWaveSpawnType.DROPSHIP || GetGameState() == eGameState.Epilogue ) && teamPlayer.GetParent() != null )
-	{
-		entity playerParent = teamPlayer.GetParent()
-		if ( playerParent.IsNPC() && IsDropship( playerParent ) )
-		{
-			statusIndex = ePlayerStatusType.PTS_TYPE_EVAC
-		}
 	}
 
 	if ( file.pilotTitanStatusCallback != null )

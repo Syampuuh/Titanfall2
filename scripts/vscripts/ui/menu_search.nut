@@ -120,14 +120,7 @@ void function OnSearchMenu_Open()
 		if ( !Lobby_IsFDMode() )
 		{
 			string playlistList = GetMyMatchmakingStatusParam( 5 )
-			array< string > searchingPlaylists = split( playlistList, "," )
-			bool isFDMode = false
-			int searchingCount = searchingPlaylists.len()
-			for( int idx = 0; idx < searchingCount; ++idx )
-			{
-				isFDMode = isFDMode || (GetPlaylistVarOrUseValue( searchingPlaylists[idx], "ingame_menu_fd_mode", "0" ) == "1")
-			}
-			Lobby_SetFDMode( isFDMode )
+			Lobby_SetFDModeBasedOnSearching( playlistList )
 			Lobby_RefreshButtons()
 		}
 

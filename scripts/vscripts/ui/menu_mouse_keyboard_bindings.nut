@@ -3,8 +3,6 @@ global function InitMouseKeyboardMenu
 global function DefaultKeyBindingsDialog
 global function ApplyKeyBindingsButton_Activate
 
-global function UICodeCallback_KeyBindOverwritten
-
 void function InitMouseKeyboardMenu()
 {
 	var menu = GetMenu( "MouseKeyboardBindingsMenu" )
@@ -87,16 +85,4 @@ void function DialogChoice_ApplyKeyBindingsAndCloseMenu()
 {
 	KeyBindings_Apply( GetMenu( "MouseKeyboardBindingsMenu" ) )
 	CloseActiveMenu()
-}
-
-
-void function UICodeCallback_KeyBindOverwritten( string key, string oldbinding, string newbinding )
-{
-	DialogData dialogData
-	dialogData.header = Localize( "#MENU_KEYBIND_WAS_BEING_USED", key )
-	dialogData.message = Localize( "#MENU_KEYBIND_WAS_BEING_USED_SUB", key, Localize( oldbinding ) )
-
-	AddDialogButton( dialogData, "#OK" )
-
-	OpenDialog( dialogData )
 }

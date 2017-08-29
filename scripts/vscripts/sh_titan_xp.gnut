@@ -327,11 +327,21 @@ int function FD_TitanGetXPForLevel( string titanRef, int titanLevel )
 
 int function FD_TitanGetXP( entity player, string titanClass )
 {
+	#if UI
+		if ( !IsPersistenceAvailable() )
+			return 0
+	#endif
+
 	return player.GetPersistentVarAsInt( "fdTitanXP[" + titanClass + "]" )
 }
 
 int function FD_TitanGetPreviousXP( entity player, string titanClass )
 {
+	#if UI
+		if ( !IsPersistenceAvailable() )
+			return 0
+	#endif
+
 	string persistenceVar = "fdPreviousTitanXP[" + titanClass + "]"
 	return player.GetPersistentVarAsInt( persistenceVar )
 }

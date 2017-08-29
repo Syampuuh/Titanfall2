@@ -344,6 +344,10 @@ WeaponData
 			"damage_far_value_titanarmor" 					"*1.25"
 			"explosion_damage_heavy_armor"					"*1.25"
 		}
+		fd_laser_upgrade
+		{
+			"critical_hit_damage_scale"						"2.0"
+		}
 	}
 
 	active_crosshair_count				"1"

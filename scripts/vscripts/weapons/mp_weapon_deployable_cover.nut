@@ -8,6 +8,7 @@ global function OnWeaponTossPrep_weapon_deployable_cover
 
 #if SERVER
 global function DeployCover
+global function GetAmpedWallsActiveCountForPlayer
 #endif
 
 const DEPLOYABLE_ONE_PER_PLAYER = false
@@ -25,6 +26,7 @@ const DEPLOYABLE_SHIELD_ANGLE_LIMIT = 0.55
 
 struct
 {
+	table< entity, int > playerToAmpedWallsActiveTable //Mainly used to track stat for amped wall execution unlock
 	int index
 }file;
 
@@ -168,7 +170,7 @@ void function DeployCover( entity projectile, vector origin, vector angles, floa
 	wait duration
 }
 
-function DeployAmpedWall( entity grenade, vector origin, vector angles )
+void function DeployAmpedWall( entity grenade, vector origin, vector angles )
 {
 	Assert( grenade )
 	EmitSoundOnEntity( grenade, "Hardcover_Shield_Start_3P" )
@@ -218,6 +220,8 @@ function DeployAmpedWall( entity grenade, vector origin, vector angles )
 				break
 			}
 		}
+
+		thread MonitorAmpedWallsActiveForPlayer( ampedWall, owner )
 	}
 
 	OnThreadEnd(
@@ -238,6 +242,39 @@ function DeployAmpedWall( entity grenade, vector origin, vector angles )
 	)
 
 	wait DEPLOYABLE_SHIELD_DURATION
+}
+
+void function MonitorAmpedWallsActiveForPlayer( entity ampedWall, entity player )
+{
+	if ( player in file.playerToAmpedWallsActiveTable )
+		++file.playerToAmpedWallsActiveTable[ player ]
+	else
+		file.playerToAmpedWallsActiveTable[ player ] <- 1
+
+	ampedWall.EndSignal( "OnDestroy" )
+
+
+	OnThreadEnd(
+	function() : ( player )
+		{
+			if( IsValid( player ) )
+			{
+				Assert( player in file.playerToAmpedWallsActiveTable )
+				--file.playerToAmpedWallsActiveTable[ player ]
+			}
+
+		}
+	)
+
+	WaitForever()
+}
+
+int function GetAmpedWallsActiveCountForPlayer( entity player )
+{
+	if ( !(player in file.playerToAmpedWallsActiveTable ))
+		return 0
+
+	return file.playerToAmpedWallsActiveTable[player ]
 }
 
 void function OnAmpedWallDamaged( entity ampedWall, var damageInfo )

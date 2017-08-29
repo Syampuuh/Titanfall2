@@ -220,6 +220,15 @@ bool function ClientCommand_PurchaseBoost( entity player, array<string> args )
 	// if ( !BoostStoreOpen() )
 		// return true
 
+	if ( player.IsPhaseShifted() )
+		return false
+
+	if ( !IsAlive( player ) )
+		return false
+
+	if ( player.IsTitan() )
+		return false
+
 	array<BoostStoreData> availableBoosts = GetAvailableBoosts()
 
 	if ( args.len() == 0 )
@@ -471,21 +480,25 @@ void function BurnRewardRefundThink( entity useEnt, entity ent )
 			return
 
 		BurnMeter_GiveRewardDirect( player, ent.e.burnReward )
-		EmitSoundAtPosition( TEAM_UNASSIGNED, ent.GetOrigin(), "Emplacement_Move_Dissolve" )
-		ent.Signal( "BoostRefunded" )
-		ent.UnsetUsable()
-		ent.SetInvulnerable()
-		ent.Dissolve( ENTITY_DISSOLVE_CORE, Vector( 0, 0, 0 ), 100 )
-
 		entity weapon = player.GetOffhandWeapon( OFFHAND_INVENTORY )
+
+		// Defensive: meaning the boost didn't make it to the inventory for some reason
+		if ( weapon == null )
+			return
+
 		if ( IsTurret( ent ) )
 		{
 			weapon.w.savedKillCount = int( ent.kv.killCount )
 			ent.DisableTurret()
 			ent.Signal( "StopTurretLaser" )
 		}
+		weapon.e.fd_roundDeployed = ent.e.fd_roundDeployed
 
-		weapon.e.burnmeter_wasPreviouslyDeployed = ent.e.burnmeter_wasPreviouslyDeployed
+		EmitSoundAtPosition( TEAM_UNASSIGNED, ent.GetOrigin(), "Emplacement_Move_Dissolve" )
+		ent.Signal( "BoostRefunded" )
+		ent.UnsetUsable()
+		ent.SetInvulnerable()
+		ent.Dissolve( ENTITY_DISSOLVE_CORE, Vector( 0, 0, 0 ), 100 )
 
 		if ( file.boostRefundCallback != null )
 			file.boostRefundCallback( player, ent.e.burnReward )
@@ -497,7 +510,8 @@ void function BoostStoreThink( entity crate )
 	while( IsValid( crate ) )
 	{
 		entity player = expect entity( crate.WaitSignal( "OnPlayerUse" ).player )
-		OpenBoostStoreMenu( player )
+		if ( IsValid( player ) )
+			OpenBoostStoreMenu( player )
 	}
 }
 

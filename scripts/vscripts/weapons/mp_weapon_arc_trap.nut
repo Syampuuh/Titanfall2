@@ -69,7 +69,7 @@ var function OnWeaponTossReleaseAnimEvent_weapon_arc_trap( entity weapon, Weapon
 		PlayerUsedOffhand( player, weapon )
 
 		#if SERVER
-		deployable.e.burnmeter_wasPreviouslyDeployed = weapon.e.burnmeter_wasPreviouslyDeployed
+		deployable.e.fd_roundDeployed = weapon.e.fd_roundDeployed
 
 		string projectileSound = GetGrenadeProjectileSound( weapon )
 		if ( projectileSound != "" )
@@ -134,6 +134,12 @@ void function AddArcTrapTriggeredCallback( void functionref( entity, var ) callb
 
 void function DeployArcTrap( entity projectile )
 {
+	if ( projectile.GetOwner() == null )
+	{
+		projectile.Destroy()
+		return
+	}
+
 	entity owner = projectile.GetOwner()
 	entity mover = CreateScriptMover( projectile.GetOrigin() )
 
@@ -150,6 +156,7 @@ void function DeployArcTrap( entity projectile )
 	minimapObj.Minimap_SetCustomState( eMinimapObject_prop_script.ARC_TRAP )
 	minimapObj.Minimap_AlwaysShow( minimapObj.GetTeam(), null )
 	minimapObj.Minimap_SetObjectScale( 0.02 )
+	minimapObj.DisableHibernation()
 
 	entity eyeButton = CreatePropDynamic( RODEO_BATTERY_MODEL, projectile.GetOrigin() - <0,0,10>, <0,0,0>, 2, -1 )
 	eyeButton.Hide()
@@ -158,7 +165,7 @@ void function DeployArcTrap( entity projectile )
 	if ( BoostStoreEnabled() )
 		thread BurnRewardRefundThink( eyeButton, projectile )
 
-	owner.Signal( "DeployArcTrap" )
+	owner.Signal( "DeployArcTrap", { projectile = projectile } )
 
 	owner.EndSignal( "OnDestroy" )
 	projectile.EndSignal( "OnDestroy" )
@@ -390,7 +397,7 @@ void function ArcTrap_DamagedTarget( entity victim, var damageInfo )
 	//Force npc titans to take a knee
 	if ( !victim.IsPlayer() )
 	{
-		if ( victim.IsTitan() && !victim.ContextAction_IsBusy() && victim.IsInterruptable() )
+		if ( victim.IsTitan() && !victim.ContextAction_IsActive() && victim.IsInterruptable() )
 		{
 			thread ArcTrap_StaggerTitan( victim )
 		}

@@ -729,6 +729,7 @@ void function MinimapPackage_MortarPosition( entity ent, var rui )
 void function MinimapPackage_ArcTrap( entity ent, var rui )
 {
 	RuiSetImage( rui, "centerImage", $"rui/hud/minimap/compass_icon_arc_trap" )
+	RuiSetImage( rui, "clampedImage", $"" )
 	RuiTrackFloat( rui, "objectRadius", ent, RUI_TRACK_MINIMAP_SCALE )
 }
 

@@ -4,6 +4,9 @@ globalize_all_functions
 
 global const NUM_EOG_CHALLENGE_BOXES = 6
 
+global const WEBBROWSER_FLAG_NONE = 0
+global const WEBBROWSER_FLAG_MUTEGAME = 0x0001
+
 
 function UtilityUI_Init()
 {
@@ -164,6 +167,20 @@ function HandleLockedMenuItem( menu, button, hideTip = false )
 		Hud_Hide( buttonTooltip )
 	}
 	return false*/
+}
+
+// No way to test a named element exists so this is a workaround
+var function GetSingleElementByClassname( var menu, string classname )
+{
+	array<var> elems = GetElementsByClassname( menu, classname )
+
+	if ( elems.len() )
+	{
+		Assert( elems.len() == 1 )
+		return elems[0]
+	}
+
+	return null
 }
 
 array function GetElementsByClassnameForMenus( string classname, array menus )

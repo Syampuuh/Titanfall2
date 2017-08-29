@@ -46,15 +46,15 @@ void function InitStoreMenuSales()
 
 	buttonIndex++
 	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
-	button.s.entitlementId <- ET_DLC7_WEAPON_BUNDLE
-	file.bundleButtons.append( button )
-	SetButtonRuiText( button, "#STORE_BUNDLE_WEAPON_WARPAINT_DLC7" )
-
-	buttonIndex++
-	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
 	button.s.entitlementId <- ET_DLC7_TITAN_WARPAINT_BUNDLE
 	file.bundleButtons.append( button )
 	SetButtonRuiText( button, "#STORE_BUNDLE_TITAN_WARPAINT_DLC7" )
+
+	buttonIndex++
+	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
+	button.s.entitlementId <- ET_DLC8_WEAPON_WARPAINT_BUNDLE
+	file.bundleButtons.append( button )
+	SetButtonRuiText( button, "#STORE_BUNDLE_WEAPON_WARPAINT_DLC8" )
 
 	foreach ( bundleButton in file.bundleButtons )
 	{
@@ -62,6 +62,8 @@ void function InitStoreMenuSales()
 		Hud_AddEventHandler( bundleButton, UIE_CLICK, OnBundleButton_Activate )
 		Hud_AddEventHandler( bundleButton, UIE_GET_FOCUS, OnBundleButton_Focused )
 	}
+
+	SetNavUpDown( file.bundleButtons )
 
 	AddMenuFooterOption( file.menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
@@ -82,7 +84,9 @@ void function UpdateStoreMenuBundleButtons()
 
 	foreach ( button in file.bundleButtons )
 	{
-		button.s.hasEntitlement <- LocalPlayerHasEntitlement( button.s.entitlementId ) || GetUnpurchasedChildEntitlements( expect int( button.s.entitlementId ) ).len() == 0
+		int entitlement = expect int( button.s.entitlementId )
+
+		button.s.hasEntitlement <- LocalPlayerHasEntitlement( entitlement ) || GetUnpurchasedChildEntitlements( entitlement ).len() == 0
 	}
 
 	RefreshEntitlements()
@@ -147,12 +151,12 @@ void function OnBundleButton_Focused( var button )
 		storeBGIndex = STORE_BG_BUNDLE5
 
 		topLeftImage = $"rui/menu/store/store_button_art_hl"
-		bottomLeftImage = $""
+		bottomLeftImage = $"rui/menu/store/store_button_callsigns_hl"
 		topRightImage = $""
 		bottomRightImage = $""
 
-		topLeftText = Localize( "#STORE_BUNDLE1_WEAPON_WARPAINT" )
-		bottomLeftText = ""
+		topLeftText = Localize( "#STORE_BUNDLE1_TITAN_WARPAINT" )
+		bottomLeftText = Localize( "#STORE_BUNDLE1_TITAN_WARPAINT_CALLSIGNS" )
 		topRightText = ""
 		bottomRightText = ""
 	}
@@ -165,7 +169,7 @@ void function OnBundleButton_Focused( var button )
 		topRightImage = $""
 		bottomRightImage = $""
 
-		topLeftText = Localize( "#STORE_BUNDLE1_TITAN_WARPAINT" )
+		topLeftText = Localize( "#STORE_BUNDLE1_WEAPON_WARPAINT" )
 		bottomLeftText = ""
 		topRightText = ""
 		bottomRightText = ""
@@ -176,7 +180,7 @@ void function OnBundleButton_Focused( var button )
 	}
 
 	RunMenuClientFunction( "UpdateStoreBackground", storeBGIndex )
-	RuiSetString( rui, "headerText", Localize( "#STORE_BUNDLE_INCLUDES_HEADER" ) )
+	RuiSetString( rui, "headerText", Localize( "#STORE_INCLUDES_HEADER" ) )
 
 	RuiSetImage( rui, "primeImage", topLeftImage )
 	RuiSetImage( rui, "customizationImage", bottomLeftImage )
@@ -234,12 +238,12 @@ void function OnBundleButton_Activate( var button )
 				dialogData.header = "#STORE_BUY_PRIME_TITANS_BUNDLE"
 				break
 
-			case ET_DLC7_WEAPON_BUNDLE:
-				dialogData.header = "#STORE_BUY_WEAPON_WARPAINT_BUNDLE"
-				break
-
 			case ET_DLC7_TITAN_WARPAINT_BUNDLE:
 				dialogData.header = "#STORE_BUY_TITAN_WARPAINT_BUNDLE"
+				break
+
+			case ET_DLC8_WEAPON_WARPAINT_BUNDLE:
+				dialogData.header = "#STORE_BUY_WEAPON_WARPAINT_BUNDLE"
 				break
 
 			default:
@@ -302,6 +306,9 @@ void function RefreshBundleEntitlement( var button )
 		int priceInt = GetEntitlementPricesAsInt( [ entitlementId ] )[0]
 		button.s.cheaperToBuyIndividually = ( priceInt > remainingContentPriceTotal )
 
+		//string originalPrice = string( GetCombinedPriceOfEntitlements( GetChildEntitlements( entitlementId ) ) )
+		//RuiSetString( rui, "originalPrice", originalPrice )
+
 		string percentOff = Localize( "#STORE_PRICE_PERCENT_OFF", GetPercentOff( entitlementId ) )
 		RuiSetString( rui, "percentOff", percentOff )
 	}
@@ -320,11 +327,8 @@ int function GetPercentOff( int parentEntitlement )
 {
 	int bundlePrice = GetEntitlementPricesAsInt( [ parentEntitlement ] )[0]
 	array<int> childEntitlements = GetChildEntitlements( parentEntitlement )
-	int childEntitlementsTotal
+	int childEntitlementsTotal = GetCombinedPriceOfEntitlements( childEntitlements )
 	int percentOff = 0
-
-	foreach ( entitlement in childEntitlements )
-		childEntitlementsTotal += GetEntitlementPricesAsInt( [ entitlement ] )[0]
 
 	Assert( bundlePrice >= 0 )
 	Assert( childEntitlementsTotal >= 0 )

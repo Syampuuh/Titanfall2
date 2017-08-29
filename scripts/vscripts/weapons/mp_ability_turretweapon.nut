@@ -202,8 +202,6 @@ entity function DeployTurret( entity player, vector origin, vector angles, entit
 
 	int team = player.GetTeam()
 
-	player.Signal( "DeploySentryTurret" )
-
 	entity turret = CreateEntity( "npc_turret_sentry" )
 	turret.SetOrigin( origin )
 	turret.SetAngles( angles )
@@ -213,7 +211,7 @@ entity function DeployTurret( entity player, vector origin, vector angles, entit
 	SetTeam( turret, team )
 	EmitSoundOnEntity( turret, "Boost_Card_SentryTurret_Deployed_3P" )
 
-	turret.e.burnmeter_wasPreviouslyDeployed = weapon.e.burnmeter_wasPreviouslyDeployed
+	turret.e.fd_roundDeployed = weapon.e.fd_roundDeployed
 	turret.kv.killCount = weapon.w.savedKillCount
 
 	if( weapon.HasMod( "burnmeter_at_turret_weapon" ) || weapon.HasMod( "burnmeter_at_turret_weapon_inf" ) )
@@ -222,6 +220,8 @@ entity function DeployTurret( entity player, vector origin, vector angles, entit
 		SetSpawnOption_AISettings( turret, DeployableTurret_GetAISettingsForPlayer_AP( player ) )
 	else
 		SetSpawnOption_AISettings( turret, "npc_turret_sentry_plasma" )
+
+	player.Signal( "DeploySentryTurret", { turret = turret } )
 
 	thread DestroyOnDeathDelayed( turret, 0.15 )
 

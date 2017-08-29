@@ -38,8 +38,9 @@
 		array<string> mods
 		asset weaponModel = $""
 		int weaponCamoIndex = -1
-		int weaponSkinIndex = 0
+		int weaponSkinIndex = -1
 
+		int showArmBadge = 0
 		asset armBadgeModel = $""
 		int armBadgeBodyGroupIndex = 0
 		bool isPrime = false
@@ -222,6 +223,7 @@
 	global const STORE_BG_BUNDLE4 = 4
 	global const STORE_BG_BUNDLE5 = 5
 	global const STORE_BG_BUNDLE6 = 6
+	global const STORE_BG_BUNDLE7 = 7
 
 #if CLIENT
 
@@ -1183,7 +1185,7 @@
 		{
 			case STORE_BG_DEFAULT:
 				file.menuStoreBackground.SetModel( $"models/test/brad/store_card.mdl" )
-				file.menuStoreBackground.SetOrigin( <68.1134, 377.554, -21.029> )
+				file.menuStoreBackground.SetOrigin( <68.1134, 377.554, -18.25> )
 				break
 			case STORE_BG_BUNDLE1:
 				file.menuStoreBackground.SetModel( $"models/test/brad/store_card_angel_city.mdl" )
@@ -1202,11 +1204,15 @@
 				file.menuStoreBackground.SetOrigin( <68.1134, 377.554, -18.25> )
 				break
 			case STORE_BG_BUNDLE5:
-				file.menuStoreBackground.SetModel( $"models/test/brad/store_weapon_warpaint_bundle.mdl" )
+				file.menuStoreBackground.SetModel( $"models/test/brad/store_titan_warpaint_bundle.mdl" )
 				file.menuStoreBackground.SetOrigin( <68.1134, 377.554, -18.25> )
 				break
 			case STORE_BG_BUNDLE6:
-				file.menuStoreBackground.SetModel( $"models/test/brad/store_titan_warpaint_bundle.mdl" )
+				file.menuStoreBackground.SetModel( $"models/test/brad/store_weapon_warpaint_bundle.mdl" )
+				file.menuStoreBackground.SetOrigin( <68.1134, 377.554, -18.25> )
+				break
+			case STORE_BG_BUNDLE7:
+				file.menuStoreBackground.SetModel( $"models/test/brad/jump_start.mdl" )
 				file.menuStoreBackground.SetOrigin( <68.1134, 377.554, -18.25> )
 				break
 		}
@@ -1503,6 +1509,7 @@
 		int skinIndex
 		int decalIndex
 		int weaponCamoIndex
+		int showArmBadge
 
 		if ( !( flags & TITANMENU_NO_CUSTOMIZATION ) )
 		{
@@ -1510,6 +1517,7 @@
 			skinIndex = GetTitanSkinIndex( loadoutIndex )
 			decalIndex = GetTitanDecalIndex( loadoutIndex )
 			weaponCamoIndex = cachedLoadout.primaryCamoIndex
+			showArmBadge = GetTitanLoadoutArmBadgeState( loadoutIndex )
 		}
 
 		clGlobal.currentMenuTitanModels.isPrime = Dev_GetPlayerSettingByKeyField_Global( setFile, "isPrime" ) == 1
@@ -1526,6 +1534,7 @@
 		asset armBadgeModel = GetTitanLoadoutArmBadge( loadoutIndex )
 		clGlobal.currentMenuTitanModels.armBadgeModel = armBadgeModel
 		clGlobal.currentMenuTitanModels.armBadgeBodyGroupIndex = armBadgeModel != $"" ? 0 : 0
+		clGlobal.currentMenuTitanModels.showArmBadge = showArmBadge
 
 		UpdateTitanModelDisplay( player )
 	}
@@ -1578,6 +1587,7 @@
 		if ( weaponModel == $"" )
 			weaponModel = clGlobal.currentMenuPilotModels.weaponModel
 
+		file.menuPilot.weapon.SetSkin( WEAPON_SKIN_INDEX_DEFAULT ) // Lame that we need this, but this avoids invalid skin errors when the model changes and the currently shown skin index doesn't exist for the new model
 		file.menuPilot.weapon.SetModel( weaponModel )
 
 		bool isPreviewingWeaponNotMatchingCurrent = clGlobal.previewMenuPilotModels.weaponModel != $"" && clGlobal.previewMenuPilotModels.weaponModel != clGlobal.currentMenuPilotModels.weaponModel
@@ -1602,33 +1612,29 @@
 		}
 		else
 		{
-			weaponSkinIndex = clGlobal.previewMenuPilotModels.weaponSkinIndex
-			if ( weaponSkinIndex == 0 )
+			// Skin or camo preview is active so use preview values for both
+			if ( clGlobal.previewMenuPilotModels.weaponSkinIndex != -1 || clGlobal.previewMenuPilotModels.weaponCamoIndex != -1 )
+			{
+				weaponSkinIndex = clGlobal.previewMenuPilotModels.weaponSkinIndex
+				weaponCamoIndex = clGlobal.previewMenuPilotModels.weaponCamoIndex
+			}
+			else // no preview active, show current for both
+			{
 				weaponSkinIndex = clGlobal.currentMenuPilotModels.weaponSkinIndex
-
-			weaponCamoIndex = clGlobal.previewMenuPilotModels.weaponCamoIndex
-			if ( weaponCamoIndex == -1 )
 				weaponCamoIndex = clGlobal.currentMenuPilotModels.weaponCamoIndex
+			}
 		}
 
-		//printt( "clGlobal.previewMenuPilotModels.weaponCamoIndex:", clGlobal.previewMenuPilotModels.weaponCamoIndex )
-		//printt( "clGlobal.currentMenuPilotModels.weaponCamoIndex:", clGlobal.currentMenuPilotModels.weaponCamoIndex )
-		//printt( "weaponCamoIndex:", weaponCamoIndex )
+
 		if ( weaponCamoIndex > 0 )
-		{
-			file.menuPilot.weapon.SetSkin( WEAPON_SKIN_INDEX_CAMO )
-			//printt( "Set pilot weapon skin to:", WEAPON_SKIN_INDEX_CAMO )
-			file.menuPilot.weapon.SetCamo( weaponCamoIndex )
-			//printt( "Set pilot weapon camo to:", weaponCamoIndex )
-		}
+			weaponSkinIndex = WEAPON_SKIN_INDEX_CAMO
 		else
-		{
-			//file.menuPilot.weapon.SetSkin( 0 )
-			file.menuPilot.weapon.SetSkin( weaponSkinIndex )
-			//printt( "Set pilot weapon skin to:", 0 )
-			file.menuPilot.weapon.SetCamo( -1 )
-			//printt( "Set pilot weapon camo to:", -1 )
-		}
+			weaponCamoIndex = -1
+
+		file.menuPilot.weapon.SetSkin( weaponSkinIndex )
+		//printt( "Set pilot weapon skin to:", weaponSkinIndex )
+		file.menuPilot.weapon.SetCamo( weaponCamoIndex )
+		//printt( "Set pilot weapon camo to:", weaponCamoIndex )
 	}
 
 	void function UpdateTitanModelDisplay( entity player )
@@ -1735,12 +1741,12 @@
 		if ( IsValid( file.menuTitan.armBadge ) )
 			file.menuTitan.armBadge.Destroy()
 
-		UpdatePreviewTitanArmBadge( player, skinIndex, camoIndex, clGlobal.currentMenuTitanModels.loadoutIndex, clGlobal.currentMenuTitanModels.isPrime )
+		UpdatePreviewTitanArmBadge( player, skinIndex, camoIndex, clGlobal.currentMenuTitanModels.loadoutIndex )
 		asset armBadgeModel = clGlobal.previewMenuTitanModels.armBadgeModel
 		int armBadgeBodyGroupIndex = clGlobal.previewMenuTitanModels.armBadgeBodyGroupIndex
 		if ( usedCurrentValues )
 		{
-			UpdateMenuTitanArmBadge( player, skinIndex, camoIndex, clGlobal.currentMenuTitanModels.loadoutIndex, clGlobal.currentMenuTitanModels.isPrime )
+			UpdateMenuTitanArmBadge( player, skinIndex, camoIndex, clGlobal.currentMenuTitanModels.loadoutIndex )
 			armBadgeModel = clGlobal.currentMenuTitanModels.armBadgeModel
 			armBadgeBodyGroupIndex = clGlobal.currentMenuTitanModels.armBadgeBodyGroupIndex
 		}
@@ -1813,12 +1819,14 @@
 		string animType = "weapon_inspect_idle"
 		string suit = GetPilotLoadoutSuit( clGlobal.editingPilotLoadoutIndex )
 		string idleAnim = GetMenuPilotAnim( animType, suit, GetItemMenuAnimClass( weapon ) )
-		int camoIndex = GetPilotLoadoutWeaponCamoIndex( clGlobal.editingPilotLoadoutIndex, itemType )
+		int weaponSkinIndex = GetPilotLoadoutWeaponSkinIndex( clGlobal.editingPilotLoadoutIndex, itemType )
+		int weaponCamoIndex = GetPilotLoadoutWeaponCamoIndex( clGlobal.editingPilotLoadoutIndex, itemType )
 
 		clGlobal.previewMenuPilotModels.idleAnim = idleAnim
 		clGlobal.previewMenuPilotModels.weapon = weapon
 		clGlobal.previewMenuPilotModels.weaponModel = weaponModel
-		clGlobal.previewMenuPilotModels.weaponCamoIndex = camoIndex
+		clGlobal.previewMenuPilotModels.weaponSkinIndex = weaponSkinIndex
+		clGlobal.previewMenuPilotModels.weaponCamoIndex = weaponCamoIndex
 		clGlobal.previewMenuPilotModels.mods = []
 
 		UpdatePilotModelDisplay( player )
@@ -1846,14 +1854,31 @@
 
 	void function PreviewPilotWeaponCamoChange( entity player, int camoIndex )
 	{
-		clGlobal.previewMenuPilotModels.weaponCamoIndex = camoIndex
+		if ( camoIndex == 0 ) // Special case for factory issue. Should make factory issue work as any other weapon skin item in the future.
+		{
+			clGlobal.previewMenuPilotModels.weaponSkinIndex = WEAPON_SKIN_INDEX_DEFAULT
+			clGlobal.previewMenuPilotModels.weaponCamoIndex = -1
+		}
+		else
+		{
+			clGlobal.previewMenuPilotModels.weaponSkinIndex = WEAPON_SKIN_INDEX_CAMO
+			clGlobal.previewMenuPilotModels.weaponCamoIndex = camoIndex
+		}
+
+		printt( "PreviewPilotWeaponCamoChange", clGlobal.previewMenuPilotModels.weaponSkinIndex, clGlobal.previewMenuPilotModels.weaponCamoIndex )
 		UpdatePilotModelDisplay( player )
+	}
+
+	void function PrintWeaponModelData()
+	{
+		printt( "clGlobal.previewMenuPilotModels.weaponSkinIndex:", clGlobal.previewMenuPilotModels.weaponSkinIndex, "clGlobal.currentMenuPilotModels.weaponSkinIndex:", clGlobal.currentMenuPilotModels.weaponSkinIndex )
+		printt( "clGlobal.previewMenuPilotModels.weaponCamoIndex:", clGlobal.previewMenuPilotModels.weaponCamoIndex, "clGlobal.currentMenuPilotModels.weaponCamoIndex:", clGlobal.currentMenuPilotModels.weaponCamoIndex )
 	}
 
 	void function PreviewPilotWeaponSkinChange( entity player, int skinIndex )
 	{
 		clGlobal.previewMenuPilotModels.weaponSkinIndex = skinIndex
-		clGlobal.previewMenuPilotModels.weaponCamoIndex = 0
+		clGlobal.previewMenuPilotModels.weaponCamoIndex = -1
 		printt( "PreviewPilotWeaponSkinChange", clGlobal.previewMenuPilotModels.weaponSkinIndex, clGlobal.previewMenuPilotModels.weaponCamoIndex )
 		UpdatePilotModelDisplay( player )
 	}
@@ -1888,29 +1913,27 @@
 		clGlobal.previewMenuTitanModels.camoIndex = camoIndex
 		clGlobal.previewMenuTitanModels.skinIndex = skinIndex
 		clGlobal.previewMenuTitanModels.loadoutIndex = loadoutIndex
-		UpdatePreviewTitanArmBadge( player, skinIndex, camoIndex, loadoutIndex, clGlobal.currentMenuTitanModels.isPrime )
+		UpdatePreviewTitanArmBadge( player, skinIndex, camoIndex, loadoutIndex )
 		printt( "PreviewTitanCombinedChange", clGlobal.previewMenuTitanModels.skinIndex, clGlobal.previewMenuTitanModels.camoIndex )
 		UpdateTitanModelDisplay( player )
 	}
 
-	void function UpdatePreviewTitanArmBadge( entity player, int skinIndex, int camoIndex, int loadoutIndex, bool isPrime )
+	void function UpdatePreviewTitanArmBadge( entity player, int skinIndex, int camoIndex, int loadoutIndex )
 	{
-		UpdateMenuDefArmBadge( clGlobal.previewMenuTitanModels, player, skinIndex, camoIndex, loadoutIndex, isPrime )
+		UpdateMenuDefArmBadge( clGlobal.previewMenuTitanModels, player, skinIndex, camoIndex, loadoutIndex )
 	}
 
-	void function UpdateMenuTitanArmBadge( entity player, int skinIndex, int camoIndex, int loadoutIndex, bool isPrime )
+	void function UpdateMenuTitanArmBadge( entity player, int skinIndex, int camoIndex, int loadoutIndex )
 	{
-		UpdateMenuDefArmBadge( clGlobal.currentMenuTitanModels, player, skinIndex, camoIndex, loadoutIndex, isPrime )
+		UpdateMenuDefArmBadge( clGlobal.currentMenuTitanModels, player, skinIndex, camoIndex, loadoutIndex )
 	}
 
-	void function UpdateMenuDefArmBadge( MenuCharacterDef charDef, entity player, int skinIndex, int camoIndex, int loadoutIndex, bool isPrime )
+	void function UpdateMenuDefArmBadge( MenuCharacterDef charDef, entity player, int skinIndex, int camoIndex, int loadoutIndex )
 	{
+		if ( !IsConnected() ) //Defensive fix for persistence not being loaded when disconnecting or connecting into a match.
+			return
+
 		TitanLoadoutDef loadout = clone GetCachedTitanLoadout( loadoutIndex )
-
-		if ( isPrime )
-			loadout.isPrime = "titan_is_prime"
-		else
-			loadout.isPrime = "titan_is_not_prime"
 
 		asset armBadgeModel = GetTitanArmBadgeFromLoadoutAndSkinIndex( loadout, skinIndex )
 
@@ -2039,6 +2062,20 @@
 		file.menuMiscModel.body.SetSkin( skinIndex )
 	}
 
+	vector function GetWeaponModelOffset( string weaponRef )
+	{
+		vector vec = <0, 0, 0>
+
+		switch ( weaponRef )
+		{
+			case "mp_weapon_sniper":
+				vec = <27.5, -2.55, 1.2>
+				break
+		}
+
+		return vec
+	}
+
 	void function UpdateStoreWeaponModelSkin( entity player, string weaponRef, int skinIndex )
 	{
 		if ( !clGlobal.initializedMenuModels ) // Handle early calls that UI script can trigger before client is ready
@@ -2046,9 +2083,13 @@
 
 		printt( "skinIndex:", skinIndex )
 
+		vector moverOffset = GetWeaponModelOffset( weaponRef )
+		file.menuWeaponModel.mover.SetLocalOrigin( moverOffset )
+
 		asset model = GetWeaponViewmodel( weaponRef )
-		file.menuWeaponModel.body.SetSkin( skinIndex )
+		file.menuWeaponModel.body.SetSkin( 0 ) // Lame, but without this the game can complain that the skin is invalid when the model or skin is changed, regardless of which happens first
 		file.menuWeaponModel.body.SetModel( model )
+		file.menuWeaponModel.body.SetSkin( skinIndex )
 
 		vector angleOffset = <0, 60, 0>
 
@@ -2058,8 +2099,6 @@
 		file.menuWeaponModel.body.SetLocalOrigin( originOffset )
 		file.menuWeaponModel.body.SetLocalAngles( angleOffset )
 		file.menuWeaponModel.body.Anim_SetPaused( true )
-
-		file.menuWeaponModel.body.SetSkin( skinIndex )
 	}
 
 	void function UpdateStoreWeaponModelZoom( entity player, float zoomFrac )
@@ -2259,6 +2298,11 @@
 		return GetCachedTitanLoadoutArmBadge( loadoutIndex )
 	}
 
+	int function GetTitanLoadoutArmBadgeState( int loadoutIndex )
+	{
+		return GetCachedTitanArmBadgeState( loadoutIndex )
+	}
+
 	asset function GetFactionModel( string ref )
 	{
 		var dataTable = GetDataTable( $"datatable/faction_leaders.rpak" )
@@ -2335,7 +2379,7 @@
 		clGlobal.previewMenuPilotModels.weaponModel = $""
 
 		clGlobal.previewMenuPilotModels.weaponCamoIndex = -1
-		//clGlobal.previewMenuPilotModels.weaponSkinIndex = 0
+		clGlobal.previewMenuPilotModels.weaponSkinIndex = -1
 
 		clGlobal.currentMenuPilotModels.mods = []
 
@@ -2363,7 +2407,7 @@
 		clGlobal.previewMenuPilotModels.weapon = ""
 		clGlobal.previewMenuPilotModels.weaponModel = $""
 		clGlobal.previewMenuPilotModels.weaponCamoIndex = -1
-		clGlobal.previewMenuPilotModels.weaponSkinIndex = 0
+		clGlobal.previewMenuPilotModels.weaponSkinIndex = -1
 		clGlobal.previewMenuPilotModels.mods = []
 		clGlobal.previewMenuPilotModels.idleAnim = ""
 		UpdatePilotModelDisplay( player )
@@ -2452,6 +2496,9 @@
 		clGlobal.previewMenuTitanModels.bodyModel = $""
 		clGlobal.previewMenuTitanModels.camoIndex = -1
 		clGlobal.previewMenuTitanModels.skinIndex = 0
+		clGlobal.previewMenuTitanModels.decalIndex = -1
+		//clGlobal.previewMenuTitanModels.armBadgeModel = $"" // Not sure why these aren't in here. These should be uncommented when we're sure it's safe to.
+		//clGlobal.previewMenuTitanModels.armBadgeBodyGroupIndex = -1
 		clGlobal.previewMenuTitanModels.weaponModel = $""
 		clGlobal.previewMenuTitanModels.weaponCamoIndex = -1
 		clGlobal.previewMenuTitanModels.idleAnim = ""

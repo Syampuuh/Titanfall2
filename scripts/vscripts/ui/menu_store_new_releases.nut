@@ -32,21 +32,23 @@ void function InitStoreMenuNewReleases()
 
 	Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), "#STORE_NEW_RELEASES" )
 
-	file.itemInfo = Hud_GetRui( Hud_GetChild( file.menu, "Info" ) )
+	file.buttons = SetupContentCycleButtons()
+	//file.buttons.append( SetupJumpStarterKitButton() )
+	SetNavUpDown( file.buttons )
 
-	SetupButtons()
+	file.itemInfo = Hud_GetRui( Hud_GetChild( file.menu, "Info" ) )
 
 	AddMenuFooterOption( file.menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 }
 
-void function SetupButtons()
+array<var> function SetupContentCycleButtons()
 {
-	file.buttons = GetElementsByClassname( file.menu, "NewReleasesButtonClass" )
+	array<var> buttons = GetElementsByClassname( file.menu, "ContentCycleButtonClass" )
 
-	for ( int i = 0; i < file.buttons.len(); i++ )
+	for ( int i = 0; i < buttons.len(); i++ )
 	{
-		var button = file.buttons[i]
+		var button = buttons[i]
 
 		ButtonData data
 		data.index = i
@@ -56,19 +58,27 @@ void function SetupButtons()
 		Hud_AddEventHandler( button, UIE_CLICK, OnButton_Activate )
 	}
 
-	SetButtonRuiText( file.buttons[0], "#STORE_LIMITED" )
-	//AddButtonEventHandler( file.buttons[0], UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Limited" ) ) )
-	var rui = Hud_GetRui( file.buttons[0] )
-	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_limited" )
-	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_limited_hl" )
-
-	SetButtonRuiText( file.buttons[1], "#STORE_WEAPON_WARPAINT" )
-	//AddButtonEventHandler( file.buttons[1], UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_WeaponSkins" ) ) )
-	rui = Hud_GetRui( file.buttons[1] )
+	SetButtonRuiText( buttons[0], "#STORE_WEAPON_WARPAINT" )
+	var rui = Hud_GetRui( buttons[0] )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_weaponskin" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_weaponskin_hl" )
 
-	SetNavUpDown( file.buttons )
+	return buttons
+}
+
+var function SetupJumpStarterKitButton()
+{
+	var button = GetSingleElementByClassname( file.menu, "JumpStarterKitButtonClass" )
+
+	//Hud_AddEventHandler( button, UIE_GET_FOCUS, OnButton_Focused )
+	//Hud_AddEventHandler( button, UIE_CLICK, OnButton_Activate )
+
+	SetButtonRuiText( button, "#STORE_JUMP_STARTER_PACK" )
+	var rui = Hud_GetRui( button )
+	RuiSetImage( rui, "primeImage", $"rui/menu/store/ion_store_icon" )
+	RuiSetImage( rui, "focusedImage", $"rui/menu/store/ion_store_icon_hl" )
+
+	return button
 }
 
 ButtonData function GetButtonData( var button )
@@ -96,8 +106,6 @@ void function OnButton_Focused( var button )
 		file.activeContentSet = index
 
 		if ( index == 0 )
-			thread CycleTitanSkins()
-		else
 			thread CycleWeaponSkins()
 	}
 }
@@ -106,18 +114,10 @@ void function OnButton_Activate( var button )
 {
 	int index = GetButtonData( button ).index
 
-	if ( index == 0 )
-	{
-		SetStoreMenuLimitedDefaultFocusIndex( file.titanIndex )
-		AdvanceMenu( GetMenu( "StoreMenu_Limited" ) )
-	}
-	else
-	{
-		Assert( index == 1 )
-
-		SetStoreMenuWeaponSkinsDefaultFocusIndex( file.weaponIndex )
-		AdvanceMenu( GetMenu( "StoreMenu_WeaponSkins" ) )
-	}
+	Assert( index == 0 )
+	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC8_WEAPON_WARPAINT_BUNDLE )
+	SetStoreMenuWeaponSkinsDefaultFocusIndex( file.weaponIndex )
+	AdvanceMenu( GetMenu( "StoreMenu_WeaponSkins" ) )
 }
 
 void function CycleTitanSkins()
@@ -139,7 +139,7 @@ void function CycleTitanSkins()
 	// Begin cycle on the same item that was being viewed on the menu just closed
 	if ( uiGlobal.lastMenuNavDirection == MENU_NAV_BACK )
 	{
-		var lastFocus = uiGlobal.menuData[ GetMenu( "StoreMenu_Limited" ) ].lastFocus
+		var lastFocus = uiGlobal.menuData[ GetMenu( "StoreMenu_WeaponSkins" ) ].lastFocus
 
 		if ( lastFocus != null )
 			file.titanIndex = int( Hud_GetScriptID( lastFocus ) )
@@ -179,14 +179,14 @@ void function CycleWeaponSkins()
 	UI_SetPresentationType( ePresentationType.STORE_WEAPON_SKINS )
 
 	array<ItemDisplayData> displayDataArray
-	displayDataArray.append( GetItemDisplayData( "skin_rspn101_wasteland", "mp_weapon_rspn101" ) )
-	displayDataArray.append( GetItemDisplayData( "skin_g2_masterwork", "mp_weapon_g2" ) )
-	displayDataArray.append( GetItemDisplayData( "skin_vinson_blue_fade", "mp_weapon_vinson" ) )
-	displayDataArray.append( GetItemDisplayData( "skin_car_crimson_fury", "mp_weapon_car" ) )
-	displayDataArray.append( GetItemDisplayData( "skin_alternator_patriot", "mp_weapon_alternator_smg" ) )
-	displayDataArray.append( GetItemDisplayData( "skin_shotgun_badlands", "mp_weapon_shotgun" ) )
-	displayDataArray.append( GetItemDisplayData( "skin_wingman_aqua_fade", "mp_weapon_wingman" ) )
-	displayDataArray.append( GetItemDisplayData( "skin_rocket_launcher_psych_spectre", "mp_weapon_rocket_launcher" ) )
+	displayDataArray.append( GetItemDisplayData( "skin_rspn101_patriot", "mp_weapon_rspn101" ) )
+	displayDataArray.append( GetItemDisplayData( "skin_hemlok_mochi", "mp_weapon_hemlok" ) )
+	displayDataArray.append( GetItemDisplayData( "skin_r97_purple_fade", "mp_weapon_r97" ) )
+	displayDataArray.append( GetItemDisplayData( "skin_kraber_masterwork", "mp_weapon_sniper" ) )
+	displayDataArray.append( GetItemDisplayData( "skin_spitfire_lead_farmer", "mp_weapon_lmg" ) )
+	displayDataArray.append( GetItemDisplayData( "skin_devotion_rspn_customs", "mp_weapon_esaw" ) )
+	displayDataArray.append( GetItemDisplayData( "skin_mozambique_crimson_fury", "mp_weapon_shotgun_pistol" ) )
+	displayDataArray.append( GetItemDisplayData( "skin_thunderbolt_8bit", "mp_weapon_arc_launcher" ) )
 
 	// Begin cycle on the same item that was being viewed on the menu just closed
 	if ( uiGlobal.lastMenuNavDirection == MENU_NAV_BACK )

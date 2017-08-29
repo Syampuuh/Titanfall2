@@ -9,7 +9,10 @@ void function ClGamemodeLTS_Init()
 		ClGamemodeLTSBomb_Init()
 	AddCallback_GameStateEnter( eGameState.Postmatch, DisplayPostMatchTop3 )
 
-	RunUIScript( "TTSMenuModeDefault" )
+	if ( GetCurrentPlaylistVarInt( "aegis_upgrades", 0 ) == 1 )
+		RunUIScript( "TTSMenuModeFD" )
+	else
+		RunUIScript( "TTSMenuModeDefault" )
 }
 
 void function LTS_GameStateChanged()

@@ -1820,7 +1820,7 @@ bool function CodeCallback_OnVortexHitProjectile( entity weapon, entity vortexSp
 				break
 
 			case eDamageSourceId.mp_titanability_sonar_pulse:
-				if ( attacker.IsTitan() )
+				if ( IsValid( attacker ) && attacker.IsTitan() )
 				{
 					int team = attacker.GetTeam()
 					PulseLocation( attacker, team, contactPos, false, false )

@@ -794,17 +794,18 @@ void function SpotlightButton_Activate( var button )
 
 		switch ( link )
 		{
-			case "menu:new":
-				menu = GetMenu( "StoreMenu_NewReleases" )
-				break
+			//case "menu:new":
+			//	menu = GetMenu( "StoreMenu_NewReleases" )
+			//	break
 
+			case "menu:new":
 			case "menu:weaponskins":
 				menu = GetMenu( "StoreMenu_WeaponSkins" )
 				break
 
-			case "menu:limited":
-				menu = GetMenu( "StoreMenu_Limited" )
-				break
+			//case "menu:limited":
+			//	menu = GetMenu( "StoreMenu_Limited" )
+			//	break
 
 			case "menu:sales":
 				menu = GetMenu( "StoreMenu_Sales" )
@@ -819,6 +820,6 @@ void function SpotlightButton_Activate( var button )
 	}
 	else
 	{
-		LaunchExternalWebBrowser( link )
+		LaunchExternalWebBrowser( link, WEBBROWSER_FLAG_MUTEGAME )
 	}
 }

@@ -259,6 +259,14 @@ void function OnEditPilotSlotButton_LostFocus( var button )
 		}
 	}
 
+	// For usage below, treat weapon3 as secondary
+	if ( propertyRef == "weapon3mod1" )
+		propertyRef = "secondarymod1"
+	else if ( propertyRef == "weapon3mod2" )
+		propertyRef = "secondarymod2"
+	else if ( propertyRef == "weapon3mod3" )
+		propertyRef = "secondarymod3"
+
 	if ( IsUnlockValid( propertyRef, parentItem.ref ) )
 		ClearNewStatus( button, propertyRef, parentItem.ref )
 }

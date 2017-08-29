@@ -74,6 +74,9 @@ void function OnPlayerDeath_StopTitanCockpitSounds( entity player )
 
 void function PlayTitanCockpitSounds( entity player ) //Note that the "powerup" sounds don't play here, they play from the titan embark animations, which means if you spawn in as a titan you don't get them, but you get the ambient sounds
 {
+	if ( !IsValid( player ) ) //GetLocalViewPlayer() can return null sometimes, and script needs to handle it
+		return
+
 	EmitSoundOnEntity( player, "sse_titancockpit_enter" )
 
 	string titanName = GetTitanCharacterName( player )
@@ -87,6 +90,9 @@ void function PlayTitanCockpitSounds( entity player ) //Note that the "powerup" 
 
 void function StopTitanCockpitSounds( entity player )
 {
+	if ( !IsValid( player ) ) //GetLocalViewPlayer() can return null sometimes, and script needs to handle it
+		return
+
 	int playerEntIndex = player.GetEntIndex()
 	if ( player.GetEntIndex() in file.playerToTitanCockpitSound )
 	{

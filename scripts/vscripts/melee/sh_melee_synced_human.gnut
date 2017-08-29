@@ -29,6 +29,9 @@ function MeleeSyncedHumanShared_Init()
 	PrecacheParticleSystem( MECHANICAL_BLOOD_FX )
 	PrecacheParticleSystem( HUMAN_STAB_FX )
 	PrecacheParticleSystem( MECHANICAL_STAB_FX )
+
+	RegisterSignal( "DeleteAWall" ) //ForAWallExecution
+	RegisterSignal( "PlayNextSound" ) //ForAwallExecution, generally could be used when we have long chains of sounds that need to be played that are different for robopilots versus non-robopilots
 #endif
 /*
 #if SERVER
@@ -459,6 +462,83 @@ function MeleeSyncedHumanShared_Init()
 		    #endif
 		}
 
+	    //Amped Wall Execution
+	    {
+
+    	#if SERVER
+	    	AnimEventData givePistolEvent
+			givePistolEvent.eventName = "attach_pistol"
+			givePistolEvent.callback = AnimEvent_attach_wingman_awall_execution
+
+			AnimEventData takePistolEvent
+			takePistolEvent.eventName = "detach_pistol"
+			takePistolEvent.callback = AnimEvent_detach_pistol
+
+			AnimEventData spawnAWallEvent
+			spawnAWallEvent.eventName = "spawn_awall"
+			spawnAWallEvent.callback = AnimEvent_spawn_awall
+
+			AnimEventData frontShotHighEvent
+			frontShotHighEvent.eventName = "front_shot_high"
+			frontShotHighEvent.callback = AnimEvent_front_shot_high
+
+			AnimEventData headshotEvent
+			headshotEvent.eventName = "headshot_death"
+			headshotEvent.callback = AnimEvent_headshot_death
+
+			AnimEventData turnoffExecutionDOFEvent //Turn off DOF at FX's request
+			turnoffExecutionDOFEvent.eventName = "turnoff_execution_dof"
+			turnoffExecutionDOFEvent.callback = AnimEvent_turnoff_executionDOF
+
+			AnimEventData aWallVictimStartSoundEvent
+			aWallVictimStartSoundEvent.eventName = "awall_victim_sound_event"
+			aWallVictimStartSoundEvent.callback = AnimEvent_awall_victim_start_sfx
+
+			AnimEventData aWallVictimShieldSoundEvent
+			aWallVictimShieldSoundEvent.eventName = "shield_sound_event"
+			aWallVictimShieldSoundEvent.callback = AnimEvent_awall_victim_shield_sfx
+
+			AnimEventData aWallVictimImpact01SoundEvent
+			aWallVictimImpact01SoundEvent.eventName = "impact_01_sound_event"
+			aWallVictimImpact01SoundEvent.callback = AnimEvent_awall_victim_impact01_sfx
+
+			AnimEventData aWallVictimImpact02SoundEvent
+			aWallVictimImpact02SoundEvent.eventName = "impact_02_sound_event"
+			aWallVictimImpact02SoundEvent.callback = AnimEvent_awall_victim_impact02_sfx
+
+			AnimEventData aWallVictimImpact03SoundEvent
+			aWallVictimImpact03SoundEvent.eventName = "impact_03_sound_event"
+			aWallVictimImpact03SoundEvent.callback = AnimEvent_awall_victim_impact03_sfx
+
+			AnimEventData aWallVictimBodyfallSoundEvent
+			aWallVictimBodyfallSoundEvent.eventName = "bodyfall_sound_event"
+			aWallVictimBodyfallSoundEvent.callback = AnimEvent_awall_victim_bodyfall_sfx
+
+
+    	#endif
+
+	        	SyncedMelee syncedMelee
+	        	syncedMelee.ref = "execution_ampedwall"
+	        	syncedMelee.direction = < -1, 0, 0 >
+	        	syncedMelee.distance = HUMAN_EXECUTION_RANGE
+	        	syncedMelee.attackerAnimation3p = "pt_mp_execution_attacker_awall"
+	        	syncedMelee.targetAnimation3p = "pt_mp_execution_victim_awall"
+	        	syncedMelee.thirdPersonCameraAttachment = "VDU"
+
+	        	#if SERVER
+	        		syncedMelee.attacker3pAnimEvents = [ turnoffExecutionDOFEvent, givePistolEvent,takePistolEvent, spawnAWallEvent ]
+	        		syncedMelee.target3pAnimEvents = [ turnoffExecutionDOFEvent, aWallVictimStartSoundEvent, aWallVictimShieldSoundEvent, aWallVictimImpact01SoundEvent, aWallVictimImpact02SoundEvent, aWallVictimImpact03SoundEvent, aWallVictimBodyfallSoundEvent, headshotEvent, frontShotHighEvent ]
+	        	#endif
+
+	    	    syncedMelee.minDot = 0.2
+	    	    syncedMelee.isAttackerRef = false
+	    	    AddSyncedMelee( meleeChooser, syncedMelee )
+	    	    #if SERVER
+	    		    AddSyncedMeleeServerThink( meleeChooser, MeleeThread_PilotVsEnemy )
+	    	    #endif
+
+	   	}
+
 		{
 			// Placeholder for the Random Execution
 			SyncedMelee syncedMelee
@@ -624,6 +704,16 @@ void function AnimEvent_back_shot_low( entity ent )
 	else
 		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( HUMAN_BLOOD_FX ), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
 }
+
+void function AnimEvent_front_shot_high( entity ent )
+{
+	int tagIdx = ent.LookupAttachment( "CHESTFOCUS" )
+	if ( ent.IsMechanical() )
+		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( MECHANICAL_BLOOD_FX), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
+	else
+		StartParticleEffectOnEntityWithPos( ent, GetParticleSystemIndex( HUMAN_BLOOD_FX ), FX_PATTACH_POINT_FOLLOW, tagIdx, <0, 0, 0>, < 0, 0, 0 > )
+}
+
 
 void function AnimEvent_headstab_death( entity ent )
 {
@@ -864,5 +954,129 @@ void function HoloPilot_Execution_MuzzleFlash( entity pistol ) //Only real diffe
 
 	EmitSoundOnEntity( pistol, "weapon_wingman_fire_3p" ) // sound above cannot play because it's an asset instead of a string
 }
+
+void function AnimEvent_spawn_awall( entity attacker )
+{
+	entity awall = CreatePropDynamic( AWALL_MODEL )
+	attacker.EndSignal( "OnDeath" )
+
+
+	OnThreadEnd(
+	function() : ( awall )
+		{
+			awall.Destroy()
+
+		}
+	)
+
+	AddAnimEvent( awall, "create_awall", AnimEvent_CreateAwall )
+
+	awall.SetParent( attacker, "ref", false, 0.0 )
+	thread PlayAnim( awall, "awall_execution", attacker, "ref", 0.0 )
+	WaittillAnimDone( attacker )
+}
+
+void function AnimEvent_CreateAwall( entity awall_base )
+{
+	vector reverseAngles = AnglesCompose( awall_base.GetAngles(), <0,180,0> )
+	entity ampedWall = CreatePropDynamic( $"models/fx/pilot_shield_wall_amped.mdl", awall_base.GetOrigin(), reverseAngles, SOLID_VPHYSICS )
+	ampedWall.kv.contents = (CONTENTS_WINDOW)
+	ampedWall.kv.CollisionGroup = TRACE_COLLISION_GROUP_BLOCK_WEAPONS_AND_PHYSICS
+	ampedWall.SetPassThroughFlags( PTF_ADDS_MODS | PTF_NO_DMG_ON_PASS_THROUGH )
+	ampedWall.SetBlocksRadiusDamage( true )
+	ampedWall.SetTakeDamageType( DAMAGE_NO ) //Can't kill this AWall!
+	ampedWall.SetDamageNotifications( true )
+	ampedWall.SetMaxHealth( 1000 )
+	ampedWall.SetHealth( 1000 )
+	awall_base.EndSignal( "OnDestroy" )
+	awall_base.EndSignal( "DeleteAWall" ) //Signaled from the animation
+	ampedWall.Hide()
+
+	OnThreadEnd(
+	function() : ( ampedWall )
+		{
+			if ( IsValid( ampedWall ) )
+				ampedWall.Destroy()
+		}
+	)
+
+	SetTeam( ampedWall, TEAM_BOTH )
+
+	ampedWall.SetPassThroughThickness( 0 )
+	ampedWall.SetPassThroughDirection( -0.55 )
+	float timeoutFailSafe = 5.0
+	StatusEffect_AddTimed( ampedWall, eStatusEffect.pass_through_amps_weapon, 1.0, timeoutFailSafe, 0.0 )
+
+	wait timeoutFailSafe
+
+}
+
+void function AnimEvent_awall_victim_start_sfx( entity victim )
+{
+	//printt( "Pilot_Mvmt_Execution_Awall_Robopilot" )
+
+	if ( victim.IsMechanical() )
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Robopilot" )
+	else
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Pilot" )
+}
+
+void function AnimEvent_awall_victim_shield_sfx( entity victim )
+{
+	//printt( "Pilot_Mvmt_Execution_Awall_Robopilot_Shield" )
+
+	if ( victim.IsMechanical() )
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Robopilot_Shield" )
+	else
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Shield" )
+}
+
+void function AnimEvent_awall_victim_impact01_sfx( entity victim )
+{
+	//printt( "Pilot_Mvmt_Execution_Awall_Robopilot_Impact_01" )
+
+	if ( victim.IsMechanical() )
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Robopilot_Impact_01" )
+	else
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Pilot_Impact_01" )
+}
+
+void function AnimEvent_awall_victim_impact02_sfx( entity victim )
+{
+	//printt( "Pilot_Mvmt_Execution_Awall_Robopilot_Impact_02" )
+
+	if ( victim.IsMechanical() )
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Robopilot_Impact_02" )
+	else
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Pilot_Impact_02" )
+}
+
+void function AnimEvent_awall_victim_impact03_sfx( entity victim )
+{
+	//printt( "Pilot_Mvmt_Execution_Awall_Robopilot_Impact_03" )
+
+	if ( victim.IsMechanical() )
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Robopilot_Impact_03" )
+	else
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Pilot_Impact_03" )
+}
+
+void function AnimEvent_awall_victim_bodyfall_sfx( entity victim )
+{
+	//printt( "Pilot_Mvmt_Execution_Awall_Robopilot_Bodyfall" )
+
+	if ( victim.IsMechanical() )
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Robopilot_Bodyfall" )
+	else
+		EmitSoundOnEntity( victim, "Pilot_Mvmt_Execution_Awall_Bodyfall" )
+}
+
+
+void function AnimEvent_attach_wingman_awall_execution( entity ent )
+{
+	AnimEvent_attach_pistol_common( ent, WINGMAN_MODEL, "wingman_execution_awall_anim", HoloPilot_Execution_MuzzleFlash )
+}
+
+
 #endif //if server. These are all anim event functions that should be run on the server anyway, no reason for them to be defined on the client.
 

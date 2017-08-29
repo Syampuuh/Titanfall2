@@ -20,6 +20,7 @@ struct {
 	var hintIcon
 	var fdProperties
 	var fdPropertiesData
+	var armBadgeButton
 	bool menuClosing = false
 } file
 
@@ -82,6 +83,10 @@ void function InitEditTitanLoadoutMenu()
 	AddButtonEventHandler( file.primeTitanButton, UIE_CLICK, OnPrimeTitanButton_Activate )
 
 	file.titanExecutionButton = Hud_GetChild( file.loadoutPanel, "ButtonTitanExecutions" )
+
+	file.armBadgeButton = Hud_GetChild( file.loadoutPanel, "ButtonShoulderBadge" )
+	AddButtonEventHandler( file.armBadgeButton, UIE_GET_FOCUS, OnArmBadgeButton_Focus )
+	AddButtonEventHandler( file.armBadgeButton, UIE_CLICK, OnArmBadgeButton_Activate )
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
@@ -146,6 +151,20 @@ void function OnOpenEditTitanLoadoutMenu()
 	Hud_SetText( file.appearanceLabel, "" )
 
 	RefreshCreditsAvailable()
+
+	var armBadgeRui = Hud_GetRui( file.armBadgeButton )
+	if ( CanEquipArmBadge( loadout.titanClass ) )
+	{
+		Hud_Show( file.armBadgeButton )
+		Hud_SetSelected( file.armBadgeButton, loadout.showArmBadge != 0 )
+		RuiSetString( armBadgeRui, "buttonText", loadout.showArmBadge != 0 ? "#HIDE_ARM_BADGE" : "#SHOW_ARM_BADGE" )
+	}
+	else
+	{
+		Hud_Hide( file.armBadgeButton )
+		Hud_SetSelected( file.armBadgeButton, false )
+		RuiSetString( armBadgeRui, "buttonText", "" )
+	}
 
 	if ( ShouldShowVanguardButtons( loadout.titanClass ) )
 	{
@@ -437,6 +456,36 @@ void function OnEditTitanNoseArtButton_Activate( var button )
 	AdvanceMenu( GetMenu( "NoseArtSelectMenu" ) )
 }
 
+
+void function OnArmBadgeButton_Focus( var button )
+{
+
+}
+
+void function OnArmBadgeButton_Activate( var button )
+{
+	entity player = GetUIPlayer()
+
+	TitanLoadoutDef loadout = GetCachedTitanLoadout( uiGlobal.editingLoadoutIndex )
+	var rui = Hud_GetRui( button )
+
+	if ( loadout.showArmBadge )
+	{
+		SetCachedLoadoutValue( player, "titan", uiGlobal.editingLoadoutIndex, "showArmBadge", "0" )
+		Hud_SetSelected( button, false )
+		RuiSetString( rui, "buttonText", "#SHOW_ARM_BADGE" )
+
+	}
+	else
+	{
+		SetCachedLoadoutValue( player, "titan", uiGlobal.editingLoadoutIndex, "showArmBadge", "1" )
+		Hud_SetSelected( button, true )
+		RuiSetString( rui, "buttonText", "#HIDE_ARM_BADGE" )
+	}
+
+	RunMenuClientFunction( "UpdateTitanModel", uiGlobal.editingLoadoutIndex )
+}
+
 void function OnPrimeTitanButton_Activate( var button )
 {
 	TitanLoadoutDef loadout = GetCachedTitanLoadout( uiGlobal.editingLoadoutIndex )
@@ -506,6 +555,7 @@ bool function ShouldCosmeticButtonShowNew( entity player, string parentRef, int 
 
 void function OnCloseEditTitanLoadoutMenu()
 {
+	RunMenuClientFunction( "ClearAllTitanPreview" )
 	file.menuClosing = true
 }
 
@@ -604,6 +654,45 @@ bool function ShouldShowVanguardButtons( string titanClass )
 		return true
 
 	return false
+}
+
+bool function CanEquipArmBadge( string titanClass )
+{
+	string skinRef
+	switch ( titanClass )
+	{
+		case "ion":
+			skinRef = "ion_skin_fd"
+			break
+
+		case "scorch":
+			skinRef = "scorch_skin_fd"
+			break
+
+		case "northstar":
+			skinRef = "northstar_skin_fd"
+			break
+
+		case "ronin":
+			skinRef = "ronin_skin_fd"
+			break
+
+		case "tone":
+			skinRef = "tone_skin_fd"
+			break
+
+		case "legion":
+			skinRef = "legion_skin_fd"
+			break
+
+		case "vanguard":
+			skinRef = "monarch_skin_fd"
+			break
+	}
+
+	return !IsSubItemLocked( GetUIPlayer(), skinRef, titanClass )
+	//int entitlementId = GetEntitlementIds( skinRef, titanClass )[0]
+	//return LocalPlayerHasEntitlement( entitlementId )
 }
 
 void function TitanUpgradeButton_OnLoseFocus( var button )

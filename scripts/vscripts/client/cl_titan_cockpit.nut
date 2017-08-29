@@ -323,8 +323,8 @@ void function ShowRUIHUD( entity cockpit )
 	thread TitanCockpitHealthChangedThink( cockpit, player )
 
 	#if MP
-		if ( GameRules_GetGameMode() == FD )
-			thread DisplayFrontierRank( file.isFirstBoot )
+	if ( GetCurrentPlaylistVarInt( "aegis_upgrades", 0 ) == 1 && !IsSpectating() && !IsWatchingKillReplay() )
+		thread DisplayFrontierRank( file.isFirstBoot )
 	#endif
 	file.isFirstBoot = false
 
@@ -355,9 +355,13 @@ void function DisplayFrontierRank( bool isFirstBoot = true )
 
 	RuiSetDrawGroup( file.cockpitAdditionalRui, RUI_DRAW_COCKPIT )
 
-	bool firstBootDisplay = isFirstBoot || !GetGlobalNetBool( "FD_waveActive" )
+	bool firstBootDisplay
+	if ( GameRules_GetGameMode() == FD )
+		firstBootDisplay = isFirstBoot || !GetGlobalNetBool( "FD_waveActive" )
+	else
+		firstBootDisplay = isFirstBoot
 
-	RuiSetBool( file.cockpitAdditionalRui, "isFirstBoot", isFirstBoot || !GetGlobalNetBool( "FD_waveActive" ) )
+	RuiSetBool( file.cockpitAdditionalRui, "isFirstBoot", firstBootDisplay )
 	RuiSetImage( file.cockpitAdditionalRui, "titanIcon", GetIconForTitanClass( titanClass ) )
 	RuiSetInt( file.cockpitAdditionalRui, "titanRank", FD_TitanGetLevel( GetLocalClientPlayer(), titanClass ) )
 	RuiSetInt( file.cockpitAdditionalRui, "maxActiveIndex", maxActiveIndex )
@@ -607,11 +611,15 @@ void function CockpitDoomedThink( entity cockpit )
 	while ( IsAlive( player ) )
 	{
 		entity soul = player.GetTitanSoul()
+		if ( !IsValid( soul ) ) //Defensive fix for bug 227087. Assumption is that the cockpit is likely to be destroyed soon if the soul is invalid.
+			return
 		if ( !soul.IsDoomed() )
 			player.WaitSignal( "Doomed" )
 
 		SetCockpitUIDoomedState( true )
 
+		if ( !IsValid( soul ) ) //Defensive fix for bug 227087. Assumption is that the cockpit is likely to be destroyed soon if the soul is invalid.
+			return
 		if ( soul.IsDoomed() )
 			player.WaitSignal( "TitanUnDoomed" )
 

@@ -59,8 +59,8 @@ global const TITAN_BRAWL = "ttdm"
 
 global const VERBOSE_DAMAGE_PRINTOUTS = false
 
-global const SAVEGAME_VERSION = 14 // increment when saves need to be tossed
-global const PERSISTENCE_INIT_VERSION = 229
+global const SAVEGAME_VERSION = 15 // increment when saves need to be tossed
+global const PERSISTENCE_INIT_VERSION = 230
 
 global const TEMP_NETWORTH_VAR = "activeBCID"
 global const NETWORTH_VAR = "netWorth"
@@ -194,7 +194,7 @@ global struct TitanLoadoutDef
 	int 			primeSkinIndex		//Prime Titans don't have the same warpaints/nose arts than non Prime Titans have, so we need to store them separately
 	int 			primeCamoIndex		//Prime Titans don't have the same warpaints/nose arts than non Prime Titans have, so we need to store them separately
 	int 			primeDecalIndex		//Prime Titans don't have the same warpaints/nose arts than non Prime Titans have, so we need to store them separately
-
+	int 			showArmBadge
 
 	// Everything above should be player choices that exist in persistent data
 	// Everything below should be derived properties from the above or otherwise set by script
@@ -2577,7 +2577,7 @@ global const int TITAN_SKIN_INDEX_CAMO = 2
 global const int TITAN_WARPAINT_CAMO_INDEX = -1
 global const int WEAPON_SKIN_INDEX_DEFAULT = 0
 global const int WEAPON_SKIN_INDEX_CAMO = 1
-global const int WEAPON_SKIN_INDEX_GHOST = 9
+global const int WEAPON_SKIN_INDEX_GHOST = 10
 
 global const int FWTS_HIDDEN 		= 1 << 0
 global const int FWTS_IMC 			= 1 << 1
@@ -2826,3 +2826,7 @@ global const int WEAPONFLAG_AMPED	= (1<<0)
 global const int PROP_IS_VALID_FOR_TURRET_PLACEMENT = SPF_CUSTOM_SCRIPT_3
 
 global const string TITAN_ARM_BADGE_ATTACHMENT = "exp_L_shoulder"
+
+global const string PERSISTENCE_LEAVECOUNT_VAR = "abandonCountForMode"
+global const string PERSISTENCE_LAST_LEAVE_TIME = "lastAbandonTime"
+global const string PERSISTENCE_LEAVEMODE_VAR = "lastAbandonedMode"

@@ -83,7 +83,7 @@ void function OnKBNSubjectButtonClick( var button )
 	if ( urlText.len() == 0 )
 		return
 
-	LaunchExternalWebBrowser( urlText )
+	LaunchExternalWebBrowser( urlText, WEBBROWSER_FLAG_MUTEGAME )
 }
 
 void function OnKBNSubjectButtonFocus( var button )

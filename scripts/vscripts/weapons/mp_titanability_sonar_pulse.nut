@@ -10,7 +10,7 @@ global function DelayedPulseLocation
 
 const int SONAR_PULSE_RADIUS = 1250
 const float SONAR_PULSE_DURATION = 5.0
-const float FD_SONAR_PULSE_DURATION = 8.0
+const float FD_SONAR_PULSE_DURATION = 10.0
 
 bool function OnWeaponAttemptOffhandSwitch_titanability_sonar_pulse( entity weapon )
 {

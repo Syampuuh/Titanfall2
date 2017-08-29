@@ -250,6 +250,23 @@ void function InitPersistentData( entity player )
 		}
 	}
 
+	if ( initializedVersion < 230 )
+	{
+		int enumCount =	PersistenceGetEnumCount( "titanClasses" )
+		for ( int i = 0; i < enumCount; i++ )
+		{
+			string enumName = PersistenceGetEnumItemNameForIndex( "titanClasses", i )
+			if ( enumName == "" )
+				continue
+
+			int currentLevel = FD_TitanGetRawLevel( player, enumName )
+			if ( currentLevel > 1 )
+			{
+				AwardRandomItemsForFDTitanLevels( player, enumName, 1, currentLevel )
+			}
+		}
+	}
+
 	player.SetPersistentVar( "isACheater", false )
 
 	player.SetPersistentVar( "initializedVersion", PERSISTENCE_INIT_VERSION )
@@ -267,12 +284,6 @@ void function InitPersistentData( entity player )
 	int titanChassisCount = PersistenceGetArrayCount( "titanChassis" )
 	for ( int chassisIndex = 0; chassisIndex < titanChassisCount; chassisIndex++ )
 	{
-		int unlockedFDCount = PersistenceGetArrayCount( "titanChassis[" + chassisIndex + "].unlockedFDUpgrades" )
-		for ( int index = 0; index < unlockedFDCount; index++ )
-		{
-			player.SetPersistentVar( "titanChassis[" + chassisIndex + "].unlockedFDUpgrades[" + index + "]", 0 )
-		}
-
 		int newFDCount = PersistenceGetArrayCount( "titanChassis[" + chassisIndex + "].newFDUpgrades" )
 		for ( int index = 0; index < newFDCount; index++ )
 		{
@@ -345,6 +356,8 @@ void function RegenPersistentLoadouts( entity player )
 		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "secondary" ) ) )
 		{
 			SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, "secondary", GetCategoryRestrictedResetValue( player, loadoutIndex, "secondary", "weapon3" ) ) // Skip validation or the change could fail due to weapon3 slot conflict
+			SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, "secondarySkinIndex", string( loadout.secondarySkinIndex ) )
+			SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, "secondaryCamoIndex", string( loadout.secondaryCamoIndex ) )
 			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "secondaryMod1",			loadout.secondaryMod1 )
 			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "secondaryMod2",			loadout.secondaryMod2 )
 			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "secondaryMod3",			loadout.secondaryMod3 )
@@ -353,6 +366,8 @@ void function RegenPersistentLoadouts( entity player )
 		if ( IsItemLocked( player, GetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "weapon3" ) ) )
 		{
 			SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, "weapon3", 	GetCategoryRestrictedResetValue( player, loadoutIndex, "weapon3", "secondary" ) ) // Skip validation or the change could fail due to secondary slot conflict
+			SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, "weapon3SkinIndex", string( loadout.weapon3SkinIndex ) )
+			SetPlayerPersistentVarWithoutValidation( player, loadoutType, loadoutIndex, "weapon3CamoIndex", string( loadout.weapon3CamoIndex ) )
 			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "weapon3Mod1",			loadout.weapon3Mod1 )
 			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "weapon3Mod2",			loadout.weapon3Mod2 )
 			SetPersistentLoadoutValue( player, loadoutType, loadoutIndex, "weapon3Mod3",			loadout.weapon3Mod3 )

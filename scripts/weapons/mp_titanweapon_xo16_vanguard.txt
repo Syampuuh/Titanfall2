@@ -564,7 +564,7 @@ WeaponData
 		}
 		fd_vanguard_weapon_2
 		{
-			"critical_hit_damage_scale"						"1.75"
+			"critical_hit_damage_scale"						"2.0"
 		}
 		fd_balance
 		{

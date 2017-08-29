@@ -13,6 +13,7 @@ global function FDTitanLevelHasRandomUnlock
 #if SERVER
 global function AwardRandomItemsForPlayerLevels
 global function AwardRandomItemsForTitanLevels
+global function AwardRandomItemsForFDTitanLevels
 global function AwardRandomItemsForWeaponLevels
 global function AwardRandomItemsForFactionLevels
 global function AwardRandomItem
@@ -46,6 +47,7 @@ struct
 
 	int unlocksPlayerLevelRowCount = 0
 	int unlocksTitanLevelRowCount = 0
+	int unlocksFDTitanLevelRowCount = 0
 	int unlocksFactionLevelRowCount = 0
 	int unlocksWeaponLevelRowCount = 0
 } file
@@ -58,10 +60,16 @@ void function InitRandomUnlocks()
 
 	var dataTable = GetDataTable( $"datatable/unlocks_player_level.rpak" )
 	file.unlocksPlayerLevelRowCount = GetDatatableRowCount( dataTable )
+
 	dataTable = GetDataTable( $"datatable/unlocks_titan_level.rpak" )
 	file.unlocksTitanLevelRowCount = GetDatatableRowCount( dataTable )
+
+	dataTable = GetDataTable( $"datatable/unlocks_fd_titan_level.rpak" )
+	file.unlocksFDTitanLevelRowCount = GetDatatableRowCount( dataTable )
+
 	dataTable = GetDataTable( $"datatable/unlocks_faction_level.rpak" )
 	file.unlocksFactionLevelRowCount = GetDatatableRowCount( dataTable )
+
 	dataTable = GetDataTable( $"datatable/unlocks_weapon_level_pilot.rpak" )
 	file.unlocksWeaponLevelRowCount = GetDatatableRowCount( dataTable )
 
@@ -249,6 +257,14 @@ void function AwardRandomItemsForTitanLevels( entity player, string titanClass, 
 	}
 }
 
+void function AwardRandomItemsForFDTitanLevels( entity player, string titanClass, int startLevel, int endLevel )
+{
+	for ( int currentLevel = startLevel; currentLevel <= endLevel; currentLevel++ )
+	{
+		AwardRandomItemsForLevel( player, eUnlockType.FD_UNLOCK_POINTS, currentLevel, file.unlocksTitanLevelRowCount, 2, titanClass )
+	}
+}
+
 void function AwardRandomItemsForWeaponLevels( entity player, string weaponClassName, int startLevel, int endLevel )
 {
 	for ( int currentLevel = startLevel; currentLevel <= endLevel; currentLevel++ )
@@ -312,6 +328,7 @@ string function _GetRandomUnlockItemPersistentVar( int unlockType, string parent
 			pVar = "randomPlayerLevelUnlocks"
 			break
 
+		case eUnlockType.FD_UNLOCK_POINTS:
 		case eUnlockType.TITAN_LEVEL:
 			Assert( parentRef != "" )
 			pVar = "randomTitanLevelUnlocks[" + parentRef + "]"
@@ -338,6 +355,7 @@ string function GetUnlockTypeName( int unlockType )
 		case eUnlockType.PLAYER_LEVEL:
 			return "playerlevel"
 
+		case eUnlockType.FD_UNLOCK_POINTS:
 		case eUnlockType.TITAN_LEVEL:
 			return "titanlevel"
 
@@ -528,10 +546,12 @@ bool function PlayerRandomUnlock_GiveItemOfUnlockType( entity player, int unlock
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.FEATURE ] )
 			break
 
+		case eUnlockType.FD_UNLOCK_POINTS:
 		case eUnlockType.TITAN_LEVEL:
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN_TITAN ] )
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.CAMO_SKIN ] )
 			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.FEATURE ] )
+			preferredUnlocks.extend( file.randomUnlockItems[ eItemTypes.TITAN_NOSE_ART ] )
 			break
 	}
 
@@ -541,6 +561,7 @@ bool function PlayerRandomUnlock_GiveItemOfUnlockType( entity player, int unlock
 	fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLING_CARD ] )
 	fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.CALLSIGN_ICON ] )
 	fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.PILOT_EXECUTION ] )
+	fallbackUnlocks.extend( file.randomUnlockItems[ eItemTypes.TITAN_NOSE_ART ] )
 
 	if ( GetColiseumAwardCount( player ) > 0 )
 	{

@@ -115,12 +115,12 @@ resource/ui/menus/team_titan_select.menu
 			InheritProperties		MenuTitle
 			font					Default_38
 			labelText				"#MENU_MISSION_SELECT"
-			xpos					-5 // include n pixels for the combo button inset
-			ypos					10
+			xpos					-10 // include n pixels for the combo button inset
+			ypos					0
 			auto_tall_tocontents 	1
 			pin_to_sibling			NextMapImage
-			pin_corner_to_sibling	TOP_LEFT
-			pin_to_sibling_corner	BOTTOM_LEFT
+			pin_corner_to_sibling	BOTTOM_LEFT
+			pin_to_sibling_corner	TOP_LEFT
 		}
 
 		MenuSubTitle
@@ -130,7 +130,7 @@ resource/ui/menus/team_titan_select.menu
 			font 					Default_28
 			labelText				"#MENU_STARTS_IN"
 			xpos					0 // include n pixels for the combo button inset
-			ypos					0
+			ypos					6
 			auto_tall_tocontents 	1
 			allcaps					0
 			pin_to_sibling			MenuTitle
@@ -485,6 +485,31 @@ resource/ui/menus/team_titan_select.menu
 			image					"vgui/HUD/white"
 			drawColor				"0 0 0 0"
 			zpos 					100
+		}
+
+		LobbyChatBox [$WINDOWS]
+		{
+			ControlName				CBaseHudChat
+			InheritProperties		ChatBox
+
+			bgcolor_override 		"0 0 0 80"
+			chatBorderThickness		1
+			chatHistoryBgColor		"24 27 30 120"
+			chatEntryBgColor		"24 27 30 120"
+			chatEntryBgColorFocused	"24 27 30 120"
+
+			destination				"match"
+			messageModeAlwaysOn		1
+
+			pin_to_sibling			NextMapImage
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+
+			xpos					0
+			ypos					10
+
+			wide					432
+			tall 					140
 		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

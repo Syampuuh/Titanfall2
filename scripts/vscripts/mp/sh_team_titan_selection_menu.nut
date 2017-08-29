@@ -96,7 +96,7 @@ void function SpawnPlayerAfterDelay( entity player, float endTime )
 
 	player.Signal( "StopSendingTTSMenuCommand" )
 	Remote_CallFunction_Replay( player, "ServerCallback_CloseTeamTitanMenu" )
-	StopSoundOnEntity( player, "Duck_For_FrontierDefenseTitanSelectScreen" )
+	FadeOutSoundOnEntity( player, "Duck_For_FrontierDefenseTitanSelectScreen" , 1.0)
 	StopUpdatingTeamTitanSelection()
 
 	wait 0.1
@@ -109,6 +109,7 @@ void function TryOpenTTSMenu( entity player, float overrideEndTime = -1 )
 {
 	player.EndSignal( "OnDestroy" )
 	ScreenFadeToBlackForever( player, 0.0 )
+	EmitSoundOnEntityOnlyToPlayer( player, player, "Duck_For_FrontierDefenseTitanSelectScreen" )
 
 	while ( level.nv.minPickLoadOutTime == null )
 		WaitFrame()
@@ -134,6 +135,7 @@ void function TryOpenTTSMenu( entity player, float overrideEndTime = -1 )
 	}
 
 	player.Signal( "StopSendingTTSMenuCommand" )
+	StopSoundOnEntity( player, "Duck_For_FrontierDefenseTitanSelectScreen" )
 
 	if ( GetGameState() == eGameState.PickLoadout )
 		ScreenFadeToBlackForever( player, 2.0 )
@@ -146,9 +148,11 @@ void function KeepSendingTTSMenuCommand( entity player, float endTime )
 
 	while ( 1 )
 	{
+		if ( !player.IsInvulnerable() )
+			player.SetInvulnerable()
 		Remote_CallFunction_UI( player, "ServerCallback_RegisterTeamTitanMenuButtons" )
 		Remote_CallFunction_Replay( player, "ServerCallback_OpenTeamTitanMenu", endTime )
-		wait 1.0
+		wait 0.2
 	}
 
 }

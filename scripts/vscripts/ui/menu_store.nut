@@ -1,5 +1,6 @@
 global function InitStoreMenu
 global function OpenStoreMenu
+global function IsStoreMenu
 global function InStoreMenu
 global function StorePurchase
 global function StoreMenuClosedThread
@@ -23,10 +24,12 @@ void function InitStoreMenu()
 	int index = 0
 	button = Hud_GetChild( menu, "Button" + index )
 	SetButtonRuiText( button, "#STORE_NEW_RELEASES" )
-	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_NewReleases" ) ) )
+	Hud_AddEventHandler( button, UIE_CLICK, OnWeaponSkinsButton_Activate )
+	//AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_NewReleases" ) ) )
 	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_new" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_new_hl" )
+	RuiSetBool( rui, "isSpecialTint", true )
 	Hud_Show( button )
 
 	index++
@@ -36,6 +39,7 @@ void function InitStoreMenu()
 	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_limited" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_limited_hl" )
+	RuiSetBool( rui, "isSpecialTint", true )
 	file.limitedButton = button
 	Hud_Show( file.limitedButton )
 
@@ -46,6 +50,7 @@ void function InitStoreMenu()
 	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_bundles" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_bundles_hl" )
+	RuiSetBool( rui, "isSpecialTint", true )
 	Hud_Show( button )
 
 	index++
@@ -60,7 +65,8 @@ void function InitStoreMenu()
 	index++
 	button = Hud_GetChild( menu, "Button" + index )
 	SetButtonRuiText( button, "#STORE_WEAPON_WARPAINT" )
-	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_WeaponSkins" ) ) )
+	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_WeaponSkinBundles" ) ) )
+	//Hud_AddEventHandler( button, UIE_CLICK, OnWeaponSkinsButton_Activate )
 	rui = Hud_GetRui( button )
 	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_weaponskin" )
 	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_weaponskin_hl" )
@@ -102,9 +108,10 @@ void function InitStoreMenu()
 	file.storeMenus.append( GetMenu( "StoreMenu_CamoPreview" ) )
 	file.storeMenus.append( GetMenu( "StoreMenu_Callsign" ) )
 	file.storeMenus.append( GetMenu( "StoreMenu_CallsignPreview" ) )
+	file.storeMenus.append( GetMenu( "StoreMenu_WeaponSkinBundles" ) )
 }
 
-void function OpenStoreMenu( array<string> menuNames )
+void function OpenStoreMenu( array<string> menuNames, void functionref() preOpenfunc = null )
 {
 	if ( IsDLCStoreUnavailable() )
 	{
@@ -115,9 +122,14 @@ void function OpenStoreMenu( array<string> menuNames )
 	if ( IsDLCStoreInitialized() )
 	{
 		OnOpenDLCStore()
+
+		if ( preOpenfunc != null )
+			preOpenfunc()
+
 		foreach ( menuName in menuNames )
 		{
 			printt( "MENUNAME", menuName )
+
 			AdvanceMenu( GetMenu( menuName ) )
 		}
 
@@ -125,7 +137,7 @@ void function OpenStoreMenu( array<string> menuNames )
 	 	return
 	}
 
-	thread WaitForDLCStoreInitialization()
+	thread WaitForDLCStoreInitialization( menuNames, preOpenfunc )
 }
 
 void function StorePurchase( int entitlementID )
@@ -135,6 +147,11 @@ void function StorePurchase( int entitlementID )
 #endif
 	PurchaseEntitlement( entitlementID )
 	uiGlobal.updateCachedNewItems = true
+}
+
+bool function IsStoreMenu( var menu )
+{
+	return file.storeMenus.contains( menu )
 }
 
 bool function InStoreMenu()
@@ -186,7 +203,13 @@ void function OnOpenStoreMenu()
 		ClientCommand( "SetHasSeenStore" )
 }
 
-void function WaitForDLCStoreInitialization()
+void function OnWeaponSkinsButton_Activate( var button )
+{
+	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC8_WEAPON_WARPAINT_BUNDLE )
+	AdvanceMenu( GetMenu( "StoreMenu_WeaponSkins" ) )
+}
+
+void function WaitForDLCStoreInitialization( array<string> menuNames, void functionref() preOpenfunc = null )
 {
 	EndSignal( uiGlobal.signalDummy, "CleanupInGameMenus" )
 
@@ -214,7 +237,13 @@ void function WaitForDLCStoreInitialization()
 		if ( IsDLCStoreInitialized() )
 		{
 			OnOpenDLCStore()
-			AdvanceMenu( GetMenu( "StoreMenu" ) )
+
+			if ( preOpenfunc != null )
+				preOpenfunc()
+
+			foreach ( menuName in menuNames )
+				AdvanceMenu( GetMenu( menuName ) )
+
 			thread StoreMenuClosedThread()
 		}
 	}

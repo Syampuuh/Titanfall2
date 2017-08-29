@@ -45,8 +45,6 @@ struct {
 	var prevPlayer
 	var nextPlayer
 
-	table evacPlayers
-
 	var scoreboardBg
 	var scoreboard
 	var background
@@ -509,11 +507,6 @@ void function ShowScoreboardMP()
 				allPlayers.append( player )
 
 				RuiSetImage( rui, "playerCard", CallsignIcon_GetSmallImage( PlayerCallsignIcon_GetActive( player ) ) )
-
-				if ( GetGameState() == eGameState.Epilogue && player.GetParent() && player.GetParent().GetSignifierName() == "npc_dropship" )
-				{
-					file.evacPlayers[ player.GetEntIndex() ] <- true
-				}
 
 				//-------------------
 				// Update player icon

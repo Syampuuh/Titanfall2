@@ -375,7 +375,7 @@ void function OnTutorialButtonClick( var button )
 	if ( link == "" )
 		return
 
-	LaunchExternalWebBrowser( link )
+	LaunchExternalWebBrowser( link, WEBBROWSER_FLAG_MUTEGAME )
 }
 
 void function OnPlayButtonClick( var button )

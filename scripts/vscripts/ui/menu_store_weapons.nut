@@ -3,6 +3,9 @@ untyped
 
 global function InitStoreMenuWeaponSkins
 global function SetStoreMenuWeaponSkinsDefaultFocusIndex
+global function SetStoreMenuWeaponSkinsBundleEntitlement
+global function GetStoreMenuWeaponSkinsBundleEntitlement
+global function DefaultToDLC8WeaponWarpaintBundle
 
 struct
 {
@@ -11,6 +14,8 @@ struct
 	var bundleButton
 	var descRui
 	int defaultFocusIndex
+	int bundleEntitlement = -1
+	bool mouseWheelRegistered = false
 } file
 
 
@@ -18,7 +23,6 @@ void function InitStoreMenuWeaponSkins()
 {
 	file.menu = GetMenu( "StoreMenu_WeaponSkins" )
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnStoreMenuWeaponSkins_Open )
-	AddMenuEventHandler( file.menu, eUIEvent.MENU_CLOSE, OnStoreMenuWeaponSkins_Close )
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_ENTITLEMENTS_CHANGED, OnStoreMenuWeaponSkins_EntitlementsChanged )
 
 	Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), "#STORE_WEAPON_WARPAINT" )
@@ -32,53 +36,100 @@ void function InitStoreMenuWeaponSkins()
 	file.weaponSkinButtons[6] = Hud_GetChild( file.menu, "Button6" )
 	file.weaponSkinButtons[7] = Hud_GetChild( file.menu, "ButtonLast" )
 
+	array<var> allButtons
+
 	foreach ( button in file.weaponSkinButtons )
 	{
-		button.s.cheaperToBuyIndividually <- false
 		Hud_AddEventHandler( button, UIE_CLICK, OnWeaponSkinButton_Activate )
 		Hud_AddEventHandler( button, UIE_GET_FOCUS, OnWeaponSkinButton_Focused )
+		allButtons.append( button )
 	}
 
 	file.bundleButton = Hud_GetChild( file.menu, "ButtonBundle" )
-	file.bundleButton.s.entitlementId <- ET_DLC7_WEAPON_BUNDLE
-	file.bundleButton.s.hasEntitlement <- false
-	file.bundleButton.s.cheaperToBuyIndividually <- false
 	Hud_AddEventHandler( file.bundleButton, UIE_CLICK, OnBundleButton_Activate )
+	allButtons.append( file.bundleButton )
+
+	SetNavUpDown( allButtons )
 
 	file.descRui = Hud_GetRui( Hud_GetChild( file.menu, "Description" ) )
 
 	AddMenuFooterOption( file.menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.menu, BUTTON_X, "#X_BUTTON_TOGGLE_ZOOM", "", ToggleWeaponZoom )
+
+	thread HandleMouseWheelInput()
+}
+
+void function HandleMouseWheelInput()
+{
+	for ( ;; )
+	{
+		WaitSignal( uiGlobal.signalDummy, "ActiveMenuChanged" )
+
+		if ( uiGlobal.activeMenu == file.menu )
+			RegisterMouseWheelInput()
+		else
+			DeregisterMouseWheelInput()
+	}
+}
+
+void function RegisterMouseWheelInput()
+{
+	if ( !file.mouseWheelRegistered )
+	{
+		RegisterButtonPressedCallback( MOUSE_WHEEL_UP, OnScrollUp_Activate )
+		RegisterButtonPressedCallback( MOUSE_WHEEL_DOWN, OnScrollDown_Activate )
+		file.mouseWheelRegistered = true
+	}
+}
+
+void function DeregisterMouseWheelInput()
+{
+	if ( file.mouseWheelRegistered )
+	{
+		DeregisterButtonPressedCallback( MOUSE_WHEEL_UP, OnScrollUp_Activate )
+		DeregisterButtonPressedCallback( MOUSE_WHEEL_DOWN, OnScrollDown_Activate )
+		file.mouseWheelRegistered = false
+	}
 }
 
 void function OnStoreMenuWeaponSkins_Open()
 {
 	UI_SetPresentationType( ePresentationType.STORE_WEAPON_SKINS )
 
-	InitMenuButton( file.weaponSkinButtons[0], "skin_rspn101_wasteland" )
-	InitMenuButton( file.weaponSkinButtons[1], "skin_g2_masterwork" )
-	InitMenuButton( file.weaponSkinButtons[2], "skin_vinson_blue_fade" )
-	InitMenuButton( file.weaponSkinButtons[3], "skin_car_crimson_fury" )
-	InitMenuButton( file.weaponSkinButtons[4], "skin_alternator_patriot" )
-	InitMenuButton( file.weaponSkinButtons[5], "skin_shotgun_badlands" )
-	InitMenuButton( file.weaponSkinButtons[6], "skin_wingman_aqua_fade" )
-	InitMenuButton( file.weaponSkinButtons[7], "skin_rocket_launcher_psych_spectre" )
+	array<string> itemRefs = GetItemRefsForEntitlement( file.bundleEntitlement )
 
-	SetButtonRuiText( file.bundleButton, Localize( "#STORE_BUNDLE" ) )
-	RefreshBundleEntitlement( file.bundleButton )
+	foreach ( index, button in file.weaponSkinButtons )
+		InitMenuButton( file.weaponSkinButtons[index], itemRefs[index] )
 
-	RegisterButtonPressedCallback( MOUSE_WHEEL_UP, OnScrollUp_Activate )
-	RegisterButtonPressedCallback( MOUSE_WHEEL_DOWN, OnScrollDown_Activate )
+	if ( file.bundleEntitlement == ET_DLC8_WEAPON_WARPAINT_BUNDLE )
+	{
+		Hud_Show( file.bundleButton )
+		InitMenuBundleButton( file.bundleButton, file.bundleEntitlement )
+		SetButtonRuiText( file.bundleButton, Localize( "#STORE_BUNDLE" ) )
+	}
+	else
+	{
+		Hud_Hide( file.bundleButton )
+	}
 
-	Hud_SetFocused( file.weaponSkinButtons[ file.defaultFocusIndex ] )
-	SetStoreMenuWeaponSkinsDefaultFocusIndex( 0 ) // Reset to standard after every usage
+	//Hud_SetFocused( file.weaponSkinButtons[ file.defaultFocusIndex ] )
+	//SetStoreMenuWeaponSkinsDefaultFocusIndex( 0 ) // Reset to standard after every usage
+	thread HackSetFocus()
 }
 
-void function OnStoreMenuWeaponSkins_Close()
+// Temp workaround to the loading screen causing default focus issues
+// If you pick a main menu promo button which launches MP and then opens this menu, nothing would be focused by default
+// because the loading screen seems to be continually setting the focus to "LoadingProgress" when this menu gets opened
+void function HackSetFocus()
 {
-	DeregisterButtonPressedCallback( MOUSE_WHEEL_UP, OnScrollUp_Activate )
-	DeregisterButtonPressedCallback( MOUSE_WHEEL_DOWN, OnScrollDown_Activate )
+	while ( GetActiveMenu() == file.menu && GetFocus() != file.weaponSkinButtons[ file.defaultFocusIndex ] )
+	{
+		Hud_SetFocused( file.weaponSkinButtons[ file.defaultFocusIndex ] )
+		WaitFrame()
+	}
+
+	SetStoreMenuWeaponSkinsDefaultFocusIndex( 0 ) // Reset to standard after every usage
 }
 
 void function OnStoreMenuWeaponSkins_EntitlementsChanged()
@@ -91,13 +142,14 @@ void function InitMenuButton( var button, string skinRef )
 {
 	ItemData displayData = GetItemData( skinRef )
 	string parentRef = displayData.parentRef
+	array<int> entitlementIds = GetEntitlementIds( skinRef, parentRef )
+	Assert( entitlementIds.len() == 1 )
 
 	button.s.parentRef <- parentRef
 	button.s.skinRef <- skinRef
 	button.s.skinIndex <- displayData.i.skinIndex
-	Assert( GetEntitlementIds( displayData.ref, displayData.parentRef ).len() == 1 )
-	button.s.entitlementId <- GetEntitlementIds( displayData.ref, displayData.parentRef )[0]
-	button.s.hasEntitlement <- false
+	button.s.entitlementId <- entitlementIds[0]
+	button.s.hasEntitlement <- LocalPlayerHasEntitlement( entitlementIds[0] )
 
 	string buttonText = GetItemName( skinRef )
 	string buttonSubText = GetItemName( parentRef )
@@ -109,6 +161,15 @@ void function InitMenuButton( var button, string skinRef )
 	SetNamedRuiImage( button, "focusedImage", buttonSwatch )
 
 	RefreshEntitlement( button )
+}
+
+void function InitMenuBundleButton( var button, int entitlement )
+{
+	button.s.entitlementId <- entitlement
+	button.s.hasEntitlement <- LocalPlayerHasEntitlement( entitlement )
+	button.s.cheaperToBuyIndividually <- false
+
+	RefreshBundleEntitlement( button )
 }
 
 void function OnScrollUp_Activate( var button )
@@ -182,6 +243,9 @@ void function RefreshEntitlements()
 {
 	foreach ( button in file.weaponSkinButtons )
 		RefreshEntitlement( button )
+
+	if ( Hud_IsVisible( file.bundleButton ) )
+		RefreshBundleEntitlement( file.bundleButton )
 }
 
 void function RefreshEntitlement( var button )
@@ -213,4 +277,20 @@ void function RefreshEntitlement( var button )
 void function SetStoreMenuWeaponSkinsDefaultFocusIndex( int index )
 {
 	file.defaultFocusIndex = index
+}
+
+void function SetStoreMenuWeaponSkinsBundleEntitlement( int bundleEntitlement )
+{
+	file.bundleEntitlement = bundleEntitlement
+}
+
+int function GetStoreMenuWeaponSkinsBundleEntitlement()
+{
+	return file.bundleEntitlement
+}
+
+void function DefaultToDLC8WeaponWarpaintBundle()
+{
+	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC8_WEAPON_WARPAINT_BUNDLE )
+	SetStoreMenuWeaponSkinsDefaultFocusIndex( 0 )
 }

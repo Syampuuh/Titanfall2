@@ -931,6 +931,7 @@ Scripts:
 	ui/menu_store_callsign_preview.nut
 	ui/menu_store_weapons.nut
 	ui/menu_store_titans.nut
+	ui/menu_store_weapon_skin_bundles.nut
 	ui/menu_advanced_hud.nut
 	ui/menu_inbox.nut
 	ui/menu_stats_misc.nut
@@ -952,8 +953,8 @@ Scripts:
     ui/menu_fd_titan_upgrade.nut
 	ui/menu_boost_store.nut
 
-	ui/menu_store_weapon_select.nut
-	ui/menu_store_weapon_skin_preview.nut
+	//ui/menu_store_weapon_select.nut
+	//ui/menu_store_weapon_skin_preview.nut
 
 	ui/panel_fd_awards.nut
 

@@ -72,14 +72,26 @@ resource/ui/menus/match_settings.menu
 			labelText				"#PM_HEADER_GAME_MODE"
 		}
 
-		BtnScoreLimit
+		BtnMatchVisibility
 		{
-			ControlName				SliderControl
-			InheritProperties		SliderControl
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
 			pin_to_sibling			ImgModeSubheaderBackground
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					BtnTitanEarn
+			navDown					BtnScoreLimit
+		}
+
+		BtnScoreLimit
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			BtnMatchVisibility
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnMatchVisibility
 			navDown					BtnTimeLimit
 			isValueClampedToStepSize 1
 			BtnDropButton
@@ -277,7 +289,7 @@ resource/ui/menus/match_settings.menu
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					BtnTitanAvailability
-			navDown					BtnScoreLimit
+			navDown					BtnMatchVisibility
 			isValueClampedToStepSize 1
 			BtnDropButton
 			{

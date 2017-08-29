@@ -231,6 +231,8 @@ global function GetTitanLoadoutIconFD
 
 global function GetTitanPrimeBg
 
+global function GetItemRefsForEntitlement
+
 #if DEV
 global function GenerateValidateDataTableCRCText
 global function GenerateAllValidateDataTableCRCCheckText
@@ -1605,6 +1607,8 @@ void function InitUnlocks()
 	InitUnlock( "callsign_104_col_fire", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_104_col_gold", "", eUnlockType.PERSISTENT_ITEM, 0 )
 
+	InitUnlock( "callsign_goodboy", "", eUnlockType.PLAYER_LEVEL, 1 )
+
 	//////////////////////////
 	// Reserved for future use
 	//////////////////////////
@@ -1804,6 +1808,7 @@ void function InitUnlocks()
 	InitUnlockForStatInt( "execution_random", "", 0, "kills_stats", "pilotExecutePilot" )
 	InitUnlockForStatInt( "execution_cloak", "", 10, "kills_stats", "pilotExecutePilotWhileCloaked" )
 	InitUnlockForStatInt( "execution_holopilot", "", 20, "kills_stats", "pilotKillsWithHoloPilotActive" )
+	InitUnlockForStatInt( "execution_ampedwall", "", 5, "kills_stats", "pilotKillsWithAmpedWallActive" )
 
 	//Distance
 	InitUnlockForStatFloat( "pilot_camo_skin56", "", 100.0, "distance_stats", "asPilot" )
@@ -3373,6 +3378,15 @@ void function InitUnlocks()
 	InitUnlockForStatInt( "burnmeter_ap_turret_weapon_infinite", "", 2, "fd_stats", "arcMinesPlaced" )
 	InitUnlockForStatInt( "burnmeter_rodeo_grenade", "", 3, "fd_stats", "rodeos" )
 	InitUnlockForStatInt( "burnmeter_harvester_shield", "", 3, "fd_stats", "wavesComplete" )
+
+	InitUnlockAsEntitlement( "skin_rspn101_patriot", "mp_weapon_rspn101", ET_DLC8_R201_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_hemlok_mochi", "mp_weapon_hemlok", ET_DLC8_HEMLOK_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_r97_purple_fade", "mp_weapon_r97", ET_DLC8_R97_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_kraber_masterwork", "mp_weapon_sniper", ET_DLC8_KRABER_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_spitfire_lead_farmer", "mp_weapon_lmg", ET_DLC8_SPITFIRE_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_devotion_rspn_customs", "mp_weapon_esaw", ET_DLC8_DEVOTION_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_mozambique_crimson_fury", "mp_weapon_shotgun_pistol", ET_DLC8_MOZAMBIQUE_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_thunderbolt_8bit", "mp_weapon_arc_launcher", ET_DLC8_THUNDERBOLT_WARPAINT, "StoreMenu_WeaponSkins" )
 
 	array<ItemData> burnMeterRewards = GetAllItemsOfType( eItemTypes.BURN_METER_REWARD )
 	foreach ( ItemData item in burnMeterRewards )
@@ -7169,7 +7183,7 @@ void function UnlockUltimateEdition( entity player )
 	if ( player.GetPersistentVarAsInt( "ultimateEdition" ) > 0 )
 		return
 
-	if ( !player.HasEntitlement( ET_ULTIMATE_EDITION ) )
+	if ( !player.HasEntitlement( ET_JUMPSTARTERKIT ) )
 		return
 
 	Player_GiveCredits( player, 500 )
@@ -10399,4 +10413,64 @@ asset function GetTitanPrimeBg( string titanClass )
 	}
 
 	return $""
+}
+
+struct FullRefWithEntitlements
+{
+	string fullRef
+	array<int> entitlementIds
+}
+
+array<string> function GetItemRefsForEntitlement( int entitlementID )
+{
+	array<int> entitlements
+	if ( HasChildEntitlements( entitlementID ) )
+		entitlements.extend( GetChildEntitlements( entitlementID ) )
+	else
+		entitlements.append( entitlementID )
+
+	array<FullRefWithEntitlements> unlocks
+	foreach ( key, val in file.entitlementUnlocks )
+	{
+		foreach ( entitlement in entitlements )
+		{
+			if ( val.entitlementIds.contains( entitlement ) )
+			{
+				//printt( "key:", key, "entitlement:", entitlement )
+				FullRefWithEntitlements record
+				record.fullRef = key
+				record.entitlementIds = val.entitlementIds
+				unlocks.append( record )
+			}
+		}
+	}
+
+	// Sort to match original entitlement order as best we can avoiding dupes.
+	// We diverge from this order whenever mulitple entitlements are associated with an unlock.
+	array<FullRefWithEntitlements> sortedUnlocks
+	foreach ( entitlement in entitlements )
+	{
+		foreach ( unlock in unlocks )
+		{
+			if ( unlock.entitlementIds.contains( entitlement ) && !sortedUnlocks.contains( unlock ) )
+			{
+				//printt( "unlock.fullRef:", unlock.fullRef, "entitlement:", entitlement )
+				sortedUnlocks.append( unlock )
+			}
+		}
+	}
+
+	array<string> sortedRefs
+	foreach ( unlock in sortedUnlocks )
+	{
+		string fullRef = unlock.fullRef
+		array<string> tokens = split( fullRef, "." )
+
+		if ( tokens.len() == 2 )
+			sortedRefs.append( tokens[1] )
+		else
+			sortedRefs.append( fullRef )
+	}
+
+	return sortedRefs
 }

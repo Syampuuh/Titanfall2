@@ -153,8 +153,8 @@ void function OnCloseControlsMenu()
 {
 	if ( IsConnected() )
 	{
-		bool holdToRodeoIsEnabled = GetConVarBool( "cl_hold_to_rodeo_enable" )
-		ClientCommand( "HoldToRodeo " + (holdToRodeoIsEnabled ? 1 : 0) )
+		int holdToRodeoState = GetConVarInt( "cl_hold_to_rodeo_enable" )
+		ClientCommand( "HoldToRodeo " + holdToRodeoState )
 	}
 
 	SavePlayerSettings()

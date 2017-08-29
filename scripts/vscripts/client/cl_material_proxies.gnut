@@ -304,6 +304,9 @@ bool function ShouldShowWeakpoints( entity ent )
 	if ( ent.GetTeam() == player.GetTeam() )
 		return false
 
+	if ( IsCloaked( ent ) )
+		return false
+
 	entity soul = ent.GetTitanSoul()
 	if ( IsValid( soul ) )
 	{

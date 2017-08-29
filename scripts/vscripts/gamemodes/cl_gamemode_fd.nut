@@ -28,6 +28,7 @@ global function FD_InitMusicSet
 #if DEV
 global function SetFDCustonDropshipIntroAnimIndex
 global function GetFDCustonDropshipIntroAnimIndex
+global function DEV_FD_HideHud
 #endif
 
 const bool FD_WAVE_INFO_ENABLED = true
@@ -61,6 +62,7 @@ struct
 	table<entity,var> boostStoreRuis
 
 	array<var> turretRuis
+	var scoreboardIconCover
 	var readyUpRui
 	var superRodeoRui
 	var harvesterShieldRui
@@ -140,7 +142,7 @@ void function ClGamemodeFD_Init()
 	ClLaserMesh_Init()
 	ClTeamTitanSelectMenu_Init()
 
-	var scoreboardIconCover = CreatePermanentCockpitRui( $"ui/scoreboard_ping_icon.rpak", 2000 )
+	file.scoreboardIconCover = CreatePermanentCockpitRui( $"ui/scoreboard_ping_icon.rpak", 2000 )
 	file.superRodeoRui = CreateCockpitRui( $"ui/super_rodeo_hud.rpak" )
 	file.harvesterShieldRui = CreateCockpitRui( $"ui/harvester_shield_hud.rpak" )
 	file.tutorialTip = CreatePermanentCockpitRui( $"ui/fd_tutorial_tip.rpak", MINIMAP_Z_BASE )
@@ -519,7 +521,7 @@ void function ActiveHarvesterChanged( entity player, entity oldEnt, entity newEn
 
 	RuiTrackInt( ClGameState_GetRui(), "restartsRemaining", null, RUI_TRACK_SCRIPT_NETWORK_VAR_GLOBAL_INT, GetNetworkedVariableIndex( "FD_restartsRemaining" ) )
 
-	RuiSetInt( ClGameState_GetRui(), "difficulty", GetCurrentPlaylistVarInt( "fd_difficulty", 1 ) )
+	RuiSetString( ClGameState_GetRui(), "difficultyString", FD_GetDifficultyString() )
 
 	FD_StoreOpen( null, null )
 
@@ -551,7 +553,7 @@ void function TrackHarvesterDamage( entity harvester )
 
 	while ( IsValid( harvester ) )
 	{
-		if ( harvester.GetHealth() < oldHealth || harvester.GetShieldHealth() < oldShield )
+		if ( harvester.GetHealth() < oldHealth || harvester.GetShieldHealth() < oldShield && file.scoreboardIconCover != null )
 		{
 			bool hasShield = harvester.GetShieldHealth() > 0
 
@@ -932,12 +934,12 @@ void function ServerCallback_FD_AnnouncePreParty( int aiID0, int aiID1 = -1, int
 
 	float interval = 0.1
 	float delay = interval * file.waveRuis.len()
+	file.waveAwardRuis.clear()
 	foreach ( rui in file.waveRuis )
 	{
 		RuiSetGameTime( rui, "startFadeOutTime", Time() + delay )
 		delay -= interval
 	}
-	file.waveAwardRuis.clear()
 	file.waveRuis.clear()
 
 	if ( FD_WAVE_INFO_ENABLED && !IsWatchingKillReplay() )
@@ -1129,6 +1131,7 @@ void function ShowWaveInfo( entity player, array<int> aiIDs, int waveNum )
 		{
 			float interval = 0.1
 			float delay = interval * file.waveRuis.len()
+			file.waveAwardRuis.clear()
 			foreach ( rui in file.waveRuis )
 			{
 				RuiSetGameTime( rui, "startFadeOutTime", Time() + delay )
@@ -1343,12 +1346,12 @@ void function ShowWaveCompleteInfo( entity player )
 		{
 			float interval = 0.1
 			float delay = interval * file.waveRuis.len()
+			file.waveAwardRuis.clear()
 			foreach ( rui in file.waveRuis )
 			{
 				RuiSetGameTime( rui, "startFadeOutTime", Time() + delay )
 				delay -= interval
 			}
-			file.waveAwardRuis.clear()
 			file.waveRuis.clear()
 		}
 	)
@@ -1852,10 +1855,19 @@ void function PlayFDRespawnIntroDiag( entity droz )
 
 void function PlayFDRespawnIntroDiag_threaded()
 {
-	wait 3.5
+	wait 3.5 //In retrospect this would have been better if we didn't wait in script here, but instead only fired off the anim event at the correct time.
 
 	entity droz = file.droz
 	entity davis = file.davis
+
+	if ( !IsValid( droz ) )
+		return
+
+	if ( !IsValid( davis ) )
+		return
+
+	droz.EndSignal( "OnDestroy" )
+	davis.EndSignal( "OnDestroy" )
 
 	int randomDiagIndex = file.dropshipIntroAnimIndex
 
@@ -2466,5 +2478,16 @@ void function ServerCallback_FD_NotifyMVP( int playerHandle )
 	{
 		var rui = file.waveAwardRuis[ "FDWaveMVP" ]
 		RuiSetString( rui, "itemText", Localize( "#SCORE_EVENT_WAVE_MVP_OTHER", player.GetPlayerName() ) )
+	}
+}
+
+void function DEV_FD_HideHud()
+{
+	RuiSetBool( file.scoreSplashRui, "isVisible", false )
+	RuiSetBool( ClGameState_GetRui(), "isVisible", false )
+	if ( file.scoreboardIconCover != null )
+	{
+		RuiDestroy( file.scoreboardIconCover )
+		file.scoreboardIconCover = null
 	}
 }

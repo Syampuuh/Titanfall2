@@ -330,7 +330,7 @@ void function OnCamoSelectMenu_Close()
 		if ( displayData.ref == "" )
 			continue
 
-		if ( IsItemNew( GetUIPlayer(), displayData.ref, displayData.parentRef ) )
+		if ( IsItemNew( player, displayData.ref, displayData.parentRef ) )
 			ClearNewStatus( null, displayData.ref, displayData.parentRef )
 	}
 }
@@ -617,9 +617,30 @@ void function CamoButton_Activate( var button, int elemNum )
 		string ref = displayData.ref
 		string parentRef = displayData.parentRef
 
-		if ( IsItemPurchasableEntitlement( ref, parentRef ) )
+		if ( IsLobby() && IsItemPurchasableEntitlement( ref, parentRef ) )
 		{
-			OpenStoreMenu( [ GetPurchasableEntitlementMenu( ref, parentRef ) ] )
+			string menuName = GetPurchasableEntitlementMenu( ref, parentRef )
+
+			if ( menuName == "StoreMenu_WeaponSkins" )
+			{
+				array<int> itemEntitlements = GetEntitlementIds( ref, parentRef )
+				Assert( itemEntitlements.len() == 1 )
+				int itemEntitlement = itemEntitlements[0]
+
+				array<int> parentEntitlements = GetParentEntitlements( itemEntitlement )
+				Assert( parentEntitlements.len() == 1 )
+				int parentEntitlement = parentEntitlements[0]
+
+				array<int> childEntitlements = GetChildEntitlements( parentEntitlement )
+				int index = childEntitlements.find( itemEntitlement )
+				if ( index == -1 )
+					index = 0
+
+				SetStoreMenuWeaponSkinsBundleEntitlement( parentEntitlement )
+				SetStoreMenuWeaponSkinsDefaultFocusIndex( index )
+			}
+
+			OpenStoreMenu( [ menuName ] )
 			return
 		}
 

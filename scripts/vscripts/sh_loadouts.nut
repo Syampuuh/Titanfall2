@@ -220,6 +220,7 @@ void function PopulateTitanLoadoutFromPersistentData( entity player, TitanLoadou
 	loadout.primaryCamoIndex	= GetValidatedPersistentLoadoutValueInt( player, "titan", loadoutIndex, "primaryCamoIndex" )
 	loadout.primarySkinIndex	= GetValidatedPersistentLoadoutValueInt( player, "titan", loadoutIndex, "primarySkinIndex" ) //Important: Skin index needs to be gotten after camoIndex for loadout validation purposes
 	loadout.titanExecution 		= GetValidatedPersistentLoadoutValue( player, "titan", loadoutIndex, "titanExecution" )
+	loadout.showArmBadge		= GetValidatedPersistentLoadoutValueInt( player, "titan", loadoutIndex, "showArmBadge" )
 
 	//Prime Titan related vars
 	loadout.isPrime			= GetValidatedPersistentLoadoutValue( player, "titan", loadoutIndex, "isPrime" )
@@ -306,6 +307,7 @@ string function GetPersistentLoadoutPropertyType( string loadoutProperty )
 		case "secondaryCamoIndex":
 		case "weapon3SkinIndex":
 		case "weapon3CamoIndex":
+		case "showArmBadge":
 			return "int"
 	}
 
@@ -562,6 +564,9 @@ bool function LoadoutPropertyRequiresItemValidation( string loadoutProperty )
 	}
 
 	if ( loadoutProperty == "name" )
+		return false
+
+	if ( loadoutProperty == "showArmBadge" )
 		return false
 
 	return true
@@ -2338,6 +2343,10 @@ void function SetTitanLoadoutValue( TitanLoadoutDef loadout, string property, st
 		case "titanExecution":
 			loadout.titanExecution = value
 			break
+
+		case "showArmBadge":
+			loadout.showArmBadge = int( value )
+			break
 	}
 }
 
@@ -2407,6 +2416,7 @@ bool function IsValidTitanLoadoutProperty( string propertyName )
 		case "primeCamoIndex":
 		case "primeDecalIndex":
 		case "titanExecution":
+		case "showArmBadge":
 			return true
 	}
 
@@ -3087,6 +3097,12 @@ void function SetPersistentSpawnLoadoutIndex( entity player, string loadoutType,
 		return GetTitanArmBadgeFromLoadoutAndPrimeStatus( cachedTitanLoadout )
 	}
 
+	int function GetCachedTitanArmBadgeState( int loadoutIndex )
+	{
+		TitanLoadoutDef cachedTitanLoadout = GetCachedTitanLoadout( loadoutIndex )
+		return cachedTitanLoadout.showArmBadge
+	}
+
 #endif // UI || CLIENT
 
 #if UI
@@ -3504,6 +3520,7 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		player.SetPersistentVar( "activeTitanLoadout.primeSkinIndex", 		loadout.primeSkinIndex )
 		player.SetPersistentVar( "activeTitanLoadout.primeCamoIndex", 		loadout.primeCamoIndex )
 		player.SetPersistentVar( "activeTitanLoadout.primeDecalIndex", 		loadout.primeDecalIndex )
+		player.SetPersistentVar( "activeTitanLoadout.showArmBadge", 		loadout.showArmBadge )
 	}
 
 	void function SetActiveTitanLoadoutIndex( entity player, int loadoutIndex )
@@ -3618,6 +3635,7 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		loadout.primeSkinIndex		= player.GetPersistentVarAsInt( "activeTitanLoadout.primeSkinIndex" )
 		loadout.primeCamoIndex		= player.GetPersistentVarAsInt( "activeTitanLoadout.primeCamoIndex" )
 		loadout.primeDecalIndex		= player.GetPersistentVarAsInt( "activeTitanLoadout.primeDecalIndex" )
+		loadout.showArmBadge		= player.GetPersistentVarAsInt( "activeTitanLoadout.showArmBadge" )
 
 		UpdateDerivedTitanLoadoutData( loadout )
 		OverwriteLoadoutWithDefaultsForSetFile_ExceptSpecialAndAntiRodeo( loadout, player )

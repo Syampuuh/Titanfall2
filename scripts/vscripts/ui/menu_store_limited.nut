@@ -139,8 +139,8 @@ void function UpdateStoreMenuPrimeTitanButtons()
 				break
 
 			case "vanguard":
-				RuiSetImage( rui, "primeImage", $"rui/menu/store/tone_store_icon" )
-				RuiSetImage( rui, "focusedImage", $"rui/menu/store/tone_store_icon_hl" )
+				RuiSetImage( rui, "primeImage", $"rui/menu/store/monarch_store_icon" )
+				RuiSetImage( rui, "focusedImage", $"rui/menu/store/monarch_store_icon_hl" )
 				skinRef = "monarch_skin_fd"
 				break
 		}
@@ -157,7 +157,6 @@ void function UpdateStoreMenuPrimeTitanButtons()
 	}
 
 	SetButtonRuiText( file.bundleButton, Localize( "#STORE_BUNDLE" ) )
-	RefreshBundleEntitlement( file.bundleButton )
 
 	RefreshEntitlements()
 }
@@ -223,6 +222,12 @@ void function OnButton_Activate( var button )
 
 	if ( !LocalPlayerHasEntitlement( file.entitlementToBuy ) && prices[0] != "" )
 	{
+		if ( file.entitlementToBuy == ET_DLC7_MONARCH_WARPAINT ) // Special case to avoid warning dialog since there is no prime monarch
+		{
+			Store_BuyPrimeTitan()
+			return
+		}
+
 		DialogData dialogData
 
 		switch ( file.entitlementToBuy )
@@ -251,10 +256,6 @@ void function OnButton_Activate( var button )
 				dialogData.header = "#STORE_BUY_FD_TONE"
 				break
 
-			case ET_DLC7_MONARCH_WARPAINT:
-				dialogData.header = "#STORE_BUY_FD_MONARCH"
-				break
-
 			default:
 				Assert( false, "entitlement id not found " + file.entitlementToBuy )
 		}
@@ -280,6 +281,8 @@ void function RefreshEntitlements()
 {
 	foreach ( button in file.titanButtons )
 		RefreshEntitlement( button )
+
+	RefreshBundleEntitlement( file.bundleButton )
 }
 
 void function RefreshEntitlement( var button )
