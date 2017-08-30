@@ -119,7 +119,7 @@
 * Xboners and PS4 players can now access the "Classic Frontier Defense music" option.
 * Newly unlocked notifications for a weapon in your third inventory slot can be properly dismissed now without having to swap the weapon around the slots.
 * Fixed Legion's Long Range Power Shots occasionally piercing a target more than once for more damage.
-* Giving a friendly doomed Titan will now give them a full overshield in addition to reviving them.
+* Giving a friendly doomed Titan an Amped Battery will now give them a full overshield in addition to reviving them.
 * The red haze of enemy critical zones will no longer be visible when enemies are cloaked by Cloak Drones.
 * Monarch's health bar should now always be accurate when Superior Chassis is active.
 * For now I'm just calling this an "other change" but it might be just a bug: The sound of a battery being removed from your Titan by an enemy rodeo is now considerably quieter, making it a bit tougher to whip around and nail them in a fight.
