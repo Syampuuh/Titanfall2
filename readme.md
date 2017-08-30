@@ -1,51 +1,154 @@
 # Table of Contents
 
- * [Operation Frontier Shield](#25-july-2017---operation-frontier-shield)
+ * [Postcards from the Frontier](#29-august-2017---postcards-from-the-frontier)
     * [Content and Feature Additions](#content-and-feature-additions)
     * [Rebalancing](#rebalancing)
     * [Fixes and Other Changes](#fixes-and-other-changes)
     * [Future Content](#future-content)
-  * [The War Games](#27-june-2017---the-war-games)
+ * [Operation Frontier Shield](#25-july-2017---operation-frontier-shield)
     * [Content and Feature Additions](#content-and-feature-additions-1)
     * [Rebalancing](#rebalancing-1)
     * [Fixes and Other Changes](#fixes-and-other-changes-1)
     * [Future Content](#future-content-1)
- * [Monarch's Reign](#30-may-2017---monarchs-reign)
+  * [The War Games](#27-june-2017---the-war-games)
     * [Content and Feature Additions](#content-and-feature-additions-2)
     * [Rebalancing](#rebalancing-2)
     * [Fixes and Other Changes](#fixes-and-other-changes-2)
     * [Future Content](#future-content-2)
- * [A Glitch in the Frontier](#25-april-2017---a-glitch-in-the-frontier)
+ * [Monarch's Reign](#30-may-2017---monarchs-reign)
     * [Content and Feature Additions](#content-and-feature-additions-3)
     * [Rebalancing](#rebalancing-3)
     * [Fixes and Other Changes](#fixes-and-other-changes-3)
     * [Future Content](#future-content-3)
- * [Colony Reborn](#30-march-2017---colony-reborn)
+ * [A Glitch in the Frontier](#25-april-2017---a-glitch-in-the-frontier)
     * [Content and Feature Additions](#content-and-feature-additions-4)
     * [Rebalancing](#rebalancing-4)
     * [Fixes and Other Changes](#fixes-and-other-changes-4)
     * [Future Content](#future-content-4)
- * [Live Fire](#23-february-2017---the-live-fire-patch)
+ * [Colony Reborn](#30-march-2017---colony-reborn)
     * [Content and Feature Additions](#content-and-feature-additions-5)
     * [Rebalancing](#rebalancing-5)
     * [Fixes and Other Changes](#fixes-and-other-changes-5)
     * [Future Content](#future-content-5)
- * [Angel City](#29-november-2016---the-angel-city-patch)
+ * [Live Fire](#23-february-2017---the-live-fire-patch)
     * [Content and Feature Additions](#content-and-feature-additions-6)
     * [Rebalancing](#rebalancing-6)
     * [Fixes and Other Changes](#fixes-and-other-changes-6)
+    * [Future Content](#future-content-6)
+ * [Angel City](#29-november-2016---the-angel-city-patch)
+    * [Content and Feature Additions](#content-and-feature-additions-7)
+    * [Rebalancing](#rebalancing-7)
+    * [Fixes and Other Changes](#fixes-and-other-changes-7)
 
 # Latest Client Changes
+
+## 29 August 2017 - Postcards from the Frontier
+
+### Content and Feature Additions
+* New Frontier Defense Map support:
+  * **Exoplanet**
+  * **Drydock**
+  * **Angel City**
+* New Live Fire Map: **UMA**
+  * *"Tight corridors guide combat into three arenas flanked by balconies, doorways, and windows. A large central divider provides cover for short range effectiveness, with a long flank that opens opportunities for confident marksmen."*
+* New Execution: **Hole in the Wall**
+  * *"Build a wall, and let bullets go through them."*
+  * Unlock by killing 5 Pilots with an AWall up.
+    * Note the phrasing here, the stat is simply tracking kills with an AWall active, not necessarily utilizing it. Feel free to just throw down an AWall and then completely ignore it to farm the kills needed.
+* A buncha community meme banners.
+  * Each is purchaseable for a whopping 1500 credits standard and 3000 in Prism.
+* [More Elite Warpaints:](http://www.respawn.com/frontier-news-network-08-22-2017-postcards-from-the-frontier)
+  * **Thunderbolt "8-Bit" ELITE**
+  * **Spitfire "Lead Farmer" ELITE**
+  * **Devotion "RSPN Custom" ELITE**
+  * **Hemlock "Mochi" ELITE**
+  * **Kraber "Masterwork" ELITE**
+  * **R-97 "Purple Fade" ELITE**
+  * **R-201 "Frontier Patriot" ELITE**
+  * **Mozambique "Crimson Fury" ELITE**
+* New Featured Modes: **Aegis LTS** and **Aegis Titan Brawl**
+  * The respective modes but with your FD Aegis unlocks enabled
+  * Matches in the modes *do not* level your Aegis unlocks, so you'd best be at max crank or you're gonna have a real bad time
+* New option for "Hold To Rodeo: Friendlies only"
+* You can now set a Private Lobby to be "Locked", which will prevent anyone from joining it.
+* You can now play Frontier Defense in a Private Lobby.
+  * Naturally, there will be no leveling or unlocks rewarded for doing so.
+* Repeatedly leaving matches can now incur a matchmaking penalty, preventing you from entering matchmaking for several minutes.
+  * Respawn's patch notes claim that this is only effective in Frontier Defense, but the warning text for leaving *any* match will claim that you may be penalized. Because all the logic behind this is server sided, I can't find any code to verify which is the case.
+  * Either way, it's not currently clear what the thresholds are, and I'm not very inclined to test and find out myself, so just don't be an ass and you won't have to worry about it, I guess.
+  
+### Rebalancing
+
+#### Ticks
+
+* You are now limited to a maximum of 6 Ticks in your inventory at once.
+
+#### Pilot Sentry
+
+* You are now limited to a maximum of 3 Sentries in your inventory at once.
+
+#### Titan Sentry
+
+* You are now limited to a maximum of 3 Sentries in your inventory at once.
+
+#### Holo Pilot Nova
+
+* You are now limited to a maximum of 3 Novae in your inventory at once.
+
+#### Tone
+
+* **[Frontier Defense]** Tone's 6th Aegis Upgrade, Signal Strength, now increases the effect time of Sonar Pulse to 10 seconds, increased from 8 seconds.
+  * For reference: the base time is 5 seconds.
+  
+#### Ion
+
+* **[Frontier Defense]** The effects of Ion's 1st and 4th Aegis Upgrades, Split Shot Power and Split Shot Efficiency, have been combined into just "Split Shot Power" in her 1st upgrade.
+* **[Frontier Defense]** To fill the open 4th upgrade slot, Ion now has the "Laser Shot Power" upgrade which increases the critical hit multiplier of Laser Shot from 1.5× to 2.0×.
+
+#### Monarch
+
+* **[Frontier Defense]** The effect of Monarch's 6th Upgrade, XO-16: Critical Hit, has been improved to increase the critical hit multiplier of the XO-16 from 1.75× to 2.0×.
+  * For reference: the base multiplier is 1.5×.
+
+### Fixes and Other Changes
+
+* Once the Warpaint is purchased, the Titan Warpaints' included Frontier Defense pauldron can now be equipped on your Titan regardless of your equipped camo/warpaint, and even on Prime Titan chassis.
+  * Equipping the pauldron *will not* grant the Aegis Bonus in Frontier Defense, only the Warpaint will.
+* The Team Titan Selection screen used for LTS and Frontier Defense now has a button to edit your Pilot loadouts, as well as a chat box on PC.
+  * Curiously, there is still no button to change your Boost, meaning it is still impossible to change your Boost during a game of LTS. I'll try to have a mod released to address this (again) ASAP.
+* Xboners and PS4 players can now access the "Classic Frontier Defense music" option.
+* Newly unlocked notifications for a weapon in your third inventory slot can be properly dismissed now without having to swap the weapon around the slots.
+* Fixed Legion's Long Range Power Shots occasionally piercing a target more than once for more damage.
+* Giving a friendly doomed Titan will now give them a full overshield in addition to reviving them.
+* The red haze of enemy critical zones will no longer be visible when enemies are cloaked by Cloak Drones.
+* Monarch's health bar should now always be accurate when Superior Chassis is active.
+* For now I'm just calling this an "other change" but it might be just a bug: The sound of a battery being removed from your Titan by an enemy rodeo is now considerably quieter, making it a bit tougher to whip around and nail them in a fight.
+
+### Future Content
+
+* Further information on the "Jumpstarter Kit":
+  * Purchased in-game, like a cosmetic DLC
+  * Permanently unlocks all Pilot Tacticals and Titans
+  * Includes the Underground Elite R-201 Warpaint
+  * Grants 500 credits and 10 Double XP Tokens
+* A bunch of code used to kick off functions for several so-far-absent game modes has been commented out. I really don't know how to interpret this, because if the modes were completely cut you'd think they'd have just deleted them or moved them to do-not-ship like they have in the past. Noting this in case it's something more than nothing.
+* [Last month I was able to find several unused Elite Warpaint designs.](https://www.youtube.com/watch?v=TQhJTYKQto8) None of these have been released yet, but the R-201 having 2 skins, 1 of which being a recycled design, suggests that they might not all be totally scrapped.
+  * At some point I'll definitely be checking if there are any new ones in the client, but the process to do so is pretty tedious so we'll see when I feel like it.
+  * I swear to god if that Mastiff Masterwork skin isn't released there will be bodies
+
+---
+
+# Older Changes
 
 ## 25 July 2017 - Operation Frontier Shield
 
 ### Content and Feature Additions
 
 * New Mode: **Frontier Defense**
-  * "Protect the Harvester. Survive."
+  * *"Protect the Harvester. Survive."*
   * 4 player co-op PVE.
   * Not everything that has been reported in this doc has made it into the final version of the mode, namely Pilot Tactical upgrades and some NPC classes.
-  * Each Titan has received a new set of unlocks that are currently exclusive to Frontier Defense. It's quite a bit of content, [so I've detailed them in a separate sheet here.](https://github.com/Syampuuh/Titanfall2/blob/master/aegisRanks.md)
+  * Each Titan has received a new set of unlocks that are currently exclusive to Frontier Defense. It's quite a bit of content, [so I've detailed them in a separate site here.](https://syampuuh.github.io/frontierDefense#upgrades)
 * New Map: **Rise**
 * New Live Fire Map: **Township**
 * New warpaints for Titans and select Pilot weapons
@@ -211,10 +314,6 @@
   * No indication of what the unlock condition will be yet.
 
 [↵ Top](#table-of-contents)
-
----
-
-# Older Changes
 
 ## 27 June 2017 - The War Games
 
