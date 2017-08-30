@@ -56,7 +56,7 @@
   * Unlock by killing 5 Pilots with an AWall up.
     * Note the phrasing here, the stat is simply tracking kills with an AWall active, not necessarily utilizing it. Feel free to just throw down an AWall and then completely ignore it to farm the kills needed.
 * A buncha community meme banners.
-  * Each is purchaseable for a whopping 1500 credits standard and 3000 in Prism.
+  * Each is purchasable for a whopping 1500 credits standard and 3000 in Prism.
 * [More Elite Warpaints:](http://www.respawn.com/frontier-news-network-08-22-2017-postcards-from-the-frontier)
   * **Thunderbolt "8-Bit" ELITE**
   * **Spitfire "Lead Farmer" ELITE**
@@ -683,7 +683,7 @@
 * Prime Titan: **Legion Prime**
 * Prime Titan: **Northstar Prime**
 * Trial gameplay added for 2 SP levels
-* A shitton of new patches, camos, banners, etc. purchaseable and free
+* A shitton of new patches, camos, banners, etc. purchasable and free
 * Ticks should now appear on the player's minimap like a normal minion
 * 2 hot new eject lines
 * New options to randomly select an execution from those you've unlocked
