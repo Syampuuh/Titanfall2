@@ -153,7 +153,7 @@ void function UpdatePilotItemButton( var button, PilotLoadoutDef loadout, bool i
 		if ( itemType == eItemTypes.PILOT_PRIMARY_ATTACHMENT )
 		{
 			// Disable attachment option for "special" primary weapons
-			if ( "menuCategory" in parentItem.i && expect int( parentItem.i.menuCategory ) == ePrimaryWeaponCategory.SPECIAL )
+			if ( "menuCategory" in parentItem.i && ( expect int( parentItem.i.menuCategory ) == ePrimaryWeaponCategory.SPECIAL || expect int( parentItem.i.menuCategory ) == ePrimaryWeaponCategory.HANDGUN ) )
 			{
 				isHiddenAttachment = true
 

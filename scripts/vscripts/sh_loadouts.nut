@@ -3230,6 +3230,10 @@ string function Loadouts_GetSetFileForRequestedClass( entity player )
 		if ( !player.IsTitan() )
 			return false
 
+		// JFS: wargames round switch BS
+		if ( !IsValid( player.GetTitanSoul() ) )
+			return false
+
 		return true
 	}
 

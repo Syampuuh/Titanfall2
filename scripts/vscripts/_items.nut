@@ -233,6 +233,8 @@ global function GetTitanPrimeBg
 
 global function GetItemRefsForEntitlement
 
+global function WeaponWarpaint_GetByIndex
+
 #if DEV
 global function GenerateValidateDataTableCRCText
 global function GenerateAllValidateDataTableCRCCheckText
@@ -1610,14 +1612,20 @@ void function InitUnlocks()
 	InitUnlock( "callsign_goodboy", "", eUnlockType.PLAYER_LEVEL, 1 )
 
 	//////////////////////////
+	// Holidays
+	//////////////////////////
+	InitUnlock( "callsign_126_col", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_127_col", "", eUnlockType.PLAYER_LEVEL, 1 )
+	//InitUnlock( "callsign_126_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 ) //Unlocked in-game or via advocate gifts
+	//InitUnlock( "callsign_127_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 ) //Unlocked in-game or via advocate gifts
+
+	//////////////////////////
 	// Reserved for future use
 	//////////////////////////
 	InitUnlock( "callsign_65_col_gold", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_14_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_14_col_fire", "", eUnlockType.PERSISTENT_ITEM, 0 )
 
-	InitUnlock( "callsign_126_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
-	InitUnlock( "callsign_127_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_129_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_130_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_131_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
@@ -1652,8 +1660,6 @@ void function InitUnlocks()
 	InitUnlock( "callsign_136_col_gold", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_137_col_gold", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_125_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
-	InitUnlock( "callsign_126_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
-	InitUnlock( "callsign_127_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_128_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_129_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_130_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 )
@@ -3334,13 +3340,13 @@ void function InitUnlocks()
 	InitUnlockAsEntitlement( "skin_wingman_aqua_fade", "mp_weapon_wingman", ET_DLC7_WINGMAN_WARPAINT, "StoreMenu_WeaponSkins" )
 	InitUnlockAsEntitlement( "skin_rocket_launcher_psych_spectre", "mp_weapon_rocket_launcher", ET_DLC7_ARCHER_WARPAINT, "StoreMenu_WeaponSkins" )
 
-	InitUnlockAsEntitlement( "ion_skin_fd", "ion", ET_DLC7_ION_WARPAINT, "StoreMenu_Limited" )
-	InitUnlockAsEntitlement( "scorch_skin_fd", "scorch", ET_DLC7_SCORCH_WARPAINT, "StoreMenu_Limited" )
-	InitUnlockAsEntitlement( "northstar_skin_fd", "northstar", ET_DLC7_NORTHSTAR_WARPAINT, "StoreMenu_Limited" )
-	InitUnlockAsEntitlement( "ronin_skin_fd", "ronin", ET_DLC7_RONIN_WARPAINT, "StoreMenu_Limited" )
-	InitUnlockAsEntitlement( "tone_skin_fd", "tone", ET_DLC7_TONE_WARPAINT, "StoreMenu_Limited" )
-	InitUnlockAsEntitlement( "legion_skin_fd", "legion", ET_DLC7_LEGION_WARPAINT, "StoreMenu_Limited" )
-	InitUnlockAsEntitlement( "monarch_skin_fd", "vanguard", ET_DLC7_MONARCH_WARPAINT, "StoreMenu_Limited" )
+	InitUnlockAsEntitlement( "ion_skin_fd", "ion", ET_DLC7_ION_WARPAINT )
+	InitUnlockAsEntitlement( "scorch_skin_fd", "scorch", ET_DLC7_SCORCH_WARPAINT )
+	InitUnlockAsEntitlement( "northstar_skin_fd", "northstar", ET_DLC7_NORTHSTAR_WARPAINT )
+	InitUnlockAsEntitlement( "ronin_skin_fd", "ronin", ET_DLC7_RONIN_WARPAINT )
+	InitUnlockAsEntitlement( "tone_skin_fd", "tone", ET_DLC7_TONE_WARPAINT )
+	InitUnlockAsEntitlement( "legion_skin_fd", "legion", ET_DLC7_LEGION_WARPAINT )
+	InitUnlockAsEntitlement( "monarch_skin_fd", "vanguard", ET_DLC7_MONARCH_WARPAINT )
 
 	InitUnlockAsEntitlement( "callsign_fd_ion_dynamic", "", ET_DLC7_ION_WARPAINT )
 	InitUnlockAsEntitlement( "callsign_fd_scorch_dynamic", "", ET_DLC7_SCORCH_WARPAINT )
@@ -3387,6 +3393,14 @@ void function InitUnlocks()
 	InitUnlockAsEntitlement( "skin_devotion_rspn_customs", "mp_weapon_esaw", ET_DLC8_DEVOTION_WARPAINT, "StoreMenu_WeaponSkins" )
 	InitUnlockAsEntitlement( "skin_mozambique_crimson_fury", "mp_weapon_shotgun_pistol", ET_DLC8_MOZAMBIQUE_WARPAINT, "StoreMenu_WeaponSkins" )
 	InitUnlockAsEntitlement( "skin_thunderbolt_8bit", "mp_weapon_arc_launcher", ET_DLC8_THUNDERBOLT_WARPAINT, "StoreMenu_WeaponSkins" )
+
+	InitUnlockAsEntitlement( "skin_lstar_heatsink", "mp_weapon_lstar", ET_DLC9_LSTAR_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_mastiff_crimson_fury", "mp_weapon_mastiff", ET_DLC9_MASTIFF_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_sidewinder_masterwork", "mp_weapon_smr", ET_DLC9_SIDEWINDER_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_rspn101_halloween", "mp_weapon_rspn101", ET_DLC9_R201_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_car_halloween", "mp_weapon_car", ET_DLC9_CAR_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_spitfire_halloween", "mp_weapon_lmg", ET_DLC9_SPITFIRE_WARPAINT, "StoreMenu_WeaponSkins" )
+
 
 	array<ItemData> burnMeterRewards = GetAllItemsOfType( eItemTypes.BURN_METER_REWARD )
 	foreach ( ItemData item in burnMeterRewards )
@@ -4934,6 +4948,26 @@ array<ItemData> function GetAllItemsOfType( int itemType )
 
 	return items
 }
+
+array<SubItemData> function GetAllSubItemsOfType( string parentRef, int itemType )
+{
+	Assert( itemType >= 0 && itemType < eItemTypes.COUNT, "Unknown item itemType " + itemType )
+
+	array<SubItemData> items = []
+
+	ItemData parentItem = GetItemData( parentRef )
+
+	foreach ( subitem in parentItem.subitems )
+	{
+		if ( GetSubitemType( parentRef, subitem.ref ) != itemType )
+			continue
+
+		items.append( subitem )
+	}
+
+	return items
+}
+
 
 array<string> function GetAllItemRefsOfType( int itemType )
 {
@@ -10473,4 +10507,18 @@ array<string> function GetItemRefsForEntitlement( int entitlementID )
 	}
 
 	return sortedRefs
+}
+
+ItemDisplayData function WeaponWarpaint_GetByIndex( int skinIndex, string parentRef )
+{
+	array<SubItemData> subItems = GetAllSubItemsOfType( parentRef, eItemTypes.WEAPON_SKIN )
+	foreach ( subItem in subItems )
+	{
+		if ( subItem.i.skinIndex != skinIndex )
+			continue
+
+		return GetSubitemDisplayData( parentRef, subItem.ref )
+	}
+
+	unreachable
 }

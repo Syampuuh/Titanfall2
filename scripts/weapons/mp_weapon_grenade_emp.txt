@@ -106,6 +106,8 @@ WeaponData
 
 		"damage_heavyarmor_nontitan_scale"				"0.5"
 		"sound_weapon_ready"							"HUD_ordinance_meter_replenished_1P"
+
+		"grenade_ignition_time"                         "0.75"
 	}
 
 	SP_BASE
@@ -135,6 +137,8 @@ WeaponData
 
 		"damage_heavyarmor_nontitan_scale"				"1"
 		"sound_weapon_ready"							"HUD_ordinance_meter_replenished_SP"
+
+		"grenade_ignition_time"                         "0.0"
 	}
 
 

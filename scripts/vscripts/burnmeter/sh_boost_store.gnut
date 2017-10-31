@@ -21,6 +21,7 @@ global function OpenBoostStores
 global function CloseBoostStores
 global function GetBoostStores
 global function BurnRewardRefundThink
+global function SetJoinInProgressBonus
 #endif
 
 #if CLIENT
@@ -61,6 +62,8 @@ struct
 	array<BoostStoreData> allBoosts
 	array<BoostStoreData> availableBoosts
 	table<entity,int> playerBonusData
+	int joinInProgressBonus = 0
+	array<string> joinInProgressGivenToPlayers
 
 	int teamReserveAmount = 0
 
@@ -123,6 +126,9 @@ void function ShInitBoostStore()
 	#endif
 
 	#if SERVER
+	if ( !BoostStoreEnabled() )
+		return
+
 	AddCallback_OnClientConnected( Store_OnClientConnected )
 	AddClientCommandCallback( "PurchaseBoost", ClientCommand_PurchaseBoost )
 	AddClientCommandCallback( "TeamReserveDeposit", ClientCommand_Deposit )
@@ -133,6 +139,11 @@ void function ShInitBoostStore()
 }
 
 #if SERVER
+void function SetJoinInProgressBonus( int moneyToAdd )
+{
+	file.joinInProgressBonus = file.joinInProgressBonus + moneyToAdd
+}
+
 void function SetBoostPurchaseCallback( void functionref( entity, BoostStoreData ) func )
 {
 	file.boostPurchaseCallback = func
@@ -151,6 +162,12 @@ void function SetTeamReserveInteractCallback( void functionref( entity, string, 
 void function Store_OnClientConnected( entity player )
 {
 	file.playerBonusData[ player ] <- 0
+	string playerUID = player.GetUID()
+	if ( !file.joinInProgressGivenToPlayers.contains( playerUID ) )
+	{
+		AddMoneyToPlayer( player, file.joinInProgressBonus )
+		file.joinInProgressGivenToPlayers.append( playerUID )
+	}
 }
 #endif
 

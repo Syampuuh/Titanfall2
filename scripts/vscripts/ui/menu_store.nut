@@ -32,16 +32,16 @@ void function InitStoreMenu()
 	RuiSetBool( rui, "isSpecialTint", true )
 	Hud_Show( button )
 
-	index++
-	button = Hud_GetChild( menu, "Button" + index )
-	SetButtonRuiText( button, "#STORE_LIMITED" )
-	AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Limited" ) ) )
-	rui = Hud_GetRui( button )
-	RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_limited" )
-	RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_limited_hl" )
-	RuiSetBool( rui, "isSpecialTint", true )
-	file.limitedButton = button
-	Hud_Show( file.limitedButton )
+	//index++
+	//button = Hud_GetChild( menu, "Button" + index )
+	//SetButtonRuiText( button, "#STORE_LIMITED" )
+	//AddButtonEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "StoreMenu_Limited" ) ) )
+	//rui = Hud_GetRui( button )
+	//RuiSetImage( rui, "bgImage", $"rui/menu/store/store_button_limited" )
+	//RuiSetImage( rui, "focusedImage", $"rui/menu/store/store_button_limited_hl" )
+	//RuiSetBool( rui, "isSpecialTint", true )
+	//file.limitedButton = button
+	//Hud_Show( file.limitedButton )
 
 	index++
 	button = Hud_GetChild( menu, "Button" + index )
@@ -205,7 +205,7 @@ void function OnOpenStoreMenu()
 
 void function OnWeaponSkinsButton_Activate( var button )
 {
-	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC8_WEAPON_WARPAINT_BUNDLE )
+	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC9_WEAPON_WARPAINT_BUNDLE )
 	AdvanceMenu( GetMenu( "StoreMenu_WeaponSkins" ) )
 }
 
@@ -226,10 +226,10 @@ void function WaitForDLCStoreInitialization( array<string> menuNames, void funct
 		WaitFrame()
 	}
 
-	if ( GetCurrentPlaylistVarInt( "limited_editions_available", 0 ) > 0 )
-		Hud_Show( file.limitedButton )
-	else
-		Hud_Hide( file.limitedButton )
+	//if ( GetCurrentPlaylistVarInt( "limited_editions_available", 0 ) > 0 )
+	//	Hud_Show( file.limitedButton )
+	//else
+	//	Hud_Hide( file.limitedButton )
 
 	if ( IsDialogActive( dialogData ) )
 	{

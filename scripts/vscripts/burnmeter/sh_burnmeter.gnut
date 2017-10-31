@@ -171,7 +171,13 @@ string function GetSelectedBurnCardRef( entity player )
 	BurnReward burnCard = burn.allCards[ burnCardID ]
 	string ref = burnCard.ref
 
+	#if SERVER
+	if ( GetItemDisplayData( ref ).hidden )
+		ClientCommand( player, "disconnect" )
+	#endif
+
 	#if SERVER || CLIENT
+
 	if ( Riff_TitanAvailability() == eTitanAvailability.Never )
 	{
 		//JFS: Batteries and Titan turrets are useless in PvP, turn them into amped weapons instead. Not an elegant solution at all. Fix next game. (Make boosts editable mid-match? )

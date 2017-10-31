@@ -32,8 +32,8 @@ WeaponData
 	"ammo_stockpile_max"							"200"
 	"ammo_clip_size"   								"200"
 	"ammo_default_total"							"200"
-	"ammo_per_shot"									"100"
-	"ammo_min_to_fire"								"100"
+	"ammo_per_shot"									"200"
+	"ammo_min_to_fire"								"200"
 	"ammo_no_remove_from_clip"						"1"
 
 	"sound_weapon_ready"							"HUD_kit_meter_replenished_1P"
@@ -78,8 +78,8 @@ WeaponData
 
 	//
 	"grapple_weapon"								"1"
-	"grapple_power_required"						"50"
-	"grapple_power_use_rate"						"50"
+	"grapple_power_required"						"100"
+	"grapple_power_use_rate"						"100"
 	"grapple_maxLength"								"1100"
 	"grapple_maxLengthVert"							"1100"
 
@@ -180,6 +180,18 @@ WeaponData
 			"explosionradius" 								"350"
 
 			custom_float_0		1.5		// CHARGE TIME
+		}
+
+		amped_tacticals
+		{
+			"grapple_power_required"						"50"
+			"grapple_power_use_rate"						"50"
+		}
+
+		all_grapple
+		{
+			"grapple_power_required"						"33"
+			"grapple_power_use_rate"						"33"
 		}
 	}
 }

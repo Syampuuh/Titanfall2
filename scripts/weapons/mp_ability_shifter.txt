@@ -184,6 +184,11 @@ WeaponData
 
 			custom_float_0		1.5		// CHARGE TIME
 		}
+		amped_tacticals
+		{
+			"ammo_min_to_fire"								"100"
+			"ammo_per_shot"									"100"
+		}
 	}
 
 	active_crosshair_count				"2"

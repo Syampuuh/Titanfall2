@@ -65,7 +65,7 @@ npc_super_spectre
 	//leechDataKnifeTag				KNIFE
 	leechMaxDist					0
 
-	Health							3000 [$mp]
+	Health							3500 [$mp]
 	Health							3000 [$sp]
 
 	PainOnHeavyDamageThreshold		450
@@ -177,8 +177,8 @@ npc_super_spectre
 	dodgePeriod 					6 [$sp] // Don't dodge more than maxDodgePerPeriod within this time
 	maxDodgePerPeriod				2 [$sp] // Don't dodge more than this many times in dodgePeriod
 
-	dodgePeriod 					8 [$mp] // Don't dodge more than maxDodgePerPeriod within this time
-	maxDodgePerPeriod				2 [$mp] // Don't dodge more than this many times in dodgePeriod
+	dodgePeriod 					6 [$mp] // Don't dodge more than maxDodgePerPeriod within this time
+	maxDodgePerPeriod				1 [$mp] // Don't dodge more than this many times in dodgePeriod
 
 	minConsecutiveDodgeTime			0
 	missileAwarenessCos				-0.1

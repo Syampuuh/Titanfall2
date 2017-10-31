@@ -46,15 +46,15 @@ void function InitStoreMenuSales()
 
 	buttonIndex++
 	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
-	button.s.entitlementId <- ET_DLC7_TITAN_WARPAINT_BUNDLE
-	file.bundleButtons.append( button )
-	SetButtonRuiText( button, "#STORE_BUNDLE_TITAN_WARPAINT_DLC7" )
-
-	buttonIndex++
-	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
-	button.s.entitlementId <- ET_DLC8_WEAPON_WARPAINT_BUNDLE
+	button.s.entitlementId <- ET_DLC9_WEAPON_WARPAINT_BUNDLE
 	file.bundleButtons.append( button )
 	SetButtonRuiText( button, "#STORE_BUNDLE_WEAPON_WARPAINT_DLC8" )
+
+	//buttonIndex++
+	//button = Hud_GetChild( file.menu, "Button" + buttonIndex )
+	//button.s.entitlementId <- ET_JUMPSTARTERKIT
+	//file.bundleButtons.append( button )
+	//SetButtonRuiText( button, "#STORE_JUMP_STARTER_PACK" )
 
 	foreach ( bundleButton in file.bundleButtons )
 	{
@@ -86,7 +86,10 @@ void function UpdateStoreMenuBundleButtons()
 	{
 		int entitlement = expect int( button.s.entitlementId )
 
-		button.s.hasEntitlement <- LocalPlayerHasEntitlement( entitlement ) || GetUnpurchasedChildEntitlements( entitlement ).len() == 0
+		if ( entitlement == ET_JUMPSTARTERKIT )
+			button.s.hasEntitlement <- LocalPlayerHasEntitlement( entitlement )
+		else
+			button.s.hasEntitlement <- LocalPlayerHasEntitlement( entitlement ) || GetUnpurchasedChildEntitlements( entitlement ).len() == 0
 	}
 
 	RefreshEntitlements()
@@ -151,12 +154,12 @@ void function OnBundleButton_Focused( var button )
 		storeBGIndex = STORE_BG_BUNDLE5
 
 		topLeftImage = $"rui/menu/store/store_button_art_hl"
-		bottomLeftImage = $"rui/menu/store/store_button_callsigns_hl"
+		bottomLeftImage = $""
 		topRightImage = $""
 		bottomRightImage = $""
 
-		topLeftText = Localize( "#STORE_BUNDLE1_TITAN_WARPAINT" )
-		bottomLeftText = Localize( "#STORE_BUNDLE1_TITAN_WARPAINT_CALLSIGNS" )
+		topLeftText = Localize( "#STORE_BUNDLE1_WEAPON_WARPAINT", 6 )
+		bottomLeftText = ""
 		topRightText = ""
 		bottomRightText = ""
 	}
@@ -164,14 +167,14 @@ void function OnBundleButton_Focused( var button )
 	{
 		storeBGIndex = STORE_BG_BUNDLE6
 
-		topLeftImage = $"rui/menu/store/store_button_art_hl"
-		bottomLeftImage = $""
-		topRightImage = $""
+		topLeftImage = $"rui/menu/store/store_button_permanent_unlock"
+		bottomLeftImage = $"rui/menu/store/store_button_art_hl"
+		topRightImage = $"rui/menu/store/store_button_currency"
 		bottomRightImage = $""
 
-		topLeftText = Localize( "#STORE_BUNDLE1_WEAPON_WARPAINT" )
-		bottomLeftText = ""
-		topRightText = ""
+		topLeftText = Localize( "#STORE_JUMP_STARTER_PACK_DESC1" )
+		bottomLeftText = Localize( "#STORE_JUMP_STARTER_PACK_DESC2" )
+		topRightText = Localize( "#STORE_JUMP_STARTER_PACK_DESC3" )
 		bottomRightText = ""
 	}
 	else
@@ -242,7 +245,7 @@ void function OnBundleButton_Activate( var button )
 				dialogData.header = "#STORE_BUY_TITAN_WARPAINT_BUNDLE"
 				break
 
-			case ET_DLC8_WEAPON_WARPAINT_BUNDLE:
+			case ET_DLC9_WEAPON_WARPAINT_BUNDLE:
 				dialogData.header = "#STORE_BUY_WEAPON_WARPAINT_BUNDLE"
 				break
 
@@ -309,7 +312,7 @@ void function RefreshBundleEntitlement( var button )
 		//string originalPrice = string( GetCombinedPriceOfEntitlements( GetChildEntitlements( entitlementId ) ) )
 		//RuiSetString( rui, "originalPrice", originalPrice )
 
-		string percentOff = Localize( "#STORE_PRICE_PERCENT_OFF", GetPercentOff( entitlementId ) )
+		string percentOff = Localize( "#STORE_PRICE_PERCENT_OFF", GetBundlePercentOff( entitlementId ) )
 		RuiSetString( rui, "percentOff", percentOff )
 	}
 
@@ -323,7 +326,7 @@ void function RefreshBundleEntitlement( var button )
 	button.s.hasEntitlement = hasEntitlement
 }
 
-int function GetPercentOff( int parentEntitlement )
+int function GetBundlePercentOff( int parentEntitlement )
 {
 	int bundlePrice = GetEntitlementPricesAsInt( [ parentEntitlement ] )[0]
 	array<int> childEntitlements = GetChildEntitlements( parentEntitlement )

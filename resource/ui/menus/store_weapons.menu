@@ -153,9 +153,9 @@ resource/ui/menus/store_bundles.menu
 			ControlName				RuiPanel
 			rui                     "ui/store_weapon_description.rpak"
             xpos					596
-            ypos					734
+            ypos					738
 			wide                    1046
-			tall                    230
+			tall                    252
 			visible					1
 			scaleImage				1
 		}

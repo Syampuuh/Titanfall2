@@ -16,11 +16,11 @@ resource/ui/menus/controls.menu
 		infocus_bgcolor_override	"0 0 0 0"
 		outoffocus_bgcolor_override	"0 0 0 0"
 
-        Vignette
-        {
-            ControlName             ImagePanel
-            InheritProperties       MenuVignette
-        }
+		Vignette
+		{
+			ControlName             ImagePanel
+			InheritProperties       MenuVignette
+		}
 
 		MenuTitle
 		{
@@ -55,7 +55,7 @@ resource/ui/menus/controls.menu
 			ypos					158
 			tall					370
 			wide 					844
-            rui                     "ui/control_options_description.rpak"
+			rui                     "ui/control_options_description.rpak"
 		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ resource/ui/menus/controls.menu
 			pin_to_sibling_corner	BOTTOM_LEFT
 			xpos					-22
 			navUp					BtnControllerOpenAdvancedMenu [$GAMECONSOLE]
-            navUp					SwchMouseInvertY [!$GAMECONSOLE]
+			navUp					SwchMouseInvertY [!$GAMECONSOLE]
 			navDown					SwchHoldToRodeo
 			tabPosition				1
 			ConVar					"autosprint_type"
@@ -201,8 +201,8 @@ resource/ui/menus/controls.menu
 			showConVarAsFloat		1
 
 			pin_to_sibling			SldMouseSensitivity
-            pin_corner_to_sibling	LEFT
-            pin_to_sibling_corner	RIGHT
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
 		}
 		SldMouseSensitivityZoomed	[!$GAMECONSOLE]
 		{
@@ -253,8 +253,8 @@ resource/ui/menus/controls.menu
 			showConVarAsFloat		1
 
 			pin_to_sibling			SldMouseSensitivityZoomed
-            pin_corner_to_sibling	LEFT
-            pin_to_sibling_corner	RIGHT
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	RIGHT
 		}
 
 		SwchMouseAcceleration [!$GAMECONSOLE]
@@ -334,6 +334,7 @@ resource/ui/menus/controls.menu
 			pin_to_sibling_corner	RIGHT
 			xpos					-10
 			zpos					-2
+			auto_tall_tocontents	1
 
 			fgcolor_override		"255 255 255 127"
 			labelText				"..."
@@ -578,6 +579,7 @@ resource/ui/menus/controls.menu
 			pin_to_sibling_corner	RIGHT
 			xpos					-10
 			zpos					2
+			auto_tall_tocontents	1
 
 			fgcolor_override		"255 255 255 127"
 			labelText				"#SETTING_DISABLED"
@@ -591,6 +593,7 @@ resource/ui/menus/controls.menu
 			pin_to_sibling_corner	RIGHT
 			xpos					-10
 			zpos					2
+			auto_tall_tocontents	1
 
 			labelText				"#SETTING_ENABLED"
 		}

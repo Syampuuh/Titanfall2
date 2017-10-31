@@ -32,8 +32,6 @@ WeaponData
 	"vortex_drain"									"0.0"
 	"projectile_adjust_to_gun_barrel"				"0"
 
-	"projectile_launch_speed"						"1000"
-
 	"npc_lead_time_scale"							"0.001"
 	"npc_lead_time_min_dist"						"100"
 	"npc_lead_time_max_dist"						"4000"
@@ -91,6 +89,13 @@ WeaponData
 		"npc_rest_time_between_bursts_min"				"2"
 		"npc_rest_time_between_bursts_max"				"3"
 		"npc_rest_time_between_bursts_expedite"			"1.5"
+
+		"projectile_launch_speed"						"1400"
+
+		"proficiency_poor_spreadscale"					"1.7"
+		"proficiency_average_spreadscale" 				"1.2"
+		"proficiency_good_spreadscale"					"0.8"
+		"proficiency_very_good_spreadscale"   			"0.5"
 	}
 
 	SP_BASE
@@ -128,14 +133,16 @@ WeaponData
 		"npc_rest_time_between_bursts_min"				"2"
 		"npc_rest_time_between_bursts_max"				"3"
 		"npc_rest_time_between_bursts_expedite"			"1.5"
+
+		"projectile_launch_speed"						"1000"
+
+		"proficiency_poor_spreadscale"					"2.7"
+		"proficiency_average_spreadscale" 				"2.2"
+		"proficiency_good_spreadscale"					"1.8"
+		"proficiency_very_good_spreadscale"   			"1.5"
 	}
 
 	// NPC
-	"proficiency_poor_spreadscale"					"2.7"
-	"proficiency_average_spreadscale" 				"2.2"
-	"proficiency_good_spreadscale"					"1.8"
-	"proficiency_very_good_spreadscale"   			"1.5"
-
 	"npc_spread_defocused_cone_multiplier"			"1.0"
 
 	"bolt_hitsize"									"30.0"

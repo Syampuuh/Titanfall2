@@ -31,8 +31,9 @@ void function InitStoreMenuWeaponSkinBundles()
 
 	Hud_SetText( Hud_GetChild( file.menu, "MenuTitle" ), "#STORE_WEAPON_WARPAINT" )
 
-	file.buttons.append( SetupButton( Hud_GetChild( file.menu, "Button0" ), ET_DLC8_WEAPON_WARPAINT_BUNDLE, "#STORE_POSTCARDS_FROM_THE_FRONTIER" ) )
-	file.buttons.append( SetupButton( Hud_GetChild( file.menu, "Button1" ), ET_DLC7_WEAPON_BUNDLE, "#STORE_OPERATION_FRONTIER_SHIELD" ) )
+	file.buttons.append( SetupButton( Hud_GetChild( file.menu, "Button0" ), ET_DLC9_WEAPON_WARPAINT_BUNDLE, "#STORE_WEAPON_WARPAINTS_DLC9" ) )
+	file.buttons.append( SetupButton( Hud_GetChild( file.menu, "Button1" ), ET_DLC8_WEAPON_WARPAINT_BUNDLE, "#STORE_POSTCARDS_FROM_THE_FRONTIER" ) )
+	file.buttons.append( SetupButton( Hud_GetChild( file.menu, "Button2" ), ET_DLC7_WEAPON_BUNDLE, "#STORE_OPERATION_FRONTIER_SHIELD" ) )
 	SetNavUpDown( file.buttons )
 
 	file.itemInfo = Hud_GetRui( Hud_GetChild( file.menu, "Info" ) )
@@ -92,28 +93,41 @@ void function OnButton_Focused( var button )
 		file.activeContentSet = index
 		array<ItemDisplayData> displayDataArray
 
-		Assert( index == 0 || index == 1 )
-		if ( index == 0 )
+		switch ( index )
 		{
-			displayDataArray.append( GetItemDisplayData( "skin_rspn101_patriot", "mp_weapon_rspn101" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_hemlok_mochi", "mp_weapon_hemlok" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_r97_purple_fade", "mp_weapon_r97" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_kraber_masterwork", "mp_weapon_sniper" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_spitfire_lead_farmer", "mp_weapon_lmg" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_devotion_rspn_customs", "mp_weapon_esaw" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_mozambique_crimson_fury", "mp_weapon_shotgun_pistol" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_thunderbolt_8bit", "mp_weapon_arc_launcher" ) )
-		}
-		else
-		{
-			displayDataArray.append( GetItemDisplayData( "skin_rspn101_wasteland", "mp_weapon_rspn101" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_g2_masterwork", "mp_weapon_g2" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_vinson_blue_fade", "mp_weapon_vinson" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_car_crimson_fury", "mp_weapon_car" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_alternator_patriot", "mp_weapon_alternator_smg" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_shotgun_badlands", "mp_weapon_shotgun" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_wingman_aqua_fade", "mp_weapon_wingman" ) )
-			displayDataArray.append( GetItemDisplayData( "skin_rocket_launcher_psych_spectre", "mp_weapon_rocket_launcher" ) )
+			case 0:
+				displayDataArray.append( GetItemDisplayData( "skin_lstar_heatsink", "mp_weapon_lstar" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_mastiff_crimson_fury", "mp_weapon_mastiff" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_sidewinder_masterwork", "mp_weapon_smr" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_rspn101_halloween", "mp_weapon_rspn101" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_car_halloween", "mp_weapon_car" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_spitfire_halloween", "mp_weapon_lmg" ) )
+				break
+
+			case 1:
+				displayDataArray.append( GetItemDisplayData( "skin_rspn101_patriot", "mp_weapon_rspn101" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_hemlok_mochi", "mp_weapon_hemlok" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_r97_purple_fade", "mp_weapon_r97" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_kraber_masterwork", "mp_weapon_sniper" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_spitfire_lead_farmer", "mp_weapon_lmg" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_devotion_rspn_customs", "mp_weapon_esaw" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_mozambique_crimson_fury", "mp_weapon_shotgun_pistol" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_thunderbolt_8bit", "mp_weapon_arc_launcher" ) )
+				break
+
+			case 2:
+				displayDataArray.append( GetItemDisplayData( "skin_rspn101_wasteland", "mp_weapon_rspn101" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_g2_masterwork", "mp_weapon_g2" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_vinson_blue_fade", "mp_weapon_vinson" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_car_crimson_fury", "mp_weapon_car" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_alternator_patriot", "mp_weapon_alternator_smg" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_shotgun_badlands", "mp_weapon_shotgun" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_wingman_aqua_fade", "mp_weapon_wingman" ) )
+				displayDataArray.append( GetItemDisplayData( "skin_rocket_launcher_psych_spectre", "mp_weapon_rocket_launcher" ) )
+				break
+
+			default:
+				Assert( false, "Button index: " + index + " not supported!" )
 		}
 
 		thread CycleWeaponSkins( button, displayDataArray )
@@ -124,7 +138,7 @@ void function OnButton_Activate( var button )
 {
 	ButtonData buttonData = GetButtonData( button )
 
-	Assert( buttonData.index == 0 || buttonData.index == 1 )
+	Assert( buttonData.index >= 0 || buttonData.index <= 2 )
 	SetStoreMenuWeaponSkinsBundleEntitlement( buttonData.bundleEntitlement )
 	SetStoreMenuWeaponSkinsDefaultFocusIndex( buttonData.currentCycleIndex )
 	AdvanceMenu( GetMenu( "StoreMenu_WeaponSkins" ) )

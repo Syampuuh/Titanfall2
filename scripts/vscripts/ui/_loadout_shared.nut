@@ -82,6 +82,7 @@ void function InitCategorySelectMenu()
 	file.primaryCategoryData.append( CreateCategory( ePrimaryWeaponCategory.SNIPER, "#MENU_TITLE_SNIPER" ) )
 	file.primaryCategoryData.append( CreateCategory( ePrimaryWeaponCategory.SHOTGUN, "#MENU_TITLE_SHOTGUN" ) )
 	file.primaryCategoryData.append( CreateCategory( ePrimaryWeaponCategory.SPECIAL, "#MENU_TITLE_GRENADIER" ) )
+	file.primaryCategoryData.append( CreateCategory( ePrimaryWeaponCategory.HANDGUN, "#MENU_TITLE_HANDGUN" ) )
 
 	file.secondaryCategoryData.append( CreateCategory( eSecondaryWeaponCategory.PISTOL, "#MENU_TITLE_PISTOL" ) )
 	file.secondaryCategoryData.append( CreateCategory( eSecondaryWeaponCategory.AT, "#MENU_TITLE_ANTI_TITAN" ) )

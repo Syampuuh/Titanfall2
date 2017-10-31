@@ -156,6 +156,15 @@ WeaponData
 		{
 
 		}
+
+		amped_tacticals
+		{
+			"ammo_min_to_fire"								"100"
+			"ammo_per_shot"									"100"
+			"ammo_drains_to_empty_on_fire"					"0"
+			"ammo_no_remove_from_clip"						"0"
+			"regen_ammo_refill_start_delay"					"0.0"
+		}
 	}
 
 	"ordnance_crosshair_always_on_start_index"	"0"

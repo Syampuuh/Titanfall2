@@ -39,7 +39,7 @@ void function TeamTitan_OnPrematch()
 	foreach ( player in GetPlayerArray() )
 	{
 		player.Signal( "StopSendingTTSMenuCommand" )
-		Remote_CallFunction_Replay( player, "ServerCallback_CloseTeamTitanMenu" )
+		Remote_CallFunction_NonReplay( player, "ServerCallback_CloseTeamTitanMenu" )
 	}
 }
 
@@ -95,7 +95,7 @@ void function SpawnPlayerAfterDelay( entity player, float endTime )
 	wait 0.5
 
 	player.Signal( "StopSendingTTSMenuCommand" )
-	Remote_CallFunction_Replay( player, "ServerCallback_CloseTeamTitanMenu" )
+	Remote_CallFunction_NonReplay( player, "ServerCallback_CloseTeamTitanMenu" )
 	FadeOutSoundOnEntity( player, "Duck_For_FrontierDefenseTitanSelectScreen" , 1.0)
 	StopUpdatingTeamTitanSelection()
 

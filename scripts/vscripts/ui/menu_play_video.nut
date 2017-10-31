@@ -79,8 +79,14 @@ void function OnPlayVideoMenu_Open()
 
 	WaitSignal( uiGlobal.signalDummy, "PlayVideoEnded" )
 
-	if ( uiGlobal.activeMenu == file.menu )
-		thread CloseActiveMenu()
+	if ( GetActiveMenu() == file.menu )
+	{
+		// CloseActiveMenu() calls below are threaded because they trigger OnPlayVideoMenu_Close() which signals "PlayVideoMenuClosed" which interrupts this function otherwise
+		if ( uiGlobal.loadingLevel != "" )
+			thread CloseActiveMenu( true, false )
+		else
+			thread CloseActiveMenu()
+	}
 }
 
 void function OnPlayVideoMenu_Close()

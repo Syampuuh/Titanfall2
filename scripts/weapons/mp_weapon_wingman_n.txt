@@ -25,7 +25,7 @@ WeaponData
 	"damage_flags"									"DF_BULLET | DF_KNOCK_BACK | DF_DISMEMBERMENT"
 
 	// Menu
-	"menu_category"                                 "pistol"
+	"menu_category"                                 "handgun"
 	"menu_anim_class"                               "small"
 	"stat_damage" 									"91"
 	"stat_range"  									"60"
@@ -80,7 +80,7 @@ WeaponData
 
 	"critical_hit_damage_scale"						"1"
 
-	"ammo_clip_size"   								"4"
+	"ammo_clip_size"   								"6"
   	"titanarmor_critical_hit_required"              "1"
 
 	dof_zoom_focusArea_horizontal					0.06
@@ -120,8 +120,8 @@ WeaponData
 	"bolt_speed"									"12000"
 
 	// Damage - When Used by Players
-	"damage_near_value"   							"50"
-	"damage_far_value"								"50"
+	"damage_near_value"   							"75"
+	"damage_far_value"								"55"
 	"damage_near_distance"							"1500"
 	"damage_far_distance" 							"2000"
 	"damage_near_value_titanarmor"					"300"
@@ -389,9 +389,9 @@ WeaponData
 		}
 		extended_ammo
 		{
-			"ammo_stockpile_max"				"120"
-			"ammo_clip_size"   					"6"
-			"ammo_default_total"				"120"
+			"ammo_stockpile_max"				"160"
+			"ammo_clip_size"   					"8"
+			"ammo_default_total"				"160"
 		}
 		silencer //HACK JFS: Doesn't get applied on amped weapons. See bug 170460
 		{

@@ -132,6 +132,12 @@ bool function IsRespawnAvailable( entity player )
 
 bool function IsPrivateMatchSpectator( entity player )
 {
+	// JFS
+	#if SERVER
+	if ( !player.p.clientScriptInitialized )
+		return false
+	#endif
+
 	if ( IsPrivateMatch() && player.GetPersistentVarAsInt( "privateMatchState" ) == 1 )
 		return true
 

@@ -492,18 +492,42 @@ void function OnRenameOrCosmeticButton_Focused( var button )
 		}
 		else if ( button == file.primaryCamoButton )
 		{
-			CamoSkin skin = CamoSkins_GetByIndex( loadout.primaryCamoIndex )
-			name = skin.name
+			if ( loadout.primarySkinIndex > WEAPON_SKIN_INDEX_CAMO )
+			{
+				ItemDisplayData skin = WeaponWarpaint_GetByIndex( loadout.primarySkinIndex, loadout.primary )
+				name = skin.name
+			}
+			else
+			{
+				CamoSkin skin = CamoSkins_GetByIndex( loadout.primaryCamoIndex )
+				name = skin.name
+			}
 		}
 		else if ( button == file.secondaryCamoButton )
 		{
-			CamoSkin skin = CamoSkins_GetByIndex( loadout.secondaryCamoIndex )
-			name = skin.name
+			if ( loadout.secondarySkinIndex > WEAPON_SKIN_INDEX_CAMO )
+			{
+				ItemDisplayData skin = WeaponWarpaint_GetByIndex( loadout.secondarySkinIndex, loadout.secondary )
+				name = skin.name
+			}
+			else
+			{
+				CamoSkin skin = CamoSkins_GetByIndex( loadout.secondaryCamoIndex )
+				name = skin.name
+			}
 		}
 		else if ( button == file.weapon3CamoButton )
 		{
-			CamoSkin skin = CamoSkins_GetByIndex( loadout.weapon3CamoIndex )
-			name = skin.name
+			if ( loadout.weapon3SkinIndex > WEAPON_SKIN_INDEX_CAMO )
+			{
+				ItemDisplayData skin = WeaponWarpaint_GetByIndex( loadout.weapon3SkinIndex, loadout.weapon3 )
+				name = skin.name
+			}
+			else
+			{
+				CamoSkin skin = CamoSkins_GetByIndex( loadout.weapon3CamoIndex )
+				name = skin.name
+			}
 		}
 		else if ( button == file.genderButton )
 		{

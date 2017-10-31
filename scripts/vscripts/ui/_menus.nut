@@ -196,6 +196,9 @@ bool function UICodeCallback_LevelLoadingStarted( string levelname )
 	if ( uiGlobal.playingCredits )
 		Signal( uiGlobal.signalDummy, "PlayingCreditsDone" )
 
+	// kill lingering postgame summary since persistent data may not be available at this point
+	Signal( uiGlobal.signalDummy, "PGDisplay" )
+
 #if CONSOLE_PROG
 	if ( !Console_IsSignedIn() )
 		return false
@@ -1928,7 +1931,7 @@ void function LaunchGamePurchaseOrDLCStore( array<string> menuNames = [ "StoreMe
 			// Special case because this menu needs a few properties set before opening
 			if ( menuName == "StoreMenu_WeaponSkins" )
 			{
-				preOpenFunc = DefaultToDLC8WeaponWarpaintBundle
+				preOpenFunc = DefaultToDLC9WeaponWarpaintBundle
 				break
 			}
 		}

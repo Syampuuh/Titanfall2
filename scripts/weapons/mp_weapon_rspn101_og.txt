@@ -259,10 +259,10 @@ WeaponData
 
 	// Spread
 
-	"spread_stand_hip"								"0.0"
-	"spread_stand_hip_run"							"0.0"
-	"spread_stand_hip_sprint"                       "0.0"
-	"spread_crouch_hip"   							"0.0"
+	"spread_stand_hip"								"2.0"
+	"spread_stand_hip_run"							"2.0"
+	"spread_stand_hip_sprint"                       "2.0"
+	"spread_crouch_hip"   							"2.0"
 
 
 	"spread_stand_ads"								"0"
@@ -320,10 +320,10 @@ WeaponData
 
 	//"viewkick_scale_firstshot_hipfire"			"0.0"
 	"viewkick_scale_firstshot_ads"					"1.25"
-	"viewkick_scale_min_hipfire"  					"1.0"
-	"viewkick_scale_max_hipfire"  					"1.5"
-	"viewkick_scale_min_ads"  						"1.0"
-	"viewkick_scale_max_ads"  						"1.5"
+	"viewkick_scale_min_hipfire"  					"1.5"
+	"viewkick_scale_max_hipfire"  					"2.0"
+	"viewkick_scale_min_ads"  						"1.5"
+	"viewkick_scale_max_ads"  						"2.0"
 	"viewkick_scale_valuePerShot" 					"1.0"
 	"viewkick_scale_valueLerpStart"   				"0"
 	"viewkick_scale_valueLerpEnd" 					"2"

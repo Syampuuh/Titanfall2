@@ -94,8 +94,8 @@ WeaponData
 		"ammo_min_to_fire"								"200"
 
 		// Regen Ammo
-		"regen_ammo_refill_rate"						"6"
-		"regen_ammo_refill_start_delay"					"7.0"
+		"regen_ammo_refill_rate"						"8"
+		"regen_ammo_refill_start_delay"					"0.0"
 
 		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
 	}
@@ -117,9 +117,9 @@ WeaponData
 	}
 
 	// Behavior
-	"cooldown_type"									"ammo_timed"
+	"cooldown_type"									"ammo_instant"
 	"grenade_fuse_time"								"0"
-	"grenade_ignition_time"                         "6.0"
+	"grenade_ignition_time"                         "4.5"
 	"grenade_death_drop_velocity_scale"				"0.05"
 	"grenade_death_drop_velocity_extraUp"			"0.10"
 	"fire_rate"   									"2"
@@ -283,6 +283,11 @@ WeaponData
 		pas_power_cell
 		{
 			"regen_ammo_refill_rate"	"*1.35"
+		}
+		amped_tacticals
+		{
+			"ammo_min_to_fire"								"100"
+			"ammo_per_shot"									"100"
 		}
 	}
 

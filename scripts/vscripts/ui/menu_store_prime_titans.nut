@@ -24,17 +24,9 @@ void function InitStoreMenuPrimeTitans()
 	{
 		var button = Hud_GetChild( file.menu, "Button" + i )
 		Hud_SetVisible( button, true )
-		if ( i < 6 )
-		{
-			Hud_AddEventHandler( button, UIE_CLICK, OnPrimeButton_Activate )
-			button.s.comingSoon <- false
-		}
-		else
-		{
-			RuiSetBool( Hud_GetRui( button ), "isComingSoon", true )
-			button.s.comingSoon <- true
-		}
 		Hud_AddEventHandler( button, UIE_GET_FOCUS, OnPrimeButton_Focused )
+		Hud_AddEventHandler( button, UIE_CLICK, OnPrimeButton_Activate )
+		button.s.comingSoon <- false
 		file.primeTitanButtons[i] = button
 	}
 
@@ -246,31 +238,43 @@ void function OnStoreMenuPrimeTitans_EntitlementsChanged()
 void function RefreshEntitlements()
 {
 	foreach ( button in file.primeTitanButtons )
+		RefreshEntitlement( button )
+}
+
+void function RefreshEntitlement( var button )
+{
+	TitanLoadoutDef loadout = GetCachedTitanLoadout( expect int( button.s.loadoutIndex ) )
+
+	array<int> entitlementIds = GetEntitlementIds( loadout.primeTitanRef )
+	Assert( entitlementIds.len() <= 2 )
+	entitlementIds.removebyvalue( ET_DELUXE_EDITION )
+	int entitlement = entitlementIds[0]
+
+	array<string> prices = GetEntitlementPricesAsStr( entitlementIds )
+	Assert( prices.len() == 1 )
+	string price = prices[0]
+
+	var rui = Hud_GetRui( button )
+	RuiSetString( rui, "price", price )
+	RuiSetBool( rui, "priceAvailable", ( price != "" ) )
+
+	int percentOff = GetPercentOff( entitlement )
+	string percentOffText = ""
+	if ( percentOff > 0 )
+		percentOffText = Localize( "#STORE_PRICE_PERCENT_OFF", percentOff )
+	RuiSetString( rui, "percentOff", percentOffText )
+
+	bool hasEntitlement = LocalPlayerHasEntitlement( entitlement )
+	if ( LocalPlayerHasEntitlement( ET_DELUXE_EDITION ) && ( entitlement == ET_DLC1_PRIME_ION || entitlement == ET_DLC1_PRIME_SCORCH ) )
+		hasEntitlement = true
+
+	RuiSetBool( rui, "isOwned", hasEntitlement )
+
+	if ( !button.s.hasEntitlement && hasEntitlement )
 	{
-		TitanLoadoutDef loadout = GetCachedTitanLoadout( expect int( button.s.loadoutIndex ) )
-
-		array<int> entitlementIds = GetEntitlementIds( loadout.primeTitanRef )
-		Assert( entitlementIds.len() <= 2 )
-		entitlementIds.removebyvalue( ET_DELUXE_EDITION )
-		array<string> prices = GetEntitlementPricesAsStr( entitlementIds )
-		Assert( prices.len() == 1 )
-
-		var rui = Hud_GetRui( button )
-		RuiSetString( rui, "price", prices[0] )
-		RuiSetBool( rui, "priceAvailable", ( prices[0] != "" ) )
-		bool hasEntitlement = LocalPlayerHasEntitlement( entitlementIds[0] )
-
-		if ( LocalPlayerHasEntitlement( ET_DELUXE_EDITION ) && ( entitlementIds[0] == ET_DLC1_PRIME_ION || entitlementIds[0] == ET_DLC1_PRIME_SCORCH ) )
-			hasEntitlement = true
-
-		RuiSetBool( rui, "isOwned", hasEntitlement )
-
-		if ( !button.s.hasEntitlement && hasEntitlement )
-		{
-			ClientCommand( "StoreSetNewItemStatus " + entitlementIds[0] + " " + loadout.primeTitanRef )
-		}
-
-		button.s.hasEntitlement = hasEntitlement
-		button.s.entitlementId <- entitlementIds[0]
+		ClientCommand( "StoreSetNewItemStatus " + entitlement + " " + loadout.primeTitanRef )
 	}
+
+	button.s.hasEntitlement = hasEntitlement
+	button.s.entitlementId <- entitlement
 }

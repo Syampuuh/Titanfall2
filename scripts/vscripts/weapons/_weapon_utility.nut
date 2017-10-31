@@ -2770,35 +2770,69 @@ void function PAS_CooldownReduction_OnKill( entity victim, entity attacker, var 
 		return
 
 	array<string> weaponMods = GetWeaponModsFromDamageInfo( damageInfo )
-	if ( !PlayerHasPassive( attacker, ePassives.PAS_CDR_ON_KILL ) && !weaponMods.contains( "tactical_cdr_on_kill" ) )
-		return
 
-	entity weapon = attacker.GetOffhandWeapon( OFFHAND_LEFT )
-
-	switch ( GetWeaponInfoFileKeyField_Global( weapon.GetWeaponClassName(), "cooldown_type" ) )
+	if ( GetCurrentPlaylistVarInt( "featured_mode_tactikill", 0 ) > 0 )
 	{
-		case "grapple":
-			attacker.SetSuitGrapplePower( attacker.GetSuitGrapplePower() + 25 )
-			break
+		entity weapon = attacker.GetOffhandWeapon( OFFHAND_LEFT )
 
-		case "ammo":
-		case "ammo_instant":
-		case "ammo_deployed":
-		case "ammo_timed":
-			int maxAmmo = weapon.GetWeaponPrimaryClipCountMax()
-			weapon.SetWeaponPrimaryClipCountNoRegenReset( min( maxAmmo, weapon.GetWeaponPrimaryClipCount() + ( maxAmmo / 4 ) ) )
-			break
+		switch ( GetWeaponInfoFileKeyField_Global( weapon.GetWeaponClassName(), "cooldown_type" ) )
+		{
+			case "grapple":
+				attacker.SetSuitGrapplePower( attacker.GetSuitGrapplePower() + 100 )
+				break
 
-		case "chargeFrac":
-			weapon.SetWeaponChargeFraction( max( 0, weapon.GetWeaponChargeFraction() - 0.25 ) )
-			break
+			case "ammo":
+			case "ammo_instant":
+			case "ammo_deployed":
+			case "ammo_timed":
+				int maxAmmo = weapon.GetWeaponPrimaryClipCountMax()
+				weapon.SetWeaponPrimaryClipCountNoRegenReset( maxAmmo )
+				break
 
-//		case "mp_ability_ground_slam":
-//			break
+			case "chargeFrac":
+				weapon.SetWeaponChargeFraction( 0 )
+				break
 
-		default:
-			Assert( false, weapon.GetWeaponClassName() + " needs to be updated to support cooldown_type setting" )
-			break
+	//		case "mp_ability_ground_slam":
+	//			break
+
+			default:
+				Assert( false, weapon.GetWeaponClassName() + " needs to be updated to support cooldown_type setting" )
+				break
+		}
+	}
+	else
+	{
+		if ( !PlayerHasPassive( attacker, ePassives.PAS_CDR_ON_KILL ) && !weaponMods.contains( "tactical_cdr_on_kill" ) )
+			return
+
+		entity weapon = attacker.GetOffhandWeapon( OFFHAND_LEFT )
+
+		switch ( GetWeaponInfoFileKeyField_Global( weapon.GetWeaponClassName(), "cooldown_type" ) )
+		{
+			case "grapple":
+				attacker.SetSuitGrapplePower( attacker.GetSuitGrapplePower() + 25 )
+				break
+
+			case "ammo":
+			case "ammo_instant":
+			case "ammo_deployed":
+			case "ammo_timed":
+				int maxAmmo = weapon.GetWeaponPrimaryClipCountMax()
+				weapon.SetWeaponPrimaryClipCountNoRegenReset( min( maxAmmo, weapon.GetWeaponPrimaryClipCount() + ( maxAmmo / 4 ) ) )
+				break
+
+			case "chargeFrac":
+				weapon.SetWeaponChargeFraction( max( 0, weapon.GetWeaponChargeFraction() - 0.25 ) )
+				break
+
+	//		case "mp_ability_ground_slam":
+	//			break
+
+			default:
+				Assert( false, weapon.GetWeaponClassName() + " needs to be updated to support cooldown_type setting" )
+				break
+		}
 	}
 }
 
@@ -2920,7 +2954,7 @@ void function WeaponAttackWave( entity ent, int projectileCount, entity inflicto
 				break
 
 			entity movingGeo = null
-			if ( downTrace.hitEnt && downTrace.hitEnt.HasPusherRootParent() )
+			if ( downTrace.hitEnt && downTrace.hitEnt.HasPusherRootParent() && !downTrace.hitEnt.IsMarkedForDeletion() )
 				movingGeo = downTrace.hitEnt
 
 			if ( !waveFunc( ent, projectileCount, inflictor, movingGeo, downTrace.endPos, angles, i ) )
@@ -2955,7 +2989,7 @@ void function WeaponAttackWave( entity ent, int projectileCount, entity inflicto
 				break
 
 			entity movingGeo = null
-			if ( downTrace.hitEnt && downTrace.hitEnt.HasPusherRootParent() )
+			if ( downTrace.hitEnt && downTrace.hitEnt.HasPusherRootParent() && !downTrace.hitEnt.IsMarkedForDeletion() )
 				movingGeo = downTrace.hitEnt
 
 			if ( !waveFunc( ent, projectileCount, inflictor, movingGeo, downTrace.endPos, angles, i ) )
@@ -3567,6 +3601,16 @@ array<string> function GetWeaponModsFromDamageInfo( var damageInfo )
 
 void function OnPlayerGetsNewPilotLoadout( entity player, PilotLoadoutDef loadout )
 {
+	if ( GetCurrentPlaylistVarInt( "featured_mode_amped_tacticals", 0 ) >= 1 )
+	{
+		player.GiveExtraWeaponMod( "amped_tacticals" )
+	}
+
+	if ( GetCurrentPlaylistVarInt( "featured_mode_all_grapple", 0 ) >= 1 )
+	{
+		player.GiveExtraWeaponMod( "all_grapple" )
+	}
+
 	SetPlayerCooldowns( player )
 }
 

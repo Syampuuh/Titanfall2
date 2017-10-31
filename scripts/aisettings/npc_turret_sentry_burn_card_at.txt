@@ -8,7 +8,7 @@ npc_turret_sentry_burn_card_at
 	maxEnemyDist			0
 
 	Health							600 [$sp]
-	Health							1250 [$mp]
+	Health							2500 [$mp]
 
 	turret_lifetime			60.0 //Make sure to change #BURNMETER_AT_TURRETWEAPON_DESC and #BURNMETER_AT_TURRETWEAPON_DESC_BOOST_ACTIVATION_TEXT
 

@@ -248,11 +248,13 @@ int function Player_GetRemainingMatchmakingDelay( entity player )
 
 int function Player_NextAvailableMatchmakingTime( entity player )
 {
+	#if MP
 	int lastLeaveTime = player.GetPersistentVarAsInt( PERSISTENCE_LAST_LEAVE_TIME )
 	if ( GetCurrentTimeForPersistence() - lastLeaveTime < Player_GetMaxMatchmakingDelay( player ) )
 	{
 		return Player_GetRemainingMatchmakingDelay(	player )
 	}
+	#endif
 
 	return 0
 }

@@ -1284,10 +1284,6 @@ asset function GetWeaponViewmodel( string weaponName )
 			modelName = $"models/weapons/lstar/ptpov_lstar_menu.mdl"
 			break
 
-		case $"models/weapons/lstar/ptpov_lstar.mdl":
-			modelName = $"models/weapons/lstar/ptpov_lstar_menu.mdl"
-			break
-
 		case $"models/weapons/softball_at/ptpov_softball_at.mdl":
 			modelName = $"models/weapons/softball_at/ptpov_softball_at_menu.mdl"
 			break

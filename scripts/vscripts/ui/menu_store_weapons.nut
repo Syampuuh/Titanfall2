@@ -5,7 +5,7 @@ global function InitStoreMenuWeaponSkins
 global function SetStoreMenuWeaponSkinsDefaultFocusIndex
 global function SetStoreMenuWeaponSkinsBundleEntitlement
 global function GetStoreMenuWeaponSkinsBundleEntitlement
-global function DefaultToDLC8WeaponWarpaintBundle
+global function DefaultToDLC9WeaponWarpaintBundle
 
 struct
 {
@@ -100,9 +100,19 @@ void function OnStoreMenuWeaponSkins_Open()
 	array<string> itemRefs = GetItemRefsForEntitlement( file.bundleEntitlement )
 
 	foreach ( index, button in file.weaponSkinButtons )
-		InitMenuButton( file.weaponSkinButtons[index], itemRefs[index] )
+	{
+		if ( index < itemRefs.len() )
+		{
+			InitMenuButton( file.weaponSkinButtons[index], itemRefs[index] )
+			Hud_Show( button )
+		}
+		else
+		{
+			Hud_Hide( button )
+		}
+	}
 
-	if ( file.bundleEntitlement == ET_DLC8_WEAPON_WARPAINT_BUNDLE )
+	if ( file.bundleEntitlement == ET_DLC9_WEAPON_WARPAINT_BUNDLE )
 	{
 		Hud_Show( file.bundleButton )
 		InitMenuBundleButton( file.bundleButton, file.bundleEntitlement )
@@ -194,11 +204,14 @@ void function OnWeaponSkinButton_Focused( var button )
 
 	RunMenuClientFunction( "UpdateStoreWeaponModelSkin", parentRef, skinIndex )
 
-	RuiSetString( file.descRui, "headerText", "#STORE_ELITE_WEAPON_BONUS_HEADER" )
-
+	string specialText = IsLimitedEditionEntitlement( expect int( button.s.entitlementId ) ) ? Localize( "#STORE_LIMITED_EDITION" ) : ""
+	string headerText = Localize( "#STORE_ELITE_WEAPON_BONUS_HEADER" )
 	string bulletText1 = Localize( "#STORE_ELITE_WEAPON_BONUS_01" )
 	string bulletText2 = Localize( "#STORE_ELITE_WEAPON_BONUS_02" )
-	string bulletText3 = Localize( "#STORE_ELITE_WEAPON_BONUS_03" )
+	//string bulletText3 = Localize( "#STORE_ELITE_WEAPON_BONUS_03" )
+
+	RuiSetString( file.descRui, "specialText", specialText )
+	RuiSetString( file.descRui, "headerText", headerText )
 
 	RuiSetString( file.descRui, "bulletText1", bulletText1 )
 	RuiSetBool( file.descRui, "bulletVisible1", bulletText1 != "" )
@@ -206,8 +219,8 @@ void function OnWeaponSkinButton_Focused( var button )
 	RuiSetString( file.descRui, "bulletText2", bulletText2 )
 	RuiSetBool( file.descRui, "bulletVisible2", bulletText2 != "" )
 
-	RuiSetString( file.descRui, "bulletText3", bulletText3 )
-	RuiSetBool( file.descRui, "bulletVisible3", bulletText3 != "" )
+	//RuiSetString( file.descRui, "bulletText3", bulletText3 )
+	//RuiSetBool( file.descRui, "bulletVisible3", bulletText3 != "" )
 
 	uiGlobal.menuData[ file.menu ].lastFocus = button
 }
@@ -242,7 +255,10 @@ void function OnWeaponSkinButton_Activate( var button )
 void function RefreshEntitlements()
 {
 	foreach ( button in file.weaponSkinButtons )
-		RefreshEntitlement( button )
+	{
+		if ( Hud_IsVisible( button ) )
+			RefreshEntitlement( button )
+	}
 
 	if ( Hud_IsVisible( file.bundleButton ) )
 		RefreshBundleEntitlement( file.bundleButton )
@@ -255,23 +271,32 @@ void function RefreshEntitlement( var button )
 
 	array<int> entitlementIds = GetEntitlementIds( skinRef, parentRef )
 	Assert( entitlementIds.len() == 1 )
+	int entitlement = entitlementIds[0]
+
 	array<string> prices = GetEntitlementPricesAsStr( entitlementIds )
 	Assert( prices.len() == 1 )
+	string price = prices[0]
 
 	var rui = Hud_GetRui( button )
-	RuiSetString( rui, "price", prices[0] )
-	RuiSetBool( rui, "priceAvailable", ( prices[0] != "" ) )
-	bool hasEntitlement = LocalPlayerHasEntitlement( entitlementIds[0] )
+	RuiSetString( rui, "price", price )
+	RuiSetBool( rui, "priceAvailable", ( price != "" ) )
 
+	int percentOff = GetPercentOff( entitlement )
+	string percentOffText = ""
+	if ( percentOff > 0 )
+		percentOffText = Localize( "#STORE_PRICE_PERCENT_OFF", percentOff )
+	RuiSetString( rui, "percentOff", percentOffText )
+
+	bool hasEntitlement = LocalPlayerHasEntitlement( entitlement )
 	RuiSetBool( rui, "isOwned", hasEntitlement )
 
 	if ( !button.s.hasEntitlement && hasEntitlement )
 	{
-		ClientCommand( "StoreSetNewItemStatus " + entitlementIds[0] + " " + skinRef + " " + parentRef )
+		ClientCommand( "StoreSetNewItemStatus " + entitlement + " " + skinRef + " " + parentRef )
 	}
 
 	button.s.hasEntitlement = hasEntitlement
-	button.s.entitlementId <- entitlementIds[0]
+	button.s.entitlementId <- entitlement
 }
 
 void function SetStoreMenuWeaponSkinsDefaultFocusIndex( int index )
@@ -289,8 +314,8 @@ int function GetStoreMenuWeaponSkinsBundleEntitlement()
 	return file.bundleEntitlement
 }
 
-void function DefaultToDLC8WeaponWarpaintBundle()
+void function DefaultToDLC9WeaponWarpaintBundle()
 {
-	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC8_WEAPON_WARPAINT_BUNDLE )
+	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC9_WEAPON_WARPAINT_BUNDLE )
 	SetStoreMenuWeaponSkinsDefaultFocusIndex( 0 )
 }

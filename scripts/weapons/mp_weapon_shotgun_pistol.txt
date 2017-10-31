@@ -14,7 +14,7 @@ WeaponData
 	"weaponClass" 									"human"
 	"weaponSubClass"								"projectile_shotgun"
 	"body_type"										"close_quarters"
-	"fire_mode"   									"semi-auto"
+	"fire_mode"   									"auto"
 	"pickup_hold_prompt"  							"Hold [USE] [WEAPONNAME]"
 	"pickup_press_prompt" 							"[USE] [WEAPONNAME]"
 	"minimap_reveal_distance"						"32000"
@@ -24,7 +24,7 @@ WeaponData
 	"OnWeaponNpcPrimaryAttack"						"OnWeaponNpcPrimaryAttack_weapon_shotgun_pistol"
 
 	// Menu
-	"menu_category"                                 "pistol"
+	"menu_category"                                 "handgun"
 	"menu_anim_class"                               "small"
 	"stat_damage" 									"57"
 	"stat_range"  									"40"
@@ -83,8 +83,8 @@ WeaponData
 
 	"projectile_inherit_owner_velocity_scale"		"0.0"
 
-	"ammo_clip_size"   								"4"
-   "titanarmor_critical_hit_required"              "1"
+	"ammo_clip_size"   								"6"
+   	"titanarmor_critical_hit_required"              "1"
 
 
 
@@ -101,7 +101,7 @@ WeaponData
 
 		// Damage - When Used by Players
 		"damage_near_value"   							"30"
-		"damage_far_value"								"20"
+		"damage_far_value"								"25"
 		"damage_near_value_titanarmor"					"30"
 		"damage_far_value_titanarmor" 					"20"
 	//	"explosion_damage"								"50"	// 150
@@ -210,7 +210,7 @@ WeaponData
 	"bolt_gravity_enabled"							"1"
 
 	// Behavior
-	"fire_rate"   									"2.5"
+	"fire_rate"   									"3.0"
 	"zoom_time_in"									"0.2"
 	"zoom_time_out"   								"0.15"
 	"zoom_fov"										"55"
@@ -419,9 +419,9 @@ WeaponData
 		}
 		extended_ammo
 		{
-			"ammo_stockpile_max"				"90"
-			"ammo_clip_size"   					"7"
-			"ammo_default_total"				"90"
+			"ammo_stockpile_max"				"160"
+			"ammo_clip_size"   					"8"
+			"ammo_default_total"				"160"
 		}
         silencer //HACK JFS: Doesn't get applied on amped weapons. See bug 170460
 		{
@@ -519,7 +519,7 @@ WeaponData
 	"ui1_draw_cloaked"	"1"
 	UiData1
 	{
-		"ui"								"ui/sa3_crosshair"
+		"ui"							"ui/sa3_crosshair"
 		"mesh"							"models/weapons/attachments/sa3_rui_upper"
 		Args
 		{
@@ -530,13 +530,13 @@ WeaponData
 	"ui2_enable"		"1"
 	UiData2
 	{
-		"ui"								"ui/sa3_ammo_counter"
+		"ui"							"ui/sa3_ammo_counter"
 		"mesh"							"models/weapons/attachments/sa3_rui_lower"
 		Args
 		{
 			vis							player_zoomfrac
 			ammo						weapon_ammo
-			clipSize						weapon_clipSize
+			clipSize					weapon_clipSize
 			clipCount					weapon_stockpileClipCount
 		}
 	}
@@ -544,11 +544,11 @@ WeaponData
 	"ui8_enable"		"0"
 	UiData8
 	{
-		"ui"									"ui/pro_screen_panel"
+		"ui"							"ui/pro_screen_panel"
 		"mesh"							"models/weapons/attachments/pro_screen_rui_upper"
 		Args
 		{
-			proValue							proscreen_int0
+			proValue					proscreen_int0
 			proOwnedByPlayer			proscreen_owner_is_player
 		}
 	}

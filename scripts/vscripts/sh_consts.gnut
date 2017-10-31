@@ -59,8 +59,8 @@ global const TITAN_BRAWL = "ttdm"
 
 global const VERBOSE_DAMAGE_PRINTOUTS = false
 
-global const SAVEGAME_VERSION = 15 // increment when saves need to be tossed
-global const PERSISTENCE_INIT_VERSION = 230
+global const SAVEGAME_VERSION = 16 // increment when saves need to be tossed
+global const PERSISTENCE_INIT_VERSION = 231
 
 global const TEMP_NETWORTH_VAR = "activeBCID"
 global const NETWORTH_VAR = "netWorth"
@@ -2239,6 +2239,7 @@ global enum ePrimaryWeaponCategory
 	SNIPER,
 	SHOTGUN,
 	SPECIAL,
+	HANDGUN,
 	COUNT
 }
 
@@ -2577,7 +2578,7 @@ global const int TITAN_SKIN_INDEX_CAMO = 2
 global const int TITAN_WARPAINT_CAMO_INDEX = -1
 global const int WEAPON_SKIN_INDEX_DEFAULT = 0
 global const int WEAPON_SKIN_INDEX_CAMO = 1
-global const int WEAPON_SKIN_INDEX_GHOST = 10
+global const int WEAPON_SKIN_INDEX_GHOST = 11
 
 global const int FWTS_HIDDEN 		= 1 << 0
 global const int FWTS_IMC 			= 1 << 1

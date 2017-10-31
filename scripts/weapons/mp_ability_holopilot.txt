@@ -36,7 +36,7 @@ WeaponData
 		"ammo_per_shot"									"100"
 		"ammo_stockpile_max"							"200"
 		"fire_rate"   									"2"
-		"regen_ammo_refill_rate"						"6"
+		"regen_ammo_refill_rate"						"8"
 
 		"enable_highlight_networking_on_creation"		"<KEEP_DEFAULT>"
 	}
@@ -104,6 +104,13 @@ WeaponData
 		dev_mod_low_recharge
 		{
 			"regen_ammo_refill_rate"   									"*10"
+		}
+		amped_tacticals
+		{
+			"ammo_clip_size"   								"300"
+			"ammo_default_total"							"300"
+			"ammo_stockpile_max"							"300"
+			"regen_ammo_refill_rate"						"12"
 		}
 	}
 

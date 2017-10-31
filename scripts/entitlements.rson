@@ -38,6 +38,15 @@
 }
 
 {
+  script_const: ET_GAMESTOPSTARTERKIT
+    pc:       ""
+    ps4:      AMPBO0000000000
+    xb1:      Titanfall2.GamestopStarterKit
+    pc_offer: ""
+    xb1_offer: "da300b40-e14c-481e-a0a4-e862711f33fc"
+}
+
+{
   script_const: ET_BF1
     pc:       BF1
     ps4:      BF1
@@ -585,4 +594,67 @@
     xb1:       Titanfall2.DLC8.WeaponWarpaintBundle
     pc_offer: "Origin.OFR.50.0002369"
     xb1_offer: "d696de07-6d9c-44fc-8404-bf39111b7414"
+}
+
+{
+  script_const: ET_DLC9_LSTAR_WARPAINT
+    pc:       TITANFALL2_DLC9_HEATSINKLSTAR
+    ps4:      HSINK00000000000
+    xb1:      Titanfall2.DLC9.HeatSinkLSTAR
+    pc_offer: "Origin.OFR.50.0002423"
+    xb1_offer: "ef0a4130-4709-445c-8017-d5da2a145cf4"
+}
+
+{
+  script_const: ET_DLC9_MASTIFF_WARPAINT
+    pc:       TITANFALL2_DLC9_CRIMSONFURYMASTIFF
+    ps4:      CFMAS00000000000
+    xb1:      Titanfall2.DLC9.CrimsonFuryMastiff
+    pc_offer: "Origin.OFR.50.0002418"
+    xb1_offer: "d16de5c9-2dec-4734-9aa1-67aa1abb6293"
+}
+
+{
+  script_const: ET_DLC9_SIDEWINDER_WARPAINT
+    pc:       TITANFALL2_DLC9_MASTERWORKSIDEWINDERSMR
+    ps4:      MASID00000000000
+    xb1:      Titanfall2.DLC9.MasterworkSidewinder
+    pc_offer: "Origin.OFR.50.0002419"
+    xb1_offer: "93d2bafe-bbe8-410e-8434-27d3f513fbf5"
+}
+
+{
+  script_const: ET_DLC9_R201_WARPAINT
+    pc:       TITANFALL2_DLC9_LIMITEDHALLOWEENR201CARBINE
+    ps4:      HR20100000000000
+    xb1:      Titanfall2.DLC9.Halloween201Carbine
+    pc_offer: "Origin.OFR.50.0002420"
+    xb1_offer: "88de0f4d-ad62-4b27-a9a6-a14830db418d"
+}
+
+{
+  script_const: ET_DLC9_CAR_WARPAINT
+    pc:       TITANFALL2_DLC9_LIMITEDHALLOWEENCARBINE
+    ps4:      HACAR00000000000
+    xb1:      Titanfall2.DLC9.HalloweenCAR
+    pc_offer: "Origin.OFR.50.0002421"
+    xb1_offer: "04340958-8934-4da5-be08-19e886234e09"
+}
+
+{
+  script_const: ET_DLC9_SPITFIRE_WARPAINT
+    pc:       TITANFALL2_DLC9_LIMITEDHALLOWEENSPITFIRE
+    ps4:      HSPIT00000000000
+    xb1:      Titanfall2.DLC9.HalloweenSpitfire
+    pc_offer: "Origin.OFR.50.0002422"
+    xb1_offer: "36d0a956-77e2-483f-ae97-3b68b379af25"
+}
+
+{
+  script_const: ET_DLC9_WEAPON_WARPAINT_BUNDLE
+    pc:        TITANFALL2_DLC9_WEAPONWARPAINT_BUNDLE
+    ps4:       D9BUN00000000000
+    xb1:       Titanfall2.DLC9.WeaponWarpaintBundle
+    pc_offer: "Origin.OFR.50.0002424"
+    xb1_offer: "0093f9d9-8a3a-4453-b0d4-a81aa39be6ae"
 }

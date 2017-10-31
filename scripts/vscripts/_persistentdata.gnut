@@ -267,6 +267,33 @@ void function InitPersistentData( entity player )
 		}
 	}
 
+	if ( initializedVersion < 231 )
+	{
+		for ( int i = 0; i < NUM_PERSISTENT_PILOT_LOADOUTS; i++ )
+		{
+			string secondaryName = GetPersistentLoadoutValue( player, "pilot", i, "secondary" )
+			if ( secondaryName == "mp_weapon_shotgun_pistol" || secondaryName == "mp_weapon_wingman_n" )
+			{
+				SetPlayerPersistentVarWithoutValidation( player, "pilot", i, "secondary", GetWeaponCategoryBasedDefault( eSecondaryWeaponCategory.PISTOL ) ) // Skip validation or the change could fail due to secondary slot conflict
+				SetPlayerPersistentVarWithoutValidation( player, "pilot", i, "secondarySkinIndex", "0" )
+				SetPlayerPersistentVarWithoutValidation( player, "pilot", i, "secondaryCamoIndex", "0" )
+				SetPersistentLoadoutValue( player, "pilot", i, "secondaryMod1",	"" )
+				SetPersistentLoadoutValue( player, "pilot", i, "secondaryMod2",	"" )
+				SetPersistentLoadoutValue( player, "pilot", i, "secondaryMod3",	"" )
+			}
+			string weapon3Name = GetPersistentLoadoutValue( player, "pilot", i, "weapon3" )
+			if ( weapon3Name == "mp_weapon_shotgun_pistol" || weapon3Name == "mp_weapon_wingman_n")
+			{
+				SetPlayerPersistentVarWithoutValidation( player, "pilot", i, "weapon3", GetWeaponCategoryBasedDefault( eSecondaryWeaponCategory.PISTOL ) ) // Skip validation or the change could fail due to secondary slot conflict
+				SetPlayerPersistentVarWithoutValidation( player, "pilot", i, "weapon3SkinIndex", "0" )
+				SetPlayerPersistentVarWithoutValidation( player, "pilot", i, "weapon3CamoIndex", "0" )
+				SetPersistentLoadoutValue( player, "pilot", i, "weapon3Mod1",	"" )
+				SetPersistentLoadoutValue( player, "pilot", i, "weapon3Mod2",	"" )
+				SetPersistentLoadoutValue( player, "pilot", i, "weapon3Mod3",	"" )
+			}
+		}
+	}
+
 	player.SetPersistentVar( "isACheater", false )
 
 	player.SetPersistentVar( "initializedVersion", PERSISTENCE_INIT_VERSION )

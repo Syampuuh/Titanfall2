@@ -35,9 +35,9 @@ var function OnWeaponPrimaryAttack_TitanHover( entity weapon, WeaponPrimaryAttac
 		float horizontalVelocity
 		entity soul = flyer.GetTitanSoul()
 		if ( IsValid( soul ) && SoulHasPassive( soul, ePassives.PAS_NORTHSTAR_FLIGHTCORE ) )
-			horizontalVelocity = 300.0
+			horizontalVelocity = 350.0
 		else
-			horizontalVelocity = 200.0
+			horizontalVelocity = 250.0
 		thread FlyerHovers( flyer, soundInfo, 3.0, horizontalVelocity )
 	#endif
 

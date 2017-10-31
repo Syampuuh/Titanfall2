@@ -88,7 +88,7 @@ var function OnWeaponPrimaryAttack_titanweapon_dumbfire_rockets( entity weapon, 
 
 entity function FireClusterRocket( entity weapon, vector attackPos, vector attackDir, bool shouldPredict )
 {
-	float missileSpeed = 3000.0
+	float missileSpeed = 3500.0
 
 	bool doPopup = false
 

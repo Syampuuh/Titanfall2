@@ -27,7 +27,7 @@ void function TDM_SetScoreEventOverride()
 	SetupScoreEventForAITDM( "KillTitan", 10 )
 	SetupScoreEventForAITDM( "TitanKillTitan", 10 )
 
-	SetupScoreEventForAITDM( "KillSuperSpectre", 5 )
+	SetupScoreEventForAITDM( "KillSuperSpectre", 3 )
 }
 
 void function SetupScoreEventForAITDM( string event, int pointvalue )

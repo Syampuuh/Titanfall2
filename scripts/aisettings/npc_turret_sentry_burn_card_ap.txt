@@ -8,7 +8,7 @@ npc_turret_sentry_burn_card_ap
 	maxEnemyDistHeavyArmor	0
 
 	Health							600 [$sp]
-	Health							600 [$mp]
+	Health							1250 [$mp]
 
 	turret_lifetime			60.0 //Make sure to change #BURNMETER_AP_TURRETWEAPON_DESC
 

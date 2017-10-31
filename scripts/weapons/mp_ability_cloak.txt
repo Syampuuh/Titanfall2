@@ -155,6 +155,11 @@ WeaponData
 		{
 
 		}
+
+		amped_tacticals
+		{
+			"regen_ammo_refill_rate"						"20"
+		}
 	}
 
 	"ordnance_crosshair_always_on_start_index"	"0"

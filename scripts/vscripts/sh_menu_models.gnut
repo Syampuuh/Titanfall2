@@ -223,7 +223,6 @@
 	global const STORE_BG_BUNDLE4 = 4
 	global const STORE_BG_BUNDLE5 = 5
 	global const STORE_BG_BUNDLE6 = 6
-	global const STORE_BG_BUNDLE7 = 7
 
 #if CLIENT
 
@@ -1204,14 +1203,10 @@
 				file.menuStoreBackground.SetOrigin( <68.1134, 377.554, -18.25> )
 				break
 			case STORE_BG_BUNDLE5:
-				file.menuStoreBackground.SetModel( $"models/test/brad/store_titan_warpaint_bundle.mdl" )
-				file.menuStoreBackground.SetOrigin( <68.1134, 377.554, -18.25> )
-				break
-			case STORE_BG_BUNDLE6:
 				file.menuStoreBackground.SetModel( $"models/test/brad/store_weapon_warpaint_bundle.mdl" )
 				file.menuStoreBackground.SetOrigin( <68.1134, 377.554, -18.25> )
 				break
-			case STORE_BG_BUNDLE7:
+			case STORE_BG_BUNDLE6:
 				file.menuStoreBackground.SetModel( $"models/test/brad/jump_start.mdl" )
 				file.menuStoreBackground.SetOrigin( <68.1134, 377.554, -18.25> )
 				break

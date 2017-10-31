@@ -2,6 +2,8 @@
 global function HasChildEntitlements
 global function GetChildEntitlements
 global function GetParentEntitlements
+global function GetPercentOff
+global function IsLimitedEditionEntitlement
 #if UI
 global function GetCombinedPriceOfEntitlements
 #endif // UI
@@ -31,6 +33,7 @@ bool function HasChildEntitlements( int entitlement )
 		case ET_DLC7_TITAN_WARPAINT_BUNDLE:
 		case ET_DLC7_WEAPON_BUNDLE:
 		case ET_DLC8_WEAPON_WARPAINT_BUNDLE:
+		case ET_DLC9_WEAPON_WARPAINT_BUNDLE:
 			return true
 	}
 
@@ -121,6 +124,15 @@ array<int> function GetChildEntitlements( int parentEntitlement )
 			childEntitlements.append( ET_DLC8_DEVOTION_WARPAINT )
 			childEntitlements.append( ET_DLC8_MOZAMBIQUE_WARPAINT )
 			childEntitlements.append( ET_DLC8_THUNDERBOLT_WARPAINT )
+			break
+
+		case ET_DLC9_WEAPON_WARPAINT_BUNDLE:
+			childEntitlements.append( ET_DLC9_LSTAR_WARPAINT )
+			childEntitlements.append( ET_DLC9_MASTIFF_WARPAINT )
+			childEntitlements.append( ET_DLC9_SIDEWINDER_WARPAINT )
+			childEntitlements.append( ET_DLC9_R201_WARPAINT )
+			childEntitlements.append( ET_DLC9_CAR_WARPAINT )
+			childEntitlements.append( ET_DLC9_SPITFIRE_WARPAINT )
 			break
 	}
 
@@ -215,9 +227,40 @@ array<int> function GetParentEntitlements( int childEntitlement )
 		case ET_DLC8_THUNDERBOLT_WARPAINT:
 			parentEntitlements.append( ET_DLC8_WEAPON_WARPAINT_BUNDLE )
 			break
+
+		case ET_DLC9_LSTAR_WARPAINT:
+		case ET_DLC9_MASTIFF_WARPAINT:
+		case ET_DLC9_SIDEWINDER_WARPAINT:
+		case ET_DLC9_R201_WARPAINT:
+		case ET_DLC9_CAR_WARPAINT:
+		case ET_DLC9_SPITFIRE_WARPAINT:
+			parentEntitlements.append( ET_DLC9_WEAPON_WARPAINT_BUNDLE )
+			break
 	}
 
 	return parentEntitlements
+}
+
+int function GetPercentOff( int entitlement )
+{
+	/*switch ( entitlement )
+	{
+	}*/
+
+	return 0
+}
+
+bool function IsLimitedEditionEntitlement( int entitlement )
+{
+	switch ( entitlement )
+	{
+		case ET_DLC9_R201_WARPAINT:
+		case ET_DLC9_CAR_WARPAINT:
+		case ET_DLC9_SPITFIRE_WARPAINT:
+			return true
+	}
+
+	return false
 }
 
 #if UI

@@ -550,6 +550,23 @@ void function StoreUpdatePIN( entity player, int entitlementId, string refParam 
 		
 			PIN_BuyItemWithRealMoney( player, false, "dlc8_weapon_warpaint_" + refParam, 0 )
 			break
+
+		case ET_DLC9_WEAPON_WARPAINT_BUNDLE:
+			PIN_BuyItemWithRealMoney( player, false, "dlc9_weapon_warpaint_bundle", 0 )
+			break
+
+		case ET_DLC9_LSTAR_WARPAINT:
+		case ET_DLC9_MASTIFF_WARPAINT:
+		case ET_DLC9_SIDEWINDER_WARPAINT:
+		case ET_DLC9_R201_WARPAINT:
+		case ET_DLC9_CAR_WARPAINT:
+		case ET_DLC9_SPITFIRE_WARPAINT:
+			Assert( refParam != "" )
+			if ( refParam == "" )
+				return
+
+			PIN_BuyItemWithRealMoney( player, false, "dlc9_weapon_warpaint_" + refParam, 0 )
+			break
 	}
 }
 
@@ -565,6 +582,7 @@ bool function ClientCommand_StoreSetNewItemStatus( entity player, array<string> 
 	if ( args.len() >= 3 )
 		parentRefParam = args[2]
 
+	StoreUpdatePIN( player, entitlementId, refParam )
 	StoreSetNewItemStatus( player, entitlementId, refParam, parentRefParam )
 
 	return true
@@ -783,6 +801,12 @@ bool function StoreSetNewItemStatus( entity player, int entitlementId, string re
 		case ET_DLC8_DEVOTION_WARPAINT:
 		case ET_DLC8_MOZAMBIQUE_WARPAINT:
 		case ET_DLC8_THUNDERBOLT_WARPAINT:
+		case ET_DLC9_LSTAR_WARPAINT:
+		case ET_DLC9_MASTIFF_WARPAINT:
+		case ET_DLC9_SIDEWINDER_WARPAINT:
+		case ET_DLC9_R201_WARPAINT:
+		case ET_DLC9_CAR_WARPAINT:
+		case ET_DLC9_SPITFIRE_WARPAINT:
 			Assert( refParam != "" )
 			if ( refParam == "" || !ItemDefined( refParam ) )
 				return false
@@ -814,6 +838,15 @@ bool function StoreSetNewItemStatus( entity player, int entitlementId, string re
 			SetItemNewStatus( player, "skin_devotion_rspn_customs", "mp_weapon_esaw", true )
 			SetItemNewStatus( player, "skin_mozambique_crimson_fury", "mp_weapon_shotgun_pistol", true )
 			SetItemNewStatus( player, "skin_thunderbolt_8bit", "mp_weapon_arc_launcher", true )
+			break
+
+		case ET_DLC9_WEAPON_WARPAINT_BUNDLE:
+			SetItemNewStatus( player, "skin_lstar_heatsink", "mp_weapon_lstar", true )
+			SetItemNewStatus( player, "skin_mastiff_crimson_fury", "mp_weapon_mastiff", true )
+			SetItemNewStatus( player, "skin_sidewinder_masterwork", "mp_weapon_smr", true )
+			SetItemNewStatus( player, "skin_rspn101_halloween", "mp_weapon_rspn101", true )
+			SetItemNewStatus( player, "skin_car_halloween", "mp_weapon_car", true )
+			SetItemNewStatus( player, "skin_spitfire_halloween", "mp_weapon_lmg", true )
 			break
 	}
 

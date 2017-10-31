@@ -146,14 +146,14 @@ void function OnPrimeButton_Focused( var button )
 	{
 		RunMenuClientFunction( "UpdateTitanModel", -1, TITANMENU_NO_CUSTOMIZATION | TITANMENU_FORCE_PRIME )
 
-		TitanLoadoutDef loadout = GetCachedTitanLoadout( index )
-
-		switch ( loadout.titanClass )
-		{
-			//case "vanguard":
-			//	RuiSetImage( rui, "titanPreview", $"rui/menu/store/monarch_prime" )
-			//	break
-		}
+		//TitanLoadoutDef loadout = GetCachedTitanLoadout( index )
+		//
+		//switch ( loadout.titanClass )
+		//{
+		//	case "vanguard":
+		//		RuiSetImage( rui, "titanPreview", $"rui/menu/store/monarch_prime" )
+		//		break
+		//}
 	}
 	else
 	{
@@ -253,24 +253,33 @@ void function RefreshEntitlement( var button )
 	array<int> entitlementIds = GetEntitlementIds( loadout.primeTitanRef )
 	Assert( entitlementIds.len() <= 2 )
 	entitlementIds.removebyvalue( ET_DELUXE_EDITION )
+	int entitlement = entitlementIds[0]
+
 	array<string> prices = GetEntitlementPricesAsStr( entitlementIds )
 	Assert( prices.len() == 1 )
+	string price = prices[0]
 
 	var rui = Hud_GetRui( button )
-	RuiSetString( rui, "price", prices[0] )
-	RuiSetBool( rui, "priceAvailable", ( prices[0] != "" ) )
-	bool hasEntitlement = LocalPlayerHasEntitlement( entitlementIds[0] )
+	RuiSetString( rui, "price", price )
+	RuiSetBool( rui, "priceAvailable", ( price != "" ) )
 
-	if ( LocalPlayerHasEntitlement( ET_DELUXE_EDITION ) && ( entitlementIds[0] == ET_DLC1_PRIME_ION || entitlementIds[0] == ET_DLC1_PRIME_SCORCH ) )
+	int percentOff = GetPercentOff( entitlement )
+	string percentOffText = ""
+	if ( percentOff > 0 )
+		percentOffText = Localize( "#STORE_PRICE_PERCENT_OFF", percentOff )
+	RuiSetString( rui, "percentOff", percentOffText )
+
+	bool hasEntitlement = LocalPlayerHasEntitlement( entitlement )
+	if ( LocalPlayerHasEntitlement( ET_DELUXE_EDITION ) && ( entitlement == ET_DLC1_PRIME_ION || entitlement == ET_DLC1_PRIME_SCORCH ) )
 		hasEntitlement = true
 
 	RuiSetBool( rui, "isOwned", hasEntitlement )
 
 	if ( !button.s.hasEntitlement && hasEntitlement )
 	{
-		ClientCommand( "StoreSetNewItemStatus " + entitlementIds[0] + " " + loadout.primeTitanRef )
+		ClientCommand( "StoreSetNewItemStatus " + entitlement + " " + loadout.primeTitanRef )
 	}
 
 	button.s.hasEntitlement = hasEntitlement
-	button.s.entitlementId <- entitlementIds[0]
+	button.s.entitlementId <- entitlement
 }
