@@ -1,46 +1,222 @@
 # Table of Contents
 
- * [Postcards from the Frontier](#29-august-2017---postcards-from-the-frontier)
+ * [Tricks and Treats](#31-october-2017---tricks-and-treats)
     * [Content and Feature Additions](#content-and-feature-additions)
     * [Rebalancing](#rebalancing)
     * [Fixes and Other Changes](#fixes-and-other-changes)
     * [Future Content](#future-content)
- * [Operation Frontier Shield](#25-july-2017---operation-frontier-shield)
+ * [Postcards from the Frontier](#29-august-2017---postcards-from-the-frontier)
     * [Content and Feature Additions](#content-and-feature-additions-1)
     * [Rebalancing](#rebalancing-1)
     * [Fixes and Other Changes](#fixes-and-other-changes-1)
     * [Future Content](#future-content-1)
-  * [The War Games](#27-june-2017---the-war-games)
+ * [Operation Frontier Shield](#25-july-2017---operation-frontier-shield)
     * [Content and Feature Additions](#content-and-feature-additions-2)
     * [Rebalancing](#rebalancing-2)
     * [Fixes and Other Changes](#fixes-and-other-changes-2)
     * [Future Content](#future-content-2)
- * [Monarch's Reign](#30-may-2017---monarchs-reign)
+  * [The War Games](#27-june-2017---the-war-games)
     * [Content and Feature Additions](#content-and-feature-additions-3)
     * [Rebalancing](#rebalancing-3)
     * [Fixes and Other Changes](#fixes-and-other-changes-3)
     * [Future Content](#future-content-3)
- * [A Glitch in the Frontier](#25-april-2017---a-glitch-in-the-frontier)
+ * [Monarch's Reign](#30-may-2017---monarchs-reign)
     * [Content and Feature Additions](#content-and-feature-additions-4)
     * [Rebalancing](#rebalancing-4)
     * [Fixes and Other Changes](#fixes-and-other-changes-4)
     * [Future Content](#future-content-4)
- * [Colony Reborn](#30-march-2017---colony-reborn)
+ * [A Glitch in the Frontier](#25-april-2017---a-glitch-in-the-frontier)
     * [Content and Feature Additions](#content-and-feature-additions-5)
     * [Rebalancing](#rebalancing-5)
     * [Fixes and Other Changes](#fixes-and-other-changes-5)
     * [Future Content](#future-content-5)
- * [Live Fire](#23-february-2017---the-live-fire-patch)
+ * [Colony Reborn](#30-march-2017---colony-reborn)
     * [Content and Feature Additions](#content-and-feature-additions-6)
     * [Rebalancing](#rebalancing-6)
     * [Fixes and Other Changes](#fixes-and-other-changes-6)
     * [Future Content](#future-content-6)
- * [Angel City](#29-november-2016---the-angel-city-patch)
+ * [Live Fire](#23-february-2017---the-live-fire-patch)
     * [Content and Feature Additions](#content-and-feature-additions-7)
     * [Rebalancing](#rebalancing-7)
     * [Fixes and Other Changes](#fixes-and-other-changes-7)
+    * [Future Content](#future-content-7)
+ * [Angel City](#29-november-2016---the-angel-city-patch)
+    * [Content and Feature Additions](#content-and-feature-additions-8)
+    * [Rebalancing](#rebalancing-8)
+    * [Fixes and Other Changes](#fixes-and-other-changes-8)
 
 # Latest Client Changes
+
+## 31 October 2017 - Tricks and Treats
+
+### Content and Feature Additions
+
+* [Even more Elite Warpaints, including *Very Spooky Limited Editions™*:](https://www.ea.com/games/titanfall/titanfall-2/news/frontier-news-network-20)
+  * **Heat Sink ELITE - L-Star**
+  * **Crimson Fury ELITE - Mastiff**
+  * **Masterwork ELITE - SMR**
+  * **Halloween ELITE - R-201** *(Limited till Nov 28th)*
+  * **Halloween ELITE - CAR** *(Limited till Nov 28th)*
+  * **Halloween ELITE - Spitfire** *(Limited till Nov 28th)*
+* Big Sales on Bundles:
+  * **Angel City's Most Wanted**
+  * **Colony Reborn**
+  * **Monarch's Reign**
+  * **Prime Titans**
+  * **Tricks and Treats Elite Warpaints**
+  * Each is 33% off, ish, because fractions.
+* 2 new Callsign Banners
+  * **Coop-O'-Lantern**
+  * **No Headshot**
+  * The basic versions are granted to you immediately, while the versions can be purchased for 1500 credits in-game.
+* More Featured Modes for the near future:
+  * **Tactikill Attrition**
+    * Pilot kills completely recharge your tactical
+	* Normal Attrition rules otherwise
+  * **Attack on Titanfall**
+    * Everyone has Grapple with 3 charges.
+	* Normal Attrition rules otherwise
+	* I would like to send a big thumbs down to whoever's in charge of the Japanese localization for simply naming the mode "Attack on Titanfall" transliterated in kana (アタック・オン・タイタンフォール), rather than "Shingeki no Titanfall" (進撃のタイタンフォール).
+  * ~~**The Grand Ruse Cruise**~~ **The Great Bamboozle**
+    * Everyone has standard Holopilot
+	* Normal Live Fire rules otherwise
+
+  
+### Rebalancing
+
+#### Attrition
+
+* There are now 2 phases of Spectres being deployed (phases 2 and 3 instead of just 2), and resultingly the final phase will consist of Reapers and Stalkers rather than just Reapers.
+  * If you don't know what that means: Attrition runs on a "DEFCON system" (that's what Respawn calls it, anyway) with 8 phases of NPC drops that are advanced by the game progress, which trigger the occasional "Enemy Spectres Incoming" etc. messages. The phases of one team's NPC drops are progressed by the opposing team's score. The order originally went **Grunts > Spectres > Stalkers > Reapers > More Reapers > No more Grunts > No more Spectres > No more Stalkers** This is why it can be so hard to find "just one minion" in Attrition's late game; they're already all dead and no more are being deployed, there's just Reapers. This will no longer be the case, as the order is now **Grunts > Spectres > More Spectres > Stalkers > Reapers > More Reapers > No more Grunts > No more Spectres**.
+* Reapers are now worth 3 points, decreased from 5.
+* The score limit has been raised from 600 to 650 points.
+* The time limit has been increased from 10 minutes (I think, maybe) to 15 minutes.
+  
+#### Frontier Defense
+
+* Joining a game that has already begun will give you a bonus starting amount of money, the Wave Completion bonus for each prior wave (which will be variable depending on your difficulty, check [my handy-dandy-will-never-be-finished guide for those numbers](https://syampuuh.github.io/frontierDefense#difficulties))
+* Arc Trap cost increased from $550 to $650.
+* Amped Battery cost decreased from $500 to $400.
+* Pilots are now invincible for 5 seconds after redeploying from the dropship.
+* You can now earn Aegis Ranks while playing Frontier Defense in a Private Match.
+
+#### Reapers
+
+* HP increased from 3000 to 3500.
+* Projectile flight speed increased from 42.6 MPH to 59.7 MPH.
+* Base spread has been decreased by 1 degree, resulting in overall better accuracy than before.
+* These changes does not apply to Single Player.
+* Damage received from all Pilot weapons has been increased, with small arms now dealing 3× damage and explosives dealing 2× damage.
+
+#### Pilot Sentry
+
+* HP increased from 600 to 1250.
+* Damage received from all Pilot weapons has been increased, with small arms now dealing 3× damage and explosives dealing 2× damage.
+
+#### Titan Sentry
+* HP increased from 1250 to 2500.
+* Damage received from all Pilot weapons has been increased, with small arms now dealing 3× damage and explosives dealing 2× damage.
+
+#### Northstar
+
+* Hover
+  * Movement speed increased from 8.5 MPH to 10.7 MPH
+* Hover (with Viper Thrusters)
+  * Movement speed increased from 12.8 MPH to 15 MPH
+* Cluster Missile
+  * Flight speed increased from 128 MPH to 149.3 MPH.
+  
+#### Arc Grenades
+
+* Arc Grenades are no longer impact-detonated, and instead behave a lot like Softball grenades. Upon impacting a surface (or enemy!), they will stick them and then detonate after 0.75 seconds.
+  * Curiously, unlike Softball grenades, Arc Grenades can also be stuck to teammates and your own Titan, rather than just bouncing off.
+  * This change does not apply to Single Player.
+
+#### Grapple
+
+* Now has only 1 charge.
+* Cooldown per charge decreased from 16.7 seconds to 10 seconds.
+
+#### Holopilot
+
+* Cooldown per charge decreased from 16.7 seconds to 12.5 seconds.
+
+#### Pulse Blade
+
+* Cooldown decreased from 33.3 seconds to 25 seconds.
+  * Respawn wrote the original value as "40 seconds": Pulse Blade used to wait 7 seconds before it would actually begin recharging, but now it will begin recharging immediately. This should avert some wonkiness with the way charge can be refunded if you die with it on cooldown.
+* Pulse effect duration decreased from 6 seconds to 4.5 seconds.
+
+#### R201/R101 Carbines
+
+* Base hipfire spreads in all stances increased from 0 to 2 degrees.
+* Hipfire recoil minimum and maximum in all stances increased by .5 degrees.
+* ADS recoil minimum increased by .5 degrees, maximum increased by 1 whole degree.
+  * Mysteriously, the R101's ADS recoil maximum has only been increased by .5 degrees, making it marginally better than the R201. This is probably a typo, and might already be fixed server side. Or maybe it's the R201 that had the typo, we won't know till the next client patch (or if Respawn says something).
+* [A before and after video of the R201's recoil can be found here.](https://youtu.be/z5ByDKcZZPs)
+
+#### V-47 Flatline
+
+* Yaw recoil randomization has been decreased by .125 of a degree (from 1.25 degrees to 1.125 degrees).
+  * This means the recoil should be generally less jerky from side-to-side.
+* Maximum and minimum recoil in every stance has been decreased by .5 of a degree.
+  
+#### SA-3 Mozambique
+
+* The Mozambique is now a primary weapon.
+  * If you had it previously equipped, your loadout will automatically replace it with an RE-45.
+* The Mozambique will now fire in full-auto, with a fire rate increased from 2.5 r/s to 3 r/s (150 RPM to 180 RPM).
+* The longest range damage has been increased from 20×3 to 25×3.
+  * Amped damage has not been modified.
+* Base capacity increased from 4 to 6.
+* Extended capacity increased from 7 to 8.
+  
+#### Wingman Elite
+
+* The Wingman Elite is now a primary weapon.
+  * If you had it previously equipped, your loadout will automatically replace it with an RE-45.
+* Close range damage increased from 50 to 75. Mid range damage increased from 50 to 55. Longest range damage remains the same, 35.
+  * Amped damage has not been modified.
+* Base capacity reverted from 4 to 6.
+* Extended capacity reverted from 6 to 8.
+
+### Fixes and Other Changes
+
+* Arc Traps should no longer remain in the field after a restart or trying to pick them up.
+* Firing at an enemy Tone's critical zones behind her amped wall will not longer deal more damage to the wall than intended.
+* Weapon skin names in the loadout menu actually work now.
+
+### Future Content
+
+* Colony and Glitch are likely to be the next Frontier Defense maps. I'd genuinely thought they were in this update until I double checked, because they appear mostly finished. Wave names, for fun:
+  * Colony
+    * Wave 1 - *"United We Stand"*
+    * Wave 2 - *"Seeking the Main Path"*
+    * Wave 3 - *"Cutting Another Path"*
+    * Wave 4 - *"Blind Patch"*
+    * Wave 5 - *"Divided We Ambush"*
+  * Glitch
+    * Wave 1 - *"Initializing…"*
+    * Wave 2 - *"6982827982"*
+    * Wave 3 - *"( 0x48A )"*
+    * Wave 4 - *"#define ESPIPE ( 5^2 );"*
+    * Wave 5 - *"ERROR ID === 42"*
+    * There's probably some Big Nerd Jokes in here, but I wouldn't know them off the top of my head. If anyone more learned wants to enlighten us, please do. They could just be fun ways of expressing the number of enemies in each wave or something.
+* Featured Mode:
+ * **Amped Tacticals**
+   * *"Classic Attrition rules except Tactical abilities are more powerful."*
+   * Cloak: Cooldown decreased from 20 seconds to 10 seconds.
+   * Grapple: 2 charges, 3.3 second cooldown per charge.
+   * Stim: 2 charges, 12.5 second cooldown per charge.
+   * Holopilot: 3 charges, 8.3 second cooldown per charge.
+   * Phase Shift: 2 charges, 7.5 second cooldown per charge.
+   * Amped Wall: 2 charges, 10 second cooldown per charge.
+   * Pulse Blade: 2 charges, 12.5 second cooldown per charge.
+* This could totally already be available like the Jumpstarter Kit was when I thought it wasn't, but there's an entry for a "GameStop Starter Kit". I wouldn't know because who the hell goes to GameStop?
+
+---
+
+# Older Changes
 
 ## 29 August 2017 - Postcards from the Frontier
 
@@ -135,10 +311,6 @@
 * [Last month I was able to find several unused Elite Warpaint designs.](https://www.youtube.com/watch?v=TQhJTYKQto8) None of these have been released yet, but the R-201 having 2 skins, 1 of which being a recycled design, suggests that they might not all be totally scrapped.
   * At some point I'll definitely be checking if there are any new ones in the client, but the process to do so is pretty tedious so we'll see when I feel like it.
   * I swear to god if that Mastiff Masterwork skin isn't released there will be bodies
-
----
-
-# Older Changes
 
 ## 25 July 2017 - Operation Frontier Shield
 
