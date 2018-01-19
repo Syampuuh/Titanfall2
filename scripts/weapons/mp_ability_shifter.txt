@@ -189,6 +189,12 @@ WeaponData
 			"ammo_min_to_fire"								"100"
 			"ammo_per_shot"									"100"
 		}
+		all_phase
+		{
+			"ammo_min_to_fire"								"100"
+			"ammo_per_shot"									"100"
+			"regen_ammo_refill_rate"						"10"
+		}
 	}
 
 	active_crosshair_count				"2"

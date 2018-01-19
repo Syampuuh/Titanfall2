@@ -59,7 +59,7 @@ global const TITAN_BRAWL = "ttdm"
 
 global const VERBOSE_DAMAGE_PRINTOUTS = false
 
-global const SAVEGAME_VERSION = 16 // increment when saves need to be tossed
+global const SAVEGAME_VERSION = 18 // increment when saves need to be tossed
 global const PERSISTENCE_INIT_VERSION = 231
 
 global const TEMP_NETWORTH_VAR = "activeBCID"

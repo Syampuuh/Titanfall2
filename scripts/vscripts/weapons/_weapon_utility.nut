@@ -3611,6 +3611,11 @@ void function OnPlayerGetsNewPilotLoadout( entity player, PilotLoadoutDef loadou
 		player.GiveExtraWeaponMod( "all_grapple" )
 	}
 
+	if ( GetCurrentPlaylistVarInt( "featured_mode_all_phase", 0 ) >= 1 )
+	{
+		player.GiveExtraWeaponMod( "all_phase" )
+	}
+
 	SetPlayerCooldowns( player )
 }
 
@@ -3795,14 +3800,14 @@ void function StoreOffhandDataThread( entity player, bool waitEndFrame )
 				if ( player.IsTitan() )
 				{
 					if ( !weapon.IsWeaponRegenDraining() )
-						player.p.lastTitanClipFrac[ index ] = weapon.GetWeaponPrimaryClipCount() / float( weapon.GetWeaponPrimaryClipCountMax() )
+						player.p.lastTitanClipFrac[ index ] = min( 1.0, weapon.GetWeaponPrimaryClipCount() / float( weapon.GetWeaponPrimaryClipCountMax() ) ) //Was returning greater than one with extraweaponmod timing.
 					else
 						player.p.lastTitanClipFrac[ index ] = 0.0
 				}
 				else
 				{
 					if ( !weapon.IsWeaponRegenDraining() )
-						player.p.lastPilotClipFrac[ index ] = weapon.GetWeaponPrimaryClipCount() / float( weapon.GetWeaponPrimaryClipCountMax() )
+						player.p.lastPilotClipFrac[ index ] = min( 1.0, weapon.GetWeaponPrimaryClipCount() / float( weapon.GetWeaponPrimaryClipCountMax() ) ) //Was returning greater than one with extraweaponmod timing.
 					else
 						player.p.lastPilotClipFrac[ index ] = 0.0
 				}

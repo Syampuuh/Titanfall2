@@ -184,6 +184,12 @@ string function GetSelectedBurnCardRef( entity player )
 		if ( ref == "burnmeter_emergency_battery" || ref == "burnmeter_at_turret_weapon"  )
 			ref = "burnmeter_amped_weapons"
 	}
+
+	if ( GetCurrentPlaylistVarInt( "featured_mode_all_ticks", 0 ) >= 1 )
+	{
+		if ( ref == "burnmeter_ticks" || ref == "burnmeter_random_foil"  )
+			ref = "burnmeter_amped_weapons"
+	}
 	#endif
 
 	return ref

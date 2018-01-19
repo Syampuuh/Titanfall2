@@ -131,4 +131,12 @@ WeaponData
 	// WeaponED Unhandled Key/Values and custom script Key/Values
 	"deployfirst_time"								"1.25"
 	"sprintcycle_time"								".55"
+
+	Mods
+	{
+		rocket_arena
+		{
+			"melee_damage"									"33"
+		}
+	}
 }

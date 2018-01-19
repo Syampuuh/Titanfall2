@@ -42,6 +42,8 @@ var function OnWeaponTossReleaseAnimEvent_weapon_frag_drone( entity weapon, Weap
 		if ( weapon.HasMod( "burn_card_weapon_mod" ) )
 			TryUsingBurnCardWeapon( weapon, weapon.GetWeaponOwner() )
 	#endif
+
+	return weapon.GetWeaponSettingInt( eWeaponVar.ammo_per_shot )
 }
 
 

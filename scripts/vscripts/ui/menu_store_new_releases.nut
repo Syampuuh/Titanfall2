@@ -115,7 +115,7 @@ void function OnButton_Activate( var button )
 	int index = GetButtonData( button ).index
 
 	Assert( index == 0 )
-	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC9_WEAPON_WARPAINT_BUNDLE )
+	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC11_WEAPON_WARPAINT_BUNDLE )
 	SetStoreMenuWeaponSkinsDefaultFocusIndex( file.weaponIndex )
 	AdvanceMenu( GetMenu( "StoreMenu_WeaponSkins" ) )
 }

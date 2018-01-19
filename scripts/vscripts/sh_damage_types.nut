@@ -381,7 +381,7 @@ global enum eModSourceId
 	threat_scope
 	smart_lock
 	pro_screen
-
+	rocket_arena
 }
 
 //Attachments intentionally left off. This prevents them from displaying in kill cards.
@@ -447,7 +447,7 @@ global const modNameStrings = {
 	[ eModSourceId.ar_trajectory ]						= "AR Trajectory",
 	[ eModSourceId.smart_lock ]							= "Smart Lock",
 	[ eModSourceId.pro_screen ]							= "Pro Screen",
-
+	[ eModSourceId.rocket_arena ]						= "Rocket Arena",
 }
 
 void function DamageTypes_Init()

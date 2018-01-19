@@ -1203,7 +1203,7 @@ function UpdateLobbyUI()
 			
 			void functionref() preOpenfunc = null
 			if ( uiGlobal.menuToOpenFromPromoButton == GetMenu( "StoreMenu_WeaponSkins" ) ) // Hardcoded special case for now
-				preOpenfunc = DefaultToDLC9WeaponWarpaintBundle
+				preOpenfunc = DefaultToDLC11WeaponWarpaintBundle
 
 			OpenStoreMenu( [ menuName ], preOpenfunc )
 		}

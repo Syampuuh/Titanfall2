@@ -46,15 +46,15 @@ void function InitStoreMenuSales()
 
 	buttonIndex++
 	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
-	button.s.entitlementId <- ET_DLC9_WEAPON_WARPAINT_BUNDLE
+	button.s.entitlementId <- ET_DLC11_WEAPON_WARPAINT_BUNDLE
 	file.bundleButtons.append( button )
 	SetButtonRuiText( button, "#STORE_BUNDLE_WEAPON_WARPAINT_DLC8" )
 
-	//buttonIndex++
-	//button = Hud_GetChild( file.menu, "Button" + buttonIndex )
-	//button.s.entitlementId <- ET_JUMPSTARTERKIT
-	//file.bundleButtons.append( button )
-	//SetButtonRuiText( button, "#STORE_JUMP_STARTER_PACK" )
+	buttonIndex++
+	button = Hud_GetChild( file.menu, "Button" + buttonIndex )
+	button.s.entitlementId <- ET_JUMPSTARTERBUNDLE
+	file.bundleButtons.append( button )
+	SetButtonRuiText( button, "#STORE_JUMP_STARTER_PACK" )
 
 	foreach ( bundleButton in file.bundleButtons )
 	{
@@ -86,7 +86,7 @@ void function UpdateStoreMenuBundleButtons()
 	{
 		int entitlement = expect int( button.s.entitlementId )
 
-		if ( entitlement == ET_JUMPSTARTERKIT )
+		if ( entitlement == ET_JUMPSTARTERBUNDLE )
 			button.s.hasEntitlement <- LocalPlayerHasEntitlement( entitlement )
 		else
 			button.s.hasEntitlement <- LocalPlayerHasEntitlement( entitlement ) || GetUnpurchasedChildEntitlements( entitlement ).len() == 0
@@ -245,7 +245,7 @@ void function OnBundleButton_Activate( var button )
 				dialogData.header = "#STORE_BUY_TITAN_WARPAINT_BUNDLE"
 				break
 
-			case ET_DLC9_WEAPON_WARPAINT_BUNDLE:
+			case ET_DLC11_WEAPON_WARPAINT_BUNDLE:
 				dialogData.header = "#STORE_BUY_WEAPON_WARPAINT_BUNDLE"
 				break
 

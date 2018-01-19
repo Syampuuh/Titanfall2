@@ -5,7 +5,7 @@ global function InitStoreMenuWeaponSkins
 global function SetStoreMenuWeaponSkinsDefaultFocusIndex
 global function SetStoreMenuWeaponSkinsBundleEntitlement
 global function GetStoreMenuWeaponSkinsBundleEntitlement
-global function DefaultToDLC9WeaponWarpaintBundle
+global function DefaultToDLC11WeaponWarpaintBundle
 
 struct
 {
@@ -97,7 +97,15 @@ void function OnStoreMenuWeaponSkins_Open()
 {
 	UI_SetPresentationType( ePresentationType.STORE_WEAPON_SKINS )
 
-	array<string> itemRefs = GetItemRefsForEntitlement( file.bundleEntitlement )
+	array<int> bundleEntitlements = GetChildEntitlements( file.bundleEntitlement )
+	array<int> validEntitlements
+	foreach ( entitlement in bundleEntitlements )
+	{
+		if ( !IsLimitedOfferEntitlementExpired( entitlement ) )
+			validEntitlements.append( entitlement )
+	}
+
+	array<string> itemRefs = GetItemRefsForEntitlements( validEntitlements )
 
 	foreach ( index, button in file.weaponSkinButtons )
 	{
@@ -112,7 +120,7 @@ void function OnStoreMenuWeaponSkins_Open()
 		}
 	}
 
-	if ( file.bundleEntitlement == ET_DLC9_WEAPON_WARPAINT_BUNDLE )
+	if ( file.bundleEntitlement == ET_DLC11_WEAPON_WARPAINT_BUNDLE )
 	{
 		Hud_Show( file.bundleButton )
 		InitMenuBundleButton( file.bundleButton, file.bundleEntitlement )
@@ -204,7 +212,7 @@ void function OnWeaponSkinButton_Focused( var button )
 
 	RunMenuClientFunction( "UpdateStoreWeaponModelSkin", parentRef, skinIndex )
 
-	string specialText = IsLimitedEditionEntitlement( expect int( button.s.entitlementId ) ) ? Localize( "#STORE_LIMITED_EDITION" ) : ""
+	string specialText = IsLimitedOfferEntitlement( expect int( button.s.entitlementId ) ) ? Localize( "#STORE_LIMITED_EDITION" ) : ""
 	string headerText = Localize( "#STORE_ELITE_WEAPON_BONUS_HEADER" )
 	string bulletText1 = Localize( "#STORE_ELITE_WEAPON_BONUS_01" )
 	string bulletText2 = Localize( "#STORE_ELITE_WEAPON_BONUS_02" )
@@ -314,8 +322,8 @@ int function GetStoreMenuWeaponSkinsBundleEntitlement()
 	return file.bundleEntitlement
 }
 
-void function DefaultToDLC9WeaponWarpaintBundle()
+void function DefaultToDLC11WeaponWarpaintBundle()
 {
-	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC9_WEAPON_WARPAINT_BUNDLE )
+	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC11_WEAPON_WARPAINT_BUNDLE )
 	SetStoreMenuWeaponSkinsDefaultFocusIndex( 0 )
 }

@@ -231,7 +231,7 @@ global function GetTitanLoadoutIconFD
 
 global function GetTitanPrimeBg
 
-global function GetItemRefsForEntitlement
+global function GetItemRefsForEntitlements
 
 global function WeaponWarpaint_GetByIndex
 
@@ -1611,11 +1611,25 @@ void function InitUnlocks()
 
 	InitUnlock( "callsign_goodboy", "", eUnlockType.PLAYER_LEVEL, 1 )
 
+
+	InitUnlock( "callsign_contest_01", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_contest_02", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_contest_03", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_contest_04", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_contest_05", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_contest_06", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_contest_07", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_contest_08", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_contest_09", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_contest_10", "", eUnlockType.PLAYER_LEVEL, 1 )
+
 	//////////////////////////
 	// Holidays
 	//////////////////////////
 	InitUnlock( "callsign_126_col", "", eUnlockType.PLAYER_LEVEL, 1 )
 	InitUnlock( "callsign_127_col", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_130_col", "", eUnlockType.PLAYER_LEVEL, 1 )
+	InitUnlock( "callsign_131_col", "", eUnlockType.PLAYER_LEVEL, 1 )
 	//InitUnlock( "callsign_126_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 ) //Unlocked in-game or via advocate gifts
 	//InitUnlock( "callsign_127_col_prism", "", eUnlockType.PERSISTENT_ITEM, 0 ) //Unlocked in-game or via advocate gifts
 
@@ -1627,8 +1641,6 @@ void function InitUnlocks()
 	InitUnlock( "callsign_14_col_fire", "", eUnlockType.PERSISTENT_ITEM, 0 )
 
 	InitUnlock( "callsign_129_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
-	InitUnlock( "callsign_130_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
-	InitUnlock( "callsign_131_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_132_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_133_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
 	InitUnlock( "callsign_134_col", "", eUnlockType.PERSISTENT_ITEM, 0 )
@@ -3397,10 +3409,23 @@ void function InitUnlocks()
 	InitUnlockAsEntitlement( "skin_lstar_heatsink", "mp_weapon_lstar", ET_DLC9_LSTAR_WARPAINT, "StoreMenu_WeaponSkins" )
 	InitUnlockAsEntitlement( "skin_mastiff_crimson_fury", "mp_weapon_mastiff", ET_DLC9_MASTIFF_WARPAINT, "StoreMenu_WeaponSkins" )
 	InitUnlockAsEntitlement( "skin_sidewinder_masterwork", "mp_weapon_smr", ET_DLC9_SIDEWINDER_WARPAINT, "StoreMenu_WeaponSkins" )
-	InitUnlockAsEntitlement( "skin_rspn101_halloween", "mp_weapon_rspn101", ET_DLC9_R201_WARPAINT, "StoreMenu_WeaponSkins" )
-	InitUnlockAsEntitlement( "skin_car_halloween", "mp_weapon_car", ET_DLC9_CAR_WARPAINT, "StoreMenu_WeaponSkins" )
-	InitUnlockAsEntitlement( "skin_spitfire_halloween", "mp_weapon_lmg", ET_DLC9_SPITFIRE_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_rspn101_halloween", "mp_weapon_rspn101", ET_DLC9_R201_WARPAINT )
+	InitUnlockAsEntitlement( "skin_car_halloween", "mp_weapon_car", ET_DLC9_CAR_WARPAINT )
+	InitUnlockAsEntitlement( "skin_spitfire_halloween", "mp_weapon_lmg", ET_DLC9_SPITFIRE_WARPAINT )
 
+	InitUnlockAsEntitlement( "skin_rspn101_og_blue_fade", "mp_weapon_rspn101_og", ET_DLC10_R101_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_vinson_badlands", "mp_weapon_vinson", ET_DLC10_FLATLINE_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_volt_heatsink", "mp_weapon_hemlok_smg", ET_DLC10_VOLT_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_alternator_headhunter", "mp_weapon_alternator_smg", ET_DLC10_ALTERNATOR_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_softball_masterwork", "mp_weapon_softball", ET_DLC10_SOFTBALL_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_epg_mrvn", "mp_weapon_epg", ET_DLC10_EPG1_WARPAINT, "StoreMenu_WeaponSkins" )
+
+	InitUnlockAsEntitlement( "skin_dmr_phantom", "mp_weapon_dmr", ET_DLC11_DMR_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_doubletake_masterwork", "mp_weapon_doubletake", ET_DLC11_DOUBLETAKE_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_g2_purple_fade", "mp_weapon_g2", ET_DLC11_G2A5_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_coldwar_heatsink", "mp_weapon_pulse_lmg", ET_DLC11_COLDWAR_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_r97_sky", "mp_weapon_r97", ET_DLC11_R97_WARPAINT, "StoreMenu_WeaponSkins" )
+	InitUnlockAsEntitlement( "skin_rspn101_crimson_fury", "mp_weapon_rspn101", ET_DLC11_R101_WARPAINT, "StoreMenu_WeaponSkins" )
 
 	array<ItemData> burnMeterRewards = GetAllItemsOfType( eItemTypes.BURN_METER_REWARD )
 	foreach ( ItemData item in burnMeterRewards )
@@ -7214,11 +7239,19 @@ bool function HasAnyNewItemOfType( entity player, int refType, int parentRefType
 #if SERVER
 void function UnlockUltimateEdition( entity player )
 {
+	printt( "!!!!!!!!!!! UnlockUltimateEdition() running" )
+
 	if ( player.GetPersistentVarAsInt( "ultimateEdition" ) > 0 )
+	{
+		printt( "!!!!!!!!!!! Returned because player.GetPersistentVarAsInt( \"ultimateEdition\" ) > 0" )
 		return
+	}
 
 	if ( !player.HasEntitlement( ET_JUMPSTARTERKIT ) )
+	{
+		printt( "!!!!!!!!!!! Returned because !player.HasEntitlement( ET_JUMPSTARTERKIT )" )
 		return
+	}
 
 	Player_GiveCredits( player, 500 )
 	Player_GiveDoubleXP( player, 10 )
@@ -10455,18 +10488,32 @@ struct FullRefWithEntitlements
 	array<int> entitlementIds
 }
 
-array<string> function GetItemRefsForEntitlement( int entitlementID )
+array<string> function GetItemRefsForEntitlements( array<int> entitlements )
 {
-	array<int> entitlements
-	if ( HasChildEntitlements( entitlementID ) )
-		entitlements.extend( GetChildEntitlements( entitlementID ) )
-	else
-		entitlements.append( entitlementID )
+	array<int> filteredEntitlements
+
+	foreach ( entitlement in entitlements )
+	{
+		if ( HasChildEntitlements( entitlement ) )
+		{
+			array<int> childEntitlements = GetChildEntitlements( entitlement )
+			foreach ( childEntitlement in childEntitlements )
+			{
+				if ( !filteredEntitlements.contains( childEntitlement ) )
+					filteredEntitlements.append( childEntitlement )
+			}
+		}
+		else
+		{
+			if ( !filteredEntitlements.contains( entitlement ) )
+				filteredEntitlements.append( entitlement )
+		}
+	}
 
 	array<FullRefWithEntitlements> unlocks
 	foreach ( key, val in file.entitlementUnlocks )
 	{
-		foreach ( entitlement in entitlements )
+		foreach ( entitlement in filteredEntitlements )
 		{
 			if ( val.entitlementIds.contains( entitlement ) )
 			{
@@ -10482,7 +10529,7 @@ array<string> function GetItemRefsForEntitlement( int entitlementID )
 	// Sort to match original entitlement order as best we can avoiding dupes.
 	// We diverge from this order whenever mulitple entitlements are associated with an unlock.
 	array<FullRefWithEntitlements> sortedUnlocks
-	foreach ( entitlement in entitlements )
+	foreach ( entitlement in filteredEntitlements )
 	{
 		foreach ( unlock in unlocks )
 		{

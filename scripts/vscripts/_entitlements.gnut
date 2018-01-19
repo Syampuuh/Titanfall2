@@ -3,7 +3,8 @@ global function HasChildEntitlements
 global function GetChildEntitlements
 global function GetParentEntitlements
 global function GetPercentOff
-global function IsLimitedEditionEntitlement
+global function IsLimitedOfferEntitlement
+global function IsLimitedOfferEntitlementExpired
 #if UI
 global function GetCombinedPriceOfEntitlements
 #endif // UI
@@ -34,6 +35,8 @@ bool function HasChildEntitlements( int entitlement )
 		case ET_DLC7_WEAPON_BUNDLE:
 		case ET_DLC8_WEAPON_WARPAINT_BUNDLE:
 		case ET_DLC9_WEAPON_WARPAINT_BUNDLE:
+		case ET_DLC10_WEAPON_WARPAINT_BUNDLE:
+		case ET_DLC11_WEAPON_WARPAINT_BUNDLE:
 			return true
 	}
 
@@ -133,6 +136,24 @@ array<int> function GetChildEntitlements( int parentEntitlement )
 			childEntitlements.append( ET_DLC9_R201_WARPAINT )
 			childEntitlements.append( ET_DLC9_CAR_WARPAINT )
 			childEntitlements.append( ET_DLC9_SPITFIRE_WARPAINT )
+			break
+
+		case ET_DLC10_WEAPON_WARPAINT_BUNDLE:
+			childEntitlements.append( ET_DLC10_R101_WARPAINT )
+			childEntitlements.append( ET_DLC10_FLATLINE_WARPAINT )
+			childEntitlements.append( ET_DLC10_VOLT_WARPAINT )
+			childEntitlements.append( ET_DLC10_ALTERNATOR_WARPAINT )
+			childEntitlements.append( ET_DLC10_SOFTBALL_WARPAINT )
+			childEntitlements.append( ET_DLC10_EPG1_WARPAINT )
+			break
+
+		case ET_DLC11_WEAPON_WARPAINT_BUNDLE:
+			childEntitlements.append( ET_DLC11_DMR_WARPAINT )
+			childEntitlements.append( ET_DLC11_DOUBLETAKE_WARPAINT )
+			childEntitlements.append( ET_DLC11_G2A5_WARPAINT )
+			childEntitlements.append( ET_DLC11_COLDWAR_WARPAINT )
+			childEntitlements.append( ET_DLC11_R97_WARPAINT )
+			childEntitlements.append( ET_DLC11_R101_WARPAINT )
 			break
 	}
 
@@ -236,6 +257,24 @@ array<int> function GetParentEntitlements( int childEntitlement )
 		case ET_DLC9_SPITFIRE_WARPAINT:
 			parentEntitlements.append( ET_DLC9_WEAPON_WARPAINT_BUNDLE )
 			break
+
+		case ET_DLC10_R101_WARPAINT:
+		case ET_DLC10_FLATLINE_WARPAINT:
+		case ET_DLC10_VOLT_WARPAINT:
+		case ET_DLC10_ALTERNATOR_WARPAINT:
+		case ET_DLC10_SOFTBALL_WARPAINT:
+		case ET_DLC10_EPG1_WARPAINT:
+			parentEntitlements.append( ET_DLC10_WEAPON_WARPAINT_BUNDLE )
+			break
+
+		case ET_DLC11_DMR_WARPAINT:
+		case ET_DLC11_DOUBLETAKE_WARPAINT:
+		case ET_DLC11_G2A5_WARPAINT:
+		case ET_DLC11_COLDWAR_WARPAINT:
+		case ET_DLC11_R97_WARPAINT:
+		case ET_DLC11_R101_WARPAINT:
+			parentEntitlements.append( ET_DLC11_WEAPON_WARPAINT_BUNDLE )
+			break
 	}
 
 	return parentEntitlements
@@ -250,7 +289,20 @@ int function GetPercentOff( int entitlement )
 	return 0
 }
 
-bool function IsLimitedEditionEntitlement( int entitlement )
+bool function IsLimitedOfferEntitlement( int entitlement )
+{
+	switch ( entitlement )
+	{
+		case ET_DLC9_R201_WARPAINT:
+		case ET_DLC9_CAR_WARPAINT:
+		case ET_DLC9_SPITFIRE_WARPAINT:
+			return true
+	}
+
+	return false
+}
+
+bool function IsLimitedOfferEntitlementExpired( int entitlement )
 {
 	switch ( entitlement )
 	{

@@ -263,7 +263,7 @@ WeaponData
 	"viewkick_pitch_base" 							"-0.17"
 	"viewkick_pitch_random"   						"0.17"
 	"viewkick_pitch_softScale"						"0.3"
-	"viewkick_pitch_hardScale"						"3.0"
+	"viewkick_pitch_hardScale"						"1.0"
 
 	"viewkick_yaw_base"   							"0.1"
 	"viewkick_yaw_random" 							"0.25"
@@ -293,7 +293,9 @@ WeaponData
 	"viewkick_scale_valueDecayDelay"  				"0.15"
 	"viewkick_scale_valueDecayRate"   				"30"
 
-	"viewkick_perm_pitch_base" 						"0.0"
+	"viewkick_perm_pitch_base" 						"-0.20"[$PS4]
+	"viewkick_perm_pitch_base" 						"-0.20"[$DURANGO]
+	"viewkick_perm_pitch_base" 						"0.0"[$WINDOWS]
 	"viewkick_perm_pitch_random"   					"0.05"
 	"viewkick_perm_yaw_base"   						"0.0"
 	"viewkick_perm_yaw_random" 						"0.2"

@@ -1931,7 +1931,7 @@ void function LaunchGamePurchaseOrDLCStore( array<string> menuNames = [ "StoreMe
 			// Special case because this menu needs a few properties set before opening
 			if ( menuName == "StoreMenu_WeaponSkins" )
 			{
-				preOpenFunc = DefaultToDLC9WeaponWarpaintBundle
+				preOpenFunc = DefaultToDLC11WeaponWarpaintBundle
 				break
 			}
 		}

@@ -44,6 +44,10 @@
 			{
 				health			2500++	[$mp]
 			}
+			turbo_titan
+			{
+				powerregenrate		50
+			}
 		}
 	}
 }

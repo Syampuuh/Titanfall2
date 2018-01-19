@@ -550,6 +550,17 @@ WeaponData
 		{
 			"projectile_launch_speed"						"1750"
 		}
+
+		rocket_arena
+		{
+			"projectile_launch_speed"						"1750"
+       		"impulse_force"									"17500"
+			"impulse_force_explosions"						"55000"
+
+			"damage_near_value"   							"35"
+			"damage_far_value"								"35"
+			"explosion_damage"								"35"
+		}
 	}
 
 	"ui1_enable"		"1"

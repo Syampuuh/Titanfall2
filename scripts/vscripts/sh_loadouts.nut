@@ -1648,6 +1648,8 @@ void function SetCachedPilotLoadoutValue( entity player, int loadoutIndex, strin
 	UpdateDerivedPilotLoadoutData( shGlobal.cachedPilotLoadouts[ loadoutIndex ] )
 
 	#if UI
+		if ( value == "" )
+			value = "null"
 		ClientCommand( "SetPersistentLoadoutValue pilot " + loadoutIndex + " " + loadoutProperty + " " + value )
 	#endif // UI
 }
@@ -1668,6 +1670,8 @@ void function SetCachedTitanLoadoutValue( entity player, int loadoutIndex, strin
 	UpdateDerivedTitanLoadoutData( shGlobal.cachedTitanLoadouts[ loadoutIndex ] )
 
 	#if UI
+		if ( value == "" )
+			value = "null"
 		ClientCommand( "SetPersistentLoadoutValue titan " + loadoutIndex + " " + loadoutProperty + " " + value )
 	#endif // UI
 }

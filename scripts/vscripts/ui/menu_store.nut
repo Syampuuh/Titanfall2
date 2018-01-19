@@ -205,7 +205,7 @@ void function OnOpenStoreMenu()
 
 void function OnWeaponSkinsButton_Activate( var button )
 {
-	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC9_WEAPON_WARPAINT_BUNDLE )
+	SetStoreMenuWeaponSkinsBundleEntitlement( ET_DLC11_WEAPON_WARPAINT_BUNDLE )
 	AdvanceMenu( GetMenu( "StoreMenu_WeaponSkins" ) )
 }
 

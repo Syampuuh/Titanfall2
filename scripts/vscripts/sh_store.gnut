@@ -551,6 +551,9 @@ void function StoreUpdatePIN( entity player, int entitlementId, string refParam 
 			PIN_BuyItemWithRealMoney( player, false, "dlc8_weapon_warpaint_" + refParam, 0 )
 			break
 
+		case ET_JUMPSTARTERBUNDLE:
+			PIN_BuyItemWithRealMoney( player, false, "dlc10_jump_starter_pack", 0 )
+
 		case ET_DLC9_WEAPON_WARPAINT_BUNDLE:
 			PIN_BuyItemWithRealMoney( player, false, "dlc9_weapon_warpaint_bundle", 0 )
 			break
@@ -566,6 +569,40 @@ void function StoreUpdatePIN( entity player, int entitlementId, string refParam 
 				return
 
 			PIN_BuyItemWithRealMoney( player, false, "dlc9_weapon_warpaint_" + refParam, 0 )
+			break
+
+		case ET_DLC10_WEAPON_WARPAINT_BUNDLE:
+			PIN_BuyItemWithRealMoney( player, false, "dlc10_weapon_warpaint_bundle", 0 )
+			break
+
+		case ET_DLC10_R101_WARPAINT:
+		case ET_DLC10_FLATLINE_WARPAINT:
+		case ET_DLC10_VOLT_WARPAINT:
+		case ET_DLC10_ALTERNATOR_WARPAINT:
+		case ET_DLC10_SOFTBALL_WARPAINT:
+		case ET_DLC10_EPG1_WARPAINT:
+			Assert( refParam != "" )
+			if ( refParam == "" )
+				return
+
+			PIN_BuyItemWithRealMoney( player, false, "dlc10_weapon_warpaint_" + refParam, 0 )
+			break
+
+		case ET_DLC11_WEAPON_WARPAINT_BUNDLE:
+			PIN_BuyItemWithRealMoney( player, false, "dlc11_weapon_warpaint_bundle", 0 )
+			break
+
+		case ET_DLC11_DMR_WARPAINT:
+		case ET_DLC11_DOUBLETAKE_WARPAINT:
+		case ET_DLC11_G2A5_WARPAINT:
+		case ET_DLC11_COLDWAR_WARPAINT:
+		case ET_DLC11_R97_WARPAINT:
+		case ET_DLC11_R101_WARPAINT:
+			Assert( refParam != "" )
+			if ( refParam == "" )
+				return
+
+			PIN_BuyItemWithRealMoney( player, false, "dlc11_weapon_warpaint_" + refParam, 0 )
 			break
 	}
 }
@@ -590,6 +627,9 @@ bool function ClientCommand_StoreSetNewItemStatus( entity player, array<string> 
 
 bool function StoreSetNewItemStatus( entity player, int entitlementId, string refParam, string parentRefParam )
 {
+	string e = entitlementId == ET_JUMPSTARTERBUNDLE ? "ET_JUMPSTARTERBUNDLE" : string( entitlementId )
+	printt( "!!!!!!!!!!! StoreSetNewItemStatus() running for entitlement:", e )
+
 	switch ( entitlementId )
 	{
 		case ET_DLC1_BUNDLE:
@@ -807,6 +847,18 @@ bool function StoreSetNewItemStatus( entity player, int entitlementId, string re
 		case ET_DLC9_R201_WARPAINT:
 		case ET_DLC9_CAR_WARPAINT:
 		case ET_DLC9_SPITFIRE_WARPAINT:
+		case ET_DLC10_R101_WARPAINT:
+		case ET_DLC10_FLATLINE_WARPAINT:
+		case ET_DLC10_VOLT_WARPAINT:
+		case ET_DLC10_ALTERNATOR_WARPAINT:
+		case ET_DLC10_SOFTBALL_WARPAINT:
+		case ET_DLC10_EPG1_WARPAINT:
+		case ET_DLC11_DMR_WARPAINT:
+		case ET_DLC11_DOUBLETAKE_WARPAINT:
+		case ET_DLC11_G2A5_WARPAINT:
+		case ET_DLC11_COLDWAR_WARPAINT:
+		case ET_DLC11_R97_WARPAINT:
+		case ET_DLC11_R101_WARPAINT:
 			Assert( refParam != "" )
 			if ( refParam == "" || !ItemDefined( refParam ) )
 				return false
@@ -847,6 +899,28 @@ bool function StoreSetNewItemStatus( entity player, int entitlementId, string re
 			SetItemNewStatus( player, "skin_rspn101_halloween", "mp_weapon_rspn101", true )
 			SetItemNewStatus( player, "skin_car_halloween", "mp_weapon_car", true )
 			SetItemNewStatus( player, "skin_spitfire_halloween", "mp_weapon_lmg", true )
+			break
+
+		case ET_DLC10_WEAPON_WARPAINT_BUNDLE:
+			SetItemNewStatus( player, "skin_rspn101_og_blue_fade", "mp_weapon_rspn101_og", true )
+			SetItemNewStatus( player, "skin_vinson_badlands", "mp_weapon_vinson", true )
+			SetItemNewStatus( player, "skin_volt_heatsink", "mp_weapon_hemlok_smg", true )
+			SetItemNewStatus( player, "skin_alternator_headhunter", "mp_weapon_alternator_smg", true )
+			SetItemNewStatus( player, "skin_softball_masterwork", "mp_weapon_softball", true )
+			SetItemNewStatus( player, "skin_epg_mrvn", "mp_weapon_epg", true )
+			break
+
+		case ET_DLC11_WEAPON_WARPAINT_BUNDLE:
+			SetItemNewStatus( player, "skin_dmr_phantom", "mp_weapon_dmr", true )
+			SetItemNewStatus( player, "skin_doubletake_masterwork", "mp_weapon_doubletake", true )
+			SetItemNewStatus( player, "skin_g2_purple_fade", "mp_weapon_g2", true )
+			SetItemNewStatus( player, "skin_coldwar_heatsink", "mp_weapon_pulse_lmg", true )
+			SetItemNewStatus( player, "skin_r97_sky", "mp_weapon_r97", true )
+			SetItemNewStatus( player, "skin_rspn101_crimson_fury", "mp_weapon_rspn101", true )
+			break
+
+		case ET_JUMPSTARTERBUNDLE:
+			UnlockUltimateEdition( player )
 			break
 	}
 

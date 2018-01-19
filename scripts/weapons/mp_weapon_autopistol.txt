@@ -500,11 +500,17 @@ WeaponData
  	 		"damage_very_far_value"							"++2"
 			"damage_near_value_titanarmor"					"++100"
 			"damage_far_value_titanarmor" 					"++100"
-			"is_burn_mod"		"1"
+			"is_burn_mod"									"1"
 		}
 		tactical_cdr_on_kill
 		{
 
+		}
+		rocket_arena
+		{
+			"damage_near_value"   							"*0.25"
+			"damage_far_value"								"*0.25"
+ 	 		"damage_very_far_value"							"*0.25"
 		}
 	}
 

@@ -47,6 +47,12 @@
 			{
 				health			2500++	[$mp]
 			}
+			turbo_titan
+			{
+				dodge  1
+				powerregenrate		20.825
+			    dodgePowerDrain		50
+			}
 		}
 	}
 }

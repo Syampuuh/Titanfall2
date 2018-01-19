@@ -46,6 +46,11 @@
 			{
 				health			2500++	[$mp]
 			}
+			turbo_titan
+			{
+				dodgePowerDrain		33
+				powerregenrate		16.5
+			}
 		}
 	}
 	"crouch"

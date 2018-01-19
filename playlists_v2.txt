@@ -1,7 +1,7 @@
 playlists
 {
 	version stable
-	versionNum 3247
+	versionNum 3246
 	Gamemodes
 	{
 		defaults
@@ -120,6 +120,11 @@ playlists
 				featured_mode_tactikill 0
 				featured_mode_all_grapple 0
 				featured_mode_all_holopilot 0
+				featured_mode_all_phase 0
+				featured_mode_all_ticks 0
+				featured_mode_rocket_arena 0
+				featured_mode_turbo_titans 0
+				featured_mode_shotguns_snipers 0
 
 				// defaults for private_match settings, as all gamemodes don't explicitly set their own
 				boosts_enabled 0
@@ -156,8 +161,8 @@ playlists
 				force_quick_play 0
 				//End of list
 
-				faq_patchnotes_version 9
-				faq_patchnotes_count 8
+				faq_patchnotes_version 11
+				faq_patchnotes_count 10
 
 				faq_community_version 10
 				faq_community_url_00    "https://www.youtube.com/embed/SbdQPdaPme4?autoplay=1"
@@ -241,6 +246,9 @@ playlists
 				mp_angel_city 1
 				mp_colony02 1
                 mp_relic02 1
+				mp_wargames 1
+				mp_glitch 1
+				mp_rise 1
 			}
 		}
 		at
@@ -690,9 +698,14 @@ playlists
  			}
  			maps
  			{
-                mp_drydock 1
+                mp_forwardbase_kodai 1
+                mp_black_water_canal 1
+                mp_homestead 1
+                mp_wargames 1
+                mp_rise 1
                 mp_thaw 1
-                mp_angel_city 1
+                mp_drydock 1
+				mp_angel_city 1
  			}
  		}
 		fd_easy
@@ -863,8 +876,7 @@ playlists
 				description #PL_rise_desc
 				abbreviation #PL_rise_abbr
 				image aitdm
-				//mixtape_promo_slot 0
-				visible 1
+				visible 0
 			}
 			gamemodes
 			{
@@ -927,33 +939,6 @@ playlists
 			{
 				aitdm
 				{
-					vars
-					{
-
-					}
-
-					maps
-					{
-						mp_drydock 2
-						mp_crashsite3 2
-						mp_grave 1
-						mp_eden 1
-						mp_thaw 1
-						mp_homestead 1
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-						mp_complex3 1
-						mp_drydock 2
-						mp_crashsite3 2
-						mp_forwardbase_kodai 1
-						mp_black_water_canal 1
-						mp_eden 1
-						mp_thaw 1
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-					}
 				}
 			}
 		}
@@ -968,41 +953,13 @@ playlists
 				abbreviation #PL_amped_tacticals_abbr
 				image aitdm
 				//mixtape_slot 0
-				mixtape_promo_slot 7
-				visible 1
+				visible 0
 				featured_mode_amped_tacticals 1
 			}
 			gamemodes
 			{
 				aitdm
 				{
-					vars
-					{
-
-					}
-
-					maps
-					{
-						mp_drydock 2
-						mp_crashsite3 2
-						mp_grave 1
-						mp_eden 1
-						mp_thaw 1
-						mp_homestead 1
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-						mp_complex3 1
-						mp_drydock 2
-						mp_crashsite3 2
-						mp_forwardbase_kodai 1
-						mp_black_water_canal 1
-						mp_eden 1
-						mp_thaw 1
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-					}
 				}
 			}
 		}
@@ -1017,41 +974,13 @@ playlists
 				abbreviation #PL_tactikill_abbr
 				image aitdm
 				//mixtape_slot 0
-				mixtape_promo_slot 0
-				visible 1
+				visible 0
 				featured_mode_tactikill 1
 			}
 			gamemodes
 			{
 				aitdm
 				{
-					vars
-					{
-
-					}
-
-					maps
-					{
-						mp_drydock 2
-						mp_crashsite3 2
-						mp_grave 1
-						mp_eden 1
-						mp_thaw 1
-						mp_homestead 1
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-						mp_complex3 1
-						mp_drydock 2
-						mp_crashsite3 2
-						mp_forwardbase_kodai 1
-						mp_black_water_canal 1
-						mp_eden 1
-						mp_thaw 1
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-					}
 				}
 			}
 		}
@@ -1066,41 +995,55 @@ playlists
 				abbreviation #PL_all_grapple_abbr
 				image aitdm
 				//mixtape_slot 0
-				mixtape_promo_slot 6
-				visible 1
+				visible 0
 				featured_mode_all_grapple 1
 			}
 			gamemodes
 			{
 				aitdm
 				{
-					vars
-					{
-
-					}
-
-					maps
-					{
-						mp_drydock 2
-						mp_crashsite3 2
-						mp_grave 1
-						mp_eden 1
-						mp_thaw 1
-						mp_homestead 1
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-						mp_complex3 1
-						mp_drydock 2
-						mp_crashsite3 2
-						mp_forwardbase_kodai 1
-						mp_black_water_canal 1
-						mp_eden 1
-						mp_thaw 1
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-					}
+				}
+			}
+		}
+		phase_aitdm
+		{
+			inherit defaults
+			vars
+			{
+				name "#PL_all_phase"
+				lobbytitle #PL_all_phase_lobby
+				description #PL_all_phase_desc
+				abbreviation #PL_all_phase_abbr
+				image aitdm
+				mixtape_promo_slot 8
+				visible 1
+				featured_mode_all_phase 1
+			}
+			gamemodes
+			{
+				aitdm
+				{
+				}
+			}
+		}
+		spicy_aitdm
+		{
+			inherit defaults
+			vars
+			{
+				name "#PL_all_spicy"
+				lobbytitle #PL_all_spicy_lobby
+				description #PL_all_spicy_desc
+				abbreviation #PL_all_spicy_abbr
+				image aitdm
+				mixtape_promo_slot 7
+				visible 1
+				featured_mode_all_ticks 1
+			}
+			gamemodes
+			{
+				aitdm
+				{
 				}
 			}
 		}
@@ -1121,27 +1064,6 @@ playlists
 			{
 				at
 				{
-					vars
-					{
-
-					}
-
-					maps
-					{
-						mp_grave 2
-						mp_black_water_canal 2
-						mp_complex3 1
-						mp_eden 2
-						mp_thaw 2
-						mp_forwardbase_kodai 2
-						mp_grave 2
-						mp_homestead 2
-						mp_thaw 2
-						mp_eden 2
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-					}
 				}
 			}
 		}
@@ -1162,34 +1084,6 @@ playlists
 			{
 				cp
 				{
-					vars
-					{
-
-					}
-
-					maps
-					{
-						mp_eden 2
-						mp_black_water_canal 1
-						mp_forwardbase_kodai 2
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-						mp_complex3 2
-						mp_thaw 2
-						mp_glitch 1
-						mp_crashsite3 1
-						mp_drydock 2
-						mp_eden 2
-						mp_black_water_canal 1
-						mp_forwardbase_kodai 2
-						mp_angel_city 1
-						mp_colony02 1
-						mp_grave 2
-						mp_homestead 2
-						mp_thaw 2
-						mp_glitch 1
-					}
 				}
 			}
 		}
@@ -1210,36 +1104,6 @@ playlists
 			{
 				lts
 				{
-					vars
-					{
-
-					}
-
-					maps
-					{
-						mp_drydock 3
-						mp_eden 2
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-						mp_crashsite3 2
-						mp_black_water_canal 2
-						mp_complex3 2
-						mp_drydock 3
-						mp_thaw 2
-						mp_glitch 1
-						mp_crashsite3 2
-						mp_eden 2
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-						mp_forwardbase_kodai 1
-						mp_grave 2
-						mp_drydock 3
-						mp_homestead 1
-						mp_thaw 2
-						mp_glitch 1
-					}
 				}
 			}
 		}
@@ -1253,8 +1117,7 @@ playlists
 				description #PL_aegis_last_titan_standing_desc
 				abbreviation #PL_aegis_last_titan_standing_abbr
 				image lts
-				//mixtape_promo_slot 0
-				visible 1
+				visible 0
 				aegis_upgrades 1
 				ingame_menu_fd_mode 1
 			}
@@ -1262,36 +1125,28 @@ playlists
 			{
 				lts
 				{
-					vars
-					{
-
-					}
-
-					maps
-					{
-						mp_drydock 3
-						mp_eden 2
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-						mp_crashsite3 2
-						mp_black_water_canal 2
-						mp_complex3 2
-						mp_drydock 3
-						mp_thaw 2
-						mp_glitch 1
-						mp_crashsite3 2
-						mp_eden 2
-						mp_angel_city 1
-						mp_colony02 1
-                        mp_relic02 1
-						mp_forwardbase_kodai 1
-						mp_grave 2
-						mp_drydock 3
-						mp_homestead 1
-						mp_thaw 2
-						mp_glitch 1
-					}
+				}
+			}
+		}
+		turbo_lts
+		{
+			inherit defaults
+			vars
+			{
+				name #PL_turbo_last_titan_standing
+				lobbytitle #PL_turbo_last_titan_standing_lobby
+				description #PL_turbo_last_titan_standing_desc
+				abbreviation #PL_turbo_last_titan_standing_abbr
+				image lts
+				mixtape_promo_slot 0
+				visible 1
+				featured_mode_turbo_titans 1
+				earn_meter_titan_multiplier 2.0
+			}
+			gamemodes
+			{
+				lts
+				{
 				}
 			}
 		}
@@ -1413,6 +1268,55 @@ playlists
 				        mp_wargames 1
 				        mp_eden 1
 				        mp_drydock 1
+						mp_black_water_canal 1
+						mp_thaw 1
+						mp_homestead 1
+						mp_forwardbase_kodai 1
+						mp_angel_city 1
+						mp_grave 1
+						mp_rise 1
+				    }
+				}
+			}
+		}
+		turbo_ttdm
+		{
+			inherit defaults
+			vars
+			{
+				name #PL_titan_brawl_turbo
+				lobbytitle #PL_titan_brawl_turbo_lobby
+				description #PL_titan_brawl_turbo_desc
+				abbreviation #PL_titan_brawl_turbo_abbr
+				image ttdm
+				visible 1
+				max_players 10
+				scorelimit 30
+				mixtape_slot 8
+				boosts_enabled 1
+				respawn_delay 10
+
+				featured_mode_turbo_titans 1
+				earn_meter_titan_multiplier 2.0
+			}
+			gamemodes
+			{
+				ttdm
+				{
+				    maps
+				    {
+				        mp_glitch 1
+				        mp_colony02 1
+				        mp_wargames 1
+				        mp_eden 1
+				        mp_drydock 1
+						mp_black_water_canal 1
+						mp_thaw 1
+						mp_homestead 1
+						mp_forwardbase_kodai 1
+						mp_angel_city 1
+						mp_grave 1
+						mp_rise 1
 				    }
 				}
 			}
@@ -1427,10 +1331,10 @@ playlists
 				description #PL_aegis_titan_brawl_desc
 				abbreviation #PL_aegis_titan_brawl_abbr
 				image ttdm
-				visible 1
+				visible 0
 				max_players 10
 				scorelimit 30
-				//mixtape_promo_slot 0
+//				mixtape_promo_slot 0
 				boosts_enabled 1
 				respawn_delay 10
 				aegis_upgrades 1
@@ -1447,6 +1351,13 @@ playlists
 				        mp_wargames 1
 				        mp_eden 1
 				        mp_drydock 1
+						mp_black_water_canal 1
+						mp_thaw 1
+						mp_homestead 1
+						mp_forwardbase_kodai 1
+						mp_angel_city 1
+						mp_grave 1
+						mp_rise 1
 				    }
 				}
 			}
@@ -1488,26 +1399,6 @@ playlists
 			{
 				ffa
 				{
-					vars
-					{
-
-					}
-
-					maps
-					{
-						mp_black_water_canal 2
-						mp_colony02 1
-                        mp_relic02 1
-						mp_complex3 1
-						mp_crashsite3 1
-						mp_drydock 1
-						mp_eden 2
-						mp_forwardbase_kodai 1
-						mp_colony02 1
-						mp_grave 2
-						mp_homestead 1
-						mp_thaw 2
-					}
 				}
 			}
 		}
@@ -1528,26 +1419,6 @@ playlists
 			{
 				fra
 				{
-					vars
-					{
-
-					}
-
-					maps
-					{
-						mp_black_water_canal 2
-						mp_colony02 1
-                        mp_relic02 1
-						mp_complex3 1
-						mp_crashsite3 1
-						mp_drydock 1
-						mp_eden 2
-						mp_forwardbase_kodai 1
-						mp_colony02 1
-						mp_grave 2
-						mp_homestead 1
-						mp_thaw 2
-					}
 				}
 			}
 		}
@@ -1848,8 +1719,14 @@ playlists
 			    {
 			        maps
 			        {
+						mp_forwardbase_kodai 1
+						mp_black_water_canal 1
+						mp_homestead 1
+						mp_wargames 1
+						mp_rise 1
 						mp_thaw 1
 						mp_drydock 1
+						mp_angel_city 1
 			        }
 			    }
 
@@ -1857,8 +1734,14 @@ playlists
 			    {
 			        maps
 			        {
+						mp_forwardbase_kodai 1
+						mp_black_water_canal 1
+						mp_homestead 1
+						mp_wargames 1
+						mp_rise 1
 						mp_thaw 1
 						mp_drydock 1
+						mp_angel_city 1
 			        }
 			    }
 
@@ -1866,8 +1749,14 @@ playlists
 			    {
 			        maps
 			        {
+						mp_forwardbase_kodai 1
+						mp_black_water_canal 1
+						mp_homestead 1
+						mp_wargames 1
+						mp_rise 1
 						mp_thaw 1
 						mp_drydock 1
+						mp_angel_city 1
 			        }
 			    }
 
@@ -1875,8 +1764,14 @@ playlists
 			    {
 			        maps
 			        {
+						mp_forwardbase_kodai 1
+						mp_black_water_canal 1
+						mp_homestead 1
+						mp_wargames 1
+						mp_rise 1
 						mp_thaw 1
 						mp_drydock 1
+						mp_angel_city 1
 			        }
 			    }
 
@@ -1884,10 +1779,107 @@ playlists
 			    {
 			        maps
 			        {
+						mp_forwardbase_kodai 1
+						mp_black_water_canal 1
+						mp_homestead 1
+						mp_wargames 1
+						mp_rise 1
 						mp_thaw 1
 						mp_drydock 1
+						mp_angel_city 1
 			        }
 			    }
+			}
+		}
+		nitro_mixtape
+		{
+			inherit defaults
+			vars
+			{
+				name #PL_nitro_mixtape
+				lobbytitle #PL_nitro_mixtape_lobby
+				description #PL_nitro_mixtape_desc
+				abbreviation #PL_nitro_mixtape_abbr
+				image lf
+				visible 1
+				scorelimit 5
+				//mixtape_promo_slot 0
+				boosts_enabled 1
+				phase_shift_drop_flag 1
+				ctf_flag_return_time 1
+			}
+			gamemodes
+			{
+				ctf
+				{
+					maps
+					{
+						mp_lf_stacks 1
+						mp_lf_township 1
+						mp_lf_uma 1
+						mp_lf_traffic 1
+						mp_lf_deck 1
+						mp_lf_meadow 1
+					}
+				}
+				mfd
+				{
+					maps
+					{
+						mp_lf_stacks 1
+						mp_lf_township 1
+						mp_lf_uma 1
+						mp_lf_traffic 1
+						mp_lf_deck 1
+						mp_lf_meadow 1
+					}
+				}
+				ps
+				{
+					maps
+					{
+						mp_lf_stacks 1
+						mp_lf_township 1
+						mp_lf_uma 1
+						mp_lf_traffic 1
+						mp_lf_deck 1
+						mp_lf_meadow 1
+					}
+				}
+			}
+		}
+		nitro_ffa
+		{
+			inherit defaults
+			vars
+			{
+				name #PL_nitro_ffa
+				lobbytitle #PL_nitro_ffa_lobby
+				description #PL_nitro_ffa_desc
+				abbreviation #PL_nitro_ffa_abbr
+				image lf
+				visible 0
+				scorelimit 5
+//				mixtape_promo_slot 0
+				boosts_enabled 1
+				phase_shift_drop_flag 1
+				max_players 6
+				max_teams 6
+			}
+			gamemodes
+			{
+				ffa
+				{
+					maps
+					{
+						mp_lf_stacks 1
+						mp_lf_township 1
+						mp_lf_uma 1
+						mp_lf_traffic 1
+						mp_lf_deck 1
+						mp_lf_meadow 1
+					}
+				}
 			}
 		}
 		ctf_lf
@@ -1916,6 +1908,8 @@ playlists
 						mp_lf_stacks 1
 						mp_lf_deck 1
 						mp_lf_meadow 1
+						mp_lf_traffic 1
+						mp_glitch 1
 						mp_lf_township 1
 						mp_lf_uma 1
 					}
@@ -1952,6 +1946,39 @@ playlists
 				}
 			}
 		}
+		rocket_lf
+		{
+			inherit defaults
+			vars
+			{
+				name #PL_rocket_arena
+				lobbytitle #PL_rocket_arena_lobby
+				description #PL_rocket_arena_desc
+				abbreviation #PL_rocket_arena_abbr
+				image lf
+				visible 1
+				scorelimit 50
+				roundtimelimit 2.0
+				mixtape_promo_slot 6
+				featured_mode_rocket_arena 1
+				boosts_enabled 1
+			}
+			gamemodes
+			{
+				speedball
+				{
+					maps
+					{
+						mp_lf_stacks 1
+						mp_lf_township 1
+						mp_lf_uma 1
+						mp_lf_traffic 1
+						mp_lf_deck 1
+						mp_lf_meadow 1
+					}
+				}
+			}
+		}
 		holopilot_lf
 		{
 			inherit defaults
@@ -1962,10 +1989,9 @@ playlists
 				description #PL_all_holopilot_desc
 				abbreviation #PL_all_holopilot_abbr
 				image lf
-				visible 1
+				visible 0
 				scorelimit 50
 				//mixtape_slot 6
-				mixtape_promo_slot 8
 				featured_mode_all_holopilot 1
 			}
 			gamemodes
@@ -2355,22 +2381,26 @@ playlists
 				"COMMUNITYUPDATE_NAME"	"Community"
 				"KNB_SUBJECT_00_DESC"	"`3Was ist neu in Titanfall?`0\n\nHier erfährst du, was sich in Titanfall 2 geändert hat!"
 				"KNB_SUBJECT_00_NAME"	"Spiel-Updates"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Grenzlandverteidigung - Unterstützung für 3 weitere Karten - Drydock, Angel City und Exoplanet.\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte - UMA\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution - Loch in der Wand\n\n`2%$rui/bullet_point%`0Neue kaufbare Store-Inhalte"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 29. August - Postkarten aus dem Grenzland"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Grenzlandverteidigung - Ein neuer Koop-Modus, bei dem du mit drei anderen Spielern ein wichtiges Einsatzziel gegen immer stärker werdende Wellen von KI-Einheiten verteidigst. Kommunikation und Anpassung sind hier entscheidend, um zu überleben.\n\n`2%$rui/bullet_point%`0Neue Karte - Aufstieg\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte - Township\n\n`2%$rui/bullet_point%`0Neue kaufbare Store-Inhalte"
-				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 25. Juli - Operation Frontier Shield"
-				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Neue Karte - Kriegsspiele\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte - Verkehr\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution - Schattenboxen\n\n`2%$rui/bullet_point%`03. Waffenslot\n\n`2%$rui/bullet_point%`0Privatspiel-Einstellungen"
-				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 27. Juni - Kriegsspiele"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Neuer Titan – Monarch\n\n`2%$rui/bullet_point%`0Neue Karte – Relikt\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution – Jetzt siehst du mich\n\n`2%$rui/bullet_point%`0Neue, käuflich zu erwerbende Store-Inhalte"
-				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 30. Mai – Monarch's Reign"
-				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Neue Karte – Glitch\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte – Deck\n\n`2%$rui/bullet_point%`0Neue Gruppierung – M.R.V.N.\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution – Komm zum Punkt\n\n`2%$rui/bullet_point%`0Maximalgeneration auf 100 erhöht"
-				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 25. April – Störimpuls im Grenzland"
-				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Neue Karte – Kolonie\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution – Curb-Check\n\n`2%$rui/bullet_point%`0Neue Waffe – R-101\n\n`2%$rui/bullet_point%`0Neue, käuflich zu erwerbende Store-Inhalte"
-				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30. März – Kolonierückkehr"
-				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Live Fire – ein neuer Pilot vs. Pilot Eliminierungsmodus! In diesem rundenbasierten 6 vs. 6-Modus ohne Respawns habt ihr nur eine Minute Zeit, das gegnerische Team zu besiegen und die Runde zu gewinnen. Ihr gewinnt die Runde aber auch, wenn euer Team am Ende der Runde die neutrale Flagge hält. Das Team, das zuerst 5 Runden gewinnt, wird zum Sieger erklärt.\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte – Meadow\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte – Stacks\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution – Später Treffer"
-				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 23. Februar – Live Fire"
-				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Neue Karte – Angel City\n\n`2%$rui/bullet_point%`0Neue Waffe – B3 Wingman Elite\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution – Innenleben\n\n`2%$rui/bullet_point%`0Neue Titan-Kits\n\n`2%$rui/bullet_point%`0Neue, käuflich zu erwerbende Store-Inhalte"
-				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30. November – Angel City's Most Wanted"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`010 Neue Rufzeichen-Banner der Community\n\n`2%$rui/bullet_point%`0Alle Fürsprechergeschenke können jetzt mit Credits erworben werden\n\n`2%$rui/bullet_point%`0Neue kaufbare Store-Inhalte\n\n"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 28. November - Erntezeit"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Pistolen-Primärslot\n\n`2%$rui/bullet_point%`0Halloween-Banner\n\n`2%$rui/bullet_point%`0Balance-Änderungen\n\n`2%$rui/bullet_point%`0Neue kaufbare Store-Inhalte\n\n"
+				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 31. Oktober - Süßes und Saures"
+				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Grenzlandverteidigung - Unterstützung für 3 weitere Karten - Drydock, Angel City und Exoplanet.\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte - UMA\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution - Loch in der Wand\n\n`2%$rui/bullet_point%`0Neue kaufbare Store-Inhalte"
+				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 29. August - Postkarten aus dem Grenzland"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Grenzlandverteidigung - Ein neuer Koop-Modus, bei dem du mit drei anderen Spielern ein wichtiges Einsatzziel gegen immer stärker werdende Wellen von KI-Einheiten verteidigst. Kommunikation und Anpassung sind hier entscheidend, um zu überleben.\n\n`2%$rui/bullet_point%`0Neue Karte - Aufstieg\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte - Township\n\n`2%$rui/bullet_point%`0Neue kaufbare Store-Inhalte"
+				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 25. Juli - Operation Frontier Shield"
+				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Neue Karte - Kriegsspiele\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte - Verkehr\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution - Schattenboxen\n\n`2%$rui/bullet_point%`03. Waffenslot\n\n`2%$rui/bullet_point%`0Privatspiel-Einstellungen"
+				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 27. Juni - Kriegsspiele"
+				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Neuer Titan – Monarch\n\n`2%$rui/bullet_point%`0Neue Karte – Relikt\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution – Jetzt siehst du mich\n\n`2%$rui/bullet_point%`0Neue, käuflich zu erwerbende Store-Inhalte"
+				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30. Mai – Monarch's Reign"
+				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Neue Karte – Glitch\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte – Deck\n\n`2%$rui/bullet_point%`0Neue Gruppierung – M.R.V.N.\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution – Komm zum Punkt\n\n`2%$rui/bullet_point%`0Maximalgeneration auf 100 erhöht"
+				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 25. April – Störimpuls im Grenzland"
+				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Neue Karte – Kolonie\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution – Curb-Check\n\n`2%$rui/bullet_point%`0Neue Waffe – R-101\n\n`2%$rui/bullet_point%`0Neue, käuflich zu erwerbende Store-Inhalte"
+				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30. März – Kolonierückkehr"
+				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0Live Fire – ein neuer Pilot vs. Pilot Eliminierungsmodus! In diesem rundenbasierten 6 vs. 6-Modus ohne Respawns habt ihr nur eine Minute Zeit, das gegnerische Team zu besiegen und die Runde zu gewinnen. Ihr gewinnt die Runde aber auch, wenn euer Team am Ende der Runde die neutrale Flagge hält. Das Team, das zuerst 5 Runden gewinnt, wird zum Sieger erklärt.\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte – Meadow\n\n`2%$rui/bullet_point%`0Neue Live Fire-Karte – Stacks\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution – Später Treffer"
+				"KNB_SUBJECT_00_SUB_08_Q"	"%$rui/hud/scoreboard/status_titan% 23. Februar – Live Fire"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0Neue Karte – Angel City\n\n`2%$rui/bullet_point%`0Neue Waffe – B3 Wingman Elite\n\n`2%$rui/bullet_point%`0Neue Piloten-Exekution – Innenleben\n\n`2%$rui/bullet_point%`0Neue Titan-Kits\n\n`2%$rui/bullet_point%`0Neue, käuflich zu erwerbende Store-Inhalte"
+				"KNB_SUBJECT_00_SUB_09_Q"	"%$rui/hud/scoreboard/status_titan% 30. November – Angel City's Most Wanted"
 				"MP_ANGEL_CITY_FD_WAVE_1"	"An den Himmel gekettet"
 				"MP_ANGEL_CITY_FD_WAVE_2"	"Formlosigkeit"
 				"MP_ANGEL_CITY_FD_WAVE_3"	"Auflehnung"
@@ -2407,8 +2437,16 @@ playlists
 				"PL_all_grapple_lobby"	"Angriff auf Titanfall-Lobby"
 				"PL_all_holopilot"	"Totale Verwirrung"
 				"PL_all_holopilot_abbr"	"LF"
-				"PL_all_holopilot_desc"	"Klassische Live-Fire-Regeln, allerdings werden alle Taktikfähigkeiten durch \"Holopilot\" ersetzt.^FFC83200\nSpieler: 6 vs. 6      *Keine Titans\nZeitlimit: 10 Sek.      *Keine Respawns\nMax. Party-Größe: 6"
+				"PL_all_holopilot_desc"	"Klassische Live-Fire-Regeln, allerdings werden alle Taktikfähigkeiten durch \"Holopilot\" ersetzt.^FFC83200\nSpieler: 6 vs. 6      *Keine Titans\nZeitlimit: 60 Sek.      *Keine Respawns\nMax. Party-Größe: 6"
 				"PL_all_holopilot_lobby"	"Totale Verwirrung-Lobby"
+				"PL_all_phase"	"Die andere Seite"
+				"PL_all_phase_abbr"	"MAT"
+				"PL_all_phase_desc"	"Klassische Materialschlacht-Regeln, allerdings werden alle Taktikfähigkeiten durch \"Phase\" ersetzt.\n^FFC83200Spieler: 6 vs. 6      *KI\nZeitlimit: 10 Min.\nMax. Party-Größe: 6"
+				"PL_all_phase_lobby"	"Die andere Seite-Lobby"
+				"PL_all_spicy"	"Würzige Materialschlacht"
+				"PL_all_spicy_abbr"	"MAT"
+				"PL_all_spicy_desc"	"Klassische Materialschlacht-Regeln, allerdings werden alle Taktikfähigkeiten durch Ticks ersetzt.\n^FFC83200Spieler: 6 vs. 6      *KI\nZeitlimit: 10 Min.\nMax. Party-Größe: 6"
+				"PL_all_spicy_lobby"	"Würzige Materialschlacht-Lobby"
 				"PL_amped_tacticals"	"Verstärkte Taktiken"
 				"PL_amped_tacticals_abbr"	"MAT"
 				"PL_amped_tacticals_desc"	"Klassische Materialschlacht-Regeln, allerdings sind alle Taktikfähigkeiten effektiver.\n^FFC83200Spieler: 6 vs. 6      *KI\nZeitlimit: 10 Min.\nMax. Party-Größe: 6"
@@ -2435,10 +2473,10 @@ playlists
 				"PL_colony_abbr"	"KOL"
 				"PL_colony_desc"	"Kolonie, rund um die Uhr. ^CCCCCC00Sucht nach Spielen in den Modi ^FFC83200Materialschlacht^CCCCCC00, ^FFC83200Piloten vs. Piloten^CCCCCC00 und ^FFC83200Last Titan Standing^CCCCCC00."
 				"PL_colony_lobby"	"Kolonie 24/7-Lobby"
-				"PL_ctf_lf"	"Capture the Flag\n(Live Fire)"
-				"PL_ctf_lf_abbr"	"MAT"
-				"PL_ctf_lf_desc"	"Rasantes Capture the Flag auf Live Fire-Karten.\n^FFC83200Spieler: 6 vs. 6\nMax. Party-Größe: 6\n^F4D5A600Keine Titans     Keine Boosts     Flagge geht durch Phasenverlagerung verloren"
-				"PL_ctf_lf_lobby"	"CTF Live Fire-Lobby"
+				"PL_ctf_lf"	"CTF (Nitro)"
+				"PL_ctf_lf_abbr"	"CTF-N"
+				"PL_ctf_lf_desc"	"Rasantes Capture the Flag auf ausgewählten Karten.\n^FFC83200Spieler: 5 vs. 5\nMax. Party-Größe: 5\n^F4D5A600Flagge wird sofort zurückgebracht"
+				"PL_ctf_lf_lobby"	"CTF Nitro-Lobby"
 				"PL_default_description"	"Standardbeschreibung"
 				"PL_default_lobbytitle"	"Standard-Lobbytitel"
 				"PL_default_name"	"Standardname"
@@ -2496,6 +2534,14 @@ playlists
 				"PL_marked_for_death_abbr"	"TG"
 				"PL_marked_for_death_desc"	"Eliminiere oder beschütze die markierten Ziele.\n^FFC83200Spieler: 6 vs. 6  \nZeitlimit: 12 Min.\nMax. Party-Größe: 6"
 				"PL_marked_for_death_lobby"	"Todgeweiht-Lobby"
+				"PL_nitro_ffa"	"FFA (Nitro)"
+				"PL_nitro_ffa_abbr"	"FFA-N"
+				"PL_nitro_ffa_desc"	"Rasantes Free for All auf ausgewählten Karten.\n^FFC83200Spieler: 6\n^F4D5A600Keine Titans\nKeine Boosts"
+				"PL_nitro_ffa_lobby"	"FFA Nitro-Lobby"
+				"PL_nitro_mixtape"	"Mixtape (Nitro)"
+				"PL_nitro_mixtape_abbr"	"MXT-N"
+				"PL_nitro_mixtape_desc"	"Rasantes CTF, TG und PvP auf ausgewählten Karten.\n^FFC83200Spieler: 5 vs. 5\nMax. Party-Größe: 5\n^F4D5A600Flagge wird sofort zurückgebracht"
+				"PL_nitro_mixtape_lobby"	"Mixtape-Lobby"
 				"PL_pilot_hunter"	"Gefecht"
 				"PL_pilot_hunter_abbr"	"GEF"
 				"PL_pilot_hunter_desc"	"Neutralisiere gegnerische Piloten und Titans. \n^FFC83200Spieler: 8 vs. 8\nZeitlimit: 10 Min.\nMax. Party-Größe: 8"
@@ -2515,6 +2561,10 @@ playlists
 				"PL_rise_abbr"	"AUF"
 				"PL_rise_desc"	"Aufstieg rund um die Uhr. ^CCCCCC00Sucht nach Spielen in den Modi ^FFC83200CTF^CCCCCC00, ^FFC83200Verstärkter Hardpoint^CCCCCC00, ^FFC83200Piloten vs. Piloten^CCCCCC00, ^FFC83200Live Fire^CCCCCC00 und ^FFC83200Last Titan Standing^CCCCCC00."
 				"PL_rise_lobby"	"Aufstieg 24/7 – Lobby"
+				"PL_rocket_arena"	"Raketenarena"
+				"PL_rocket_arena_abbr"	"LF"
+				"PL_rocket_arena_desc"	"Klassische Live-Fire-Regeln mit modifizierten EPGs.^FFC83200\nSpieler: 6 vs. 6 *Keine Titans\nZeitlimit: 90 Sek. *Keine Respawns\nMax. Party-Größe: 6"
+				"PL_rocket_arena_lobby"	"Raketenarena-Lobby"
 				"PL_settings_for_when_someone_loads_a_map_on_the_command_line_do_not_edit_the_cmdlinemapload_1_below_-_this_makes_this_work"	"Einstellungen, wenn jemand eine Karte auf der Befehlszeile lädt. Nicht cmdlineMapLoad 1 bearbeiten - dadurch funktioniert es."
 				"PL_speedball"	"Live Fire"
 				"PL_speedball_desc"	"Kämpfe um die neutrale Flagge. Eliminiere das gegnerische Team oder halte am Ende der Spielzeit die Flagge, um die Runde zu gewinnen. Wer zuerst 5 Runden für sich entscheidet, gewinnt.\n^FFC83200Spieler: 6 vs. 6 *Keine Titans\nZeitlimit: 60 Sekunden pro Runde *Keine Respawns\nMax. Party-Größe: 6"
@@ -2528,6 +2578,15 @@ playlists
 				"PL_titan_brawl_desc"	"Eliminiere gegnerische Titans. Piloten nicht erlaubt.\n^FFC83200Spieler: 5 vs. 5\nZeitlimit: 10 Min.\nMax. Party-Größe: 5"
 				"PL_titan_brawl_hint"	"Neutralisiere gegnerische Titans.\nKein Ausstieg."
 				"PL_titan_brawl_lobby"	"Titan Brawl-Lobby"
+				"PL_titan_brawl_turbo"	"Turbo-Titan-Brawl"
+				"PL_titan_brawl_turbo_abbr"	"TTDM"
+				"PL_titan_brawl_turbo_desc"	"Klassische Titan-Brawl-Regeln mit schnellerer Jetschub-und System-Regeneration.\n^FFC83200Spieler: 5 vs. 5\nZeitlimit: 10 Min.\nMax. Party-Größe: 5"
+				"PL_titan_brawl_turbo_hint"	"Neutralisiere gegnerische Titans.\nKein Ausstieg"
+				"PL_titan_brawl_turbo_lobby"	"Turbo-Titan-Brawl-Lobby"
+				"PL_turbo_last_titan_standing"	"Turbo-LTS"
+				"PL_turbo_last_titan_standing_abbr"	"LTS"
+				"PL_turbo_last_titan_standing_desc"	"Klassische LTS-Regeln mit schnellerer Jetschub-und System-Regeneration.\n^FFC83200Spieler: 5 vs. 5      *Starte als Titan\nZeitlimit: 3 Min. pro Runde\nMax. Party-Größe: 5"
+				"PL_turbo_last_titan_standing_lobby"	"Turbo-LTS-Lobby"
 				"PL_variety_pack"	"Mixtape"
 				"PL_variety_pack_desc"	"Variierende Spielerzahlen und verschiedene Karten in diesen Modi:\n^FFC83200*Kopfgeldjagd                 *Materialschlacht\n*Last Titan Standing      *Verstärkter Hardpoint\n*Piloten vs. Piloten           *Capture the Flag"
 				"PL_variety_pack_lobby"	"Mixtape-Lobby"
@@ -2556,7 +2615,7 @@ playlists
 				"COMMUNITYUPDATE_05_A"	"Kevin Younger criou uma montagem divertida mostrando vários movimentos impressionantes com a Lâmina Sônica.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
 				"COMMUNITYUPDATE_05_Q"	"Criações da Comunidade: Direto ao Ponto"
 				"COMMUNITYUPDATE_06_A"	"ConzeyG via Reddit demonstra eficiência brutal com a Northstar eliminando Pilotos no modo Marcado para Morrer.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
-				"COMMUNITYUPDATE_06_Q"	"Criações da Comunidade: Caça aos Pilotos com a Northstar"
+				"COMMUNITYUPDATE_06_Q"	"Criações da Comunidade: Caça com a Northstar"
 				"COMMUNITYUPDATE_07_A"	"Já disponível! Defesa da Fronteira retorna junto de Elevação, além de novas pinturas de guerra à venda e um novo mapa de Queima-roupa. Veja tudo aqui.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
 				"COMMUNITYUPDATE_07_Q"	"Trailer de Operação Escudo da Fronteira"
 				"COMMUNITYUPDATE_08_A"	"Já disponível! O icônico mapa Jogos de Guerra retorna para Titanfall 2 mais bonito do que nunca. Confira também a nova execução e o novo mapa de Queima-roupa, Tráfego, em ação.\n\n\nPressione `2%[A_BUTTON|MOUSE1]%`0 para visualizar."
@@ -2581,22 +2640,26 @@ playlists
 				"COMMUNITYUPDATE_NAME"	"Comunidade"
 				"KNB_SUBJECT_00_DESC"	"`3Quais as novidades de Titanfall?`0\n\nConfira aqui o que mudou em Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Atualizações do jogo"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Defesa da Fronteira - Suporte para mais 3 mapas - Doca Seca, Angel City e Exoplaneta.\n\n`2%$rui/bullet_point%`0Novo mapa do Queima-roupa - UMA\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Parede Perfurada\n\n`2%$rui/bullet_point%`0Novo conteúdo à venda na Loja"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 29 de agosto - Cartões-postais da Fronteira"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Defesa da Fronteira - Um novo modo cooperativo no qual você une forças com até três jogadores para defender um objetivo vital contra as ondas cada vez mais intensas de combatentes da IA. Comunicação e adaptabilidade são as chaves para sobreviver.\n\n`2%$rui/bullet_point%`0Novo Mapa - Elevação\n\n`2%$rui/bullet_point%`0Novo mapa do Queima-roupa - Cidade\n\n`2%$rui/bullet_point%`0Novo conteúdo na Loja"
-				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 25/07 - Operação Escudo da Fronteira"
-				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Novo mapa - Jogos de Guerra\n\n`2%$rui/bullet_point%`0Novo mapa de Queima-roupa - Tráfego\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Boxe Simulado\n\n`2%$rui/bullet_point%`03º espaço de arma\n\n`2%$rui/bullet_point%`0Configurações de partida privada"
-				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 27/06 - Jogos de Guerra"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Novo Titã - Monarch\n\n`2%$rui/bullet_point%`0Novo mapa - Relíquia\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Agora Você Me Vê\n\n`2%$rui/bullet_point%`0Novo conteúdo à venda na Loja"
-				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 30/05 - Reino do Monarca"
-				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Novo mapa - Falha\n\n`2%$rui/bullet_point%`0Novo mapa de Queima-roupa - Convés\n\n`2%$rui/bullet_point%`0Nova facção - M.R.V.N.\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Direto ao Ponto\n\n`2%$rui/bullet_point%`0Geração máxima aumentada para 100"
-				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 25/04 - Falha na Fronteira"
-				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Novo mapa - Colônia\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Esmaga-crânio\n\n`2%$rui/bullet_point%`0Nova arma - R-101\n\n`2%$rui/bullet_point%`0Novo conteúdo à venda na Loja"
-				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30/03 - Colônia Renascida"
-				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Queima-roupa - Um novo modo de eliminação entre Pilotos! As partidas são disputadas em rodadas de 6v6 sem reaparecimento. Você terá um minuto para eliminar a equipe inimiga e vencer a rodada. Também é possível vencer se sua equipe estiver em posse da bandeira neutra quando o tempo acabar. A primeira equipe a vencer 5 rodadas ganha a partida.\n\n`2%$rui/bullet_point%`0Novo mapa de Queima-roupa - Prado\n\n`2%$rui/bullet_point%`0Novo mapa de Queima-roupa - Pilhas\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Golpe Atrasado"
-				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 23/02 - Queima-roupa"
-				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Novo mapa - Angel City\n\n`2%$rui/bullet_point%`0Nova arma - B3 Wingman de Elite\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - De Dentro para Fora\n\n`2%$rui/bullet_point%`0Novos kits de Titã\n\n`2%$rui/bullet_point%`0Novo conteúdo à venda na Loja"
-				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30/11 - O Mais Procurado de Angel City"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`010 Novas insígnias de Distintivos criadas pela comunidade\n\n`2%$rui/bullet_point%`0Agora é possível comprar todos os presentes do colaborador com créditos\n\n`2%$rui/bullet_point%`0Novo conteúdo da loja para comprar\n\n"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 28 de novembro - Época de Colheita"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Espaço Principal de Pistola\n\n`2%$rui/bullet_point%`0Insígnias de Dia das Bruxas\n\n`2%$rui/bullet_point%`0Alterações no Equilíbrio\n\n`2%$rui/bullet_point%`0Novo Conteúdo Para Compras na Loja\n\n"
+				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 31 de outubro - Travessuras e Gostosuras"
+				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Defesa da Fronteira - Suporte para mais 3 mapas - Doca Seca, Angel City e Exoplaneta.\n\n`2%$rui/bullet_point%`0Novo mapa do Queima-roupa - UMA\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Parede Perfurada\n\n`2%$rui/bullet_point%`0Novo conteúdo à venda na Loja"
+				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 29 de agosto - Cartões-postais da Fronteira"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Defesa da Fronteira - Um novo modo cooperativo no qual você une forças com até três jogadores para defender um objetivo vital contra as ondas cada vez mais intensas de combatentes da IA. Comunicação e adaptabilidade são as chaves para sobreviver.\n\n`2%$rui/bullet_point%`0Novo Mapa - Elevação\n\n`2%$rui/bullet_point%`0Novo mapa do Queima-roupa - Cidade\n\n`2%$rui/bullet_point%`0Novo conteúdo na Loja"
+				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 25/07 - Operação Escudo da Fronteira"
+				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Novo mapa - Jogos de Guerra\n\n`2%$rui/bullet_point%`0Novo mapa de Queima-roupa - Tráfego\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Boxe Simulado\n\n`2%$rui/bullet_point%`03º espaço de arma\n\n`2%$rui/bullet_point%`0Configurações de partida privada"
+				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 27/06 - Jogos de Guerra"
+				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Novo Titã - Monarch\n\n`2%$rui/bullet_point%`0Novo mapa - Relíquia\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Agora Você Me Vê\n\n`2%$rui/bullet_point%`0Novo conteúdo à venda na Loja"
+				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30/05 - Reino do Monarca"
+				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Novo mapa - Falha\n\n`2%$rui/bullet_point%`0Novo mapa de Queima-roupa - Convés\n\n`2%$rui/bullet_point%`0Nova facção - M.R.V.N.\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Direto ao Ponto\n\n`2%$rui/bullet_point%`0Geração máxima aumentada para 100"
+				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 25/04 - Falha na Fronteira"
+				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Novo mapa - Colônia\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Esmaga-crânio\n\n`2%$rui/bullet_point%`0Nova arma - R-101\n\n`2%$rui/bullet_point%`0Novo conteúdo à venda na Loja"
+				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30/03 - Colônia Renascida"
+				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0Queima-roupa - Um novo modo de eliminação entre Pilotos! As partidas são disputadas em rodadas de 6v6 sem reaparecimento. Você terá um minuto para eliminar a equipe inimiga e vencer a rodada. Também é possível vencer se sua equipe estiver em posse da bandeira neutra quando o tempo acabar. A primeira equipe a vencer 5 rodadas ganha a partida.\n\n`2%$rui/bullet_point%`0Novo mapa de Queima-roupa - Prado\n\n`2%$rui/bullet_point%`0Novo mapa de Queima-roupa - Pilhas\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - Golpe Atrasado"
+				"KNB_SUBJECT_00_SUB_08_Q"	"%$rui/hud/scoreboard/status_titan% 23/02 - Queima-roupa"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0Novo mapa - Angel City\n\n`2%$rui/bullet_point%`0Nova arma - B3 Wingman de Elite\n\n`2%$rui/bullet_point%`0Nova execução de Piloto - De Dentro para Fora\n\n`2%$rui/bullet_point%`0Novos kits de Titã\n\n`2%$rui/bullet_point%`0Novo conteúdo à venda na Loja"
+				"KNB_SUBJECT_00_SUB_09_Q"	"%$rui/hud/scoreboard/status_titan% 30/11 - O Mais Procurado de Angel City"
 				"MP_ANGEL_CITY_FD_WAVE_1"	"Ligados aos Céus"
 				"MP_ANGEL_CITY_FD_WAVE_2"	"Sem Formas"
 				"MP_ANGEL_CITY_FD_WAVE_3"	"Insurgência"
@@ -2635,6 +2698,14 @@ playlists
 				"PL_all_holopilot_abbr"	"QR"
 				"PL_all_holopilot_desc"	"Regras de Queima-roupa clássicas, exceto todas as habilidades Táticas, são substituídas com Holopiloto.\n^FFC83200Jogadores: 6v6      *Sem Titãs\nLimite de tempo: 60 seg.\nTamanho máximo do grupo: 6"
 				"PL_all_holopilot_lobby"	"Sala de espera: A Grande Trapaça"
+				"PL_all_phase"	"O Outrolado"
+				"PL_all_phase_abbr"	"EXA"
+				"PL_all_phase_desc"	"Regras de Exaustão clássicas, exceto todas as habilidades Táticas, são substituídas com Cronossalto.\n^FFC83200Jogadores: 6v6      *IA\nLimite de tempo: 10 min.\nTamanho máximo do grupo: 6"
+				"PL_all_phase_lobby"	"Sala de espera: O Outrolado"
+				"PL_all_spicy"	"Exaustão Apimentada"
+				"PL_all_spicy_abbr"	"EXA"
+				"PL_all_spicy_desc"	"Regras de Exaustão clássicas, exceto todas as habilidades Táticas, são substituídas com Pulgões.\n^FFC83200Jogadores: 6v6      *IA\nLimite de tempo: 10 min.\nTamanho máximo do grupo: 6"
+				"PL_all_spicy_lobby"	"Sala de espera: Exaustão Apimentada"
 				"PL_amped_tacticals"	"Táticas Melhoradas"
 				"PL_amped_tacticals_abbr"	"EXA"
 				"PL_amped_tacticals_desc"	"Regras de Exaustão clássicas, exceto que todas as habilidades Táticas são mais potentes.\n^FFC83200Jogadores: 6v6      *IA\nLimite de tempo: 10 min.\nTamanho máximo do grupo: 6"
@@ -2661,10 +2732,10 @@ playlists
 				"PL_colony_abbr"	"COL"
 				"PL_colony_desc"	"Somente Colônia, o tempo todo. ^CCCCCC00Isto vai buscar partidas de ^FFC83200Exaustão^CCCCCC00, ^FFC83200Pilotos vs Pilotos^CCCCCC00 e ^FFC83200Sobrevivência de Titã^CCCCCC00."
 				"PL_colony_lobby"	"Sala de espera de Colônia Permanente"
-				"PL_ctf_lf"	"Captura de Bandeira\n(Queima-roupa)"
-				"PL_ctf_lf_abbr"	"EXA"
-				"PL_ctf_lf_desc"	"Captura de Bandeira frenética em mapas de Queima-roupa.\n^FFC83200Jogadores: 6v6\nTamanho máximo do grupo: 6\n^F4D5A600Sem Titãs     Sem reforços     Cronossalto derruba a bandeira"
-				"PL_ctf_lf_lobby"	"Sala de Espera: CdB Queima-roupa"
+				"PL_ctf_lf"	"CdB (Nitro)"
+				"PL_ctf_lf_abbr"	"CdB-N"
+				"PL_ctf_lf_desc"	"Captura de Bandeira frenética em mapas selecionados.\n^FFC83200Jogadores: 5v5\nTamanho máximo do grupo: 5\n^F4D5A600Retorno Imediato de Bandeira"
+				"PL_ctf_lf_lobby"	"Sala de espera: CdB Nitro"
 				"PL_default_description"	"Descrição padrão"
 				"PL_default_lobbytitle"	"Título de sala padrão"
 				"PL_default_name"	"Nome padrão"
@@ -2722,6 +2793,14 @@ playlists
 				"PL_marked_for_death_abbr"	"MPM"
 				"PL_marked_for_death_desc"	"Elimine ou proteja os alvos marcados.\n^FFC83200Jogadores: 6v6  \nLimite de tempo: 12m\nTamanho máximo do grupo: 6"
 				"PL_marked_for_death_lobby"	"Sala de espera: Marcado para Morrer"
+				"PL_nitro_ffa"	"CPS (Nitro)"
+				"PL_nitro_ffa_abbr"	"CPS-N"
+				"PL_nitro_ffa_desc"	"Cada Um Por Si frenético nos mapas selecionados.\n^FFC83200Jogadores: 6\n^F4D5A600Sem Titãs\nSem reforços"
+				"PL_nitro_ffa_lobby"	"Sala de espera: CPS Nitro"
+				"PL_nitro_mixtape"	"Variedade (Nitro)"
+				"PL_nitro_mixtape_abbr"	"VAR-N"
+				"PL_nitro_mixtape_desc"	"CdB, MPM e JxJ frenéticos em mapas selecionados.\n^FFC83200Jogadores: 5v5\nTamanho máximo do grupo: 5\n^F4D5A600Retorno Imediato de Bandeira"
+				"PL_nitro_mixtape_lobby"	"Sala de espera: Variedade"
 				"PL_pilot_hunter"	"Duelos"
 				"PL_pilot_hunter_abbr"	"DUE"
 				"PL_pilot_hunter_desc"	"Elimine Pilotos e Titãs inimigos. \n^FFC83200Jogadores: 8v8\nLimite de tempo: 10 min\nTamanho máximo do grupo: 8"
@@ -2741,6 +2820,10 @@ playlists
 				"PL_rise_abbr"	"ELE"
 				"PL_rise_desc"	"Somente Elevação, o tempo todo. ^CCCCCC00Isto vai buscar partidas de ^FFC83200CdB^CCCCCC00, ^FFC83200Ponto de Controle Amplificado^CCCCCC00, ^FFC83200Pilotos vs Pilotos^CCCCCC00, ^FFC83200Queima-roupa^CCCCCC00 e ^FFC83200Sobrevivência de Titã^CCCCCC00."
 				"PL_rise_lobby"	"Sala de espera: Elevação Permanente"
+				"PL_rocket_arena"	"Arena de Foguetes"
+				"PL_rocket_arena_abbr"	"QR"
+				"PL_rocket_arena_desc"	"Regras de Queima-roupa clássicas, com EPGs modificadas.^FFC83200Jogadores: 6v6      *Sem Titãs\nLimite de tempo: 90 seg.\nTamanho máximo do grupo: 6"
+				"PL_rocket_arena_lobby"	"Sala de espera: Arena de Foguetes"
 				"PL_settings_for_when_someone_loads_a_map_on_the_command_line_do_not_edit_the_cmdlinemapload_1_below_-_this_makes_this_work"	"Configurações para quando alguém carrega um mapa na linha de comando. Não edite cmdlineMapLoad 1 abaixo - isso faz isso funcionar."
 				"PL_speedball"	"Queima-roupa"
 				"PL_speedball_desc"	"Lute pela posse de uma bandeira neutra. Elimine a equipe inimiga ou esteja com a bandeira quando o tempo acabar para vencer a rodada. Vence a equipe que ganhar 5 rodadas primeiro.\n^FFC83200Jogadores: 6v6 *Sem Titãs\nLimite de tempo: 60 segundos por rodada *Sem reaparecimento\nTamanho máximo do grupo: 6"
@@ -2754,6 +2837,15 @@ playlists
 				"PL_titan_brawl_desc"	"Elimine Titãs inimigos. Proibido Pilotos.\n^FFC83200Jogadores: 5v5\nLimite de tempo: 10 min.\nTamanho máximo do grupo: 5"
 				"PL_titan_brawl_hint"	"Elimine Titãs inimigos.\nSem ejeção"
 				"PL_titan_brawl_lobby"	"Sala de espera: Disputa de Titãs"
+				"PL_titan_brawl_turbo"	"Disputa de Titãs Turbo"
+				"PL_titan_brawl_turbo_abbr"	"DdT"
+				"PL_titan_brawl_turbo_desc"	"Regras de Disputa de Titãs clássicas com regeneração de Arrancada e geração de Núcleo mais rápidas.\n^FFC83200Jogadores: 5v5\nLimite de tempo: 10 min.\nTamanho máximo do grupo: 5"
+				"PL_titan_brawl_turbo_hint"	"Elimine Titãs inimigos.\nSem ejeção"
+				"PL_titan_brawl_turbo_lobby"	"Sala de espera: Disputa de Titãs Turbo"
+				"PL_turbo_last_titan_standing"	"SdT Turbo"
+				"PL_turbo_last_titan_standing_abbr"	"SdT"
+				"PL_turbo_last_titan_standing_desc"	"Regras de SdT clássicas com regeneração de Arrancada e geração de Núcleo mais rápidas.\n^FFC83200Jogadores: 5v5      *Inicia como Titã\nLimite de tempo: 3 min. por rodada      *Sem reaparecimentos\nTamanho máximo do grupo: 5"
+				"PL_turbo_last_titan_standing_lobby"	"Sala de espera: SdT Turbo"
 				"PL_variety_pack"	"Variedade"
 				"PL_variety_pack_desc"	"Número variável de jogadores e inclui uma variedade de mapas nos seguintes modos:\n^FFC83200*Recompensa                   *Exaustão\n*Sobrevivência de Titã      *Ponto de Controle Amplificado\n*Pilotos vs. Pilotos              *Captura de Bandeira"
 				"PL_variety_pack_lobby"	"Sala de espera: Variedade"
@@ -2782,7 +2874,7 @@ playlists
 				"COMMUNITYUPDATE_05_A"	"Kevin Younger氏から、華麗にパルスブレードを操る様子を大量に収めた楽しいダイジェスト動画が届きました。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で視聴"
 				"COMMUNITYUPDATE_05_Q"	"コミュニティー作品:敵はそこだ"
 				"COMMUNITYUPDATE_06_A"	"redditのConzeyG氏が、マーク・フォー・デスでノーススターが残酷なまでの効率でパイロットの息の根を止める様子を披露してくれました。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で表示。"
-				"COMMUNITYUPDATE_06_Q"	"コミュニティー作品:ノーススターのパイロットハント"
+				"COMMUNITYUPDATE_06_Q"	"コミュニティー作品:ノーススターのハント"
 				"COMMUNITYUPDATE_07_A"	"好評配信中！フロンティアディフェンスとマップ「ライズ」が復活。さらに新ウォーペイントの販売が始まり、ライブファイアに新マップが登場。実際のプレイの様子をご覧ください。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で視聴。"
 				"COMMUNITYUPDATE_07_Q"	"「フロンティアシールド作戦」GPトレーラー"
 				"COMMUNITYUPDATE_08_A"	"配信開始！シリーズを代表するマップ「ウォーゲームズ」が美しさを増してタイタンフォール 2に戻ってきました。また、新処刑攻撃とライブファイアの新マップ「交通」もご紹介します。\n\n\n`2%[A_BUTTON|MOUSE1]% `0で視聴。"
@@ -2807,22 +2899,26 @@ playlists
 				"COMMUNITYUPDATE_NAME"	"コミュニティ"
 				"KNB_SUBJECT_00_DESC"	"`3タイタンフォール更新履歴`0\n\nこちらをチェックして、タイタンフォール 2の変更点を確認しましょう！"
 				"KNB_SUBJECT_00_NAME"	"アップデート一覧"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0フロンティアディフェンス - 対応マップにドライドック、エンジェルシティ、外惑星を追加。\n\n`2%$rui/bullet_point%`0ライブファイアの新マップ - UMA\n\n`2%$rui/bullet_point%`0パイロットの処刑攻撃 - ホール・イン・ザ・ウォール\n\n`2%$rui/bullet_point%`0ストアに新着商品が登場"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 8月29日 - フロンティアからのポストカード"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0フロンティアディフェンス - 自分を含め最大4人のプレイヤーでプレイできる協力プレイモード。ゴールは重要な防衛対象を、次第に激しさを増すAIユニットのウェーブから守り通すこと。緊密な連携と臨機応変の対応が勝利のカギになる。\n\n`2%$rui/bullet_point%`0新マップ - ライズ\n\n`2%$rui/bullet_point%`0新ライブファイアマップ - タウンシップ\n\n`2%$rui/bullet_point%`0ストアの新販売アイテム"
-				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 7月25日 - フロンティアシールド作戦"
-				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0新マップ - ウォーゲーム\n\n`2%$rui/bullet_point%`0ライブファイア用の新マップ - 交通\n\n`2%$rui/bullet_point%`0新パイロット処刑攻撃 - シャドウボクシング\n\n`2%$rui/bullet_point%`0第3の武器スロット\n\n`2%$rui/bullet_point%`0プライベートマッチ設定"
-				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 6月27日 - ウォーゲーム"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point% `0新型タイタン - モナーク\n\n`2%$rui/bullet_point% `0新マップ - レリック\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - 俺が見えるな\n\n`2%$rui/bullet_point% `0ストアに新着商品を追加"
-				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 5月30日 - モナークレイン"
-				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point% `0新マップ - グリッチ\n\n`2%$rui/bullet_point% `0ライブファイア用新マップ - デッキ\n\n`2%$rui/bullet_point% `0新勢力 - M.R.V.N.\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - 敵はそこだ\n\n`2%$rui/bullet_point% `0世代上限を100に上昇"
-				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 4月25日 - フロンティアのグリッチ"
-				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point% `0新マップ - 植民地\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - ロードチェック\n\n`2%$rui/bullet_point% `0新兵器 - R-101\n\n`2%$rui/bullet_point% `0ストアに新着商品を追加"
-				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 3月30日 - コロニーリボーン"
-				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point% `0ライブファイア - パイロット同士が、勝ち残りを賭けて戦います！リスポーンなし、6対6のラウンド制マッチで、1分以内に敵を全滅させるとラウンド勝利です。また、ラウンド終了時に自分のチームが中立のフラッグを所持していた場合も勝利となります。5ラウンド先取したチームがマッチの勝者となります。\n\n`2%$rui/bullet_point% `0ライブファイア用新マップ - 草原\n\n`2%$rui/bullet_point% `0ライブファイア用新マップ - スタック\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - レイトアタック"
-				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 2月23日 - ライブファイア"
-				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point% `0新マップ - エンジェルシティ\n\n`2%$rui/bullet_point% `0新兵器 - B3ウィングマン・エリート\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - インナーピース\n\n`2%$rui/bullet_point% `0新タイタンキット\n\n`2%$rui/bullet_point% `0ストアに新着商品を追加"
-				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan%11月30日 - エンジェルシティモストウォンテッド"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`010 コミュニティー発の新コールサインとバナーが登場\n\n`2%$rui/bullet_point%`0支持者のギフトがすべてクレジットで購入可能に\n\n`2%$rui/bullet_point%`0ストアに販売アイテムを新入荷\n\n"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 11月28日 - ハーベストタイム"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0メインスロットのピストル装備\n\n`2%$rui/bullet_point%`0ハロウィン仕様バナー\n\n`2%$rui/bullet_point%`0各種バランス調整\n\n`2%$rui/bullet_point%`0ストアに販売アイテムを新入荷\n\n"
+				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 10月31日 - トリック＆トリート"
+				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0フロンティアディフェンス - 対応マップにドライドック、エンジェルシティ、外惑星を追加。\n\n`2%$rui/bullet_point%`0ライブファイアの新マップ - UMA\n\n`2%$rui/bullet_point%`0パイロットの処刑攻撃 - ホール・イン・ザ・ウォール\n\n`2%$rui/bullet_point%`0ストアに新着商品が登場"
+				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 8月29日 - フロンティアからのポストカード"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0フロンティアディフェンス - 自分を含め最大4人のプレイヤーでプレイできる協力プレイモード。ゴールは重要な防衛対象を、次第に激しさを増すAIユニットのウェーブから守り通すこと。緊密な連携と臨機応変の対応が勝利のカギになる。\n\n`2%$rui/bullet_point%`0新マップ - ライズ\n\n`2%$rui/bullet_point%`0新ライブファイアマップ - タウンシップ\n\n`2%$rui/bullet_point%`0ストアの新販売アイテム"
+				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 7月25日 - フロンティアシールド作戦"
+				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0新マップ - ウォーゲーム\n\n`2%$rui/bullet_point%`0ライブファイア用の新マップ - 交通\n\n`2%$rui/bullet_point%`0新パイロット処刑攻撃 - シャドウボクシング\n\n`2%$rui/bullet_point%`0第3の武器スロット\n\n`2%$rui/bullet_point%`0プライベートマッチ設定"
+				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 6月27日 - ウォーゲーム"
+				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point% `0新型タイタン - モナーク\n\n`2%$rui/bullet_point% `0新マップ - レリック\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - 俺が見えるな\n\n`2%$rui/bullet_point% `0ストアに新着商品を追加"
+				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 5月30日 - モナークレイン"
+				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point% `0新マップ - グリッチ\n\n`2%$rui/bullet_point% `0ライブファイア用新マップ - デッキ\n\n`2%$rui/bullet_point% `0新勢力 - M.R.V.N.\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - 敵はそこだ\n\n`2%$rui/bullet_point% `0世代上限を100に上昇"
+				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 4月25日 - フロンティアのグリッチ"
+				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point% `0新マップ - 植民地\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - ロードチェック\n\n`2%$rui/bullet_point% `0新兵器 - R-101\n\n`2%$rui/bullet_point% `0ストアに新着商品を追加"
+				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 3月30日 - コロニーリボーン"
+				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point% `0ライブファイア - パイロット同士が、勝ち残りを賭けて戦います！リスポーンなし、6対6のラウンド制マッチで、1分以内に敵を全滅させるとラウンド勝利です。また、ラウンド終了時に自分のチームが中立のフラッグを所持していた場合も勝利となります。5ラウンド先取したチームがマッチの勝者となります。\n\n`2%$rui/bullet_point% `0ライブファイア用新マップ - 草原\n\n`2%$rui/bullet_point% `0ライブファイア用新マップ - スタック\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - レイトアタック"
+				"KNB_SUBJECT_00_SUB_08_Q"	"%$rui/hud/scoreboard/status_titan% 2月23日 - ライブファイア"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point% `0新マップ - エンジェルシティ\n\n`2%$rui/bullet_point% `0新兵器 - B3ウィングマン・エリート\n\n`2%$rui/bullet_point% `0パイロットの新処刑攻撃 - インナーピース\n\n`2%$rui/bullet_point% `0新タイタンキット\n\n`2%$rui/bullet_point% `0ストアに新着商品を追加"
+				"KNB_SUBJECT_00_SUB_09_Q"	"%$rui/hud/scoreboard/status_titan%11月30日 - エンジェルシティモストウォンテッド"
 				"MP_ANGEL_CITY_FD_WAVE_1"	"空に繋がれ"
 				"MP_ANGEL_CITY_FD_WAVE_2"	"不定形"
 				"MP_ANGEL_CITY_FD_WAVE_3"	"暴動"
@@ -2861,6 +2957,14 @@ playlists
 				"PL_all_holopilot_abbr"	"LF"
 				"PL_all_holopilot_desc"	"戦術アビリティがすべてホロパイロットに置き換わる以外は、従来のライブファイアと同じルール。^FFC83200\nプレイヤー数:6対6      *タイタンなし\n時間制限:60秒      *リスポーンなし\n最大パーティー人数:6"
 				"PL_all_holopilot_lobby"	"華麗なる謀略のロビー"
+				"PL_all_phase"	"異次元"
+				"PL_all_phase_abbr"	"ATT"
+				"PL_all_phase_desc"	"戦術アビリティがすべてフェーズに置き換わる以外は、従来の消耗戦と同じルール。\n^FFC83200プレイヤー数:6対6      *AI\n時間制限:10分\n最大パーティー人数:6"
+				"PL_all_phase_lobby"	"異次元のロビー"
+				"PL_all_spicy"	"辛口消耗戦"
+				"PL_all_spicy_abbr"	"ATT"
+				"PL_all_spicy_desc"	"戦術アビリティがすべてティックに置き換わる以外は、従来の消耗戦と同じルール。\n^FFC83200プレイヤー数:6対6      *AI\n時間制限:10分\n最大パーティー人数:6"
+				"PL_all_spicy_lobby"	"辛口消耗戦のロビー"
 				"PL_amped_tacticals"	"戦術強化"
 				"PL_amped_tacticals_abbr"	"ATT"
 				"PL_amped_tacticals_desc"	"戦術アビリティが強化される以外は、従来の消耗戦と同じルール。\n^FFC83200プレイヤー数:6対6      *AI\n時間制限:10分\n最大パーティー人数:6"
@@ -2887,10 +2991,10 @@ playlists
 				"PL_colony_abbr"	"植民地"
 				"PL_colony_desc"	"いつでも植民地だけを。^CCCCCC00このリストでは、^FFC83200消耗戦^CCCCCC00、^FFC83200パイロット対パイロット^CCCCCC00と^FFC83200ラスト・タイタン・スタンディング^CCCCCC00のマッチを検索します。"
 				"PL_colony_lobby"	"植民地24/7ロビー"
-				"PL_ctf_lf"	"キャプチャー・ザ・フラッグ\n(ライブファイア)"
-				"PL_ctf_lf_abbr"	"ATT"
-				"PL_ctf_lf_desc"	"ライブファイアのマップで繰り広げる高速のキャプチャー・ザ・フラッグ。\n^FFC83200プレイヤー数:6対6\n最大パーティー人数:6\n^F4D5A600タイタンなし     ブーストなし     フェーズシフトでフラッグ落下"
-				"PL_ctf_lf_lobby"	"CTFライブファイアロビー"
+				"PL_ctf_lf"	"CTF(ニトロ)"
+				"PL_ctf_lf_abbr"	"CTF-N"
+				"PL_ctf_lf_desc"	"選択したマップで繰り広げる高速のキャプチャー・ザ・フラッグ。\n^FFC83200プレイヤー数:5対5\n最大パーティー人数:5\n^F4D5A600フラッグを即時返還"
+				"PL_ctf_lf_lobby"	"CTFニトロのロビー"
 				"PL_default_description"	"デフォルトの説明"
 				"PL_default_lobbytitle"	"デフォルトのロビータイトル"
 				"PL_default_name"	"デフォルトの名前"
@@ -2948,6 +3052,14 @@ playlists
 				"PL_marked_for_death_abbr"	"MFD"
 				"PL_marked_for_death_desc"	"マークされた標的の命をめぐる攻防戦。\n^FFC83200プレイヤー数:6対6  \n時間制限:12分\n最大パーティー人数:6"
 				"PL_marked_for_death_lobby"	"マーク・フォー・デス・ロビー"
+				"PL_nitro_ffa"	"FFA(ニトロ)"
+				"PL_nitro_ffa_abbr"	"FFA-N"
+				"PL_nitro_ffa_desc"	"選択したマップで繰り広げる高速のフリー・フォー・オール。\n^FFC83200プレイヤー数:6\n^F4D5A600タイタンなし\nブーストなし"
+				"PL_nitro_ffa_lobby"	"FFAニトロのロビー"
+				"PL_nitro_mixtape"	"ミックステープ(ニトロ)"
+				"PL_nitro_mixtape_abbr"	"MXT-N"
+				"PL_nitro_mixtape_desc"	"選択したマップで繰り広げる高速のCTF、MFDおよびPvP。\n^FFC83200プレイヤー数:5対5\n最大パーティー人数:5\n^F4D5A600フラッグを即時返還"
+				"PL_nitro_mixtape_lobby"	"ミックステープロビー"
 				"PL_pilot_hunter"	"スカーミッシュ"
 				"PL_pilot_hunter_abbr"	"SKM"
 				"PL_pilot_hunter_desc"	"敵のパイロットやタイタンを倒せ。\n^FFC83200プレイヤー数:8対8\n時間制限:10分\n最大パーティー人数:8"
@@ -2967,6 +3079,10 @@ playlists
 				"PL_rise_abbr"	"RIS"
 				"PL_rise_desc"	"いつでもライズだけを。^CCCCCC00このリストでは^FFC83200CTF^CCCCCC00、^FFC83200拠点増幅^CCCCCC00、^FFC83200パイロット対パイロット^CCCCCC00、^FFC83200ライブファイア^CCCCCC00と^FFC83200ラスト・タイタン・スタンディング^CCCCCC00のマッチを検索します。"
 				"PL_rise_lobby"	"ライズ24/7のロビー"
+				"PL_rocket_arena"	"ロケットアリーナ"
+				"PL_rocket_arena_abbr"	"LF"
+				"PL_rocket_arena_desc"	"従来のライブファイアと同じルールで、改造したEPGを使用する。^FFC83200\nプレイヤー数:6対6      *タイタンなし\n時間制限:90秒      *リスポーンなし\n最大パーティー人数:6"
+				"PL_rocket_arena_lobby"	"ロケットアリーナのロビー"
 				"PL_settings_for_when_someone_loads_a_map_on_the_command_line_do_not_edit_the_cmdlinemapload_1_below_-_this_makes_this_work"	"コマンド行でマップをロードする際の設定。以下のcmdlineMapLoad 1は実行に必要なので編集しないでください。"
 				"PL_speedball"	"ライブファイア"
 				"PL_speedball_desc"	"中立のフラッグを奪い合う。敵チームを排除するか、制限時間終了時に自チームがフラッグを所有していればラウンドに勝利。5ラウンド先取制。\n^FFC83200プレイヤー数:6対6 *タイタンなし\n時間制限:1ラウンドにつき60秒 *リスポーンなし\n最大パーティー人数:6"
@@ -2980,6 +3096,15 @@ playlists
 				"PL_titan_brawl_desc"	"敵のタイタンを倒せ。パイロットは参戦禁止。\n^FFC83200プレイヤー数:5対5\n時間制限:10分\n最大パーティー人数:5"
 				"PL_titan_brawl_hint"	"敵のタイタンを倒せ。\n降機なし。"
 				"PL_titan_brawl_lobby"	"タイタンブロールのロビー"
+				"PL_titan_brawl_turbo"	"ターボタイタンブロール"
+				"PL_titan_brawl_turbo_abbr"	"TTDM"
+				"PL_titan_brawl_turbo_desc"	"ダッシュとコアの回復が早まった状態で、従来のタイタンブロールのルールで戦う。\n^FFC83200プレイヤー数:5対5\n時間制限:10分\n最大パーティー人数:5"
+				"PL_titan_brawl_turbo_hint"	"敵のタイタンを倒せ。\n脱出なし"
+				"PL_titan_brawl_turbo_lobby"	"ターボタイタンブロールのロビー"
+				"PL_turbo_last_titan_standing"	"ターボLTS"
+				"PL_turbo_last_titan_standing_abbr"	"LTS"
+				"PL_turbo_last_titan_standing_desc"	"ダッシュとコアの回復が早まった状態で、従来のLTSのルールで戦う。\n^FFC83200プレイヤー数:5対5      *タイタンでスタート\n時間制限:1ラウンド3分      *リスポーン\n最大パーティー人数:5"
+				"PL_turbo_last_titan_standing_lobby"	"ターボLTSのロビー"
 				"PL_variety_pack"	"ミックステープ"
 				"PL_variety_pack_desc"	"様々なプレイヤー数やマップで、次のモードをプレイできます。\n^FFC83200*賞金稼ぎ                   *消耗戦\n*ラスト・タイタン・スタンディング      *拠点増幅\n*パイロット対パイロット              *キャプチャー・ザ・フラッグ"
 				"PL_variety_pack_lobby"	"ミックステープロビー"
@@ -3008,7 +3133,7 @@ playlists
 				"COMMUNITYUPDATE_05_A"	"Kevin Younger создал забавный ролик, в котором демонстрирует различные приемчики с пульсирующим клинком.\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
 				"COMMUNITYUPDATE_05_Q"	"Творчество сообщества: На острие"
 				"COMMUNITYUPDATE_06_A"	"ConzeyG с reddit демонстрирует жестокую эффективность «Нордстара», одного за другим уничтожая пилотов в режиме «Приговор — смерть».\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_06_Q"	"Творчество сообщества: Охота на пилотов «Нордстара»"
+				"COMMUNITYUPDATE_06_Q"	"Сообщество: Охота на пилотов «Нордстара»"
 				"COMMUNITYUPDATE_07_A"	"Уже в игре! «Оборона Фронтира» возвращается вместе с картой «Восход», для покупки доступны новые боевые раскраски, а также появилась новая карта для режима «Перестрелка». Ознакомьтесь с нововведениями здесь. \n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
 				"COMMUNITYUPDATE_07_Q"	"Трейлер \"Операция «Щит Фронтира»\""
 				"COMMUNITYUPDATE_08_A"	"Уже в игре! Знаменитая карта «Военные игры» возвращается — и такой вы ее еще не видели! А еще не пропустите новую казнь и карту для «Перестрелки» — «Траффик».\n\n\nДля просмотра нажмите `2%[A_BUTTON|MOUSE1]%`0."
@@ -3033,22 +3158,26 @@ playlists
 				"COMMUNITYUPDATE_NAME"	"Сообщество"
 				"KNB_SUBJECT_00_DESC"	"`3Что нового в Titanfall?`0\n\nНовости обновлений Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Обновления игры"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0«Оборона Фронтира» — добавлена поддержка 3 карт: Док, Город Ангелов и Экзопланета.\n\n`2%$rui/bullet_point%`0Новая карта для «Перестрелки» — UMA\n\n`2%$rui/bullet_point%`0Новая казнь пилота — Дырявая стена\n\n`2%$rui/bullet_point%`0Новый доступный для покупки контент в магазине"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 29 августа — Открытки с Фронтира"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Оборона Фронтира — новый совместный режим, в котором вам придется вместе с другими игроками защищать важную цель от усиливающихся волн противников под управлением ИИ. Без общения и умения адаптироваться тут не победить.\n\n`2%$rui/bullet_point%`0Новая карта: «Восход»\n\n`2%$rui/bullet_point%`0Новая карта для «Перестрелки»: «Поселок»\n\n`2%$rui/bullet_point%`0Новый доступный для покупки контент в магазине"
-				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 25 июля: операция «Щит Фронтира»"
-				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Новая карта — «Военные игры»\n\n`2%$rui/bullet_point%`0Новая карта для режима «Перестрелка» — «Траффик»\n\n`2%$rui/bullet_point%`0Новая казнь пилота — «Бой с тенью»\n\n`2%$rui/bullet_point%`03 ячейка для оружия\n\n`2%$rui/bullet_point%`0Настройки частных матчей"
-				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 27 июня: «Военные игры»"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Новый Титан: «Монарх»\n\n`2%$rui/bullet_point%`0Новая карта: «Святыня»\n\n`2%$rui/bullet_point%`0Новая казнь пилота: «Иллюзия обмана»\n\n`2%$rui/bullet_point%`0Новый контент в магазине"
-				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 30 мая: Власть монарха"
-				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Новая карта: «Разлом»\n\n`2%$rui/bullet_point%`0Новая карта для «Перестрелки»: «Палуба»\n\n`2%$rui/bullet_point%`0Новая фракция: МРВН\n\n`2%$rui/bullet_point%`0Новая казнь пилота: «На острие»\n\n`2%$rui/bullet_point%`0Увеличение макс. поколения до 100"
-				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 25 апреля: Разлом на Фронтире"
-				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Новая карта: «Колония»\n\n`2%$rui/bullet_point%`0Новая казнь пилота: «Череподав»\n\n`2%$rui/bullet_point%`0Новое оружие: R-101\n\n`2%$rui/bullet_point%`0Новый контент в магазине"
-				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 марта: Новая колония"
-				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0«Перестрелка» — новый режим на выбывание для пилотов! Вас ждут битвы 6 на 6 без возможности возрождения. Выигрывает та команда, которая уничтожит соперника за одну минуту или будет удерживать нейтральный флаг по окончании отсчета. Первая команда, выигравшая в пяти раундах, побеждает.\n\n`2%$rui/bullet_point%`0Новые карты для «Перестрелки»: «Луг» и «Склад»\n\n`2%$rui/bullet_point%`0Новая казнь пилота: «Поздний удар»"
-				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 23 февраля: Перестрелка"
-				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Новая карта: «Город Ангелов»\n\n`2%$rui/bullet_point%`0Новое оружие: «Элитный ведомый B3»\n\n`2%$rui/bullet_point%`0Новая казнь пилота: «Внутренности»\n\n`2%$rui/bullet_point%`0Новые наборы для Титанов\n\n`2%$rui/bullet_point%`0Новый контент в магазине"
-				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 ноября: Особо опасные в Городе Ангелов"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`010 Новые фоны эмблем от сообщества\n\n`2%$rui/bullet_point%`0Все подарки сторонника теперь доступны за кредиты\n\n`2%$rui/bullet_point%`0Новый платный контент в магазине\n\n"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 28 ноября — время жатвы"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Главная ячейка для пистолета\n\n`2%$rui/bullet_point%`0Фоны на Хэллоуин\n\n`2%$rui/bullet_point%`0Изменения баланса\n\n`2%$rui/bullet_point%`0Новый доступный для покупки контент в магазине\n\n"
+				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 31 октября: «Сласти и страсти»"
+				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0«Оборона Фронтира» — добавлена поддержка 3 карт: Док, Город Ангелов и Экзопланета.\n\n`2%$rui/bullet_point%`0Новая карта для «Перестрелки» — UMA\n\n`2%$rui/bullet_point%`0Новая казнь пилота — Дырявая стена\n\n`2%$rui/bullet_point%`0Новый доступный для покупки контент в магазине"
+				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 29 августа — Открытки с Фронтира"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Оборона Фронтира — новый совместный режим, в котором вам придется вместе с другими игроками защищать важную цель от усиливающихся волн противников под управлением ИИ. Без общения и умения адаптироваться тут не победить.\n\n`2%$rui/bullet_point%`0Новая карта: «Восход»\n\n`2%$rui/bullet_point%`0Новая карта для «Перестрелки»: «Поселок»\n\n`2%$rui/bullet_point%`0Новый доступный для покупки контент в магазине"
+				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 25 июля: операция «Щит Фронтира»"
+				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Новая карта — «Военные игры»\n\n`2%$rui/bullet_point%`0Новая карта для режима «Перестрелка» — «Траффик»\n\n`2%$rui/bullet_point%`0Новая казнь пилота — «Бой с тенью»\n\n`2%$rui/bullet_point%`03 ячейка для оружия\n\n`2%$rui/bullet_point%`0Настройки частных матчей"
+				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 27 июня: «Военные игры»"
+				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Новый Титан: «Монарх»\n\n`2%$rui/bullet_point%`0Новая карта: «Святыня»\n\n`2%$rui/bullet_point%`0Новая казнь пилота: «Иллюзия обмана»\n\n`2%$rui/bullet_point%`0Новый контент в магазине"
+				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 мая: Власть монарха"
+				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Новая карта: «Разлом»\n\n`2%$rui/bullet_point%`0Новая карта для «Перестрелки»: «Палуба»\n\n`2%$rui/bullet_point%`0Новая фракция: МРВН\n\n`2%$rui/bullet_point%`0Новая казнь пилота: «На острие»\n\n`2%$rui/bullet_point%`0Увеличение макс. поколения до 100"
+				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 25 апреля: Разлом на Фронтире"
+				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Новая карта: «Колония»\n\n`2%$rui/bullet_point%`0Новая казнь пилота: «Череподав»\n\n`2%$rui/bullet_point%`0Новое оружие: R-101\n\n`2%$rui/bullet_point%`0Новый контент в магазине"
+				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 марта: Новая колония"
+				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0«Перестрелка» — новый режим на выбывание для пилотов! Вас ждут битвы 6 на 6 без возможности возрождения. Выигрывает та команда, которая уничтожит соперника за одну минуту или будет удерживать нейтральный флаг по окончании отсчета. Первая команда, выигравшая в пяти раундах, побеждает.\n\n`2%$rui/bullet_point%`0Новые карты для «Перестрелки»: «Луг» и «Склад»\n\n`2%$rui/bullet_point%`0Новая казнь пилота: «Поздний удар»"
+				"KNB_SUBJECT_00_SUB_08_Q"	"%$rui/hud/scoreboard/status_titan% 23 февраля: Перестрелка"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0Новая карта: «Город Ангелов»\n\n`2%$rui/bullet_point%`0Новое оружие: «Элитный ведомый B3»\n\n`2%$rui/bullet_point%`0Новая казнь пилота: «Внутренности»\n\n`2%$rui/bullet_point%`0Новые наборы для Титанов\n\n`2%$rui/bullet_point%`0Новый контент в магазине"
+				"KNB_SUBJECT_00_SUB_09_Q"	"%$rui/hud/scoreboard/status_titan% 30 ноября: Особо опасные в Городе Ангелов"
 				"MP_ANGEL_CITY_FD_WAVE_1"	"Пленники небес"
 				"MP_ANGEL_CITY_FD_WAVE_2"	"Бесформенность"
 				"MP_ANGEL_CITY_FD_WAVE_3"	"Мятеж"
@@ -3087,6 +3216,14 @@ playlists
 				"PL_all_holopilot_abbr"	"ПС"
 				"PL_all_holopilot_desc"	"Классическая «Перестрелка», где все тактические умения заменены голопилотом.^FFC83200\nИгроки: 6 на 6      * Без Титанов\nВремя: 60 с      * Без возрождений\nРазмер команды: 6"
 				"PL_all_holopilot_lobby"	"Лобби «Великая разводка»"
+				"PL_all_phase"	"Иная сторона"
+				"PL_all_phase_abbr"	"ИСТ"
+				"PL_all_phase_desc"	"Классическое «Истребление», где все тактические умения заменены на фазовый сдвиг.\n^FFC83200Игроки: 6 на 6      * ИИ\nВремя: 10 мин\nРазмер команды: 6"
+				"PL_all_phase_lobby"	"Лобби: Иная сторона"
+				"PL_all_spicy"	"Острое истребление"
+				"PL_all_spicy_abbr"	"ИСТ"
+				"PL_all_spicy_desc"	"Классическое «Истребление», где все тактические умения заменены на клещи.\n^FFC83200Игроки: 6 на 6      * ИИ\nВремя: 10 мин\nРазмер команды: 6"
+				"PL_all_spicy_lobby"	"Лобби: Острое истребление"
 				"PL_amped_tacticals"	"Усиленная тактика"
 				"PL_amped_tacticals_abbr"	"ИСТ"
 				"PL_amped_tacticals_desc"	"Классическое «Истребление», где все тактические умения значительно усилены.\n^FFC83200Игроки: 6 на 6      * ИИ\nВремя: 10 мин\nРазмер команды: 6"
@@ -3113,10 +3250,10 @@ playlists
 				"PL_colony_abbr"	"КОЛ"
 				"PL_colony_desc"	"«Колония» круглосуточно. ^CCCCCC00Поиск матчей в режимах ^FFC83200«Истребление»^CCCCCC00, ^FFC83200«Пилоты против пилотов»^CCCCCC00 и ^FFC83200«Последний из Титанов»^CCCCCC00."
 				"PL_colony_lobby"	"Лобби: «Колония» 24/7"
-				"PL_ctf_lf"	"Захват флага\n(Перестрелка)"
-				"PL_ctf_lf_abbr"	"ИСТ"
-				"PL_ctf_lf_desc"	"Быстрая игра в режиме «Захват флага» на картах режима «Перестрелка».\n^FFC83200Игроки: 6 на 6\nРазмер команды: 6\n^F4D5A600Без Титанов     Без усилений     При использовании фазового сдвига флаг теряется"
-				"PL_ctf_lf_lobby"	"Лобби: ЗФ (Перестрелка)"
+				"PL_ctf_lf"	"ЗФ (Нитро)"
+				"PL_ctf_lf_abbr"	"ЗФ-Н"
+				"PL_ctf_lf_desc"	"Быстрая игра в режиме «Захват флага» на картах режима «Перестрелка».\n^FFC83200Игроки: 5 на 5\nРазмер команды: 5\n^F4D5A600Мгновенный возврат флага"
+				"PL_ctf_lf_lobby"	"Лобби: ЗФ Нитро"
 				"PL_default_description"	"Описание по умолчанию"
 				"PL_default_lobbytitle"	"Название лобби по умолчанию"
 				"PL_default_name"	"Название по умолчанию"
@@ -3174,6 +3311,14 @@ playlists
 				"PL_marked_for_death_abbr"	"П-С"
 				"PL_marked_for_death_desc"	"Убивайте или защищайте приговоренные цели.\n^FFC83200Игроки: 6 на 6\nВремя: 12 мин\nРазмер команды: 6"
 				"PL_marked_for_death_lobby"	"Лобби: Приговор — смерть"
+				"PL_nitro_ffa"	"ВПВ (Нитро)"
+				"PL_nitro_ffa_abbr"	"ВПВ-Н"
+				"PL_nitro_ffa_desc"	"Стремительные битвы «Все против всех» на избранных картах.\n^FFC83200Игроки: 6\n^F4D5A600Без Титанов\nБез усилений"
+				"PL_nitro_ffa_lobby"	"ВПВ (Нитро): лобби"
+				"PL_nitro_mixtape"	"Смешанный набор (Нитро)"
+				"PL_nitro_mixtape_abbr"	"СН-Н"
+				"PL_nitro_mixtape_desc"	"Стремительные битвы ЗФ, П-С и PvP на избранных картах.\n^FFC83200Игроки: 5 на 5\nРазмер команды: 5\n^F4D5A600Мгновенный возврат флага"
+				"PL_nitro_mixtape_lobby"	"Смешанный набор: лобби"
 				"PL_pilot_hunter"	"Схватка"
 				"PL_pilot_hunter_abbr"	"СХВ"
 				"PL_pilot_hunter_desc"	"Убивайте вражеских пилотов и Титанов. \n^FFC83200Игроки: 8 на 8\nЛимит времени: 10 мин\nРазмер команды: 8"
@@ -3193,6 +3338,10 @@ playlists
 				"PL_rise_abbr"	"ВСХ"
 				"PL_rise_desc"	"«Восход» 24/7. ^CCCCCC00Начинает поиск матчей в режимах ^FFC83200ЗФ^CCCCCC00, ^FFC83200«Усиленные опорные пункты»^CCCCCC00, ^FFC83200«Пилоты против пилотов»^CCCCCC00, ^FFC83200«Перестрелка»^CCCCCC00 и ^FFC83200«Последний из Титанов»^CCCCCC00."
 				"PL_rise_lobby"	"Лобби: «Восход» 24/7"
+				"PL_rocket_arena"	"Ракетная арена"
+				"PL_rocket_arena_abbr"	"ПС"
+				"PL_rocket_arena_desc"	"Классическая «Перестрелка» с модифицированными ЭПУ.^FFC83200\nИгроки: 6 на 6 * Без Титанов\nВремя: 90 с * Без возрождений\nРазмер команды: 6"
+				"PL_rocket_arena_lobby"	"Лобби: Ракетная арена"
 				"PL_settings_for_when_someone_loads_a_map_on_the_command_line_do_not_edit_the_cmdlinemapload_1_below_-_this_makes_this_work"	"Настройки на случай загрузки карты из командной строки. Не редактируйте cmdlineMapLoad 1 ниже (благодаря этому все и работает)."
 				"PL_speedball"	"Перестрелка"
 				"PL_speedball_desc"	"Сражение идет за владение нейтральным флагом. Для победы в раунде необходимо уничтожить всех вражеских игроков или захватить флаг до окончания отсчета. Побеждает команда, первой достигшая пяти побед.\n^FFC83200Игроков: 6 на 6 *Без Титанов\nОграничение по времени: 60 секунд на раунд *Без возрождений\nРазмер команды: 6"
@@ -3206,6 +3355,15 @@ playlists
 				"PL_titan_brawl_desc"	"Убивайте вражеских Титанов. Пилоты в бою не участвуют.\n^FFC83200Игроки: 5 на 5\nЛимит времени: 10 мин\nРазмер команды: 5"
 				"PL_titan_brawl_hint"	"Убивайте вражеских Титанов.\nКатапультирование запрещено"
 				"PL_titan_brawl_lobby"	"Лобби: Битва Титанов"
+				"PL_titan_brawl_turbo"	"Турбодрака Титанов"
+				"PL_titan_brawl_turbo_abbr"	"КМНБ"
+				"PL_titan_brawl_turbo_desc"	"Классическая «Драка Титанов» с ускоренными перезарядкой рывка и зарядом ядра.\n^FFC83200Игроки: 5 на 5\nВремя: 10 мин.\nРазмер команды: 5"
+				"PL_titan_brawl_turbo_hint"	"Убивайте вражеских Титанов.\nКатапультирование запрещено"
+				"PL_titan_brawl_turbo_lobby"	"Лобби: Турбодрака Титанов"
+				"PL_turbo_last_titan_standing"	"Турбо-ПИТ"
+				"PL_turbo_last_titan_standing_abbr"	"ПИТ"
+				"PL_turbo_last_titan_standing_desc"	"Классический «Последний из Титанов» с ускоренными перезарядкой рывка и зарядом ядра.\n^FFC83200Игроки: 5 на 5      * Сразу есть Титан\nВремя: 3 минуты на раунд      * Без возрождений\nРазмер команды: 5"
+				"PL_turbo_last_titan_standing_lobby"	"Лобби: Турбо-ПИТ"
 				"PL_variety_pack"	"Смешанный набор"
 				"PL_variety_pack_desc"	"Разное количество игроков и разнообразные карты. Режимы:\n^FFC83200*Охота за наживой                   *Истребление\n*Последний из Титанов      *Усиленные опорные пункты\n*Пилоты против пилотов              *Захват флага"
 				"PL_variety_pack_lobby"	"Смешанный набор: лобби"
@@ -3259,22 +3417,26 @@ playlists
 				"COMMUNITYUPDATE_NAME"	"Comunidad"
 				"KNB_SUBJECT_00_DESC"	"`3¿Qué novedades trae Titanfall?`0\n\n¡Consulta aquí qué ha cambiado en Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Actualizaciones"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Defensa fronteriza: - Compatibilidad para 3 mapas más - Dique seco, Angel City y Exoplaneta.\n\n`2%$rui/bullet_point%`0Nuevo mapa de Munición real - UMA\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto - Agujero en el muro\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 29 de agosto - Postales de la Frontera"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Defensa fronteriza: un nuevo modo cooperativo donde unes fuerzas con hasta 3 jugadores más para defender un objetivo crucial de oleadas cada vez más intensas de combatientes de IA. La comunicación y la adaptabilidad son claves para sobrevivir.\n\n`2%$rui/bullet_point%`0Mapa nuevo: Ascenso\n\n`2%$rui/bullet_point%`0Mapa nuevo de Munición real: Municipio\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda"
-				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 25 de julio: operación Escudo fronterizo"
-				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Juegos de guerra\n\n`2%$rui/bullet_point%`0Nuevo mapa de Munición real: Tráfico\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Lucha con tu sombra\n\n`2%$rui/bullet_point%`03.er espacio de arma\n\n`2%$rui/bullet_point%`0Ajustes de partida privada"
-				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 27 de junio: Juegos de guerra"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Nuevo titán: Monarch\n\n`2%$rui/bullet_point%`0Nuevo mapa: Reliquia\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Ahora me ves\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda"
-				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 30 de mayo: Reino del Monarch"
-				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Glitch\n\n`2%$rui/bullet_point%`0Nuevo mapa de Munición real: Cubierta\n\n`2%$rui/bullet_point%`0Nueva facción: Marvins\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Incisivo\n\n`2%$rui/bullet_point%`0Generación máxima aumentada a 100"
-				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 25 de abril: Un glitch en la Frontera"
-				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Colonia\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Aplastacráneos\n\n`2%$rui/bullet_point%`0Nueva arma: R-101\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda"
-				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 de marzo: Colony Reborn"
-				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Munición real: un nuevo modo de juego de eliminación de pilotos contra pilotos. Modo 6 contra 6 sin reaparición, donde tienes un minuto para eliminar al equipo rival para ganar la ronda. También ganas la ronda si tu equipo conserva la bandera neutral cuando el tiempo se agote. Vence el primero en ganar 5 rondas.\n\n`2%$rui/bullet_point%`0Nuevo mapa de Munición real: Prado\n\n`2%$rui/bullet_point%`0Nuevo mapa de Munición real: Chimeneas\n\n`2%$rui/bullet_point%`0Nueva ejecución: Impacto tardío"
-				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 23 de febrero: Munición real"
-				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Angel City\n\n`2%$rui/bullet_point%`0Nueva arma: B3 Wingman de élite\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Destruido desde dentro\n\n`2%$rui/bullet_point%`0Nuevos kits de titán\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda"
-				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 de noviembre: Más buscados de Angel City"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`010 nuevas banderas de indicativos creadas por la comunidad\n\n`2%$rui/bullet_point%`0Todos los regalos de partidario ahora pueden adquirirse con créditos\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda\n\n"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 28 de noviembre: Cosecha"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Espacio principal de pistola\n\n`2%$rui/bullet_point%`0Banderas de Halloween\n\n`2%$rui/bullet_point%`0Cambios de equilibrio\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda\n\n"
+				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 31 de octubre: Trucos o golosinas"
+				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Defensa fronteriza: - Compatibilidad para 3 mapas más - Dique seco, Angel City y Exoplaneta.\n\n`2%$rui/bullet_point%`0Nuevo mapa de Munición real - UMA\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto - Agujero en el muro\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda"
+				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 29 de agosto - Postales de la Frontera"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Defensa fronteriza: un nuevo modo cooperativo donde unes fuerzas con hasta 3 jugadores más para defender un objetivo crucial de oleadas cada vez más intensas de combatientes de IA. La comunicación y la adaptabilidad son claves para sobrevivir.\n\n`2%$rui/bullet_point%`0Mapa nuevo: Ascenso\n\n`2%$rui/bullet_point%`0Mapa nuevo de Munición real: Municipio\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda"
+				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 25 de julio: operación Escudo fronterizo"
+				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Juegos de guerra\n\n`2%$rui/bullet_point%`0Nuevo mapa de Munición real: Tráfico\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Lucha con tu sombra\n\n`2%$rui/bullet_point%`03.er espacio de arma\n\n`2%$rui/bullet_point%`0Ajustes de partida privada"
+				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 27 de junio: Juegos de guerra"
+				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Nuevo titán: Monarch\n\n`2%$rui/bullet_point%`0Nuevo mapa: Reliquia\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Ahora me ves\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda"
+				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 de mayo: Reino del Monarch"
+				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Glitch\n\n`2%$rui/bullet_point%`0Nuevo mapa de Munición real: Cubierta\n\n`2%$rui/bullet_point%`0Nueva facción: Marvins\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Incisivo\n\n`2%$rui/bullet_point%`0Generación máxima aumentada a 100"
+				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 25 de abril: Un glitch en la Frontera"
+				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Colonia\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Aplastacráneos\n\n`2%$rui/bullet_point%`0Nueva arma: R-101\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda"
+				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 de marzo: Colony Reborn"
+				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0Munición real: un nuevo modo de juego de eliminación de pilotos contra pilotos. Modo 6 contra 6 sin reaparición, donde tienes un minuto para eliminar al equipo rival para ganar la ronda. También ganas la ronda si tu equipo conserva la bandera neutral cuando el tiempo se agote. Vence el primero en ganar 5 rondas.\n\n`2%$rui/bullet_point%`0Nuevo mapa de Munición real: Prado\n\n`2%$rui/bullet_point%`0Nuevo mapa de Munición real: Chimeneas\n\n`2%$rui/bullet_point%`0Nueva ejecución: Impacto tardío"
+				"KNB_SUBJECT_00_SUB_08_Q"	"%$rui/hud/scoreboard/status_titan% 23 de febrero: Munición real"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Angel City\n\n`2%$rui/bullet_point%`0Nueva arma: B3 Wingman de élite\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Destruido desde dentro\n\n`2%$rui/bullet_point%`0Nuevos kits de titán\n\n`2%$rui/bullet_point%`0Nuevo contenido adquirible en la tienda"
+				"KNB_SUBJECT_00_SUB_09_Q"	"%$rui/hud/scoreboard/status_titan% 30 de noviembre: Más buscados de Angel City"
 				"MP_ANGEL_CITY_FD_WAVE_1"	"Encadenado al cielo"
 				"MP_ANGEL_CITY_FD_WAVE_2"	"Amorfo"
 				"MP_ANGEL_CITY_FD_WAVE_3"	"Insurgencia"
@@ -3313,6 +3475,14 @@ playlists
 				"PL_all_holopilot_abbr"	"MR"
 				"PL_all_holopilot_desc"	"Reglas de Munición real clásico, excepto que todas las funciones tácticas se reemplazan por holopiloto.^FFC83200\nJugadores: 6 contra 6      *Sin titanes\nLímite de tiempo: 60 s      *Sin reapariciones\nTamaño máximo de grupo: 6"
 				"PL_all_holopilot_lobby"	"Vestíbulo de El gran engaño"
+				"PL_all_phase"	"El otro lado"
+				"PL_all_phase_abbr"	"DGT"
+				"PL_all_phase_desc"	"Reglas de Desgaste clásico, excepto que todas las funciones tácticas se reemplazan por Fase.\n^FFC83200Jugadores: 6 contra 6      *IA\nLímite de tiempo: 10 min\nTamaño máximo de grupo: 6"
+				"PL_all_phase_lobby"	"Vestíbulo de El otro lado"
+				"PL_all_spicy"	"Desgaste animado"
+				"PL_all_spicy_abbr"	"DGT"
+				"PL_all_spicy_desc"	"Reglas de Desgaste clásico, excepto que todas las funciones tácticas se reemplazan con garrapatas.\n^FFC83200Jugadores: 6 contra 6      *IA\nLímite de tiempo: 10 min\nTamaño máximo de grupo: 6"
+				"PL_all_spicy_lobby"	"Vestíbulo de Desgaste animado"
 				"PL_amped_tacticals"	"Tácticas +"
 				"PL_amped_tacticals_abbr"	"DGT"
 				"PL_amped_tacticals_desc"	"Reglas de Desgaste clásico, excepto que las funciones tácticas son más potentes.\n^FFC83200Jugadores: 6 contra 6      *IA\nLímite de tiempo: 10 min\nTamaño máximo de grupo: 6"
@@ -3339,10 +3509,10 @@ playlists
 				"PL_colony_abbr"	"COL"
 				"PL_colony_desc"	"Mapa Colonia, continuamente. ^CCCCCC00Buscará partidas de ^FFC83200Desgaste^CCCCCC00, ^FFC83200Pilotos contra pilotos^CCCCCC00 y ^FFC83200Último titán en pie^CCCCCC00."
 				"PL_colony_lobby"	"Vestíbulo de Colonia 24/7"
-				"PL_ctf_lf"	"Captura la bandera\n(Munición real)"
-				"PL_ctf_lf_abbr"	"DGT"
-				"PL_ctf_lf_desc"	"Frenético Captura la bandera en mapas de Munición real.\n^FFC83200Jugadores: 6 contra6\nTamaño máximo de grupo: 6\n^F4D5A600Sin titanes     Sin potenciadores     Al usar el salto de fase, se pierde la bandera"
-				"PL_ctf_lf_lobby"	"Vestíbulo CLB Munición real"
+				"PL_ctf_lf"	"CLB (Nitro)"
+				"PL_ctf_lf_abbr"	"CLB-N"
+				"PL_ctf_lf_desc"	"Frenético Captura la bandera en mapas seleccionados.\n^FFC83200Jugadores: 5 contra 5\nTamaño máximo de grupo: 5\n^F4D5A600Recuperación instantánea de banderas"
+				"PL_ctf_lf_lobby"	"Vestíbulo CLB Nitro"
 				"PL_default_description"	"Descripción predeterminada"
 				"PL_default_lobbytitle"	"Título de vestíbulo por defecto"
 				"PL_default_name"	"Nombre predeterminado"
@@ -3400,6 +3570,14 @@ playlists
 				"PL_marked_for_death_abbr"	"CON"
 				"PL_marked_for_death_desc"	"Elimina o protege los blancos marcados.\n^FFC83200Jugadores: 6 contra 6 \nLímite de tiempo: 12 min\nTamaño máximo de grupo: 6"
 				"PL_marked_for_death_lobby"	"Vestíbulo de Condenado"
+				"PL_nitro_ffa"	"BC (Nitro)"
+				"PL_nitro_ffa_abbr"	"BC-N"
+				"PL_nitro_ffa_desc"	"Frenética Batalla campal en mapas seleccionados.\n^FFC83200Jugadores: 6\n^F4D5A600Sin titanes\nSin potenciadores"
+				"PL_nitro_ffa_lobby"	"Vestíbulo de BC (Nitro)"
+				"PL_nitro_mixtape"	"Variado (Nitro)"
+				"PL_nitro_mixtape_abbr"	"VRD-N"
+				"PL_nitro_mixtape_desc"	"Frenéticos CLB, CON y JcJ en mapas seleccionados.\n^FFC83200Jugadores: 5 contra 5\nTamaño máximo de grupo: 5\n^F4D5A600Recuperación instantánea de banderas"
+				"PL_nitro_mixtape_lobby"	"Vestíbulo de Variado"
 				"PL_pilot_hunter"	"Escaramuza"
 				"PL_pilot_hunter_abbr"	"ECM"
 				"PL_pilot_hunter_desc"	"Elimina pilotos y titanes enemigos. \n^FFC83200Jugadores: 8 contra 8\nLímite de tiempo: 10 min\nTamaño máximo de grupo: 8"
@@ -3419,6 +3597,10 @@ playlists
 				"PL_rise_abbr"	"ASC"
 				"PL_rise_desc"	"Mapa Ascenso, continuamente. ^CCCCCC00Buscará partidas de ^FFC83200CLB^CCCCCC00, ^FFC83200Fortines cargados^CCCCCC00, ^FFC83200Pilotos contra pilotos^CCCCCC00, ^FFC83200Munición real^CCCCCC00 y ^FFC83200Último titán en pie^CCCCCC00."
 				"PL_rise_lobby"	"Vestíbulo de Ascenso 24/7"
+				"PL_rocket_arena"	"Arena balística"
+				"PL_rocket_arena_abbr"	"MR"
+				"PL_rocket_arena_desc"	"Reglas de Munición real clásico con EPG modificadas.^FFC83200\nJugadores: 6 contra 6 *Sin titanes\nLímite de tiempo: 90 s *Sin reapariciones\nTamaño máximo de grupo: 6"
+				"PL_rocket_arena_lobby"	"Vestíbulo de Arena balística"
 				"PL_settings_for_when_someone_loads_a_map_on_the_command_line_do_not_edit_the_cmdlinemapload_1_below_-_this_makes_this_work"	"Ajustes para cuando alguien carga un mapa desde la línea de comandos. No editar cmdlineMapLoad 1: eso hace que esto funcione."
 				"PL_speedball"	"Munición real"
 				"PL_speedball_desc"	"Lucha por la posesión de una bandera neutral. Elimina al equipo enemigo o mantén la posesión de la bandera cuando se agote el tiempo para vencer en la ronda. Gana el primero en imponerse en 5 rondas.\n^FFC83200Jugadores: 6 contra 6 *Sin titanes\nLímite de tiempo: 60 segundos por ronda *Sin reapariciones\nTamaño máximo de grupo: 6"
@@ -3432,6 +3614,15 @@ playlists
 				"PL_titan_brawl_desc"	"Elimina titanes enemigos. Pilotos no permitidos.\n^FFC83200Jugadores: 5 contra 5\nLímite de tiempo: 10 min\nTamaño máximo de grupo: 5"
 				"PL_titan_brawl_hint"	"Elimina titanes enemigos.\nSin eyección."
 				"PL_titan_brawl_lobby"	"Vestíbulo de Batalla de titanes"
+				"PL_titan_brawl_turbo"	"Batalla de titanes turbo"
+				"PL_titan_brawl_turbo_abbr"	"BDT"
+				"PL_titan_brawl_turbo_desc"	"Reglas de Batalla de titanes clásico con regeneración de impulso y generación de núcleo más rápidas.\n^FFC83200Jugadores: 5 contra 5\nLímite de tiempo: 10 min\nTamaño máximo de grupo: 5"
+				"PL_titan_brawl_turbo_hint"	"Elimina titanes enemigos.\nSin eyección"
+				"PL_titan_brawl_turbo_lobby"	"Vestíbulo de Batalla de titanes turbo"
+				"PL_turbo_last_titan_standing"	"UTEP turbo"
+				"PL_turbo_last_titan_standing_abbr"	"UTEP"
+				"PL_turbo_last_titan_standing_desc"	"Reglas de UTEP clásico con regeneración de impulso y generación de núcleo más rápidas.\n^FFC83200Jugadores: 5 contra 5      *Empiezas como titán\nLímite de tiempo: 3 min por ronda      *Sin reapariciones\nTamaño máximo de grupo: 5"
+				"PL_turbo_last_titan_standing_lobby"	"Vestíbulo de UTEP turbo"
 				"PL_variety_pack"	"Variado"
 				"PL_variety_pack_desc"	"Número de jugadores variables. Incluye diversos mapas de los siguientes modos:\n^FFC83200*Cazarrecompensas                   *Desgaste\n*Último titán en pie      *Fortines cargados\n*Pilotos contra pilotos              *Captura la bandera"
 				"PL_variety_pack_lobby"	"Vestíbulo de Variado"
@@ -3485,22 +3676,26 @@ playlists
 				"COMMUNITYUPDATE_NAME"	"社群"
 				"KNB_SUBJECT_00_DESC"	"`3《Titanfall》有什麼新內容？`0\n\n從此處瞭解《Titanfall 2》的改變！"
 				"KNB_SUBJECT_00_NAME"	"遊戲更新"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0邊境防禦 - 支援 3 張額外的地圖：乾塢、天使城和系外行星。\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - UMA\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 穿透障壁\n\n`2%$rui/bullet_point%`0全新商城道具供你購買"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 8 月 29 日 - 邊境明信片"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0邊境防禦 - 全新合作模式讓你與其他三名玩家一同保護重要目標並擊退一波波逐漸增強的 AI 敵人。溝通與適應力將是生存的關鍵。\n\n`2%$rui/bullet_point%`0全新地圖 - 崛起\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - 小鎮\n\n`2%$rui/bullet_point%`0全新商城道具供你購買"
-				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 7 月 25 日 - 邊境神盾任務"
-				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0新地圖 - 戰爭遊戲\n\n`2%$rui/bullet_point%`0新烈火戰場地圖 - 交通\n\n`2%$rui/bullet_point%`0新鐵馭處決動畫 - 幻影拳腳\n\n`2%$rui/bullet_point%`0第三武器欄\n\n`2%$rui/bullet_point%`0私人比賽設置"
-				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 6 月 27 日 - 戰爭遊戲"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0全新泰坦 - 帝王\n\n`2%$rui/bullet_point%`0全新地圖 - 遺跡\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 無影無蹤\n\n`2%$rui/bullet_point%`0全新商城道具供你購買"
-				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 5 月 30 日 - 帝王的統治"
-				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0全新地圖 - 異常\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - 甲板\n\n`2%$rui/bullet_point%`0全新陣營 - 馬文機器人\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 刀刀見骨\n\n`2%$rui/bullet_point%`0重生上限提升至 100"
-				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 4 月 25 日 - 邊境故障"
-				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0全新地圖 - 殖民地\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 猛擊\n\n`2%$rui/bullet_point%`0全新武器 - R-101\n\n`2%$rui/bullet_point%`0全新商城道具供你購買"
-				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 3 月 30 日 - 殖民地重生"
-				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0烈火戰場 - 全新鐵馭對鐵馭殲滅模式！這是一場 6 對 6 回合模式且不能重生，你將有一分鐘時間殲滅敵隊來贏得此回合。你也能夠透過在計時結束時持有中立旗幟來取勝。先贏得 5 個回合的隊伍將贏得比賽。\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - 草原\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - 堆積地\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 快速攻擊"
-				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 2 月 23 日 - 烈火戰場"
-				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0全新地圖 - 天使城\n\n`2%$rui/bullet_point%`0全新武器 - B3 幫手菁英\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 瞬間爆炸\n\n`2%$rui/bullet_point%`0全新泰坦裝備\n\n`2%$rui/bullet_point%`0全新商城道具供你購買"
-				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 11 月 30 日 - 天使城通緝令"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`010 社群建立的全新呼叫代號旗幟\n\n`2%$rui/bullet_point%`0現在能夠使用點數購買所有擁護禮包\n\n`2%$rui/bullet_point%`0全新商城道具供你購買\n\n"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 11 月 28 日 - 收穫季節"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0主手槍欄\n\n`2%$rui/bullet_point%`0萬聖節旗幟\n\n`2%$rui/bullet_point%`0平衡性變更\n\n`2%$rui/bullet_point%`0全新商城道具供你購買\n\n"
+				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 10 月 31 日 - 萬聖節活動"
+				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0邊境防禦 - 支援 3 張額外的地圖：乾塢、天使城和系外行星。\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - UMA\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 穿透障壁\n\n`2%$rui/bullet_point%`0全新商城道具供你購買"
+				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 8 月 29 日 - 邊境明信片"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0邊境防禦 - 全新合作模式讓你與其他三名玩家一同保護重要目標並擊退一波波逐漸增強的 AI 敵人。溝通與適應力將是生存的關鍵。\n\n`2%$rui/bullet_point%`0全新地圖 - 崛起\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - 小鎮\n\n`2%$rui/bullet_point%`0全新商城道具供你購買"
+				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 7 月 25 日 - 邊境神盾任務"
+				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0新地圖 - 戰爭遊戲\n\n`2%$rui/bullet_point%`0新烈火戰場地圖 - 交通\n\n`2%$rui/bullet_point%`0新鐵馭處決動畫 - 幻影拳腳\n\n`2%$rui/bullet_point%`0第三武器欄\n\n`2%$rui/bullet_point%`0私人比賽設置"
+				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 6 月 27 日 - 戰爭遊戲"
+				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0全新泰坦 - 帝王\n\n`2%$rui/bullet_point%`0全新地圖 - 遺跡\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 無影無蹤\n\n`2%$rui/bullet_point%`0全新商城道具供你購買"
+				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 5 月 30 日 - 帝王的統治"
+				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0全新地圖 - 異常\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - 甲板\n\n`2%$rui/bullet_point%`0全新陣營 - 馬文機器人\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 刀刀見骨\n\n`2%$rui/bullet_point%`0重生上限提升至 100"
+				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 4 月 25 日 - 邊境故障"
+				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0全新地圖 - 殖民地\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 猛擊\n\n`2%$rui/bullet_point%`0全新武器 - R-101\n\n`2%$rui/bullet_point%`0全新商城道具供你購買"
+				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 3 月 30 日 - 殖民地重生"
+				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0烈火戰場 - 全新鐵馭對鐵馭殲滅模式！這是一場 6 對 6 回合模式且不能重生，你將有一分鐘時間殲滅敵隊來贏得此回合。你也能夠透過在計時結束時持有中立旗幟來取勝。先贏得 5 個回合的隊伍將贏得比賽。\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - 草原\n\n`2%$rui/bullet_point%`0全新烈火戰場地圖 - 堆積地\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 快速攻擊"
+				"KNB_SUBJECT_00_SUB_08_Q"	"%$rui/hud/scoreboard/status_titan% 2 月 23 日 - 烈火戰場"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0全新地圖 - 天使城\n\n`2%$rui/bullet_point%`0全新武器 - B3 幫手菁英\n\n`2%$rui/bullet_point%`0全新鐵馭處決動畫 - 瞬間爆炸\n\n`2%$rui/bullet_point%`0全新泰坦裝備\n\n`2%$rui/bullet_point%`0全新商城道具供你購買"
+				"KNB_SUBJECT_00_SUB_09_Q"	"%$rui/hud/scoreboard/status_titan% 11 月 30 日 - 天使城通緝令"
 				"MP_ANGEL_CITY_FD_WAVE_1"	"被縛於天際"
 				"MP_ANGEL_CITY_FD_WAVE_2"	"無形"
 				"MP_ANGEL_CITY_FD_WAVE_3"	"暴動"
@@ -3539,6 +3734,14 @@ playlists
 				"PL_all_holopilot_abbr"	"烈火戰場"
 				"PL_all_holopilot_desc"	"傳統烈火戰場規則，但是戰術技能被幻影鐵馭取代。\n^FFC83200玩家：6v6      *無泰坦\n時間限制：60 秒      *無重生\n最大隊伍人數：6"
 				"PL_all_holopilot_lobby"	"大騙局大廳"
+				"PL_all_phase"	"異次元"
+				"PL_all_phase_abbr"	"消耗戰"
+				"PL_all_phase_desc"	"傳統消耗戰規則，但是戰術技能被轉移取代。\n^FFC83200玩家：6v6      *電腦\n時間限制：10 分鐘\n最大隊伍人數：6"
+				"PL_all_phase_lobby"	"異次元大廳"
+				"PL_all_spicy"	"火熱消耗戰"
+				"PL_all_spicy_abbr"	"消耗戰"
+				"PL_all_spicy_desc"	"傳統消耗戰規則，但是戰術技能被炸蛛取代。\n^FFC83200玩家：6v6      *電腦\n時間限制：10 分鐘\n最大隊伍人數：6"
+				"PL_all_spicy_lobby"	"火熱消耗戰大廳"
 				"PL_amped_tacticals"	"強化戰術技能"
 				"PL_amped_tacticals_abbr"	"消耗戰"
 				"PL_amped_tacticals_desc"	"傳統消耗戰規則，但是戰術技能將更加強大。\n^FFC83200玩家：6v6      *電腦\n時間限制：10 分鐘\n最大隊伍人數：6"
@@ -3565,10 +3768,10 @@ playlists
 				"PL_colony_abbr"	"COL"
 				"PL_colony_desc"	"所有殖民地，持續不斷。 ^CCCCCC00這將會搜尋^FFC83200消耗戰^CCCCCC00、^FFC83200鐵馭對鐵馭^CCCCCC00、及^FFC83200泰坦殊死戰^CCCCCC00的比賽。"
 				"PL_colony_lobby"	"殖民地 24/7 大廳"
-				"PL_ctf_lf"	"奪旗\n（烈火戰場）"
-				"PL_ctf_lf_abbr"	"ATT"
-				"PL_ctf_lf_desc"	"在烈火戰場地圖中進行快節奏的奪旗比賽。\n^FFC83200玩家：6 對 6\n最大派對人數：6\n^F4D5A600無泰坦     無強化     瞬間轉移會造成旗幟掉落"
-				"PL_ctf_lf_lobby"	"奪旗烈火戰場大廳"
+				"PL_ctf_lf"	"奪旗（氮氧）"
+				"PL_ctf_lf_abbr"	"氮氧奪旗"
+				"PL_ctf_lf_desc"	"在選擇的地圖中進行快節奏的奪旗比賽。\n^FFC83200玩家：5 對 5\n最大隊伍人數：5\n^F4D5A600立即歸還旗幟"
+				"PL_ctf_lf_lobby"	"氮氧奪旗大廳"
 				"PL_default_description"	"預設說明"
 				"PL_default_lobbytitle"	"預設大廳名稱"
 				"PL_default_name"	"預設名稱"
@@ -3626,6 +3829,14 @@ playlists
 				"PL_marked_for_death_abbr"	"MFD"
 				"PL_marked_for_death_desc"	"擊殺或保護被標記的目標。\n^FFC83200玩家：6 對 6\n時間限制：12 分鐘\n最大派對人數：6"
 				"PL_marked_for_death_lobby"	"獵殺標記大廳"
+				"PL_nitro_ffa"	"混戰（氮氧）"
+				"PL_nitro_ffa_abbr"	"混戰-氮氧"
+				"PL_nitro_ffa_desc"	"在特定地圖上進行快節奏的混戰。\n^FFC83200玩家：6\n^F4D5A600無泰坦\n無強化"
+				"PL_nitro_ffa_lobby"	"混戰氮氧大廳"
+				"PL_nitro_mixtape"	"綜合（氮氧）"
+				"PL_nitro_mixtape_abbr"	"綜合-氮氧"
+				"PL_nitro_mixtape_desc"	"在特定地圖上進行快節奏的奪旗、獵殺標記與鐵馭對鐵馭。\n^FFC83200玩家：5 對 5\n最大隊伍人數：5\n^F4D5A600立即歸還旗幟"
+				"PL_nitro_mixtape_lobby"	"綜合大廳"
 				"PL_pilot_hunter"	"小規模戰鬥"
 				"PL_pilot_hunter_abbr"	"SKM"
 				"PL_pilot_hunter_desc"	"擊殺敵方鐵馭與泰坦。\n^FFC83200玩家：8 對 8\n時間限制：10 分鐘\n最大派對人數：8"
@@ -3645,6 +3856,10 @@ playlists
 				"PL_rise_abbr"	"RIS"
 				"PL_rise_desc"	"僅限崛起，持續不斷。^CCCCCC00這將搜尋^FFC83200奪旗^CCCCCC00、^FFC83200強化據點^CCCCCC00、^FFC83200鐵馭對鐵馭^CCCCCC00、^FFC83200烈火戰場^CCCCCC00與^FFC83200泰坦殊死戰^CCCCCC00比賽。"
 				"PL_rise_lobby"	"崛起 24/7 大廳"
+				"PL_rocket_arena"	"火箭競技場"
+				"PL_rocket_arena_abbr"	"烈火戰場"
+				"PL_rocket_arena_desc"	"傳統烈火戰場規則，但是配有改裝版 EPG。^FFC83200\n玩家：6v6*無泰坦\n時間限制：90 秒*無重生\n最大隊伍人數：6"
+				"PL_rocket_arena_lobby"	"火箭競技場大廳"
 				"PL_settings_for_when_someone_loads_a_map_on_the_command_line_do_not_edit_the_cmdlinemapload_1_below_-_this_makes_this_work"	"有人在命令行載入地圖時的設定。請勿編輯下面 cmdlineMapLoad 1－有這個才能使用本功能。"
 				"PL_speedball"	"烈火戰場"
 				"PL_speedball_desc"	"搶奪中立旗幟。消滅敵隊或是在比賽結束時持有旗幟者贏得一局。先贏 5 局者勝。\n^FFC83200玩家：6 對 6 *無泰坦\n時間限制：每局 60 秒 *無重生\n最大派對人數：6"
@@ -3658,6 +3873,15 @@ playlists
 				"PL_titan_brawl_desc"	"擊殺敵方泰坦，不可使用鐵馭。\n^FFC83200玩家：5 對 5\n時間限制：10 分鐘\n最大派對人數：5"
 				"PL_titan_brawl_hint"	"擊殺敵方泰坦。\n無彈射"
 				"PL_titan_brawl_lobby"	"泰坦爭鬥大廳"
+				"PL_titan_brawl_turbo"	"渦輪泰坦爭鬥"
+				"PL_titan_brawl_turbo_abbr"	"泰坦爭鬥"
+				"PL_titan_brawl_turbo_desc"	"傳統泰坦爭鬥規則，但是擁有更快的衝刺恢復與核心提升率。\n^FFC83200玩家：5 對 5\n時間限制：10 分鐘\n最大隊伍人數：5"
+				"PL_titan_brawl_turbo_hint"	"擊殺敵方泰坦。\n無彈射"
+				"PL_titan_brawl_turbo_lobby"	"渦輪泰坦爭鬥大廳"
+				"PL_turbo_last_titan_standing"	"渦輪殊死戰"
+				"PL_turbo_last_titan_standing_abbr"	"泰坦殊死戰"
+				"PL_turbo_last_titan_standing_desc"	"傳統泰坦殊死戰規則，但是擁有更快的衝刺恢復與核心提升率。\n^FFC83200玩家：5 對 5      *開始時有泰坦\n時間限制：每回合 3 分鐘      *無重生\n最大隊伍人數：5"
+				"PL_turbo_last_titan_standing_lobby"	"渦輪泰坦殊死戰大廳"
 				"PL_variety_pack"	"綜合"
 				"PL_variety_pack_desc"	"綜合玩家包含下列模式中的各種地圖：\n^FFC83200*賞金追緝                   *消耗戰\n*泰坦殊死戰      *強化據點\n*鐵馭對鐵馭              *奪旗"
 				"PL_variety_pack_lobby"	"綜合大廳"
@@ -3686,7 +3910,7 @@ playlists
 				"COMMUNITYUPDATE_05_A"	"Kevin Younger ha creato un montaggio divertente mostrando innumerevoli mosse con Lama a impulsi. \n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
 				"COMMUNITYUPDATE_05_Q"	"Creazioni community: Arriva al punto"
 				"COMMUNITYUPDATE_06_A"	"ConzeyG su reddit mostra una brutale efficienza: Northstar che elimina i piloti nella modalità Marchiato a morte. \n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
-				"COMMUNITYUPDATE_06_Q"	"Creazioni della community: Cacciatore di piloti Northstar"
+				"COMMUNITYUPDATE_06_Q"	"Creazioni : Cacciatore di piloti Northstar"
 				"COMMUNITYUPDATE_07_A"	"Disponibile ora! Difesa Frontiera torna con Ascesa, nuovi colori da guerra acquistabili e una nuova mappa Live Fire.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
 				"COMMUNITYUPDATE_07_Q"	"Trailer gameplay \"Scudo frontiera operazioni\""
 				"COMMUNITYUPDATE_08_A"	"Disponibile ora! L’apprezzata mappa Giochi di guerra torna in Titanfall 2, più bella che mai. Scopri anche la nuova esecuzione e la nuova mappa Live Fire, Traffico in azione.\n\n\nPremi `2%[A_BUTTON|MOUSE1]%`0 per visualizzare."
@@ -3711,22 +3935,26 @@ playlists
 				"COMMUNITYUPDATE_NAME"	"Community"
 				"KNB_SUBJECT_00_DESC"	"`3Quali sono le novità di Titanfall?`0\n\nQui potrai vedere tutte le novità in Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Aggiornamenti"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Difesa Frontiera - Supporto per tre mappe aggiuntive - Bacino di carenaggio, Angel City ed Esopianeta.\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - UMA\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Buco nel muro\n\n`2%$rui/bullet_point%`0Nuovo contenuto acquistabile nello store"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 29 agosto - Cartoline dalla frontiera"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Difesa Frontiera: una nuova modalità cooperativa in cui unisci le forze con un massimo di altri tre giocatori per difendere un obiettivo vitale da ondate sempre più intense di combattenti IA. La comunicazione e l'adattamento sono la chiave per la sopravvivenza.\n\n`2%$rui/bullet_point%`0Nuova mappa: Ascesa\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire: Cittadina\n\n`2%$rui/bullet_point%`0Nuovo contenuto acquistabile nel negozio"
-				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 25 luglio - Operazione Scudo Frontiera "
-				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Nuova mappa - Giochi di guerra\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Traffico\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Scatola ombra\n\n`2%$rui/bullet_point%`03° slot arma\n\n`2%$rui/bullet_point%`0Impostazioni partita privata"
-				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 27 giugno - Giochi di guerra"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Nuovo Titan - Monarch\n\n`2%$rui/bullet_point%`0Nuova mappa - Relitto\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Ora mi vedi\n\n`2%$rui/bullet_point%`0Nuovo contenuto acquistabile nello store"
-				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 30 maggio - Regno di Monarch"
-				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Nuova mappa - Glitch\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Ponte\n\n`2%$rui/bullet_point%`0Nuova fazione - M.R.V.N.\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Arriva al punto\n\n`2%$rui/bullet_point%`0Generazione max portata a 100"
-				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 25 aprile - Glitch nella Frontiera"
-				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Nuova mappa - Colonia\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Spaccatesta\n\n`2%$rui/bullet_point%`0Nuova arma - R-101\n\n`2%$rui/bullet_point%`0Nuovo contenuto acquistabile nello store"
-				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 marzo - Colonia Rinata"
-				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Live Fire - Una nuova modalità di gioco a eliminazione Pilota contro Pilota! 6v6 basata su round senza rientri, avrai un minuto per eliminare la squadra rivale per vincere il round. Puoi vincere il round anche se la tua squadra è in possesso della bandiera neutra allo scadere del tempo. Vince la partita la squadra che si aggiudica per prima 5 round.\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Prateria\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Cataste\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Colpo ritardato"
-				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 23 febbraio - Live Fire"
-				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Nuova mappa - Angel City\n\n`2%$rui/bullet_point%`0Nuova arma - B3 Wingman Elite\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Dal di dentro\n\n`2%$rui/bullet_point%`0Nuovi kit Titan\n\n`2%$rui/bullet_point%`0Nuovo contenuto acquistabile nello store"
-				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 novembre - Ricercato di Angel City"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`010 Nuovi banner distintivo creati dalla community\n\n`2%$rui/bullet_point%`0Tutti i regali del difensore sono ora acquistabili con crediti\n\n`2%$rui/bullet_point%`0Nuovo contenuto negozio acquistabile\n\n"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 28 novembre - Momento della raccolta"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Slot primario pistola\n\n`2%$rui/bullet_point%`0Banner Halloween\n\n`2%$rui/bullet_point%`0Modifiche al bilanciamento\n\n`2%$rui/bullet_point%`0Nuovi contenuti del negozio acquistabili\n\n"
+				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 31 ottobre - Dolcetti e scherzetti"
+				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Difesa Frontiera - Supporto per tre mappe aggiuntive - Bacino di carenaggio, Angel City ed Esopianeta.\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - UMA\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Buco nel muro\n\n`2%$rui/bullet_point%`0Nuovo contenuto acquistabile nello store"
+				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 29 agosto - Cartoline dalla frontiera"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Difesa Frontiera: una nuova modalità cooperativa in cui unisci le forze con un massimo di altri tre giocatori per difendere un obiettivo vitale da ondate sempre più intense di combattenti IA. La comunicazione e l'adattamento sono la chiave per la sopravvivenza.\n\n`2%$rui/bullet_point%`0Nuova mappa: Ascesa\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire: Cittadina\n\n`2%$rui/bullet_point%`0Nuovo contenuto acquistabile nel negozio"
+				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 25 luglio - Operazione Scudo Frontiera "
+				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Nuova mappa - Giochi di guerra\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Traffico\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Scatola ombra\n\n`2%$rui/bullet_point%`03° slot arma\n\n`2%$rui/bullet_point%`0Impostazioni partita privata"
+				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 27 giugno - Giochi di guerra"
+				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Nuovo Titan - Monarch\n\n`2%$rui/bullet_point%`0Nuova mappa - Relitto\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Ora mi vedi\n\n`2%$rui/bullet_point%`0Nuovo contenuto acquistabile nello store"
+				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 maggio - Regno di Monarch"
+				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Nuova mappa - Glitch\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Ponte\n\n`2%$rui/bullet_point%`0Nuova fazione - M.R.V.N.\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Arriva al punto\n\n`2%$rui/bullet_point%`0Generazione max portata a 100"
+				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 25 aprile - Glitch nella Frontiera"
+				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Nuova mappa - Colonia\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Spaccatesta\n\n`2%$rui/bullet_point%`0Nuova arma - R-101\n\n`2%$rui/bullet_point%`0Nuovo contenuto acquistabile nello store"
+				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 marzo - Colonia Rinata"
+				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0Live Fire - Una nuova modalità di gioco a eliminazione Pilota contro Pilota! 6v6 basata su round senza rientri, avrai un minuto per eliminare la squadra rivale per vincere il round. Puoi vincere il round anche se la tua squadra è in possesso della bandiera neutra allo scadere del tempo. Vince la partita la squadra che si aggiudica per prima 5 round.\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Prateria\n\n`2%$rui/bullet_point%`0Nuova mappa Live Fire - Cataste\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Colpo ritardato"
+				"KNB_SUBJECT_00_SUB_08_Q"	"%$rui/hud/scoreboard/status_titan% 23 febbraio - Live Fire"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0Nuova mappa - Angel City\n\n`2%$rui/bullet_point%`0Nuova arma - B3 Wingman Elite\n\n`2%$rui/bullet_point%`0Nuova esecuzione pilota - Dal di dentro\n\n`2%$rui/bullet_point%`0Nuovi kit Titan\n\n`2%$rui/bullet_point%`0Nuovo contenuto acquistabile nello store"
+				"KNB_SUBJECT_00_SUB_09_Q"	"%$rui/hud/scoreboard/status_titan% 30 novembre - Ricercato di Angel City"
 				"MP_ANGEL_CITY_FD_WAVE_1"	"Incatenato al cielo"
 				"MP_ANGEL_CITY_FD_WAVE_2"	"Informe"
 				"MP_ANGEL_CITY_FD_WAVE_3"	"Insurrezione"
@@ -3765,6 +3993,14 @@ playlists
 				"PL_all_holopilot_abbr"	"LF"
 				"PL_all_holopilot_desc"	"Regole di Live Fire classiche, ad eccezione del fatto che tutte le abilità tattiche sono sostituite con Pilota olografico.^FFC83200\nGiocatori: 6v6      *No Titan\nTempo limite: 60 s      *Nessun rientro\nDimensioni max gruppo: 6"
 				"PL_all_holopilot_lobby"	"Loggy Il grande inganno"
+				"PL_all_phase"	"L’Altra Parte"
+				"PL_all_phase_abbr"	"ATT"
+				"PL_all_phase_desc"	"Regole di logoramento classiche, ad eccezione del fatto che tutte le abilità tattiche sono sostituite con Fasico.\n^FFC83200Giocatori: 6v6      *AI\nTempo limite: 10 m\nDimensioni max gruppo: 6"
+				"PL_all_phase_lobby"	"Lobby L’Altra Parte"
+				"PL_all_spicy"	"Logoramento speziato"
+				"PL_all_spicy_abbr"	"ATT"
+				"PL_all_spicy_desc"	"Regole di logoramento classiche, ad eccezione del fatto che tutte le abilità tattiche sono sostituite con Tick.\n^FFC83200Giocatori: 6v6      *AI\nTempo limite: 10 m\nDimensioni max gruppo: 6"
+				"PL_all_spicy_lobby"	"Lobby Logoramento speziato"
 				"PL_amped_tacticals"	"Tattiche amplificate"
 				"PL_amped_tacticals_abbr"	"ATT"
 				"PL_amped_tacticals_desc"	"Regole di logoramento classiche, ad eccezione del fatto che le abilità tattiche sono più potenti.\n^FFC83200Giocatori: 6v6      *AI\nTempo limite: 10 m\nDimensioni max gruppo: 6"
@@ -3791,10 +4027,10 @@ playlists
 				"PL_colony_abbr"	"COL"
 				"PL_colony_desc"	"Sempre e soltanto Colonia. ^CCCCCC00Questa operazione effettuerà ricerche di corrispondenze di ^FFC83200Logoramento^CCCCCC00, ^FFC83200Piloti contro piloti^CCCCCC00 e ^FFC83200Sopravvivenza Titan^CCCCCC00."
 				"PL_colony_lobby"	"Lobby Colonia 24/7"
-				"PL_ctf_lf"	"Cattura bandiera\n(Live Fire)"
-				"PL_ctf_lf_abbr"	"LOG"
-				"PL_ctf_lf_desc"	"Un frenetico Cattura bandiera nelle mappe Live Fire.\n^FFC83200Giocatori: 6v6\nDimensioni max gruppo: 6\n^F4D5A600No Titan     Nessun potenziamento     Salto fasico fa cadere la bandiera"
-				"PL_ctf_lf_lobby"	"Lobby Live Fire CLB"
+				"PL_ctf_lf"	"CB (Nitro)"
+				"PL_ctf_lf_abbr"	"CB-N"
+				"PL_ctf_lf_desc"	"Un frenetico Cattura bandiera in mappe selezionate.\n^FFC83200Giocatori: 5v5\nDimensioni max gruppo: 5\n^F4D5A600Torna Bandiera istantanea"
+				"PL_ctf_lf_lobby"	"Lobby Nitro CB"
 				"PL_default_description"	"Descrizione predefinita"
 				"PL_default_lobbytitle"	"Titolo lobby predefinito"
 				"PL_default_name"	"Nome predefinito"
@@ -3852,6 +4088,14 @@ playlists
 				"PL_marked_for_death_abbr"	"MAM"
 				"PL_marked_for_death_desc"	"Uccidi o proteggi i bersagli marchiati.\n^FFC83200Giocatori: 6v6  \nTempo limite: 12 m\nDimensioni max gruppo: 6"
 				"PL_marked_for_death_lobby"	"Lobby Marchiato a morte"
+				"PL_nitro_ffa"	"FFA (Nitro)"
+				"PL_nitro_ffa_abbr"	"FFA-N"
+				"PL_nitro_ffa_desc"	"Un frenetico Tutti contro tutti su mappe selezionate.\n^FFC83200Giocatori: 6\n^F4D5A600No Titan\nNo potenziamenti"
+				"PL_nitro_ffa_lobby"	"Lobby Nitro FFA"
+				"PL_nitro_mixtape"	"Remix (Nitro)"
+				"PL_nitro_mixtape_abbr"	"MXT-N"
+				"PL_nitro_mixtape_desc"	"Un frenetico CB, MFD e PvP in mappe selezionate.\n^FFC83200Giocatori: 5v5\nDimensioni max gruppo: 5\n^F4D5A600Torna Bandiera istantanea"
+				"PL_nitro_mixtape_lobby"	"Lobby Remix"
 				"PL_pilot_hunter"	"Scontro"
 				"PL_pilot_hunter_abbr"	"SCN"
 				"PL_pilot_hunter_desc"	"Uccidi piloti e Titan nemici.  \n^FFC83200Giocatori: 8v8\nTempo limite: 10 min.\nDimensioni max gruppo: 8"
@@ -3871,6 +4115,10 @@ playlists
 				"PL_rise_abbr"	"ASC"
 				"PL_rise_desc"	"Sempre e soltanto Ascesa. ^CCCCCC00Questa operazione effettuerà una ricerca per corrispondenze di ^FFC83200Cattura Bandiera^CCCCCC00, ^FFC83200Punto di controllo amplificato^CCCCCC00, ^FFC83200Piloti contro piloti^CCCCCC00, ^FFC83200Live Fire^CCCCCC00 e ^FFC83200Sopravvivenza Titan^CCCCCC00."
 				"PL_rise_lobby"	"Lobby Ascesa 24/7"
+				"PL_rocket_arena"	"Arena razzi"
+				"PL_rocket_arena_abbr"	"LF"
+				"PL_rocket_arena_desc"	"Regole di Live Fire classiche con EPG modificati.^FFC83200\nGiocatori: 6v6 *No Titan\nTempo limite: 90 s *Nessun rientro\nDimensioni max gruppo: 6"
+				"PL_rocket_arena_lobby"	"Lobby Arena razzi"
 				"PL_settings_for_when_someone_loads_a_map_on_the_command_line_do_not_edit_the_cmdlinemapload_1_below_-_this_makes_this_work"	"Impostazioni per il caricamento di una mappa dalla linea di comando. Non modificare il comando sottostante cmdlineMapLoad 1 perché è essenziale per il funzionamento."
 				"PL_speedball"	"Live Fire"
 				"PL_speedball_desc"	"Combatti per il possesso di una bandiera neutrale. Elimina la squadra nemica o possiedi la bandiera allo scadere del tempo per vincere il round. Vince il primo ad aggiudicarsi 5 round.\n^FFC83200Giocatori: 6v6 *Niente Titan\nTempo limite: 60 secondi per round *Nessun rientro\nDimensioni max gruppo: 6"
@@ -3884,6 +4132,15 @@ playlists
 				"PL_titan_brawl_desc"	"Uccidi i Titan nemici. Piloti non consentiti.\n^FFC83200Giocatori: 5v5\nTempo limite: 10m\nDimensioni max gruppo: 5"
 				"PL_titan_brawl_hint"	"Uccidi i Titan nemici.\nNessuna espulsione"
 				"PL_titan_brawl_lobby"	"Lobby Scontro tra Titan"
+				"PL_titan_brawl_turbo"	"Scontro tra Titan Turbo"
+				"PL_titan_brawl_turbo_abbr"	"TTDM"
+				"PL_titan_brawl_turbo_desc"	"Regole di Scontro tra Titan classiche con rigenerazione Scatto e generazione Nucleo più rapide.\n^FFC83200Giocatori: 5v5\nTempo limite: 10 m\nDimensioni max gruppo: 5"
+				"PL_titan_brawl_turbo_hint"	"Uccidi i Titan nemici.\nNessuna espulsione"
+				"PL_titan_brawl_turbo_lobby"	"Lobby Scontro tra Titan Turbo"
+				"PL_turbo_last_titan_standing"	"Turbo ST"
+				"PL_turbo_last_titan_standing_abbr"	"ST"
+				"PL_turbo_last_titan_standing_desc"	"Regole ST classiche con rigenerazione Scatto e generazione Nucleo più rapide.\n^FFC83200Giocatori: 5v5      *Inizia come Titan\nTempo limite: 3 m per round      *Nessun rientro\nDimensioni max gruppo: 5"
+				"PL_turbo_last_titan_standing_lobby"	"Lobby ST Turbo"
 				"PL_variety_pack"	"Remix"
 				"PL_variety_pack_desc"	"Un numero di giocatori variabile e varie mappe in queste modalità:\n^FFC83200*Caccia alle taglie                   *Logoramento\n*Sopravvivenza Titan      *Punto di controllo amplificato\n*Piloti contro piloti              *Cattura bandiera"
 				"PL_variety_pack_lobby"	"Lobby Remix"
@@ -3944,10 +4201,21 @@ playlists
 				"PL_wargames_lobby"	"Wargames 24/7 Lobby"
 				"PL_wargames_desc"	"All Wargames, all the time. ^CCCCCC00This will search for matches of ^FFC83200Attrition^CCCCCC00, ^FFC83200CTF^CCCCCC00, ^FFC83200Pilots vs Pilots^CCCCCC00, ^FFC83200Amped Hardpoint^CCCCCC00, and ^FFC83200Last Titan Standing^CCCCCC00."
 				"PL_wargames_abbr"	"WGM"
-				"PL_ctf_lf"	"Capture the Flag\n(Live Fire)"
-				"PL_ctf_lf_lobby"	"CTF Live Fire Lobby"
-				"PL_ctf_lf_desc"	"Fast paced Capture the Flag in Live Fire maps.\n^FFC83200Players: 6v6\nMax Party Size: 6\n^F4D5A600No Titans     No Boosts     Phase Shift Drops Flag"
-				"PL_ctf_lf_abbr"	"ATT"
+				"PL_ctf_lf"	"CTF (Nitro)"
+				"PL_ctf_lf_lobby"	"CTF Nitro Lobby"
+				"PL_ctf_lf_desc"	"Fast paced Capture the Flag in selected maps.\n^FFC83200Players: 5v5\nMax Party Size: 5\n^F4D5A600Instant Flag Returns // No Titans\nNo Boosts // Phase Shift Drops Flag"
+				"PL_ctf_lf_abbr"	"CTF-N"
+
+				"PL_nitro_mixtape"	"Mixtape (Nitro)"
+				"PL_nitro_mixtape_lobby"	"Mixtape Lobby"
+				"PL_nitro_mixtape_desc"	"Fast paced CTF, MFD and PvP on selected maps.\n^FFC83200Players: 5v5\nMax Party Size: 5\n^F4D5A600Instant Flag Returns // No Titans\nNo Boosts // Phase Shift Drops Flag"
+				"PL_nitro_mixtape_abbr"	"MXT-N"
+
+				"PL_nitro_ffa"	"FFA (Nitro)"
+				"PL_nitro_ffa_lobby"	"FFA Nitro Lobby"
+				"PL_nitro_ffa_desc"	"Fast paced Free for All on selected maps.\n^FFC83200Players: 6\n^F4D5A600No Titans\nNo Boosts"
+				"PL_nitro_ffa_abbr"	"FFA-N"
+
 				"PL_aitdm"	"Attrition"
 				"PL_aitdm_lobby"	"Attrition Lobby"
 				"PL_aitdm_desc"	"Kill all enemies.\n^FFC83200Players: 6v6      *AI\nTime Limit: 10m\nMax Party Size: 6"
@@ -4056,6 +4324,33 @@ playlists
 				"PL_all_holopilot_desc"		"Classic Live Fire rules except all Tactical abilities are replaced with Holopilot.^FFC83200\nPlayers: 6v6      *No Titans\nTime Limit: 60s      *No Respawns\nMax Party Size: 6"
 				"PL_all_holopilot_abbr"		"LF"
 
+				"PL_all_phase"			"The Otherside"
+				"PL_all_phase_lobby"	"The Otherside Lobby"
+				"PL_all_phase_desc"		"Classic Attrition rules except all Tactical abilities are replaced with Phase.\n^FFC83200Players: 6v6      *AI\nTime Limit: 10m\nMax Party Size: 6"
+				"PL_all_phase_abbr"		"ATT"
+
+				"PL_rocket_arena" 		"Rocket Arena"
+				"PL_rocket_arena_lobby" "Rocket Arena Lobby"
+				"PL_rocket_arena_desc" 	"Classic Live Fire rules with modified EPGs.^FFC83200\nPlayers: 6v6      *No Titans\nTime Limit: 90s      *No Respawns\nMax Party Size: 6"
+				"PL_rocket_arena_abbr"	"LF"
+
+				"PL_turbo_last_titan_standing"	"Turbo LTS"
+				"PL_turbo_last_titan_standing_lobby"	"Turbo LTS Lobby"
+				"PL_turbo_last_titan_standing_desc"	"Classic LTS rules with faster Dash regen and Core generation.\n^FFC83200Players: 5v5      *Start as Titan\nTime Limit: 3m per round      *No Respawns\nMax Party Size: 5"
+				"PL_turbo_last_titan_standing_abbr"	"LTS"
+
+				"PL_all_spicy"			"Spicy Attrition"
+				"PL_all_spicy_lobby"	"Spicy Attrition Lobby"
+				"PL_all_spicy_desc"		"Classic Attrition rules except all Tactical abilities are replaced with Ticks.\n^FFC83200Players: 6v6      *AI\nTime Limit: 10m\nMax Party Size: 6"
+				"PL_all_spicy_abbr"		"ATT"
+
+				"PL_titan_brawl_turbo"	    "Turbo Titan Brawl"
+				"PL_titan_brawl_turbo_lobby"	"Turbo Titan Brawl Lobby"
+				"PL_titan_brawl_turbo_desc"	"Classic Titan Brawl rules with faster Dash regen and Core generation.\n^FFC83200Players: 5v5\nTime Limit: 10m\nMax Party Size: 5"
+				"PL_titan_brawl_turbo_abbr"	"TTDM"
+				"PL_titan_brawl_turbo_hint"	"Kill enemy Titans.\nNo Ejection // No Disembark"
+
+
 				// FAQ - Community
 				//
 
@@ -4121,29 +4416,35 @@ playlists
 				"KNB_SUBJECT_00_NAME"						"Game Updates"
 				"KNB_SUBJECT_00_DESC"						"`3What's New in Titanfall?`0\n\nCheck here to see what's changed in Titanfall 2!"
 
-				"KNB_SUBJECT_00_SUB_00_A"					"`2%$rui/bullet_point%`0Frontier Defense - Support for 3 more maps - Drydock, Angel City and Exoplanet.\n\n`2%$rui/bullet_point%`0New Live Fire Map - UMA\n\n`2%$rui/bullet_point%`0New Pilot Execution - Hole In The Wall\n\n`2%$rui/bullet_point%`0New Purchasable Store Content"
-				"KNB_SUBJECT_00_SUB_00_Q"					"%$rui/hud/scoreboard/status_titan% August 29 - Postcards from the Frontier"
+				"KNB_SUBJECT_00_SUB_00_A"					"`2%$rui/bullet_point%`010 New community created callsign banners\n\n`2%$rui/bullet_point%`0All advocate gifts are now purchasable with credits\n\n`2%$rui/bullet_point%`0New Purchasable Store Content\n\n"
+				"KNB_SUBJECT_00_SUB_00_Q"					"%$rui/hud/scoreboard/status_titan% November 28 - Harvest Time"
 
-				"KNB_SUBJECT_00_SUB_01_A"					"`2%$rui/bullet_point%`0Frontier Defense - A new cooperative mode where you join forces with up to three other players to defend a vital objective from increasingly intense waves of AI combatants. Communication and adaptation are key to surviving.\n\n`2%$rui/bullet_point%`0New Map - Rise\n\n`2%$rui/bullet_point%`0New Live Fire Map - Township\n\n`2%$rui/bullet_point%`0New Purchasable Store Content"
-				"KNB_SUBJECT_00_SUB_01_Q"					"%$rui/hud/scoreboard/status_titan% July 25 - Operation Frontier Shield"
+				"KNB_SUBJECT_00_SUB_01_A"					"`2%$rui/bullet_point%`0Pistol Primary Slot\n\n`2%$rui/bullet_point%`0Halloween Banners\n\n`2%$rui/bullet_point%`0Balance Changes\n\n`2%$rui/bullet_point%`0New Purchasable Store Content\n\n"
+				"KNB_SUBJECT_00_SUB_01_Q"					"%$rui/hud/scoreboard/status_titan% October 31 - Tricks and Treats"
 
-				"KNB_SUBJECT_00_SUB_02_A"					"`2%$rui/bullet_point%`0New Map - Wargames\n\n`2%$rui/bullet_point%`0New Live Fire Map - Traffic\n\n`2%$rui/bullet_point%`0New Pilot Execution - Shadow Boxing\n\n`2%$rui/bullet_point%`03rd Weapon Slot\n\n`2%$rui/bullet_point%`0Private Match Settings"
-				"KNB_SUBJECT_00_SUB_02_Q"					"%$rui/hud/scoreboard/status_titan% June 27 - The War Games"
+				"KNB_SUBJECT_00_SUB_02_A"					"`2%$rui/bullet_point%`0Frontier Defense - Support for 3 more maps - Drydock, Angel City and Exoplanet.\n\n`2%$rui/bullet_point%`0New Live Fire Map - UMA\n\n`2%$rui/bullet_point%`0New Pilot Execution - Hole In The Wall\n\n`2%$rui/bullet_point%`0New Purchasable Store Content"
+				"KNB_SUBJECT_00_SUB_02_Q"					"%$rui/hud/scoreboard/status_titan% August 29 - Postcards from the Frontier"
 
-				"KNB_SUBJECT_00_SUB_03_A"					"`2%$rui/bullet_point%`0New Titan - Monarch\n\n`2%$rui/bullet_point%`0New Map - Relic\n\n`2%$rui/bullet_point%`0New Pilot Execution - Now You See Me\n\n`2%$rui/bullet_point%`0New Purchasable Store Content"
-				"KNB_SUBJECT_00_SUB_03_Q"					"%$rui/hud/scoreboard/status_titan% May 30 - Monarch's Reign"
+				"KNB_SUBJECT_00_SUB_03_A"					"`2%$rui/bullet_point%`0Frontier Defense - A new cooperative mode where you join forces with up to three other players to defend a vital objective from increasingly intense waves of AI combatants. Communication and adaptation are key to surviving.\n\n`2%$rui/bullet_point%`0New Map - Rise\n\n`2%$rui/bullet_point%`0New Live Fire Map - Township\n\n`2%$rui/bullet_point%`0New Purchasable Store Content"
+				"KNB_SUBJECT_00_SUB_03_Q"					"%$rui/hud/scoreboard/status_titan% July 25 - Operation Frontier Shield"
 
-				"KNB_SUBJECT_00_SUB_04_A"					"`2%$rui/bullet_point%`0New Map - Glitch\n\n`2%$rui/bullet_point%`0New Live Fire Map - Deck\n\n`2%$rui/bullet_point%`0New Faction - M.R.V.N.\n\n`2%$rui/bullet_point%`0New Pilot Execution - Get to the Point\n\n`2%$rui/bullet_point%`0Max Gen increased to 100"
-				"KNB_SUBJECT_00_SUB_04_Q"					"%$rui/hud/scoreboard/status_titan% Apr 25 - A Glitch in the Frontier"
+				"KNB_SUBJECT_00_SUB_04_A"					"`2%$rui/bullet_point%`0New Map - Wargames\n\n`2%$rui/bullet_point%`0New Live Fire Map - Traffic\n\n`2%$rui/bullet_point%`0New Pilot Execution - Shadow Boxing\n\n`2%$rui/bullet_point%`03rd Weapon Slot\n\n`2%$rui/bullet_point%`0Private Match Settings"
+				"KNB_SUBJECT_00_SUB_04_Q"					"%$rui/hud/scoreboard/status_titan% June 27 - The War Games"
 
-				"KNB_SUBJECT_00_SUB_05_A"					"`2%$rui/bullet_point%`0New Map - Colony\n\n`2%$rui/bullet_point%`0New Pilot Execution - Curb Check\n\n`2%$rui/bullet_point%`0New Weapon - R-101\n\n`2%$rui/bullet_point%`0New Purchasable Store Content"
-				"KNB_SUBJECT_00_SUB_05_Q"					"%$rui/hud/scoreboard/status_titan% Mar 30 - Colony Reborn"
+				"KNB_SUBJECT_00_SUB_05_A"					"`2%$rui/bullet_point%`0New Titan - Monarch\n\n`2%$rui/bullet_point%`0New Map - Relic\n\n`2%$rui/bullet_point%`0New Pilot Execution - Now You See Me\n\n`2%$rui/bullet_point%`0New Purchasable Store Content"
+				"KNB_SUBJECT_00_SUB_05_Q"					"%$rui/hud/scoreboard/status_titan% May 30 - Monarch's Reign"
 
-				"KNB_SUBJECT_00_SUB_06_A"					"`2%$rui/bullet_point%`0Live Fire - A new Pilot vs Pilot elimination game mode! It’s a 6v6 round-based with no respawns, you will have one minute to eliminate the opposing team in order to win the round. You can also win the round if your team is holding the neutral flag when the round timer ends. The team to win 5 rounds first wins the match.\n\n`2%$rui/bullet_point%`0New Live Fire Map - Meadow\n\n`2%$rui/bullet_point%`0New Live Fire Map - Stacks\n\n`2%$rui/bullet_point%`0New Pilot Execution - Late Hit"
-				"KNB_SUBJECT_00_SUB_06_Q"					"%$rui/hud/scoreboard/status_titan% Feb 23 - Live Fire"
+				"KNB_SUBJECT_00_SUB_06_A"					"`2%$rui/bullet_point%`0New Map - Glitch\n\n`2%$rui/bullet_point%`0New Live Fire Map - Deck\n\n`2%$rui/bullet_point%`0New Faction - M.R.V.N.\n\n`2%$rui/bullet_point%`0New Pilot Execution - Get to the Point\n\n`2%$rui/bullet_point%`0Max Gen increased to 100"
+				"KNB_SUBJECT_00_SUB_06_Q"					"%$rui/hud/scoreboard/status_titan% Apr 25 - A Glitch in the Frontier"
 
-				"KNB_SUBJECT_00_SUB_07_A"					"`2%$rui/bullet_point%`0New Map - Angel City\n\n`2%$rui/bullet_point%`0New Weapon - B3 Wingman Elite\n\n`2%$rui/bullet_point%`0New Pilot Execution - Inner Pieces\n\n`2%$rui/bullet_point%`0New Titan Kits\n\n`2%$rui/bullet_point%`0New Purchasable Store Content"
-				"KNB_SUBJECT_00_SUB_07_Q"					"%$rui/hud/scoreboard/status_titan% Nov 30 - Angel City's Most Wanted"
+				"KNB_SUBJECT_00_SUB_07_A"					"`2%$rui/bullet_point%`0New Map - Colony\n\n`2%$rui/bullet_point%`0New Pilot Execution - Curb Check\n\n`2%$rui/bullet_point%`0New Weapon - R-101\n\n`2%$rui/bullet_point%`0New Purchasable Store Content"
+				"KNB_SUBJECT_00_SUB_07_Q"					"%$rui/hud/scoreboard/status_titan% Mar 30 - Colony Reborn"
+
+				"KNB_SUBJECT_00_SUB_08_A"					"`2%$rui/bullet_point%`0Live Fire - A new Pilot vs Pilot elimination game mode! It’s a 6v6 round-based with no respawns, you will have one minute to eliminate the opposing team in order to win the round. You can also win the round if your team is holding the neutral flag when the round timer ends. The team to win 5 rounds first wins the match.\n\n`2%$rui/bullet_point%`0New Live Fire Map - Meadow\n\n`2%$rui/bullet_point%`0New Live Fire Map - Stacks\n\n`2%$rui/bullet_point%`0New Pilot Execution - Late Hit"
+				"KNB_SUBJECT_00_SUB_08_Q"					"%$rui/hud/scoreboard/status_titan% Feb 23 - Live Fire"
+
+				"KNB_SUBJECT_00_SUB_09_A"					"`2%$rui/bullet_point%`0New Map - Angel City\n\n`2%$rui/bullet_point%`0New Weapon - B3 Wingman Elite\n\n`2%$rui/bullet_point%`0New Pilot Execution - Inner Pieces\n\n`2%$rui/bullet_point%`0New Titan Kits\n\n`2%$rui/bullet_point%`0New Purchasable Store Content"
+				"KNB_SUBJECT_00_SUB_09_Q"					"%$rui/hud/scoreboard/status_titan% Nov 30 - Angel City's Most Wanted"
 
                 "MP_ANGEL_CITY_FD_WAVE_1"					"Chained to the Sky"
                 "MP_ANGEL_CITY_FD_WAVE_2"					"Formlessness"
@@ -4172,7 +4473,7 @@ playlists
 				"COMMUNITYUPDATE_00_A"	"Vos aventures à travers les environnements de la Frontière continuent avec le nouveau DLC de Titanfall 2 : Cartes postales de la Frontière. Personnalisez votre arsenal avec des peintures de guerre d'élite et combattez dans des lieux nouveaux ou familiers. La Frontière n'aura jamais été aussi belle !\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0."
 				"COMMUNITYUPDATE_00_Q"	"Trailer \"Cartes postales de la Frontière\""
 				"COMMUNITYUPDATE_01_A"	"Consultez la liste de changements inclus au patch Cartes postales de la Frontière.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_01_Q"	"Cartes postales de la Frontière : notes de patch"
+				"COMMUNITYUPDATE_01_Q"	"Cartes postales de la Frontière : Notes "
 				"COMMUNITYUPDATE_02_A"	"Prochainement disponible sur appareils mobiles, Titanfall: Assault est un STR captivant dans l'univers Titanfall développé en collaboration avec Particle City. Regardez la vidéo ! \n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0."
 				"COMMUNITYUPDATE_02_Q"	"Titanfall: Assault - Trailer de lancement"
 				"COMMUNITYUPDATE_03_A"	"Iniquity nous présente le didacticiel et les bases de Titanfall: Assault. Obtenez vite plus d'informations sur les mécaniques de ce nouveau jeu.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0."
@@ -4182,7 +4483,7 @@ playlists
 				"COMMUNITYUPDATE_05_A"	"Kevin Younger a créé un montage de ses meilleures actions avec sa lame à impulsion. \n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0."
 				"COMMUNITYUPDATE_05_Q"	"Créations communautaires : impulsion fatale"
 				"COMMUNITYUPDATE_06_A"	"ConzeyG (sur reddit) nous démontre de toute son efficacité avec le Titan Northstar dans le mode de jeu Condamnation. \n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0."
-				"COMMUNITYUPDATE_06_Q"	"Créations communautaires : chasse avec Northstar"
+				"COMMUNITYUPDATE_06_Q"	"Créations : Northstar chasseur de pilotes "
 				"COMMUNITYUPDATE_07_A"	"Disponible ! Défense frontalière revient avec la carte Expansion, de nouvelles peintures de guerre payantes et une nouvelle carte Live Fire. Regardez vite le trailer !\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0."
 				"COMMUNITYUPDATE_07_Q"	"Trailer gameplay \"Opération Frontier Shield\""
 				"COMMUNITYUPDATE_08_A"	"Disponible dès maintenant ! La carte à succès Jeux de guerre fait son grand retour dans Titanfall 2. Découvrez également une exécution inédite et Trafic, une toute nouvelle carte Live Fire.\n\n\nAppuyez sur `2%[A_BUTTON|MOUSE1]%`0 pour voir la vidéo."
@@ -4207,22 +4508,26 @@ playlists
 				"COMMUNITYUPDATE_NAME"	"Communauté"
 				"KNB_SUBJECT_00_DESC"	"`3Quoi de neuf dans Titanfall ?`0\n\nPrenez connaissance des nouvelles fonctionnalités de Titanfall 2 !"
 				"KNB_SUBJECT_00_NAME"	"Mises à jour du jeu"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Défense frontalière -  Prise en charge de 3 cartes supplémentaires : Cale sèche, Angel City et Exoplanète.\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - UMA\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Trou dans le mur\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 29 août - Cartes postales de la Frontière"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Défense frontalière - Nouveau mode coopératif, qui vous propose de vous allier à un maximum de trois autres joueurs pour défendre un objectif stratégique face à des vagues de combattants IA de plus en plus intenses. Votre survie dépendra de vos facultés de communication et d'adaptation !\n\n`2%$rui/bullet_point%`0Nouvelle carte - Expansion\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - Cité\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique"
-				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 25 juillet - Opération Frontier Shield"
-				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Nouvelle carte - Jeux de guerre\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - Trafic\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Boxe furtive\n\n`2%$rui/bullet_point%`0Troisième emplacement d'armement\n\n`2%$rui/bullet_point%`0Paramètres de partie privée"
-				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 27 juin - Jeux de guerre"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Nouveau Titan - Monarch\n\n`2%$rui/bullet_point%`0Nouvelle carte - Relique\n\n`2%$rui/bullet_point%`0Nouvelle exécution - Vision mortelle\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique"
-				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 30 mai - Règne du Monarch"
-				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Nouvelle carte - Glitch\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - Pont\n\n`2%$rui/bullet_point%`0Nouvelle faction - Marvin\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Impulsion fatale\n\n`2%$rui/bullet_point%`0Niveau de génération maximal augmenté à 100"
-				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 25 avril - Glitch frontalier"
-				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Nouvelle carte - Colonie\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Coup du grappin\n\n`2%$rui/bullet_point%`0Nouvelle arme - R-101\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique"
-				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 mars - Nouvelle colonie"
-				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Live Fire - Un nouveau mode Pilotes contre pilotes à élimination ! Dans ce mode à 6c6 en plusieurs manches, vous disposerez d'une minute pour éliminer l'équipe adverse et remporter la manche. Vous pourrez aussi gagner la manche si votre équipe est en possession du drapeau neutre à la fin du temps imparti. La première équipe à gagner 5 manches remporte la partie.\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - Prairie\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - Empilements\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Frappe spéciale"
-				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 23 février - Live Fire"
-				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Nouvelle carte - Angel City\n\n`2%$rui/bullet_point%`0Nouvelle arme - Wingman B3 Élite\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Viscéral\n\n`2%$rui/bullet_point%`0Nouveaux kits pour Titan\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique"
-				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 novembre - Liste noire d'Angel City"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`010 Nouvelles bannières créées par la communauté\n\n`2%$rui/bullet_point%`0Tous les cadeaux sont désormais achetables avec des crédits\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique\n\n"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 28 novembre - Récolte"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Emplacement principal pour pistolet\n\n`2%$rui/bullet_point%`0Bannières Halloween\n\n`2%$rui/bullet_point%`0Optimisations de l'équilibre\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique\n\n"
+				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 31 octobre - Bundle Halloween"
+				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Défense frontalière -  Prise en charge de 3 cartes supplémentaires : Cale sèche, Angel City et Exoplanète.\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - UMA\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Trou dans le mur\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique"
+				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 29 août - Cartes postales de la Frontière"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Défense frontalière - Nouveau mode coopératif, qui vous propose de vous allier à un maximum de trois autres joueurs pour défendre un objectif stratégique face à des vagues de combattants IA de plus en plus intenses. Votre survie dépendra de vos facultés de communication et d'adaptation !\n\n`2%$rui/bullet_point%`0Nouvelle carte - Expansion\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - Cité\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique"
+				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 25 juillet - Opération Frontier Shield"
+				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Nouvelle carte - Jeux de guerre\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - Trafic\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Boxe furtive\n\n`2%$rui/bullet_point%`0Troisième emplacement d'armement\n\n`2%$rui/bullet_point%`0Paramètres de partie privée"
+				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 27 juin - Jeux de guerre"
+				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Nouveau Titan - Monarch\n\n`2%$rui/bullet_point%`0Nouvelle carte - Relique\n\n`2%$rui/bullet_point%`0Nouvelle exécution - Vision mortelle\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique"
+				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 mai - Règne du Monarch"
+				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Nouvelle carte - Glitch\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - Pont\n\n`2%$rui/bullet_point%`0Nouvelle faction - Marvin\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Impulsion fatale\n\n`2%$rui/bullet_point%`0Niveau de génération maximal augmenté à 100"
+				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 25 avril - Glitch frontalier"
+				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Nouvelle carte - Colonie\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Coup du grappin\n\n`2%$rui/bullet_point%`0Nouvelle arme - R-101\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique"
+				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 mars - Nouvelle colonie"
+				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0Live Fire - Un nouveau mode Pilotes contre pilotes à élimination ! Dans ce mode à 6c6 en plusieurs manches, vous disposerez d'une minute pour éliminer l'équipe adverse et remporter la manche. Vous pourrez aussi gagner la manche si votre équipe est en possession du drapeau neutre à la fin du temps imparti. La première équipe à gagner 5 manches remporte la partie.\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - Prairie\n\n`2%$rui/bullet_point%`0Nouvelle carte Live Fire - Empilements\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Frappe spéciale"
+				"KNB_SUBJECT_00_SUB_08_Q"	"%$rui/hud/scoreboard/status_titan% 23 février - Live Fire"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0Nouvelle carte - Angel City\n\n`2%$rui/bullet_point%`0Nouvelle arme - Wingman B3 Élite\n\n`2%$rui/bullet_point%`0Nouvelle exécution de pilote - Viscéral\n\n`2%$rui/bullet_point%`0Nouveaux kits pour Titan\n\n`2%$rui/bullet_point%`0Nouveau contenu payant dans la Boutique"
+				"KNB_SUBJECT_00_SUB_09_Q"	"%$rui/hud/scoreboard/status_titan% 30 novembre - Liste noire d'Angel City"
 				"MP_ANGEL_CITY_FD_WAVE_1"	"Enchaînement céleste"
 				"MP_ANGEL_CITY_FD_WAVE_2"	"Menace informe"
 				"MP_ANGEL_CITY_FD_WAVE_3"	"Insurrection"
@@ -4261,6 +4566,14 @@ playlists
 				"PL_all_holopilot_abbr"	"LF"
 				"PL_all_holopilot_desc"	"Règles Live Fire classiques avec toutes les capacités tactiques remplacées par le module holo-pilote.^FFC83200\nJoueurs : 6c6      *Aucun Titan\nLimite de temps : 60 s      *Aucune réapparition\nTaille max. du groupe : 6"
 				"PL_all_holopilot_lobby"	"Salon Holo-bataille"
+				"PL_all_phase"	"De l'autre côté"
+				"PL_all_phase_abbr"	"ATT"
+				"PL_all_phase_desc"	"Règles Attrition classiques avec toutes les capacités tactiques remplacées par la téléportation.\n^FFC83200Joueurs : 6c6      *IA\nLimite de temps : 10 min\nTaille max. du groupe : 6"
+				"PL_all_phase_lobby"	"Salon De l'autre côté"
+				"PL_all_spicy"	"Attritique"
+				"PL_all_spicy_abbr"	"ATT"
+				"PL_all_spicy_desc"	"Règles Attrition classiques avec toutes les capacités tactiques remplacées par des tiques.\n^FFC83200Joueurs : 6c6      *IA\nLimite de temps : 10 min\nTaille max. du groupe : 6"
+				"PL_all_spicy_lobby"	"Salon Attritique"
 				"PL_amped_tacticals"	"Tactiques amplifiées"
 				"PL_amped_tacticals_abbr"	"ATT"
 				"PL_amped_tacticals_desc"	"Règles Attrition classiques avec amplification de toutes les capacités tactiques.\n^FFC83200Joueurs : 6c6      *IA\nLimite de temps : 10 min\nTaille max. du groupe : 6"
@@ -4287,10 +4600,10 @@ playlists
 				"PL_colony_abbr"	"COL"
 				"PL_colony_desc"	"Affrontements exclusivement sur la carte Colonie. ^CCCCCC00Vous allez chercher des parties en modes ^FFC83200Attrition^CCCCCC00, ^FFC83200Pilotes contre pilotes^CCCCCC00 et ^FFC83200Dernier Titan^CCCCCC00."
 				"PL_colony_lobby"	"Salon Colonie 24/7"
-				"PL_ctf_lf"	"Capture de drapeau\n(Live Fire)"
-				"PL_ctf_lf_abbr"	"ATT"
-				"PL_ctf_lf_desc"	"Affrontements rapides en Capture de drapeau sur des cartes Live Fire.\n^FFC83200Joueurs : 6c6\nTaille max. du groupe : 6\n^F4D5A600Pas de Titans     Aucun Boost     Drapeau relâché après téléportation"
-				"PL_ctf_lf_lobby"	"Salon CDD Live Fire"
+				"PL_ctf_lf"	"CDD (Nitro)"
+				"PL_ctf_lf_abbr"	"CDD-N"
+				"PL_ctf_lf_desc"	"Affrontements rapides en Capture de drapeau sur une sélection de cartes.\n^FFC83200Joueurs : 5c5\nTaille max. du groupe : 5\n^F4D5A600Retours instantanés du drapeau"
+				"PL_ctf_lf_lobby"	"Salon CDD Nitro"
 				"PL_default_description"	"Description par défaut"
 				"PL_default_lobbytitle"	"Nom salon par défaut"
 				"PL_default_name"	"Nom par défaut"
@@ -4348,6 +4661,14 @@ playlists
 				"PL_marked_for_death_abbr"	"COND"
 				"PL_marked_for_death_desc"	"Abattez ou protégez les cibles désignées.\n^FFC83200Joueurs : 6c6  \nLimite de temps : 12 min\nTaille max. du groupe : 6"
 				"PL_marked_for_death_lobby"	"Salon Condamnation"
+				"PL_nitro_ffa"	"CPS (Nitro)"
+				"PL_nitro_ffa_abbr"	"CPS-N"
+				"PL_nitro_ffa_desc"	"Affrontements rapides en Chacun pour soi sur une sélection de cartes.\n^FFC83200Joueurs : 6\n^F4D5A600Pas de Titans\nAucun Boost"
+				"PL_nitro_ffa_lobby"	"Salon CPS Nitro"
+				"PL_nitro_mixtape"	"Mixtape (Nitro)"
+				"PL_nitro_mixtape_abbr"	"MXT-N"
+				"PL_nitro_mixtape_desc"	"Affrontements rapides en CDD, COND et PcP sur une sélection de cartes.\n^FFC83200Joueurs : 5c5\nTaille max. du groupe : 5\n^F4D5A600Retours instantanés du drapeau"
+				"PL_nitro_mixtape_lobby"	"Salon Mixtape"
 				"PL_pilot_hunter"	"Escarmouche"
 				"PL_pilot_hunter_abbr"	"ESC"
 				"PL_pilot_hunter_desc"	"Éliminez les pilotes et Titans ennemis. \n^FFC83200Joueurs : 8c8\nLimite de temps : 10 min\nTaille max. du groupe : 8"
@@ -4367,6 +4688,10 @@ playlists
 				"PL_rise_abbr"	"EXP"
 				"PL_rise_desc"	"Affrontements exclusivement sur la carte Expansion. ^CCCCCC00Vous allez chercher des parties en modes ^FFC83200CDD^CCCCCC00, ^FFC83200Point clé amplifié^CCCCCC00, ^FFC83200Pilotes contre pilotes^CCCCCC00, ^FFC83200Live Fire^CCCCCC00 et ^FFC83200Dernier Titan^CCCCCC00."
 				"PL_rise_lobby"	"Salon Expansion 24/7"
+				"PL_rocket_arena"	"Arène à roquettes"
+				"PL_rocket_arena_abbr"	"LF"
+				"PL_rocket_arena_desc"	"Règles Live Fire classiques avec EPG modifiés.^FFC83200\nJoueurs : 6c6      *Aucun Titan\nLimite de temps : 90 s *Aucune réapparition\nTaille max. du groupe : 6"
+				"PL_rocket_arena_lobby"	"Salon Arène à roquettes"
 				"PL_settings_for_when_someone_loads_a_map_on_the_command_line_do_not_edit_the_cmdlinemapload_1_below_-_this_makes_this_work"	"Paramètres pour le chargement utilisateur d’une carte par ligne de commande. Ne pas éditer la commande \"cmdlineMapLoad 1\" ci-dessous, elle est requise pour le chargement."
 				"PL_speedball"	"Live Fire"
 				"PL_speedball_desc"	"Disputez-vous la possession d'un drapeau neutre. Éliminez l'équipe ennemie ou détenez le drapeau à la fin de la manche. La première équipe à gagner 5 manches remporte la partie.\n^FFC83200Joueurs : 6c6 *Aucun Titan\nLimite de temps : 60 s par manche *Aucune réapparition\nTaille max. du groupe : 6"
@@ -4380,6 +4705,15 @@ playlists
 				"PL_titan_brawl_desc"	"Détruisez les Titans ennemis. Les pilotes ne sont pas autorisés.\n^FFC83200Joueurs : 5c5\nLimite de temps : 10 min\nTaille max. du groupe : 5"
 				"PL_titan_brawl_hint"	"Détruisez les Titans ennemis.\nPas d'éjection"
 				"PL_titan_brawl_lobby"	"Salon Combat de Titan"
+				"PL_titan_brawl_turbo"	"Combat de Titan Turbo"
+				"PL_titan_brawl_turbo_abbr"	"CDT"
+				"PL_titan_brawl_turbo_desc"	"Règles Combat de Titan classiques avec régénération de propulsion et génération de noyau plus rapides.\n^FFC83200Joueurs : 5c5\nLimite de temps : 10 min\nTaille max. du groupe : 5"
+				"PL_titan_brawl_turbo_hint"	"Détruisez les Titans ennemis.\nPas d'éjection"
+				"PL_titan_brawl_turbo_lobby"	"Salon Combat de Titan Turbo"
+				"PL_turbo_last_titan_standing"	"DT Turbo"
+				"PL_turbo_last_titan_standing_abbr"	"DT"
+				"PL_turbo_last_titan_standing_desc"	"Règles DT classiques avec régénération de propulsion et génération de noyau plus rapides.\n^FFC83200Joueurs : 5c5      *Début en Titan\nLimite de temps : 3 min par manche      *Aucune réapparition\nTaille max. du groupe : 5"
+				"PL_turbo_last_titan_standing_lobby"	"Salon DT Turbo"
 				"PL_variety_pack"	"Mixtape"
 				"PL_variety_pack_desc"	"Jouez avec différents nombres de joueurs et cartes dans plusieurs modes de jeu :\n^FFC83200*Chasse aux primes                   *Attrition\n*Dernier Titan      *Point clé amplifié\n*Pilotes contre pilotes              *Capture de drapeau"
 				"PL_variety_pack_lobby"	"Salon Mixtape"
@@ -4433,22 +4767,26 @@ playlists
 				"COMMUNITYUPDATE_NAME"	"Społeczność"
 				"KNB_SUBJECT_00_DESC"	"`3Co nowego w Titanfall?`0\n\nZajrzyj tutaj, by zobaczyć zmiany w Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Aktualizacje gry"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Obrona Kresów – Obsługa 3 dodatkowych map: Suchy Dok, Miasto Aniołów i Egzoplaneta.\n\n`2%$rui/bullet_point%`0Nowa mapa do \"Szybkiego szturmu\" - UMA\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota  – \"Dziura w ścianie\"\n\n`2%$rui/bullet_point%`0Nowa zawartość dostępna w sklepie"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 29 sierpnia – Pocztówki z Kresów"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Obrona Kresów – nowy tryb współpracy, w którym łączysz siły z maksymalnie trzema innymi graczami, aby chronić ważny cel przed coraz silniejszymi falami przeciwników sterowanych przez SI. Komunikacja i przystosowanie się do sytuacji są kluczem do przetrwania.\n\n`2%$rui/bullet_point%`0Nowa mapa – Powstanie\n\n`2%$rui/bullet_point%`0Nowa mapa do trybu „Szybki szturm” – Miasto\n\n`2%$rui/bullet_point%`0Nowa zawartość do kupienia w sklepie"
-				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 25 lipca – operacja „Tarcza Kresów”"
-				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Nowa mapa – „Gry wojenne”\n\n`2%$rui/bullet_point%`0Nowa mapa do Szybkiego szturmu – „Ruch uliczny”\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – Walka z cieniem\n\n`2%$rui/bullet_point%`0Trzecie miejsce na broń\n\n`2%$rui/bullet_point%`0Ustawienia gier prywatnych"
-				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 27 czerwca – Gry wojenne"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Nowy Tytan – Monarcha\n\n`2%$rui/bullet_point%`0Nowa mapa – Relikt\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – A kuku\n\n`2%$rui/bullet_point%`0Nowa zawartość dostępna w sklepie"
-				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 30 maja: Rządy Monarchy"
-				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Nowa mapa – Błąd\n\n`2%$rui/bullet_point%`0Nowa mapa do szybkiego szturmu – Pokład\n\n`2%$rui/bullet_point%`0Nowa frakcja – MARVIN\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – Na ostrzu noża\n\n`2%$rui/bullet_point%`0Zwiększenie maksymalnej generacji do 100"
-				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 25 kwietnia: Błąd na Kresach"
-				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Nowa mapa – Kolonia\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – Uziemienie\n\n`2%$rui/bullet_point%`0Nowa broń – R-101\n\n`2%$rui/bullet_point%`0Nowa zawartość dostępna w sklepie"
-				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 marca – Nowa Kolonia"
-				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Szybki szturm – nowy tryb eliminacyjny, w którym zmagają się wyłącznie piloci! To oparty na rundach tryb 6 na 6, w którym nie można się odradzać. Gracze mają minutę na wyeliminowanie drużyny przeciwnej. Możliwe jest także wygranie rundy poprzez kontrolowanie neutralnej flagi, gdy upłynie czas. O wygranej decyduje zwycięstwo w pięciu rundach.\n\n`2%$rui/bullet_point%`0Nowa mapa do szybkiego szturmu – Polana\n\n`2%$rui/bullet_point%`0Nowa mapa do szybkiego szturmu – Stosy\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – Późne uderzenie"
-				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 23 lutego: Szybki szturm"
-				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Nowa mapa – Miasto aniołów\n\n`2%$rui/bullet_point%`0Nowa broń – Elitarny skrzydłowy B3\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – Rozrywacz\n\n`2%$rui/bullet_point%`0Nowe zestawy Tytana\n\n`2%$rui/bullet_point%`0Nowa zawartość dostępna w sklepie"
-				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 listopada: Renegat z Miasta Aniołów"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`010 Nowe, zaprojektowane przez społeczność identyfikatory.\n\n`2%$rui/bullet_point%`0Wszystkie prezenty patrona można teraz kupić za pomocą kredytów.\n\n`2%$rui/bullet_point%`0Nowa zawartość do kupienia w sklepie.\n\n"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 28 listopada – Pora żniw"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Pistolet w głównym miejscu na broń\n\n`2%$rui/bullet_point%`0Halloweenowe identyfikatory\n\n`2%$rui/bullet_point%`0Zmiany w wyważaniu\n\n`2%$rui/bullet_point%`0Nowa zawartość do kupienia w sklepie\n\n"
+				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 31 października – Cukierki i psikusy"
+				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Obrona Kresów – Obsługa 3 dodatkowych map: Suchy Dok, Miasto Aniołów i Egzoplaneta.\n\n`2%$rui/bullet_point%`0Nowa mapa do \"Szybkiego szturmu\" - UMA\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota  – \"Dziura w ścianie\"\n\n`2%$rui/bullet_point%`0Nowa zawartość dostępna w sklepie"
+				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 29 sierpnia – Pocztówki z Kresów"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Obrona Kresów – nowy tryb współpracy, w którym łączysz siły z maksymalnie trzema innymi graczami, aby chronić ważny cel przed coraz silniejszymi falami przeciwników sterowanych przez SI. Komunikacja i przystosowanie się do sytuacji są kluczem do przetrwania.\n\n`2%$rui/bullet_point%`0Nowa mapa – Powstanie\n\n`2%$rui/bullet_point%`0Nowa mapa do trybu „Szybki szturm” – Miasto\n\n`2%$rui/bullet_point%`0Nowa zawartość do kupienia w sklepie"
+				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 25 lipca – operacja „Tarcza Kresów”"
+				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Nowa mapa – „Gry wojenne”\n\n`2%$rui/bullet_point%`0Nowa mapa do Szybkiego szturmu – „Ruch uliczny”\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – Walka z cieniem\n\n`2%$rui/bullet_point%`0Trzecie miejsce na broń\n\n`2%$rui/bullet_point%`0Ustawienia gier prywatnych"
+				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 27 czerwca – Gry wojenne"
+				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Nowy Tytan – Monarcha\n\n`2%$rui/bullet_point%`0Nowa mapa – Relikt\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – A kuku\n\n`2%$rui/bullet_point%`0Nowa zawartość dostępna w sklepie"
+				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 maja: Rządy Monarchy"
+				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Nowa mapa – Błąd\n\n`2%$rui/bullet_point%`0Nowa mapa do szybkiego szturmu – Pokład\n\n`2%$rui/bullet_point%`0Nowa frakcja – MARVIN\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – Na ostrzu noża\n\n`2%$rui/bullet_point%`0Zwiększenie maksymalnej generacji do 100"
+				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 25 kwietnia: Błąd na Kresach"
+				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Nowa mapa – Kolonia\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – Uziemienie\n\n`2%$rui/bullet_point%`0Nowa broń – R-101\n\n`2%$rui/bullet_point%`0Nowa zawartość dostępna w sklepie"
+				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 marca – Nowa Kolonia"
+				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0Szybki szturm – nowy tryb eliminacyjny, w którym zmagają się wyłącznie piloci! To oparty na rundach tryb 6 na 6, w którym nie można się odradzać. Gracze mają minutę na wyeliminowanie drużyny przeciwnej. Możliwe jest także wygranie rundy poprzez kontrolowanie neutralnej flagi, gdy upłynie czas. O wygranej decyduje zwycięstwo w pięciu rundach.\n\n`2%$rui/bullet_point%`0Nowa mapa do szybkiego szturmu – Polana\n\n`2%$rui/bullet_point%`0Nowa mapa do szybkiego szturmu – Stosy\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – Późne uderzenie"
+				"KNB_SUBJECT_00_SUB_08_Q"	"%$rui/hud/scoreboard/status_titan% 23 lutego: Szybki szturm"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0Nowa mapa – Miasto aniołów\n\n`2%$rui/bullet_point%`0Nowa broń – Elitarny skrzydłowy B3\n\n`2%$rui/bullet_point%`0Nowa egzekucja pilota – Rozrywacz\n\n`2%$rui/bullet_point%`0Nowe zestawy Tytana\n\n`2%$rui/bullet_point%`0Nowa zawartość dostępna w sklepie"
+				"KNB_SUBJECT_00_SUB_09_Q"	"%$rui/hud/scoreboard/status_titan% 30 listopada: Renegat z Miasta Aniołów"
 				"MP_ANGEL_CITY_FD_WAVE_1"	"Przykuty do nieba"
 				"MP_ANGEL_CITY_FD_WAVE_2"	"Bezkształtność"
 				"MP_ANGEL_CITY_FD_WAVE_3"	"Rewolta"
@@ -4487,6 +4825,14 @@ playlists
 				"PL_all_holopilot_abbr"	"SS"
 				"PL_all_holopilot_desc"	"Klasyczne zasady szybkiego szturmu, poza tym, że wszystkie zdolności taktyczne zostają zastąpione holopilotem.\n^FFC83200Gracze: 6 na 6      *Bez Tytanów\nLimit czasowy: 60 s      *Bez odrodzeń\nMaksymalna wielkość grupy: 6"
 				"PL_all_holopilot_lobby"	"Lobby: Wielka ściema"
+				"PL_all_phase"	"Druga strona"
+				"PL_all_phase_abbr"	"W"
+				"PL_all_phase_desc"	"Klasyczne zasady wyniszczenia, poza tym, że wszystkie zdolności taktyczne zostają zastąpione przeskokiem fazowym.\n^FFC83200Gracze: 6 na 6      *SI\nLimit czasowy: 10 min\nMaksymalna wielkość grupy: 6"
+				"PL_all_phase_lobby"	"Lobby: Druga strona"
+				"PL_all_spicy"	"Pikantne wyniszczenie"
+				"PL_all_spicy_abbr"	"W"
+				"PL_all_spicy_desc"	"Klasyczne zasady wyniszczenia, poza tym, że wszystkie zdolności taktyczne zostają zastąpione kleszczami.\n^FFC83200Gracze: 6 na 6      *SI\nLimit czasowy: 10 min\nMaksymalna wielkość grupy: 6"
+				"PL_all_spicy_lobby"	"Lobby: Pikantne wyniszczenie"
 				"PL_amped_tacticals"	"Wzmocnione zdolności taktyczne"
 				"PL_amped_tacticals_abbr"	"W"
 				"PL_amped_tacticals_desc"	"Klasyczne zasady wyniszczenia, poza tym, że wszystkie zdolności taktyczne są potężniejsze.\n^FFC83200Gracze: 6 na 6      *SI\nLimit czasowy: 10 min\nMaksymalna wielkość grupy: 6"
@@ -4513,10 +4859,10 @@ playlists
 				"PL_colony_abbr"	"KOL"
 				"PL_colony_desc"	"Nieustające walki w Kolonii. ^CCCCCC00Spowoduje wyszukiwanie gier w trybach ^FFC83200Wyniszczenia^CCCCCC00, ^FFC83200Piloci kontra piloci^CCCCCC00 i ^FFC83200Do ostatniego Tytana^CCCCCC00."
 				"PL_colony_lobby"	"Kolonia 24/7 – lobby"
-				"PL_ctf_lf"	"Walka o flagę\n(Szybki szturm)"
-				"PL_ctf_lf_abbr"	"WoF"
-				"PL_ctf_lf_desc"	"Dynamiczna rozgrywka w trybie Walka o flagę na mapach z „Szybkim szturmem”.\n^FFC83200Gracze: 6 na6\nMaksymalny rozmiar grupy: 6\n^F4D5A600Brak Tytanów     Brak wzmocnień     Przeskok fazowy powoduje upuszczenie flagi"
-				"PL_ctf_lf_lobby"	"Lobby: WoF (Szybki szturm)"
+				"PL_ctf_lf"	"WoF (Nitro)"
+				"PL_ctf_lf_abbr"	"WoF-N"
+				"PL_ctf_lf_desc"	"Dynamiczna rozgrywka w trybie „Walka o flagę” na wybranych mapach.\n^FFC83200Gracze: 5 na 5\nMaksymalny rozmiar grupy: 5\n^F4D5A600Natychmiastowe odniesienie flagi"
+				"PL_ctf_lf_lobby"	"Lobby: WoF (Nitro)"
 				"PL_default_description"	"Domyślny opis"
 				"PL_default_lobbytitle"	"Domyślny tytuł lobby"
 				"PL_default_name"	"Domyślna nazwa"
@@ -4574,6 +4920,14 @@ playlists
 				"PL_marked_for_death_abbr"	"NC"
 				"PL_marked_for_death_desc"	"Zabijaj lub chroń oznaczone cele.\n^FFC83200Gracze: 6 na 6  \nLimit czasu: 12 min\nMaksymalny rozmiar grupy: 6"
 				"PL_marked_for_death_lobby"	"Lobby: Na celowniku"
+				"PL_nitro_ffa"	"KNK (Nitro)"
+				"PL_nitro_ffa_abbr"	"KNK-N"
+				"PL_nitro_ffa_desc"	"Dynamiczne starcia w trybie Każdy na każdego na wybranych mapach.\n^FFC83200Gracze: 6\n^F4D5A600Brak Tytanów\nBrak wzmocnień"
+				"PL_nitro_ffa_lobby"	"Lobby: KNK Nitro "
+				"PL_nitro_mixtape"	"Remix (Nitro)"
+				"PL_nitro_mixtape_abbr"	"RMX-N"
+				"PL_nitro_mixtape_desc"	"Dynamiczna rozgrywka w trybach „Walka o flagę”, „Na celowniku” i PvP na wybranych mapach.\n^FFC83200Gracze: 5 na 5\nMaksymalny rozmiar grupy: 5\n^F4D5A600Natychmiastowe odniesienie flagi"
+				"PL_nitro_mixtape_lobby"	"Lobby: Remix"
 				"PL_pilot_hunter"	"Starcie pilotów"
 				"PL_pilot_hunter_abbr"	"SP"
 				"PL_pilot_hunter_desc"	"Zabij wrogich pilotów i ich Tytany. \n^FFC83200Gracze: 8 na 8\nLimit czasu: 10 min.\nMaksymalny rozmiar grupy: 8"
@@ -4593,6 +4947,10 @@ playlists
 				"PL_rise_abbr"	"POW"
 				"PL_rise_desc"	"Powstanie non-stop. ^CCCCCC00Wyszukiwane będą gry w trybach: ^FFC83200WoF^CCCCCC00, ^FFC83200Obrona umocnień^CCCCCC00, ^FFC83200Piloci kontra piloci^CCCCCC00, ^FFC83200Szybki szturm^CCCCCC00 i ^FFC83200Do ostatniego Tytana^CCCCCC00."
 				"PL_rise_lobby"	"Powstanie 24/7 – lobby"
+				"PL_rocket_arena"	"Rakietowa arena"
+				"PL_rocket_arena_abbr"	"SS"
+				"PL_rocket_arena_desc"	"Klasyczne zasady szybkiego szturmu ze zmodyfikowanymi EPG.^FFC83200\nGracze: 6 na 6 *Bez Tytanów\nLimit czasowy: 90s *Bez odrodzeń\nMaksymalny rozmiar grupy: 6"
+				"PL_rocket_arena_lobby"	"Lobby: Rakietowa arena"
 				"PL_settings_for_when_someone_loads_a_map_on_the_command_line_do_not_edit_the_cmdlinemapload_1_below_-_this_makes_this_work"	"Ustawienia w przypadku wczytania mapy poprzez wiersz poleceń. Nie edytować cmdlineMapLoad 1 – wszystko będzie działać."
 				"PL_speedball"	"Szybki szturm"
 				"PL_speedball_desc"	"Walcz o przejęcie neutralnej flagi. Wyeliminuj drużynę przeciwną lub bądź w posiadaniu flagi, gdy runda dobiegnie końca. Gra toczy się do 5 zwycięstw.\n^FFC83200Gracze: 6 na 6 *Bez Tytanów\nLimit czasu: 60 s/tura * Bez odrodzeń\nMaksymalny rozmiar grupy: 6"
@@ -4606,6 +4964,15 @@ playlists
 				"PL_titan_brawl_desc"	"Zniszcz wrogie Tytany. Bez pilotów.\n^FFC83200Gracze: 5 na 5\nLimit czasu: 10 min\nMaksymalny rozmiar grupy: 5"
 				"PL_titan_brawl_hint"	"Zniszcz wrogie Tytany.\nBrak katapultowania"
 				"PL_titan_brawl_lobby"	"Lobby: Starcie Tytanów"
+				"PL_titan_brawl_turbo"	"Turbo starcie Tytanów"
+				"PL_titan_brawl_turbo_abbr"	"ST"
+				"PL_titan_brawl_turbo_desc"	"Klasyczne zasady starcia Tytanów z szybszym odnawianiem zrywów oraz ładowaniem rdzenia.\n^FFC83200Gracze: 5 na 5\nLimit czasowy: 10 min\nMaksymalny rozmiar grupy: 5"
+				"PL_titan_brawl_turbo_hint"	"Zniszcz wrogie Tytany.\nBrak katapultowania"
+				"PL_titan_brawl_turbo_lobby"	"Lobby: Turbo starcie Tytanów"
+				"PL_turbo_last_titan_standing"	"Turbo DoT"
+				"PL_turbo_last_titan_standing_abbr"	"DOT"
+				"PL_turbo_last_titan_standing_desc"	"Klasyczne zasady DoT z szybszym odnawianiem zrywów oraz ładowaniem rdzenia.\n^FFC83200Gracze: 5v5      *Rozpoczynasz grę w Tytanie\nLimit czasowy: 3 min na każdą rundę      *Bez odrodzeń\nMaksymalny rozmiar grupy: 5"
+				"PL_turbo_last_titan_standing_lobby"	"Lobby: Turbo DoT"
 				"PL_variety_pack"	"Remix"
 				"PL_variety_pack_desc"	"Zmienna liczba graczy i wybór różnych map; rozgrywka w trybach takich jak:\n^FFC83200*Łowy                   *Wyniszczenie\n*Do ostatniego Tytana      *Obrona umocnień\n*Piloci kontra piloci              *Walka o flagę"
 				"PL_variety_pack_lobby"	"Remix – lobby"
@@ -4634,7 +5001,7 @@ playlists
 				"COMMUNITYUPDATE_05_A"	"Kevin Younger creó un montaje divertido en el que presume de grandes movimientos con la cuchilla de pulso. \n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
 				"COMMUNITYUPDATE_05_Q"	"Creaciones de la comunidad: dale en el centro"
 				"COMMUNITYUPDATE_06_A"	"ConzeyG presume a través de reddit de manejar a Northstar de forma asombrosa mientras recoge pilotos en el modo Marcado para morir. \n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
-				"COMMUNITYUPDATE_06_Q"	"Creaciones de la comunidad: cacería de pilotos con Northstar"
+				"COMMUNITYUPDATE_06_Q"	"Creaciones : cacería de pilotos con Northstar"
 				"COMMUNITYUPDATE_07_A"	"¡Ya disponible! Defensa fronteriza regresa junto con Ascenso y nuevas pinturas de guerra que podrás comprar y un nuevo mapa de Fuego vivo. Mira todo esto en acción aquí.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
 				"COMMUNITYUPDATE_07_Q"	"Tráiler de juego \"Operación Escudo fronterizo\""
 				"COMMUNITYUPDATE_08_A"	"¡Ya disponible! El icónico mapa Juegos bélicos regresa a Titanfall 2 y se ve mejor que nunca. No te olvides de checar la nueva ejecución y el nuevo mapa Tráfico de Fuego vivo en acción.\n\n\nPulsa `2%[A_BUTTON|MOUSE1]%`0 para verlo."
@@ -4659,22 +5026,26 @@ playlists
 				"COMMUNITYUPDATE_NAME"	"Comunidad"
 				"KNB_SUBJECT_00_DESC"	"`3¿Qué es nuevo en Titanfall?`0\n\n¡Chécalo aquí para ver qué ha cambiado en Titanfall 2!"
 				"KNB_SUBJECT_00_NAME"	"Actualizaciones"
-				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`0Defensa fronteriza compatible con 3 mapas más: Dique seco, Ciudad Ángel y Exoplaneta.\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: UMA\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Agujero en el muro\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar"
-				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 29 de agosto: Postales de la Frontera"
-				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Defensa fronteriza: un nuevo modo cooperativo en el que unes tus fuerzas con hasta 3 otros jugadores para defender un objetivo vital de las oleadas de combatientes de la IA que van aumentando de intensidad. La comunicación y la adaptación son claves para la sobrevivencia.\n\n`2%$rui/bullet_point%`0Nuevo mapa: Ascenso\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: Municipio\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar"
-				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 25 de julio: Operación Escudo fronterizo"
-				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Juegos bélicos\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: Tráfico\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Golpe fantasma\n\n`2%$rui/bullet_point%`0Tercer espacio de arma\n\n`2%$rui/bullet_point%`0Configuración de la partida privada"
-				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 27 de junio: Juegos bélicos"
-				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Nuevo titán: Monarch\n\n`2%$rui/bullet_point%`0Nuevo mapa: Reliquia\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Ahora me ves\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar"
-				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 30 de mayo: Reino de Monarch"
-				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Fallo\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: Muelle\n\n`2%$rui/bullet_point%`0Nueva facción: M.R.V.N.\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Dale en el centro\n\n`2%$rui/bullet_point%`0Generación máxima aumentada a 100"
-				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 25 de abril: Un Fallo en la Frontera"
-				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Colonia\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Rompecráneos\n\n`2%$rui/bullet_point%`0Nueva arma: R-101\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar"
-				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 de marzo: Colonia Renacida"
-				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Fuego vivo: un nuevo modo de eliminaciones de Batalla de pilotos. Una partida de rondas de 6vs6 sin regeneraciones en la que tendrás un minuto para eliminar al equipo contrario y ganar la ronda. También podrás ganar la ronda si tu equipo tiene la bandera neutral cuando el temporizador llegue a cero. El primer equipo que gane 5 rondas ganará la partida.\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: Pradera\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: Aglomeración\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Último disparo"
-				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 23 de febrero: Fuego vivo"
-				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Ciudad Ángel\n\n`2%$rui/bullet_point%`0Nueva arma: B3 Wingman Élite\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Piezas internas\n\n`2%$rui/bullet_point%`0Nuevs kits de titán\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar"
-				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 de nov.: El más deseado de Ciudad Ángel"
+				"KNB_SUBJECT_00_SUB_00_A"	"`2%$rui/bullet_point%`010 nuevas banderas creadas por la comunidad\n\n`2%$rui/bullet_point%`0Todos los regalos del defensor se pueden comprar ahora con créditos\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar\n\n"
+				"KNB_SUBJECT_00_SUB_00_Q"	"%$rui/hud/scoreboard/status_titan% 28 de noviembre: Recolector de tiempo"
+				"KNB_SUBJECT_00_SUB_01_A"	"`2%$rui/bullet_point%`0Espacio principal de la pistola\n\n`2%$rui/bullet_point%`0Banderas de Halloween\n\n`2%$rui/bullet_point%`0Cambios de equilibrio\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar\n\n"
+				"KNB_SUBJECT_00_SUB_01_Q"	"%$rui/hud/scoreboard/status_titan% 31 de octubre: Trucos y tratos"
+				"KNB_SUBJECT_00_SUB_02_A"	"`2%$rui/bullet_point%`0Defensa fronteriza compatible con 3 mapas más: Dique seco, Ciudad Ángel y Exoplaneta.\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: UMA\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Agujero en el muro\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar"
+				"KNB_SUBJECT_00_SUB_02_Q"	"%$rui/hud/scoreboard/status_titan% 29 de agosto: Postales de la Frontera"
+				"KNB_SUBJECT_00_SUB_03_A"	"`2%$rui/bullet_point%`0Defensa fronteriza: un nuevo modo cooperativo en el que unes tus fuerzas con hasta 3 otros jugadores para defender un objetivo vital de las oleadas de combatientes de la IA que van aumentando de intensidad. La comunicación y la adaptación son claves para la sobrevivencia.\n\n`2%$rui/bullet_point%`0Nuevo mapa: Ascenso\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: Municipio\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar"
+				"KNB_SUBJECT_00_SUB_03_Q"	"%$rui/hud/scoreboard/status_titan% 25 de julio: Operación Escudo fronterizo"
+				"KNB_SUBJECT_00_SUB_04_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Juegos bélicos\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: Tráfico\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Golpe fantasma\n\n`2%$rui/bullet_point%`0Tercer espacio de arma\n\n`2%$rui/bullet_point%`0Configuración de la partida privada"
+				"KNB_SUBJECT_00_SUB_04_Q"	"%$rui/hud/scoreboard/status_titan% 27 de junio: Juegos bélicos"
+				"KNB_SUBJECT_00_SUB_05_A"	"`2%$rui/bullet_point%`0Nuevo titán: Monarch\n\n`2%$rui/bullet_point%`0Nuevo mapa: Reliquia\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Ahora me ves\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar"
+				"KNB_SUBJECT_00_SUB_05_Q"	"%$rui/hud/scoreboard/status_titan% 30 de mayo: Reino de Monarch"
+				"KNB_SUBJECT_00_SUB_06_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Fallo\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: Muelle\n\n`2%$rui/bullet_point%`0Nueva facción: M.R.V.N.\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Dale en el centro\n\n`2%$rui/bullet_point%`0Generación máxima aumentada a 100"
+				"KNB_SUBJECT_00_SUB_06_Q"	"%$rui/hud/scoreboard/status_titan% 25 de abril: Un Fallo en la Frontera"
+				"KNB_SUBJECT_00_SUB_07_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Colonia\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Rompecráneos\n\n`2%$rui/bullet_point%`0Nueva arma: R-101\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar"
+				"KNB_SUBJECT_00_SUB_07_Q"	"%$rui/hud/scoreboard/status_titan% 30 de marzo: Colonia Renacida"
+				"KNB_SUBJECT_00_SUB_08_A"	"`2%$rui/bullet_point%`0Fuego vivo: un nuevo modo de eliminaciones de Batalla de pilotos. Una partida de rondas de 6vs6 sin regeneraciones en la que tendrás un minuto para eliminar al equipo contrario y ganar la ronda. También podrás ganar la ronda si tu equipo tiene la bandera neutral cuando el temporizador llegue a cero. El primer equipo que gane 5 rondas ganará la partida.\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: Pradera\n\n`2%$rui/bullet_point%`0Nuevo mapa de Fuego vivo: Aglomeración\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Último disparo"
+				"KNB_SUBJECT_00_SUB_08_Q"	"%$rui/hud/scoreboard/status_titan% 23 de febrero: Fuego vivo"
+				"KNB_SUBJECT_00_SUB_09_A"	"`2%$rui/bullet_point%`0Nuevo mapa: Ciudad Ángel\n\n`2%$rui/bullet_point%`0Nueva arma: B3 Wingman Élite\n\n`2%$rui/bullet_point%`0Nueva ejecución de piloto: Piezas internas\n\n`2%$rui/bullet_point%`0Nuevs kits de titán\n\n`2%$rui/bullet_point%`0Nuevo contenido en la tienda para comprar"
+				"KNB_SUBJECT_00_SUB_09_Q"	"%$rui/hud/scoreboard/status_titan% 30 de nov.: El más deseado de Ciudad Ángel"
 				"MP_ANGEL_CITY_FD_WAVE_1"	"Encadenado al cielo"
 				"MP_ANGEL_CITY_FD_WAVE_2"	"Sin forma"
 				"MP_ANGEL_CITY_FD_WAVE_3"	"Levantamiento"
@@ -4713,6 +5084,14 @@ playlists
 				"PL_all_holopilot_abbr"	"FV"
 				"PL_all_holopilot_desc"	"Las reglas clásicas de Fuego vivo, pero todas las habilidades tácticas se reemplazan por el holopiloto.^FFC83200\nJugadores: 6vs6      *Sin titanes\nLímite de tiempo: 60 s      *Sin regeneraciones\nNúmero máximo de miembros del grupo: 6"
 				"PL_all_holopilot_lobby"	"Lobby de El gran engaño"
+				"PL_all_phase"	"El otro lado"
+				"PL_all_phase_abbr"	"DET"
+				"PL_all_phase_desc"	"Las reglas clásicas de Deterioro, pero todas las habilidades tácticas se reemplazan por la fase.\n^FFC83200Jugadores: 6vs6      *IA\nLímite de tiempo: 10 min.\nTamaño máximo del grupo: 6"
+				"PL_all_phase_lobby"	"Lobby de El otro lado"
+				"PL_all_spicy"	"Deterioro picante"
+				"PL_all_spicy_abbr"	"DET"
+				"PL_all_spicy_desc"	"Las reglas clásicas de Deterioro, pero todas las habilidades tácticas se reemplazan por garrapatas.\n^FFC83200Jugadores: 6vs6      *IA\nLímite de tiempo: 10 min.\nTamaño máximo del grupo: 6"
+				"PL_all_spicy_lobby"	"Lobby de Deterioro picante"
 				"PL_amped_tacticals"	"Tácticas +"
 				"PL_amped_tacticals_abbr"	"DET"
 				"PL_amped_tacticals_desc"	"Las reglas clásicas de Deterioro, pero todas las habilidades tácticas son más potentes.\n^FFC83200Jugadores: 6vs6      *IA\nLímite de tiempo: 10 min.\nTamaño máximo del grupo: 6"
@@ -4739,10 +5118,10 @@ playlists
 				"PL_colony_abbr"	"COL"
 				"PL_colony_desc"	"Colonia, sin interrupciones. ^CCCCCC00Buscará partidas de^FFC83200Deterioro^CCCCCC00, ^FFC83200Batalla de pilotos^CCCCCC00 y ^FFC83200Último titán en pie^CCCCCC00."
 				"PL_colony_lobby"	"Lobby de Colonia 24/7"
-				"PL_ctf_lf"	"Captura la bandera\n(Fuego vivo)"
-				"PL_ctf_lf_abbr"	"DET"
-				"PL_ctf_lf_desc"	"El frenético Captura la bandera en los mapas de Fuego vivo.\n^FFC83200Jugadores: 6vs6\nNúmero máximo de miembros del grupo: 6\n^F4D5A600Sin titanes   Sin potenciadores     Al cambiar de fase se pierde la bandera"
-				"PL_ctf_lf_lobby"	"Lobby de CLB en Fuego vivo"
+				"PL_ctf_lf"	"CLB (Nitro)"
+				"PL_ctf_lf_abbr"	"CLB-N"
+				"PL_ctf_lf_desc"	"El frenético Captura la bandera en mapas seleccionados.\n^FFC83200Jugadores: 5vs5\nTamaño máximo del grupo: 5\n^F4D5A600Regresos de bandera al instante"
+				"PL_ctf_lf_lobby"	"Lobby de Nitro de CLB"
 				"PL_default_description"	"Descripción predeterminada"
 				"PL_default_lobbytitle"	"Título de lobby predeterminado"
 				"PL_default_name"	"Nombre predeterminado"
@@ -4800,6 +5179,14 @@ playlists
 				"PL_marked_for_death_abbr"	"MPM"
 				"PL_marked_for_death_desc"	"Elimina o protege los objetivos marcados.\n^FFC83200Jugadores: 6vs6  \nLímite de tiempo: 12 min\nNúmero máximo de miembros del grupo: 6"
 				"PL_marked_for_death_lobby"	"Lobby de Marcado para morir"
+				"PL_nitro_ffa"	"TCT (Nitro)"
+				"PL_nitro_ffa_abbr"	"TCT-N"
+				"PL_nitro_ffa_desc"	"Todos contra todos acelerado en mapas seleccionados.\n^FFC83200Jugadores: 6\n^F4D5A600Sin titanes\nSin potenciadores"
+				"PL_nitro_ffa_lobby"	"Lobby de TCT (Nitro)"
+				"PL_nitro_mixtape"	"Diverso (Nitro)"
+				"PL_nitro_mixtape_abbr"	"DVS-N"
+				"PL_nitro_mixtape_desc"	"CLB, MPM y BDP acelerados en mapas seleccionados.\n^FFC83200Jugadores: 5vs5\nTamaño máximo del grupo: 5\n^F4D5A600Regresos de bandera al instante"
+				"PL_nitro_mixtape_lobby"	"Lobby de Diverso"
 				"PL_pilot_hunter"	"Escaramuza"
 				"PL_pilot_hunter_abbr"	"ECM"
 				"PL_pilot_hunter_desc"	"Elimina a los pilotos y titanes enemigos. \n^FFC83200Jugadores: 8vs8\nLímite de tiempo: 10 min.\nTamaño máximo del grupo: 8"
@@ -4819,6 +5206,10 @@ playlists
 				"PL_rise_abbr"	"ASC"
 				"PL_rise_desc"	"Ascenso, sin interrupciones. ^CCCCCC00Buscará partidas de ^FFC83200CLB^CCCCCC00, ^FFC83200Punto clave amplificado^CCCCCC00, ^FFC83200Batalla de pilotos^CCCCCC00, ^FFC83200Fuego vivo^CCCCCC00 y ^FFC83200Último titán en pie^CCCCCC00."
 				"PL_rise_lobby"	"Lobby de Ascenso 24/7"
+				"PL_rocket_arena"	"Zona de misiles"
+				"PL_rocket_arena_abbr"	"FV"
+				"PL_rocket_arena_desc"	"Las reglas clásicas de Fuego vivo con EPGs modificadas.^FFC83200\nJugadores: 6vs6 *Sin titanes\nLímite de tiempo: 90 s *Sin regeneraciones\nTamaño máximo del grupo: 6"
+				"PL_rocket_arena_lobby"	"Lobby de Zona de misiles"
 				"PL_settings_for_when_someone_loads_a_map_on_the_command_line_do_not_edit_the_cmdlinemapload_1_below_-_this_makes_this_work"	"Configuraciones para cuando alguien carga un mapa en la línea de comandos. No edites la cmdlineMapLoad 1 debajo porque se encarga de que esto funcione."
 				"PL_speedball"	"Fuego vivo"
 				"PL_speedball_desc"	"Lucha por la posesión de una bandera neutral. Elimina al equipo enemigo o ten la bandera cuando se acabe el tiempo para ganar la ronda. Gana el primero con 5 rondas ganadas.\n^FFC83200Jugadores: 6vs6 *Sin titanes\nLímite de tiempo: 60 segundos por ronda *Sin regeneraciones\nNúmero máximo de miembros del grupo: 6"
@@ -4832,6 +5223,15 @@ playlists
 				"PL_titan_brawl_desc"	"Elimina a los titanes enemigos. No se permiten pilotos.\n^FFC83200Jugadores: 5vs5\nLímite de tiempo: 10 min.\nTamaño máximo del grupo: 5"
 				"PL_titan_brawl_hint"	"Elimina a los titanes enemigos.\nSin eyección"
 				"PL_titan_brawl_lobby"	"Lobby de Pelea de titanes"
+				"PL_titan_brawl_turbo"	"Pelea de titanes turbo"
+				"PL_titan_brawl_turbo_abbr"	"PdTT"
+				"PL_titan_brawl_turbo_desc"	"Las reglas clásicas de Pelea de titanes con regeneración de impulsos y generación de núcleo más rápidas.\n^FFC83200Jugadores: 5vs5\nLímite de tiempo: 10 min.\nTamaño máximo del grupo: 5"
+				"PL_titan_brawl_turbo_hint"	"Elimina a los titanes enemigos.\nSin eyección"
+				"PL_titan_brawl_turbo_lobby"	"Lobby de Pelea de titanes turbo"
+				"PL_turbo_last_titan_standing"	"UTEP turbo"
+				"PL_turbo_last_titan_standing_abbr"	"UTEP"
+				"PL_turbo_last_titan_standing_desc"	"Las reglas clásicas de UTEP con regeneración de impulsos y generación de núcleo más rápidas.\n^FFC83200Jugadores: 5vs5      *Comienza como titán\nLímite de tiempo: 3 min. por ronda      *Sin regeneraciones\nTamaño máximo del grupo: 5"
+				"PL_turbo_last_titan_standing_lobby"	"Lobby de UTEP turbo"
 				"PL_variety_pack"	"Diverso"
 				"PL_variety_pack_desc"	"Número variado de jugadores con una gran variedad de mapas en estos modos:\n^FFC83200*Cazarrecompensas                   *Deterioro\n*Último titán en pie      *Punto clave\n*Pilotos contra pilotos              *Captura la bandera"
 				"PL_variety_pack_lobby"	"Lobby diverso"

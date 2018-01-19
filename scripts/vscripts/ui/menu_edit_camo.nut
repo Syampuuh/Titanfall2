@@ -404,18 +404,21 @@ bool function CamoButton_Init( var button, int elemNum )
 	RuiSetImage( rui, "buttonImage", displayData.image )
 
 	int itemType = displayData.itemType
+	bool isLocked
 	if ( IsSubItemType( itemType ) )
 	{
-		Hud_SetLocked( button, IsSubItemLocked( GetLocalClientPlayer(), displayData.ref, displayData.parentRef ) )
+		isLocked = IsSubItemLocked( GetLocalClientPlayer(), displayData.ref, displayData.parentRef )
 		RefreshButtonCost( button, displayData.ref, displayData.parentRef )
 		Hud_SetNew( button, ButtonShouldShowNew( itemType, displayData.ref, displayData.parentRef ) )
 	}
 	else
 	{
-		Hud_SetLocked( button, IsItemLocked( GetLocalClientPlayer(), displayData.ref ) )
+		isLocked = IsItemLocked( GetLocalClientPlayer(), displayData.ref )
 		RefreshButtonCost( button, displayData.ref )
 		Hud_SetNew( button, ButtonShouldShowNew( itemType, displayData.ref ) )
 	}
+
+	Hud_SetLocked( button, isLocked )
 
 	int persistentId = GetItemPersistenceId( displayData.ref, displayData.parentRef )
 	bool isSelected = false
@@ -426,7 +429,7 @@ bool function CamoButton_Init( var button, int elemNum )
 		int camoIndex = GetTitanCamoIndexFromLoadoutAndPrimeStatus( loadout )
 		if ( uiGlobal.editingLoadoutProperty == "camoIndex" || uiGlobal.editingLoadoutProperty ==  "primeCamoIndex" )
 		{
-			isSelected = camoIndex == persistentId
+			isSelected = (camoIndex == persistentId) && !isLocked
 		}
 		else if ( uiGlobal.editingLoadoutProperty == "primaryCamoIndex" )
 		{
